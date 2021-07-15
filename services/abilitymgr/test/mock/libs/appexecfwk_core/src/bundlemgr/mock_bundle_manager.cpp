@@ -142,7 +142,7 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
     auto find = false;
     // filter ams onstart
     for (const auto &entity : entityVector) {
-        if (entity == Want::FLAG_HW_HOME_INTENT_FROM_SYSTEM && element.GetAbilityName().empty() &&
+        if (entity == Want::FLAG_HOME_INTENT_FROM_SYSTEM && element.GetAbilityName().empty() &&
             element.GetBundleName().empty()) {
             find = true;
             break;
@@ -154,7 +154,6 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
     if (find || (bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME &&
                     (abilityName == AbilityConfig::SYSTEM_UI_STATUS_BAR ||
                         abilityName == AbilityConfig::SYSTEM_UI_NAVIGATION_BAR))) {
-        GTEST_LOG_(INFO) << "QueryAbilityInfo ++> system luncher, find :" << find;
         return true;
     }
 

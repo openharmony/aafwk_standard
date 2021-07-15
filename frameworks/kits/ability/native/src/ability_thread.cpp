@@ -110,6 +110,7 @@ std::shared_ptr<ContextDeal> AbilityThread::CreateAndInitContextDeal(std::shared
 
     contextDeal->SetBundleCodePath(abilityRecord->GetAbilityInfo()->codePath);
     contextDeal->SetContext(abilityObject);
+    contextDeal->SetRunner(abilityHandler_->GetEventRunner());
 
     return contextDeal;
 }
@@ -145,12 +146,12 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     }
 
     APP_LOGI("AbilityThread::new ability success.");
-    std::shared_ptr<Context> abilityObject(ability);
     currentAbility_.reset(ability);
     token_ = abilityRecord->GetToken();
     abilityRecord->SetEventHandler(abilityHandler_);
     abilityRecord->SetEventRunner(mainRunner);
     abilityRecord->SetAbilityThread(this);
+    std::shared_ptr<Context> abilityObject = currentAbility_;
     std::shared_ptr<ContextDeal> contextDeal = CreateAndInitContextDeal(application, abilityRecord, abilityObject);
     ability->AttachBaseContext(contextDeal);
 
@@ -207,12 +208,12 @@ void AbilityThread::Attach(
     }
 
     APP_LOGI("AbilityThread::new ability success.");
-    std::shared_ptr<Context> abilityObject(ability);
     currentAbility_.reset(ability);
     token_ = abilityRecord->GetToken();
     abilityRecord->SetEventHandler(abilityHandler_);
     abilityRecord->SetEventRunner(runner_);
     abilityRecord->SetAbilityThread(this);
+    std::shared_ptr<Context> abilityObject = currentAbility_;
     std::shared_ptr<ContextDeal> contextDeal = CreateAndInitContextDeal(application, abilityRecord, abilityObject);
     ability->AttachBaseContext(contextDeal);
 
@@ -724,6 +725,11 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &
 
     ret = abilityImpl_->BatchInsert(uri, values);
     return ret;
+}
+
+void AbilityThread::DisplayUnlockMissionMessage()
+{
+    APP_LOGI("DisplayUnlockMissionMessage...");
 }
 
 /**

@@ -180,5 +180,30 @@ int MockServiceAbilityManagerService::RemoveStack(int id)
 {
     return 0;
 }
+
+int MockServiceAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
+{
+    return 0;
+}
+
+bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
+{
+    return true;
+}
+
+int MockServiceAbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
+{
+    return 0;
+}
+
+int MockServiceAbilityManagerService::PowerOff()
+{
+    return 0;
+}
+int MockServiceAbilityManagerService::PowerOn()
+{
+    return 0;
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -14,9 +14,9 @@
  */
 
 #include "lifecycle_deal.h"
-
-#include "ability_record.h"
 #include "hilog_wrapper.h"
+#include "ability_util.h"
+#include "ability_record.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -33,11 +33,8 @@ void LifecycleDeal::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
 
 void LifecycleDeal::Activate(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("LifecycleDeal Activate");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     HILOG_INFO("%{public}s, caller %{public}s, %{public}s, %{public}s",
         __func__,
         stateInfo.caller.deviceId.c_str(),
@@ -49,64 +46,46 @@ void LifecycleDeal::Activate(const Want &want, LifeCycleStateInfo &stateInfo)
 
 void LifecycleDeal::Inactivate(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("LifecycleDeal Inactivate");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
     abilityScheduler_->ScheduleAbilityTransaction(want, stateInfo);
 }
 
 void LifecycleDeal::MoveToBackground(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("LifecycleDeal MoveToBackground");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND;
     abilityScheduler_->ScheduleAbilityTransaction(want, stateInfo);
 }
 
 void LifecycleDeal::ConnectAbility(const Want &want)
 {
-    HILOG_INFO("LifecycleDeal connect ability");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     abilityScheduler_->ScheduleConnectAbility(want);
 }
 
 void LifecycleDeal::DisconnectAbility(const Want &want)
 {
-    HILOG_INFO("LifecycleDeal disconnect ability");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     abilityScheduler_->ScheduleDisconnectAbility(want);
 }
 
 void LifecycleDeal::Terminate(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("LifecycleDeal Terminate");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     abilityScheduler_->ScheduleAbilityTransaction(want, stateInfo);
 }
 
 void LifecycleDeal::CommandAbility(const Want &want, bool reStart, int startId)
 {
-    HILOG_INFO("LifecycleDeal command ability");
-    if (abilityScheduler_ == nullptr) {
-        HILOG_ERROR("abilityScheduler_ is nullptr");
-        return;
-    }
+    HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(abilityScheduler_);
     abilityScheduler_->ScheduleCommandAbility(want, reStart, startId);
 }
 }  // namespace AAFwk

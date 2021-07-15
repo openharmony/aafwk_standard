@@ -19,7 +19,11 @@
 #include "system_ability_definition.h"
 #include "ability_info.h"
 #include "application_info.h"
+#define private public
+#define protected public
 #include "ability_manager_service.h"
+#undef private
+#undef protected
 #include "ability_manager_errors.h"
 #include "gtest/gtest.h"
 #include "mock_bundle_manager.h"
@@ -269,7 +273,6 @@ HWTEST_F(AbilityWithApplicationsTest, Teminate_Ability_With_Applications_001, Te
     auto missionstack = stackmgr->GetCurrentMissionStack();
 
     if (missionstack) {
-        EXPECT_EQ(1, missionstack->GetMissionStackId());
         topAbility = missionstack->GetTopAbilityRecord();
     }
 

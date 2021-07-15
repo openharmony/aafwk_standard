@@ -35,6 +35,9 @@ const std::string COM_IX_HIRADIO = "com.ix.hiRadio";
 const std::string COM_IX_HISERVICE = "com.ix.hiService";
 const std::string COM_IX_MUSICSERVICE = "com.ix.musicService";
 const std::string COM_IX_HIDATA = "com.ix.hiData";
+const std::string COM_IX_PHONE = "com.ix.hiPhone";
+const std::string COM_IX_TV = "com.ix.hiTV";
+const std::string COM_IX_Film = "com.ix.hiFilm";
 
 auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
     abilityInfo.name = elementTemp.GetAbilityName();
@@ -121,6 +124,54 @@ auto HiDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     return true;
 };
 
+auto HiPhoneInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationName = "hiPhone";
+    abilityInfo.applicationInfo.name = "hiPhone";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.applicationInfo.isLauncherApp = false;
+    abilityInfo.process = "p7";
+    if (elementTemp.GetAbilityName() == "PhoneAbility1") {
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    if (elementTemp.GetAbilityName() == "PhoneAbility2") {
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    return true;
+};
+
+auto HiTVInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationName = "hiTV";
+    abilityInfo.applicationInfo.name = "hiTV";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.applicationInfo.isLauncherApp = false;
+    if (elementTemp.GetAbilityName() == "TVAbility") {
+        abilityInfo.process = "p8";
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    return true;
+};
+
+auto HiFilmInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationName = "hiFilm";
+    abilityInfo.applicationInfo.name = "hiFilm";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.applicationInfo.isLauncherApp = false;
+    if (elementTemp.GetAbilityName() == "FilmAbility") {
+        abilityInfo.process = "p9";
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    return true;
+};
+
 }  // namespace
 
 class BundleMgrProxy : public IRemoteProxy<IBundleMgr> {
@@ -169,6 +220,19 @@ public:
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
     MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
+    MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
+    MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
+    MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &, bool));
+    MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
+    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
+    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(RegisterPermissionsChanged,
+        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
+    MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName,std::vector<FormInfo> &formInfos));
+    MOCK_METHOD3(GetFormsInfoByModule, bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -220,7 +284,19 @@ public:
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
         bool(const std::string &bundleName, const std::string &permission, const int userId));
-
+    MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
+    MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
+    MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &, bool));
+    MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
+    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
+    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(RegisterPermissionsChanged,
+        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
+    MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName,std::vector<FormInfo> &formInfos));
+    MOCK_METHOD3(GetFormsInfoByModule, bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool GetApplicationInfo(
@@ -233,6 +309,9 @@ public:
         abilityInfoMap_.emplace(COM_IX_HISERVICE, HiServiceInfo);
         abilityInfoMap_.emplace(COM_IX_MUSICSERVICE, MusicServiceInfo);
         abilityInfoMap_.emplace(COM_IX_HIDATA, HiDataInfo);
+        abilityInfoMap_.emplace(COM_IX_PHONE, HiPhoneInfo);
+        abilityInfoMap_.emplace(COM_IX_TV, HiTVInfo);
+        abilityInfoMap_.emplace(COM_IX_Film, HiFilmInfo);
     }
 
     virtual ~BundleMgrService()

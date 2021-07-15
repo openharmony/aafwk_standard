@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #define private public
+#include "sa_mgr_client.h"
 #include "kernal_system_app_manager.h"
 #include "app_scheduler.h"
 #undef private
@@ -24,7 +25,7 @@
 #include "ability_manager_service.h"
 #include "ability_manager_errors.h"
 #include "ability_scheduler_mock.h"
-#include "mock_bundle_manager.h"
+#include "bundlemgr/mock_bundle_manager.h"
 #include "mock_app_manager_client.h"
 
 using namespace testing;
@@ -67,6 +68,9 @@ public:
 
 void KernalSystemAppManagerTest::SetUpTestCase()
 {
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        401, new (std::nothrow) AppExecFwk::BundleMgrService());
 
     DelayedSingleton<AbilityManagerService>::GetInstance();
     DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
@@ -120,7 +124,7 @@ void KernalSystemAppManagerTest::StartSystemUI()
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Start a system level aa
  */
-HWTEST_F(KernalSystemAppManagerTest, StartAbility_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, StartAbility_001, TestSize.Level1)
 {
     // start a system ui
     Want want;
@@ -164,7 +168,7 @@ HWTEST_F(KernalSystemAppManagerTest, StartAbility_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Start a system level aa
  */
-HWTEST_F(KernalSystemAppManagerTest, StartAbility_002, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, StartAbility_002, TestSize.Level1)
 {
     // start a system ui
     Want want;
@@ -223,7 +227,7 @@ HWTEST_F(KernalSystemAppManagerTest, StartAbility_002, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: have a ability to attach
  */
-HWTEST_F(KernalSystemAppManagerTest, AttachAbilityThread_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, AttachAbilityThread_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     sptr<IAbilityScheduler> scheduler = nullptr;
@@ -252,7 +256,7 @@ HWTEST_F(KernalSystemAppManagerTest, AttachAbilityThread_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, AbilityTransitionDone_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, AbilityTransitionDone_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     sptr<IRemoteObject> token = nullptr;
@@ -271,6 +275,7 @@ HWTEST_F(KernalSystemAppManagerTest, AbilityTransitionDone_001, TestSize.Level0)
     ref = kernalSystemMgr_->AbilityTransitionDone(topAbilityRecord->GetToken(), AbilityState::ACTIVE);
     EXPECT_EQ(ERR_OK, ref);
     WaitUntilTaskFinished();
+
     ref = kernalSystemMgr_->AbilityTransitionDone(topAbilityRecord->GetToken(), AbilityState::INITIAL);
     EXPECT_EQ(ERR_INVALID_VALUE, ref);
 }
@@ -283,7 +288,7 @@ HWTEST_F(KernalSystemAppManagerTest, AbilityTransitionDone_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, OnAbilityRequestDone_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, OnAbilityRequestDone_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -305,7 +310,7 @@ HWTEST_F(KernalSystemAppManagerTest, OnAbilityRequestDone_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, GetManagerUserId_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, GetManagerUserId_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -321,7 +326,7 @@ HWTEST_F(KernalSystemAppManagerTest, GetManagerUserId_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, DumpState_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, DumpState_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -343,7 +348,7 @@ HWTEST_F(KernalSystemAppManagerTest, DumpState_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification ability died
  */
-HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -361,7 +366,7 @@ HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_002, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_002, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -379,7 +384,7 @@ HWTEST_F(KernalSystemAppManagerTest, OnAbilityDied_002, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, OnTimeOut_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, OnTimeOut_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -408,7 +413,7 @@ HWTEST_F(KernalSystemAppManagerTest, OnTimeOut_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, DequeueWaittingAbility_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, DequeueWaittingAbility_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();
@@ -444,7 +449,7 @@ HWTEST_F(KernalSystemAppManagerTest, DequeueWaittingAbility_001, TestSize.Level0
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
 
@@ -480,7 +485,7 @@ HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_001, TestSize.Leve
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_002, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_002, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
 
@@ -522,7 +527,7 @@ HWTEST_F(KernalSystemAppManagerTest, GetOrCreateAbilityRecord_002, TestSize.Leve
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, GetAbilityRecordByToken_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, GetAbilityRecordByToken_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
 
@@ -551,7 +556,7 @@ HWTEST_F(KernalSystemAppManagerTest, GetAbilityRecordByToken_001, TestSize.Level
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, DispatchActive_001, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, DispatchActive_001, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
 
@@ -587,7 +592,7 @@ HWTEST_F(KernalSystemAppManagerTest, DispatchActive_001, TestSize.Level0)
  * EnvConditions:Is Kernal System Ability
  * CaseDescription: Notification status
  */
-HWTEST_F(KernalSystemAppManagerTest, DispatchActive_002, TestSize.Level0)
+HWTEST_F(KernalSystemAppManagerTest, DispatchActive_002, TestSize.Level1)
 {
     EXPECT_TRUE(kernalSystemMgr_);
     StartSystemUI();

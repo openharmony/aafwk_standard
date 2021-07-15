@@ -24,10 +24,7 @@ ohos_systemtest("ability_command_start_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    "${appexecfwk_path}/tools/bm:tools_bm_config",
-  ]
+  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -54,10 +51,7 @@ ohos_systemtest("ability_command_stop_service_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    "${appexecfwk_path}/tools/bm:tools_bm_config",
-  ]
+  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -84,10 +78,7 @@ ohos_systemtest("ability_command_dump_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    "${appexecfwk_path}/tools/bm:tools_bm_config",
-  ]
+  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
 
   cflags = []
   if (target_cpu == "arm") {

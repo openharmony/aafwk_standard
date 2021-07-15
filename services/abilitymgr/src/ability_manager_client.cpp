@@ -256,7 +256,7 @@ ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 }
 
 ErrCode AbilityManagerClient::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList)
+    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
     if (remoteObject_ == nullptr) {
         HILOG_ERROR("%{private}s:ability service not connect", __func__);
@@ -284,6 +284,16 @@ ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MoveMissionToTop(missionId);
+}
+
+ErrCode AbilityManagerClient::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->MoveMissionToEnd(token, nonFirst);
 }
 
 ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
@@ -325,5 +335,257 @@ ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->KillProcess(bundleName);
 }
+
+ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
+{
+    if (token == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ERR_NULL_OBJECT;
+    }
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    if (!(abms->IsFirstInMission(token))) {
+        return NO_FIRST_IN_MISSION;
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::CompelVerifyPermission(
+    const std::string &permission, int pid, int uid, std::string &message)
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->CompelVerifyPermission(permission, pid, uid, message);
+}
+
+ErrCode AbilityManagerClient::PowerOff()
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->PowerOff();
+}
+
+ErrCode AbilityManagerClient::PowerOn()
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->PowerOn();
+}
+
+ErrCode AbilityManagerClient::LockMission(int missionId)
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->LockMission(missionId);
+}
+
+ErrCode AbilityManagerClient::UnlockMission(int missionId)
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->UnlockMission(missionId);
+}
+
+sptr<IWantSender> AbilityManagerClient::GetWantSender(
+    const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return nullptr;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetWantSender(wantSenderInfo, callerToken);
+}
+
+ErrCode AbilityManagerClient::SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->SendWantSender(target, senderInfo);
+}
+
+void AbilityManagerClient::CancelWantSender(const sptr<IWantSender> &sender)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    abms->CancelWantSender(sender);
+}
+
+ErrCode AbilityManagerClient::GetPendingWantUid(const sptr<IWantSender> &target, int32_t &uid)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    uid = abms->GetPendingWantUid(target);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::GetPendingWantUserId(const sptr<IWantSender> &target, int32_t &userId)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    userId = abms->GetPendingWantUserId(target);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::GetPendingWantBundleName(const sptr<IWantSender> &target, std::string &bundleName)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    bundleName = abms->GetPendingWantBundleName(target);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::GetPendingWantCode(const sptr<IWantSender> &target, int32_t &code)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    code = abms->GetPendingWantCode(target);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::GetPendingWantType(const sptr<IWantSender> &target, int32_t &type)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    type = abms->GetPendingWantType(target);
+    return ERR_OK;
+}
+
+void AbilityManagerClient::RegisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &recevier)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return;
+    }
+    if (sender == nullptr) {
+        HILOG_ERROR("%{private}s:sender is nullptr", __func__);
+        return;
+    }
+    if (recevier == nullptr) {
+        HILOG_ERROR("%{private}s:recevier is nullptr", __func__);
+        return;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    abms->RegisterCancelListener(sender, recevier);
+}
+
+void AbilityManagerClient::UnregisterCancelListener(
+    const sptr<IWantSender> &sender, const sptr<IWantReceiver> &recevier)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return;
+    }
+    if (sender == nullptr) {
+        HILOG_ERROR("%{private}s:sender is nullptr", __func__);
+        return;
+    }
+    if (recevier == nullptr) {
+        HILOG_ERROR("%{private}s:recevier is nullptr", __func__);
+        return;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    abms->UnregisterCancelListener(sender, recevier);
+}
+
+ErrCode AbilityManagerClient::GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (target == nullptr) {
+        HILOG_ERROR("%{private}s:target is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (want == nullptr) {
+        HILOG_ERROR("%{private}s:want is nullptr", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetPendingRequestWant(target, want);
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

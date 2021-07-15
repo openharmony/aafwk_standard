@@ -15,8 +15,9 @@ import("//build/ohos.gni")
 
 group("napi_packages") {
   deps = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:napi_ability_manager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/context:context",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:feature_ability",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:abilitymanager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataUriUtils:datauriutils",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
   ]
 }

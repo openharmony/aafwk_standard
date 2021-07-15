@@ -15,21 +15,29 @@ import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk_standard/mstabilitymgrservice"
+EVENT_DIR = "//base/notification/ces_standard/cesfwk"
 
 ohos_moduletest("ability_stack_module_test") {
   module_out_path = module_output_path
 
-  include_dirs = [ "${services_path}/test/mock/include" ]
+  include_dirs = [
+    "${services_path}/test/mock/include",
+    "${EVENT_DIR}/innerkits/include",
+    "${EVENT_DIR}/kits/native/include",
+  ]
 
   sources = [ "ability_stack_module_test.cpp" ]
   sources += [
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_event_handler.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_service.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_mission_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_record_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_stack_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_token_stub.cpp",
@@ -48,8 +56,16 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/recent_mission_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/pending_want_key.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/pending_want_manager.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/pending_want_record.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/power_storage.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/want_receiver_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
   ]
   configs = [
@@ -65,8 +81,11 @@ ohos_moduletest("ability_stack_module_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
+    "${EVENT_DIR}/kits/native:cesfwk_kits",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",

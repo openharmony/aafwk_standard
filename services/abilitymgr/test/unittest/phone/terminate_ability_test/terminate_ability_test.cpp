@@ -215,7 +215,7 @@ void TerminateAbilityTest::TerminateAbility(
  * EnvConditions: Launcher has started.
  * CaseDescription: verify TerminateAbility parameters. TerminateAbility fail if token is nullptr.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_001, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_001, TestSize.Level1)
 {
     EXPECT_NE(g_aams->TerminateAbility(nullptr, -1, nullptr), 0);
 }
@@ -228,7 +228,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_001, TestSize.Le
  * EnvConditions: Launcher has started.
  * CaseDescription: Terminate ability on terminating should return ERR_OK.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_002, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_002, TestSize.Level1)
 {
     OHOS::sptr<Token> token0;
     OHOS::sptr<AbilityScheduler> scheduler0;
@@ -253,7 +253,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_002, TestSize.Le
  * EnvConditions:Launcher has started.
  * CaseDescription: Can't terminate launcher root ability.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_003, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_003, TestSize.Level1)
 {
     // AbilityManagerService starts one launcher ability in default.
     // Unable terminate root launcher ability.
@@ -283,7 +283,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_003, TestSize.Le
  * 2. Jump to Launcher. Launcher receives result and is active.
  * 3. AbilityRecord and and MissionRecord are destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherToken;
     OHOS::sptr<AbilityScheduler> launcherScheduler;
@@ -330,7 +330,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Le
  * 3. send result to caller
  * 4. caller is in background
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_005, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_005, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherToken;
     OHOS::sptr<AbilityScheduler> launcherScheduler;
@@ -373,7 +373,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_005, TestSize.Le
  * 2. Jump to caller. caller receives result and is active.
  * 3. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_006, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_006, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -420,7 +420,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_006, TestSize.Le
  * 2. Jump to caller. caller receives result and is active.
  * 3. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> launcherSchedulerA;
@@ -468,7 +468,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_008, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_008, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -508,7 +508,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_008, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_009, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_009, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> launcherSchedulerA;
@@ -551,7 +551,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_009, TestSize.Le
  * 3. caller is in background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_010, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_010, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -600,7 +600,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_010, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_011, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_011, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -754,7 +754,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_013, TestSize.Le
  * 2. caller TestAbilityA receives result.
  * 3. AbilityRecordA is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_014, TestSize.Level0)
+HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_014, TestSize.Level1)
 {
     OHOS::sptr<Token> token;
     OHOS::sptr<AbilityScheduler> scheduler;

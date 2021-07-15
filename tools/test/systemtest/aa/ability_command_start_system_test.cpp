@@ -39,7 +39,7 @@ const std::string STRING_PAGE_ABILITY_NAME_INVALID = STRING_PAGE_ABILITY_NAME + 
 const std::string STRING_SERVICE_ABILITY_BUNDLE_PATH = "/data/test/resource/aa/serviceAbilityBundleForStart.hap";
 const std::string STRING_SERVICE_ABILITY_BUNDLE_NAME = "com.ohos.tools.serviceAbilityBundleForStart";
 const std::string STRING_SERVICE_ABILITY_BUNDLE_NAME_INVALID = STRING_SERVICE_ABILITY_BUNDLE_NAME + ".invalid";
-const std::string STRING_SERVICE_ABILITY_NAME = "com.ohos.tools.serviceAbilityForStart.MainAbility";
+const std::string STRING_SERVICE_ABILITY_NAME = "MainAbility";
 const std::string STRING_SERVICE_ABILITY_NAME_INVALID = STRING_SERVICE_ABILITY_NAME + ".Invalid";
 }  // namespace
 

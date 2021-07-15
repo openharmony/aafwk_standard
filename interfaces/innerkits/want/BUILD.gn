@@ -36,6 +36,7 @@ config("want_public_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
   ]
 }
 
@@ -50,6 +51,7 @@ ohos_shared_library("want") {
     "${wantImpl}/skills.cpp",
     "${wantImpl}/want.cpp",
     "${wantImpl}/want_params.cpp",
+    "${wantImpl}/want_params_wrapper.cpp",
   ]
 
   deps = [

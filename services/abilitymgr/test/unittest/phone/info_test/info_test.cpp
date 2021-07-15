@@ -19,7 +19,7 @@
 #include "image_info.h"
 #include "mission_snapshot_info.h"
 #include "mission_description_info.h"
-#include "recent_mission_info.h"
+#include "ability_mission_info.h"
 
 using namespace testing::ext;
 
@@ -41,7 +41,7 @@ public:
     ImageHeader imageHeader_;
     MissionSnapshotInfo missionSnapshotInfo_;
     MissionDescriptionInfo missionDescriptionInfo_;
-    RecentMissionInfo recentMissionInfo_;
+    AbilityMissionInfo recentMissionInfo_;
 };
 
 void InfoTest::SetUpTestCase(void)
@@ -175,7 +175,7 @@ HWTEST_F(InfoTest, stack_info_oprator_004, TestSize.Level0)
     abilityRecordInfo_.Marshalling(parcel);
     AbilityRecordInfo *obj = abilityRecordInfo_.Unmarshalling(parcel);
     ASSERT_TRUE(obj);
-   
+
     EXPECT_EQ(obj->id, abilityRecordInfo_.id);
     EXPECT_EQ(obj->elementName, abilityRecordInfo_.elementName);
     EXPECT_EQ(obj->appName, abilityRecordInfo_.appName);
@@ -257,12 +257,12 @@ HWTEST_F(InfoTest, stack_info_oprator_008, TestSize.Level0)
 }
 
 /*
- * Feature: RecentMissionInfo
+ * Feature: AbilityMissionInfo
  * Function: ReadFromParcel and Marshalling and Unmarshalling
  * SubFunction: NA
- * FunctionPoints: RecentMissionInfo ReadFromParcel and Marshalling and Unmarshalling
+ * FunctionPoints: AbilityMissionInfo ReadFromParcel and Marshalling and Unmarshalling
  * EnvConditions:NA
- * CaseDescription: The process of verifying RecentMissionInfo parcel
+ * CaseDescription: The process of verifying AbilityMissionInfo parcel
  */
 HWTEST_F(InfoTest, stack_info_oprator_009, TestSize.Level0)
 {
@@ -275,7 +275,7 @@ HWTEST_F(InfoTest, stack_info_oprator_009, TestSize.Level0)
     recentMissionInfo_.missionDescription = missionDescriptionInfo;
     Parcel parcel;
     recentMissionInfo_.Marshalling(parcel);
-    RecentMissionInfo *obj = recentMissionInfo_.Unmarshalling(parcel);
+    AbilityMissionInfo *obj = recentMissionInfo_.Unmarshalling(parcel);
     ASSERT_TRUE(obj);
     EXPECT_EQ(obj->id, recentMissionInfo_.id);
     EXPECT_EQ(obj->runingState, recentMissionInfo_.runingState);

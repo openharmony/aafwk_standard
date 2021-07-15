@@ -217,7 +217,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList) override;
+        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
 
     /**
      * Get mission snapshot by mission id
@@ -235,6 +235,15 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int MoveMissionToTop(int32_t missionId) override;
+
+    /**
+     * Requires that tasks associated with a given capability token be moved to the background
+     *
+     * @param token ability token
+     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, bool nonFirst) override;
 
     /**
      * Remove the specified mission from the stack by missionid
@@ -267,6 +276,75 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int UninstallApp(const std::string &bundleName) override;
+
+    /**
+     * @brief Checks whether this ability is the first ability in a mission.
+     *
+     * @return Returns true is first in Mission.
+     */
+    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
+
+    /**
+     * Checks whether a specified permission has been granted to the process identified by pid and uid
+     *
+     * @param permission Indicates the permission to check.
+     * @param pid Indicates the ID of the process to check.
+     * @param uid Indicates the UID of the process to check.
+     * @param message Describe success or failure
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) override;
+
+    /**
+     * Save the top ability States and move them to the background
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int PowerOff() override;
+
+    /**
+     * Restore the state before top ability poweroff
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int PowerOn() override;
+
+    /**
+     * Sets the application to start its ability in lock mission mode.
+     * @param missionId luck mission id
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int LockMission(int missionId) override;
+
+    /**
+     * Unlocks this ability by exiting the lock mission mode.
+     * @param missionId unluck mission id
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UnlockMission(int missionId) override;
+
+    virtual sptr<IWantSender> GetWantSender(
+        const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override;
+
+    virtual int SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo) override;
+
+    virtual void CancelWantSender(const sptr<IWantSender> &sender) override;
+
+    virtual int GetPendingWantUid(const sptr<IWantSender> &target) override;
+
+    virtual int GetPendingWantUserId(const sptr<IWantSender> &target) override;
+
+    virtual std::string GetPendingWantBundleName(const sptr<IWantSender> &target) override;
+
+    virtual int GetPendingWantCode(const sptr<IWantSender> &target) override;
+
+    virtual int GetPendingWantType(const sptr<IWantSender> &target) override;
+
+    virtual void RegisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) override;
+
+    virtual void UnregisterCancelListener(
+        const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) override;
+
+    virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
 private:
     template <typename T>

@@ -173,6 +173,32 @@ enum {
      * Result(2097185) for check permission failed.
      */
     CHECK_PERMISSION_FAILED,
+    /**
+     * Result(2097186) for waiting ability lifecycle complete.
+     */
+    POWER_OFF_WAITING,
+    /**
+     * Result(2097187) for power off failed.
+     */
+    POWER_OFF_FAILED,
+    /**
+     * Result(2097188) for power on failed.
+     */
+    POWER_ON_FAILED,
+    /**
+     * Result(2097189) for ability no first in mission.
+     */
+    NO_FIRST_IN_MISSION,
+
+    /**
+     * Result(2097190) for lock mission errors.
+     */
+    LOCK_MISSION_DENY_FAILED,
+
+    /**
+     * Result(2097191) for unlock mission errors.
+     */
+    UNLOCK_MISSION_DENY_FAILED,
 };
 
 enum {

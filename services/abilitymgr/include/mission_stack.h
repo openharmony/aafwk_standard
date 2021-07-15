@@ -34,7 +34,7 @@ namespace AAFwk {
 class MissionStack {
 public:
     MissionStack(int id, int userId);
-    ~MissionStack();
+    virtual ~MissionStack();
 
     /**
      * get target mission record by app name
@@ -77,6 +77,13 @@ public:
      * @return MissionRecord.
      */
     std::shared_ptr<MissionRecord> GetTopMissionRecord();
+
+    /**
+     * get the bottom mission of this mission stack
+     *
+     * @return MissionRecord.
+     */
+    std::shared_ptr<MissionRecord> GetBottomMissionRecord();
 
     /**
      * get the mission by id
@@ -131,6 +138,8 @@ public:
      * put the mission at the top of the stack
      */
     void MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission);
+
+    void MoveMissionRecordToBottom(const std::shared_ptr<MissionRecord> &mission);
 
     /**
      * dump the mission stack information

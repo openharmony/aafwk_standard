@@ -83,7 +83,7 @@ void Char::WriteUTF8Bytes(char *dst, /* [in] */
     zchar c,                         /* [in] */
     int size)                        /* [in] */
 {
-    u_int32_t uc = (u_int32_t)c;
+    uint32_t uc = (uint32_t)c;
     dst += size;
     switch (size) {
         /* note: everything falls through. */

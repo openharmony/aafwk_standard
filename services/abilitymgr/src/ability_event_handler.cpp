@@ -15,8 +15,9 @@
 
 #include "ability_event_handler.h"
 
-#include "ability_manager_service.h"
 #include "hilog_wrapper.h"
+#include "ability_util.h"
+#include "ability_manager_service.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -29,10 +30,7 @@ AbilityEventHandler::AbilityEventHandler(
 
 void AbilityEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (event == nullptr) {
-        HILOG_ERROR("AMSEventHandler::ProcessEvent::parameter error");
-        return;
-    }
+    CHECK_POINTER(event);
     HILOG_DEBUG("AMSEventHandler::ProcessEvent::inner event id obtained: %u.", event->GetInnerEventId());
     switch (event->GetInnerEventId()) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG: {
@@ -60,10 +58,7 @@ void AbilityEventHandler::ProcessLoadTimeOut(int64_t eventId)
 {
     HILOG_INFO("attach timeout.");
     auto server = server_.lock();
-    if (!server) {
-        HILOG_WARN("process event, the ams service is null.");
-        return;
-    }
+    CHECK_POINTER(server);
     server->HandleLoadTimeOut(eventId);
 }
 
@@ -71,20 +66,14 @@ void AbilityEventHandler::ProcessActiveTimeOut(int64_t eventId)
 {
     HILOG_INFO("active timeout.");
     auto server = server_.lock();
-    if (!server) {
-        HILOG_WARN("process event, the ams service is null.");
-        return;
-    }
+    CHECK_POINTER(server);
     server->HandleActiveTimeOut(eventId);
 }
 void AbilityEventHandler::ProcessInactiveTimeOut(int64_t eventId)
 {
     HILOG_INFO("inactive timeout.");
     auto server = server_.lock();
-    if (!server) {
-        HILOG_WARN("process event, the ams service is null.");
-        return;
-    }
+    CHECK_POINTER(server);
     server->HandleInactiveTimeOut(eventId);
 }
 }  // namespace AAFwk

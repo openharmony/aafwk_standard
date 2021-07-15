@@ -420,10 +420,10 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level0)
     data.WriteInt32(1);
     int res = stub_->OnRemoteRequest(IAbilityManager::GET_RECENT_MISSION, data, reply, option);
 
-    std::vector<RecentMissionInfo> recentList;
+    std::vector<AbilityMissionInfo> recentList;
     int size = reply.ReadInt32();
     for (int32_t i = 0; i < size; i++) {
-        std::unique_ptr<RecentMissionInfo> info(reply.ReadParcelable<RecentMissionInfo>());
+        std::unique_ptr<AbilityMissionInfo> info(reply.ReadParcelable<AbilityMissionInfo>());
         recentList.emplace_back(*info);
     }
 

@@ -39,6 +39,7 @@ public:
     MOCK_METHOD1(ScheduleNewWant, void(const Want &));
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD3(ScheduleCommandAbility, void(const Want &, bool, int));
+    MOCK_METHOD0(DisplayUnlockMissionMessage, void());
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {

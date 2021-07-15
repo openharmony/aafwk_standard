@@ -83,6 +83,20 @@ public:
     };
 };
 
+class OnPermissionChangedCallback : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.OnPermissionChangedCallback");
+    /**
+     * @brief Called when an application's permission changed.
+     * @param uid Indicates the uid of the application which permission changed.
+     */
+    virtual void OnChanged(const int32_t uid) = 0;
+
+    enum class Message {
+        ON_CHANGED,
+    };
+};
+
 class IStatusReceiver : public IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.StatusReceiver");
@@ -143,24 +157,23 @@ public:
     virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) = 0;
     virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) = 0;
     virtual int GetUidByBundleName(const std::string &bundleName, const int userId) = 0;
-    virtual bool GetBundleNamesForUid(const int uid, std::vector<std::string> &bundleNames) = 0;
+    virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) = 0;
+    virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) = 0;
+    virtual bool GetBundlesForUid(const int uid, std::vector<std::string> &bundleNames) = 0;
+    virtual bool GetNameForUid(const int uid, std::string &name) = 0;
     virtual bool GetBundleGids(const std::string &bundleName, std::vector<int> &gids) = 0;
     virtual std::string GetAppType(const std::string &bundleName) = 0;
     virtual bool CheckIsSystemAppByUid(const int uid) = 0;
     virtual bool GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos) = 0;
     virtual bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) = 0;
-    virtual bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) = 0;
+    virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) = 0;
     virtual bool QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleInfos) = 0;
     virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) = 0;
-    // obtains information about an application bundle contained in an OHOS Ability Package (HAP).
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) = 0;
-    virtual bool GetHapModuleInfo(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo) = 0;
-    // obtains the Want for starting the main ability of an application based on the given bundle name.
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) = 0;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) = 0;
-    // checks whether the publickeys of two bundles are the same.
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) = 0;
-    // checks whether a specified bundle has been granted a specific permission.
     virtual int CheckPermission(const std::string &bundleName, const std::string &permission) = 0;
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) = 0;
     virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) = 0;
@@ -169,23 +182,74 @@ public:
     virtual bool HasSystemCapability(const std::string &capName) = 0;
     virtual bool GetSystemAvailableCapabilities(std::vector<std::string> &systemCaps) = 0;
     virtual bool IsSafeMode() = 0;
-    // clears cache data of a specified application.
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) = 0;
     virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
-    // unregister callback of all application
     virtual bool UnregisterBundleStatusCallback() = 0;
     virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) = 0;
-    virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
+    virtual bool IsApplicationEnabled(const std::string &bundleName) = 0;
+    virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) = 0;
+    virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) = 0;
+    virtual bool SetAbilityEnabled(const AbilityInfo &abilityInfo, bool isEnabled) = 0;
+    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) = 0;
     virtual bool CanRequestPermission(
         const std::string &bundleName, const std::string &permissionName, const int userId) = 0;
     virtual bool RequestPermissionFromUser(
         const std::string &bundleName, const std::string &permission, const int userId) = 0;
+    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual bool RegisterPermissionsChanged(
+        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
+
     enum class Message {
-        QUERY_ABILITY_INFO,
         GET_APPLICATION_INFO,
+        GET_APPLICATION_INFOS,
+        GET_BUNDLE_INFO,
+        GET_BUNDLE_INFOS,
+        GET_UID_BY_BUNDLE_NAME,
+        GET_APPID_BY_BUNDLE_NAME,
+        GET_BUNDLE_NAME_FOR_UID,
+        GET_BUNDLES_FOR_UID,
+        GET_NAME_FOR_UID,
+        GET_BUNDLE_GIDS,
+        GET_APP_TYPE,
+        CHECK_IS_SYSTEM_APP_BY_UID,
+        GET_BUNDLE_INFOS_BY_METADATA,
+        QUERY_ABILITY_INFO,
+        QUERY_ABILITY_INFO_BY_URI,
+        QUERY_KEEPALIVE_BUNDLE_INFOS,
+        GET_ABILITY_LABEL,
+        GET_BUNDLE_ARCHIVE_INFO,
+        GET_HAP_MODULE_INFO,
+        GET_LAUNCH_WANT_FOR_BUNDLE,
+        CHECK_PUBLICKEYS,
+        CHECK_PERMISSION,
+        GET_PERMISSION_DEF,
+        GET_ALL_PERMISSION_GROUP_DEFS,
+        GET_APPS_GRANTED_PERMISSIONS,
+        HAS_SYSTEM_CAPABILITY,
+        GET_SYSTEM_AVAILABLE_CAPABILITIES,
+        IS_SAFE_MODE,
+        CLEAN_BUNDLE_CACHE_FILES,
+        CLEAN_BUNDLE_DATA_FILES,
+        REGISTER_BUNDLE_STATUS_CALLBACK,
+        CLEAR_BUNDLE_STATUS_CALLBACK,
+        UNREGISTER_BUNDLE_STATUS_CALLBACK,
+        DUMP_INFOS,
+        IS_APPLICATION_ENABLED,
+        SET_APPLICATION_ENABLED,
+        IS_ABILITY_ENABLED,
+        SET_ABILITY_ENABLED,
+        GET_ABILITY_ICON,
+        CAN_REQUEST_PERMISSION,
+        REQUEST_PERMISSION_FROM_USER,
+        REGISTER_ALL_PERMISSIONS_CHANGED,
+        REGISTER_PERMISSIONS_CHANGED,
+        UNREGISTER_PERMISSIONS_CHANGED,
+        GET_BUNDLE_INSTALLER,
     };
 };
 }  // namespace AppExecFwk

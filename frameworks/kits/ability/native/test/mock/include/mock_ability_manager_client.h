@@ -133,6 +133,9 @@ public:
     {
         return "Type1";
     }
+
+    void DisplayUnlockMissionMessage()
+    {}
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

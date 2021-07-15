@@ -80,3 +80,27 @@ int MockAbilityManagerStub::StopServiceAbility(const Want &want)
 
     return ERR_OK;
 }
+
+int MockAbilityManagerStub::PowerOff()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+
+    HILOG_INFO("powerState_: %{public}s", powerState_.c_str());
+    if (powerState_ == STRING_STATE_OFF_INVALID) {
+        return POWER_OFF_FAILED;
+    }
+
+    return ERR_OK;
+}
+
+int MockAbilityManagerStub::PowerOn()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+
+    HILOG_INFO("powerState_: %{public}s", powerState_.c_str());
+    if (powerState_ == STRING_STATE_ON_INVALID) {
+        return POWER_ON_FAILED;
+    }
+
+    return ERR_OK;
+}

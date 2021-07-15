@@ -800,7 +800,7 @@ bool PacMap::ReadFromParcel(Parcel &parcel)
 {
     int32_t size;
     int32_t data_type;
-    __uint32_t udata_type;
+    uint32_t udata_type;
 
     // read element count
     READ_PARCEL_AND_RETURN_FALSE_IF_FAIL(Int32, parcel, size);
@@ -844,12 +844,12 @@ bool PacMap::ReadFromParcel(Parcel &parcel)
  */
 bool PacMap::Marshalling(Parcel &parcel) const
 {
-    if (IsEmpty()) {
-        return false;
-    }
-
     // write element count
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(Int32, parcel, data_list_.size());
+
+    if (IsEmpty()) {
+        return true;
+    }
 
     for (auto it = data_list_.begin(); it != data_list_.end(); it++) {
         if (it->second->IsBase()) {

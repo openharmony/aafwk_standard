@@ -32,6 +32,18 @@ public:
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD2(
+        GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
+    MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
+    MOCK_METHOD1(CancelWantSender, void(const sptr<IWantSender> &sender));
+    MOCK_METHOD1(GetPendingWantUid, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantBundleName, std::string(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantCode, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantType, int(const sptr<IWantSender> &target));
+    MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {
@@ -125,9 +137,10 @@ public:
         return 0;
     }
 
-    virtual int GetRecentMissions(const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList)
+    virtual int GetRecentMissions(
+        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
     {
-        RecentMissionInfo info;
+        AbilityMissionInfo info;
         info.id = 1;
         AppExecFwk::ElementName baseEle("baseDevice", "baseBundle", "baseAbility");
         info.baseAbility = baseEle;
@@ -172,6 +185,40 @@ public:
     {
         return 0;
     }
+
+    bool IsFirstInMission(const sptr<IRemoteObject> &token) override
+    {
+        return true;
+    }
+
+    int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) override
+    {
+        return 0;
+    }
+
+    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override
+    {
+        return 0;
+    }
+
+    int PowerOff() override
+    {
+        return 0;
+    }
+
+    int PowerOn() override
+    {
+        return 0;
+    }
+
+    int LockMission(int missionId) override
+    {
+        return 0;
+    };
+    int UnlockMission(int missionId) override
+    {
+        return 0;
+    };
 };
 
 }  // namespace AAFwk

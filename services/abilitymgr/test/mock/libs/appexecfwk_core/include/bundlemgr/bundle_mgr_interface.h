@@ -279,6 +279,19 @@ public:
      */
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
 
+    /**
+     * @brief Requests a certain permission from user.
+     * @param bundleName Indicates the name of the bundle to request permission.
+     * @param permission Indicates the permission to request permission.
+     * @param userId Indicates the user id.
+     * @return Returns true if the permission request successfully; returns false otherwise.
+     */
+    virtual bool RequestPermissionFromUser(
+        const std::string &bundleName, const std::string &permission, const int userId)
+    {
+        return true;
+    }
+
     enum class Message {
         GET_APPLICATION_INFO,
         GET_APPLICATION_INFOS,

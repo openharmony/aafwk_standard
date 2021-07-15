@@ -474,7 +474,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0021, TestSize.Level0)
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
         .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    std::vector<RecentMissionInfo> info;
+    std::vector<AbilityMissionInfo> info;
     auto res = proxy_->GetRecentMissions(INT_MAX, 1, info);
 
     EXPECT_EQ(res, 1);

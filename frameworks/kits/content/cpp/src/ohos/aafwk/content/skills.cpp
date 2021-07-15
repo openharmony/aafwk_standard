@@ -285,7 +285,7 @@ std::string Skills::GetPath(int index) const
  */
 void Skills::AddPath(const std::string &path)
 {
-    PatternsMatcher pm(path, MatchType::PATTERN_LITERAL);
+    PatternsMatcher pm(path, MatchType::DEFAULT);
     AddPath(pm);
 }
 
@@ -461,7 +461,7 @@ std::string Skills::GetSchemeSpecificPart(int index) const
  */
 void Skills::AddSchemeSpecificPart(const std::string &schemeSpecificPart)
 {
-    PatternsMatcher patternsMatcher(schemeSpecificPart, MatchType::PATTERN_LITERAL);
+    PatternsMatcher patternsMatcher(schemeSpecificPart, MatchType::DEFAULT);
     auto it = std::find_if(
         schemeSpecificParts_.begin(), schemeSpecificParts_.end(), [&patternsMatcher](const PatternsMatcher pm) {
             return (pm.GetPattern() == patternsMatcher.GetPattern()) && (pm.GetType() == patternsMatcher.GetType());
@@ -530,7 +530,7 @@ std::string Skills::GetType(int index) const
  */
 void Skills::AddType(const std::string &type)
 {
-    PatternsMatcher pm(type, MatchType::PATTERN_LITERAL);
+    PatternsMatcher pm(type, MatchType::DEFAULT);
     AddType(pm);
 }
 
@@ -726,26 +726,25 @@ int Skills::MatchData(const std::string &type, const std::string &scheme, Uri da
     }
     std::vector<std::string> schemes = schemes_;
 
-    int match = MATCH_CATEGORY_EMPTY;
+    int match = RESULT_EMPTY;
 
     if (types.empty() && schemes.empty()) {
-        return (type == std::string() ? (MATCH_CATEGORY_EMPTY + MATCH_ADJUSTMENT_NORMAL) : NO_MATCH_DATA);
+        return (type == std::string() ? (RESULT_EMPTY + RESULT_NORMAL) : DISMATCH_DATA);
     }
 
     if (!schemes.empty()) {
         auto it = std::find(schemes.begin(), schemes.end(), scheme);
         if (it != schemes.end()) {
-            match = MATCH_CATEGORY_SCHEME;
+            match = RESULT_SCHEME;
         } else {
-            return NO_MATCH_DATA;
+            return DISMATCH_DATA;
         }
 
         std::vector<PatternsMatcher> schemeSpecificParts = schemeSpecificParts_;
         if (schemeSpecificParts.size() >= 0) {
-            match = HasSchemeSpecificPart(data.GetSchemeSpecificPart()) ? MATCH_CATEGORY_SCHEME_SPECIFIC_PART
-                                                                        : NO_MATCH_DATA;
+            match = HasSchemeSpecificPart(data.GetSchemeSpecificPart()) ? RESULT_SCHEME_SPECIFIC_PART : DISMATCH_DATA;
         }
-        if (match != MATCH_CATEGORY_SCHEME_SPECIFIC_PART) {
+        if (match != RESULT_SCHEME_SPECIFIC_PART) {
             std::vector<std::string> authorities = authorities_;
             if (authorities.size() >= 0) {
                 bool authMatch = HasAuthority(data.GetAuthority());
@@ -754,37 +753,37 @@ int Skills::MatchData(const std::string &type, const std::string &scheme, Uri da
                     if (paths.size() <= 0) {
                         match = authMatch;
                     } else if (HasPath(data.GetPath())) {
-                        match = MATCH_CATEGORY_PATH;
+                        match = RESULT_PATH;
                     } else {
-                        return NO_MATCH_DATA;
+                        return DISMATCH_DATA;
                     }
                 } else {
-                    return NO_MATCH_DATA;
+                    return DISMATCH_DATA;
                 }
             }
         }
-        if (match == NO_MATCH_DATA) {
-            return NO_MATCH_DATA;
+        if (match == DISMATCH_DATA) {
+            return DISMATCH_DATA;
         }
     } else {
         if (scheme != std::string() && scheme != "content" && scheme != "file") {
-            return NO_MATCH_DATA;
+            return DISMATCH_DATA;
         }
     }
 
     if (!types.empty()) {
         if (FindMimeType(type)) {
-            match = MATCH_CATEGORY_TYPE;
+            match = RESULT_TYPE;
         } else {
-            return NO_MATCH_TYPE;
+            return DISMATCH_TYPE;
         }
     } else {
         if (type != std::string()) {
-            return NO_MATCH_TYPE;
+            return DISMATCH_TYPE;
         }
     }
 
-    return match + MATCH_ADJUSTMENT_NORMAL;
+    return match + RESULT_NORMAL;
 }
 
 bool Skills::FindMimeType(const std::string &type)

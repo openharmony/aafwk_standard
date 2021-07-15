@@ -43,6 +43,7 @@ struct LifeCycleStateInfo : public Parcelable {
     AbilityLifeCycleState state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     bool isNewWant = false;
     int missionId = -1;
+    int stackId = -1;
     CallerInfo caller;
 
     bool ReadFromParcel(Parcel &parcel);

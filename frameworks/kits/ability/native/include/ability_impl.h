@@ -334,6 +334,13 @@ protected:
      */
     void SerUriString(const std::string &uri);
 
+    /**
+     * @brief Set the LifeCycleStateInfo to the deal.
+     *
+     * @param info the info to set.
+     */
+    void SetLifeCycleStateInfo(const AAFwk::LifeCycleStateInfo &info);
+
     int lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     sptr<IRemoteObject> token_;
     std::shared_ptr<Ability> ability_;

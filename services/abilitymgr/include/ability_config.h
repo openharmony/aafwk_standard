@@ -27,7 +27,11 @@ const std::string SCHEME_DATA_ABILITY = "dataability";
 const std::string SYSTEM_UI_BUNDLE_NAME = "com.ohos.systemui";
 const std::string SYSTEM_UI_STATUS_BAR = "com.ohos.systemui.statusbar.MainAbility";
 const std::string SYSTEM_UI_NAVIGATION_BAR = "com.ohos.systemui.navigationbar.MainAbility";
-const std::string SYSTEM_DIALOG_NAME = "com.ohos.systemdialog.MainAbility";
+const std::string SYSTEM_DIALOG_NAME = "com.ohos.systemui.systemdialog.MainAbility";
+
+const std::string SYSTEM_DIALOG_REQUEST_PERMISSIONS = "OHOS_RESULT_PERMISSIONS_LIST_YES";
+const std::string SYSTEM_DIALOG_CALLER_BUNDLENAME = "OHOS_RESULT_CALLER_BUNDLERNAME";
+const std::string SYSTEM_DIALOG_KEY = "OHOS_RESULT_PERMISSION_KEY";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

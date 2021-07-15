@@ -127,7 +127,7 @@ bool LifecycleTest::StartLauncherAbility()
 {
     ElementName element("device", "com.ix.hiWord", "LauncherAbility");
     Want want;
-    want.AddEntity(Want::FLAG_HW_HOME_INTENT_FROM_SYSTEM);
+    want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
     want.SetElement(element);
     int ref = aams_->StartAbility(want, -1);
     WaitUntilTaskFinished();

@@ -31,11 +31,9 @@
 #include "dummy_notification_request.h"
 #include "dummy_data_ability_predicates.h"
 #include "dummy_values_bucket.h"
-#include "dummy_raw_file_descriptor.h"
 #include "dummy_result_set.h"
 #include "dummy_continuation_state.h"
 #include "dummy_ability_package.h"
-#include "dummy_file_descriptor.h"
 #include "dummy_configuration.h"
 #include "ability_window.h"
 #include "ability_lifecycle_interface.h"
@@ -297,6 +295,21 @@ public:
      */
     virtual void SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag);
 
+    /**
+     * @brief Called when this ability gains or loses window focus.
+     *
+     * @param hasFocus Specifies whether this ability has focus.
+     */
+    virtual void OnWindowFocusChanged(bool hasFocus);
+
+    /**
+     * @brief Called when this ability is moved to or removed from the top of the stack.
+     *
+     * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
+     * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
+     */
+    virtual void OnTopActiveAbilityChanged(bool topActive);
+
 #ifdef WMS_COMPILE
     /**
      * @brief Inflates UI controls by using WindowConfig.
@@ -501,20 +514,6 @@ public:
      *
      */
     virtual void OnEventDispatch();
-
-    /**
-     * @brief Called when this ability gains or loses window focus.
-     * The focus state refers to the global state, which is independent of the ability lifecycle states.
-     * Although the lifecycle state change of an ability may lead to a focus change (for example, onStop()
-     * may cause the ability to lose window focus), there is no particular sequence between this callback
-     * and other lifecycle callbacks such as onBackground().
-     * Generally, the ability in the foreground will have window focus. The ability will lose focus when
-     * another dialog box or pop-up window is displayed. The ability will also lose focus when a system-level
-     * window (such as the status bar or a system alarm) is displayed.
-     *
-     * @param hasFocus Specifies whether this ability has focus.
-     */
-    virtual void OnWindowFocusChanged(bool hasFocus);
 
     /**
      * @brief Sets the want object that can be obtained by calling getWant().
@@ -827,6 +826,19 @@ public:
      * @return -
      */
     void PostTask(std::function<void()> task, long delayTime);
+
+    /**
+     * @brief Called to set caller information for the application. The default implementation returns null.
+     *
+     * @return Returns the caller information.
+     */
+    virtual Uri OnSetCaller();
+
+    /**
+     * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
+     * finishing the root ability of the mission.
+     */
+    void TerminateAndRemoveMission() override;
 
 private:
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
