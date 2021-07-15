@@ -29,6 +29,7 @@
 #include "ability_manager_errors.h"
 #include "ability_scheduler.h"
 #include "mock_ability_connect_callback.h"
+#include "ability_scheduler_mock.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
@@ -159,7 +160,7 @@ AbilityRequest AbilityStackManagerTest::GenerateAbilityRequest(const std::string
  * EnvConditions:NA
  * CaseDescription: verify get ability by token success
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_001, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_001, TestSize.Level1)
 {
     stackManager_->Init();
     stackManager_->StartAbility(launcherAbilityRequest_);
@@ -177,7 +178,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_001, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify get ability by token fail
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_002, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_002, TestSize.Level1)
 {
     Want want;
     AbilityInfo abilityInfo;
@@ -201,7 +202,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_002, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify start launcher ability
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_003, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_003, TestSize.Level1)
 {
     stackManager_->Init();
     auto topAbility = stackManager_->GetCurrentTopAbility();
@@ -223,7 +224,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_003, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify repeated start launcher ability
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_004, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_004, TestSize.Level1)
 {
     stackManager_->Init();
     stackManager_->StartAbility(musicSAbilityRequest_);
@@ -243,7 +244,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_004, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify no launcher ability GetTopMissionRecord
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_005, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_005, TestSize.Level1)
 {
     stackManager_->Init();
     auto topMissionRecord = stackManager_->GetTopMissionRecord();
@@ -258,7 +259,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_005, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify no launcher ability GetCurrentTopAbility
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_006, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_006, TestSize.Level1)
 {
     stackManager_->Init();
     auto topAbility = stackManager_->GetCurrentTopAbility();
@@ -273,7 +274,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_006, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify repeated start launcher ability, GetTopMissionRecord
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_007, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_007, TestSize.Level1)
 {
     stackManager_->Init();
 
@@ -299,7 +300,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_007, TestSize.
  * EnvConditions:NA
  * CaseDescription: verify launcher ability RemoveMissionRecordById
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_008, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_008, TestSize.Level1)
 {
     stackManager_->Init();
     stackManager_->StartAbility(launcherAbilityRequest_);
@@ -328,7 +329,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_008, TestSize.
  *                   3. the ability record count is 1.
  *                   4. the result of StartAbility is ERRO_OK.
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_009, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_009, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -356,7 +357,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_009, TestSize.
  *                   3. the ability record count is 1.
  *                   4. the result of StartAbility is ERRO_OK.
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_010, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_010, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -384,7 +385,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_010, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the state of top ability is INACTIVATING.
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_011, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_011, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -423,7 +424,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_011, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the state of top ability is INACTIVATING.
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_012, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_012, TestSize.Level1)
 {
     stackManager_->Init();
 
@@ -462,7 +463,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_012, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the name of top ability is "secondAbility".
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_013, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_013, TestSize.Level1)
 {
     // start first ability not belong to launcher.
     stackManager_->Init();
@@ -518,7 +519,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_013, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the name of top ability is "secondAbility".
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_014, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_014, TestSize.Level1)
 {
     // start launcher ability
     stackManager_->Init();
@@ -568,7 +569,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_014, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the name of top ability is "MainAbility".
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_015, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_015, TestSize.Level1)
 {
     // start common app the first ability from launcher
     stackManager_->Init();
@@ -618,7 +619,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_015, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the name of top ability is "MainAbility".
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_016, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_016, TestSize.Level1)
 {
     // start common app the first ability from launcher
     stackManager_->Init();
@@ -661,7 +662,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_016, TestSize.
  *                   4. the result of StartAbility is ERRO_OK.
  *                   5. the name of top ability and bottom is "MainAbility".
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_017, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_017, TestSize.Level1)
 {
     // start common app the first ability from launcher
     stackManager_->Init();
@@ -710,7 +711,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_017, TestSize.
  * EnvConditions:NA
  * CaseDescription: Verify get user id value
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_018, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_018, TestSize.Level1)
 {
     EXPECT_EQ(stackManager_->GetAbilityStackManagerUserId(), 0);
 }
@@ -723,7 +724,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_018, TestSize.
  * EnvConditions: NA
  * CaseDescription: launchMode is STANDARD, Startability and verify value
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_019, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_019, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -768,7 +769,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_019, TestSize.
  * CaseDescription: 1. ability record is nullptr cause TerminateAbility failed
  *                  2. Verify TerminateAbility succeeded
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_020, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_020, TestSize.Level1)
 {
     stackManager_->Init();
 
@@ -796,7 +797,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_020, TestSize.
  * EnvConditions:NA
  * CaseDescription: isTerminating_ is true cause TerminateAbility success
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_021, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_021, TestSize.Level1)
 {
     stackManager_->Init();
     int result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -819,7 +820,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_021, TestSize.
  * EnvConditions:NA
  * CaseDescription: Terminate other Ability cause fail
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_022, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_022, TestSize.Level1)
 {
     stackManager_->Init();
 
@@ -848,7 +849,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_022, TestSize.
  * EnvConditions:NA
  * CaseDescription: handler is nullptr cause dispatchActive failed
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_023, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_023, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -884,7 +885,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_023, TestSize.
  * EnvConditions:NA
  * CaseDescription: start ability and remove ability record, verify terminal ability fail
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_024, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_024, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -914,7 +915,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_024, TestSize.
  * EnvConditions:NA
  * CaseDescription: MissionRecord is nullptr cause TerminateAbility fail
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_025, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_025, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -941,7 +942,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_025, TestSize.
  * EnvConditions:NA
  * CaseDescription: isLauncherAbility_ is true cause TerminateAbility failed
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_026, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_026, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(musicAbilityRequest_);
@@ -965,7 +966,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_026, TestSize.
  * EnvConditions:NA
  * CaseDescription: Verify get target mission stack value
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_027, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_027, TestSize.Level1)
 {
     Want want;
     want.AddEntity(Want::ENTITY_HOME);
@@ -985,7 +986,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_027, TestSize.
  * EnvConditions:NA
  * CaseDescription: handler is nullptr cause AttachAbilityThread fail
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(musicAbilityRequest_);
@@ -1011,7 +1012,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.
  * EnvConditions:NA
  * CaseDescription: Verify AddWindowInfo operation
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.Level1)
 {
     stackManager_->Init();
     int result = stackManager_->StartAbility(musicAbilityRequest_);
@@ -1043,7 +1044,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.
  * EnvConditions:NA
  * CaseDescription: MoveMissionStackToTop UT Exception case
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_030, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_030, TestSize.Level1)
 {
     stackManager_->Init();
     int result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1077,7 +1078,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_030, TestSize.
  * EnvConditions:NA
  * CaseDescription: Verify that ability is a launcher
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_031, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_031, TestSize.Level1)
 {
     Want want;
     std::string entity = Want::ENTITY_HOME;
@@ -1109,9 +1110,9 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_031, TestSize.
  * EnvConditions: NA
  * CaseDescription: Failed to verify getrecentmissions
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_033, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_033, TestSize.Level1)
 {
-    std::vector<RecentMissionInfo> info;
+    std::vector<AbilityMissionInfo> info;
     auto result = stackManager_->GetRecentMissions(-1, 0, info);
     EXPECT_EQ(ERR_INVALID_VALUE, result);
 
@@ -1131,7 +1132,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_033, TestSize.
  * EnvConditions: NA
  * CaseDescription: Get all recent missions list
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_034, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_034, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1149,7 +1150,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_034, TestSize.
     auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
     thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    std::vector<RecentMissionInfo> info;
+    std::vector<AbilityMissionInfo> info;
     result = stackManager_->GetRecentMissions(10, 1, info);
     EXPECT_EQ(ERR_OK, result);
 
@@ -1166,7 +1167,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_034, TestSize.
  * EnvConditions: NA
  * CaseDescription: Gets the list of recently active tasks
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_035, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_035, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1189,7 +1190,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_035, TestSize.
     auto topAbility = stackManager_->GetCurrentTopAbility();
     topAbility->SetAbilityState(OHOS::AAFwk::INITIAL);
 
-    std::vector<RecentMissionInfo> info;
+    std::vector<AbilityMissionInfo> info;
     result = stackManager_->GetRecentMissions(10, 2, info);
     EXPECT_EQ(ERR_OK, result);
 
@@ -1206,7 +1207,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_035, TestSize.
  * EnvConditions: NA
  * CaseDescription: Failed to verify movemissiontotop
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_036, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_036, TestSize.Level1)
 {
     stackManager_->Init();
 
@@ -1226,7 +1227,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_036, TestSize.
  * EnvConditions: NA
  * CaseDescription: Failed to verify movemissiontotop
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_037, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_037, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1253,7 +1254,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_037, TestSize.
  * EnvConditions: NA
  * CaseDescription: Succeeded to verify movemissiontotop
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_038, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_038, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1281,7 +1282,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_038, TestSize.
     EXPECT_EQ(ERR_OK, result1);
 
     topAbility = stackManager_->GetCurrentTopAbility();
-    EXPECT_EQ("MusicAbility", topAbility->GetAbilityInfo().name);
+    EXPECT_EQ("RadioAbility", topAbility->GetAbilityInfo().name);
 }
 
 /*
@@ -1293,7 +1294,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_038, TestSize.
  * CaseDescription: If the current ability is active, if it is dead, it will return to the launcher and the state will
  * be init
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_039, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_039, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1331,7 +1332,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_039, TestSize.
  * EnvConditions: NA
  * CaseDescription: If the current ability is uninstall, if it is dead, delete record, it will return to the launcher
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_040, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_040, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1370,7 +1371,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_040, TestSize.
  * EnvConditions: NA
  * CaseDescription: kill music process, music ability state is init, back to launcher
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_041, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_041, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1389,14 +1390,14 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_041, TestSize.
     thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
     auto mission = thirdTopAbility->GetMissionRecord();
 
-    stackManager_->KillProcess("com.ix.hiMusic");
-    // process died
-    stackManager_->OnAbilityDied(secondTopAbility);
-    stackManager_->OnAbilityDied(thirdTopAbility);
-    auto topAbility = stackManager_->GetCurrentTopAbility();
-    EXPECT_EQ("MusicAbility", topAbility->GetAbilityInfo().name);
-    auto size = stackManager_->defaultMissionStack_->GetMissionRecordCount();
-    EXPECT_EQ(size, 1);
+    // stackManager_->KillProcess("com.ix.hiMusic");
+    // // process died
+    // stackManager_->OnAbilityDied(secondTopAbility);
+    // stackManager_->OnAbilityDied(thirdTopAbility);
+    // auto topAbility = stackManager_->GetCurrentTopAbility();
+    // EXPECT_EQ("MusicAbility", topAbility->GetAbilityInfo().name);
+    // auto size = stackManager_->defaultMissionStack_->GetMissionRecordCount();
+    // EXPECT_EQ(size, 1);
 }
 
 /*
@@ -1407,7 +1408,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_041, TestSize.
  * EnvConditions: NA
  * CaseDescription: Uninstall music process, delete music record, back to launcher
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_042, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_042, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1445,7 +1446,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_042, TestSize.
  * EnvConditions: NA
  * CaseDescription: Failed to verify removemissionbyid
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_043, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_043, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1485,7 +1486,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_043, TestSize.
  * EnvConditions: NA
  * CaseDescription: Succeeded to verify removemissionbyid
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_044, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_044, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1519,7 +1520,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_044, TestSize.
  * EnvConditions: NA
  * CaseDescription: Failed to verify RemoveStack
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1554,7 +1555,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.
  * EnvConditions: NA
  * CaseDescription: Succeeded to verify RemoveStack
  */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_046, TestSize.Level0)
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_046, TestSize.Level1)
 {
     stackManager_->Init();
     auto result = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1575,5 +1576,176 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_046, TestSize.
     result = stackManager_->RemoveStack(1);
     EXPECT_EQ(ERR_OK, result);
 }
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RemoveStack
+ * SubFunction: NA
+ * FunctionPoints: RemoveStack
+ * EnvConditions: NA
+ * CaseDescription: Succeeded to verify RemoveStack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_047, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    EXPECT_NE(OHOS::AAFwk::ACTIVE, secondTopAbility->GetAbilityState());
+
+    result = stackManager_->PowerOff();
+    EXPECT_EQ(POWER_OFF_WAITING, result);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RemoveStack
+ * SubFunction: NA
+ * FunctionPoints: RemoveStack
+ * EnvConditions: NA
+ * CaseDescription: Succeeded to verify RemoveStack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto firstMissionId = firstTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto secondMissionId = secondTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
+    thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    auto thridMissionId = thirdTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+
+    EXPECT_EQ(secondMissionId, thridMissionId);
+    EXPECT_NE(firstMissionId, secondMissionId);
+
+    OHOS::sptr<AbilitySchedulerMock> scheduler(new AbilitySchedulerMock());
+
+    thirdTopAbility->SetScheduler(scheduler);
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(1);
+
+    result = stackManager_->PowerOff();
+    EXPECT_EQ(ERR_OK, result);
+
+    auto missionInfo1 = stackManager_->GetMissionRecordFromAllStacks(firstMissionId);
+    EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
+    auto missionInfo2 = stackManager_->GetMissionRecordFromAllStacks(secondMissionId);
+    EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
+
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    int size = recordVector.size();
+    EXPECT_EQ(size, 1); // Because we only focus on the top of the stack
+
+    for(const auto &it : recordVector){
+        if(it.missionId == thridMissionId){
+            EXPECT_EQ(firstTopAbility->GetRecordId(), it.ability.lock()->GetRecordId());
+        }
+        if(it.missionId == secondMissionId){
+            EXPECT_EQ(secondTopAbility->GetRecordId(), it.ability.lock()->GetRecordId());
+        }
+    }
+
+    result = stackManager_->PowerOn();
+    EXPECT_EQ(ERR_OK, result);
+    EXPECT_EQ(OHOS::AAFwk::INACTIVE, secondTopAbility->GetAbilityState());
+    
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RemoveStack
+ * SubFunction: NA
+ * FunctionPoints: RemoveStack
+ * EnvConditions: NA
+ * CaseDescription: Succeeded to verify RemoveStack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto firstMissionId = firstTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto secondMissionId = secondTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
+    thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto thridMissionId = thirdTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(musicSAbilityRequest_);
+    EXPECT_EQ(ERR_OK, result);
+    auto fourthTopAbility = stackManager_->GetCurrentTopAbility();
+    fourthTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    thirdTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+
+    auto fourthMissionId = fourthTopAbility->GetMissionRecord()->GetMissionRecordId();
+
+    EXPECT_EQ(secondMissionId, thridMissionId);
+    EXPECT_NE(fourthMissionId, secondMissionId);
+
+    OHOS::sptr<AbilitySchedulerMock> scheduler(new AbilitySchedulerMock());
+    fourthTopAbility->SetScheduler(scheduler);
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(1);
+
+    result = stackManager_->PowerOff();
+    EXPECT_EQ(ERR_OK, result);
+
+    auto missionInfo1 = stackManager_->GetMissionRecordFromAllStacks(firstMissionId);
+    EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
+    auto missionInfo2 = stackManager_->GetMissionRecordFromAllStacks(secondMissionId);
+    EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
+    auto missionInfo3 = stackManager_->GetMissionRecordFromAllStacks(fourthMissionId);
+    EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
+
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    int size = recordVector.size();
+    EXPECT_EQ(size, 2);
+
+    for(const auto &it : recordVector){
+        if(it.missionId == firstMissionId){
+            EXPECT_TRUE(firstTopAbility->GetRecordId() == it.ability.lock()->GetRecordId());
+        }
+        if(it.missionId == thridMissionId){
+            EXPECT_TRUE(thirdTopAbility->GetRecordId() == it.ability.lock()->GetRecordId());
+        }
+    }
+    result = stackManager_->PowerOn();
+    EXPECT_EQ(ERR_OK, result);
+
+    //mocke app clent
+    // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, firstTopAbility->GetAbilityState());
+    // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, thirdTopAbility->GetAbilityState());
+    EXPECT_EQ(OHOS::AAFwk::INACTIVATING, fourthTopAbility->GetAbilityState());
+    
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

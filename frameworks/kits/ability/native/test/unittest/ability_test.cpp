@@ -65,7 +65,6 @@ void AbilityBaseTest::TearDown(void)
 HWTEST_F(AbilityBaseTest, AaFwk_Ability_Name_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_Ability_Name_0100 start";
-
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = "ability";
     std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();

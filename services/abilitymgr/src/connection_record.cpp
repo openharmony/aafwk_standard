@@ -15,9 +15,10 @@
 
 #include "connection_record.h"
 
+#include "hilog_wrapper.h"
+#include "ability_util.h"
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
-#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -39,12 +40,8 @@ ConnectionRecord::~ConnectionRecord()
 std::shared_ptr<ConnectionRecord> ConnectionRecord::CreateConnectionRecord(const sptr<IRemoteObject> &callerToken,
     const std::shared_ptr<AbilityRecord> &targetService, const sptr<IAbilityConnection> &connCallback)
 {
-    std::shared_ptr<ConnectionRecord> connRecord =
-        std::make_shared<ConnectionRecord>(callerToken, targetService, connCallback);
-    if (connRecord == nullptr) {
-        HILOG_ERROR("%{public}s failed to create connection record.", __func__);
-        return nullptr;
-    }
+    auto connRecord = std::make_shared<ConnectionRecord>(callerToken, targetService, connCallback);
+    CHECK_POINTER_AND_RETURN(connRecord, nullptr);
     connRecord->SetConnectState(ConnectionState::INIT);
     return connRecord;
 }
@@ -90,14 +87,11 @@ int ConnectionRecord::DisconnectAbility()
 
     /* set state to Disconnecting */
     SetConnectState(ConnectionState::DISCONNECTING);
-    if (targetService_ == nullptr) {
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(targetService_, ERR_INVALID_VALUE);
     int connectNums = targetService_->GetConnectRecordList().size();
     if (connectNums == 1) {
         /* post timeout task to eventhandler */
-        std::shared_ptr<AbilityEventHandler> handler =
-            DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+        auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
         if (handler == nullptr) {
             HILOG_ERROR("fail to get AbilityEventHandler");
         } else {
@@ -120,10 +114,7 @@ int ConnectionRecord::DisconnectAbility()
 
 void ConnectionRecord::CompleteConnect(int resultCode)
 {
-    if (targetService_ == nullptr) {
-        HILOG_ERROR("%{public}s record is nullptr", __func__);
-        return;
-    }
+    CHECK_POINTER(targetService_);
     if (resultCode == ERR_OK) {
         SetConnectState(ConnectionState::CONNECTED);
         targetService_->SetAbilityState(AbilityState::ACTIVE);
@@ -142,9 +133,7 @@ void ConnectionRecord::CompleteDisconnect(int resultCode)
     if (resultCode == ERR_OK) {
         SetConnectState(ConnectionState::DISCONNECTED);
     }
-    if (targetService_ == nullptr) {
-        return;
-    }
+    CHECK_POINTER(targetService_);
     const AppExecFwk::AbilityInfo &abilityInfo = targetService_->GetAbilityInfo();
     AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
     if (connCallback_) {
@@ -160,8 +149,7 @@ void ConnectionRecord::ScheduleDisconnectAbilityDone()
         return;
     }
 
-    std::shared_ptr<AbilityEventHandler> handler =
-        DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr) {
         HILOG_ERROR("fail to get AbilityEventHandler");
     } else {
@@ -178,8 +166,7 @@ void ConnectionRecord::ScheduleConnectAbilityDone()
         HILOG_ERROR("fail to schedule connect ability done, current state is not connecting.");
         return;
     }
-    std::shared_ptr<AbilityEventHandler> handler =
-        DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr) {
         HILOG_ERROR("fail to get AbilityEventHandler");
     } else {
@@ -192,10 +179,7 @@ void ConnectionRecord::ScheduleConnectAbilityDone()
 
 void ConnectionRecord::DisconnectTimeout()
 {
-    if (targetService_ == nullptr) {
-        HILOG_ERROR("target service ability is nullptr.");
-        return;
-    }
+    CHECK_POINTER(targetService_);
     /* force to disconnect */
     /* so scheduler target service disconnect done */
     DelayedSingleton<AbilityManagerService>::GetInstance()->ScheduleDisconnectAbilityDone(targetService_->GetToken());

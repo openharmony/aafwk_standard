@@ -18,10 +18,10 @@
 namespace OHOS {
 namespace AAFwk {
 enum class MatchType {
-    PATTERN_LITERAL = 0,
-    PATTERN_PREFIX = 1,
-    PATTERN_REGEX = 2,
-    PATTERN_SIMPLE_GLOB = 3,
+    DEFAULT = 0,
+    PREFIX = 1,
+    PATTERN = 2,
+    GLOBAL = 3,
 };
 }
 }  // namespace OHOS

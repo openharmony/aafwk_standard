@@ -54,6 +54,7 @@ private:
     int AcquireDataAbilityInner(MessageParcel &data, MessageParcel &reply);
     int ReleaseDataAbilityInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToTopInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToEndInner(MessageParcel &data, MessageParcel &reply);
     int KillProcessInner(MessageParcel &data, MessageParcel &reply);
     int UninstallAppInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -62,6 +63,27 @@ private:
     int DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StopServiceAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DumpStateInner(MessageParcel &data, MessageParcel &reply);
+    int IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply);
+    int CompelVerifyPermissionInner(MessageParcel &data, MessageParcel &reply);
+    int PowerOffInner(MessageParcel &data, MessageParcel &reply);
+    int PowerOnInner(MessageParcel &data, MessageParcel &reply);
+    int LockMissionInner(MessageParcel &data, MessageParcel &reply);
+    int UnlockMissionInner(MessageParcel &data, MessageParcel &reply);
+
+    int GetWantSenderInner(MessageParcel &data, MessageParcel &reply);
+    int SendWantSenderInner(MessageParcel &data, MessageParcel &reply);
+    int CancelWantSenderInner(MessageParcel &data, MessageParcel &reply);
+
+    int GetPendingWantUidInner(MessageParcel &data, MessageParcel &reply);
+    int GetPendingWantUserIdInner(MessageParcel &data, MessageParcel &reply);
+    int GetPendingWantBundleNameInner(MessageParcel &data, MessageParcel &reply);
+    int GetPendingWantCodeInner(MessageParcel &data, MessageParcel &reply);
+    int GetPendingWantTypeInner(MessageParcel &data, MessageParcel &reply);
+
+    int RegisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
+    int UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
+
+    int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

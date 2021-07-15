@@ -35,5 +35,6 @@ group("moduletest") {
     "moduletest/ipc_ability_connect_test:moduletest",
     "moduletest/ipc_ability_mgr_test:moduletest",
     "moduletest/module_test_dump_util:module_test_dump_util",
+    "moduletest/panding_want_manager_test:moduletest",
   ]
 }

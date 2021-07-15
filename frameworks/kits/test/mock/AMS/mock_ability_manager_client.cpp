@@ -25,18 +25,18 @@
 
 namespace OHOS {
 namespace AAFwk {
-std::shared_ptr<AbilityManagerClient> AbilityManagerClient::instance_ = nullptr;
-std::mutex AbilityManagerClient::mutex_;
+std::shared_ptr<AbilityManagerClient> mockMTInstance_ = nullptr;
+std::mutex mockMTMutex_;
 
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
 {
-    if (instance_ == nullptr) {
-        std::lock_guard<std::mutex> lock_l(mutex_);
-        if (instance_ == nullptr) {
-            instance_ = std::make_shared<AbilityManagerClient>();
+    if (mockMTInstance_ == nullptr) {
+        std::lock_guard<std::mutex> lock_l(mockMTMutex_);
+        if (mockMTInstance_ == nullptr) {
+            mockMTInstance_ = std::make_shared<AbilityManagerClient>();
         }
     }
-    return instance_;
+    return mockMTInstance_;
 }
 
 AbilityManagerClient::AbilityManagerClient()
@@ -169,7 +169,7 @@ ErrCode AbilityManagerClient::DumpState(const std::string &args, std::vector<std
 
 ErrCode AbilityManagerClient::Connect()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mockMTMutex_);
     remoteObject_ =
         OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     if (remoteObject_ == nullptr) {

@@ -32,11 +32,16 @@ config("ability_config") {
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/context",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+
+    "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher/include/dispatcher",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher/include/task",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher/include/threading",
+    "//foundation/appexecfwk/standard/kits/appkit/native/app/include/task",
   ]
 
   cflags = []
@@ -55,6 +60,7 @@ config("ability_public_config") {
     "${INNERKITS_PATH}/base/include",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
     "${SUBSYSTEM_DIR}/include",
+    "//third_party/libuv/include",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/ohos/aafwk/base",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
@@ -83,8 +89,9 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
     "${SUBSYSTEM_DIR}/src/page_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/service_ability_impl.cpp",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/context/napi_context.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/feature_ability.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/want_wrapper.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/ability_start_setting.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/application_context.cpp",
@@ -98,14 +105,13 @@ ohos_shared_library("abilitykit_native") {
   deps = [
     "${INNERKITS_PATH}/base:base",
     "${INNERKITS_PATH}/want:want",
-
-    # "//foundation/graphic/standard/prebuilts/librarys/display_gralloc:libdisplay_gralloc",
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher:appkit_dispatcher_td",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event:mmi_event",
@@ -117,7 +123,10 @@ ohos_shared_library("abilitykit_native") {
     "ipc:ipc_core",
   ]
 
-  public_deps = [ "//foundation/graphic/standard:libwms_client" ]
+  public_deps = [
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/graphic/standard:libwms_client",
+  ]
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

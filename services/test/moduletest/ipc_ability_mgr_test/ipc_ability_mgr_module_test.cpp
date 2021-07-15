@@ -62,11 +62,17 @@ AbilityRequest IpcAbilityMgrModuleTest::CreateAbilityRequest(
     const std::string &abilityName, const std::string &bundleName)
 {
     AbilityRequest abilityRequest;
+
+    ElementName element("device", bundleName, abilityName);
     Want want;
+    want.SetElement(element);
+
     AbilityInfo abilityInfo;
     abilityInfo.name = abilityName;
     abilityInfo.applicationName = bundleName;
     abilityInfo.bundleName = bundleName;
+    abilityInfo.type = AbilityType::PAGE;
+
     ApplicationInfo appInfo;
     appInfo.name = bundleName;
     appInfo.bundleName = bundleName;
@@ -116,14 +122,12 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_002, TestSize.Level1)
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_002 start";
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
-
-    AbilityRequest abilityRequest = CreateAbilityRequest(abilityName, bundleName);
-    std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-
+    auto abilityRequest = CreateAbilityRequest(abilityName, bundleName);
+    auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    ASSERT_TRUE(abilityRecord);
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
         EXPECT_CALL(*mockAbilityMgr, AbilityTransitionDone(_, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
@@ -303,8 +307,8 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_009, TestSize.Level1)
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
-    AbilityRequest abilityRequest = CreateAbilityRequest(abilityName, bundleName);
-    std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    auto abilityRequest = CreateAbilityRequest(abilityName, bundleName);
+    auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     for (int i = 0; i < COUNT; i++) {
@@ -448,7 +452,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_014, TestSize.Level1)
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
 
-        std::vector<RecentMissionInfo> renCentList;
+        std::vector<AbilityMissionInfo> renCentList;
         EXPECT_CALL(*mockAbilityMgr, GetRecentMissions(_, _, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));

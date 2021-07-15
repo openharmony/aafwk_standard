@@ -19,9 +19,11 @@
 #include <list>
 
 #include "ability_record.h"
+#include "mission_stack.h"
 
 namespace OHOS {
 namespace AAFwk {
+class MissionStack;
 /**
  * @class MissionRecord
  * MissionRecord records mission info and ability records.
@@ -29,7 +31,7 @@ namespace AAFwk {
 class MissionRecord {
 public:
     MissionRecord(const std::string &bundleName = "");
-    ~MissionRecord();
+    virtual ~MissionRecord();
 
     /**
      * calculate next mission id
@@ -179,14 +181,28 @@ public:
      */
     bool IsExistAbilityRecord(int32_t id);
 
+    /**
+     * set parent mission stack.
+     *
+     * @param parentStack: the parent mission stack
+     */
+    void SetParentStack(const std::shared_ptr<MissionStack> &parent, int stackId);
+    std::shared_ptr<MissionStack> GetParentStack() const;
+
+    std::string GetName() const
+    {
+        return bundleName_;
+    };
+
 private:
     static int nextMissionId_;
     int missionId_;
     std::string bundleName_;
     std::list<std::shared_ptr<AbilityRecord>> abilities_;
-    bool isLuncherCreate_ = false;
+    bool isLauncherCreate_ = false;
     std::weak_ptr<MissionRecord> preMissionRecord_;
-};
+    std::weak_ptr<MissionStack> parentMissionStack_;
+};  // namespace AAFwk
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_MISSION_RECORD_H

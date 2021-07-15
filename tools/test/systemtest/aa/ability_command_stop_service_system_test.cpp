@@ -31,7 +31,7 @@ const std::string STRING_DEVICE_NAME = "device";
 const std::string STRING_SERVICE_ABILITY_BUNDLE_PATH = "/data/test/resource/aa/serviceAbilityBundleForStop.hap";
 const std::string STRING_SERVICE_ABILITY_BUNDLE_NAME = "com.ohos.tools.serviceAbilityBundleForStop";
 const std::string STRING_SERVICE_ABILITY_BUNDLE_NAME_INVALID = STRING_SERVICE_ABILITY_BUNDLE_NAME + ".invalid";
-const std::string STRING_SERVICE_ABILITY_NAME = "com.ohos.tools.serviceAbilityForStop.MainAbility";
+const std::string STRING_SERVICE_ABILITY_NAME = "MainAbility";
 const std::string STRING_SERVICE_ABILITY_NAME_INVALID = STRING_SERVICE_ABILITY_NAME + ".Invalid";
 }  // namespace
 

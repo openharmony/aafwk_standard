@@ -20,7 +20,7 @@
 
 #include "errors.h"
 #include "hilog_wrapper.h"
-
+#include "ability_util.h"
 #include "ability_event_handler.h"
 #include "ability_manager_service.h"
 #include "ability_scheduler_stub.h"
@@ -56,9 +56,7 @@ Token::~Token()
 
 std::shared_ptr<AbilityRecord> Token::GetAbilityRecordByToken(const sptr<IRemoteObject> &token)
 {
-    if (token == nullptr) {
-        return nullptr;
-    }
+    CHECK_POINTER_AND_RETURN(token, nullptr);
     return (static_cast<Token *>(token.GetRefPtr()))->GetAbilityRecord();
 }
 
@@ -89,10 +87,7 @@ std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityR
 {
     std::shared_ptr<AbilityRecord> abilityRecord = std::make_shared<AbilityRecord>(
         abilityRequest.want, abilityRequest.abilityInfo, abilityRequest.appInfo, abilityRequest.requestCode);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("failed to create new ability record");
-        return nullptr;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, nullptr);
     if (!abilityRecord->Init()) {
         HILOG_ERROR("failed to init new ability record");
         return nullptr;
@@ -103,15 +98,10 @@ std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityR
 bool AbilityRecord::Init()
 {
     lifecycleDeal_ = std::make_unique<LifecycleDeal>();
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("failed to create new lifecycle deal");
-        return false;
-    }
+    CHECK_POINTER_RETURN_BOOL(lifecycleDeal_);
+
     token_ = new (std::nothrow) Token(weak_from_this());
-    if (token_ == nullptr) {
-        HILOG_ERROR("failed to create new token");
-        return false;
-    }
+    CHECK_POINTER_RETURN_BOOL(token_);
 
     if (applicationInfo_.isLauncherApp) {
         isLauncherAbility_ = true;
@@ -123,10 +113,7 @@ int AbilityRecord::LoadAbility()
 {
     HILOG_INFO("%s", __func__);
     startTime_ = SystemTimeMillis();
-    if (token_ == nullptr) {
-        HILOG_ERROR("token is nullptr");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
     std::string appName = applicationInfo_.name;
     if (appName.empty()) {
         HILOG_ERROR("app name is empty");
@@ -162,6 +149,11 @@ void AbilityRecord::SetMissionRecord(const std::shared_ptr<MissionRecord> &missi
     }
 }
 
+void AbilityRecord::SetMissionStackId(const int stackId)
+{
+    lifeCycleStateInfo_.stackId = stackId;
+}
+
 std::shared_ptr<MissionRecord> AbilityRecord::GetMissionRecord() const
 {
     return missionRecord_.lock();
@@ -190,10 +182,7 @@ void AbilityRecord::SetAbilityState(AbilityState state)
 void AbilityRecord::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
 {
     HILOG_INFO("%s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
     if (scheduler != nullptr) {
         if (scheduler_ != nullptr && schedulerDeathRecipient_ != nullptr) {
             auto schedulerObject = scheduler_->AsObject();
@@ -320,10 +309,7 @@ void AbilityRecord::SetCreateByConnectMode()
 void AbilityRecord::Activate()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::ACTIVE_TIMEOUT_MSG, AbilityManagerService::ACTIVE_TIMEOUT);
 
@@ -348,7 +334,7 @@ void AbilityRecord::ProcessActivate()
     HILOG_DEBUG("ability record: %{public}s", element.c_str());
 
     if (isReady_) {
-        if (currentState_ == AbilityState::BACKGROUND) {
+        if (IsAbilityState(AbilityState::BACKGROUND)) {
             HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
             DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else {
@@ -360,13 +346,28 @@ void AbilityRecord::ProcessActivate()
     }
 }
 
+void AbilityRecord::ProcessInactivate()
+{
+    std::string element = GetWant().GetElement().GetURI();
+    HILOG_DEBUG("ability record: %{public}s", element.c_str());
+
+    if (isReady_) {
+        if (IsAbilityState(AbilityState::BACKGROUND)) {
+            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+        } else if (!IsAbilityState(AbilityState::INACTIVE) && !IsAbilityState(AbilityState::INACTIVATING)) {
+            HILOG_DEBUG("Inactivate %{public}s", element.c_str());
+            Inactivate();
+        }
+    } else {
+        LoadAbility();
+    }
+}
+
 void AbilityRecord::Inactivate()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::INACTIVE_TIMEOUT_MSG, AbilityManagerService::INACTIVE_TIMEOUT);
 
@@ -379,12 +380,8 @@ void AbilityRecord::Inactivate()
 void AbilityRecord::MoveToBackground(const Closure &task)
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
-    std::shared_ptr<AbilityEventHandler> handler =
-        DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER(lifecycleDeal_);
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr || task == nullptr) {
         // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
         // so don't return here.
@@ -404,12 +401,8 @@ void AbilityRecord::MoveToBackground(const Closure &task)
 void AbilityRecord::Terminate(const Closure &task)
 {
     HILOG_INFO("terminate ability : %{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
-    std::shared_ptr<AbilityEventHandler> handler =
-        DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER(lifecycleDeal_);
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr || task == nullptr) {
         // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
         // so don't return here.
@@ -429,30 +422,21 @@ void AbilityRecord::Terminate(const Closure &task)
 void AbilityRecord::ConnectAbility()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->ConnectAbility(want_);
 }
 
 void AbilityRecord::DisconnectAbility()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->DisconnectAbility(want_);
 }
 
 void AbilityRecord::CommandAbility()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->CommandAbility(want_, false, startId_);
 }
 
@@ -484,17 +468,18 @@ std::shared_ptr<AbilityResult> AbilityRecord::GetResult() const
 void AbilityRecord::SendResult()
 {
     HILOG_INFO("%{public}s", __func__);
-    if (scheduler_ == nullptr) {
-        HILOG_ERROR("scheduler_ is nullptr");
-        return;
-    }
-    if (result_ == nullptr) {
-        HILOG_ERROR("result_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(scheduler_);
+    CHECK_POINTER(result_);
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
     // reset result to avoid send result next time
     result_.reset();
+}
+
+void AbilityRecord::DisplayUnlockMissionMessage()
+{
+    HILOG_INFO("%{public}s", __func__);
+    CHECK_POINTER(scheduler_);
+    scheduler_->DisplayUnlockMissionMessage();
 }
 
 void AbilityRecord::SendResultToCallers()
@@ -520,10 +505,7 @@ void AbilityRecord::SaveResultToCallers(const int resultCode, const Want *result
 
 void AbilityRecord::AddConnectRecordToList(const std::shared_ptr<ConnectionRecord> &connRecord)
 {
-    if (connRecord == nullptr) {
-        HILOG_ERROR("%{public}s: connRecord is null, can't be added to list", __func__);
-        return;
-    }
+    CHECK_POINTER(connRecord);
     auto it = std::find(connRecordList_.begin(), connRecordList_.end(), connRecord);
     // found it
     if (it != connRecordList_.end()) {
@@ -543,10 +525,7 @@ std::list<std::shared_ptr<ConnectionRecord>> AbilityRecord::GetConnectRecordList
 
 void AbilityRecord::RemoveConnectRecordFromList(const std::shared_ptr<ConnectionRecord> &connRecord)
 {
-    if (connRecord == nullptr) {
-        HILOG_ERROR("%{public}s: connRecord is null, can't be removed from list", __func__);
-        return;
-    }
+    CHECK_POINTER(connRecord);
     connRecordList_.remove(connRecord);
     HILOG_INFO("%{public}s: remove member(%{public}p) from list", __func__, connRecord.get());
 }
@@ -555,10 +534,7 @@ void AbilityRecord::AddCallerRecord(const sptr<IRemoteObject> &callerToken, int 
 {
     HILOG_INFO("%{public}s", __func__);
     auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
-    if (!abilityRecord) {
-        HILOG_ERROR("caller ability record is nullptr");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
 
     auto isExist = [&abilityRecord](const std::shared_ptr<CallerRecord> &callerRecord) {
         return (callerRecord->GetCaller() == abilityRecord);
@@ -789,17 +765,10 @@ void AbilityRecord::GetAbilityRecordInfo(AbilityRecordInfo &recordInfo)
 void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
-
-    if (scheduler_ == nullptr) {
-        HILOG_ERROR("BUG: remote death notifies to a unready ability.");
-        return;
-    }
+    CHECK_POINTER(scheduler_);
 
     auto object = remote.promote();
-    if (!object) {
-        HILOG_ERROR("Ability on scheduler died: null object.");
-        return;
-    }
+    CHECK_POINTER(object);
 
     if (object != scheduler_->AsObject()) {
         HILOG_ERROR("Ability on scheduler died: scheduler is not matches with remote.");
@@ -814,23 +783,14 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
         }
     }
     scheduler_.clear();
-    if (lifecycleDeal_ == nullptr) {
-        HILOG_ERROR("lifecycleDeal_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->SetScheduler(nullptr);
 
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (!abilityManagerService) {
-        HILOG_ERROR("Ability on scheduler died: failed to get ams.");
-        return;
-    }
+    CHECK_POINTER(abilityManagerService);
 
     auto handler = abilityManagerService->GetEventHandler();
-    if (!handler) {
-        HILOG_ERROR("Ability on scheduler died: failed to get ams handler.");
-        return;
-    }
+    CHECK_POINTER(handler);
 
     HILOG_INFO("Ability on scheduler died: '%{public}s'", abilityInfo_.name.c_str());
     auto task = [abilityManagerService, ability = shared_from_this()]() {
@@ -887,17 +847,29 @@ bool AbilityRecord::IsLauncherRoot() const
     return isLauncherRoot_;
 }
 
+bool AbilityRecord::IsAbilityState(const AbilityState &state) const
+{
+    return (currentState_ == state);
+}
+
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
 {
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (!handler) {
-        HILOG_ERROR("fail to get AbilityEventHandler");
-        return;
-    }
+    CHECK_POINTER(handler);
 
     g_abilityRecordEventId_++;
     eventId_ = g_abilityRecordEventId_;
     handler->SendEvent(msg, eventId_, timeOut);
+}
+
+void AbilityRecord::SetPowerState(const bool isPower)
+{
+    isPowerState_ = isPower;
+}
+
+bool AbilityRecord::GetPowerState() const
+{
+    return isPowerState_;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

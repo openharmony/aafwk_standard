@@ -98,6 +98,12 @@ void AbilityImpl::Active()
 
     APP_LOGD("AbilityImpl::Active");
     ability_->OnActive();
+
+    if ((lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
+        ability_->OnTopActiveAbilityChanged(true);
+        ability_->OnWindowFocusChanged(true);
+    }
+
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
 }
@@ -116,6 +122,12 @@ void AbilityImpl::Inactive()
 
     APP_LOGD("AbilityImpl::Inactive");
     ability_->OnInactive();
+
+    if ((lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
+        ability_->OnTopActiveAbilityChanged(false);
+        ability_->OnWindowFocusChanged(false);
+    }
+
     lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
     abilityLifecycleCallbacks_->OnAbilityInactive(ability_);
 }
@@ -328,15 +340,28 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
         return;
     }
 
-    if (resultData.HasParameter(OHOS_PERMISSIONS_REQUEST_RESULT_KEY) &&
-        resultData.HasParameter(OHOS_PERMISSIONS_REQUEST_KEY)) {
+    if (resultData.HasParameter(OHOS_RESULT_PERMISSION_KEY) && resultData.HasParameter(OHOS_RESULT_PERMISSIONS_LIST) &&
+        resultData.HasParameter(OHOS_RESULT_CALLER_BUNDLERNAME)) {
 
-        std::vector<int> grant_result = resultData.GetIntArrayParam(OHOS_PERMISSIONS_REQUEST_RESULT_KEY);
-        std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_PERMISSIONS_REQUEST_KEY);
-        if (permissions.size() > 0 && permissions.size() == grant_result.size()) {
-            ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grant_result);
+        if (resultCode > 0) {
+            std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST);
+            std::vector<std::string> grantYes = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_YES);
+            std::vector<std::string> grantNo = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_NO);
+            std::vector<int> grantResult;
+            int intOK = 0;
+            for (size_t i = 0; i < permissions.size(); i++) {
+                intOK = 0;
+                for (size_t j = 0; j < grantYes.size(); j++) {
+                    if (permissions[i] == grantYes[j]) {
+                        intOK = 1;
+                        break;
+                    }
+                }
+                grantResult.push_back(intOK);
+            }
+            ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grantResult);
         } else {
-            APP_LOGE("AbilityImpl::SendResult Grand failed, data error!");
+            APP_LOGE("AbilityImpl::SendResult user cancel permissions");
         }
     } else {
         ability_->OnAbilityResult(requestCode, resultCode, resultData);
@@ -512,6 +537,20 @@ void AbilityImpl::SerUriString(const std::string &uri)
         return;
     }
     contextDeal_->SerUriString(uri);
+}
+
+/**
+ * @brief Set the LifeCycleStateInfo to the deal.
+ *
+ * @param info the info to set.
+ */
+void AbilityImpl::SetLifeCycleStateInfo(const AAFwk::LifeCycleStateInfo &info)
+{
+    if (contextDeal_ == nullptr) {
+        APP_LOGE("AbilityImpl::SetLifeCycleStateInfo contextDeal_ is nullptr");
+        return;
+    }
+    contextDeal_->SetLifeCycleStateInfo(info);
 }
 
 /**

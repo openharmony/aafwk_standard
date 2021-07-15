@@ -26,7 +26,6 @@ using namespace testing::ext;
 using namespace OHOS::AAFwk;
 using OHOS::Parcel;
 
-
 namespace OHOS {
 namespace AAFwk {
 static const int LARGE_STR_LEN = 65534;
@@ -36,8 +35,7 @@ public:
     SkillsBaseTest()
     {}
     ~SkillsBaseTest()
-    {
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -59,8 +57,7 @@ void SkillsBaseTest::SetUp(void)
 }
 
 void SkillsBaseTest::TearDown(void)
-{
-}
+{}
 
 /**
  * @tc.number: AaFwk_Skills_Parcelable_0100
@@ -89,7 +86,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Parcelable_0100, Function | MediumTest | L
     Parcel in;
     std::shared_ptr<Skills> SkillsOut_(Skills::Unmarshalling(in));
     SkillsIn_->Marshalling(in);
-    if(SkillsOut_ != nullptr){
+    if (SkillsOut_ != nullptr) {
         CompareSkills(SkillsIn_, SkillsOut_);
         EXPECT_EQ(valueBool, Boolean::Unbox(IBoolean::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));
     }
@@ -118,17 +115,17 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Parcelable_0200, Function | MediumTest | L
     std::string keyStr = "@#￥#3243adsafdf_中文";
     long valueLong = 12345L;
     wantParams.SetParam(keyStr, Long::Box(valueLong));
-    EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(wantParams.GetParam(keyStr)))); 
+    EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(wantParams.GetParam(keyStr))));
 
     SkillsIn_->SetWantParams(wantParams);
 
     Parcel in;
     SkillsIn_->Marshalling(in);
     std::shared_ptr<Skills> SkillsOut_(Skills::Unmarshalling(in));
-   
-    if(SkillsOut_ != nullptr){
+
+    if (SkillsOut_ != nullptr) {
         CompareSkills(SkillsIn_, SkillsOut_);
-        EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));   
+        EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));
     }
 }
 
@@ -156,15 +153,14 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Parcelable_0300, Function | MediumTest | L
     int valueInt = 123;
     wantParams.SetParam(keyStr, Integer::Box(valueInt));
 
-    
     SkillsIn_->SetWantParams(wantParams);
-    EXPECT_EQ(valueInt, Integer::Unbox(IInteger::Query(wantParams.GetParam(keyStr)))); 
+    EXPECT_EQ(valueInt, Integer::Unbox(IInteger::Query(wantParams.GetParam(keyStr))));
 
     Parcel in;
     SkillsIn_->Marshalling(in);
     std::shared_ptr<Skills> SkillsOut_(Skills::Unmarshalling(in));
 
-    if(SkillsOut_ != nullptr){
+    if (SkillsOut_ != nullptr) {
         CompareSkills(SkillsIn_, SkillsOut_);
         EXPECT_EQ(valueInt, Integer::Unbox(IInteger::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));
     }
@@ -212,7 +208,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Parcelable_0400, Function | MediumTest | L
     SkillsIn_->Marshalling(in);
     std::shared_ptr<Skills> SkillsOut_(Skills::Unmarshalling(in));
 
-    if(SkillsOut_ != nullptr){
+    if (SkillsOut_ != nullptr) {
         CompareSkills(SkillsIn_, SkillsOut_);
         EXPECT_EQ(valueString, String::Unbox(IString::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));
     }
@@ -333,7 +329,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Path_0300, Function | MediumTest | Level1)
 {
     std::string empty;
     std::string path = "paths.system.test";
-    PatternsMatcher pm(path, MatchType::PATTERN_LITERAL);
+    PatternsMatcher pm(path, MatchType::DEFAULT);
     base_->AddPath(pm);
 
     EXPECT_EQ(1, base_->CountPaths());
@@ -583,7 +579,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Types_0100, Function | MediumTest | Level1
     GTEST_LOG_(INFO) << "---------------1 ";
     EXPECT_EQ(empty, base_->GetAuthority(0));
     GTEST_LOG_(INFO) << "---------------2 ";
-    
+
     base_->RemoveAuthority(types);
     EXPECT_EQ(0, base_->CountTypes());
     EXPECT_EQ(false, base_->HasAuthority(types));
@@ -634,13 +630,13 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Path_0200, Function | MediumTest | Level1)
 {
     std::string empty;
     std::string path = "path.system.test";
-    base_->AddPath(path, MatchType::PATTERN_LITERAL);
+    base_->AddPath(path, MatchType::DEFAULT);
 
     EXPECT_EQ(1, base_->CountPaths());
     EXPECT_EQ(true, base_->HasPath(path));
     EXPECT_EQ(path, base_->GetPath(0));
 
-    base_->RemovePath(path, MatchType::PATTERN_LITERAL);
+    base_->RemovePath(path, MatchType::DEFAULT);
     EXPECT_EQ(0, base_->CountPaths());
     EXPECT_EQ(false, base_->HasPath(path));
 }
@@ -827,7 +823,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_addremoveType_0100, Function | MediumTest 
 {
     std::string patternStr = std::string("systems/*t");
 
-    PatternsMatcher pattern(patternStr, MatchType::PATTERN_LITERAL);
+    PatternsMatcher pattern(patternStr, MatchType::DEFAULT);
 
     base_->AddType(pattern);
     std::string type1 = base_->GetType(0);
@@ -840,7 +836,7 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_addremoveType_0100, Function | MediumTest 
     base_->AddType(pattern);
 
     std::string patternStr2 = std::string("systems/*test");
-    PatternsMatcher pattern2(patternStr2, MatchType::PATTERN_PREFIX);
+    PatternsMatcher pattern2(patternStr2, MatchType::PREFIX);
     base_->AddType(pattern2);
     std::string type2 = base_->GetType(1);
     EXPECT_EQ(patternStr2, type2);
@@ -849,12 +845,12 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_addremoveType_0100, Function | MediumTest 
     EXPECT_EQ(0, base_->CountEntities());
 
     std::string patternStr3 = std::string("systems/*test3");
-    base_->AddType(patternStr3, MatchType::PATTERN_SIMPLE_GLOB);
+    base_->AddType(patternStr3, MatchType::GLOBAL);
 
     std::string type3 = base_->GetType(1);
     EXPECT_EQ(patternStr3, type3);
 
-    base_->RemoveType(patternStr3, MatchType::PATTERN_SIMPLE_GLOB);
+    base_->RemoveType(patternStr3, MatchType::GLOBAL);
 
     EXPECT_EQ(0, base_->CountEntities());
 }
@@ -862,11 +858,10 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_addremoveType_0100, Function | MediumTest 
 using testParamsType = std::tuple<std::string, std::string>;
 class SkillsParamsTest : public testing::TestWithParam<testParamsType> {
 public:
-    SkillsParamsTest() 
+    SkillsParamsTest()
     {}
     ~SkillsParamsTest()
-    {
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -886,8 +881,7 @@ void SkillsParamsTest::SetUp(void)
 }
 
 void SkillsParamsTest::TearDown(void)
-{
-}
+{}
 
 /**
  * @tc.number: AaFwk_Skills_Params_0100
@@ -913,5 +907,5 @@ INSTANTIATE_TEST_CASE_P(SkillsParamsTestCaseP, SkillsParamsTest,
         testParamsType(std::string(LARGE_STR_LEN + 1, 'k'), std::string(LARGE_STR_LEN + 1, 'k')),
         testParamsType("#$%^&*(!@\":<>{},/", "#$%^&*(!@\":<>{},/")));
 
-}
-}
+}  // namespace AAFwk
+}  // namespace OHOS

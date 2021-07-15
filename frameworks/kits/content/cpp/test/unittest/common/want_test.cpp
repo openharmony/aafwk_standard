@@ -438,7 +438,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
     WantIn_->SetElement(element);
 
     WantParams wantParams;
-
     std::string keyStr = "system.test.wantparams.key";
     std::string MIMEKEY = "mime-type";
     wantParams.SetParam(MIMEKEY, String::Box("system.test.uritype"));
@@ -474,6 +473,14 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
 
     std::vector<std::string> stringArrayValue = {"stringtest1", "string@test2", "string@!#test2"};
     WantIn_->SetParam(std::string("string_arraykey"), stringArrayValue);
+
+    Want wantCopy(*WantIn_);
+    std::vector<std::string> teststringArrayValue1 = WantIn_->GetStringArrayParam(std::string("string_arraykey"));
+    std::vector<std::string> teststringArrayValue2 = wantCopy.GetStringArrayParam(std::string("string_arraykey"));
+    bool copyarraycompare = CompareArrayData<std::string>(teststringArrayValue1, teststringArrayValue1);
+    EXPECT_EQ(copyarraycompare, true);
+    std::string str = (copyarraycompare == true) ? "true" : "false";
+    GTEST_LOG_(INFO) << "copyarraycompare=" << str.c_str();
 
     Parcel in;
     bool result = false;
@@ -2153,7 +2160,7 @@ HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0200, Function 
  */
 HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("ff");
     std::vector<zchar> firstValue({U'中', U'文'});
     std::vector<zchar> secondValue({U'字', U'符'});
     std::vector<zchar> thirdValue({U'集', U'英'});
@@ -2258,7 +2265,7 @@ HWTEST_F(WantCharParamTest, AaFwk_Want_Parameters_Char_0200, Function | MediumTe
  */
 HWTEST_F(WantCharParamTest, AaFwk_Want_Parameters_Char_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("jj");
     zchar firstValue = U'中';
     zchar secondValue = U'文';
     zchar thirdValue = U'字';
@@ -2369,7 +2376,7 @@ HWTEST_F(WantDoubleArrayParamTest, AaFwk_Want_DoubleArray_0200, Function | Mediu
 HWTEST_F(WantDoubleArrayParamTest, AaFwk_Want_DoubleArray_0300, Function | MediumTest | Level1)
 {
     std::vector<double> defaultValue;
-    std::string setKey1 = "";
+    std::string setKey1 = "cc";
     std::string setKey2 = "aa";
     std::vector<double> setValue1 = {1.1, 2.1};
     std::vector<double> setValue2 = {5.1, 6.1};
@@ -2481,7 +2488,7 @@ HWTEST_F(WantFloatArrayParamTest, AaFwk_Want_FloatArray_0200, Function | MediumT
 HWTEST_F(WantFloatArrayParamTest, AaFwk_Want_FloatArray_0300, Function | MediumTest | Level1)
 {
     std::vector<float> defaultValue;
-    std::string setKey1 = "";
+    std::string setKey1 = "hh";
     std::string setKey2 = "aa";
     std::vector<float> setValue1 = {1.1, 2.1};
     want_->SetParam(setKey1, setValue1);
@@ -2590,7 +2597,7 @@ HWTEST_F(WantLongArrayParamTest, AaFwk_Want_LongArray_0200, Function | MediumTes
 HWTEST_F(WantLongArrayParamTest, AaFwk_Want_LongArray_0300, Function | MediumTest | Level1)
 {
     std::vector<long> defaultValue;
-    std::string setKey1 = "";
+    std::string setKey1 = "bb";
     std::string setKey2 = "aa";
     std::vector<long> setValue1 = {1, 2};
     want_->SetParam(setKey1, setValue1);
@@ -2698,7 +2705,7 @@ HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0200, Function | MediumT
  */
 HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("hh");
     std::vector<short> firstValue({1, 4, -9});
     std::vector<short> secondValue({1, 8, -9});
     std::vector<short> thirdValue({1, 4, 9});
@@ -2741,9 +2748,7 @@ public:
         want_ = nullptr;
     }
     ~WantShortParamTest()
-    {
-        want_ = nullptr;
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -2803,7 +2808,7 @@ HWTEST_F(WantShortParamTest, AaFwk_Want_Short_0200, Function | MediumTest | Leve
  */
 HWTEST_F(WantShortParamTest, AaFwk_Want_Short_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("bb");
     short firstValue = 1;
     short secondValue = 2;
     short thirdValue = 4;
@@ -2849,14 +2854,12 @@ public:
         want_ = nullptr;
     }
     ~WantStringArrayParamTest()
-    {
-        want_ = nullptr;
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    std::shared_ptr<Want> want_;
+    std::shared_ptr<Want> want_ = nullptr;
 };
 
 void WantStringArrayParamTest::SetUpTestCase(void)
@@ -2918,7 +2921,7 @@ HWTEST_F(WantStringArrayParamTest, AaFwk_Want_StringArray_0300, Function | Mediu
     std::vector<std::string> defaultValue;
     std::vector<std::string> setValue1 = {"aaa", "2132"};
     std::vector<std::string> setValue2 = {"1*中_aR", "dbdb"};
-    std::string key1 = "";
+    std::string key1 = "cc";
     std::string key2 = "aa";
     want_->SetParam(key1, setValue1);
     want_->SetParam(key1, setValue1);
@@ -2963,9 +2966,7 @@ public:
         want_ = nullptr;
     }
     ~WantStringParamTest()
-    {
-        want_ = nullptr;
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -3029,7 +3030,7 @@ HWTEST_F(WantStringParamTest, AaFwk_Want_String_0300, Function | MediumTest | Le
     std::string defaultStrValue;
     std::string setValue1 = "aaa";
     std::string setValue2 = "1*中_aR";
-    std::string key1 = "";
+    std::string key1 = "dd";
     std::string key2 = "aa";
     want_->SetParam(key1, setValue1);
     want_->SetParam(key1, setValue1);
@@ -3067,14 +3068,12 @@ public:
         want_ = nullptr;
     }
     ~WantLongParamTest()
-    {
-        want_ = nullptr;
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    std::shared_ptr<Want> want_;
+    std::shared_ptr<Want> want_ = nullptr;
 };
 
 void WantLongParamTest::SetUpTestCase(void)
@@ -3108,8 +3107,8 @@ HWTEST_P(WantLongParamTest, AaFwk_Want_LongParam_0100, Function | MediumTest | L
 }
 
 INSTANTIATE_TEST_CASE_P(WantLongParamTestCaseP, WantLongParamTest,
-    testing::Values(testLongType("", "aa", -1, 100, 100), testLongType("", "", -9, -41, -9),
-        testLongType("1*中_aR", "aa", 50, 5, 5), testLongType("1*中_aR", "1*中_aR", -5000, 5000, -5000)));
+    testing::Values(testLongType("b1", "b1", -1, 100, -1), testLongType("b3", "b4", 600, 200, 200),
+        testLongType("b5", "b5", 50, 6, 50), testLongType("b6", "b7", 1000, 2200, 2200)));
 
 /**
  * @tc.number: AaFwk_Want_LongParam_0200
@@ -3130,7 +3129,7 @@ HWTEST_F(WantLongParamTest, AaFwk_Want_LongParam_0200, Function | MediumTest | L
  */
 HWTEST_F(WantLongParamTest, AaFwk_Want_LongParam_0300, Function | MediumTest | Level1)
 {
-    std::string setKey1 = "";
+    std::string setKey1 = "dd";
     std::string setKey2 = "aa";
     long setValue1 = 1;
     long setValue2 = 5;
@@ -3238,7 +3237,7 @@ HWTEST_F(WantIntParamTest, AaFwk_Want_IntParam_0200, Function | MediumTest | Lev
  */
 HWTEST_F(WantIntParamTest, AaFwk_Want_IntParam_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("bb");
     int firstValue = 1;
     int secondValue = 2;
     int thirdValue = 4;
@@ -3348,7 +3347,7 @@ HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0200, Function | Medium
  */
 HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("cc");
     std::vector<int> firstValue({1, 4, -9});
     std::vector<int> secondValue({1, 8, -9});
     std::vector<int> thirdValue({1, 4, 9});
@@ -3455,7 +3454,7 @@ HWTEST_F(WantFloatParamTest, AaFwk_Want_FloatParam_0200, Function | MediumTest |
  */
 HWTEST_F(WantFloatParamTest, AaFwk_Want_FloatParam_0300, Function | MediumTest | Level1)
 {
-    std::string setKey1 = "";
+    std::string setKey1 = "ee";
     std::string setKey2 = "aa";
     float setValue1 = 1.1;
     float setValue2 = 5.1;
@@ -3564,7 +3563,7 @@ HWTEST_F(WantDoubleParamTest, AaFwk_Want_DoubleParam_0300, Function | MediumTest
  */
 HWTEST_F(WantDoubleParamTest, AaFwk_Want_DoubleParam_0400, Function | MediumTest | Level1)
 {
-    std::string setKey1 = "";
+    std::string setKey1 = "ff";
     std::string setKey2 = "aa";
     double setValue1 = 1.1;
     double setValue2 = 5.1;
@@ -3673,7 +3672,7 @@ HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0200, Function | MediumTes
  */
 HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0300, Function | MediumTest | Level1)
 {
-    std::string emptyStr("");
+    std::string emptyStr("gg");
     std::vector<byte> firstValue({'a', '2'});
     std::vector<byte> secondValue({'1', 'd'});
     std::vector<byte> thirdValue({'t', '3'});
@@ -3756,8 +3755,8 @@ HWTEST_P(WantBoolParamTest, AaFwk_Want_BoolParam_0100, Function | MediumTest | L
 }
 
 INSTANTIATE_TEST_CASE_P(WantBoolParamTestCaseP, WantBoolParamTest,
-    testing::Values(testBoolType("", "aa", true, true, true), testBoolType("", "aa", true, false, false),
-        testBoolType("", "", true, true, true), testBoolType("", "", true, false, true),
+    testing::Values(testBoolType("b1", "aa", true, true, true), testBoolType("b1", "aa", true, false, false),
+        testBoolType("b2", "b2", true, true, true), testBoolType("b3", "b3", true, false, true),
         testBoolType("123", "123", true, false, true), testBoolType("123", "aa", true, false, false),
         testBoolType("-~*&%￥", "-~*&%￥", true, false, true), testBoolType("-~*&%￥", "aa", true, false, false),
         testBoolType("中文", "中文", true, false, true), testBoolType("中文", "aa", true, false, false),

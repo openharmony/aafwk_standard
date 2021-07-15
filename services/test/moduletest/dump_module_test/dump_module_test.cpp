@@ -20,7 +20,11 @@
 #include "system_ability_definition.h"
 #include "ability_info.h"
 #include "application_info.h"
+#define private public
+#define protected public
 #include "ability_manager_service.h"
+#undef private
+#undef protected
 #include "ability_manager_errors.h"
 #include "gtest/gtest.h"
 #include "mock_bundle_manager.h"
@@ -134,7 +138,7 @@ void DumpModuleTest::SetUp()
 
 void DumpModuleTest::StartAllAbilities()
 {
-    wantLauncher.AddEntity(Want::FLAG_HW_HOME_INTENT_FROM_SYSTEM);
+    wantLauncher.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
     g_abilityMs->StartAbility(wantLauncher);
     WaitUntilTaskFinished();
     auto topAbilityLuncher = g_abilityMs->GetStackManager()->GetCurrentTopAbility();

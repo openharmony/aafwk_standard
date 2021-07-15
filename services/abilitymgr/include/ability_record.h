@@ -175,6 +175,13 @@ public:
     void SetMissionRecord(const std::shared_ptr<MissionRecord> &missionRecord);
 
     /**
+     * set ability's mission stack.
+     *
+     * @param missionStack, mission stack.
+     */
+    void SetMissionStackId(const int stackId);
+
+    /**
      * get ability's mission record.
      *
      * @return missionRecord, mission record.
@@ -361,6 +368,12 @@ public:
     void ProcessActivate();
 
     /**
+     * process request of inactiving the ability.
+     *
+     */
+    void ProcessInactivate();
+
+    /**
      * inactive the ability.
      *
      */
@@ -431,6 +444,12 @@ public:
      *
      */
     void SendResult();
+
+    /**
+     * Displays a system-defined message to the user, prompting the user how to exit the lock mission mode.
+     *
+     */
+    void DisplayUnlockMissionMessage();
 
     /**
      * send result object to caller ability.
@@ -588,6 +607,11 @@ public:
     void SetLauncherRoot();
     bool IsLauncherRoot() const;
 
+    bool IsAbilityState(const AbilityState &state) const;
+
+    void SetPowerState(const bool isPower);
+    bool GetPowerState() const;
+
 private:
     /**
      * get system time.
@@ -610,7 +634,6 @@ private:
     AppExecFwk::ApplicationInfo applicationInfo_;       // the ability info get from BMS
     sptr<Token> token_;                                 // used to interact with kit and wms
     std::weak_ptr<MissionRecord> missionRecord_;        // mission of this ability
-    std::shared_ptr<AppScheduler> appScheduler_;        // scheduler of app
     std::weak_ptr<AbilityRecord> preAbilityRecord_;     // who starts this ability record
     std::weak_ptr<AbilityRecord> nextAbilityRecord_;    // ability that started by this ability
     std::weak_ptr<AbilityRecord> backAbilityRecord_;    // who back to this ability record
@@ -656,6 +679,7 @@ private:
 
     bool isKernalSystemAbility = false;
     bool isLauncherRoot_ = false;
+    bool isPowerState_ = false;  // ability to change state when poweroff and poweron.
 };
 }  // namespace AAFwk
 }  // namespace OHOS

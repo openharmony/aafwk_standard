@@ -14,8 +14,8 @@
  */
 
 #include "mission_stack.h"
-
 #include "hilog_wrapper.h"
+#include "ability_util.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -98,6 +98,15 @@ std::shared_ptr<MissionRecord> MissionStack::GetTopMissionRecord()
     return missions_.front();
 }
 
+std::shared_ptr<MissionRecord> MissionStack::GetBottomMissionRecord()
+{
+    if (missions_.empty()) {
+        HILOG_ERROR("missions_ is empty");
+        return nullptr;
+    }
+    return missions_.back();
+}
+
 std::shared_ptr<MissionRecord> MissionStack::GetMissionRecordById(int id)
 {
     if (missions_.empty()) {
@@ -169,10 +178,7 @@ void MissionStack::RemoveAll()
 
 void MissionStack::AddMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
 {
-    if (mission == nullptr) {
-        HILOG_ERROR("mission is nullptr");
-        return;
-    }
+    CHECK_POINTER(mission);
     auto isExist = [targetMission = mission](const std::shared_ptr<MissionRecord> &mission) {
         if (mission == nullptr) {
             return false;
@@ -187,10 +193,7 @@ void MissionStack::AddMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
 
 void MissionStack::MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
 {
-    if (mission == nullptr) {
-        HILOG_ERROR("mission is nullptr");
-        return;
-    }
+    CHECK_POINTER(mission);
     if (missions_.front() == mission) {
         HILOG_ERROR("missions is at the top of list");
         return;
@@ -201,7 +204,23 @@ void MissionStack::MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission
             break;
         }
     }
-    missions_.push_front(mission);
+    missions_.emplace_front(mission);
+}
+
+void MissionStack::MoveMissionRecordToBottom(const std::shared_ptr<MissionRecord> &mission)
+{
+    CHECK_POINTER(mission);
+    if (missions_.back() == mission) {
+        HILOG_ERROR("missions is at the bottom of list");
+        return;
+    }
+    for (auto iter = missions_.begin(); iter != missions_.end(); iter++) {
+        if ((*iter) == mission) {
+            missions_.erase(iter);
+            break;
+        }
+    }
+    missions_.emplace_back(mission);
 }
 
 void MissionStack::Dump(std::vector<std::string> &info)

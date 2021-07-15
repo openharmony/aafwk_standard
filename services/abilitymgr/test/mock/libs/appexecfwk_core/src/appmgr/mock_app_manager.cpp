@@ -100,5 +100,26 @@ AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
     return AppMgrResultCode::RESULT_OK;
 }
 
+int AppMgrClient::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
+{
+    return 0;
+}
+
+bool AppMgrClient::IsFirstInMission(const sptr<IRemoteObject> &token)
+{
+    return true;
+}
+
+int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
+{
+    return 0;
+}
+
+void AppMgrClient::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
+{
+    
+}
+
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

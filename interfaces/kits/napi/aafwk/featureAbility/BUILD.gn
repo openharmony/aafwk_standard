@@ -11,27 +11,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
-
-ohos_shared_library("feature_ability") {
+ohos_shared_library("featureability") {
   include_dirs = [
     "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
+    "//third_party/libuv/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/context",
   ]
 
   sources = [
     "feature_ability.cpp",
+    "napi_context.cpp",
+    "napi_data_ability_helper.cpp",
     "native_module.cpp",
     "want_wrapper.cpp",
   ]
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/kits:appkit_native",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//third_party/libuv:uv_static",
     "//utils/native/base:utils",
   ]
 
@@ -45,7 +50,7 @@ ohos_shared_library("feature_ability") {
     "ipc:ipc_core",
   ]
 
-  relative_install_dir = "module"
+  relative_install_dir = "module/ability"
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

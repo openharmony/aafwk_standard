@@ -15,9 +15,13 @@ import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
+EVENT_DIR = "//base/notification/ces_standard/cesfwk"
+
 ohos_source_set("abilityms_test_source") {
   sources = abilityms_files
   include_dirs = [
+    "${EVENT_DIR}/innerkits/include",
+    "${EVENT_DIR}/kits/native/include",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -32,6 +36,8 @@ ohos_source_set("abilityms_test_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
+    "${EVENT_DIR}/kits/native:cesfwk_kits",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -76,7 +82,17 @@ group("unittest") {
     "unittest/phone/lifecycle_test:unittest",
     "unittest/phone/mission_record_test:unittest",
     "unittest/phone/mission_stack_test:unittest",
+    "unittest/phone/pending_want_key_test:unittest",
+    "unittest/phone/pending_want_manager_test:unittest",
+    "unittest/phone/pending_want_record_test:unittest",
+    "unittest/phone/sender_info_test:unittest",
     "unittest/phone/terminate_ability_test:unittest",
+    "unittest/phone/want_receiver_proxy_test:unittest",
+    "unittest/phone/want_receiver_stub_test:unittest",
+    "unittest/phone/want_sender_info_test:unittest",
+    "unittest/phone/want_sender_proxy_test:unittest",
+    "unittest/phone/want_sender_stub_test:unittest",
+    "unittest/phone/wants_info_test:unittest",
     "unittest/phone/window_info_test:unittest",
   ]
 }

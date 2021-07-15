@@ -14,11 +14,11 @@
  */
 
 #include "kernal_system_app_manager.h"
-
+#include "hilog_wrapper.h"
+#include "ability_util.h"
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
 #include "app_scheduler.h"
-#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -61,10 +61,7 @@ int KernalSystemAppManager::StartAbilityLocked(const AbilityRequest &abilityRequ
 {
     std::shared_ptr<AbilityRecord> targetAbility;
     GetOrCreateAbilityRecord(abilityRequest, targetAbility);
-    if (targetAbility == nullptr) {
-        HILOG_ERROR("failed to get ability record , is nullptr");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
     targetAbility->SetKernalSystemAbility();
 
     HILOG_INFO("%{public}s Load kernal system ability, bundleName:%{public}s , abilityName:%{public}s",
@@ -72,8 +69,8 @@ int KernalSystemAppManager::StartAbilityLocked(const AbilityRequest &abilityRequ
         abilityRequest.abilityInfo.bundleName.c_str(),
         abilityRequest.abilityInfo.name.c_str());
 
-    if (targetAbility->GetAbilityState() == AbilityState::ACTIVE ||
-        targetAbility->GetAbilityState() == AbilityState::ACTIVATING) {
+    if (targetAbility->IsAbilityState(AbilityState::ACTIVE) ||
+        targetAbility->IsAbilityState(AbilityState::ACTIVATING)) {
         HILOG_INFO("kernal system ability is already activing or activated.");
         targetAbility->Activate();
         return ERR_OK;
@@ -86,21 +83,16 @@ int KernalSystemAppManager::AttachAbilityThread(
 {
     HILOG_INFO("%{public}s.", __func__);
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    std::shared_ptr<AbilityRecord> abilityRecord = GetAbilityRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is null");
-        return ERR_INVALID_VALUE;
-    }
+    auto abilityRecord = GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     std::string flag = KernalSystemAppManager::GetFlagOfAbility(
         abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name);
     HILOG_INFO("%{public}s, ability: %{public}s", __func__, flag.c_str());
 
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr) {
-        HILOG_ERROR("fail to get AbilityEventHandler");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(handler, ERR_INVALID_VALUE);
+
     handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecord->GetEventId());
 
     abilityRecord->SetScheduler(scheduler);
@@ -115,11 +107,8 @@ void KernalSystemAppManager::OnAbilityRequestDone(const sptr<IRemoteObject> &tok
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     AppAbilityState abilitState = DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(state);
     if (abilitState == AppAbilityState::ABILITY_STATE_FOREGROUND) {
-        std::shared_ptr<AbilityRecord> abilityRecord = GetAbilityRecordByToken(token);
-        if (abilityRecord == nullptr) {
-            HILOG_ERROR("abilityRecord is null");
-            return;
-        }
+        auto abilityRecord = GetAbilityRecordByToken(token);
+        CHECK_POINTER(abilityRecord);
         abilityRecord->Activate();
     }
 }
@@ -128,11 +117,8 @@ int KernalSystemAppManager::AbilityTransitionDone(const sptr<IRemoteObject> &tok
 {
     HILOG_INFO("%{public}s", __func__);
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    std::shared_ptr<AbilityRecord> abilityRecord = GetAbilityRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is null");
-        return ERR_INVALID_VALUE;
-    }
+    auto abilityRecord = GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     std::string flag = KernalSystemAppManager::GetFlagOfAbility(
         abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name);
@@ -154,11 +140,10 @@ int KernalSystemAppManager::AbilityTransitionDone(const sptr<IRemoteObject> &tok
 int KernalSystemAppManager::DispatchActive(const std::shared_ptr<AbilityRecord> &abilityRecord, int state)
 {
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr || abilityRecord == nullptr) {
-        HILOG_ERROR("event handler or ability record is nullptr.");
-        return ERR_INVALID_VALUE;
-    }
-    if (abilityRecord->GetAbilityState() != AbilityState::ACTIVATING) {
+    CHECK_POINTER_AND_RETURN(handler, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    if (!abilityRecord->IsAbilityState(AbilityState::ACTIVATING)) {
         HILOG_ERROR("kernal ability transition life state error. start:%{public}d", state);
         return ERR_INVALID_VALUE;
     }
@@ -176,10 +161,8 @@ void KernalSystemAppManager::CompleteActive(const std::shared_ptr<AbilityRecord>
     abilityRecord->SetAbilityState(AbilityState::ACTIVE);
 
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr) {
-        HILOG_ERROR("fail to get AbilityEventHandler");
-        return;
-    }
+    CHECK_POINTER(handler);
+
     auto task = [kernalManager = shared_from_this()]() { kernalManager->DequeueWaittingAbility(); };
     handler->PostTask(task, "DequeueWaittingAbility");
 }
@@ -228,11 +211,9 @@ std::shared_ptr<AbilityRecord> KernalSystemAppManager::GetCurrentTopAbility() co
 std::shared_ptr<AbilityRecord> KernalSystemAppManager::GetAbilityRecordByToken(const sptr<IRemoteObject> &token)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    std::shared_ptr<AbilityRecord> abilityToFind = Token::GetAbilityRecordByToken(token);
-    if (abilityToFind == nullptr) {
-        HILOG_ERROR("ability in token is null");
-        return nullptr;
-    }
+    auto abilityToFind = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityToFind, nullptr);
+
     auto isExist = [targetAbility = abilityToFind](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability == nullptr) {
             return false;
@@ -264,10 +245,7 @@ std::shared_ptr<AbilityRecord> KernalSystemAppManager::GetAbilityRecordByEventId
 
 bool KernalSystemAppManager::RemoveAbilityRecord(std::shared_ptr<AbilityRecord> ability)
 {
-    if (ability == nullptr) {
-        HILOG_ERROR("ability is null");
-        return false;
-    }
+    CHECK_POINTER_RETURN_BOOL(ability);
     for (auto iter = abilities_.begin(); iter != abilities_.end(); iter++) {
         if ((*iter) == ability) {
             abilities_.erase(iter);
@@ -314,10 +292,7 @@ void KernalSystemAppManager::DumpState(std::vector<std::string> &info)
 void KernalSystemAppManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (!abilityRecord) {
-        HILOG_ERROR("System UI on scheduler died, record is nullptr");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     if (!abilityRecord->IsKernalSystemAbility()) {
         HILOG_ERROR("System UI on scheduler died, ability type is not system ui");
         return;
@@ -328,15 +303,11 @@ void KernalSystemAppManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilit
         return;
     }
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (!ams) {
-        HILOG_ERROR("System UI on scheduler died: failed to get ams.");
-        return;
-    }
+    CHECK_POINTER(ams);
+
     auto handler = ams->GetEventHandler();
-    if (!handler) {
-        HILOG_ERROR("System UI on scheduler died: failed to get ams handler.");
-        return;
-    }
+    CHECK_POINTER(handler);
+
     HILOG_INFO("System UI on scheduler died: '%{public}s'", abilityRecord->GetAbilityInfo().name.c_str());
     std::string name = abilityRecord->GetAbilityInfo().name;
     abilityRecord->SetAbilityState(AbilityState::INITIAL);
@@ -356,21 +327,13 @@ void KernalSystemAppManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     }
 
     auto abilityRecord = GetAbilityRecordByEventId(eventId);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("System UI on time out event: ability record is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
 
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (!ams) {
-        HILOG_ERROR("System UI on time out event: failed to get ams.");
-        return;
-    }
+    CHECK_POINTER(ams);
+
     auto handler = ams->GetEventHandler();
-    if (!handler) {
-        HILOG_ERROR("System UI on time out event: failed to get ams handler.");
-        return;
-    }
+    CHECK_POINTER(handler);
 
     switch (msgId) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG:

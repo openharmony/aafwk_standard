@@ -25,8 +25,9 @@ ohos_unittest("kernal_system_app_mgr_test") {
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/ability_scheduler_mock",
     "//foundation/aafwk/standard/services/abilitymgr/include/",
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/include/bundlemgr",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/include",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/include",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
   ]
 
   sources = [ "kernal_system_app_manager_test.cpp" ]

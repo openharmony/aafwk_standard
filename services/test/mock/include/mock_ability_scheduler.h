@@ -35,6 +35,7 @@ public:
     MOCK_METHOD1(ScheduleSaveAbilityState, void(PacMap &outState));
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &inState));
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
+    MOCK_METHOD0(DisplayUnlockMissionMessage, void());
 
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {

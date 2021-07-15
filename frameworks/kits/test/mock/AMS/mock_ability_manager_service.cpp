@@ -170,7 +170,7 @@ int MockAbilityManagerService::StopServiceAbility(const Want &want)
 }
 
 int MockAbilityManagerService::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList)
+    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
     return 0;
 }
@@ -208,5 +208,31 @@ ErrCode MockAbilityManagerService::ReleaseDataAbility(
     }
     return -1;
 }
+
+int MockAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
+{
+    return 0;
+}
+
+bool MockAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
+{
+    return true;
+}
+
+int MockAbilityManagerService::CompelVerifyPermission(
+    const std::string &permission, int pid, int uid, std::string &message)
+{
+    return 0;
+}
+
+int MockAbilityManagerService::PowerOff()
+{
+    return 0;
+}
+int MockAbilityManagerService::PowerOn()
+{
+    return 0;
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

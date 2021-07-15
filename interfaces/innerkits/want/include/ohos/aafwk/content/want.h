@@ -755,7 +755,7 @@ public:
     // entity definition
     static const std::string ENTITY_HOME;
     static const std::string ENTITY_VIDEO;
-    static const std::string FLAG_HW_HOME_INTENT_FROM_SYSTEM;
+    static const std::string FLAG_HOME_INTENT_FROM_SYSTEM;
 
     // flag definition
     static unsigned int FLAG_ABILITY_NEW_MISSION;
