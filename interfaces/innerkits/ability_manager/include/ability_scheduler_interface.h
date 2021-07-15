@@ -196,6 +196,12 @@ public:
      */
     virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) = 0;
 
+    /**
+     * @brief Displays a system-defined message to the user, prompting the user how to exit the lock mission mode.
+     *
+     */
+    virtual void DisplayUnlockMissionMessage() = 0;
+
     enum {
         // ipc id for scheduling ability to a state of life cycle
         SCHEDULE_ABILITY_TRANSACTION = 0,
@@ -247,6 +253,9 @@ public:
 
         // ipc id for scheduling BatchInsert​
         SCHEDULE_BATCHINSERT,
+
+        // ipc id for display unlock message
+        DISPLAY_UNLOCK_MISSION_MESSAGE
     };
 };
 }  // namespace AAFwk

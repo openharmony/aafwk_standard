@@ -434,16 +434,17 @@ public:
     static Skills *Unmarshalling(Parcel &parcel);
 
 private:
-    static const int NO_MATCH_TYPE = -1;
-    static const int NO_MATCH_DATA = -2;
-    static const int NO_MATCH_ACTION = -3;
-    static const int NO_MATCH_CATEGORY = -4;
-    static const int MATCH_CATEGORY_EMPTY = 0x0100000;
-    static const int MATCH_CATEGORY_SCHEME = 0x0200000;
-    static const int MATCH_CATEGORY_PATH = 0x0500000;
-    static const int MATCH_CATEGORY_SCHEME_SPECIFIC_PART = 0x0580000;
-    static const int MATCH_CATEGORY_TYPE = 0x0600000;
-    static const int MATCH_ADJUSTMENT_NORMAL = 0x8000;
+    static const int DISMATCH_TYPE = -101;
+    static const int DISMATCH_DATA = -102;
+    static const int DISMATCH_ACTION = -103;
+    static const int DISMATCH_ENTITIES = -104;
+
+    static const int RESULT_EMPTY = 0x10000;
+    static const int RESULT_SCHEME = 0x20000;
+    static const int RESULT_PATH = 0x50000;
+    static const int RESULT_SCHEME_SPECIFIC_PART = 0x58000;
+    static const int RESULT_TYPE = 0x60000;
+    static const int RESULT_NORMAL = 0x800;
 
     std::vector<std::string> entities_;
     std::vector<std::string> actions_;

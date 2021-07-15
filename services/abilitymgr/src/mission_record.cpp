@@ -16,6 +16,7 @@
 #include "mission_record.h"
 
 #include "hilog_wrapper.h"
+#include "ability_util.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -64,11 +65,8 @@ std::shared_ptr<AbilityRecord> MissionRecord::GetTopAbilityRecord() const
 
 std::shared_ptr<AbilityRecord> MissionRecord::GetAbilityRecordByToken(const sptr<IRemoteObject> &token) const
 {
-    std::shared_ptr<AbilityRecord> abilityToFind = Token::GetAbilityRecordByToken(token);
-    if (abilityToFind == nullptr) {
-        HILOG_ERROR("ability in token is null");
-        return nullptr;
-    }
+    auto abilityToFind = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityToFind, nullptr);
 
     auto isExist = [targetAbility = abilityToFind](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability == nullptr) {
@@ -111,10 +109,7 @@ std::shared_ptr<AbilityRecord> MissionRecord::GetAbilityRecordByCaller(
 
 void MissionRecord::AddAbilityRecordToTop(std::shared_ptr<AbilityRecord> ability)
 {
-    if (ability == nullptr) {
-        HILOG_ERROR("ability is null");
-        return;
-    }
+    CHECK_POINTER(ability);
     auto isExist = [targetAbility = ability](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability == nullptr) {
             return false;
@@ -129,10 +124,7 @@ void MissionRecord::AddAbilityRecordToTop(std::shared_ptr<AbilityRecord> ability
 
 bool MissionRecord::RemoveAbilityRecord(std::shared_ptr<AbilityRecord> ability)
 {
-    if (ability == nullptr) {
-        HILOG_ERROR("ability is null");
-        return false;
-    }
+    CHECK_POINTER_RETURN_BOOL(ability);
     for (auto iter = abilities_.begin(); iter != abilities_.end(); iter++) {
         if ((*iter) == ability) {
             abilities_.erase(iter);
@@ -200,12 +192,12 @@ bool MissionRecord::IsTopAbilityRecordByName(const std::string &abilityName)
 
 void MissionRecord::SetIsLauncherCreate()
 {
-    isLuncherCreate_ = true;
+    isLauncherCreate_ = true;
 }
 
 bool MissionRecord::IsLauncherCreate() const
 {
-    return isLuncherCreate_;
+    return isLauncherCreate_;
 }
 
 void MissionRecord::SetPreMissionRecord(const std::shared_ptr<MissionRecord> &record)
@@ -226,6 +218,20 @@ bool MissionRecord::IsExistAbilityRecord(int32_t id)
         }
     }
     return false;
+}
+
+void MissionRecord::SetParentStack(const std::shared_ptr<MissionStack> &parent, int stackId)
+{
+    CHECK_POINTER(parent);
+    parentMissionStack_ = parent;
+    for (auto &it : abilities_) {
+        it->SetMissionStackId(stackId);
+    }
+}
+
+std::shared_ptr<MissionStack> MissionRecord::GetParentStack() const
+{
+    return parentMissionStack_.lock();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

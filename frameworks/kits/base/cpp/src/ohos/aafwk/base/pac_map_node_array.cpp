@@ -74,7 +74,14 @@ static void PacMapSetArray(const AAFwk::InterfaceID &id, const std::vector<T1> &
 template <typename T1, typename T2, typename T3>
 static void PacMapGetArray(const sptr<AAFwk::IArray> &ao, std::vector<T1> &array)
 {
-    auto func = [&](AAFwk::IInterface *object) { array.emplace_back(T2::Unbox(T3::Query(object))); };
+    auto func = [&](AAFwk::IInterface *object) {
+        if (object != nullptr) {
+            T3 *value = T3::Query(object);
+            if (value != nullptr) {
+                array.push_back(T2::Unbox(value));
+            }
+        }
+    };
     AAFwk::Array::ForEach(ao.GetRefPtr(), func);
 }
 
@@ -414,8 +421,10 @@ bool PacMapNodeTypeArray::MarshallingArrayString(Parcel &parcel) const
 {
     std::vector<std::u16string> array;
     auto func = [&](AAFwk::IInterface *object) {
-        std::string s = AAFwk::String::Unbox(AAFwk::IString::Query(object));
-        array.push_back(Str8ToStr16(s));
+        if (AAFwk::IString::Query(object) != nullptr) {
+            std::string s = AAFwk::String::Unbox(AAFwk::IString::Query(object));
+            array.push_back(Str8ToStr16(s));
+        }
     };
     AAFwk::Array::ForEach(value_, func);
 
@@ -555,7 +564,7 @@ bool PacMapNodeTypeArray::UnmarshallingArrayByte(Parcel &parcel)
     READ_PARCEL_AND_RETURN_FALSE_IF_FAIL_ARRAY(Int8Vector, parcel, &value);
 
     for (int i = 0; i < (int)value.size(); i++) {
-        byteValue.emplace_back(value[i]);
+        byteValue.push_back(value[i]);
     }
     PutByteValueArray(byteValue);
     return true;
@@ -568,7 +577,7 @@ bool PacMapNodeTypeArray::UnmarshallingArrayBoolean(Parcel &parcel)
     READ_PARCEL_AND_RETURN_FALSE_IF_FAIL_ARRAY(Int8Vector, parcel, &value);
 
     for (int i = 0; i < (int)value.size(); i++) {
-        boolValue.emplace_back((value[i] == 0) ? false : true);
+        boolValue.push_back((value[i] == 0) ? false : true);
     }
     PutBooleanValueArray(boolValue);
     return true;
@@ -668,7 +677,7 @@ bool PacMapNodeTypeArray::ReadLongVector(Parcel &parcel, std::vector<long> &valu
         const uint8_t *pdata = parcel.ReadBuffer(sizeof(long));
         if (pdata != nullptr) {
             pvalue_ = (long *)pdata;
-            value.emplace_back(*pvalue_);
+            value.push_back(*pvalue_);
         } else {
             return false;
         }

@@ -29,6 +29,7 @@
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
+using namespace testing;
 
 namespace OHOS {
 namespace AAFwk {
@@ -41,28 +42,93 @@ public:
     Want CreateWant(const std::string &entity);
     AbilityInfo CreateAbilityInfo(const std::string &name, const std::string &appName, const std::string &bundleName);
     ApplicationInfo CreateAppInfo(const std::string &appName, const std::string &bundleName);
-
+    AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
+        const std::string &appName, const std::string &bundleName);
+    void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
     std::shared_ptr<AbilityStackManager> stackManager_;
 };
 
 void AbilityStackModuleTest::SetUpTestCase(void)
-{
-    // OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
-}
+{}
 
 void AbilityStackModuleTest::TearDownTestCase(void)
-{
-    // OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
-    // OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-}
+{}
 
 void AbilityStackModuleTest::SetUp(void)
 {
-    stackManager_ = std::make_shared<AbilityStackManager>(0);
+    stackManager_ = std::make_shared<AbilityStackManager>(100);
 }
 
 void AbilityStackModuleTest::TearDown(void)
 {}
+
+AbilityRequest AbilityStackModuleTest::GenerateAbilityRequest(const std::string &deviceName,
+    const std::string &abilityName, const std::string &appName, const std::string &bundleName)
+{
+    ElementName element(deviceName, abilityName, bundleName);
+    Want want;
+    want.SetElement(element);
+
+    AbilityInfo abilityInfo;
+    ApplicationInfo appinfo;
+
+    abilityInfo.name = abilityName;
+    abilityInfo.bundleName = bundleName;
+    abilityInfo.applicationName = appName;
+    abilityInfo.applicationInfo.bundleName = bundleName;
+    abilityInfo.applicationInfo.name = appName;
+
+    makeScene(abilityName, bundleName, abilityInfo, want);
+
+    appinfo = abilityInfo.applicationInfo;
+    AbilityRequest abilityRequest;
+    abilityRequest.want = want;
+    abilityRequest.abilityInfo = abilityInfo;
+    abilityRequest.appInfo = appinfo;
+
+    return abilityRequest;
+}
+
+void AbilityStackModuleTest::makeScene(
+    const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want)
+{
+    if (bundleName == "com.ix.hiworld") {
+        std::string entity = Want::ENTITY_HOME;
+        want.AddEntity(entity);
+        abilityInfo.type = AbilityType::PAGE;
+        abilityInfo.applicationInfo.isLauncherApp = true;
+        abilityInfo.process = "p";
+    }
+
+    if (bundleName == "com.ix.hiMusic") {
+        abilityInfo.type = AbilityType::PAGE;
+        abilityInfo.applicationInfo.isLauncherApp = false;
+
+        if (abilityName == "MusicAbility") {
+            abilityInfo.process = "p1";
+            abilityInfo.launchMode = LaunchMode::STANDARD;
+        }
+        if (abilityName == "MusicTopAbility") {
+            abilityInfo.process = "p1";
+            abilityInfo.launchMode = LaunchMode::SINGLETOP;
+        }
+        if (abilityName == "MusicSAbility") {
+            abilityInfo.process = "p2";
+            abilityInfo.launchMode = LaunchMode::SINGLETON;
+        }
+    }
+
+    if (bundleName == "com.ix.hiRadio") {
+        abilityInfo.type = AbilityType::PAGE;
+        abilityInfo.process = "p3";
+        if (abilityName == "RadioAbility") {
+            abilityInfo.launchMode = LaunchMode::STANDARD;
+        }
+        if (abilityName == "RadioTopAbility") {
+            abilityInfo.launchMode = LaunchMode::SINGLETON;
+        }
+    }
+}
 
 Want AbilityStackModuleTest::CreateWant(const std::string &entity)
 {
@@ -551,8 +617,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_009, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_010, TestSize.Level1)
 {
-    GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_013 start";
-
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
@@ -577,8 +641,128 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_010, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(1);
     stackManager_->OnAbilityRequestDone(
         abilityRecord->GetToken(), static_cast<int32_t>(OHOS::AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND));
-
-    GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_013 end";
 }
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RemoveStack
+ * SubFunction: NA
+ * FunctionPoints: RemoveStack
+ * EnvConditions: NA
+ * CaseDescription: Succeeded to verify RemoveStack
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
+{
+
+    AbilityRequest launcherAbilityRequest_ =
+        GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    stackManager_->Init();
+    stackManager_->StartAbility(launcherAbilityRequest_);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(firstTopAbility);
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto transactionDoneCaller = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteInactive(firstTopAbility);
+    };
+
+    auto transactionDoneCaller2 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteBackground(firstTopAbility);
+    };
+
+    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
+
+    firstTopAbility->SetScheduler(scheduler);
+    // EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(2))
+        .WillOnce(testing::Invoke(transactionDoneCaller))
+        .WillOnce(testing::Invoke(transactionDoneCaller2));
+
+    int result = stackManager_->PowerOff();
+    EXPECT_EQ(ERR_OK, result);
+
+    EXPECT_NE(stackManager_->powerStorage_, nullptr);
+    EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState());
+
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    EXPECT_TRUE(recordVector.empty());
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RemoveStack
+ * SubFunction: NA
+ * FunctionPoints: RemoveStack
+ * EnvConditions: NA
+ * CaseDescription: Succeeded to verify RemoveStack
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    stackManager_->StartAbility(launcherAbilityRequest_);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    stackManager_->StartAbility(musicAbilityRequest_);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+
+    auto transactionDoneCaller = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteBackground(firstTopAbility);
+    };
+
+    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
+    firstTopAbility->SetScheduler(scheduler);
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(1))
+        .WillOnce(testing::Invoke(transactionDoneCaller));
+
+    auto transactionDoneCaller2_1 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteInactive(secondTopAbility);
+    };
+
+    auto transactionDoneCaller2_2 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteBackground(secondTopAbility);
+    };
+
+    auto transactionDoneCaller2_3 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteActive(secondTopAbility);
+    };
+
+    OHOS::sptr<MockAbilityScheduler> scheduler2(new MockAbilityScheduler());
+    secondTopAbility->SetScheduler(scheduler2);
+    EXPECT_CALL(*scheduler2, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(3))
+        .WillOnce(testing::Invoke(transactionDoneCaller2_1))
+        .WillOnce(testing::Invoke(transactionDoneCaller2_2))
+        .WillOnce(testing::Invoke(transactionDoneCaller2_3));
+
+    int result = stackManager_->PowerOff();
+    EXPECT_EQ(ERR_OK, result);
+
+    EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState());
+    EXPECT_EQ(OHOS::AAFwk::BACKGROUND, secondTopAbility->GetAbilityState());
+
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    int size = recordVector.size();
+    EXPECT_EQ(size, 1);
+
+    for (const auto &it : recordVector) {
+        EXPECT_EQ(it.ability.lock()->GetRecordId(), firstTopAbility->GetRecordId());
+    }
+
+    result = stackManager_->PowerOn();
+    EXPECT_EQ(ERR_OK, result);
+    // mocke appmgr caller
+    usleep(500);
+    stackManager_->OnAbilityRequestDone(secondTopAbility->GetToken(), 2);
+    // EXPECT_EQ(OHOS::AAFwk::INACTIVE, firstTopAbility->GetAbilityState());
+    EXPECT_EQ(OHOS::AAFwk::ACTIVE, secondTopAbility->GetAbilityState());
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

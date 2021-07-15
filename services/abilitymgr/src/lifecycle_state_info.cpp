@@ -26,6 +26,7 @@ bool LifeCycleStateInfo::ReadFromParcel(Parcel &parcel)
     int32_t stateData = parcel.ReadInt32();
     state = static_cast<AbilityLifeCycleState>(stateData);
     missionId = parcel.ReadInt32();
+    stackId = parcel.ReadInt32();
     std::unique_ptr<CallerInfo> callerInfo(parcel.ReadParcelable<CallerInfo>());
     if (callerInfo == nullptr) {
         return false;
@@ -60,6 +61,10 @@ bool LifeCycleStateInfo::Marshalling(Parcel &parcel) const
     }
     // write missionId
     if (!parcel.WriteInt32(missionId)) {
+        return false;
+    }
+    // write stackId
+    if (!parcel.WriteInt32(stackId)) {
         return false;
     }
     // write caller

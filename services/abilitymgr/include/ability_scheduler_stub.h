@@ -54,6 +54,7 @@ private:
     int GetTypeInner(MessageParcel &data, MessageParcel &reply);
     int ReloadInner(MessageParcel &data, MessageParcel &reply);
     int BatchInsertInner(MessageParcel &data, MessageParcel &reply);
+    int DisplayUnlockMissionMessageInner(MessageParcel &data, MessageParcel &reply);
     using RequestFuncType = int (AbilitySchedulerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

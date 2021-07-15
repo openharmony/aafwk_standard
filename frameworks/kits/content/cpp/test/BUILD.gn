@@ -31,6 +31,21 @@ config("module_private_config") {
   ]
 }
 
+config("module_private_want_param_wrapper_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "//utils/native/base/include",
+    "//sdk/appexecfwk/appexecfwk_base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include",
+    "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
+  ]
+
+  defines = [
+    "APP_LOG_TAG = \"WantUnitTest\"",
+    "LOG_DOMAIN = 0xD002210",
+  ]
+}
+
 ohos_unittest("intent_parcelable_test") {
   module_out_path = module_output_path
   sources = []
@@ -243,6 +258,7 @@ ohos_unittest("want_params_test") {
   module_out_path = module_output_path
   sources = [
     "../src/ohos/aafwk/content/want_params.cpp",
+    "../src/ohos/aafwk/content/want_params_wrapper.cpp",
     "unittest/common/want_params_test.cpp",
   ]
 
@@ -253,6 +269,26 @@ ohos_unittest("want_params_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [ "appexecfwk_standard:appexecfwk_base" ]
+}
+
+ohos_unittest("want_params_wrapper_test") {
+  module_out_path = module_output_path
+  sources = [
+    "../src/ohos/aafwk/content/want_params.cpp",
+    "../src/ohos/aafwk/content/want_params_wrapper.cpp",
+    "unittest/common/want_params_wrapper_test.cpp",
+  ]
+
+  configs = [ ":module_private_want_param_wrapper_config" ]
+
+  deps = [
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -304,6 +340,7 @@ group("unittest") {
     ":patterns_matcher_test",
     ":skills_test",
     ":want_params_test",
+    ":want_params_wrapper_test",
     ":want_test",
   ]
 }

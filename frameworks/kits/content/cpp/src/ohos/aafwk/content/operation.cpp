@@ -222,13 +222,15 @@ bool Operation::operator==(const Operation &other) const
 
 Operation &Operation::operator=(const Operation &other)
 {
-    uri_ = other.uri_;
-    flags_ = other.flags_;
-    action_ = other.action_;
-    deviceId_ = other.deviceId_;
-    entities_ = other.entities_;
-    bundleName_ = other.bundleName_;
-    abilityName_ = other.abilityName_;
+    if (this != &other) {
+        uri_ = other.uri_;
+        flags_ = other.flags_;
+        action_ = other.action_;
+        deviceId_ = other.deviceId_;
+        entities_ = other.entities_;
+        bundleName_ = other.bundleName_;
+        abilityName_ = other.abilityName_;
+    }
     return *this;
 }
 

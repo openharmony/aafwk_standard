@@ -53,6 +53,14 @@ public:
 
     virtual AppMgrResultCode KillApplication(const std::string &bundleName);
 
+    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
+
+    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
+
+    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
+
+    virtual void AbilityAttachTimeOut(const sptr<IRemoteObject> &token);
+
     static int loadAbilityCount;
     static int terminateAbilityCount;
     static int backgroundCount;

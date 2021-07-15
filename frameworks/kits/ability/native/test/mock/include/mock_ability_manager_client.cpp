@@ -19,18 +19,18 @@
 
 namespace OHOS {
 namespace AAFwk {
-std::shared_ptr<AbilityManagerClient> AbilityManagerClient::instance_ = nullptr;
-std::mutex AbilityManagerClient::mutex_;
+std::shared_ptr<AbilityManagerClient> mockInstance_ = nullptr;
+std::mutex mockMutex_;
 
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
 {
-    if (instance_ == nullptr) {
-        std::lock_guard<std::mutex> lock_l(mutex_);
-        if (instance_ == nullptr) {
-            instance_ = std::make_shared<AbilityManagerClient>();
+    if (mockInstance_ == nullptr) {
+        std::lock_guard<std::mutex> lock_l(mockMutex_);
+        if (mockInstance_ == nullptr) {
+            mockInstance_ = std::make_shared<AbilityManagerClient>();
         }
     }
-    return instance_;
+    return mockInstance_;
 }
 
 AbilityManagerClient::AbilityManagerClient()

@@ -27,10 +27,40 @@
 #include "ohos/aafwk/base/float_wrapper.h"
 #include "ohos/aafwk/base/double_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
+#include "want_params_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
+std::string WantParams::GetStringByType(const sptr<IInterface> iIt, int typeId)
+{
+    if (typeId == VALUE_TYPE_BOOLEAN) {
+        return static_cast<Boolean *>(IBoolean::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_BYTE) {
+        return static_cast<Byte *>(IByte::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_CHAR) {
+        return static_cast<Char *>(IChar::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_SHORT) {
+        return static_cast<Short *>(IShort::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_INT) {
+        return static_cast<Integer *>(IInteger::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_LONG) {
+        return static_cast<Long *>(ILong::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_FLOAT) {
+        return static_cast<Float *>(IFloat::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_DOUBLE) {
+        return static_cast<Double *>(IDouble::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_STRING) {
+        return static_cast<String *>(IString::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_ARRAY) {
+        return static_cast<Array *>(IArray::Query(iIt))->ToString();
+    } else {
+        return "";
+    }
+    return "";
+}
+template <typename T1, typename T2, typename T3>
+static void SetNewArray(const AAFwk::InterfaceID &id, AAFwk::IArray *orgIArray, sptr<AAFwk::IArray> &ao);
 /**
  * @description: A constructor used to create an IntentParams instance by using the parameters of an existing
  * IntentParams object.
@@ -39,10 +69,75 @@ namespace AAFwk {
 WantParams::WantParams(const WantParams &wantParams)
 {
     params_.clear();
-
-    for (auto it : wantParams.params_) {
-        params_.insert(make_pair(it.first, it.second));
+    NewParams(wantParams, *this);
+}
+// inner use function
+bool WantParams::NewParams(const WantParams &source, WantParams &dest)
+{
+    // Deep copy
+    for (auto it = source.params_.begin(); it != source.params_.end(); it++) {
+        sptr<IInterface> o = it->second;
+        if (IString::Query(o) != nullptr) {
+            dest.params_[it->first] = String::Box(String::Unbox(IString::Query(o)));
+        } else if (IBoolean::Query(o) != nullptr) {
+            dest.params_[it->first] = Boolean::Box(Boolean::Unbox(IBoolean::Query(o)));
+        } else if (IByte::Query(o) != nullptr) {
+            dest.params_[it->first] = Byte::Box(Byte::Unbox(IByte::Query(o)));
+        } else if (IChar::Query(o) != nullptr) {
+            dest.params_[it->first] = Char::Box(Char::Unbox(IChar::Query(o)));
+        } else if (IShort::Query(o) != nullptr) {
+            dest.params_[it->first] = Short::Box(Short::Unbox(IShort::Query(o)));
+        } else if (IInteger::Query(o) != nullptr) {
+            dest.params_[it->first] = Integer::Box(Integer::Unbox(IInteger::Query(o)));
+        } else if (ILong::Query(o) != nullptr) {
+            dest.params_[it->first] = Long::Box(Long::Unbox(ILong::Query(o)));
+        } else if (IFloat::Query(o) != nullptr) {
+            dest.params_[it->first] = Float::Box(Float::Unbox(IFloat::Query(o)));
+        } else if (IDouble::Query(o) != nullptr) {
+            dest.params_[it->first] = Double::Box(Double::Unbox(IDouble::Query(o)));
+        } else if (IWantParams::Query(o) != nullptr) {
+            WantParams newDest(WantParamWrapper::Unbox(IWantParams::Query(o)));
+            dest.params_[it->first] = WantParamWrapper::Box(newDest);
+        } else if (IArray::Query(o) != nullptr) {
+            sptr<IArray> destAO = nullptr;
+            if (!NewArrayData(IArray::Query(o), destAO)) {
+                continue;
+            }
+            dest.params_[it->first] = destAO;
+        }
     }
+    return true;
+}  // namespace AAFwk
+// inner use
+bool WantParams::NewArrayData(IArray *source, sptr<IArray> &dest)
+{
+    if (Array::IsBooleanArray(source)) {
+        SetNewArray<bool, AAFwk::Boolean, AAFwk::IBoolean>(AAFwk::g_IID_IBoolean, source, dest);
+    } else if (Array::IsCharArray(source)) {
+        SetNewArray<char, AAFwk::Char, AAFwk::IChar>(AAFwk::g_IID_IChar, source, dest);
+    } else if (Array::IsByteArray(source)) {
+        SetNewArray<byte, AAFwk::Byte, AAFwk::IByte>(AAFwk::g_IID_IByte, source, dest);
+    } else if (Array::IsShortArray(source)) {
+        SetNewArray<short, AAFwk::Short, AAFwk::IShort>(AAFwk::g_IID_IShort, source, dest);
+    } else if (Array::IsIntegerArray(source)) {
+        SetNewArray<int, AAFwk::Integer, AAFwk::IInteger>(AAFwk::g_IID_IInteger, source, dest);
+    } else if (Array::IsLongArray(source)) {
+        SetNewArray<long, AAFwk::Long, AAFwk::ILong>(AAFwk::g_IID_ILong, source, dest);
+    } else if (Array::IsFloatArray(source)) {
+        SetNewArray<float, AAFwk::Float, AAFwk::IFloat>(AAFwk::g_IID_IFloat, source, dest);
+    } else if (Array::IsDoubleArray(source)) {
+        SetNewArray<double, AAFwk::Double, AAFwk::IDouble>(AAFwk::g_IID_IDouble, source, dest);
+    } else if (Array::IsStringArray(source)) {
+        SetNewArray<std::string, AAFwk::String, AAFwk::IString>(AAFwk::g_IID_IString, source, dest);
+    } else {
+        return false;
+    }
+
+    if (dest == nullptr) {
+        return false;
+    }
+
+    return true;
 }
 /**
  * @description: A WantParams used to
@@ -51,9 +146,122 @@ WantParams::WantParams(const WantParams &wantParams)
  */
 WantParams &WantParams::operator=(const WantParams &other)
 {
-    params_ = other.params_;
+    if (this != &other) {
+        params_.clear();
+        NewParams(other, *this);
+    }
     return *this;
 }
+bool WantParams::operator==(const WantParams &other)
+{
+    if (this->params_.size() != other.params_.size()) {
+        return false;
+    }
+    for (auto itthis : this->params_) {
+        auto itother = other.params_.find(itthis.first);
+        if (itother == other.params_.end()) {
+            return false;
+        }
+        if (!CompareInterface(itother->second, itthis.second, WantParams::GetDataType(itother->second))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+#define GETWRAPDATATYPE(id, value, ret)                        \
+    do {                                                       \
+        if (value != nullptr && id::Query(value) != nullptr) { \
+            return ret;                                        \
+        } else {                                               \
+            break;                                             \
+        }                                                      \
+    } while (0)
+
+#define GETSPTRBYTYPE(type, typeid, typeClass, str) \
+    do {                                            \
+        if (type == typeid) {                       \
+            return typeClass::Parse(str);           \
+        }                                           \
+    } while (0)
+
+int WantParams::GetDataType(const sptr<IInterface> iIt)
+{
+    GETWRAPDATATYPE(IBoolean, iIt, VALUE_TYPE_BOOLEAN);
+    GETWRAPDATATYPE(IByte, iIt, VALUE_TYPE_BYTE);
+    GETWRAPDATATYPE(IChar, iIt, VALUE_TYPE_CHAR);
+    GETWRAPDATATYPE(IShort, iIt, VALUE_TYPE_SHORT);
+    GETWRAPDATATYPE(IInteger, iIt, VALUE_TYPE_INT);
+    GETWRAPDATATYPE(ILong, iIt, VALUE_TYPE_LONG);
+    GETWRAPDATATYPE(IFloat, iIt, VALUE_TYPE_FLOAT);
+    GETWRAPDATATYPE(IDouble, iIt, VALUE_TYPE_DOUBLE);
+    GETWRAPDATATYPE(IString, iIt, VALUE_TYPE_STRING);
+    GETWRAPDATATYPE(IArray, iIt, VALUE_TYPE_ARRAY);
+    GETWRAPDATATYPE(IWantParams, iIt, VALUE_TYPE_WANTPARAMS);
+    return VALUE_TYPE_NULL;
+}
+
+sptr<IInterface> WantParams::GetInterfaceByType(int typeId, const std::string &value)
+{
+    GETSPTRBYTYPE(VALUE_TYPE_BOOLEAN, typeId, Boolean, value);
+    GETSPTRBYTYPE(VALUE_TYPE_BYTE, typeId, Byte, value);
+    GETSPTRBYTYPE(VALUE_TYPE_CHAR, typeId, Char, value);
+    GETSPTRBYTYPE(VALUE_TYPE_SHORT, typeId, Short, value);
+    GETSPTRBYTYPE(VALUE_TYPE_INT, typeId, Integer, value);
+    GETSPTRBYTYPE(VALUE_TYPE_LONG, typeId, Long, value);
+    GETSPTRBYTYPE(VALUE_TYPE_FLOAT, typeId, Float, value);
+    GETSPTRBYTYPE(VALUE_TYPE_DOUBLE, typeId, Double, value);
+    GETSPTRBYTYPE(VALUE_TYPE_STRING, typeId, String, value);
+    GETSPTRBYTYPE(VALUE_TYPE_ARRAY, typeId, Array, value);
+    return nullptr;
+}
+
+bool WantParams::CompareInterface(const sptr<IInterface> iIt1, const sptr<IInterface> iIt2, int typeId)
+{
+    bool flag = false;
+    switch (typeId) {
+        case VALUE_TYPE_BOOLEAN:
+            flag =
+                static_cast<Boolean *>(IBoolean::Query(iIt1))->Equals(*(static_cast<Boolean *>(IBoolean::Query(iIt1))));
+            break;
+        case VALUE_TYPE_BYTE:
+            flag = static_cast<Byte *>(IByte::Query(iIt1))->Equals(*(static_cast<Byte *>(IByte::Query(iIt1))));
+            break;
+        case VALUE_TYPE_CHAR:
+            flag = static_cast<Char *>(IChar::Query(iIt1))->Equals(*(static_cast<Char *>(IChar::Query(iIt1))));
+            break;
+        case VALUE_TYPE_SHORT:
+            flag = static_cast<Short *>(IShort::Query(iIt1))->Equals(*(static_cast<Short *>(IShort::Query(iIt1))));
+            break;
+        case VALUE_TYPE_INT:
+            flag =
+                static_cast<Integer *>(IInteger::Query(iIt1))->Equals(*(static_cast<Integer *>(IInteger::Query(iIt1))));
+            break;
+        case VALUE_TYPE_LONG:
+            flag = static_cast<Long *>(ILong::Query(iIt1))->Equals(*(static_cast<Long *>(ILong::Query(iIt1))));
+            break;
+        case VALUE_TYPE_FLOAT:
+            flag = static_cast<Float *>(IFloat::Query(iIt1))->Equals(*(static_cast<Float *>(IFloat::Query(iIt1))));
+            break;
+        case VALUE_TYPE_DOUBLE:
+            flag = static_cast<Double *>(IDouble::Query(iIt1))->Equals(*(static_cast<Double *>(IDouble::Query(iIt1))));
+            break;
+        case VALUE_TYPE_STRING:
+            flag = static_cast<String *>(IString::Query(iIt1))->Equals(*(static_cast<String *>(IString::Query(iIt1))));
+            break;
+        case VALUE_TYPE_ARRAY:
+            flag = static_cast<Array *>(IArray::Query(iIt1))->Equals(*(static_cast<Array *>(IArray::Query(iIt1))));
+            break;
+        case VALUE_TYPE_WANTPARAMS:
+            flag = static_cast<WantParamWrapper *>(IWantParams::Query(iIt1))
+                       ->Equals(*(static_cast<WantParamWrapper *>(IWantParams::Query(iIt1))));
+            break;
+        default:
+            break;
+    }
+    return flag;
+}
+
 /**
  * @description: Sets a parameter in key-value pair format.
  * @param key Indicates the key matching the parameter.
@@ -159,7 +367,14 @@ bool WantParams::WriteToParcelBool(Parcel &parcel, sptr<IInterface> &o) const
     }
     return parcel.WriteInt8(value);
 }
-
+bool WantParams::WriteToParcelWantParams(Parcel &parcel, sptr<IInterface> &o) const
+{
+    WantParams value = WantParamWrapper::Unbox(IWantParams::Query(o));
+    if (!parcel.WriteInt32(VALUE_TYPE_WANTPARAMS)) {
+        return false;
+    }
+    return parcel.WriteString16(Str8ToStr16(static_cast<WantParamWrapper *>(IWantParams::Query(o))->ToString()));
+}
 bool WantParams::WriteToParcelByte(Parcel &parcel, sptr<IInterface> &o) const
 {
     byte value = Byte::Unbox(IByte::Query(o));
@@ -241,6 +456,8 @@ bool WantParams::WriteMarshalling(Parcel &parcel, sptr<IInterface> &o) const
         return WriteToParcelLong(parcel, o);
     } else if (IFloat::Query(o) != nullptr) {
         return WriteToParcelFloat(parcel, o);
+    } else if (IWantParams::Query(o) != nullptr) {
+        return WriteToParcelWantParams(parcel, o);
     } else if (IDouble::Query(o) != nullptr) {
         return WriteToParcelDouble(parcel, o);
     } else {
@@ -301,8 +518,43 @@ static bool SetArray(const InterfaceID &id, const std::vector<T1> &value, sptr<I
 template <typename T1, typename T2, typename T3>
 static void FillArray(IArray *ao, std::vector<T1> &array)
 {
-    auto func = [&](IInterface *object) { array.push_back(T2::Unbox(T3::Query(object))); };
+    auto func = [&](IInterface *object) {
+        if (object != nullptr) {
+            T3 *value = T3::Query(object);
+            if (value != nullptr) {
+                array.push_back(T2::Unbox(value));
+            }
+        }
+    };
     Array::ForEach(ao, func);
+}
+// inner use template function
+template <typename T1, typename T2, typename T3>
+static void SetNewArray(const AAFwk::InterfaceID &id, AAFwk::IArray *orgIArray, sptr<AAFwk::IArray> &ao)
+{
+    if (orgIArray == nullptr) {
+        return;
+    }
+    std::vector<T1> array;
+    auto func = [&](IInterface *object) {
+        if (object != nullptr) {
+            T3 *value = T3::Query(object);
+            if (value != nullptr) {
+                array.push_back(T2::Unbox(value));
+            }
+        }
+    };
+    Array::ForEach(orgIArray, func);
+
+    typename std::vector<T1>::size_type size = array.size();
+    if (size > 0) {
+        ao = new (std::nothrow) AAFwk::Array(size, id);
+        if (ao != nullptr) {
+            for (typename std::vector<T1>::size_type i = 0; i < size; i++) {
+                ao->Set(i, T2::Box(array[i]));
+            }
+        }
+    }
 }
 
 bool WantParams::WriteArrayToParcelString(Parcel &parcel, IArray *ao) const
@@ -660,7 +912,15 @@ bool WantParams::ReadFromParcelInt(Parcel &parcel, const std::string &key)
         return false;
     }
 }
-
+bool WantParams::ReadFromParcelWantParamWrapper(Parcel &parcel, const std::string &key)
+{
+    std::u16string value = parcel.ReadString16();
+    sptr<IInterface> intf = WantParamWrapper::Parse(Str16ToStr8(value));
+    if (intf) {
+        SetParam(key, intf);
+    }
+    return true;
+}
 bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
 {
     int64_t value;
@@ -724,6 +984,8 @@ bool WantParams::ReadFromParcelParam(Parcel &parcel, const std::string &key, int
             return ReadFromParcelFloat(parcel, key);
         case VALUE_TYPE_DOUBLE:
             return ReadFromParcelDouble(parcel, key);
+        case VALUE_TYPE_WANTPARAMS:
+            return ReadFromParcelWantParamWrapper(parcel, key);
         case VALUE_TYPE_NULL:
             break;
         default: {

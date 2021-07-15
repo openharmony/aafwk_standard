@@ -18,6 +18,8 @@
 
 #include "context_container.h"
 #include "data_ability_helper.h"
+#include "distributed_sched_interface.h"
+#include "distributed_sched_proxy.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -445,7 +447,7 @@ public:
      */
     virtual void RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode) override;
 
-    /*
+    /**
      * @brief Deletes the specified private file associated with the application.
      *
      * @param fileName Indicates the name of the file to delete. The file name cannot contain path separators.
@@ -459,9 +461,9 @@ public:
      *
      * @param deviceId deviceId of the calling ability
      *
-     * @param deviceId bundleName of the calling ability
+     * @param bundleName bundleName of the calling ability
      *
-     * @param deviceId abilityName of the calling ability
+     * @param abilityName abilityName of the calling ability
      */
     void SetCallingContext(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName);
 
@@ -472,7 +474,192 @@ public:
      */
     Uri GetCaller() override;
 
+    /**
+     * @brief Get the string of this Context based on the specified resource ID.
+     *
+     * @param resId Indicates the resource ID of the string to get.
+     *
+     * @return Returns the string of this Context.
+     */
+    std::string GetString(int resId) override;
+
+    /**
+     * @brief Get the string array of this Context based on the specified resource ID.
+     *
+     * @param resId Indicates the resource ID of the string array to get.
+     *
+     * @return Returns the string array of this Context.
+     */
+    std::vector<std::string> GetStringArray(int resId) override;
+
+    /**
+     * @brief Get the integer array of this Context based on the specified resource ID.
+     *
+     * @param resId Indicates the resource ID of the integer array to get.
+     *
+     * @return Returns the integer array of this Context.
+     */
+    std::vector<int> GetIntArray(int resId) override;
+
+    /**
+     * @brief Obtains the theme of this Context.
+     *
+     * @return theme Returns the theme of this Context.
+     */
+    std::map<std::string, std::string> GetTheme() override;
+
+    /**
+     * @brief Sets the theme of this Context based on the specified theme ID.
+     *
+     * @param themeId Indicates the resource ID of the theme to set.
+     */
+    void SetTheme(int themeId) override;
+
+    /**
+     * @brief Obtains the pattern of this Context.
+     *
+     * @return getPattern in interface Context
+     */
+    std::map<std::string, std::string> GetPattern() override;
+
+    /**
+     * @brief Get the color of this Context based on the specified resource ID.
+     *
+     * @param resId Indicates the resource ID of the color to get.
+     *
+     * @return Returns the color value of this Context.
+     */
+    int GetColor(int resId) override;
+
+    /**
+     * @brief Obtains the theme id of this {@code Context}.
+     *
+     * @return int Returns the theme id of this {@code Context}.
+     */
+    int GetThemeId() override;
+
+    /**
+     * @brief
+     * Destroys this Service ability if the number of times it has been started equals the number represented by the
+     * given {@code startId}. This method is the same as calling {@link #terminateAbility} to destroy this Service
+     * ability, except that this method helps you avoid destroying it if a client has requested a Service
+     * ability startup in {@link ohos.aafwk.ability.Ability#onCommand} but you are unaware of it.
+     *
+     * @param startId Indicates the number of startup times of this Service ability passed to
+     *                {@link ohos.aafwk.ability.Ability#onCommand}. The {@code startId} is
+     *                incremented by 1 every time this ability is started. For example,
+     *                if this ability has been started for six times, the value of {@code startId} is {@code 6}.
+     *
+     * @return Returns {@code true} if the {@code startId} matches the number of startup times
+     *         and this Service ability will be destroyed; returns {@code false} otherwise.
+     */
+    bool TerminateAbilityResult(int startId) override;
+
+    /**
+     * @brief Obtains the current display orientation of this ability.
+     *
+     * @return Returns the current display orientation.
+     */
+    int GetDisplayOrientation() override;
+
+    /**
+     * @brief Obtains the path storing the preference file of the application.
+     *        If the preference file path does not exist, the system creates one and returns the created path.
+     *
+     * @return Returns the preference file path .
+     */
+    std::string GetPreferencesDir() override;
+
+    /**
+     * @brief Set color mode
+     *
+     * @param the value of color mode.
+     */
+    void SetColorMode(int mode) override;
+
+    /**
+     * @brief Obtains color mode.
+     *
+     * @return Returns the color mode value.
+     */
+    int GetColorMode() override;
+
+    /**
+     * @brief Obtains the unique ID of the mission containing this ability.
+     *
+     * @return Returns the unique mission ID.
+     */
+    int GetMissionId() override;
+
+    /**
+     * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
+     * finishing the root ability of the mission.
+     */
+    void TerminateAndRemoveMission() override;
+
+    /**
+     * @brief Starts multiple abilities.
+     *
+     * @param wants Indicates the Want containing information array about the target ability to start.
+     */
+    void StartAbilities(const std::vector<AAFwk::Want> &wants) override;
+
+    /**
+     * @brief Checks whether this ability is the first ability in a mission.
+     *
+     * @return Returns true is first in Mission.
+     */
+    bool IsFirstInMission() override;
+
+    /**
+     * @brief Obtains a task dispatcher that is bound to the UI thread.
+     *
+     * @return Returns the task dispatcher that is bound to the UI thread.
+     */
+    std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() final override;
+
+    /**
+     * @brief Obtains a task dispatcher that is bound to the application main thread.
+     *
+     * @return Returns the task dispatcher that is bound to the application main thread.
+     */
+    std::shared_ptr<TaskDispatcher> GetMainTaskDispatcher() override;
+
+    /**
+     * @brief Creates a parallel task dispatcher with a specified priority.
+     *
+     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
+     * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
+     *
+     * @return Returns a parallel task dispatcher.
+     */
+    std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
+        const std::string &name, const TaskPriority &priority) override;
+
+    /**
+     * @brief Creates a serial task dispatcher with a specified priority.
+     *
+     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
+     * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
+     *
+     * @return Returns a serial task dispatcher.
+     */
+    std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
+        const std::string &name, const TaskPriority &priority) override;
+
+    /**
+     * @brief Obtains a global task dispatcher with a specified priority.
+     *
+     * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
+     *
+     * @return Returns a global task dispatcher.
+     */
+    std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) override;
+
     friend DataAbilityHelper;
+
+public:
+    static int ABILITY_CONTEXT_DEFAULT_REQUEST_CODE;
 
 private:
     /**
@@ -481,6 +668,23 @@ private:
      * @return Current Ability Type
      */
     AppExecFwk::AbilityType GetAbilityInfoType();
+    void GetPermissionDes(const std::string &permissionName, std::string &des);
+
+    /**
+     * @brief Check whether it wants to operate a remote ability
+     *
+     * @param want Indicates the Want containing information about the ability to start.
+     *
+     * @return return true if it wamts to operate a remote ability, ohterwise return false.
+     */
+    bool CheckIfOperateRemote(const Want &want);
+
+    /**
+     * @brief Obtains a distributedSchedService.
+     *
+     * @return Returns an IDistributedSched proxy.
+     */
+    std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> GetDistributedSchedServiceProxy();
 
 protected:
     sptr<IRemoteObject> GetToken() override;

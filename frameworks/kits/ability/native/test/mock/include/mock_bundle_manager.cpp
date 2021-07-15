@@ -102,7 +102,7 @@ std::string BundleMgrService::GetAppType(const std::string &bundleName)
     return "system";
 }
 
-bool BundleMgrService::GetHapModuleInfo(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo)
+bool BundleMgrService::GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo)
 {
     GTEST_LOG_(INFO) << " BundleMgrService::GetHapModuleInfo";
     hapModuleInfo.name = "Captain";

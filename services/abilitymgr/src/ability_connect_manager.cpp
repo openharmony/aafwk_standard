@@ -17,8 +17,8 @@
 
 #include <algorithm>
 
+#include "ability_util.h"
 #include "hilog_wrapper.h"
-
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
 #include "ability_connect_callback_stub.h"
@@ -92,16 +92,13 @@ int AbilityConnectManager::StartAbilityLocked(const AbilityRequest &abilityReque
     std::shared_ptr<AbilityRecord> targetService;
     bool isLoadedAbility = false;
     GetOrCreateServiceRecord(abilityRequest, false, targetService, isLoadedAbility);
-    if (targetService == nullptr) {
-        HILOG_ERROR("%{public}s,target service record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(targetService, ERR_INVALID_VALUE);
 
     targetService->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
 
     if (!isLoadedAbility) {
         LoadAbility(targetService);
-    } else if (targetService->GetAbilityState() == AbilityState::ACTIVE) {
+    } else if (targetService->IsAbilityState(AbilityState::ACTIVE)) {
         // It may have been started through connect
         CommandAbility(targetService);
     } else {
@@ -122,10 +119,7 @@ int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &tok
 {
     HILOG_INFO("%{public}s,called", __func__);
     auto abilityRecord = GetServiceRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("serviceAbility is null");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     if (abilityRecord->IsTerminating()) {
         HILOG_INFO("ability is on terminating");
@@ -150,17 +144,10 @@ int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &tok
 int AbilityConnectManager::TerminateAbilityResultLocked(const sptr<IRemoteObject> &token, int startId)
 {
     HILOG_INFO("%{public}s called, startId:%{public}d", __func__, startId);
-
-    if (token == nullptr) {
-        HILOG_ERROR("%{public}s failed, token is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    if (!abilityRecord) {
-        HILOG_ERROR("%{public}s, ability record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     if (abilityRecord->GetStartId() != startId) {
         HILOG_ERROR("%{public}s, Start id not equal", __func__);
@@ -176,10 +163,7 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
     auto abilityRecord = GetServiceRecordByElementName(element.GetURI());
-    if (!abilityRecord) {
-        HILOG_ERROR("%{public}s,target service record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     if (abilityRecord->IsTerminating()) {
         HILOG_INFO("ability is on terminating");
@@ -243,10 +227,7 @@ int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityReq
     std::shared_ptr<AbilityRecord> targetService;
     bool isLoadedAbility = false;
     GetOrCreateServiceRecord(abilityRequest, true, targetService, isLoadedAbility);
-    if (targetService == nullptr) {
-        HILOG_ERROR("%{public}s,target service record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(targetService, ERR_INVALID_VALUE);
     // 2. get target connectRecordList, and check whether this callback has been connected.
     ConnectListType connectRecordList;
     GetConnectRecordListFromMap(connect, connectRecordList);
@@ -260,10 +241,7 @@ int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityReq
 
     // 4. Other cases , need to connect the service ability
     auto connectRecord = ConnectionRecord::CreateConnectionRecord(callerToken, targetService, connect);
-    if (connectRecord == nullptr) {
-        HILOG_ERROR("%{public}s failed to create connection record.", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(connectRecord, ERR_INVALID_VALUE);
     connectRecord->SetConnectState(ConnectionState::CONNECTING);
     targetService->AddConnectRecordToList(connectRecord);
     connectRecordList.push_back(connectRecord);
@@ -277,7 +255,7 @@ int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityReq
     // 5. load or connect ability
     if (!isLoadedAbility) {
         LoadAbility(targetService);
-    } else if (targetService->GetAbilityState() == AbilityState::ACTIVE) {
+    } else if (targetService->IsAbilityState(AbilityState::ACTIVE)) {
         // this service ability has not first connect
         if (targetService->GetConnectRecordList().size() > 1) {
             if (eventHandler_ != nullptr) {
@@ -338,10 +316,7 @@ int AbilityConnectManager::AttachAbilityThreadLocked(
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilityRecord = GetServiceRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is null");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
     if (eventHandler_ != nullptr) {
         int recordId = abilityRecord->GetRecordId();
         std::string taskName = std::string("LoadTimeout_") + std::to_string(recordId);
@@ -361,10 +336,7 @@ void AbilityConnectManager::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilitState = DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(state);
     auto abilityRecord = GetServiceRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is null");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("%{public}s, ability: %{public}s", __func__, element.c_str());
 
@@ -380,10 +352,7 @@ int AbilityConnectManager::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilityRecord = GetServiceRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("transition done abilityRecord is null");
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
@@ -408,22 +377,16 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
     const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &remoteObject)
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (token == nullptr) {
-        HILOG_ERROR("%{public}s, token or remoteObject is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("%{public}s, ability record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("%{public}s, ability: %{public}s", __func__, element.c_str());
 
-    if (abilityRecord->GetAbilityState() != AbilityState::INACTIVE &&
-        abilityRecord->GetAbilityState() != AbilityState::ACTIVE) {
+    if ((!abilityRecord->IsAbilityState(AbilityState::INACTIVE)) &&
+        (!abilityRecord->IsAbilityState(AbilityState::ACTIVE))) {
         HILOG_ERROR("%{public}s, ability record state is not inactive ,state：%{public}d",
             __func__,
             abilityRecord->GetAbilityState());
@@ -443,19 +406,13 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
 int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemoteObject> &token)
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    std::shared_ptr<AbilityRecord> abilityRecord = GetServiceRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("can't find the service ability by token when scheduler disconnect.");
-        return CONNECTION_NOT_EXIST;
-    }
+    auto abilityRecord = GetServiceRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, CONNECTION_NOT_EXIST);
 
-    std::shared_ptr<ConnectionRecord> connect = abilityRecord->GetDisconnectingRecord();
-    if (connect == nullptr) {
-        HILOG_ERROR("can't find any disconnecting record by token when scheduler disconnect.");
-        return CONNECTION_NOT_EXIST;
-    }
+    auto connect = abilityRecord->GetDisconnectingRecord();
+    CHECK_POINTER_AND_RETURN(connect, CONNECTION_NOT_EXIST);
 
-    if (abilityRecord->GetAbilityState() != AbilityState::ACTIVE) {
+    if (!abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
         HILOG_ERROR("%{public}s, the service ability state is not active ,state：%{public}d",
             __func__,
             abilityRecord->GetAbilityState());
@@ -484,20 +441,14 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
 int AbilityConnectManager::ScheduleCommandAbilityDoneLocked(const sptr<IRemoteObject> &token)
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (token == nullptr) {
-        HILOG_ERROR("%{public}s, token or remoteObject is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("%{public}s, ability record is nullptr", __func__);
-        return ERR_INVALID_VALUE;
-    }
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("%{public}s, ability: %{public}s", __func__, element.c_str());
 
-    if (abilityRecord->GetAbilityState() != AbilityState::INACTIVE &&
-        abilityRecord->GetAbilityState() != AbilityState::ACTIVE) {
+    if ((!abilityRecord->IsAbilityState(AbilityState::INACTIVE)) &&
+        (!abilityRecord->IsAbilityState(AbilityState::ACTIVE))) {
         HILOG_ERROR("%{public}s, ability record state is not inactive ,state：%{public}d",
             __func__,
             abilityRecord->GetAbilityState());
@@ -511,10 +462,7 @@ int AbilityConnectManager::ScheduleCommandAbilityDoneLocked(const sptr<IRemoteOb
 
 void AbilityConnectManager::CompleteCommandAbility(std::shared_ptr<AbilityRecord> abilityRecord)
 {
-    if (!abilityRecord) {
-        HILOG_ERROR("%{public}s, ability record is nullptr", __func__);
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
 
     if (eventHandler_) {
         int recordId = abilityRecord->GetRecordId();
@@ -570,10 +518,7 @@ void AbilityConnectManager::RemoveAll()
 
 void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
 
     PostTimeOutTask(abilityRecord, AbilityManagerService::LOAD_TIMEOUT_MSG);
 
@@ -595,10 +540,8 @@ void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &ab
 
 void AbilityConnectManager::PostTimeOutTask(const std::shared_ptr<AbilityRecord> &abilityRecord, uint32_t messageId)
 {
-    if (abilityRecord == nullptr || eventHandler_ == nullptr) {
-        HILOG_ERROR("abilityRecord or eventHandler_ is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
+    CHECK_POINTER(eventHandler_);
     if (messageId != AbilityConnectManager::LOAD_TIMEOUT_MSG &&
         messageId != AbilityConnectManager::CONNECT_TIMEOUT_MSG) {
         HILOG_ERROR("timeout task messageId is error.");
@@ -617,10 +560,7 @@ void AbilityConnectManager::PostTimeOutTask(const std::shared_ptr<AbilityRecord>
         delayTime = AbilityManagerService::LOAD_TIMEOUT;
     } else {
         auto connectRecord = abilityRecord->GetConnectingRecord();
-        if (connectRecord == nullptr) {
-            HILOG_ERROR("timeout task connectRecord is nullptr.");
-            return;
-        }
+        CHECK_POINTER(connectRecord);
         recordId = connectRecord->GetRecordId();
         taskName = std::string("ConnectTimeout_") + std::to_string(recordId);
         resultCode = CONNECTION_TIMEOUT;
@@ -639,10 +579,7 @@ void AbilityConnectManager::HandleStartTimeoutTask(const std::shared_ptr<Ability
 {
     HILOG_DEBUG("complete connect or load ability timeout.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (!abilityRecord) {
-        HILOG_ERROR("the target ability recorc is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     auto connectingList = abilityRecord->GetConnectingRecordList();
     for (auto &connectRecord : connectingList) {
         if (connectRecord == nullptr) {
@@ -663,10 +600,7 @@ void AbilityConnectManager::HandleStopTimeoutTask(const std::shared_ptr<AbilityR
 {
     HILOG_DEBUG("complete stop ability timeout start.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (!abilityRecord) {
-        HILOG_ERROR("the target ability recorc is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     TerminateDone(abilityRecord);
     HILOG_DEBUG("complete stop ability timeout end.");
 }
@@ -692,11 +626,8 @@ void AbilityConnectManager::HandleDisconnectTask(const ConnectListType &connectl
 
 int AbilityConnectManager::DispatchInactive(const std::shared_ptr<AbilityRecord> &abilityRecord, int state)
 {
-    if (eventHandler_ == nullptr) {
-        HILOG_ERROR("fail to get AbilityEventHandler");
-        return ERR_INVALID_VALUE;
-    }
-    if (abilityRecord->GetAbilityState() != AbilityState::INACTIVATING) {
+    CHECK_POINTER_AND_RETURN(eventHandler_, ERR_INVALID_VALUE);
+    if (!abilityRecord->IsAbilityState(AbilityState::INACTIVATING)) {
         HILOG_ERROR("ability transition life state error. expect %{public}d, actual %{public}d callback %{public}d",
             AbilityState::INACTIVATING,
             abilityRecord->GetAbilityState(),
@@ -729,10 +660,7 @@ int AbilityConnectManager::DispatchTerminate(const std::shared_ptr<AbilityRecord
 
 void AbilityConnectManager::ConnectAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("abilityRecord is nullptr.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     PostTimeOutTask(abilityRecord, AbilityConnectManager::CONNECT_TIMEOUT_MSG);
     abilityRecord->ConnectAbility();
 }
@@ -756,7 +684,7 @@ void AbilityConnectManager::CommandAbility(const std::shared_ptr<AbilityRecord> 
 
 void AbilityConnectManager::TerminateDone(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    if (abilityRecord->GetAbilityState() != AbilityState::TERMINATING) {
+    if (!abilityRecord->IsAbilityState(AbilityState::TERMINATING)) {
         std::string expect = AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING);
         std::string actual = AbilityRecord::ConvertAbilityState(abilityRecord->GetAbilityState());
         HILOG_ERROR(
@@ -803,9 +731,7 @@ void AbilityConnectManager::RemoveConnectionRecordFromMap(const std::shared_ptr<
 
 void AbilityConnectManager::RemoveServiceAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    if (!abilityRecord) {
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     const AppExecFwk::AbilityInfo &abilityInfo = abilityRecord->GetAbilityInfo();
     std::string element = abilityInfo.deviceId + "/" + abilityInfo.bundleName + "/" + abilityInfo.name;
     HILOG_INFO("%{public}s: remove service(%{public}s) from map ", __func__, element.c_str());
@@ -818,10 +744,8 @@ void AbilityConnectManager::RemoveServiceAbility(const std::shared_ptr<AbilityRe
 
 void AbilityConnectManager::AddConnectDeathRecipient(const sptr<IAbilityConnection> &connect)
 {
-    if (!connect || !connect->AsObject()) {
-        HILOG_ERROR("%{public}s add death recipient,the object is nullptr.", __func__);
-        return;
-    }
+    CHECK_POINTER(connect);
+    CHECK_POINTER(connect->AsObject());
     auto it = recipientMap_.find(connect->AsObject());
     if (it != recipientMap_.end()) {
         HILOG_ERROR("%{public}s this death recipient has been added.", __func__);
@@ -836,10 +760,8 @@ void AbilityConnectManager::AddConnectDeathRecipient(const sptr<IAbilityConnecti
 
 void AbilityConnectManager::RemoveConnectDeathRecipient(const sptr<IAbilityConnection> &connect)
 {
-    if (!connect || !connect->AsObject()) {
-        HILOG_ERROR("%{public}s add death recipient,the object is nullptr.", __func__);
-        return;
-    }
+    CHECK_POINTER(connect);
+    CHECK_POINTER(connect->AsObject());
     auto it = recipientMap_.find(connect->AsObject());
     if (it != recipientMap_.end()) {
         it->first->RemoveDeathRecipient(it->second);
@@ -851,10 +773,7 @@ void AbilityConnectManager::RemoveConnectDeathRecipient(const sptr<IAbilityConne
 void AbilityConnectManager::OnCallBackDied(const wptr<IRemoteObject> &remote)
 {
     auto object = remote.promote();
-    if (!object) {
-        HILOG_ERROR("Ability on scheduler died: null object.");
-        return;
-    }
+    CHECK_POINTER(object);
     if (eventHandler_) {
         auto task = [object, connectManager = shared_from_this()]() { connectManager->HandleCallBackDiedTask(object); };
         eventHandler_->PostTask(task, TASK_ON_CALLBACK_DIED);
@@ -865,10 +784,7 @@ void AbilityConnectManager::HandleCallBackDiedTask(const sptr<IRemoteObject> &co
 {
     HILOG_INFO("%{public}s,called", __func__);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (!connect) {
-        HILOG_ERROR("%{public}s handle on call back died is nullptr.", __func__);
-        return;
-    }
+    CHECK_POINTER(connect);
     auto it = connectMap_.find(connect);
     if (it != connectMap_.end()) {
         ConnectListType connectRecordList = it->second;
@@ -886,10 +802,7 @@ void AbilityConnectManager::HandleCallBackDiedTask(const sptr<IRemoteObject> &co
 void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    if (!abilityRecord) {
-        HILOG_ERROR("%{public}s Ability on scheduler died: null object..", __func__);
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     if (abilityRecord->GetAbilityInfo().type != AbilityType::SERVICE) {
         HILOG_DEBUG("ability type is not service");
         return;
@@ -906,10 +819,7 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
 {
     HILOG_INFO("%{public}s,called", __func__);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    if (!abilityRecord) {
-        HILOG_ERROR("%{public}s Ability on scheduler died: null object..", __func__);
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
     if (!GetServiceRecordByToken(abilityRecord->GetToken())) {
         HILOG_ERROR("%{public}s died ability record is not exist in service map", __func__);
         return;

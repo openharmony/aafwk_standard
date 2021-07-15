@@ -18,9 +18,15 @@
 #include "app_log_wrapper.h"
 #include "resource_manager.h"
 #include "bundle_constants.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "sys_mgr_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+
+int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
+
 /**
  * @brief Starts a new ability.
  * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
@@ -37,7 +43,7 @@ namespace AppExecFwk {
  */
 void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
 {
-    APP_LOGI("AbilityContext::StartAbility called");
+    APP_LOGI("AbilityContext::StartAbility called, requestCode = %{public}d", requestCode);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (type != AppExecFwk::AbilityType::PAGE && type != AppExecFwk::AbilityType::SERVICE) {
@@ -45,9 +51,24 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
         return;
     }
 
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
-    if (err != ERR_OK) {
-        APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
+    if (CheckIfOperateRemote(want)) {
+        std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> dms = GetDistributedSchedServiceProxy();
+        if (dms != nullptr) {
+            AAFwk::Want innerWant;
+            APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
+            int result = dms->StartRemoteAbility(want, innerWant, requestCode);
+            if (result != ERR_NONE) {
+                APP_LOGE("AbilityContext::StartAbility start remote ability failed, the result is %{public}d", result);
+            }
+        } else {
+            APP_LOGE("AbilityContext::StartAbility failed. It wants to start a remote ability, but failed to get dms.");
+            return;
+        }
+    } else {
+        ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
+        if (err != ERR_OK) {
+            APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
+        }
     }
 }
 
@@ -600,7 +621,11 @@ bool AbilityContext::CanRequestPermission(const std::string &permission)
  */
 int AbilityContext::VerifyCallingOrSelfPermission(const std::string &permission)
 {
-    return VerifySelfPermission(permission);
+    if (VerifyCallingPermission(permission) != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return VerifySelfPermission(permission);
+    } else {
+        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+    }
 }
 
 /**
@@ -634,6 +659,20 @@ int AbilityContext::VerifyPermission(const std::string &permission, int pid, int
     return ptr->CheckPermission(bundle_name, permission);
 }
 
+void AbilityContext::GetPermissionDes(const std::string &permissionName, std::string &des)
+{
+    sptr<IBundleMgr> ptr = GetBundleManager();
+    if (ptr == nullptr) {
+        APP_LOGE("GetPermissionDes failed to get bundle manager service");
+        return;
+    }
+
+    PermissionDef permissionDef;
+    if (ptr->GetPermissionDef(permissionName, permissionDef)) {
+        des = permissionDef.description;
+    }
+}
+
 /**
  * @brief Requests certain permissions from the system.
  * This method is called for permission request. This is an asynchronous method. When it is executed,
@@ -655,11 +694,21 @@ void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permis
         return;
     }
 
+    std::vector<std::string> permissionDes;
+    std::string des;
+    for (size_t i = 0; i < permissions.size(); i++) {
+        des = "";
+        GetPermissionDes(permissions[i], des);
+        permissionDes.push_back(des);
+    }
+
     AAFwk::Want want;
-    want.SetElementName("com.ohos.systemui", "com.ohos.systemdialog.MainAbility");
-    want.SetParam(OHOS_PERMISSIONS_REQUEST_KEY, permissions);
-    want.SetParam(OHOS_PERMISSIONS_REQUEST_USER_ID_KEY, 0);
-    want.SetParam(OHOS_PERMISSIONS_REQUEST_BUNDLE_NAME_KEY, GetBundleName());
+    want.SetElementName(OHOS_REQUEST_PERMISSION_BUNDLENAME, OHOS_REQUEST_PERMISSION_ABILITY_NAME);
+
+    want.SetParam(OHOS_REQUEST_PERMISSION_KEY, OHOS_REQUEST_PERMISSION_VALUE);
+    want.SetParam(OHOS_REQUEST_PERMISSIONS_LIST, permissions);
+    want.SetParam(OHOS_REQUEST_PERMISSIONS_DES_LIST, permissionDes);
+    want.SetParam(OHOS_REQUEST_CALLER_BUNDLERNAME, GetBundleName());
 
     StartAbility(want, requestCode);
 }
@@ -826,5 +875,303 @@ void AbilityContext::InitResourceManager(BundleInfo &bundleInfo, std::shared_ptr
 {
     ContextContainer::InitResourceManager(bundleInfo, deal);
 }
+
+/**
+ * @brief Get the string of this Context based on the specified resource ID.
+ *
+ * @param resId Indicates the resource ID of the string to get.
+ *
+ * @return Returns the string of this Context.
+ */
+std::string AbilityContext::GetString(int resId)
+{
+    return ContextContainer::GetString(resId);
+}
+
+/**
+ * @brief Get the string array of this Context based on the specified resource ID.
+ *
+ * @param resId Indicates the resource ID of the string array to get.
+ *
+ * @return Returns the string array of this Context.
+ */
+std::vector<std::string> AbilityContext::GetStringArray(int resId)
+{
+    return ContextContainer::GetStringArray(resId);
+}
+
+/**
+ * @brief Get the integer array of this Context based on the specified resource ID.
+ *
+ * @param resId Indicates the resource ID of the integer array to get.
+ *
+ * @return Returns the integer array of this Context.
+ */
+std::vector<int> AbilityContext::GetIntArray(int resId)
+{
+    return ContextContainer::GetIntArray(resId);
+}
+
+/**
+ * @brief Obtains the theme of this Context.
+ *
+ * @return theme Returns the theme of this Context.
+ */
+std::map<std::string, std::string> AbilityContext::GetTheme()
+{
+    return ContextContainer::GetTheme();
+}
+
+/**
+ * @brief Sets the theme of this Context based on the specified theme ID.
+ *
+ * @param themeId Indicates the resource ID of the theme to set.
+ */
+void AbilityContext::SetTheme(int themeId)
+{
+    ContextContainer::SetTheme(themeId);
+}
+
+/**
+ * @brief Obtains the pattern of this Context.
+ *
+ * @return getPattern in interface Context
+ */
+std::map<std::string, std::string> AbilityContext::GetPattern()
+{
+    return ContextContainer::GetPattern();
+}
+
+/**
+ * @brief Get the color of this Context based on the specified resource ID.
+ *
+ * @param resId Indicates the resource ID of the color to get.
+ *
+ * @return Returns the color value of this Context.
+ */
+int AbilityContext::GetColor(int resId)
+{
+    return ContextContainer::GetColor(resId);
+}
+
+/**
+ * @brief Obtains the theme id of this Context.
+ *
+ * @return int Returns the theme id of this Context.
+ */
+int AbilityContext::GetThemeId()
+{
+    return ContextContainer::GetThemeId();
+}
+
+/**
+ * @brief
+ * Destroys this Service ability if the number of times it has been started equals the number represented by the
+ * given {@code startId}. This method is the same as calling {@link #terminateAbility} to destroy this Service
+ * ability, except that this method helps you avoid destroying it if a client has requested a Service
+ * ability startup in {@link ohos.aafwk.ability.Ability#onCommand} but you are unaware of it.
+ *
+ * @param startId Indicates the number of startup times of this Service ability passed to
+ *                {@link ohos.aafwk.ability.Ability#onCommand}. The {@code startId} is
+ *                incremented by 1 every time this ability is started. For example,
+ *                if this ability has been started for six times, the value of {@code startId} is {@code 6}.
+ *
+ * @return Returns {@code true} if the {@code startId} matches the number of startup times
+ *         and this Service ability will be destroyed; returns {@code false} otherwise.
+ */
+bool AbilityContext::TerminateAbilityResult(int startId)
+{
+    auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
+    if (abilityClient == nullptr) {
+        APP_LOGE("AbilityContext::TerminateAbilityResult abilityClient is nullptr");
+        return false;
+    }
+
+    ErrCode errval = abilityClient->TerminateAbilityResult(token_, startId);
+
+    return (errval == ERR_OK) ? true : false;
+}
+
+/**
+ * @brief Obtains the current display orientation of this ability.
+ *
+ * @return Returns the current display orientation.
+ */
+int AbilityContext::GetDisplayOrientation()
+{
+    return ContextContainer::GetDisplayOrientation();
+}
+
+/**
+ * @brief Obtains the path storing the preference file of the application.
+ *        If the preference file path does not exist, the system creates one and returns the created path.
+ *
+ * @return Returns the preference file path .
+ */
+std::string AbilityContext::GetPreferencesDir()
+{
+    return ContextContainer::GetPreferencesDir();
+}
+
+/**
+ * @brief Set color mode
+ *
+ * @param the value of color mode.
+ */
+void AbilityContext::SetColorMode(int mode)
+{
+    ContextContainer::SetColorMode(mode);
+}
+
+/**
+ * @brief Obtains color mode.
+ *
+ * @return Returns the color mode value.
+ */
+int AbilityContext::GetColorMode()
+{
+    return ContextContainer::GetColorMode();
+}
+
+/**
+ * @brief Obtains the unique ID of the mission containing this ability.
+ *
+ * @return Returns the unique mission ID.
+ */
+int AbilityContext::GetMissionId()
+{
+    return ContextContainer::GetMissionId();
+}
+
+/**
+ * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
+ * finishing the root ability of the mission.
+ */
+void AbilityContext::TerminateAndRemoveMission()
+{
+    ContextContainer::TerminateAndRemoveMission();
+}
+
+/**
+ * @brief Starts multiple abilities.
+ *
+ * @param wants Indicates the Want containing information array about the target ability to start.
+ */
+void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
+{
+    for (auto want : wants) {
+        StartAbility(want, ABILITY_CONTEXT_DEFAULT_REQUEST_CODE);
+    }
+}
+
+/**
+ * @brief Checks whether this ability is the first ability in a mission.
+ *
+ * @return Returns true is first in Mission.
+ */
+bool AbilityContext::IsFirstInMission()
+{
+    auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
+    if (abilityClient == nullptr) {
+        APP_LOGE("AbilityContext::IsFirstInMission abilityClient is nullptr");
+        return false;
+    }
+    ErrCode errval = abilityClient->IsFirstInMission(token_);
+    return (errval == ERR_OK) ? true : false;
+}
+
+/**
+ * @brief Check whether it wants to operate a remote ability
+ *
+ * @param want Indicates the Want containing information about the ability to start.
+ *
+ * @return return true if it wamts to operate a remote ability, ohterwise return false.
+ */
+bool AbilityContext::CheckIfOperateRemote(const Want &want)
+{
+    if (want.GetElement().GetDeviceID() != "") {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @brief Obtains a distributedSchedService.
+ *
+ * @return Returns an IDistributedSched proxy.
+ */
+std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> AbilityContext::GetDistributedSchedServiceProxy()
+{
+    auto remoteObject = OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
+    if (remoteObject == nullptr) {
+        APP_LOGE("failed to get dms service");
+        return nullptr;
+    }
+
+    APP_LOGI("get dms proxy success.");
+    std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> proxy = nullptr;
+    proxy = std::make_shared<OHOS::DistributedSchedule::DistributedSchedProxy>(remoteObject);
+    return proxy;
+}
+
+/**
+ * @brief Obtains a task dispatcher that is bound to the UI thread.
+ *
+ * @return Returns the task dispatcher that is bound to the UI thread.
+ */
+std::shared_ptr<TaskDispatcher> AbilityContext::GetUITaskDispatcher()
+{
+    return ContextContainer::GetUITaskDispatcher();
+}
+
+/**
+ * @brief Obtains a task dispatcher that is bound to the application main thread.
+ *
+ * @return Returns the task dispatcher that is bound to the application main thread.
+ */
+std::shared_ptr<TaskDispatcher> AbilityContext::GetMainTaskDispatcher()
+{
+    return ContextContainer::GetMainTaskDispatcher();
+}
+/**
+ * @brief Creates a parallel task dispatcher with a specified priority.
+ *
+ * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
+ * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
+ *
+ * @return Returns a parallel task dispatcher.
+ */
+std::shared_ptr<TaskDispatcher> AbilityContext::CreateParallelTaskDispatcher(
+    const std::string &name, const TaskPriority &priority)
+{
+    return ContextContainer::CreateParallelTaskDispatcher(name, priority);
+}
+
+/**
+ * @brief Creates a serial task dispatcher with a specified priority.
+ *
+ * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
+ * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
+ *
+ * @return Returns a serial task dispatcher.
+ */
+std::shared_ptr<TaskDispatcher> AbilityContext::CreateSerialTaskDispatcher(
+    const std::string &name, const TaskPriority &priority)
+{
+    return ContextContainer::CreateSerialTaskDispatcher(name, priority);
+}
+
+/**
+ * @brief Obtains a global task dispatcher with a specified priority.
+ *
+ * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
+ *
+ * @return Returns a global task dispatcher.
+ */
+std::shared_ptr<TaskDispatcher> AbilityContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
+{
+    return ContextContainer::GetGlobalTaskDispatcher(priority);
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
