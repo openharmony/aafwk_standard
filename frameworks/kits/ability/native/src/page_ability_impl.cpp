@@ -37,6 +37,8 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         return;
     }
 
+    SetLifeCycleStateInfo(targetState);
+
     if (lifecycleState_ == AAFwk::ABILITY_STATE_INITIAL) {
         Start(want);
     }

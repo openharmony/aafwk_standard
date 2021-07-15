@@ -30,8 +30,7 @@ namespace OHOS {
 namespace AAFwk {
 enum class ServiceRunningState { STATE_NOT_START, STATE_RUNNING };
 
-class MockAbilityManagerService : public AbilityManagerStub,
-                                  public std::enable_shared_from_this<MockAbilityManagerService> {
+class MockAbilityManagerService : public AbilityManagerStub {
 public:
     MockAbilityManagerService();
     ~MockAbilityManagerService();
@@ -59,9 +58,31 @@ public:
 
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
     int StopServiceAbility(const Want &want) override;
+    int PowerOff() override;
+    int PowerOn() override;
+
+    int LockMission(int missionId) override
+    {
+        return 0;
+    };
+    int UnlockMission(int missionId) override
+    {
+        return 0;
+    };
 
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
-
+    MOCK_METHOD2(
+        GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
+    MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
+    MOCK_METHOD1(CancelWantSender, void(const sptr<IWantSender> &sender));
+    MOCK_METHOD1(GetPendingWantUid, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantBundleName, std::string(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantCode, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantType, int(const sptr<IWantSender> &target));
+    MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     int RemoveMission(int id) override;
 
     int RemoveStack(int id) override;
@@ -78,7 +99,7 @@ public:
     }
 
     int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList) override
+        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override
     {
         return 0;
     }
@@ -93,10 +114,17 @@ public:
     int KillProcess(const std::string &bundleName) override;
 
     int UninstallApp(const std::string &bundleName) override;
+
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override
     {
         return 0;
     }
+
+    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
+
+    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
+
+    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     enum RequestCode {
         E_STATE_INITIAL = 0,

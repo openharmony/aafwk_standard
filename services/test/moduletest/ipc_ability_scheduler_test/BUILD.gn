@@ -20,6 +20,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   module_out_path = module_output_path
 
   sources = [
+    "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",

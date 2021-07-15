@@ -1,0 +1,84 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
+
+module_output_path = "aafwk_standard/mstabilitymgrservice"
+EVENT_DIR = "//base/notification/ces_standard/cesfwk"
+
+ohos_moduletest("PandingWantMgrTest") {
+  module_out_path = module_output_path
+
+  include_dirs = [
+    "${EVENT_DIR}/innerkits/include",
+    "${EVENT_DIR}/kits/native/include",
+    "//foundation/aafwk/standard/services/test/mock/include",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmg",
+    "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
+    "//base/notification/ans_standard/kits/native/wantagent/include",
+  ]
+
+  sources = abilityms_files
+  sources += [
+    "//base/notification/ans_standard/kits/native/wantagent/src/completed_dispatcher.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/pending_want.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/trigger_info.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_helper.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_info.cpp",
+    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_log_wrapper.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_client.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
+    "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
+    "panding_want_manager_test.cpp",
+  ]
+
+  configs = [ "${services_path}/abilitymgr:abilityms_config" ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
+    "${EVENT_DIR}/kits/native:cesfwk_kits",
+    "${innerkits_path}/want:want",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+group("moduletest") {
+  testonly = true
+
+  deps = [ ":PandingWantMgrTest" ]
+}

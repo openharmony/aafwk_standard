@@ -11,8 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
-
 ohos_shared_library("context") {
   include_dirs = [
     "//foundation/ace/napi/interfaces/kits",
@@ -40,8 +40,8 @@ ohos_shared_library("context") {
     "appexecfwk_standard:appexecfwk_base",
     "appexecfwk_standard:appexecfwk_core",
     "appexecfwk_standard:libeventhandler",
+    "communication_L2:ipc_core",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
   ]
 
   relative_install_dir = "module"

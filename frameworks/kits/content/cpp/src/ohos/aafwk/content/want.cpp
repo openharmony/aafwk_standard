@@ -43,7 +43,7 @@ const std::string Want::ACTION_HOME("action.system.home");
 
 const std::string Want::ENTITY_HOME("entity.system.home");
 const std::string Want::ENTITY_VIDEO("entity.system.video");
-const std::string Want::FLAG_HW_HOME_INTENT_FROM_SYSTEM("flag.home.intent.from.system");
+const std::string Want::FLAG_HOME_INTENT_FROM_SYSTEM("flag.home.intent.from.system");
 
 const std::string Want::OCT_EQUALSTO("075");   // '='
 const std::string Want::OCT_SEMICOLON("073");  // ';'
@@ -469,7 +469,15 @@ std::vector<bool> Want::GetBoolArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsBooleanArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Boolean::Unbox(IBoolean::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IBoolean *value = IBoolean::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Boolean::Unbox(value));
+                }
+            }
+        };
+
         Array::ForEach(ao, func);
     }
     return array;
@@ -536,7 +544,14 @@ std::vector<byte> Want::GetByteArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsByteArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Byte::Unbox(IByte::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IByte *value = IByte::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Byte::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -603,7 +618,14 @@ std::vector<zchar> Want::GetCharArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsCharArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Char::Unbox(IChar::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IChar *value = IChar::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Char::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -670,7 +692,14 @@ std::vector<int> Want::GetIntArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsIntegerArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Integer::Unbox(IInteger::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IInteger *value = IInteger::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Integer::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -737,7 +766,14 @@ std::vector<double> Want::GetDoubleArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsDoubleArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Double::Unbox(IDouble::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IDouble *value = IDouble::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Double::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -803,7 +839,14 @@ std::vector<float> Want::GetFloatArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsFloatArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Float::Unbox(IFloat::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IFloat *value = IFloat::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Float::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -871,7 +914,14 @@ std::vector<long> Want::GetLongArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsLongArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Long::Unbox(ILong::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                ILong *value = ILong::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Long::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -938,7 +988,14 @@ std::vector<short> Want::GetShortArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsShortArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(Short::Unbox(IShort::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IShort *value = IShort::Query(object);
+                if (value != nullptr) {
+                    array.push_back(Short::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -1004,7 +1061,14 @@ std::vector<std::string> Want::GetStringArrayParam(const std::string &key) const
     auto value = parameters_.GetParam(key);
     IArray *ao = IArray::Query(value);
     if (ao != nullptr && Array::IsStringArray(ao)) {
-        auto func = [&](IInterface *object) { array.emplace_back(String::Unbox(IString::Query(object))); };
+        auto func = [&](IInterface *object) {
+            if (object != nullptr) {
+                IString *value = IString::Query(object);
+                if (value != nullptr) {
+                    array.push_back(String::Unbox(value));
+                }
+            }
+        };
         Array::ForEach(ao, func);
     }
     return array;
@@ -1564,6 +1628,7 @@ bool Want::ReadFromParcel(Parcel &parcel)
         if (params != nullptr) {
             parameters_ = *params;
             delete params;
+            params = nullptr;
         } else {
             return false;
         }

@@ -156,7 +156,7 @@ AbilityConnectManager *AbilityConnectManagerTest::ConnectManager() const
  * EnvConditions:NA
  * CaseDescription: Verify the normal process of startability
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_001, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_001, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -194,7 +194,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_001, TestSize.Level0)
  * 1.token is nullptr, terminate ability failed
  * 2.token is not nullptr, terminate ability success, and verify the status
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_002, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_002, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -225,7 +225,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_002, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify ability is terminating, terminate ability success
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_003, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_003, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -253,7 +253,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_003, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify service is connected, terminate ability failed
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_004, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_004, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -285,7 +285,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_004, TestSize.Level0)
  * 1.token is nullptr, stop service ability failed
  * 2.token is not nullptr, stop service ability success, and verify the status
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_005, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_005, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -317,7 +317,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_005, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify ability is terminating, stop service ability success
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_006, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_006, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -345,7 +345,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_006, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify service is connected, stop service ability failed
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_007, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_007, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -375,7 +375,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_007, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service not loaded and callback not bound.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_008, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_008, TestSize.Level1)
 {
     int result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result);
@@ -400,7 +400,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_008, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service load ability's timeout.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_009, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_009, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -424,7 +424,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_009, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service loaded and callback not bound.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_010, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_010, TestSize.Level1)
 {
     auto result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result);
@@ -455,7 +455,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_010, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service connect ability's timeout.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_011, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_011, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -491,7 +491,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_011, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service loaded and callback bound.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_012, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_012, TestSize.Level1)
 {
     auto result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result);
@@ -519,7 +519,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_012, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service not loaded and callback bound.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_013, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_013, TestSize.Level1)
 {
     int result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result);
@@ -558,7 +558,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_013, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the scene of service loaded and callback bound, but service and callback was not associated.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_014, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_014, TestSize.Level1)
 {
     auto result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result);
@@ -595,7 +595,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_014, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the AttachAbilityThreadLocked function when the parameter is null.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_015, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_015, TestSize.Level1)
 {
     auto result = ConnectManager()->AttachAbilityThreadLocked(nullptr, nullptr);
     EXPECT_EQ(OHOS::ERR_INVALID_VALUE, result);
@@ -624,7 +624,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_016, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: verify the ScheduleConnectAbilityDoneLocked function when the state is CONNECTED.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_017, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_017, TestSize.Level1)
 {
     auto callback = new AbilityConnectCallback();
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callback, nullptr);
@@ -656,7 +656,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_017, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the input parameters.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_001, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_001, TestSize.Level1)
 {
     // start test
     // test1 for serviceToken is null but remoteObject is valid
@@ -677,7 +677,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_001, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the input serviceToken which corresponding ability record doesn't exist.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_002, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_002, TestSize.Level1)
 {
     // test for serviceToken's abilityRecord is null
     serviceRecord_ = nullptr;
@@ -693,7 +693,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_002, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: verify the input serviceToken which corresponding connection list is empty.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_003, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_003, TestSize.Level1)
 {
     // test for serviceToken's connection list is null
     // start test
@@ -713,7 +713,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_003, TestSize.Level0)
  * CaseDescription: verify the input serviceToken which corresponding connection list members' state
  * is not CONNECTING or CONNECTED.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_004, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_004, TestSize.Level1)
 {
     // test for schedule the service connected done but the corresponding connection state is not CONNECTING
     // generate the first connection record of callbackA_
@@ -745,7 +745,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_004, TestSize.Level0)
  * CaseDescription: verify the scene : 1.serviceToken's corresponding connection list member's state is CONNECTING.
  * 2.But the connection callback is null.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_005, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_005, TestSize.Level1)
 {
     // test for schedule the service connected done but the corresponding connection state is not CONNECTING
     // generate the first connection record of null
@@ -773,7 +773,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_005, TestSize.Level0)
  * CaseDescription: verify the scene : 1.serviceToken's corresponding connection list member's state is CONNECTED.
  * 2.But the connection callback is null.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_006, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_006, TestSize.Level1)
 {
     // test for schedule the service connected done but the corresponding connection state is not CONNECTING
     // generate the first connection record of null
@@ -801,7 +801,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_006, TestSize.Level0)
  * CaseDescription: verify the scene : 1.serviceToken's corresponding connection list member's state is CONNECTING.
  * 2.But the connection callback is valid.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_007, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_007, TestSize.Level1)
 {
     // test for schedule the service connected done but the corresponding connection state is not CONNECTING
     // generate the first connection record of callbackA_
@@ -833,7 +833,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_007, TestSize.Level0)
  * CaseDescription: verify the scene : 1.serviceToken's corresponding connection list member's state is CONNECTED.
  * 2.But the connection callback is valid.
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_008, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_008, TestSize.Level1)
 {
     // test for schedule the service connected done but the corresponding connection state is not CONNECTING
     // generate the first connection record of callbackA_
@@ -873,7 +873,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Connect_008, TestSize.Level0)
  * 2. If the current connect ability state is not connected, disconnect fails
  * 3. Verify the success of disconnect ability
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_001, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_001, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -907,7 +907,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_001, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Results after verifying the disconnect ability
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_002, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_002, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -959,7 +959,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Kit_Disconnect_002, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the ability status, right
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_018, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_018, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1001,7 +1001,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_018, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the abilitytransitiondone process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_019, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_019, TestSize.Level1)
 {
     OHOS::sptr<OHOS::IRemoteObject> nullToken = nullptr;
     auto result = ConnectManager()->AbilityTransitionDone(nullToken, OHOS::AAFwk::AbilityState::INACTIVE);
@@ -1032,7 +1032,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_019, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the ScheduleDisconnectAbilityDoneLocked process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_020, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_020, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1079,7 +1079,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_020, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the ScheduleCommandAbilityDoneLocked process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_021, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_021, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1116,7 +1116,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_021, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the GetServiceRecordByToken process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_022, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_022, TestSize.Level1)
 {
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
@@ -1141,7 +1141,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_022, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the RemoveAll process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_023, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_023, TestSize.Level1)
 {
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
@@ -1169,7 +1169,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_023, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the OnAbilityDied process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_024, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_024, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1231,7 +1231,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_024, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the DispatchInactive process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_025, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_025, TestSize.Level1)
 {
     std::shared_ptr<AbilityRecord> ability = nullptr;
     auto result = ConnectManager()->DispatchInactive(ability, OHOS::AAFwk::AbilityState::INACTIVATING);
@@ -1267,7 +1267,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_025, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the DispatchInactive process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_026, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_026, TestSize.Level1)
 {
     std::shared_ptr<AbilityRecord> ability = nullptr;
     auto result = ConnectManager()->DispatchInactive(ability, OHOS::AAFwk::AbilityState::INACTIVATING);
@@ -1303,7 +1303,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_026, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the AddConnectDeathRecipient process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_027, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_027, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1327,7 +1327,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_027, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the RemoveConnectDeathRecipient process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_028, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_028, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);
@@ -1350,7 +1350,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_028, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: Verify the OnCallBackDied process
  */
-HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_029, TestSize.Level0)
+HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_029, TestSize.Level1)
 {
     auto handler = std::make_shared<EventHandler>(EventRunner::Create());
     ConnectManager()->SetEventHandler(handler);

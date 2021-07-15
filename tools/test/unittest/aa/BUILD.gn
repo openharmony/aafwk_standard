@@ -32,10 +32,7 @@ ohos_unittest("ability_command_test") {
   sources = [ "ability_command_test.cpp" ]
   sources += tools_aa_mock_sources
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    ":tools_aa_config_mock",
-  ]
+  configs = [ ":tools_aa_config_mock" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -61,10 +58,7 @@ ohos_unittest("ability_command_start_test") {
   sources = [ "ability_command_start_test.cpp" ]
   sources += tools_aa_mock_sources
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    ":tools_aa_config_mock",
-  ]
+  configs = [ ":tools_aa_config_mock" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -90,10 +84,7 @@ ohos_unittest("ability_command_stop_service_test") {
   sources = [ "ability_command_stop_service_test.cpp" ]
   sources += tools_aa_mock_sources
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    ":tools_aa_config_mock",
-  ]
+  configs = [ ":tools_aa_config_mock" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -119,10 +110,7 @@ ohos_unittest("ability_command_dump_test") {
   sources = [ "ability_command_dump_test.cpp" ]
   sources += tools_aa_mock_sources
 
-  configs = [
-    "${aafwk_path}/tools/aa:ability_command_config",
-    ":tools_aa_config_mock",
-  ]
+  configs = [ ":tools_aa_config_mock" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -142,11 +130,40 @@ ohos_unittest("ability_command_dump_test") {
   ]
 }
 
+ohos_unittest("ability_command_screen_test") {
+  module_out_path = module_output_path
+
+  sources = [ "ability_command_screen_test.cpp" ]
+  sources += tools_aa_mock_sources
+
+  configs = [ ":tools_aa_config_mock" ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${aafwk_path}/tools/aa:tools_aa_source_set",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "appexecfwk_standard:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
+  install_enable = true
+}
+
 group("unittest") {
   testonly = true
 
   deps = [
     ":ability_command_dump_test",
+    ":ability_command_screen_test",
     ":ability_command_start_test",
     ":ability_command_stop_service_test",
     ":ability_command_test",

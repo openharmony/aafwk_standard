@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_AAFWK_SERVICES_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H
-#define FOUNDATION_AAFWK_SERVICES_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H
+#ifndef FOUNDATION_AAFWK_STANDARD_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H
+#define FOUNDATION_AAFWK_STANDARD_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H
 
 #include "shell_command.h"
 #include "ability_manager_interface.h"
@@ -30,6 +30,12 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  start                start ability with options\n"
                              "  stop-service         stop service with options\n"
                              "  dump                 dump the ability stack info\n";
+
+const std::string HELP_MSG_SCREEN =
+    "usage: aa screen <options>\n"
+    "options list:\n"
+    "  -h, --help                                               list available commands\n"
+    "  -p, --power <state>                                      power on or off with a state name\n";
 
 const std::string HELP_MSG_START =
     "usage: aa start <options>\n"
@@ -62,6 +68,13 @@ const std::string STRING_START_ABILITY_NG = "error: failed to start ability.";
 
 const std::string STRING_STOP_SERVICE_ABILITY_OK = "stop service ability successfully.";
 const std::string STRING_STOP_SERVICE_ABILITY_NG = "error: failed to stop service ability.";
+
+const std::string STRING_SCREEN_POWER_ON = "on";
+
+const std::string STRING_SCREEN_POWER_ON_OK = "power on screen successfully.";
+const std::string STRING_SCREEN_POWER_ON_NG = "error: failed to power on screen.";
+const std::string STRING_SCREEN_POWER_OFF_OK = "power off screen successfully.";
+const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off screen.";
 }  // namespace
 
 class AbilityManagerShellCommand : public ShellCommand {
@@ -76,6 +89,7 @@ private:
     ErrCode init() override;
 
     ErrCode RunAsHelpCommand();
+    ErrCode RunAsScreenCommand();
     ErrCode RunAsStartAbility();
     ErrCode RunAsStopService();
     ErrCode RunAsDumpCommand();
@@ -87,4 +101,4 @@ private:
 }  // namespace AAFwk
 }  // namespace OHOS
 
-#endif  // FOUNDATION_AAFWK_SERVICES_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H
+#endif  // FOUNDATION_AAFWK_STANDARD_TOOLS_AA_INCLUDE_ABILITY_COMMAND_H

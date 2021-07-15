@@ -66,15 +66,41 @@ public:
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD1(UninstallApp, int(const std::string &bundleName));
+    MOCK_METHOD2(
+        GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
+    MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
+    MOCK_METHOD1(CancelWantSender, void(const sptr<IWantSender> &sender));
+    MOCK_METHOD1(GetPendingWantUid, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantBundleName, std::string(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantCode, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantType, int(const sptr<IWantSender> &target));
+    MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
+
+    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
+    bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
+    int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) override;
 
     int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList) override;
+        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
 
     int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
 
     int RemoveMission(int id) override;
 
     int RemoveStack(int id) override;
+    int PowerOff() override;
+    int PowerOn() override;
+    int LockMission(int missionId) override
+    {
+        return 0;
+    };
+    int UnlockMission(int missionId) override
+    {
+        return 0;
+    };
 
     AbilityLifeCycleState curstate_ = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life

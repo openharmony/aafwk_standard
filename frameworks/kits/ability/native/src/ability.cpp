@@ -87,13 +87,19 @@ void Ability::OnStart(const Want &want)
         if (abilityInfo_->bundleName == SYSTEM_UI) {
             if (abilityInfo_->name == STATUS_BAR) {
                 config.type = OHOS::WindowType::WINDOW_TYPE_STATUS_BAR;
-                APP_LOGI("Ability::OnStart STATUS_BAR : set config.type = %{public}d", config.type);
             }
             if (abilityInfo_->name == NAVIGATION_BAR) {
                 config.type = OHOS::WindowType::WINDOW_TYPE_NAVI_BAR;
-                APP_LOGI("Ability::OnStart NAVIGATION_BAR : set config.type = %{public}d", config.type);
             }
         }
+        if (abilityInfo_->bundleName == OHOS_REQUEST_PERMISSION_BUNDLENAME &&
+            abilityInfo_->name == OHOS_REQUEST_PERMISSION_ABILITY_NAME) {
+            config.type = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
+        }
+        APP_LOGI("Ability::OnStart bundleName:%{public}s abilityName:%{public}s: set config.type = %{public}d",
+            abilityInfo_->bundleName.c_str(),
+            abilityInfo_->name.c_str(),
+            config.type);
         SetUIContent(config);
 
         if (abilityWindow_ != nullptr) {
@@ -741,21 +747,6 @@ void Ability::OnEventDispatch()
 {}
 
 /**
- * @brief Called when this ability gains or loses window focus.
- * The focus state refers to the global state, which is independent of the ability lifecycle states.
- * Although the lifecycle state change of an ability may lead to a focus change (for example, onStop()
- * may cause the ability to lose window focus), there is no particular sequence between this callback
- * and other lifecycle callbacks such as onBackground().
- * Generally, the ability in the foreground will have window focus. The ability will lose focus when
- * another dialog box or pop-up window is displayed. The ability will also lose focus when a system-level
- * window (such as the status bar or a system alarm) is displayed.
- *
- * @param hasFocus Specifies whether this ability has focus.
- */
-void Ability::OnWindowFocusChanged(bool hasFocus)
-{}
-
-/**
  * @brief Sets the want object that can be obtained by calling getWant().
  * @param Want information of other ability
  */
@@ -1263,6 +1254,47 @@ void Ability::PostTask(std::function<void()> task, long delayTime)
 {
     APP_LOGI("Ability::PostTask called");
     TaskHandlerClient::GetInstance()->PostTask(task, delayTime);
+}
+
+/**
+ * @brief Called when this ability gains or loses window focus.
+ *
+ * @param hasFocus Specifies whether this ability has focus.
+ */
+void Ability::OnWindowFocusChanged(bool hasFocus)
+{}
+
+/**
+ * @brief Called when this ability is moved to or removed from the top of the stack.
+ *
+ * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
+ * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
+ */
+void Ability::OnTopActiveAbilityChanged(bool topActive)
+{}
+
+/**
+ * @brief Called to set caller information for the application. The default implementation returns null.
+ *
+ * @return Returns the caller information.
+ */
+Uri Ability::OnSetCaller()
+{
+    return Uri("");
+}
+
+/**
+ * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
+ * finishing the root ability of the mission.
+ */
+void Ability::TerminateAndRemoveMission()
+{
+    auto state = GetState();
+    if (state > AbilityLifecycleExecutor::LifecycleState::INITIAL) {
+        APP_LOGI("Ability::TerminateAndRemoveMission the GetState retval is %d", state);
+        return;
+    }
+    AbilityContext::TerminateAndRemoveMission();
 }
 
 }  // namespace AppExecFwk

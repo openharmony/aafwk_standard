@@ -25,11 +25,10 @@ namespace OHOS {
 namespace AAFwk {
 class PatternsMatcherBaseTest : public testing::Test {
 public:
-    PatternsMatcherBaseTest() 
+    PatternsMatcherBaseTest()
     {}
     ~PatternsMatcherBaseTest()
-    {
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -51,8 +50,7 @@ void PatternsMatcherBaseTest::SetUp(void)
 }
 
 void PatternsMatcherBaseTest::TearDown(void)
-{
-}
+{}
 
 /**
  * @tc.number: AaFwk_PatternsMatcher_Parcelable_0100
@@ -61,7 +59,7 @@ void PatternsMatcherBaseTest::TearDown(void)
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0100, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("1234", MatchType::PATTERN_LITERAL);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("1234", MatchType::DEFAULT);
     if (PatternsMatcherIn_ != nullptr) {
         Parcel in;
         PatternsMatcherIn_->Marshalling(in);
@@ -80,7 +78,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0100, Functio
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0200, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("@#￥#3243adsafdf_中文", MatchType::PATTERN_PREFIX);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("@#￥#3243adsafdf_中文", MatchType::PREFIX);
     if (PatternsMatcherIn_ != nullptr) {
         Parcel in;
         PatternsMatcherIn_->Marshalling(in);
@@ -99,7 +97,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0200, Functio
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0300, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("", MatchType::PATTERN_SIMPLE_GLOB);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("", MatchType::GLOBAL);
     if (PatternsMatcherIn_ != nullptr) {
         Parcel in;
         PatternsMatcherIn_->Marshalling(in);
@@ -118,7 +116,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Parcelable_0300, Functio
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0100, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abcdefg", MatchType::PATTERN_LITERAL);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abcdefg", MatchType::DEFAULT);
     if (PatternsMatcherIn_ != nullptr) {
         EXPECT_EQ(PatternsMatcherIn_->match("abcdefg"), true);
         EXPECT_EQ(PatternsMatcherIn_->match("Abcdefg"), false);
@@ -132,7 +130,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0100, Function | M
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0200, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abcdefg", MatchType::PATTERN_PREFIX);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abcdefg", MatchType::PREFIX);
     if (PatternsMatcherIn_ != nullptr) {
         EXPECT_EQ(PatternsMatcherIn_->match("abcdefgABCDEFG"), true);
         EXPECT_EQ(PatternsMatcherIn_->match("AbcdefgABCDEFG"), false);
@@ -146,7 +144,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0200, Function | M
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0300, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abc*defg.", MatchType::PATTERN_REGEX);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abc*defg.", MatchType::PATTERN);
     if (PatternsMatcherIn_ != nullptr) {
         EXPECT_EQ(PatternsMatcherIn_->match("abcdefgG"), true);
         EXPECT_EQ(PatternsMatcherIn_->match("abcccccdefgG"), true);
@@ -162,7 +160,7 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0300, Function | M
  */
 HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0400, Function | MediumTest | Level1)
 {
-    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abc*ABC*123", MatchType::PATTERN_SIMPLE_GLOB);
+    PatternsMatcherIn_ = std::make_shared<PatternsMatcher>("abc*ABC*123", MatchType::GLOBAL);
     if (PatternsMatcherIn_ != nullptr) {
         EXPECT_EQ(PatternsMatcherIn_->match("abcABC123"), true);
         EXPECT_EQ(PatternsMatcherIn_->match("abcdefgABCDEFG123"), true);
@@ -172,5 +170,5 @@ HWTEST_F(PatternsMatcherBaseTest, AaFwk_PatternsMatcher_Match_0400, Function | M
         EXPECT_EQ(PatternsMatcherIn_->match("abcABC12345"), false);
     }
 }
-}
-}
+}  // namespace AAFwk
+}  // namespace OHOS

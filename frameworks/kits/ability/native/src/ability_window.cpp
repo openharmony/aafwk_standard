@@ -93,7 +93,9 @@ bool AbilityWindow::OnKeyEvent(KeyEvent event)
     switch (event.GetKeyCode()) {
         case KeyEvent::CODE_BACK:
             APP_LOGI("AbilityWindow::OnKeyEvent Back key pressed.");
-            ret = OnBackPressed(ability);
+            if (!event.IsKeyDown()) {
+                ret = OnBackPressed(ability);
+            }
             break;
         default:
             APP_LOGI("AbilityWindow::OnKeyEvent the key event is %{public}d.", event.GetKeyCode());

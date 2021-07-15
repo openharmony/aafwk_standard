@@ -33,10 +33,10 @@ public:
     {}
     ~BundleMgrProxy() = default;
 
-    bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) override;
-    bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
+    virtual bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) override;
+    virtual bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
 
-    std::string GetAppType(const std::string &bundleName) override;
+    virtual std::string GetAppType(const std::string &bundleName) override;
 
     virtual bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
@@ -61,7 +61,7 @@ public:
     {
         return 0;
     };
-    virtual bool GetBundleNamesForUid(const int uid, std::vector<std::string> &bundleNames) override
+    virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) override
     {
         return true;
     };
@@ -87,7 +87,7 @@ public:
     {
         return true;
     };
-    virtual bool GetHapModuleInfo(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo) override;
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
     // obtains the Want for starting the main ability of an application based on the given bundle name.
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override
     {
@@ -170,6 +170,51 @@ public:
     {
         return true;
     }
+    virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) override
+    {
+        return "";
+    }
+    virtual bool GetBundlesForUid(const int uid, std::vector<std::string> &bundleNames) override
+    {
+        return true;
+    }
+    virtual bool GetNameForUid(const int uid, std::string &name) override
+    {
+        return true;
+    }
+    virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override
+    {
+        return true;
+    }
+    virtual bool SetAbilityEnabled(const AbilityInfo &abilityInfo, bool isEnabled) override
+    {
+        return true;
+    }
+    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) override
+    {
+        return "";
+    }
+    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool RegisterPermissionsChanged(
+        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool IsApplicationEnabled(const std::string &bundleName) override
+    {
+        return true;
+    }
+    virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) override
+    {
+        return true;
+    }
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -181,10 +226,10 @@ public:
 
 class BundleMgrService : public BundleMgrStub {
 public:
-    bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
-    bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
+    virtual bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+    virtual bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
 
-    std::string GetAppType(const std::string &bundleName) override;
+    virtual std::string GetAppType(const std::string &bundleName) override;
 
     virtual bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
@@ -193,7 +238,7 @@ public:
     {
         return true;
     };
-    bool CheckIsSystemAppByUid(const int uid) override
+    virtual bool CheckIsSystemAppByUid(const int uid) override
     {
         return true;
     };
@@ -209,7 +254,7 @@ public:
     {
         return 0;
     };
-    virtual bool GetBundleNamesForUid(const int uid, std::vector<std::string> &bundleNames) override
+    virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) override
     {
         return true;
     };
@@ -235,7 +280,7 @@ public:
     {
         return true;
     };
-    virtual bool GetHapModuleInfo(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo) override;
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
     // obtains the Want for starting the main ability of an application based on the given bundle name.
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override
     {
@@ -315,6 +360,51 @@ public:
     }
     virtual bool RequestPermissionFromUser(
         const std::string &bundleName, const std::string &permission, const int userId) override
+    {
+        return true;
+    }
+    virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) override
+    {
+        return "";
+    }
+    virtual bool GetBundlesForUid(const int uid, std::vector<std::string> &bundleNames) override
+    {
+        return true;
+    }
+    virtual bool GetNameForUid(const int uid, std::string &name) override
+    {
+        return true;
+    }
+    virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override
+    {
+        return true;
+    }
+    virtual bool SetAbilityEnabled(const AbilityInfo &abilityInfo, bool isEnabled) override
+    {
+        return true;
+    }
+    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) override
+    {
+        return "";
+    }
+    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool RegisterPermissionsChanged(
+        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override
+    {
+        return true;
+    }
+    virtual bool IsApplicationEnabled(const std::string &bundleName) override
+    {
+        return true;
+    }
+    virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) override
     {
         return true;
     }

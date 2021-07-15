@@ -132,7 +132,7 @@ void AbilityManagerServiceTest::TearDown()
  * EnvConditions: NA
  * CaseDescription: Verify that the result of StartAbility is failed if the param of StartAbility is illegal.
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_001, TestSize.Level1)
 {
     Want want;
     want.AddEntity(Want::ENTITY_HOME);
@@ -149,7 +149,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_001, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify that the result of StartAbility is successful if the param of StartAbility is normal.
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_002, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_002, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
@@ -171,7 +171,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_002, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify the singleton startup mode, start multiple times, and do not recreate
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_003, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_003, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
@@ -217,7 +217,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_003, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify the standard startup mode, start several times, and create a new record
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_004, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_004, TestSize.Level1)
 {
 
     Want want;
@@ -254,7 +254,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_004, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify the singletop startup mode, start several times, and create a new record
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_005, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_005, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
@@ -300,7 +300,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_005, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify that service ability started successfully
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_006, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_006, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
@@ -320,7 +320,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_006, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Top ability is not active, so enqueue ability for waiting. StartAbility failed
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_007, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_007, TestSize.Level1)
 {
 
     Want want;
@@ -348,7 +348,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_007, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Failed to verify terminate ability
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_008, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_008, TestSize.Level1)
 {
 
     Want want;
@@ -388,7 +388,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_008, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verification service terminate ability failure
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_009, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_009, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
@@ -418,7 +418,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_009, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verification service terminate ability failure
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_010, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_010, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
@@ -482,7 +482,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_010, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Attachabilitythread failed due to empty token or scheduler
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level1)
 {
 
     Want wantLuncher;
@@ -513,7 +513,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: AbilityTransitionDone failed due to empty token or scheduler
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
 {
 
     Want wantLuncher;
@@ -542,7 +542,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify set and get
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level1)
 {
 
     abilityMs_->SetStackManager(0);
@@ -557,7 +557,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify dumpwaittingabilityqueue result
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level1)
 {
 
     std::string dump;
@@ -573,7 +573,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: OnAbilityRequestDone failed due to empty token
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level1)
 {
 
     Want wantLuncher;
@@ -605,7 +605,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level0)
  *                  4.The current mission cannot be removed
  *                  5.current mission is launcher, remove default mission is success
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level1)
 {
 
     Want wantLuncher;
@@ -664,7 +664,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level0)
  * EnvConditions: window visible is true, ability state is inactive
  * CaseDescription: Verify RemoveMission operation fail
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
 {
 
     Want wantLuncher;
@@ -710,7 +710,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify GetRecentMissions operation
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level1)
 {
 
     Want want;
@@ -730,7 +730,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level0)
     WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result1);
 
-    std::vector<RecentMissionInfo> info;
+    std::vector<AbilityMissionInfo> info;
     auto res = abilityMs_->GetRecentMissions(-1, 1, info);
     EXPECT_EQ(OHOS::ERR_INVALID_VALUE, res);
 
@@ -766,7 +766,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level0)
  *                  2.stackid no exist, RemoveStack failed
  *                  3.don't allow remove luncher mission stack
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level1)
 {
 
     EXPECT_EQ(abilityMs_->RemoveStack(-1), OHOS::ERR_INVALID_VALUE);
@@ -782,7 +782,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: remove default stack success
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
 {
 
     Want want;
@@ -822,7 +822,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level0)
  * 2.ability type is page, connectAbility failed
  * 3.ability type is service and callback is not nullptr, connectAbility success
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_021, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_021, TestSize.Level1)
 {
 
     Want want;
@@ -853,7 +853,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_021, TestSize.Level0)
  * 1.callback is nullptr, disconnect ability failed
  * 2.connect ability is not connected, connectAbility failed
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_022, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_022, TestSize.Level1)
 {
 
     Want want;
@@ -886,7 +886,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_022, TestSize.Level0)
  * 2.ability record is nullptr, ScheduleConnectAbilityDone failed
  * 2.ability type is not service, ScheduleConnectAbilityDone failed
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_023, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_023, TestSize.Level1)
 {
 
     Want want;
@@ -940,7 +940,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_023, TestSize.Level0)
  * 2.ability record is nullptr, ScheduleDisconnectAbilityDone failed
  * 2.ability type is not service, ScheduleDisconnectAbilityDone failed
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_024, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_024, TestSize.Level1)
 {
 
     Want want;
@@ -995,7 +995,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_024, TestSize.Level0)
  * 2.ability record is nullptr, ScheduleCommandAbilityDone failed
  * 2.ability type is not service, ScheduleCommandAbilityDone failed
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_025, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_025, TestSize.Level1)
 {
 
     Want want;
@@ -1047,7 +1047,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_025, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify getallstackenfo results
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_026, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_026, TestSize.Level1)
 {
     EXPECT_TRUE(abilityMs_ != nullptr);
     Want want;
@@ -1092,7 +1092,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_026, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify StopServiceAbility results
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_027, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_027, TestSize.Level1)
 {
 
     Want want;
@@ -1129,7 +1129,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_027, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify MoveMissionToTop results
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_028, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_028, TestSize.Level1)
 {
 
     Want want;
@@ -1169,12 +1169,12 @@ HWTEST_F(AbilityManagerServiceTest, Interface_028, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify KillProcess Failure situation
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
 {
 
     abilityMs_->currentStackManager_ = nullptr;
     auto result = abilityMs_->KillProcess("bundle");
-    EXPECT_EQ(ERR_NO_INIT, result);
+    EXPECT_EQ(ERR_OK, result);
 }
 
 /*
@@ -1185,7 +1185,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify UninstallApp Failure situation
  */
-HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level1)
 {
 
     abilityMs_->currentStackManager_ = nullptr;
@@ -1202,7 +1202,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level0)
  * CaseDescription: Verify function AcquireDataAbility return nullptr when AbilityManagerService not
  * dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_001, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
 
@@ -1220,7 +1220,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_001
  * EnvConditions: NA
  * CaseDescription: Verify function AcquireDataAbility return nullptr when AbilityManagerService not iBundleManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_002, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_002, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
     // assert ability record
@@ -1236,7 +1236,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_002
  * EnvConditions: NA
  * CaseDescription: Verify function AcquireDataAbility return nullptr when uri not start with 'dataablity'
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_003, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_003, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("mydataability:///data.bundle.DataAbility");
     // assert ability record
@@ -1252,7 +1252,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_003
  * EnvConditions: NA
  * CaseDescription: Verify function AcquireDataAbility return nullptr when uri start with empty
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_004, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_004, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("dataability://");
     EXPECT_EQ(abilityMs_->AcquireDataAbility(dataAbilityUri, true, abilityRecord_->GetToken()), nullptr);
@@ -1266,7 +1266,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_004
  * EnvConditions: NA
  * CaseDescription: Verify function AcquireDataAbility return nullptr when QueryAbilityInfoByUri false.
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_005, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_005, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
     EXPECT_EQ(abilityMs_->AcquireDataAbility(dataAbilityUri, true, abilityRecord_->GetToken()), nullptr);
@@ -1280,7 +1280,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_005
  * EnvConditions: NA
  * CaseDescription: Verify function AcquireDataAbility return nullptr when appInfo name empty
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_006, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_006, TestSize.Level1)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
 
@@ -1303,7 +1303,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_006
  * CaseDescription: Verify function ReleaseDataAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_ReleaseDataAbility_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_ReleaseDataAbility_001, TestSize.Level1)
 {
     // assert ability record
     ASSERT_TRUE(abilityRecord_);
@@ -1319,7 +1319,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_ReleaseDataAbility_001
  * CaseDescription: Verify function ReleaseDataAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, TerminateAbilityResult_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, TerminateAbilityResult_001, TestSize.Level1)
 {
     sptr<IRemoteObject> token = nullptr;
     auto result1 = abilityMs_->TerminateAbilityResult(token, -1);
@@ -1373,7 +1373,7 @@ HWTEST_F(AbilityManagerServiceTest, TerminateAbilityResult_001, TestSize.Level0)
  * CaseDescription: Verify function ReleaseDataAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, startAbility_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, startAbility_001, TestSize.Level1)
 {
     // first run a service aa
     Want want;
@@ -1408,7 +1408,7 @@ HWTEST_F(AbilityManagerServiceTest, startAbility_001, TestSize.Level0)
  * CaseDescription: Verify function startAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, startAbility_002, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, startAbility_002, TestSize.Level1)
 {
     // first run a service aa
     Want want;
@@ -1439,7 +1439,7 @@ HWTEST_F(AbilityManagerServiceTest, startAbility_002, TestSize.Level0)
  * CaseDescription: Verify function startAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, startAbility_003, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, startAbility_003, TestSize.Level1)
 {
     // first run a service aa
     Want want;
@@ -1472,7 +1472,7 @@ HWTEST_F(AbilityManagerServiceTest, startAbility_003, TestSize.Level0)
  * CaseDescription: Verify function startAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, startAbility_004, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, startAbility_004, TestSize.Level1)
 {
     // run a page aa
     Want want;
@@ -1511,7 +1511,7 @@ HWTEST_F(AbilityManagerServiceTest, startAbility_004, TestSize.Level0)
  * CaseDescription: Verify function startAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, systemDialog_001, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, systemDialog_001, TestSize.Level1)
 {
     Want want;
     ElementName element("device", "com.ix.hiworld", "WorldService");
@@ -1574,7 +1574,7 @@ HWTEST_F(AbilityManagerServiceTest, systemDialog_001, TestSize.Level0)
  * CaseDescription: Verify function startAbility
  * return nullptr when AbilityManagerService not dataAbilityManager_.
  */
-HWTEST_F(AbilityManagerServiceTest, systemDialog_002, TestSize.Level0)
+HWTEST_F(AbilityManagerServiceTest, systemDialog_002, TestSize.Level1)
 {
     // start dialog when device get up
     Want want;
@@ -1602,6 +1602,974 @@ HWTEST_F(AbilityManagerServiceTest, systemDialog_002, TestSize.Level0)
     EXPECT_EQ(OHOS::ERR_OK, result2);
     auto MusicAbility = stackManager->GetCurrentTopAbility();
     EXPECT_EQ(MusicAbility->GetAbilityInfo().bundleName, "com.ix.hiMusic");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_001, TestSize.Level1)
+{
+    // start SYSTEM_UI_STATUS_BAR when device get up
+    Want want;
+    ElementName elementbar("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
+    want.SetElement(elementbar);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto barAbility = stackManager->GetCurrentTopAbility();
+    AbilityRecordInfo barAbilityInfo;
+    barAbility->GetAbilityRecordInfo(barAbilityInfo);
+    auto dialogtoken = barAbility->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
+    EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    abilityMs_->HandleLoadTimeOut(barAbility->GetEventId());
+    WaitUntilTaskFinished();
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newBarAbility = newStackManager->GetCurrentTopAbility();
+    AbilityRecordInfo newAbilityInfo;
+    newBarAbility->GetAbilityRecordInfo(newAbilityInfo);
+    EXPECT_TRUE(newBarAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_NE(barAbilityInfo.id, newAbilityInfo.id);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_002, TestSize.Level1)
+{
+    // start SYSTEM_UI_NAVIGATION_BAR when device get up
+    Want want;
+    ElementName elementdialog("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+    want.SetElement(elementdialog);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto navigationAbility = stackManager->GetCurrentTopAbility();
+    auto dialogtoken = navigationAbility->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
+    EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    abilityMs_->HandleLoadTimeOut(navigationAbility->GetEventId());
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_NE(navigationAbility, newNavigationAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when timeout ,the HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_003, TestSize.Level1)
+{
+    // start SYSTEM_UI_STATUS_BAR when device get up
+    Want want;
+    ElementName elementbar("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
+    want.SetElement(elementbar);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto barAbility = stackManager->GetCurrentTopAbility();
+    AbilityRecordInfo barAbilityInfo;
+    barAbility->GetAbilityRecordInfo(barAbilityInfo);
+    EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    abilityMs_->HandleLoadTimeOut(barAbility->GetEventId());
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newBarAbility = newStackManager->GetCurrentTopAbility();
+    AbilityRecordInfo newAbilityInfo;
+    newBarAbility->GetAbilityRecordInfo(newAbilityInfo);
+    EXPECT_TRUE(newBarAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_NE(barAbilityInfo.id, newAbilityInfo.id);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when timeout ,the HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_004, TestSize.Level1)
+{
+    // start SYSTEM_UI_NAVIGATION_BAR when device get up
+    Want want;
+    ElementName elementbar("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+    want.SetElement(elementbar);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto navigationAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    abilityMs_->HandleLoadTimeOut(navigationAbility->GetEventId());
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_NE(navigationAbility, newNavigationAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_005, TestSize.Level1)
+{
+    // start SYSTEM_UI_STATUS_BAR when device get up
+    Want want;
+    ElementName elementbar("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
+    want.SetElement(elementbar);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto barAbility = stackManager->GetCurrentTopAbility();
+    auto bartoken = barAbility->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, bartoken), OHOS::ERR_OK);
+    EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newBarAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newBarAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_EQ(barAbility, newBarAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start systemui, when HandleLoadTimeOut called, restart systemui
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_006, TestSize.Level1)
+{
+    // start SYSTEM_UI_NAVIGATION_BAR when device get up
+    Want want;
+    ElementName elementbar("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+    want.SetElement(elementbar);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->systemAppManager_;
+    auto navigationAbility = stackManager->GetCurrentTopAbility();
+    auto navigationtoken = navigationAbility->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, navigationtoken), OHOS::ERR_OK);
+    EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    auto newStackManager = abilityMs_->systemAppManager_;
+    auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    EXPECT_EQ(navigationAbility, newNavigationAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when HandleLoadTimeOut called, restart previous ability
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_007, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when HandleLoadTimeOut called, restart previous ability
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_008, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", COM_IX_HIWORLD, "helloAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when Activate timeout, the HandleLoadTimeOut called, restart launch
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_009, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", COM_IX_HIWORLD, "helloAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    auto abilityTokenTv = abilityTv->GetToken();
+    OHOS::sptr<IAbilityScheduler> newScheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(newScheduler, abilityTokenTv), OHOS::ERR_OK);
+    abilityTv->Activate();
+    abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName != "com.ix.hiTv");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when InActivate timeout, the HandleLoadTimeOut called, restart launch
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_010, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", COM_IX_HIWORLD, "helloAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    auto abilityTokenTv = abilityTv->GetToken();
+    OHOS::sptr<IAbilityScheduler> newScheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(newScheduler, abilityTokenTv), OHOS::ERR_OK);
+    abilityTv->Inactivate();
+    abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName != "com.ix.hiTv");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when HandleLoadTimeOut called,the parameter is the maximum,nothing is done.
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_011, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    abilityMs_->HandleLoadTimeOut(INT32_MAX);
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");
+    EXPECT_NE(ability, newAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: HandleLoadTimeOut
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService HandleLoadTimeOut
+ * EnvConditions: NA
+ * CaseDescription: Verify function HandleLoadTimeOut
+ * When you start page ability, when HandleLoadTimeOut called,the parameter is the minimum,nothing is done.
+ */
+HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_012, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    abilityMs_->HandleLoadTimeOut(INT32_MIN);
+    auto newStackManager = abilityMs_->GetStackManager();
+    auto newAbility = newStackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");
+    EXPECT_NE(ability, newAbility);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * IsFirstInMission parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_001, TestSize.Level1)
+{
+    auto result = abilityMs_->IsFirstInMission(nullptr);
+    EXPECT_EQ(result, false);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * IsFirstInMission parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_002, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    AbilityRequest requestInfo;
+    requestInfo.want = ability->GetWant();
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.appInfo = ability->GetApplicationInfo();
+    requestInfo.requestCode = ability->GetRequestCode();
+    auto abilitySelf = AbilityRecord::CreateAbilityRecord(requestInfo);
+    auto resultFunction = abilityMs_->IsFirstInMission(abilitySelf->GetToken());
+    EXPECT_EQ(resultFunction, false);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * IsFirstInMission parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_003, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    abilityMs_->currentStackManager_ = nullptr;
+    auto resultFunction = abilityMs_->IsFirstInMission(abilityToken);
+    EXPECT_EQ(resultFunction, false);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * IsFirstInMission parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_004, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    auto resultFunction = abilityMs_->IsFirstInMission(abilityToken);
+    EXPECT_EQ(resultFunction, true);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * Checks whether this ability is the first ability in a mission.
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_005, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityTv->GetAbilityInfo().bundleName == "com.ix.hiTv");
+    auto resultFunction = abilityMs_->IsFirstInMission(abilityToken);
+    EXPECT_EQ(resultFunction, true);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * Checks whether this ability is the first ability in a mission.
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_006, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+    EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    auto resultTv = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    auto stackManagerTv = abilityMs_->GetStackManager();
+    auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityTv->GetAbilityInfo().bundleName == "com.ix.hiTv");
+    auto resultFunction = abilityMs_->IsFirstInMission(abilityTv->GetToken());
+    EXPECT_EQ(resultFunction, false);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: IsFirstInMission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService IsFirstInMission
+ * EnvConditions: NA
+ * CaseDescription: Verify function IsFirstInMission
+ * Checks whether this ability is the first ability in a mission.
+ */
+HWTEST_F(AbilityManagerServiceTest, isfirstinmission_007, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    auto resultTvFunction = abilityMs_->IsFirstInMission(abilityTv->GetToken());
+    EXPECT_EQ(resultTvFunction, true);
+    auto resultMusicFunction = abilityMs_->IsFirstInMission(ability->GetToken());
+    EXPECT_EQ(resultMusicFunction, true);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * MoveMissionToEnd parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_001, TestSize.Level1)
+{
+    auto result = abilityMs_->MoveMissionToEnd(nullptr, true);
+    EXPECT_EQ(result, ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * MoveMissionToEnd parameter
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_002, TestSize.Level1)
+{
+    auto result = abilityMs_->MoveMissionToEnd(nullptr, false);
+    EXPECT_EQ(result, ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * MoveMissionToEnd parameter, Only one MissionRecord in Stack,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_003, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityToken, true);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * MoveMissionToEnd parameter, Only one MissionRecord in Stack,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_004, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    auto abilityToken = ability->GetToken();
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityToken, false);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When AbilityState not equal ACTIVE,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_005, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), false);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When AbilityState not equal ACTIVE,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_006, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), true);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When AbilityState not equal ACTIVE,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_007, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), false);
+    EXPECT_EQ(resultFunction, ERR_OK);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When AbilityState not equal ACTIVE,MoveMissionToEnd failed
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_008, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), true);
+    EXPECT_EQ(resultFunction, ERR_OK);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When this ability is not the first ability in a mission,
+ * and MoveMissionToEnd second parameter is false.
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_009, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    ElementName elementPhone("device", "com.ix.hiMusic", "PhoneAbility");
+    want.SetElement(elementPhone);
+    auto resultPhone = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultPhone);
+    auto abilityPhone = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityPhone);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityPhone->GetToken(), false);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When this ability is not the first ability in a mission,
+ * and MoveMissionToEnd second parameter is true.
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_010, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    ElementName elementPhone("device", "com.ix.hiMusic", "PhoneAbility");
+    want.SetElement(elementPhone);
+    auto resultPhone = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultPhone);
+    auto abilityPhone = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityPhone);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(abilityPhone->GetToken(), true);
+    EXPECT_EQ(resultFunction, ERR_OK);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When this ability is the first ability in a mission,
+ * and MoveMissionToEnd second parameter is false,but this ability AbilityState not equal ACTIVE.
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_011, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    ElementName elementPhone("device", "com.ix.hiPhone", "PhoneAbility");
+    want.SetElement(elementPhone);
+    auto resultPhone = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultPhone);
+    auto abilityPhone = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityPhone);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(ability->GetToken(), false);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: MoveMissionToEnd
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService MoveMissionToEnd
+ * EnvConditions: NA
+ * CaseDescription: Verify function MoveMissionToEnd
+ * Multiple MissionRecord in Stack,When this ability is the first ability in a mission,
+ * and MoveMissionToEnd second parameter is true,but this ability AbilityState not equal ACTIVE.
+ */
+HWTEST_F(AbilityManagerServiceTest, movemissiontoend_012, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto stackManager = abilityMs_->GetStackManager();
+    auto ability = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(ability);
+    ElementName elementPhone("device", "com.ix.hiPhone", "PhoneAbility");
+    want.SetElement(elementPhone);
+    auto resultPhone = StartAbility(want);
+    EXPECT_EQ(OHOS::ERR_OK, resultPhone);
+    auto abilityPhone = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityPhone);
+    AbilityRequest requestInfo;
+    ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
+    want.SetElement(elementTv);
+    requestInfo.want = want;
+    requestInfo.abilityInfo = ability->GetAbilityInfo();
+    requestInfo.abilityInfo.launchMode = AppExecFwk::LaunchMode::SINGLETON;
+    result = stackManager->StartAbility(requestInfo);
+    EXPECT_EQ(OHOS::ERR_OK, result);
+    auto abilityTv = stackManager->GetCurrentTopAbility();
+    stackManager->CompleteActive(abilityTv);
+    auto resultFunction = abilityMs_->MoveMissionToEnd(ability->GetToken(), true);
+    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: CompelVerifyPermission
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService CompelVerifyPermission
+ * EnvConditions: NA
+ * CaseDescription: Verify function CompelVerifyPermission
+ */
+HWTEST_F(AbilityManagerServiceTest, compelverifypermission_001, TestSize.Level1)
+{
+    const std::string permission = "permission";
+    int pid = 100;
+    int uid = 1000;
+    std::string message;
+    auto resultFunction = abilityMs_->CompelVerifyPermission(permission, pid, uid, message);
+    EXPECT_EQ(resultFunction, ERR_OK);
 }
 
 }  // namespace AAFwk

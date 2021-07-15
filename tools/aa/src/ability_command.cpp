@@ -24,12 +24,13 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string SHORT_OPTIONS = "hd:a:b:r:t";
+const std::string SHORT_OPTIONS = "hd:a:b:p:";
 const struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
     {"ability", required_argument, nullptr, 'a'},
     {"bundle", required_argument, nullptr, 'b'},
+    {"power", required_argument, nullptr, 'p'},
 };
 
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::";
@@ -52,6 +53,7 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
 {
     commandMap_ = {
         {"help", std::bind(&AbilityManagerShellCommand::RunAsHelpCommand, this)},
+        {"screen", std::bind(&AbilityManagerShellCommand::RunAsScreenCommand, this)},
         {"start", std::bind(&AbilityManagerShellCommand::RunAsStartAbility, this)},
         {"stop-service", std::bind(&AbilityManagerShellCommand::RunAsStopService, this)},
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpCommand, this)},
@@ -149,6 +151,10 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             "error: inner err.",
         },
         {
+            GET_RECENT_MISSIONS_FAILED,
+            "error: get recent missions failed.",
+        },
+        {
             REMOVE_STACK_LAUNCHER_DENIED,
             "error: remove stack launcher denied.",
         },
@@ -188,6 +194,26 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             UNINSTALL_APP_FAILED,
             "error: uninstall app failed.",
         },
+        {
+            TERMINATE_ABILITY_RESULT_FAILED,
+            "error: terminate ability result failed.",
+        },
+        {
+            CHECK_PERMISSION_FAILED,
+            "error: check permission failed.",
+        },
+        {
+            POWER_OFF_WAITING,
+            "error: power off waiting.",
+        },
+        {
+            POWER_OFF_FAILED,
+            "error: power off failed.",
+        },
+        {
+            POWER_ON_FAILED,
+            "error: power on failed.",
+        },
     };
 
     return OHOS::ERR_OK;
@@ -205,6 +231,147 @@ ErrCode AbilityManagerShellCommand::RunAsHelpCommand()
     resultReceiver_.append(HELP_MSG);
 
     return OHOS::ERR_OK;
+}
+
+ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
+{
+    int result = OHOS::ERR_OK;
+
+    int option = -1;
+    int counter = 0;
+
+    std::string powerState = "";
+
+    while (true) {
+        counter++;
+
+        option = getopt_long(argc_, argv_, SHORT_OPTIONS.c_str(), LONG_OPTIONS, nullptr);
+
+        HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
+
+        if (optind < 0 || optind > argc_) {
+            return OHOS::ERR_INVALID_VALUE;
+        }
+
+        for (int i = 0; i < argc_; i++) {
+            HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
+        }
+
+        if (option == -1) {
+            if (counter == 1) {
+                // When scanning the first argument
+                if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
+                    // 'aa screen' with no option: aa screen
+                    // 'aa screen' with a wrong argument: aa screen xxx
+                    HILOG_INFO("'aa %{public}s' %{public}s", HELP_MSG_NO_OPTION.c_str(), cmd_.c_str());
+
+                    resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
+                    result = OHOS::ERR_INVALID_VALUE;
+                }
+            }
+            break;
+        }
+
+        if (option == '?') {
+            switch (optopt) {
+                case 'p': {
+                    // 'aa screen -p' with no argument
+                    HILOG_INFO("'aa %{public}s -p' with no argument.", cmd_.c_str());
+
+                    resultReceiver_.append("error: option '");
+                    resultReceiver_.append(argv_[optind - 1]);
+                    resultReceiver_.append("' requires a value.\n");
+
+                    result = OHOS::ERR_INVALID_VALUE;
+                    break;
+                }
+                case 0: {
+                    // 'aa screen' with an unknown option: aa screen --x
+                    // 'aa screen' with an unknown option: aa screen --xxx
+                    std::string unknownOption = "";
+                    std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+
+                    HILOG_INFO(
+                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+
+                    resultReceiver_.append(unknownOptionMsg);
+                    result = OHOS::ERR_INVALID_VALUE;
+                    break;
+                }
+                default: {
+                    // 'aa screen' with an unknown option: aa screen -x
+                    // 'aa screen' with an unknown option: aa screen -xxx
+                    std::string unknownOption = "";
+                    std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+
+                    HILOG_INFO(
+                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+
+                    resultReceiver_.append(unknownOptionMsg);
+                    result = OHOS::ERR_INVALID_VALUE;
+                    break;
+                }
+            }
+            break;
+        }
+
+        switch (option) {
+            case 'h': {
+                // 'aa screen -h'
+                // 'aa screen --help'
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            case 'p': {
+                // 'aa screen -p xxx'
+
+                // save powerState
+                if (optarg != nullptr) {
+                    powerState = optarg;
+                }
+                break;
+            }
+            case 0: {
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("powerState: %{public}s", powerState.c_str());
+
+        if (powerState == STRING_SCREEN_POWER_ON) {
+            result = AbilityManagerClient::GetInstance()->PowerOn();
+            if (result == OHOS::ERR_OK) {
+                HILOG_INFO("%{public}s", STRING_SCREEN_POWER_ON_OK.c_str());
+                resultReceiver_ = STRING_SCREEN_POWER_ON_OK + "\n";
+            } else {
+                HILOG_INFO("%{public}s result = %{public}d", STRING_SCREEN_POWER_ON_NG.c_str(), result);
+                resultReceiver_ = STRING_SCREEN_POWER_ON_NG + "\n";
+
+                resultReceiver_.append(GetMessageFromCode(result));
+            }
+        } else {
+            result = AbilityManagerClient::GetInstance()->PowerOff();
+            if (result == OHOS::ERR_OK) {
+                HILOG_INFO("%{public}s", STRING_SCREEN_POWER_OFF_OK.c_str());
+                resultReceiver_ = STRING_SCREEN_POWER_OFF_OK + "\n";
+            } else {
+                HILOG_INFO("%{public}s result = %{public}d", STRING_SCREEN_POWER_OFF_NG.c_str(), result);
+                resultReceiver_ = STRING_SCREEN_POWER_OFF_NG + "\n";
+
+                resultReceiver_.append(GetMessageFromCode(result));
+            }
+        }
+    } else {
+        resultReceiver_.append(HELP_MSG_SCREEN);
+        result = OHOS::ERR_INVALID_VALUE;
+    }
+
+    return result;
 }
 
 ErrCode AbilityManagerShellCommand::RunAsStartAbility()
@@ -381,24 +548,24 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
             break;
         }
         case 0: {
-            // 'aa dump' with a unknown option: aa dump --x
-            // 'aa dump' with a unknown option: aa dump --xxx
+            // 'aa dump' with an unknown option: aa dump --x
+            // 'aa dump' with an unknown option: aa dump --xxx
             std::string unknownOption = "";
             std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-            HILOG_INFO("'aa dump' with a unknown option: %{public}s", unknownOption.c_str());
+            HILOG_INFO("'aa dump' with an unknown option: %{public}s", unknownOption.c_str());
 
             resultReceiver_.append(unknownOptionMsg);
             result = OHOS::ERR_INVALID_VALUE;
             break;
         }
         default: {
-            // 'aa dump' with a unknown option: aa dump -x
-            // 'aa dump' with a unknown option: aa dump -xxx
+            // 'aa dump' with an unknown option: aa dump -x
+            // 'aa dump' with an unknown option: aa dump -xxx
             std::string unknownOption = "";
             std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-            HILOG_INFO("'aa dump' with a unknown option: %{public}s", unknownOption.c_str());
+            HILOG_INFO("'aa dump' with an unknown option: %{public}s", unknownOption.c_str());
 
             resultReceiver_.append(unknownOptionMsg);
             result = OHOS::ERR_INVALID_VALUE;
@@ -491,30 +658,30 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                     break;
                 }
                 case 0: {
-                    // 'aa start' with a unknown option: aa start --x
-                    // 'aa start' with a unknown option: aa start --xxx
-                    // 'aa stop-service' with a unknown option: aa stop-service --x
-                    // 'aa stop-service' with a unknown option: aa stop-service --xxx
+                    // 'aa start' with an unknown option: aa start --x
+                    // 'aa start' with an unknown option: aa start --xxx
+                    // 'aa stop-service' with an unknown option: aa stop-service --x
+                    // 'aa stop-service' with an unknown option: aa stop-service --xxx
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
                     HILOG_INFO(
-                        "'aa %{public}s' with a unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
                 }
                 default: {
-                    // 'aa start' with a unknown option: aa start -x
-                    // 'aa start' with a unknown option: aa start -xxx
-                    // 'aa stop-service' with a unknown option: aa stop-service -x
-                    // 'aa stop-service' with a unknown option: aa stop-service -xxx
+                    // 'aa start' with an unknown option: aa start -x
+                    // 'aa start' with an unknown option: aa start -xxx
+                    // 'aa stop-service' with an unknown option: aa stop-service -x
+                    // 'aa stop-service' with an unknown option: aa stop-service -xxx
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
                     HILOG_INFO(
-                        "'aa %{public}s' with a unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;

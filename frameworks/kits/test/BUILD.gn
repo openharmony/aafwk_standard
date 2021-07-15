@@ -37,6 +37,7 @@ config("module_private_config") {
     "//foundation/aafwk/standard/services/common/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
   ]
 }
 
@@ -50,8 +51,11 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_mission_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_record_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/caller_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/image_info.cpp",
@@ -60,8 +64,10 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/recent_mission_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "moduletest/cpp/abilitytest/ability_test.cpp",
   ]
 
@@ -103,8 +109,10 @@ ohos_moduletest("ability_conetxt_test") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_record_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/caller_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",

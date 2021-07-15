@@ -20,14 +20,17 @@
 #include <list>
 #include <queue>
 #include <unordered_map>
+#include <vector>
 
 #include "ability_info.h"
 #include "ability_record.h"
 #include "application_info.h"
 #include "mission_record.h"
 #include "mission_stack.h"
-#include "recent_mission_info.h"
+#include "ability_mission_info.h"
+#include "lock_mission_container.h"
 #include "stack_info.h"
+#include "power_storage.h"
 #include "want.h"
 
 namespace OHOS {
@@ -93,13 +96,6 @@ public:
     }
 
     /**
-     * get current top ability of stack.
-     *
-     * @return top ability record.
-     */
-    std::shared_ptr<AbilityRecord> GetCurrentTopAbility() const;
-
-    /**
      * get current top ability's token of stack.
      *
      * @return top ability record's token.
@@ -113,6 +109,14 @@ public:
      * @return ability record.
      */
     std::shared_ptr<AbilityRecord> GetAbilityRecordById(const int64_t recordId);
+
+    /**
+     * get the stack by id.
+     *
+     * @param recordId, stack id.
+     * @return MissionStack.
+     */
+    std::shared_ptr<MissionStack> GetStackById(int stackId);
 
     /**
      * get current top mission of stack.
@@ -270,7 +274,7 @@ public:
      * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int GetRecentMissions(const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList);
+    int GetRecentMissions(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList);
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -282,6 +286,15 @@ public:
     int MoveMissionToTop(int32_t missionId);
 
     /**
+     * Requires that tasks associated with a given capability token be moved to the background
+     *
+     * @param token ability token
+     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
+
+    /**
      * Ability detects death
      *
      * @param abilityRecord
@@ -289,22 +302,28 @@ public:
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
 
     /**
-     * Kill the process immediately.
-     *
-     * @param bundleName.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int KillProcess(const std::string &bundleName);
-
-    /**
      * Uninstall app
      *
      * @param bundleName.
-     * @return Returns ERR_OK on success, others on failure.
      */
-    int UninstallApp(const std::string &bundleName);
+    void UninstallApp(const std::string &bundleName);
 
     void OnTimeOut(uint32_t msgId, int64_t eventId);
+    bool IsFirstInMission(const sptr<IRemoteObject> &token);
+
+    /**
+     * Save the top ability States and move them to the background
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int PowerOff();
+
+    /**
+     * Restore the state before top ability poweroff
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int PowerOn();
+
+    int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
 
 private:
     /**
@@ -318,6 +337,13 @@ private:
     int DispatchInactive(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
     int DispatchBackground(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
     int DispatchTerminate(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
+
+    /**
+     * get current top ability of stack.
+     *
+     * @return top ability record.
+     */
+    std::shared_ptr<AbilityRecord> GetCurrentTopAbility() const;
 
     /**
      * StartAbilityLocked.
@@ -386,7 +412,7 @@ private:
      * @param abilityRequest, the abilityRequest fot starting ability.
      * @return Returns true on success, false on failure.
      */
-    bool IsLauncherAbility(const AbilityRequest &abilityRequest);
+    bool IsLauncherAbility(const AbilityRequest &abilityRequest) const;
 
     /**
      * check wheather the mission has launcher ability.
@@ -408,9 +434,9 @@ private:
      * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int GetRecentMissionsLocked(const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList);
+    int GetRecentMissionsLocked(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList);
 
-    void CreateRecentMissionInfo(const MissionRecordInfo &mission, RecentMissionInfo &recentMissionInfo);
+    void CreateRecentMissionInfo(const MissionRecordInfo &mission, AbilityMissionInfo &recentMissionInfo);
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -420,6 +446,15 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     int MoveMissionToTopLocked(int32_t missionId);
+
+    /**
+     * Requires that tasks associated with a given capability token be moved to the background
+     *
+     * @param token ability token
+     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int MoveMissionToEndLocked(const sptr<IRemoteObject> &token, const bool nonFirst);
 
     /**
      * Remove the specified mission stack by stack id
@@ -456,6 +491,9 @@ private:
      */
     void AddUninstallTags(const std::string &bundleName);
 
+    /**
+     * Get target record by start mode.
+     */
     void GetRecordBySingleton(const AbilityRequest &abilityRequest,
         const std::shared_ptr<AbilityRecord> &currentTopAbility, std::shared_ptr<AbilityRecord> &targetAbilityRecord,
         std::shared_ptr<MissionRecord> &targetMissionRecord);
@@ -464,8 +502,33 @@ private:
         const std::shared_ptr<AbilityRecord> &currentTopAbility, std::shared_ptr<AbilityRecord> &targetAbilityRecord,
         std::shared_ptr<MissionRecord> &targetMissionRecord);
 
+    /**
+     * Get root ability from launcher mission stack.
+     */
     std::shared_ptr<AbilityRecord> GetLauncherRootAbility() const;
+
+    /**
+     * Get ability record by event id.
+     * @param eventId
+     * @return Returns target record.
+     */
     std::shared_ptr<AbilityRecord> GetAbilityRecordByEventId(int64_t eventId) const;
+
+    void ActiveTopAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void ActiveTopAbility(const bool isAll, int32_t stackId);
+
+    void MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
+        std::shared_ptr<AbilityRecord> &targetAbilityRecord, std::shared_ptr<MissionRecord> &targetMissionRecord,
+        const bool isSetPreMission);
+    int PowerOffLocked();
+    int PowerOnLocked();
+
+    bool CheckLockMissionCondition(
+        int uid, int missionId, int isLock, bool isSystemApp, std::shared_ptr<MissionRecord> &mission, int &lockUid);
+    bool CanStartInLockMissionState(
+        const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &currentTopAbility) const;
+    bool CanStopInLockMissionState(const std::shared_ptr<AbilityRecord> &terminateAbility) const;
+    void SendDisplayUnlockMissionMessage();
 
 private:
     const std::string MISSION_NAME_MARK_HEAD = "#";
@@ -473,6 +536,7 @@ private:
     static constexpr int LAUNCHER_MISSION_STACK_ID = 0;
     static constexpr int DEFAULT_MISSION_STACK_ID = 1;
     int userId_;
+    bool powerOffing_ = false;
     std::recursive_mutex stackLock_;
     std::shared_ptr<MissionStack> launcherMissionStack_;
     std::shared_ptr<MissionStack> defaultMissionStack_;
@@ -482,8 +546,10 @@ private:
     std::list<std::shared_ptr<AbilityRecord>> terminateAbilityRecordList_;  // abilities on terminating put in this
                                                                             // list.
     std::queue<AbilityRequest> waittingAbilityQueue_;
+    std::shared_ptr<PowerStorage> powerStorage_;
     // find AbilityRecord by windowToken. one windowToken has one and only one AbilityRecord.
     std::unordered_map<int, std::shared_ptr<AbilityRecord>> windowTokenToAbilityMap_;
+    std::shared_ptr<LockMissionContainer> lockMissionContainer_ = nullptr;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

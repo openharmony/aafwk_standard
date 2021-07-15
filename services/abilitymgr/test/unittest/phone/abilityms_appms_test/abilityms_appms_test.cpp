@@ -21,10 +21,10 @@
 #define protected public
 #include "ability_scheduler.h"
 #include "app_scheduler.h"
+#include "ability_manager_service.h"
 #undef private
 #undef protected
 
-#include "ability_manager_service.h"
 #include "mock_bundle_manager.h"
 #include "mock_app_manager_client.h"
 #include "sa_mgr_client.h"
@@ -269,7 +269,7 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_005, TestSize.Level1)
     sptr<Token> sourcetoken = nullptr;
 
     auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-    auto mockAppMgrClient = std::make_unique<MockAppMgrClient>();
+    auto mockAppMgrClient = std::make_shared<MockAppMgrClient>();
     appScheduler->appMgrClient_.reset(mockAppMgrClient.get());
     EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _)).Times(1);
 
@@ -283,6 +283,7 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_005, TestSize.Level1)
     };
     handler->PostTask(checkSourceActivtingState);
     WaitUntilTaskFinished();
+    testing::Mock::AllowLeak(mockAppMgrClient.get());
     GTEST_LOG_(INFO) << "AbilityMsAppMsTest_AaFwk_AbilityMS_AppMS_005 end";
 }
 }  // namespace AAFwk

@@ -94,7 +94,7 @@ void DataAbilityManagerTest::TearDown(void)
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify the DataAbilityManager simple flow.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Flow_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Flow_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Flow_001 start.");
 
@@ -147,7 +147,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Flow_001, TestSize.Lev
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire parameter is nullptr.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_001 start.");
 
@@ -166,7 +166,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_001, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire parameter ability type is not data
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_002, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_002 start.");
 
@@ -187,7 +187,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_002, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire parameter appinfo bundlename empty
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_003, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_003 start.");
 
@@ -208,7 +208,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_003, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire parameter ability name empty
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_004, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_004, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_004 start.");
 
@@ -229,7 +229,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_004, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire parameter same bundle name and ability name
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_005, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_005, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_005 start.");
 
@@ -259,7 +259,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_005, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Acquire waitforloaded timeout.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_006, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_006, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_006 start.");
 
@@ -278,7 +278,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_006, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Release client is nullptr
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Release_001 start.");
 
@@ -297,7 +297,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_001, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Release scheduler is nullptr
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_002, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Release_002 start.");
 
@@ -316,7 +316,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_002, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Release ability record invalid
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_003, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_Release_003 start.");
 
@@ -335,7 +335,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_003, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AttachAbilityThread client is nullptr
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_AttachAbilityThread_001 start.");
 
@@ -354,7 +354,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_00
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AttachAbilityThread scheduler is nullptr
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_002, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_AttachAbilityThread_002 start.");
 
@@ -373,7 +373,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_00
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AttachAbilityThread ability record invalid
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_003, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_AttachAbilityThread_003 start.");
 
@@ -393,7 +393,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AttachAbilityThread_00
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AbilityTransitionDone token is nullptr
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_AbilityTransitionDone_001 start.");
 
@@ -412,7 +412,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AbilityTransitionDone ability record invalid
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_002, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_AbilityTransitionDone_002 start.");
 
@@ -432,7 +432,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetAbilityRecordByToken token is nullptr.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordByToken_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordByToken_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_GetAbilityRecordByToken_001 start.");
 
@@ -450,7 +450,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordByToke
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetAbilityRecordByScheduler token is nullptr.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordByScheduler_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordByScheduler_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_GetAbilityRecordByScheduler_001 start.");
 
@@ -468,7 +468,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordBySche
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetAbilityRecordById id is -1.
  */
-HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordById_001, TestSize.Level0)
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_GetAbilityRecordById_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityManager_GetAbilityRecordById_001 start.");
 

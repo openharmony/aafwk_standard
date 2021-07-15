@@ -110,7 +110,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Flow_001, TestSize.Level
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function StartLoading called twice.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_StartLoading_001 start.");
 
@@ -129,7 +129,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_001, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function StartLoading request parameter without app name
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_StartLoading_002 start.");
 
@@ -149,7 +149,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_StartLoading_002, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function WaitForLoaded, before call WaitForLoaded not startloading.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_WaitForLoaded_001 start.");
 
@@ -170,7 +170,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_001, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function WaitForLoaded wait state timeout.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_WaitForLoaded_002 start.");
 
@@ -192,7 +192,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_002, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function WaitForLoaded ability has loaded.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_WaitForLoaded_003 start.");
 
@@ -218,7 +218,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_WaitForLoaded_003, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Attach request parameter without call StartLoading.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_Attach_001 start.");
 
@@ -236,7 +236,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_001, TestSize.Lev
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Attach request parameter with nullptr
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_Attach_002 start.");
 
@@ -255,7 +255,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_002, TestSize.Lev
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function Attach called twice
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_Attach_003 start.");
 
@@ -277,7 +277,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_Attach_003, TestSize.Lev
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function OnTransitionDone without call StartLoading and Attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_OnTransitionDone_001 start.");
 
@@ -295,7 +295,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_001, Te
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function OnTransitionDone request parameter without call Attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_OnTransitionDone_002 start.");
 
@@ -314,7 +314,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_002, Te
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function OnTransitionDone request parameter state
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_OnTransitionDone_003 start.");
 
@@ -362,7 +362,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_003, Te
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function OnTransitionDone ability state changed to inactive, and call OnTransitionDone.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_004, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_004, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_OnTransitionDone_004 start.");
 
@@ -387,7 +387,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_004, Te
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function OnTransitionDone with nullptr.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_001 start.");
 
@@ -405,7 +405,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_001, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AddClient, before call AddClient not startloading and not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_002 start.");
 
@@ -425,7 +425,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_002, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AddClient, before call AddClient not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_003 start.");
 
@@ -446,7 +446,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_003, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function AddClient ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_004, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_004, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_004 start.");
 
@@ -496,7 +496,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_005, TestSize.
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClient with nullptr.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_001 start.");
 
@@ -514,7 +514,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_001, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClient, before call RemoveClient not startloading and not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_002 start.");
 
@@ -534,7 +534,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_002, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClient ability state is not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_003 start.");
 
@@ -555,7 +555,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_003, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClient ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_004, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_004, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_004 start.");
 
@@ -578,7 +578,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_004, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClient return ok when not add client.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_005, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_005, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_005 start.");
 
@@ -673,7 +673,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_007, TestSi
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClients, before call RemoveClients not startloading and not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClients_001 start.");
 
@@ -693,7 +693,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_001, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClients ability state is not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClients_002 start.");
 
@@ -714,7 +714,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_002, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClients ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClients_003 start.");
 
@@ -737,7 +737,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_003, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function RemoveClients return ok when not add client.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_005, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_005, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClients_005 start.");
 
@@ -798,7 +798,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_006, TestS
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetClientCount, before call GetClientCount not startloading and not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_001 start.");
 
@@ -818,7 +818,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_001, Test
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetClientCount ability state is not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_002 start.");
 
@@ -839,7 +839,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_002, Test
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function GetClientCount ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_003 start.");
 
@@ -863,7 +863,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_003, Test
  * CaseDescription: Verify function KillBoundClientProcesses,
  * before call KillBoundClientProcesses not startloading and not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_001, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_001, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_KillBoundClientProcesses_001 start.");
 
@@ -882,7 +882,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function KillBoundClientProcesses ability state is not attach.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_002, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_002, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_KillBoundClientProcesses_002 start.");
 
@@ -902,7 +902,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function KillBoundClientProcesses ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_003, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_003, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_KillBoundClientProcesses_003 start.");
 
@@ -924,7 +924,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses
  * EnvConditions: Can run ohos test framework
  * CaseDescription: Verify function KillBoundClientProcesses ability state is not inactive.
  */
-HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_004, TestSize.Level0)
+HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_KillBoundClientProcesses_004, TestSize.Level1)
 {
     HILOG_INFO("AaFwk_DataAbilityRecord_KillBoundClientProcesses_004 start.");
 

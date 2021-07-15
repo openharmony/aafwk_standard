@@ -16,9 +16,9 @@
 #include "data_ability_record.h"
 
 #include <algorithm>
-
-#include "app_scheduler.h"
 #include "hilog_wrapper.h"
+#include "ability_util.h"
+#include "app_scheduler.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -71,9 +71,7 @@ int DataAbilityRecord::StartLoading()
 
 int DataAbilityRecord::WaitForLoaded(std::mutex &mutex, const std::chrono::system_clock::duration &timeout)
 {
-    if (!ability_) {
-        return ERR_INVALID_STATE;
-    }
+    CHECK_POINTER_AND_RETURN(ability_, ERR_INVALID_STATE);
 
     // Data ability uses 'ACTIVATE' as loaded state.
     if (ability_->GetAbilityState() == ACTIVE) {
@@ -96,9 +94,8 @@ int DataAbilityRecord::WaitForLoaded(std::mutex &mutex, const std::chrono::syste
 sptr<IAbilityScheduler> DataAbilityRecord::GetScheduler()
 {
     // Check if data ability is attached.
-    if (!ability_ || !scheduler_) {
-        return nullptr;
-    }
+    CHECK_POINTER_AND_RETURN(ability_, nullptr);
+    CHECK_POINTER_AND_RETURN(scheduler_, nullptr);
 
     // Check if data ability is loaded.
     if (ability_->GetAbilityState() != ACTIVE) {
@@ -154,10 +151,8 @@ int DataAbilityRecord::Attach(const sptr<IAbilityScheduler> &scheduler)
 
 int DataAbilityRecord::OnTransitionDone(int state)
 {
-    if (!ability_ || !scheduler_) {
-        HILOG_ERROR("Data ability on transition done: not attached.");
-        return ERR_INVALID_STATE;
-    }
+    CHECK_POINTER_AND_RETURN(ability_, ERR_INVALID_STATE);
+    CHECK_POINTER_AND_RETURN(scheduler_, ERR_INVALID_STATE);
 
     if (ability_->GetAbilityState() != ACTIVATING) {
         HILOG_ERROR("Data ability on transition done: not in 'ACTIVATING' state.");
@@ -346,10 +341,8 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
 
 size_t DataAbilityRecord::GetClientCount(const std::shared_ptr<AbilityRecord> &client) const
 {
-    if (!ability_ || !scheduler_) {
-        HILOG_ERROR("Data ability get client count: not attached.");
-        return 0;
-    }
+    CHECK_POINTER_AND_RETURN(ability_, 0);
+    CHECK_POINTER_AND_RETURN(scheduler_, 0);
 
     if (ability_->GetAbilityState() != ACTIVE) {
         HILOG_ERROR("Data ability get client count: not loaded.");
@@ -366,10 +359,8 @@ size_t DataAbilityRecord::GetClientCount(const std::shared_ptr<AbilityRecord> &c
 
 int DataAbilityRecord::KillBoundClientProcesses()
 {
-    if (!ability_ || !scheduler_) {
-        HILOG_ERROR("Data ability kill bound clients: not attached.");
-        return ERR_INVALID_STATE;
-    }
+    CHECK_POINTER_AND_RETURN(ability_, ERR_INVALID_STATE);
+    CHECK_POINTER_AND_RETURN(scheduler_, ERR_INVALID_STATE);
 
     if (ability_->GetAbilityState() != ACTIVE) {
         HILOG_ERROR("Data ability kill bound clients: not loaded.");
@@ -417,10 +408,7 @@ sptr<IRemoteObject> DataAbilityRecord::GetToken()
 
 void DataAbilityRecord::Dump() const
 {
-    if (!ability_) {
-        HILOG_INFO("DataAbility <null>");
-        return;
-    }
+    CHECK_POINTER(ability_);
 
     HILOG_INFO("attached: %{public}s, clients: %{public}u, refcnt: %{public}d, state: %{public}s",
         scheduler_ ? "true" : "false",
@@ -442,9 +430,7 @@ void DataAbilityRecord::Dump() const
 
 void DataAbilityRecord::Dump(std::vector<std::string> &info) const
 {
-    if (!ability_) {
-        return;
-    }
+    CHECK_POINTER(ability_);
     info.emplace_back("    AbilityRecord ID #" + std::to_string(ability_->GetRecordId()) + "   state #" +
                       AbilityRecord::ConvertAbilityState(ability_->GetAbilityState()) + "   start time [" +
                       std::to_string(ability_->GetStartTime()) + "]");

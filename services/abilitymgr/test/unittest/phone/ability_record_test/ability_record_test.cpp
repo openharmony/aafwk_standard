@@ -548,7 +548,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Dump, TestSize.Level1)
     abilityRecord_->Dump(info);
     abilityRecord_->SetNextAbilityRecord(nextAbilityRecord);
     abilityRecord_->Dump(info);
-}
+}  // namespace AAFwk
 
 /*
  * Feature: AbilityRecord

@@ -15,10 +15,11 @@
 
 #include "app_scheduler.h"
 
+#include "hilog_wrapper.h"
+#include "ability_util.h"
 #include "ability_manager_errors.h"
 #include "ability_record.h"
 #include "appmgr/app_mgr_constants.h"
-#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -30,14 +31,9 @@ AppScheduler::~AppScheduler()
 
 bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
 {
-    if (callback.lock() == nullptr) {
-        HILOG_ERROR("AppScheduler Init:callback is nullptr");
-        return false;
-    }
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("AppScheduler Init:appMgrClient_ is nullptr");
-        return false;
-    }
+    CHECK_POINTER_RETURN_BOOL(callback.lock());
+    CHECK_POINTER_RETURN_BOOL(appMgrClient_);
+
     callback_ = callback;
     /* because the errcode type of AppMgr Client API will be changed to int,
      * so must to covert the return result  */
@@ -59,11 +55,8 @@ bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
 int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo)
 {
-    HILOG_DEBUG("AppScheduler::LoadAbility");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return INNER_ERR;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     /* because the errcode type of AppMgr Client API will be changed to int,
      * so must to covert the return result  */
     int ret = static_cast<int>(appMgrClient_->LoadAbility(token, preToken, abilityInfo, applicationInfo));
@@ -76,11 +69,8 @@ int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
 
 int AppScheduler::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("AppScheduler::TerminateAbility");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return INNER_ERR;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     /* because the errcode type of AppMgr Client API will be changed to int,
      * so must to covert the return result  */
     int ret = static_cast<int>(appMgrClient_->TerminateAbility(token));
@@ -93,42 +83,30 @@ int AppScheduler::TerminateAbility(const sptr<IRemoteObject> &token)
 
 void AppScheduler::MoveToForground(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("AppScheduler::MoveToForground");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
 }
 
 void AppScheduler::MoveToBackground(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("AppScheduler::MoveToBackground");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
 }
 
 void AppScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const int32_t visibility, const int32_t perceptibility, const int32_t connectionState)
 {
-    HILOG_DEBUG("AppScheduler::AbilityBehaviorAnalysis");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(appMgrClient_);
     appMgrClient_->AbilityBehaviorAnalysis(token, preToken, visibility, perceptibility, connectionState);
 }
 
 void AppScheduler::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("AppScheduler::KillProcessByAbilityToken");
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return;
-    }
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(appMgrClient_);
     appMgrClient_->KillProcessByAbilityToken(token);
 }
 
@@ -154,12 +132,9 @@ AppAbilityState AppScheduler::GetAbilityState() const
 
 void AppScheduler::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state)
 {
-    HILOG_INFO("AppScheduler::OnAbilityRequestDone:%d", static_cast<int32_t>(state));
+    HILOG_INFO("%{public}s, %{public}d, state:%{public}d", __func__, __LINE__, static_cast<int32_t>(state));
     auto callback = callback_.lock();
-    if (callback == nullptr) {
-        HILOG_ERROR("callback_ is nullptr");
-        return;
-    }
+    CHECK_POINTER(callback);
     appAbilityState_ = ConvertToAppAbilityState(static_cast<int32_t>(state));
     callback->OnAbilityRequestDone(token, static_cast<int32_t>(state));
 }
@@ -167,13 +142,30 @@ void AppScheduler::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const 
 int AppScheduler::KillApplication(const std::string &bundleName)
 {
     HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
-    if (appMgrClient_ == nullptr) {
-        HILOG_ERROR("appMgrClient_ is nullptr");
-        return INNER_ERR;
-    }
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     int ret = (int)appMgrClient_->KillApplication(bundleName);
     if (ret != ERR_OK) {
         HILOG_ERROR("Fail to kill application.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
+
+void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
+{
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->AbilityAttachTimeOut(token);
+}
+
+int AppScheduler::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
+{
+    HILOG_DEBUG("%{public}s, %{public}d", __func__, __LINE__);
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    auto ret = static_cast<int>(appMgrClient_->CompelVerifyPermission(permission, pid, uid, message));
+    if (ret != ERR_OK) {
+        HILOG_ERROR("compel verify permission failed");
         return INNER_ERR;
     }
 

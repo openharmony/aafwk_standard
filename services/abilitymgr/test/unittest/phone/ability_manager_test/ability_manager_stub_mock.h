@@ -50,7 +50,7 @@ public:
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int));
     MOCK_METHOD1(StopServiceAbility, int(const Want &));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &));
-    MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<RecentMissionInfo> &));
+    MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<AbilityMissionInfo> &));
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionSnapshotInfo &));
     MOCK_METHOD1(RemoveMission, int(int));
     MOCK_METHOD1(RemoveStack, int(int));
@@ -59,6 +59,25 @@ public:
     MOCK_METHOD1(UninstallApp, int(const std::string &));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
+    MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
+    MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
+    MOCK_METHOD0(PowerOff, int());
+    MOCK_METHOD0(PowerOn, int());
+    MOCK_METHOD1(LockMission, int(int));
+    MOCK_METHOD1(UnlockMission, int(int));
+    MOCK_METHOD2(
+        GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
+    MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
+    MOCK_METHOD1(CancelWantSender, void(const sptr<IWantSender> &sender));
+    MOCK_METHOD1(GetPendingWantUid, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantBundleName, std::string(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantCode, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(GetPendingWantType, int(const sptr<IWantSender> &target));
+    MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
+    MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
 };
 
 }  // namespace AAFwk

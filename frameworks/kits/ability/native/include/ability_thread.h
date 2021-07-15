@@ -255,6 +255,12 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values);
 
+    /**
+     * @brief Displays a system-defined message to the user, prompting the user how to exit the lock mission mode.
+     *
+     */
+    void DisplayUnlockMissionMessage();
+
 private:
     /**
      * @description: Create the abilityname.

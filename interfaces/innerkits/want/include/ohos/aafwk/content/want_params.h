@@ -33,6 +33,17 @@ public:
     inline ~WantParams()
     {}
     WantParams &operator=(const WantParams &other);
+
+    bool operator==(const WantParams &other);
+
+    static sptr<IInterface> GetInterfaceByType(int typeId, const std::string &value);
+
+    static bool CompareInterface(const sptr<IInterface> iIt1, const sptr<IInterface> iIt2, int typeId);
+
+    static int GetDataType(const sptr<IInterface> iIt);
+
+    static std::string GetStringByType(const sptr<IInterface> iIt, int typeId);
+
     void SetParam(const std::string &key, IInterface *value);
 
     sptr<IInterface> GetParam(const std::string &key) const;
@@ -76,6 +87,8 @@ private:
         VALUE_TYPE_DOUBLEARRAY = 18,
         VALUE_TYPE_STRINGARRAY = 19,
         VALUE_TYPE_CHARSEQUENCEARRAY = 20,
+        VALUE_TYPE_WANTPARAMS = 21,
+        VALUE_TYPE_ARRAY = 22,
     };
 
     bool WriteArrayToParcel(Parcel &parcel, IArray *ao) const;
@@ -97,10 +110,12 @@ private:
     bool ReadFromParcelArrayByte(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayChar(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayShort(Parcel &parcel, sptr<IArray> &ao);
+
     bool ReadFromParcelArrayInt(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayDouble(Parcel &parcel, sptr<IArray> &ao);
+    bool ReadFromParcelWantParamWrapper(Parcel &parcel, const std::string &key);
 
     bool WriteArrayToParcelString(Parcel &parcel, IArray *ao) const;
     bool WriteArrayToParcelBool(Parcel &parcel, IArray *ao) const;
@@ -122,7 +137,12 @@ private:
     bool WriteToParcelLong(Parcel &parcel, sptr<IInterface> &o) const;
     bool WriteToParcelFloat(Parcel &parcel, sptr<IInterface> &o) const;
     bool WriteToParcelDouble(Parcel &parcel, sptr<IInterface> &o) const;
+    bool WriteToParcelWantParams(Parcel &parcel, sptr<IInterface> &o) const;
 
+    friend class WantParamWrapper;
+    // inner use function
+    bool NewArrayData(IArray *source, sptr<IArray> &dest);
+    bool NewParams(const WantParams &source, WantParams &dest);
     std::map<std::string, sptr<IInterface>> params_;
 };
 }  // namespace AAFwk

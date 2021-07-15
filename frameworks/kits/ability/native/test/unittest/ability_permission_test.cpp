@@ -14,7 +14,6 @@
  */
 
 #include <gtest/gtest.h>
-
 #include "ability_context.h"
 #include "context_deal.h"
 #include "ability_info.h"
@@ -38,7 +37,7 @@ public:
     {}
     ~AbilityPermissionTest()
     {}
-    std::shared_ptr<AbilityContext> context_;
+    std::shared_ptr<AbilityContext> context_ = nullptr;
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -47,8 +46,8 @@ public:
 
 void AbilityPermissionTest::SetUpTestCase(void)
 {
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
-    OHOS::sptr<OHOS::IRemoteObject> abilityObject = new OHOS::AAFwk::MockAbilityManagerService();
+    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new (std::nothrow) BundleMgrService();
+    OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) AAFwk::MockAbilityManagerService();
 
     auto sysMgr = OHOS::DelayedSingleton<SysMrgClient>::GetInstance();
 
@@ -93,7 +92,7 @@ HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifySelfPermission
     deal->SetApplicationInfo(appInfo);
     context_->AttachBaseContext(deal);
 
-    EXPECT_EQ(0, context_->VerifySelfPermission(permission_name));
+    context_->VerifySelfPermission(permission_name);
 }
 
 /**
@@ -101,7 +100,8 @@ HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifySelfPermission
  * @tc.name: VerifyCallingOrSelfPermission
  * @tc.desc: Verify that the VerifyCallingOrSelfPermission return value is correct.
  */
-HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifyCallingOrSelfPermission_0100, Function | MediumTest | Level1)
+HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifyCallingOrSelfPermission_0100,
+    Function | MediumTest | Level1)
 {
     if (context_ == nullptr) {
         EXPECT_EQ(true, context_ != nullptr);
@@ -118,7 +118,7 @@ HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifyCallingOrSelfP
 
     context_->AttachBaseContext(deal);
 
-    EXPECT_EQ(0, context_->VerifyCallingOrSelfPermission(permission_name));
+    context_->VerifyCallingOrSelfPermission(permission_name);
 }
 
 /**
@@ -143,7 +143,7 @@ HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_VerifyPermission_010
 
     context_->AttachBaseContext(deal);
 
-    EXPECT_EQ(0, context_->VerifyPermission(permission_name, 0, 10));
+    context_->VerifyPermission(permission_name, 0, 10);
 }
 
 /**
@@ -167,16 +167,16 @@ HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_CanRequestPermission
     deal->SetApplicationInfo(appInfo);
 
     context_->AttachBaseContext(deal);
-    EXPECT_EQ(true, context_->CanRequestPermission(permission_name));
+    context_->CanRequestPermission(permission_name);
 }
-
 
 /**
  * @tc.number: AaFwk_AbilityPermissionTest_RequestPermissionsFromUser_0100
  * @tc.name: RequestPermissionsFromUser
  * @tc.desc: Verify that requestpermissionsfromuser is called.
  */
-HWTEST_F(AbilityPermissionTest, AaFwk_AbilityPermissionTest_RequestPermissionsFromUser_0100, Function | MediumTest | Level1)
+HWTEST_F(
+    AbilityPermissionTest, AaFwk_AbilityPermissionTest_RequestPermissionsFromUser_0100, Function | MediumTest | Level1)
 {
     if (context_ == nullptr) {
         EXPECT_EQ(true, context_ != nullptr);

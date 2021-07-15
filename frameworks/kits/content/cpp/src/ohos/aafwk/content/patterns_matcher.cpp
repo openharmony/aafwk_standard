@@ -27,7 +27,7 @@ namespace AAFwk {
 PatternsMatcher::PatternsMatcher()
 {
     pattern_ = "";
-    type_ = MatchType::PATTERN_LITERAL;
+    type_ = MatchType::DEFAULT;
 }
 
 /**
@@ -102,17 +102,17 @@ bool PatternsMatcher::MatchPattern(std::string pattern, std::string match, Match
         return false;
     }
     switch (type) {
-        case MatchType::PATTERN_LITERAL: {
+        case MatchType::DEFAULT: {
             return pattern == match;
         }
-        case MatchType::PATTERN_PREFIX: {
+        case MatchType::PREFIX: {
             return match.find(pattern) == 0;
         }
-        case MatchType::PATTERN_REGEX: {
+        case MatchType::PATTERN: {
             std::regex regex_(pattern);
             return regex_match(match, regex_);
         }
-        case MatchType::PATTERN_SIMPLE_GLOB: {
+        case MatchType::GLOBAL: {
             return GlobPattern(pattern, match);
         }
         default: {

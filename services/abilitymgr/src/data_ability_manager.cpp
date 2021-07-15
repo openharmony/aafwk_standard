@@ -19,6 +19,7 @@
 #include <thread>
 
 #include "hilog_wrapper.h"
+#include "ability_util.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -124,16 +125,11 @@ int DataAbilityManager::Release(const sptr<IAbilityScheduler> &scheduler, const 
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!scheduler || !client) {
-        HILOG_ERROR("Release data ability with invalid parameters.");
-        return ERR_NULL_OBJECT;
-    }
+    CHECK_POINTER_AND_RETURN(scheduler, ERR_NULL_OBJECT);
+    CHECK_POINTER_AND_RETURN(client, ERR_NULL_OBJECT);
 
     auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
-    if (!clientAbilityRecord) {
-        HILOG_ERROR("Release data ability with unknown client.");
-        return ERR_UNKNOWN_OBJECT;
-    }
+    CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
 
     std::lock_guard<std::mutex> locker(mutex_);
 
@@ -175,10 +171,8 @@ int DataAbilityManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!scheduler || !token) {
-        HILOG_ERROR("Attaching data ability with invalid parameters.");
-        return ERR_NULL_OBJECT;
-    }
+    CHECK_POINTER_AND_RETURN(scheduler, ERR_NULL_OBJECT);
+    CHECK_POINTER_AND_RETURN(token, ERR_NULL_OBJECT);
 
     std::lock_guard<std::mutex> locker(mutex_);
 
@@ -226,10 +220,7 @@ int DataAbilityManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, 
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!token) {
-        HILOG_ERROR("Data ability transition done with invalid parameters.");
-        return ERR_NULL_OBJECT;
-    }
+    CHECK_POINTER_AND_RETURN(token, ERR_NULL_OBJECT);
 
     std::lock_guard<std::mutex> locker(mutex_);
 
@@ -275,10 +266,7 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!abilityRecord) {
-        HILOG_ERROR("Data ability manager on ability died: null object.");
-        return;
-    }
+    CHECK_POINTER(abilityRecord);
 
     std::lock_guard<std::mutex> locker(mutex_);
 
@@ -332,10 +320,7 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordByToken(const
 {
     HILOG_INFO("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!token) {
-        HILOG_ERROR("Get data ability by token with null object.");
-        return nullptr;
-    }
+    CHECK_POINTER_AND_RETURN(token, nullptr);
 
     std::lock_guard<std::mutex> locker(mutex_);
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
@@ -357,10 +342,7 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordByScheduler(c
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
-    if (!scheduler) {
-        HILOG_ERROR("Get data ability by scheduler with null object.");
-        return nullptr;
-    }
+    CHECK_POINTER_AND_RETURN(scheduler, nullptr);
 
     std::lock_guard<std::mutex> locker(mutex_);
 

@@ -24,10 +24,14 @@
 #include "ability_connect_callback_interface.h"
 #include "ability_scheduler_interface.h"
 #include "mission_snapshot_info.h"
-#include "recent_mission_info.h"
+#include "ability_mission_info.h"
 #include "stack_info.h"
 #include "uri.h"
 #include "want.h"
+#include "want_sender_info.h"
+#include "sender_info.h"
+#include "want_sender_interface.h"
+#include "want_receiver_interface.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -222,7 +226,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<RecentMissionInfo> &recentList) = 0;
+        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) = 0;
 
     /**
      * Get mission snapshot by mission id
@@ -240,6 +244,15 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int MoveMissionToTop(int32_t missionId) = 0;
+
+    /**
+     * Requires that tasks associated with a given capability token be moved to the background
+     *
+     * @param token ability token
+     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) = 0;
 
     /**
      * Remove the specified mission from the stack by missionid
@@ -272,6 +285,73 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int UninstallApp(const std::string &bundleName) = 0;
+
+    /** Checks whether this ability is the first ability in a mission.
+     * @param lostToken, the token of ability
+     * @return Returns true is first in Mission.
+     */
+    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) = 0;
+
+    /**
+     * Checks whether a specified permission has been granted to the process identified by pid and uid
+     *
+     * @param permission Indicates the permission to check.
+     * @param pid Indicates the ID of the process to check.
+     * @param uid Indicates the UID of the process to check.
+     * @param message Describe success or failure
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) = 0;
+
+    /**
+     * Save the top ability States and move them to the background
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int PowerOff() = 0;
+
+    /**
+     * Restore the state before top ability poweroff
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int PowerOn() = 0;
+
+    /**
+     * Sets the application to start its ability in lock mission mode.
+     * @param missionId luck mission id
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int LockMission(int missionId) = 0;
+
+    /**
+     * Unlocks this ability by exiting the lock mission mode.
+     * @param missionId unluck mission id
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UnlockMission(int missionId) = 0;
+
+    virtual sptr<IWantSender> GetWantSender(
+        const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) = 0;
+
+    virtual int SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo) = 0;
+
+    virtual void CancelWantSender(const sptr<IWantSender> &sender) = 0;
+
+    virtual int GetPendingWantUid(const sptr<IWantSender> &target) = 0;
+
+    virtual int GetPendingWantUserId(const sptr<IWantSender> &target) = 0;
+
+    virtual std::string GetPendingWantBundleName(const sptr<IWantSender> &target) = 0;
+
+    virtual int GetPendingWantCode(const sptr<IWantSender> &target) = 0;
+
+    virtual int GetPendingWantType(const sptr<IWantSender> &target) = 0;
+
+    virtual void RegisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) = 0;
+
+    virtual void UnregisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) = 0;
+
+    virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
 
     enum {
         // ipc id 1-1000 for kit
@@ -332,6 +412,27 @@ public:
         // ipc id for terminate ability by callerToken and request code (19)
         TERMINATE_ABILITY_BY_CALLER,
 
+        // ipc id for isfirstinmission app (28)
+        IS_FIRST_IN_MISSION,
+
+        // ipc id for move mission to end (29)
+        MOVE_MISSION_TO_END,
+
+        // ipc id for compel verify permission (30)
+        COMPEL_VERIFY_PERMISSION,
+
+        // ipc id for power off (31)
+        POWER_OFF,
+
+        // ipc id for power off (32)
+        POWER_ON,
+
+        // ipc id for luck mission (33)
+        LUCK_MISSION,
+
+        // ipc id for unluck mission (34)
+        UNLUCK_MISSION,
+
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
         START_ABILITY = 1001,
@@ -345,8 +446,30 @@ public:
         // ipc id for disconnecting ability (1004)
         STOP_SERVICE_ABILITY,
 
-        // ipc id for disconnecting ability (1004)
+        // ipc id for starting ability by caller(1005)
         START_ABILITY_ADD_CALLER,
+
+        GET_PENDING_WANT_SENDER,
+
+        SEND_PENDING_WANT_SENDER,
+
+        CANCEL_PENDING_WANT_SENDER,
+
+        GET_PENDING_WANT_UID,
+
+        GET_PENDING_WANT_BUNDLENAME,
+
+        GET_PENDING_WANT_USERID,
+
+        GET_PENDING_WANT_TYPE,
+
+        GET_PENDING_WANT_CODE,
+
+        REGISTER_CANCEL_LISTENER,
+
+        UNREGISTER_CANCEL_LISTENER,
+
+        GET_PENDING_REQUEST_WANT,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
