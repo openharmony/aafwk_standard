@@ -381,6 +381,36 @@ ohos_unittest("data_ability_helper_test") {
   ]
 }
 
+ohos_unittest("data_ability_operation_test") {
+  module_out_path = module_output_path
+  sources = [ "unittest/data_ability_operation_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${INNERKITS_PATH}/want:want",
+    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/appexecfwk/standard/kits:appkit_native",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//foundation/multimodalinput/input/interfaces/native/innerkits/event:mmi_event",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 ohos_unittest("ability_impl_active_test") {
   module_out_path = module_output_path
   sources = [
@@ -788,6 +818,25 @@ ohos_unittest("task_handler_client_test") {
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 }
 
+ohos_unittest("data_ability_result_test") {
+  module_out_path = module_output_path
+  sources = [ "//foundation/aafwk/standard/frameworks/kits/ability/native/test/unittest/data_ability_result_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 ###############################################################################
 
 group("unittest") {
@@ -807,6 +856,8 @@ group("unittest") {
     ":data_ability_impl_file_secondpart_test",
     ":data_ability_impl_file_test",
     ":data_ability_impl_test",
+    ":data_ability_operation_test",
+    ":data_ability_result_test",
     ":data_uri_utils_test",
     ":pac_map_test",
     ":page_ability_impl_test",

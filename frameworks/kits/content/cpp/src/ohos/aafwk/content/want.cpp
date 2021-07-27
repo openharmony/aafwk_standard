@@ -1855,5 +1855,17 @@ bool Want::CheckAndSetParameters(Want &want, const std::string &key, std::string
     return true;
 }
 
+void Want::DumpInfo(int level) const
+{
+    APP_LOGI("==================Want::DumpInfo level： %{public}d start=============", level);
+    operation_.DumpInfo(level);
+    parameters_.DumpInfo(level);
+
+    if (picker_ != nullptr) {
+        picker_->DumpInfo(level + 1);
+    }
+    APP_LOGI("==================Want::DumpInfo level： %{public}d end=============", level);
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

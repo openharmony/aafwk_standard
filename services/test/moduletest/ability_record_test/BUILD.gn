@@ -15,14 +15,14 @@ import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk_standard/mstabilitymgrservice"
-EVENT_DIR = "//base/notification/ces_standard/cesfwk"
+EVENT_DIR = "//base/notification/ces_standard"
 
 ohos_moduletest("AbilityRecordModuleTest") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "${EVENT_DIR}/innerkits/include",
-    "${EVENT_DIR}/kits/native/include",
+    "${EVENT_DIR}/frameworks/core/include",
+    "${EVENT_DIR}/interfaces/innerkits/native/include",
   ]
 
   sources = [
@@ -82,8 +82,6 @@ ohos_moduletest("AbilityRecordModuleTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
-    "${EVENT_DIR}/kits/native:cesfwk_kits",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
@@ -99,6 +97,8 @@ ohos_moduletest("AbilityRecordModuleTest") {
   ]
 
   external_deps = [
+    "ces_standard:cesfwk_core",
+    "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

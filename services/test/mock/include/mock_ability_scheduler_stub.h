@@ -41,7 +41,6 @@ public:
     MOCK_METHOD2(OpenRawFile, int(const Uri &uri, const std::string &mode));
     MOCK_METHOD2(Reload, bool(const Uri &uri, const PacMap &extras));
     MOCK_METHOD2(BatchInsert, int(const Uri &uri, const std::vector<ValuesBucket> &values));
-    MOCK_METHOD0(DisplayUnlockMissionMessage, void());
 };
 
 }  // namespace AAFwk

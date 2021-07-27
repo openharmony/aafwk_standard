@@ -199,6 +199,16 @@ enum {
      * Result(2097191) for unlock mission errors.
      */
     UNLOCK_MISSION_DENY_FAILED,
+
+    /**
+     * Result(2097192) for set mission info errors.
+     */
+    SET_MISSION_INFO_FAILED,
+
+    /**
+     * Result(2097193) for system is lock mission state.
+     */
+    LOCK_MISSION_STATE_DENY_REQUEST,
 };
 
 enum {

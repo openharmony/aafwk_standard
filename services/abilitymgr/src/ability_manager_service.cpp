@@ -296,6 +296,26 @@ int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionSn
     return 0;
 }
 
+int AbilityManagerService::SetMissionDescriptionInfo(
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(currentStackManager_, INNER_ERR);
+
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    return currentStackManager_->SetMissionDescriptionInfo(abilityRecord, missionDescriptionInfo);
+}
+
+int AbilityManagerService::GetMissionLockModeState()
+{
+    HILOG_INFO("%{public}s called", __func__);
+    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
+    return currentStackManager_->GetMissionLockModeState();
+}
+
 int AbilityManagerService::MoveMissionToTop(int32_t missionId)
 {
     HILOG_INFO("%{public}s mission id: %d", __func__, missionId);

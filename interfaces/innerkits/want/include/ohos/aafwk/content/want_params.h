@@ -64,6 +64,8 @@ public:
 
     static WantParams *Unmarshalling(Parcel &parcel);
 
+    void DumpInfo(int level) const;
+
 private:
     enum {
         VALUE_TYPE_NULL = -1,

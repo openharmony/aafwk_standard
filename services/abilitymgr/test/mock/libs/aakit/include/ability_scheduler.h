@@ -71,8 +71,6 @@ public:
 
     int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override;
 
-    void DisplayUnlockMissionMessage() override;
-
 private:
     AbilityResult result_;
 };

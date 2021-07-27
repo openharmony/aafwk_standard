@@ -196,12 +196,6 @@ public:
      */
     virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) = 0;
 
-    /**
-     * @brief Displays a system-defined message to the user, prompting the user how to exit the lock mission mode.
-     *
-     */
-    virtual void DisplayUnlockMissionMessage() = 0;
-
     enum {
         // ipc id for scheduling ability to a state of life cycle
         SCHEDULE_ABILITY_TRANSACTION = 0,

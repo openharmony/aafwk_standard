@@ -273,7 +273,10 @@ ohos_unittest("want_params_test") {
     "//utils/native/base:utils",
   ]
 
-  external_deps = [ "appexecfwk_standard:appexecfwk_base" ]
+  external_deps = [
+    "appexecfwk_standard:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 }
 
 ohos_unittest("want_params_wrapper_test") {
@@ -289,11 +292,16 @@ ohos_unittest("want_params_wrapper_test") {
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
 
-  external_deps = [ "appexecfwk_standard:appexecfwk_base" ]
+  external_deps = [
+    "appexecfwk_standard:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 }
 
 ohos_unittest("want_test") {

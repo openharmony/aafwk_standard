@@ -747,6 +747,8 @@ public:
      */
     static Want *Unmarshalling(Parcel &parcel);
 
+    void DumpInfo(int level) const;
+
 public:
     // action definition
     static const std::string ACTION_PLAY;

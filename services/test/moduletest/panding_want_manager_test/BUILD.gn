@@ -16,31 +16,28 @@ import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
 module_output_path = "aafwk_standard/mstabilitymgrservice"
-EVENT_DIR = "//base/notification/ces_standard/cesfwk"
 
 ohos_moduletest("PandingWantMgrTest") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "${EVENT_DIR}/innerkits/include",
-    "${EVENT_DIR}/kits/native/include",
     "//foundation/aafwk/standard/services/test/mock/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmg",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
-    "//base/notification/ans_standard/kits/native/wantagent/include",
+    "//base/notification/ans_standard/interfaces/innerkits/wantagent/include",
   ]
 
   sources = abilityms_files
   sources += [
-    "//base/notification/ans_standard/kits/native/wantagent/src/completed_dispatcher.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/pending_want.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/trigger_info.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_helper.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_info.cpp",
-    "//base/notification/ans_standard/kits/native/wantagent/src/want_agent_log_wrapper.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/completed_dispatcher.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/pending_want.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/trigger_info.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/want_agent.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/want_agent_helper.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/want_agent_info.cpp",
+    "//base/notification/ans_standard/frameworks/wantagent/src/want_agent_log_wrapper.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_client.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
@@ -55,8 +52,6 @@ ohos_moduletest("PandingWantMgrTest") {
   }
 
   deps = [
-    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
-    "${EVENT_DIR}/kits/native:cesfwk_kits",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
@@ -72,6 +67,8 @@ ohos_moduletest("PandingWantMgrTest") {
   ]
 
   external_deps = [
+    "ces_standard:cesfwk_core",
+    "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

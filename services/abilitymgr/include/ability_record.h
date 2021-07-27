@@ -409,6 +409,9 @@ public:
      */
     void CommandAbility();
 
+    void SaveAbilityState();
+    void RestoreAbilityState();
+
     /**
      * set the want for start ability.
      *
@@ -444,12 +447,6 @@ public:
      *
      */
     void SendResult();
-
-    /**
-     * Displays a system-defined message to the user, prompting the user how to exit the lock mission mode.
-     *
-     */
-    void DisplayUnlockMissionMessage();
 
     /**
      * send result object to caller ability.
