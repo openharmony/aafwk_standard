@@ -404,6 +404,27 @@ ErrCode AbilityManagerClient::UnlockMission(int missionId)
     return abms->UnlockMission(missionId);
 }
 
+ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->SetMissionDescriptionInfo(token, missionDescriptionInfo);
+}
+
+int AbilityManagerClient::GetMissionLockModeState()
+{
+    if (remoteObject_ == nullptr) {
+        HILOG_ERROR("%{private}s:ability service not connect", __func__);
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetMissionLockModeState();
+}
+
 sptr<IWantSender> AbilityManagerClient::GetWantSender(
     const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken)
 {

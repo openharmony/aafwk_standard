@@ -14,7 +14,6 @@
  */
 #include "napi_data_ability_helper.h"
 #include "data_ability_helper.h"
-#include "want_wrapper.h"
 #include "uri.h"
 #include <cstring>
 #include <vector>
@@ -155,8 +154,8 @@ napi_value InsertWrap(napi_env env, napi_callback_info info, DAHelperInsertCB *i
 {
 
     HILOG_INFO("%{public}s,called", __func__);
-    size_t argcAsync = ARGS3;
-    const size_t argcPromise = ARGS2;
+    size_t argcAsync = ARGS_THREE;
+    const size_t argcPromise = ARGS_TWO;
     const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
     napi_value args[ARGS_MAX_COUNT] = {nullptr};
     napi_value ret = 0;
@@ -269,14 +268,14 @@ void InsertAsyncCompleteCB(napi_env env, napi_status status, void *data)
     DAHelperInsertCB *insertCB = (DAHelperInsertCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, insertCB->cbBase.cbInfo.callback, &callback));
 
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     napi_create_int32(env, insertCB->result, &result[PARAM1]);
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (insertCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, insertCB->cbBase.cbInfo.callback));
@@ -318,14 +317,14 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
     }
 
     napi_value jsObject = nullptr;
-    jsObject = GetObjectByPropertyName(env, args, "valueBucket");
+    jsObject = GetPropertyValueByPropertyName(env, args, "valueBucket", napi_object);
     if (jsObject == nullptr) {
         HILOG_ERROR("%{public}s, jsObject == nullptr.", __func__);
         return nullptr;
     }
 
     std::string strValue = "";
-    if (GetStringByPropertyName(env, jsObject, "value", strValue)) {
+    if (UnwrapStringByPropertyName(env, jsObject, "value", strValue)) {
         HILOG_INFO("%{public}s,strValue=%{public}s", __func__, strValue.c_str());
         value = strValue;
     }

@@ -18,7 +18,6 @@
 #include <uv.h>
 #include "securec.h"
 #include "ability_process.h"
-#include "want_wrapper.h"
 #include "hilog_wrapper.h"
 #include "napi_context.h"
 #include "element_name.h"
@@ -170,13 +169,13 @@ napi_value StartAbilityAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_create_int32(env, 0, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -347,13 +346,13 @@ napi_value StartAbilityForResultAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_create_int32(env, 0, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -508,7 +507,7 @@ napi_value SetResultAsync(
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("NAPI_SetResult, main event thread complete.");
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value callResult = 0;
@@ -516,7 +515,7 @@ napi_value SetResultAsync(
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_get_null(env, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -669,13 +668,13 @@ napi_value TerminateAbilityAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_get_null(env, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -847,13 +846,13 @@ napi_value GetContextAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_new_instance(env, g_classContext, 0, nullptr, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -975,13 +974,13 @@ napi_value HasWindowFocusAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
             napi_get_boolean(env, asyncCallbackInfo->native_result, &result[PARAM1]);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -1077,7 +1076,7 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             HILOG_INFO("CallOnAbilityResult, uv_queue_work");
             // JS Thread
             OnAbilityCallback *event = (OnAbilityCallback *)work->data;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             result[PARAM0] = GetCallbackErrorValue(event->cb.env, NO_ERROR);
 
             napi_create_object(event->cb.env, &result[PARAM1]);
@@ -1089,7 +1088,7 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             napi_create_int32(event->cb.env, event->resultCode, &jsValue);
             napi_set_named_property(event->cb.env, result[PARAM1], "resultCode", jsValue);
             // create want
-            napi_value jsWant = WrapWant(event->resultData, event->cb.env);
+            napi_value jsWant = WrapWant(event->cb.env, event->resultData);
             napi_set_named_property(event->cb.env, result[PARAM1], "want", jsWant);
             napi_value callback = 0;
             napi_value undefined = 0;
@@ -1097,7 +1096,7 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             napi_value callResult = 0;
             napi_get_reference_value(event->cb.env, event->cb.callback, &callback);
 
-            napi_call_function(event->cb.env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(event->cb.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
             if (event->cb.callback != nullptr) {
                 napi_delete_reference(event->cb.env, event->cb.callback);
             }
@@ -1106,6 +1105,23 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
         });
 
     return;
+}
+
+bool InnerUnwrapWant(napi_env env, napi_value args, Want &want)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    napi_valuetype valueType = napi_undefined;
+    NAPI_CALL_BASE(env, napi_typeof(env, args, &valueType), false);
+    if (valueType != napi_object) {
+        return false;
+    }
+
+    napi_value jsWant = GetPropertyValueByPropertyName(env, args, "want", napi_object);
+    if (jsWant == nullptr) {
+        return false;
+    }
+
+    return UnwrapWant(env, jsWant, want);
 }
 
 /**
@@ -1124,7 +1140,7 @@ napi_value UnwrapParam(CallAbilityParam &param, napi_env env, napi_value args)
     napi_valuetype valueType = napi_undefined;
 
     // unwrap the param : want object
-    UnwrapWant(param.want, env, args);
+    InnerUnwrapWant(env, args, param.want);
 
     // unwrap the param : requestCode (optional)
     napi_value requestCodeProp = nullptr;
@@ -1181,7 +1197,7 @@ napi_value UnwrapAbilityResult(CallAbilityParam &param, napi_env env, napi_value
     HILOG_INFO("%{public}s, requestCode=%{public}d.", __func__, param.requestCode);
 
     // unwrap the param : want object
-    UnwrapWant(param.want, env, args);
+    InnerUnwrapWant(env, args, param.want);
 
     napi_value result;
     NAPI_CALL(env, napi_create_int32(env, 1, &result));
@@ -1251,13 +1267,13 @@ napi_value GetWantAsync(
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_value result[ARGS2] = {0};
+            napi_value result[ARGS_TWO] = {0};
             napi_value callResult = 0;
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
-            result[PARAM1] = WrapWant(asyncCallbackInfo->param.want, env);
+            result[PARAM1] = WrapWant(env, asyncCallbackInfo->param.want);
             napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
-            napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult);
+            napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
 
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -1307,7 +1323,7 @@ napi_value GetWantPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetWantPromise, main event thread complete.");
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
-            napi_value result = WrapWant(asyncCallbackInfo->param.want, env);
+            napi_value result = WrapWant(env, asyncCallbackInfo->param.want);
             napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
@@ -1605,13 +1621,13 @@ void GetAppInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
     AppInfoCB *appInfoCB = (AppInfoCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapAppInfo(env, appInfoCB->appInfo);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, appInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (appInfoCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, appInfoCB->cbBase.cbInfo.callback));
@@ -1901,7 +1917,7 @@ void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
     AppTypeCB *appTypeCB = (AppTypeCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
 
@@ -1912,7 +1928,7 @@ void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
             env, appTypeCB->cbBase.ability->GetAppType().c_str(), NAPI_AUTO_LENGTH, &result[PARAM1]));
 
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, appTypeCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (appTypeCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, appTypeCB->cbBase.cbInfo.callback));
@@ -2141,13 +2157,13 @@ void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
     ElementNameCB *elementNameCB = (ElementNameCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapElementName(env, elementNameCB);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, elementNameCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (elementNameCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, elementNameCB->cbBase.cbInfo.callback));
@@ -2939,13 +2955,13 @@ void GetAbilityNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
     AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapAbilityName(env, abilityNameCB);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, abilityNameCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
     if (abilityNameCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, abilityNameCB->cbBase.cbInfo.callback));
     }
@@ -2966,14 +2982,14 @@ void GetProcessInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
     ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapProcessInfo(env, processInfoCB);
 
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, processInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (processInfoCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, processInfoCB->cbBase.cbInfo.callback));
@@ -2995,13 +3011,13 @@ void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
     ProcessNameCB *processNameCB = (ProcessNameCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapProcessName(env, processNameCB);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, processNameCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (processNameCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, processNameCB->cbBase.cbInfo.callback));
@@ -3023,13 +3039,13 @@ void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *dat
     CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapCallingBundle(env, callingBundleCB);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, callingBundleCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (callingBundleCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, callingBundleCB->cbBase.cbInfo.callback));
@@ -3401,13 +3417,13 @@ void GetAbilityInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
     AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapAbilityInfo(env, abilityInfoCB->abilityInfo);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, abilityInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (abilityInfoCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, abilityInfoCB->cbBase.cbInfo.callback));
@@ -3752,13 +3768,13 @@ void GetHapModuleInfoAsyncCompleteCB(napi_env env, napi_status status, void *dat
     HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = WrapHapModuleInfo(env, *hapModuleInfoCB);
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, hapModuleInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (hapModuleInfoCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, hapModuleInfoCB->cbBase.cbInfo.callback));
@@ -3996,7 +4012,7 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     napi_value uri = nullptr;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
-    napi_value result[ARGS2] = {nullptr};
+    napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
@@ -4005,7 +4021,7 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
 
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = dataAbilityHelperCB->result;
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS2, &result[PARAM0], &callResult));
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (dataAbilityHelperCB->cbBase.cbInfo.callback != nullptr) {
         NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, dataAbilityHelperCB->cbBase.cbInfo.callback));

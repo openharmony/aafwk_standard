@@ -29,6 +29,9 @@
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "want_params_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "app_log_wrapper.h"
+
+using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
@@ -54,6 +57,8 @@ std::string WantParams::GetStringByType(const sptr<IInterface> iIt, int typeId)
         return static_cast<String *>(IString::Query(iIt))->ToString();
     } else if (typeId == VALUE_TYPE_ARRAY) {
         return static_cast<Array *>(IArray::Query(iIt))->ToString();
+    } else if (typeId == VALUE_TYPE_WANTPARAMS) {
+        return static_cast<WantParamWrapper *>(IWantParams::Query(iIt))->ToString();
     } else {
         return "";
     }
@@ -1040,6 +1045,26 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
         wantParams = nullptr;
     }
     return wantParams;
+}
+
+void WantParams::DumpInfo(int level) const
+{
+    APP_LOGI("=======WantParams::DumpInfo level： %{public}d start=============", level);
+
+    int params_size = params_.size();
+    APP_LOGI("===WantParams::params_: count %{public}d =============", params_size);
+    int typeId = VALUE_TYPE_NULL;
+    for (auto it : params_) {
+        typeId = VALUE_TYPE_NULL;
+        typeId = WantParams::GetDataType(it.second);
+        if (typeId != VALUE_TYPE_NULL) {
+            std::string value = WantParams::GetStringByType(it.second, typeId);
+            APP_LOGI("=WantParams::params_[%{public}s] : %{public}s =============", it.first.c_str(), value.c_str());
+        } else {
+            APP_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
+        }
+    }
+    APP_LOGI("=======WantParams::DumpInfo level： %{public}d end=============", level);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -85,7 +85,6 @@ int32_t PendingWantRecord::SenderInner(SenderInfo &senderInfo)
     bool immutable = (key_->GetFlags() & (int32_t)Flags::CONSTANT_FLAG) != 0;
     senderInfo.resolvedType = key_->GetRequestResolvedType();
     if (!immutable) {
-        want = senderInfo.want;
         want.AddFlags(key_->GetFlags());
     }
 
@@ -106,7 +105,8 @@ int32_t PendingWantRecord::SenderInner(SenderInfo &senderInfo)
             res = pendingWantManager->PendingWantStartAbility(want, callerToken_, -1);
             break;
         case (int32_t)OperationType::SEND_COMMON_EVENT:
-            res = pendingWantManager->PendingWantPublishCommonEvent(want, senderInfo);
+            res = pendingWantManager->PendingWantPublishCommonEvent(want, senderInfo, callerUid_);
+            (res == ERR_OK) ? (sendFinish = false) : (sendFinish = (senderInfo.finishedReceiver != nullptr));
             break;
         default:
             break;
@@ -137,6 +137,11 @@ void PendingWantRecord::SetCanceled()
 bool PendingWantRecord::GetCanceled()
 {
     return canceled_;
+}
+
+void PendingWantRecord::SetCallerUid(const int32_t callerUid)
+{
+    callerUid_ = callerUid;
 }
 
 std::list<sptr<IWantReceiver>> PendingWantRecord::GetCancelCallbacks()

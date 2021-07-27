@@ -72,6 +72,8 @@ AbilityManagerStub::AbilityManagerStub()
     requestFuncMap_[REGISTER_CANCEL_LISTENER] = &AbilityManagerStub::RegisterCancelListenerInner;
     requestFuncMap_[UNREGISTER_CANCEL_LISTENER] = &AbilityManagerStub::UnregisterCancelListenerInner;
     requestFuncMap_[GET_PENDING_REQUEST_WANT] = &AbilityManagerStub::GetPendingRequestWantInner;
+    requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
+    requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
 }
 
 AbilityManagerStub::~AbilityManagerStub()
@@ -461,6 +463,28 @@ int AbilityManagerStub::UnlockMissionInner(MessageParcel &data, MessageParcel &r
     int result = UnlockMission(id);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("AbilityManagerStub: lock mission failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto token = data.ReadParcelable<IRemoteObject>();
+    auto missionInfo = data.ReadParcelable<MissionDescriptionInfo>();
+    int result = SetMissionDescriptionInfo(token, *missionInfo);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("AbilityManagerStub: set mission info failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetMissionLockModeStateInner(MessageParcel &data, MessageParcel &reply)
+{
+    int result = GetMissionLockModeState();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("AbilityManagerStub: get mission lock mode state failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

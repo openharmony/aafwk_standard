@@ -82,6 +82,8 @@ public:
     bool Marshalling(Parcel &parcel) const;
     static Operation *Unmarshalling(Parcel &parcel);
 
+    void DumpInfo(int level) const;
+
 private:
     /**
      * @description: Sets a flag in a Want.

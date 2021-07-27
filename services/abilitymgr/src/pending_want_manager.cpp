@@ -88,6 +88,7 @@ sptr<IWantSender> PendingWantManager::GetWantSenderLocked(const int32_t callingU
                 wantSenderInfo.allWants.back().want = ref->GetKey()->GetRequestWant();
                 wantSenderInfo.allWants.back().resolvedTypes = ref->GetKey()->GetRequestResolvedType();
                 ref->GetKey()->SetAllWantsInfos(wantSenderInfo.allWants);
+                ref->SetCallerUid(callingUid);
             }
             return ref;
         }
@@ -103,6 +104,7 @@ sptr<IWantSender> PendingWantManager::GetWantSenderLocked(const int32_t callingU
     sptr<PendingWantRecord> rec =
         new (std::nothrow) PendingWantRecord(shared_from_this(), uid, callerToken, pendingKey);
     if (rec != nullptr) {
+        rec->SetCallerUid(callingUid);
         pendingKey->SetCode(PendingRecordIdCreate());
         wantRecords_.insert(std::make_pair(pendingKey, rec));
         return rec;
@@ -222,14 +224,16 @@ int32_t PendingWantManager::PendingWantStartAbilitys(
     for (const auto &item : wantsInfo) {
         const auto &want = item.want;
         result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(want, callerToken, requestCode);
-        if (result != ERR_OK || result != START_ABILITY_WAITING) {
+        if (result != ERR_OK && result != START_ABILITY_WAITING) {
+            HILOG_ERROR("%{public}s:result != ERR_OK && result != START_ABILITY_WAITING.", __func__);
             return result;
         }
     }
     return result;
 }
 
-int32_t PendingWantManager::PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo)
+int32_t PendingWantManager::PendingWantPublishCommonEvent(
+    const Want &want, const SenderInfo &senderInfo, int32_t callerUid)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
 
@@ -252,8 +256,8 @@ int32_t PendingWantManager::PendingWantPublishCommonEvent(const Want &want, cons
         WantParams wantParams = {};
         pendingWantCommonEvent->SetWantParams(wantParams);
     }
-
-    bool result = CommonEventManager::PublishCommonEvent(eventData, eventPublishData, pendingWantCommonEvent);
+    bool result = DelayedSingleton<EventFwk::CommonEvent>::GetInstance()->PublishCommonEvent(
+        eventData, eventPublishData, pendingWantCommonEvent, callerUid);
     return ((result == true) ? ERR_OK : (-1));
 }
 

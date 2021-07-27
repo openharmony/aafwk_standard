@@ -195,7 +195,7 @@ public:
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
-    MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
+    // MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
@@ -229,7 +229,7 @@ public:
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
 
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-
+    int GetUidByBundleName(const std::string &bundleName, const int userId) override;
     BundleMgrService()
     {
         abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);

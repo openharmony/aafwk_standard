@@ -818,6 +818,51 @@ int AbilityManagerProxy::UnlockMission(int missionId)
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::SetMissionDescriptionInfo(
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("%{public}s for result fail", __func__);
+        return false;
+    }
+    if (!data.WriteParcelable(&missionDescriptionInfo)) {
+        HILOG_ERROR("%{public}s for result fail", __func__);
+        return false;
+    }
+    error = Remote()->SendRequest(IAbilityManager::SET_MISSION_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("unlock mission by id , error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::GetMissionLockModeState()
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_LOCK_MODE_STATE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("get mission luck mode state , error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 sptr<IWantSender> AbilityManagerProxy::GetWantSender(
     const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken)
 {

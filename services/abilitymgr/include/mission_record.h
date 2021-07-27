@@ -20,6 +20,7 @@
 
 #include "ability_record.h"
 #include "mission_stack.h"
+#include "mission_description_info.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -194,6 +195,15 @@ public:
         return bundleName_;
     };
 
+    void SetMissionDescriptionInfo(std::shared_ptr<MissionDescriptionInfo> &missionDescriptionInfo)
+    {
+        missionDescriptionInfo_ = missionDescriptionInfo;
+    };
+    std::shared_ptr<MissionDescriptionInfo> GetMissionDescriptionInfo() const
+    {
+        return missionDescriptionInfo_;
+    };
+
 private:
     static int nextMissionId_;
     int missionId_;
@@ -202,6 +212,8 @@ private:
     bool isLauncherCreate_ = false;
     std::weak_ptr<MissionRecord> preMissionRecord_;
     std::weak_ptr<MissionStack> parentMissionStack_;
+
+    std::shared_ptr<MissionDescriptionInfo> missionDescriptionInfo_ = nullptr;
 };  // namespace AAFwk
 }  // namespace AAFwk
 }  // namespace OHOS
