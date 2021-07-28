@@ -29,10 +29,18 @@ public:
     ValuesBucket() = default;
     ValuesBucket(const std::string &testInf);
     ~ValuesBucket() = default;
+    ValuesBucket(const Parcel &parcel){};
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
     static ValuesBucket *Unmarshalling(Parcel &parcel);
+
+    bool IsEmpty()
+    {
+        return false;
+    };
+
+    void PutValues(std::shared_ptr<ValuesBucket> &other){};
 
 private:
     std::string testInf_;

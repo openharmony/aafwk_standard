@@ -31,18 +31,21 @@ public:
     LockMissionContainer() = default;
     virtual ~LockMissionContainer() = default;
 
+    enum LockMissionState { LOCK_MISSION_STATE_NONE = 0, LOCK_MISSION_STATE_LOCKED, LOCK_MISSION_STATE_PINNED };
+
     bool IsLockedMissionState() const;
-    bool SetLockedMission(const std::shared_ptr<MissionRecord> &mission, int lockUid);
+    bool SetLockedMission(const std::shared_ptr<MissionRecord> &mission, int lockUid, bool isSystemApp);
     bool ReleaseLockedMission(const std::shared_ptr<MissionRecord> &mission, int callerUid, bool isForce);
     bool IsSameLockedMission(std::string bundleName) const;
     std::shared_ptr<MissionRecord> GetLockMission();
+    int GetLockedMissionState() const;
 
 private:
     void Clear();
 
 private:
     int lockerUid_ = -1;
-    bool isLocked_ = false;
+    LockMissionState lockState_ = LOCK_MISSION_STATE_NONE;
     std::weak_ptr<MissionRecord> lockMission_;
 };
 }  // namespace AAFwk

@@ -231,8 +231,10 @@ public:
     MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
-    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName,std::vector<FormInfo> &formInfos));
-    MOCK_METHOD3(GetFormsInfoByModule, bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD3(GetFormsInfoByModule,
+        bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -249,7 +251,6 @@ public:
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
-    MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
@@ -295,12 +296,17 @@ public:
     MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
-    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName,std::vector<FormInfo> &formInfos));
-    MOCK_METHOD3(GetFormsInfoByModule, bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD3(GetFormsInfoByModule,
+        bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
+
+
     BundleMgrService()
     {
         abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);

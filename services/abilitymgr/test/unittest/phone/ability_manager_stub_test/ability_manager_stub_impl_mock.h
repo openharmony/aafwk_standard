@@ -214,11 +214,21 @@ public:
     int LockMission(int missionId) override
     {
         return 0;
-    };
+    }
     int UnlockMission(int missionId) override
     {
         return 0;
-    };
+    }
+    int SetMissionDescriptionInfo(
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
+    {
+        return 0;
+    }
+
+    int GetMissionLockModeState()
+    {
+        return 0;
+    }
 };
 
 }  // namespace AAFwk

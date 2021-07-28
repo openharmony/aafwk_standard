@@ -93,9 +93,6 @@ public:
     {
         return -1;
     }
-
-    virtual void DisplayUnlockMissionMessage() override
-    {}
 };
 
 }  // namespace AAFwk

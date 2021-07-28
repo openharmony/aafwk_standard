@@ -42,6 +42,7 @@ config("ability_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher/include/task",
     "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher/include/threading",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include/task",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
   ]
 
   cflags = []
@@ -64,6 +65,7 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/ohos/aafwk/base",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
   ]
 }
 
@@ -84,15 +86,20 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_window.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_helper.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_impl.cpp",
+    "${SUBSYSTEM_DIR}/src/data_ability_operation.cpp",
+    "${SUBSYSTEM_DIR}/src/data_ability_operation_builder.cpp",
+    "${SUBSYSTEM_DIR}/src/data_ability_result.cpp",
     "${SUBSYSTEM_DIR}/src/data_uri_utils.cpp",
     "${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
     "${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
+    "${SUBSYSTEM_DIR}/src/mission_information.cpp",
     "${SUBSYSTEM_DIR}/src/page_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/service_ability_impl.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/feature_ability.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/want_wrapper.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_util.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/ability_start_setting.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/context_container.cpp",
