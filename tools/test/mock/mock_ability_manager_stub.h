@@ -96,6 +96,8 @@ public:
     int PowerOn();
     MOCK_METHOD1(LockMission, int(int));
     MOCK_METHOD1(UnlockMission, int(int));
+    MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
+    MOCK_METHOD0(GetMissionLockModeState, int());
 
 public:
     std::string powerState_;

@@ -403,6 +403,9 @@ void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycle
     APP_LOGI("ScheduleAbilityTransaction::enter, targeState = %{public}d, isNewWant = %{public}d",
         lifeCycleStateInfo.state,
         lifeCycleStateInfo.isNewWant);
+
+    want.DumpInfo(0);
+
     if ((token_ == nullptr) || abilityImpl_ == nullptr) {
         APP_LOGE("ScheduleAbilityTransaction::failed");
         return;
@@ -725,11 +728,6 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &
 
     ret = abilityImpl_->BatchInsert(uri, values);
     return ret;
-}
-
-void AbilityThread::DisplayUnlockMissionMessage()
-{
-    APP_LOGI("DisplayUnlockMissionMessage...");
 }
 
 /**

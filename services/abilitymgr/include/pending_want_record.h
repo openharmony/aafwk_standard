@@ -48,6 +48,7 @@ public:
 public:
     std::shared_ptr<PendingWantKey> GetKey();
     int32_t GetUid() const;
+    void SetCallerUid(const int32_t callerUid);
     void SetCanceled();
     bool GetCanceled();
     std::list<sptr<IWantReceiver>> GetCancelCallbacks();
@@ -55,6 +56,7 @@ public:
 private:
     std::weak_ptr<PendingWantManager> pendingWantManager_;
     int32_t uid_;
+    int32_t callerUid_;
     sptr<IRemoteObject> callerToken_;
     bool canceled_ = false;
     std::shared_ptr<PendingWantKey> key_;

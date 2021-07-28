@@ -370,5 +370,24 @@ void Operation::SetEntities(const std::vector<std::string> &entities)
     entities_.clear();
     entities_ = entities;
 }
+
+void Operation::DumpInfo(int level) const
+{
+    APP_LOGI("=======Operation::DumpInfo level： %{public}d start=============", level);
+
+    APP_LOGI("===Operation::abilityName_ %{public}s =============", abilityName_.c_str());
+    APP_LOGI("===Operation::action_ %{public}s =============", action_.c_str());
+    APP_LOGI("===Operation::bundleName_ %{public}s =============", bundleName_.c_str());
+    APP_LOGI("===Operation::deviceId_ %{public}s =============", deviceId_.c_str());
+    long entities_count = entities_.size();
+    APP_LOGI("===Operation::entities_: count %{public}ld =============", entities_count);
+    for (long i = 0; i < entities_count; i++) {
+        APP_LOGI("=Operation::entities_[%{public}ld]:%{public}s =============", i, entities_[i].c_str());
+    }
+    APP_LOGI("===Operation::flags_ %{public}ud =============", flags_);
+    APP_LOGI("===Operation::uri_ %{public}s =============", uri_.ToString().c_str());
+
+    APP_LOGI("=======Operation::DumpInfo level： %{public}d end=============", level);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -47,9 +47,8 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 
     auto currentTopAbilityRecord = GetCurrentTopAbility();
     if (!CanStartInLockMissionState(abilityRequest, currentTopAbilityRecord)) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        SendDisplayUnlockMissionMessage();
-        return CREATE_MISSION_RECORD_FAILED;
+        SendUnlockMissionMessage();
+        return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
     if (abilityRequest.abilityInfo.applicationInfo.isLauncherApp &&
@@ -192,9 +191,8 @@ int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int 
     }
 
     if (!CanStopInLockMissionState(abilityRecord)) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        SendDisplayUnlockMissionMessage();
-        return ERR_INVALID_VALUE;
+        SendUnlockMissionMessage();
+        return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
     abilityRecord->SetTerminatingState();
@@ -220,9 +218,8 @@ int AbilityStackManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &
     }
 
     if (!CanStopInLockMissionState(targetAbility)) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        SendDisplayUnlockMissionMessage();
-        return ERR_INVALID_VALUE;
+        SendUnlockMissionMessage();
+        return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
     return TerminateAbilityLocked(targetAbility, -1, nullptr);
@@ -1357,7 +1354,35 @@ void AbilityStackManager::CreateRecentMissionInfo(
         recentMissionInfo.missionDescription = missionDescription;
     }
 
+    if (auto desc = missionRecord->GetMissionDescriptionInfo()) {
+        recentMissionInfo.missionDescription = *desc;
+    }
+
     recentMissionInfo.size = missionRecord->GetAbilityRecordCount();
+}
+
+int AbilityStackManager::SetMissionDescriptionInfo(
+    const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &missionDescriptionInfo)
+{
+    HILOG_DEBUG("%{public}s called", __FUNCTION__);
+    CHECK_POINTER_AND_RETURN(abilityRecord, SET_MISSION_INFO_FAILED);
+
+    auto mission = abilityRecord->GetMissionRecord();
+    CHECK_POINTER_AND_RETURN(mission, SET_MISSION_INFO_FAILED);
+    auto ptr = std::make_shared<MissionDescriptionInfo>(missionDescriptionInfo);
+    mission->SetMissionDescriptionInfo(ptr);
+
+    return ERR_OK;
+}
+
+int AbilityStackManager::GetMissionLockModeState()
+{
+    HILOG_DEBUG("%{public}s called", __FUNCTION__);
+    if (!lockMissionContainer_) {
+        return LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_NONE;
+    }
+
+    return lockMissionContainer_->GetLockedMissionState();
 }
 
 int AbilityStackManager::MoveMissionToTop(int32_t missionId)
@@ -1603,6 +1628,13 @@ void AbilityStackManager::OnAbilityDiedByDefault(std::shared_ptr<AbilityRecord> 
         HILOG_ERROR("mission is nullptr or not exist");
         return;
     }
+
+    auto topAbility = mission->GetTopAbilityRecord();
+    if (!topAbility) {
+        return;
+    }
+    auto isBackLauncher = topAbility->IsAbilityState(AbilityState::ACTIVE);
+
     std::vector<AbilityRecordInfo> abilityInfos;
     mission->GetAllAbilityInfo(abilityInfos);
     for (auto &it : abilityInfos) {
@@ -1612,12 +1644,17 @@ void AbilityStackManager::OnAbilityDiedByDefault(std::shared_ptr<AbilityRecord> 
             continue;
         }
         if (ability == abilityRecord) {
-            DelayedStartLauncher();
+            if (isBackLauncher) {
+                DelayedStartLauncher();
+            }
             if (abilityRecord->IsUninstallAbility()) {
                 HILOG_INFO("ability uninstall,%{public}d", __LINE__);
                 mission->RemoveAbilityRecord(abilityRecord);
                 if (mission->GetAbilityRecordCount() == 0) {
                     defaultMissionStack_->RemoveMissionRecord(mission->GetMissionRecordId());
+                }
+                if (defaultMissionStack_->GetMissionRecordCount() == 0) {
+                    MoveMissionStackToTop(launcherMissionStack_);
                 }
                 break;
             }
@@ -1990,10 +2027,12 @@ int AbilityStackManager::StartLockMission(int uid, int missionId, bool isSystemA
 
     // lock mission
     if (isLock) {
-        if (!lockMissionContainer_->SetLockedMission(missionRecord, lockUid)) {
+        if (!lockMissionContainer_->SetLockedMission(missionRecord, lockUid, isSystemApp)) {
             HILOG_ERROR("lock mission error.");
             return LOCK_MISSION_DENY_FAILED;
         }
+        // notify wms mission locked state.
+
         // move lock mission to top
         return MoveMissionToTopLocked(missionRecord->GetMissionRecordId());
     }
@@ -2088,14 +2127,9 @@ bool AbilityStackManager::CanStopInLockMissionState(const std::shared_ptr<Abilit
     return (lockMissionContainer_->IsSameLockedMission(mission->GetName()) && terminateAbility != bottom);
 }
 
-void AbilityStackManager::SendDisplayUnlockMissionMessage()
+void AbilityStackManager::SendUnlockMissionMessage()
 {
-    CHECK_POINTER(lockMissionContainer_);
-    auto lockMission = lockMissionContainer_->GetLockMission();
-    CHECK_POINTER(lockMission);
-    auto topLockAbility = lockMission->GetTopAbilityRecord();
-    CHECK_POINTER(topLockAbility);
-    topLockAbility->DisplayUnlockMissionMessage();
+    HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
 }
 
 }  // namespace AAFwk

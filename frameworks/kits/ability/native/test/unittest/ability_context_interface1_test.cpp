@@ -633,5 +633,102 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_Ability_TerminateAndRemoveMission_02
     GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAndRemoveMission_0200 end";
 }
 
+HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_MoveMissionToEnd_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_MoveMissionToEnd_0100 start";
+    std::shared_ptr<MockAbilityContextTest> abilityContext = std::make_shared<MockAbilityContextTest>();
+    const sptr<IRemoteObject> token(new (std::nothrow) MockAbilityStub());
+    bool testValue = OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMoveMissionToEnd();
+
+    abilityContext->SetToken(token);
+    EXPECT_TRUE(abilityContext->MoveMissionToEnd(!testValue));
+
+    if (testValue) {
+        EXPECT_FALSE(OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMoveMissionToEnd());
+    } else {
+        EXPECT_TRUE(OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMoveMissionToEnd());
+    }
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_MoveMissionToEnd_0100 end";
+}
+
+HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_LockMission_0100, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_LockMission_0100 start";
+    std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
+    std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
+
+    int testValue = OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMissionId();
+    testValue++;
+    AAFwk::LifeCycleStateInfo lifeInfo;
+    lifeInfo.missionId = testValue;
+    contextDeal->SetLifeCycleStateInfo(lifeInfo);
+    abilityContext->AttachBaseContext(contextDeal);
+
+    abilityContext->LockMission();
+
+    EXPECT_EQ(testValue, OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMissionId());
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_LockMission_0100 end";
+}
+
+HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_UnlockMission_0100, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_UnlockMission_0100 start";
+    std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
+    std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
+
+    int testValue = OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMissionId();
+    testValue++;
+    AAFwk::LifeCycleStateInfo lifeInfo;
+    lifeInfo.missionId = testValue;
+    contextDeal->SetLifeCycleStateInfo(lifeInfo);
+    abilityContext->AttachBaseContext(contextDeal);
+
+    abilityContext->UnlockMission();
+
+    EXPECT_EQ(testValue, OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetMockMissionId());
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_UnlockMission_0100 end";
+}
+
+HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_GetMissionId_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetMissionId_0100 start";
+    std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
+    std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
+    const int testValue = 1;
+
+    EXPECT_NE(testValue, abilityContext->GetMissionId());
+
+    abilityContext->AttachBaseContext(contextDeal);
+
+    EXPECT_NE(testValue, abilityContext->GetMissionId());
+
+    AAFwk::LifeCycleStateInfo lifeInfo;
+    lifeInfo.missionId = testValue;
+    contextDeal->SetLifeCycleStateInfo(lifeInfo);
+
+    EXPECT_EQ(testValue, abilityContext->GetMissionId());
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetMissionId_0100 end";
+}
+
+HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_SetMissionInformation_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_SetMissionInformation_0100 start";
+    std::shared_ptr<MockAbilityContextTest> abilityContext = std::make_shared<MockAbilityContextTest>();
+    const sptr<IRemoteObject> token(new (std::nothrow) MockAbilityStub());
+    AppExecFwk::MissionInformation missionInformation;
+
+    EXPECT_FALSE(abilityContext->SetMissionInformation(missionInformation));
+
+    abilityContext->SetToken(token);
+
+    EXPECT_TRUE(abilityContext->SetMissionInformation(missionInformation));
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityContext_SetMissionInformation_0100 end";
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -62,12 +62,24 @@ void AbilityStackManagerTest::SetUpTestCase(void)
 void AbilityStackManagerTest::TearDownTestCase(void)
 {}
 void AbilityStackManagerTest::TearDown()
-{}
+{
+    stackManager_.reset();
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 void AbilityStackManagerTest::SetUp()
 {
-    stackManager_ = std::make_shared<AbilityStackManager>(0);
     init();
+    auto bundleObject = new BundleMgrService();
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
+
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    // stackManager_ = ams->GetStackManager();
+    stackManager_ = std::make_shared<AbilityStackManager>(0);
+    auto bms = ams->GetBundleManager();
+    EXPECT_NE(bms, nullptr);
 }
 
 void AbilityStackManagerTest::init()
@@ -152,6 +164,7 @@ AbilityRequest AbilityStackManagerTest::GenerateAbilityRequest(const std::string
 
     return abilityRequest;
 }
+
 /*
  * Feature: AbilityStackManager
  * Function: stack operate
@@ -1633,7 +1646,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
     secondTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
     auto thridMissionId = thirdTopAbility->GetMissionRecord()->GetMissionRecordId();
 
-
     EXPECT_EQ(secondMissionId, thridMissionId);
     EXPECT_NE(firstMissionId, secondMissionId);
 
@@ -1652,13 +1664,13 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
 
     auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
     int size = recordVector.size();
-    EXPECT_EQ(size, 1); // Because we only focus on the top of the stack
+    EXPECT_EQ(size, 1);  // Because we only focus on the top of the stack
 
-    for(const auto &it : recordVector){
-        if(it.missionId == thridMissionId){
+    for (const auto &it : recordVector) {
+        if (it.missionId == thridMissionId) {
             EXPECT_EQ(firstTopAbility->GetRecordId(), it.ability.lock()->GetRecordId());
         }
-        if(it.missionId == secondMissionId){
+        if (it.missionId == secondMissionId) {
             EXPECT_EQ(secondTopAbility->GetRecordId(), it.ability.lock()->GetRecordId());
         }
     }
@@ -1666,7 +1678,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
     result = stackManager_->PowerOn();
     EXPECT_EQ(ERR_OK, result);
     EXPECT_EQ(OHOS::AAFwk::INACTIVE, secondTopAbility->GetAbilityState());
-    
 }
 
 /*
@@ -1729,23 +1740,405 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.
     int size = recordVector.size();
     EXPECT_EQ(size, 2);
 
-    for(const auto &it : recordVector){
-        if(it.missionId == firstMissionId){
+    for (const auto &it : recordVector) {
+        if (it.missionId == firstMissionId) {
             EXPECT_TRUE(firstTopAbility->GetRecordId() == it.ability.lock()->GetRecordId());
         }
-        if(it.missionId == thridMissionId){
+        if (it.missionId == thridMissionId) {
             EXPECT_TRUE(thirdTopAbility->GetRecordId() == it.ability.lock()->GetRecordId());
         }
     }
     result = stackManager_->PowerOn();
     EXPECT_EQ(ERR_OK, result);
 
-    //mocke app clent
+    // mocke app clent
     // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, firstTopAbility->GetAbilityState());
     // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, thirdTopAbility->GetAbilityState());
     EXPECT_EQ(OHOS::AAFwk::INACTIVATING, fourthTopAbility->GetAbilityState());
-    
 }
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_050, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartLockMission(1000, 3, true, true);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result);
+
+    auto result1 = stackManager_->StartLockMission(1000, -2, true, true);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_051, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMisionRecord = stackManager_->GetTopMissionRecord();
+    auto MisionRecordId = topMisionRecord->GetMissionRecordId();
+
+    auto topAbilityRecord = topMisionRecord->GetTopAbilityRecord();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    // can't repeat the lock
+    auto resul2 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, resul2);
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_LOCKED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_052, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topAbility = stackManager_->GetCurrentTopAbility();
+    topAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto luncherMissionRecord = stackManager_->GetTopMissionRecord();
+    auto luncherMisionRecordId = luncherMissionRecord->GetMissionRecordId();
+
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto musicMisionRecord = stackManager_->GetTopMissionRecord();
+    // auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+
+    auto topAbilityRecord = stackManager_->GetCurrentTopAbility();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, luncherMisionRecordId, true, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    auto missionRecord = stackManager_->GetTopMissionRecord();
+    EXPECT_EQ(missionRecord->GetMissionRecordId(), luncherMisionRecordId);
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_PINNED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_053, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto musicMisionRecord = stackManager_->GetTopMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+
+    auto topAbilityRecord = stackManager_->GetCurrentTopAbility();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // 2
+    auto musicAbilityRequest2th = GenerateAbilityRequest("device", "MusicAbility2th", "music", "com.ix.hiMusic");
+    result = stackManager_->StartAbility(musicAbilityRequest2th);
+    EXPECT_EQ(0, result);
+    auto musicMisionRecord2th = stackManager_->GetTopMissionRecord();
+    auto musicMisionRecordId2th = musicMisionRecord->GetMissionRecordId();
+    EXPECT_EQ(musicMisionRecordId, musicMisionRecordId2th);
+
+    topAbilityRecord = stackManager_->GetCurrentTopAbility();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, musicMisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    auto topRecord = stackManager_->GetCurrentTopAbility();
+    auto abilityInfo = topRecord->GetAbilityInfo();
+    EXPECT_EQ(abilityInfo.name, "MusicAbility2th");
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_LOCKED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_054, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMisionRecord = stackManager_->GetTopMissionRecord();
+    auto MisionRecordId = topMisionRecord->GetMissionRecordId();
+    EXPECT_NE(0, MisionRecordId);
+    auto topAbilityRecord = topMisionRecord->GetTopAbilityRecord();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, false);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a mission and unlock
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_055, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMisionRecord = stackManager_->GetTopMissionRecord();
+    auto MisionRecordId = topMisionRecord->GetMissionRecordId();
+    EXPECT_NE(0, MisionRecordId);
+    auto topAbilityRecord = topMisionRecord->GetTopAbilityRecord();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_LOCKED);
+
+    // unlock
+    auto result2 = stackManager_->StartLockMission(1000, MisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result2);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a luncher mission and unlock
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_056, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMisionRecord = stackManager_->GetTopMissionRecord();
+    auto MisionRecordId = topMisionRecord->GetMissionRecordId();
+    EXPECT_NE(0, MisionRecordId);
+    auto topAbilityRecord = topMisionRecord->GetTopAbilityRecord();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, true, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_PINNED);
+
+    // unlock
+    auto result2 = stackManager_->StartLockMission(1000, MisionRecordId, true, false);
+    EXPECT_EQ(ERR_OK, result2);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: StartLockMission
+ * EnvConditions: NA
+ * CaseDescription: lock a luncher mission and unlock
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_057, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMisionRecord = stackManager_->GetTopMissionRecord();
+    auto MisionRecordId = topMisionRecord->GetMissionRecordId();
+    EXPECT_NE(0, MisionRecordId);
+    auto topAbilityRecord = topMisionRecord->GetTopAbilityRecord();
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    auto lockState = stackManager_->GetMissionLockModeState();
+    EXPECT_EQ(lockState, LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_LOCKED);
+
+    // unlock
+    auto result2 = stackManager_->StartLockMission(1000, MisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result2);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  SetMissionDescriptionInfo
+ * SubFunction: NA
+ * FunctionPoints: SetMissionDescriptionInfo
+ * EnvConditions: NA
+ * CaseDescription: set details for a mission
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_058, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    Want want;
+    AbilityInfo abilityInfo;
+    ApplicationInfo appInfo;
+    auto abilityRecord = std::make_shared<AbilityRecord>(want, abilityInfo, appInfo);
+
+    MissionDescriptionInfo missionDescriptionInfo;
+    missionDescriptionInfo.label = "123456";
+    missionDescriptionInfo.iconPath = "loacl";
+
+    result = stackManager_->SetMissionDescriptionInfo(abilityRecord, missionDescriptionInfo);
+    EXPECT_EQ(SET_MISSION_INFO_FAILED, result);
+
+    result = stackManager_->SetMissionDescriptionInfo(topAbilityRecord, missionDescriptionInfo);
+    EXPECT_EQ(ERR_OK, result);
+
+    auto descriptionInfo = topMissionRecord->GetMissionDescriptionInfo();
+    EXPECT_TRUE(descriptionInfo);
+
+    EXPECT_TRUE(descriptionInfo->label == missionDescriptionInfo.label);
+    EXPECT_TRUE(descriptionInfo->iconPath == missionDescriptionInfo.iconPath);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  SetMissionDescriptionInfo
+ * SubFunction: NA
+ * FunctionPoints: SetMissionDescriptionInfo
+ * EnvConditions: NA
+ * CaseDescription: can stop or can start mission state
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_059, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto isCanStart = stackManager_->CanStartInLockMissionState(launcherAbilityRequest_, topAbilityRecord);
+    EXPECT_TRUE(isCanStart);
+
+    // LOCK
+    auto MisionRecordId = topMissionRecord->GetMissionRecordId();
+    auto result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    // check can terminal
+    auto isCanStop = stackManager_->CanStopInLockMissionState(topAbilityRecord);
+    EXPECT_FALSE(isCanStop);
+
+    // check start agin
+    isCanStart = stackManager_->CanStartInLockMissionState(launcherAbilityRequest_, topAbilityRecord);
+    EXPECT_FALSE(isCanStart);
+
+    // unlock
+    result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result1);
+
+    isCanStop = stackManager_->CanStopInLockMissionState(topAbilityRecord);
+    EXPECT_TRUE(isCanStop);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  SetMissionDescriptionInfo
+ * SubFunction: NA
+ * FunctionPoints: SetMissionDescriptionInfo
+ * EnvConditions: NA
+ * CaseDescription: when the uid defferent
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_060, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto isCanStart = stackManager_->CanStartInLockMissionState(launcherAbilityRequest_, topAbilityRecord);
+    EXPECT_TRUE(isCanStart);
+
+    // LOCK
+    auto MisionRecordId = topMissionRecord->GetMissionRecordId();
+    auto result1 = stackManager_->StartLockMission(99, MisionRecordId, false, true);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
+
+    result1 = stackManager_->StartLockMission(100, MisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result1);
+
+    // unlock defferent uid(99)
+    result1 = stackManager_->StartLockMission(99, MisionRecordId, false, false);
+    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
+
+    result1 = stackManager_->StartLockMission(100, MisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result1);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  SetMissionDescriptionInfo
+ * SubFunction: NA
+ * FunctionPoints: SetMissionDescriptionInfo
+ * EnvConditions: NA
+ * CaseDescription: when the uid defferent
+ */
 
 }  // namespace AAFwk
 }  // namespace OHOS

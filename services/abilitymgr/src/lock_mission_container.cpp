@@ -22,10 +22,16 @@ namespace AAFwk {
 
 bool LockMissionContainer::IsLockedMissionState() const
 {
-    return isLocked_;
+    return lockState_ != LockMissionState::LOCK_MISSION_STATE_NONE;
 }
 
-bool LockMissionContainer::SetLockedMission(const std::shared_ptr<MissionRecord> &mission, int lockerUid)
+int LockMissionContainer::GetLockedMissionState() const
+{
+    return lockState_;
+}
+
+bool LockMissionContainer::SetLockedMission(
+    const std::shared_ptr<MissionRecord> &mission, int lockerUid, bool isSystemApp)
 {
     auto lockMission = lockMission_.lock();
     if (lockMission) {
@@ -44,7 +50,8 @@ bool LockMissionContainer::SetLockedMission(const std::shared_ptr<MissionRecord>
         lockerUid);
     lockMission_ = mission;
     lockerUid_ = lockerUid;
-    isLocked_ = true;
+    lockState_ =
+        isSystemApp ? LockMissionState::LOCK_MISSION_STATE_PINNED : LockMissionState::LOCK_MISSION_STATE_LOCKED;
     return true;
 }
 
@@ -99,7 +106,7 @@ void LockMissionContainer::Clear()
 {
     lockMission_.reset();
     lockerUid_ = -1;
-    isLocked_ = false;
+    lockState_ = LockMissionState::LOCK_MISSION_STATE_NONE;
 }
 
 std::shared_ptr<MissionRecord> LockMissionContainer::GetLockMission()

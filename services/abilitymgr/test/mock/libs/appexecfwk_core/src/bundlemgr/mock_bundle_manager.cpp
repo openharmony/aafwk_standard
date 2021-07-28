@@ -160,5 +160,10 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
     return false;
 }
 
+int BundleMgrService::GetUidByBundleName(const std::string &bundleName, const int userId)
+{
+    return 1000;
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

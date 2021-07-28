@@ -19,6 +19,7 @@
 #include "napi/native_node_api.h"
 #include "ability.h"
 #include "want.h"
+#include "../inner/napi_common/napi_common.h"
 #include "dummy_values_bucket.h"
 #include "dummy_data_ability_predicates.h"
 
@@ -30,14 +31,6 @@ namespace OHOS {
 namespace AppExecFwk {
 class FeatureAbility;
 
-#define ARGS_MAX_COUNT 10
-#define ARGS_ASYNC_COUNT 1
-#define ARGS1 1
-#define ARGS2 2
-#define ARGS3 3
-#define PARAM0 0
-#define PARAM1 1
-#define PARAM2 2
 #define NO_ERROR 0
 
 struct CallAbilityParam {
@@ -47,10 +40,6 @@ struct CallAbilityParam {
     std::shared_ptr<AbilityStartSetting> setting = nullptr;
 };
 
-struct CallbackInfo {
-    napi_env env;
-    napi_ref callback = 0;
-};
 
 struct OnAbilityCallback {
     int requestCode = 0;
@@ -211,29 +200,8 @@ struct DAHelperInsertCB {
 static inline std::string NapiValueToStringUtf8(napi_env env, napi_value value)
 {
     std::string result = "";
-    size_t size = 0;
-
-    if (napi_get_value_string_utf8(env, value, nullptr, 0, &size) != napi_ok || size == 0) {
-        return "";
-    }
-
-    result.resize(size + 1);
-    if (napi_get_value_string_utf8(env, value, &result[0], result.size(), &size) != napi_ok) {
-        return "";
-    }
-    return result;
+	return UnwrapStringFromJS(env, value, result);
 }
-
-static inline napi_value GetCallbackErrorValue(napi_env env, int errCode)
-{
-    napi_value result = nullptr;
-    napi_value eCode = nullptr;
-    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
-    NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
-    return result;
-}
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_FEATURE_ABILITY_COMMON_H */
