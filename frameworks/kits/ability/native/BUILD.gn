@@ -31,7 +31,6 @@ config("ability_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
@@ -62,7 +61,6 @@ config("ability_public_config") {
     "${SUBSYSTEM_DIR}/include",
     "//third_party/libuv/include",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/ohos/aafwk/base",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
   ]
 }
@@ -105,7 +103,6 @@ ohos_shared_library("abilitykit_native") {
   deps = [
     "${INNERKITS_PATH}/base:base",
     "${INNERKITS_PATH}/want:want",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -124,6 +121,7 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   public_deps = [
+    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwms_client",
   ]
