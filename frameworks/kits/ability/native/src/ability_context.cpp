@@ -56,6 +56,7 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
         if (dms != nullptr) {
             AAFwk::Want innerWant;
             APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
+            want.DumpInfo(0);
             int result = dms->StartRemoteAbility(want, innerWant, requestCode);
             if (result != ERR_NONE) {
                 APP_LOGE("AbilityContext::StartAbility start remote ability failed, the result is %{public}d", result);
@@ -624,7 +625,7 @@ int AbilityContext::VerifyCallingOrSelfPermission(const std::string &permission)
     if (VerifyCallingPermission(permission) != AppExecFwk::Constants::PERMISSION_GRANTED) {
         return VerifySelfPermission(permission);
     } else {
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        return AppExecFwk::Constants::PERMISSION_GRANTED;
     }
 }
 
@@ -988,6 +989,9 @@ bool AbilityContext::TerminateAbilityResult(int startId)
     }
 
     ErrCode errval = abilityClient->TerminateAbilityResult(token_, startId);
+    if (errval != ERR_OK) {
+        APP_LOGE("AbilityContext::TerminateAbilityResult TerminateAbilityResult retval is %d", errval);
+    }
 
     return (errval == ERR_OK) ? true : false;
 }
@@ -1077,6 +1081,10 @@ bool AbilityContext::IsFirstInMission()
         return false;
     }
     ErrCode errval = abilityClient->IsFirstInMission(token_);
+    if (errval != ERR_OK) {
+        APP_LOGE("AbilityContext::IsFirstInMission IsFirstInMission retval is %d", errval);
+    }
+
     return (errval == ERR_OK) ? true : false;
 }
 
@@ -1171,6 +1179,46 @@ std::shared_ptr<TaskDispatcher> AbilityContext::CreateSerialTaskDispatcher(
 std::shared_ptr<TaskDispatcher> AbilityContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
 {
     return ContextContainer::GetGlobalTaskDispatcher(priority);
+}
+
+/**
+ * @brief Requires that tasks associated with a given capability token be moved to the background
+ *
+ * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
+ *
+ * @return Returns true on success, others on failure.
+ */
+bool AbilityContext::MoveMissionToEnd(bool nonFirst)
+{
+    return ContextContainer::MoveMissionToEnd(nonFirst);
+}
+
+/**
+ * @brief Sets the application to start its ability in lock mission mode.
+ */
+void AbilityContext::LockMission()
+{
+    ContextContainer::LockMission();
+}
+
+/**
+ * @brief Unlocks this ability by exiting the lock mission mode.
+ */
+void AbilityContext::UnlockMission()
+{
+    ContextContainer::UnlockMission();
+}
+
+/**
+ * @brief Sets description information about the mission containing this ability.
+ *
+ * @param MissionInformation Indicates the object containing information about the
+ *                               mission. This parameter cannot be null.
+ * @return Returns true on success, others on failure.
+ */
+bool AbilityContext::SetMissionInformation(const MissionInformation &missionInformation)
+{
+    return ContextContainer::SetMissionInformation(missionInformation);
 }
 
 }  // namespace AppExecFwk

@@ -35,6 +35,8 @@ MockAbilityManagerClient::MockAbilityManagerClient()
     removeMissionsE_ = ERR_INVALID_OPERATION;
     terminateAbilityValue_ = 0;
     removeMissions_ = 0;
+    missionId_ = -1;
+    moveMissionToEnd_ = false;
 }
 MockAbilityManagerClient::~MockAbilityManagerClient()
 {}
@@ -56,9 +58,6 @@ void MockAbilityManagerClient::SetInstanceNull(bool flag)
     mock_intanceIsNull_ = flag;
 }
 
-std::shared_ptr<AbilityManagerClient> AbilityManagerClient::instance_ = nullptr;
-std::mutex AbilityManagerClient::mutex_;
-
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
 {
     if (instance_ == nullptr) {
@@ -72,9 +71,6 @@ std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
     else
         return nullptr;
 }
-
-AbilityManagerClient::AbilityManagerClient()
-{}
 
 AbilityManagerClient::~AbilityManagerClient()
 {}
@@ -220,6 +216,31 @@ ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
     return MockAbilityManagerClient::GetInstance()->GetIsFirstInMission();
 }
 
+ErrCode AbilityManagerClient::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
+{
+    MockAbilityManagerClient::GetInstance()->SetMockMoveMissionToEnd(
+        !MockAbilityManagerClient::GetInstance()->GetMockMoveMissionToEnd());
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::LockMission(int missionId)
+{
+    MockAbilityManagerClient::GetInstance()->SetMockMissionId(missionId);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::UnlockMission(int missionId)
+{
+    MockAbilityManagerClient::GetInstance()->SetMockMissionId(missionId);
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+{
+    return ERR_OK;
+}
+
 ErrCode MockAbilityManagerClient::GetStartAbility()
 {
     return startAbility_;
@@ -279,6 +300,24 @@ void MockAbilityManagerClient::ChangeRemoveMissionsValue()
     ++removeMissions_;
 }
 
+int MockAbilityManagerClient::GetMockMissionId()
+{
+    return missionId_;
+}
+void MockAbilityManagerClient::SetMockMissionId(int missionId)
+{
+    missionId_ = missionId;
+}
+
+bool MockAbilityManagerClient::GetMockMoveMissionToEnd()
+{
+    return moveMissionToEnd_;
+}
+void MockAbilityManagerClient::SetMockMoveMissionToEnd(bool flag)
+{
+    moveMissionToEnd_ = flag;
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS
 
@@ -319,6 +358,11 @@ size_t MockAbilityContextTest::GetStartAbilityRunCount()
 void MockAbilityContextTest::SetStartAbilityRunCount(size_t nCount)
 {
     startAbilityRunCount_ = nCount;
+}
+
+void MockAbilityContextTest::SetToken(const sptr<IRemoteObject> token)
+{
+    token_ = token;
 }
 
 }  // namespace AppExecFwk

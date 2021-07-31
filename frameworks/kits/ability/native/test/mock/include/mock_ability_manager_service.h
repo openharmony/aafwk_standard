@@ -70,6 +70,17 @@ public:
         return 0;
     };
 
+    int SetMissionDescriptionInfo(
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
+    {
+        return 0;
+    };
+
+    int GetMissionLockModeState()
+    {
+        return 0;
+    }
+
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));

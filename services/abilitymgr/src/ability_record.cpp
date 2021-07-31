@@ -440,6 +440,16 @@ void AbilityRecord::CommandAbility()
     lifecycleDeal_->CommandAbility(want_, false, startId_);
 }
 
+void AbilityRecord::SaveAbilityState()
+{
+    HILOG_INFO("%{public}s", __func__);
+}
+
+void AbilityRecord::RestoreAbilityState()
+{
+    HILOG_INFO("%{public}s", __func__);
+}
+
 void AbilityRecord::SetWant(const Want &want)
 {
     want_ = want;
@@ -473,13 +483,6 @@ void AbilityRecord::SendResult()
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
     // reset result to avoid send result next time
     result_.reset();
-}
-
-void AbilityRecord::DisplayUnlockMissionMessage()
-{
-    HILOG_INFO("%{public}s", __func__);
-    CHECK_POINTER(scheduler_);
-    scheduler_->DisplayUnlockMissionMessage();
 }
 
 void AbilityRecord::SendResultToCallers()

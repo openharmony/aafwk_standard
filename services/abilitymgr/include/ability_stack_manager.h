@@ -324,6 +324,9 @@ public:
     int PowerOn();
 
     int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
+    int SetMissionDescriptionInfo(
+        const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &missionDescriptionInfo);
+    int GetMissionLockModeState();
 
 private:
     /**
@@ -528,7 +531,7 @@ private:
     bool CanStartInLockMissionState(
         const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &currentTopAbility) const;
     bool CanStopInLockMissionState(const std::shared_ptr<AbilityRecord> &terminateAbility) const;
-    void SendDisplayUnlockMissionMessage();
+    void SendUnlockMissionMessage();
 
 private:
     const std::string MISSION_NAME_MARK_HEAD = "#";

@@ -66,6 +66,9 @@ public:
     MOCK_METHOD0(PowerOn, int());
     MOCK_METHOD1(LockMission, int(int));
     MOCK_METHOD1(UnlockMission, int(int));
+    MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
+    MOCK_METHOD0(GetMissionLockModeState, int());
+
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));

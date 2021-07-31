@@ -25,11 +25,60 @@
 #include "want.h"
 
 #include "iremote_object.h"
+#include "iremote_stub.h"
 
 #include "ability_manager_client.h"
 
 namespace OHOS {
+namespace AppExecFwk {
+
+class IAbilityMock : public OHOS::IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.AbilityMock");
+};
+
+class MockAbilityStub : public IRemoteStub<IAbilityMock> {
+public:
+    MockAbilityStub() = default;
+    virtual ~MockAbilityStub() = default;
+    virtual int OnRemoteRequest(
+        uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override
+    {
+        return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+    };
+};
+
+class MockAbilityContextDeal : public ContextDeal {
+public:
+    MockAbilityContextDeal();
+    virtual ~MockAbilityContextDeal();
+
+    std::shared_ptr<HapModuleInfo> GetHapModuleInfo();
+
+    std::shared_ptr<HapModuleInfo> hapModInfo_;
+};
+
+class MockAbilityContextTest : public AbilityContext {
+public:
+    MockAbilityContextTest();
+    ~MockAbilityContextTest();
+
+    void StartAbility(const AAFwk::Want &want, int requestCode);
+
+    void SetToken(const sptr<IRemoteObject> token);
+
+    size_t GetStartAbilityRunCount();
+    void SetStartAbilityRunCount(size_t nCount);
+
+    size_t startAbilityRunCount_;
+};
+
+}  // namespace AppExecFwk
+}  // namespace OHOS
+
+namespace OHOS {
 namespace AAFwk {
+
 class MockAbilityManagerClient : public AbilityManagerClient {
 public:
     MockAbilityManagerClient();
@@ -53,6 +102,12 @@ public:
     int GetRemoveMissionsValue();
     void ChangeRemoveMissionsValue();
 
+    int GetMockMissionId();
+    void SetMockMissionId(int missionId);
+
+    bool GetMockMoveMissionToEnd();
+    void SetMockMoveMissionToEnd(bool flag);
+
     static std::shared_ptr<MockAbilityManagerClient> mock_instance_;
     static bool mock_intanceIsNull_;
 
@@ -68,38 +123,12 @@ private:
 
     int terminateAbilityValue_;
     int removeMissions_;
+    int missionId_;
+    bool moveMissionToEnd_;
 };
 
-}  // namespace AAFwk
-}  // namespace OHOS
+};  // namespace AAFwk
 
-namespace OHOS {
-namespace AppExecFwk {
-
-class MockAbilityContextDeal : public ContextDeal {
-public:
-    MockAbilityContextDeal();
-    virtual ~MockAbilityContextDeal();
-
-    std::shared_ptr<HapModuleInfo> GetHapModuleInfo();
-
-    std::shared_ptr<HapModuleInfo> hapModInfo_;
-};
-
-class MockAbilityContextTest : public AbilityContext {
-public:
-    MockAbilityContextTest();
-    ~MockAbilityContextTest();
-
-    void StartAbility(const AAFwk::Want &want, int requestCode);
-
-    size_t GetStartAbilityRunCount();
-    void SetStartAbilityRunCount(size_t nCount);
-
-    size_t startAbilityRunCount_;
-};
-
-}  // namespace AppExecFwk
 }  // namespace OHOS
 
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_H

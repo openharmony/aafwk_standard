@@ -612,19 +612,5 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<ValuesB
 
     return ret;
 }
-
-void AbilitySchedulerProxy::DisplayUnlockMissionMessage()
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    int32_t err = Remote()->SendRequest(IAbilityScheduler::DISPLAY_UNLOCK_MISSION_MESSAGE, data, reply, option);
-    if (err != NO_ERROR) {
-        HILOG_ERROR("DisplayUnlockMissionMessage​ fail to SendRequest. err: %d", err);
-    }
-}
 }  // namespace AAFwk
 }  // namespace OHOS
