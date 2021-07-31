@@ -15,13 +15,13 @@ import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
-EVENT_DIR = "//base/notification/ces_standard/cesfwk"
+EVENT_DIR = "//base/notification/ces_standard/"
 
 ohos_source_set("abilityms_test_source") {
   sources = abilityms_files
   include_dirs = [
-    "${EVENT_DIR}/innerkits/include",
-    "${EVENT_DIR}/kits/native/include",
+    "${EVENT_DIR}/frameworks/core/include",
+    "${EVENT_DIR}/interfaces/innerkits/native/include",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -36,8 +36,6 @@ ohos_source_set("abilityms_test_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${EVENT_DIR}/innerkits:cesfwk_innerkits",
-    "${EVENT_DIR}/kits/native:cesfwk_kits",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -46,6 +44,8 @@ ohos_source_set("abilityms_test_source") {
   ]
 
   external_deps = [
+    "ces_standard:cesfwk_core",
+    "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

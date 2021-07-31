@@ -41,7 +41,6 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_GETTYPE] = &AbilitySchedulerStub::GetTypeInner;
     requestFuncMap_[SCHEDULE_RELOAD] = &AbilitySchedulerStub::ReloadInner;
     requestFuncMap_[SCHEDULE_BATCHINSERT] = &AbilitySchedulerStub::BatchInsertInner;
-    requestFuncMap_[DISPLAY_UNLOCK_MISSION_MESSAGE] = &AbilitySchedulerStub::DisplayUnlockMissionMessageInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -383,12 +382,6 @@ int AbilitySchedulerStub::BatchInsertInner(MessageParcel &data, MessageParcel &r
         return ERR_INVALID_VALUE;
     }
     delete uri;
-    return NO_ERROR;
-}
-
-int AbilitySchedulerStub::DisplayUnlockMissionMessageInner(MessageParcel &data, MessageParcel &reply)
-{
-    DisplayUnlockMissionMessage();
     return NO_ERROR;
 }
 

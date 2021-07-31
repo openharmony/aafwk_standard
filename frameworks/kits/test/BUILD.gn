@@ -152,6 +152,67 @@ ohos_moduletest("ability_conetxt_test") {
   ]
 }
 
+ohos_moduletest("data_ability_operation_moduletest") {
+  module_out_path = module_output_path
+  sources = [
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation_builder.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/mock_bundle_manager.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS/mock_ability_manager_client.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS/mock_ability_manager_service.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_mission_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_record_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_proxy.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/caller_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/image_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_description_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
+    "moduletest/cpp/abilitytest/data_ability_operation_module_test.cpp",
+  ]
+
+  configs = [
+    ":module_private_config",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want_public_config",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:ability_config",
+  ]
+
+  deps = [
+    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/kits:appkit_native",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 ################################################################################
 group("moduletest") {
   testonly = true
@@ -162,6 +223,7 @@ group("moduletest") {
     deps += [
       ":ability_conetxt_test",
       ":ability_moduletest",
+      ":data_ability_operation_moduletest",
     ]
   }
 }

@@ -25,7 +25,7 @@
 #include "ability_manager_service.h"
 #include "ability_manager_errors.h"
 #include "ability_record.h"
-#include "common_event_manager.h"
+#include "common_event.h"
 #include "nocopyable.h"
 #include "pending_want_key.h"
 #include "pending_want_record.h"
@@ -151,7 +151,7 @@ public:
     int32_t PendingWantStartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode);
     int32_t PendingWantStartAbilitys(
         const std::vector<WantsInfo> wnatsInfo, const sptr<IRemoteObject> &callerToken, int32_t requestCode);
-    int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo);
+    int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo, int32_t callerUid);
 
 private:
     sptr<IWantSender> GetWantSenderLocked(const int32_t callingUid, const int32_t uid, const int32_t userId,

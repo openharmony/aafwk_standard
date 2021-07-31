@@ -330,6 +330,23 @@ public:
      */
     virtual int UnlockMission(int missionId) = 0;
 
+    /**
+     * Sets description information about the mission containing this ability.
+     *
+     * @param missionDescriptionInfo Indicates the object containing information about the
+     *                           mission. This parameter cannot be null.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetMissionDescriptionInfo(
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) = 0;
+
+    /**
+     * get current system mission lock mode state.
+     *
+     * @return Returns 0: LOCK_MISSION_STATE_NONE, 1: LOCK_MISSION_STATE_LOCKED
+     */
+    virtual int GetMissionLockModeState() = 0;
+
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) = 0;
 
@@ -432,6 +449,12 @@ public:
 
         // ipc id for unluck mission (34)
         UNLUCK_MISSION,
+
+        // ipc id for set mission info (35)
+        SET_MISSION_INFO,
+
+        // ipc id for get mission lock mode state (36)
+        GET_MISSION_LOCK_MODE_STATE,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

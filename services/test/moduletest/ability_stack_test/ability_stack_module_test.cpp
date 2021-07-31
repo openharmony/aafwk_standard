@@ -27,6 +27,10 @@
 #undef private
 #undef protected
 
+#include "mock_bundle_mgr.h"
+#include "sa_mgr_client.h"
+#include "system_ability_definition.h"
+
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
 using namespace testing;
@@ -45,7 +49,10 @@ public:
     AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
         const std::string &appName, const std::string &bundleName);
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
+
+public:
     std::shared_ptr<AbilityStackManager> stackManager_;
+    BundleMgrService *bundleObject_ = nullptr;
 };
 
 void AbilityStackModuleTest::SetUpTestCase(void)
@@ -56,11 +63,23 @@ void AbilityStackModuleTest::TearDownTestCase(void)
 
 void AbilityStackModuleTest::SetUp(void)
 {
-    stackManager_ = std::make_shared<AbilityStackManager>(100);
+    bundleObject_ = new BundleMgrService();
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject_);
+
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    // stackManager_ = ams->GetStackManager();
+    stackManager_ = std::make_shared<AbilityStackManager>(10);
+    auto bms = ams->GetBundleManager();
+    ams->OnStart();
+    EXPECT_NE(bms, nullptr);
 }
 
 void AbilityStackModuleTest::TearDown(void)
-{}
+{
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 AbilityRequest AbilityStackModuleTest::GenerateAbilityRequest(const std::string &deviceName,
     const std::string &abilityName, const std::string &appName, const std::string &bundleName)
@@ -98,13 +117,14 @@ void AbilityStackModuleTest::makeScene(
         abilityInfo.type = AbilityType::PAGE;
         abilityInfo.applicationInfo.isLauncherApp = true;
         abilityInfo.process = "p";
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
     }
 
     if (bundleName == "com.ix.hiMusic") {
         abilityInfo.type = AbilityType::PAGE;
         abilityInfo.applicationInfo.isLauncherApp = false;
 
-        if (abilityName == "MusicAbility") {
+        if (abilityName == "MusicAbility" || abilityName == "MusicAbility2th") {
             abilityInfo.process = "p1";
             abilityInfo.launchMode = LaunchMode::STANDARD;
         }
@@ -523,12 +543,13 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_007, TestSize.Level1)
     curMissionStack->AddMissionRecordToTop(mission);
 
     auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-    auto mockAppMgrClient = std::make_unique<MockAppMgrClient>();
-    appScheduler->appMgrClient_.reset(mockAppMgrClient.get());
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
 
     OHOS::sptr<MockAbilityScheduler> abilityScheduler(new MockAbilityScheduler());
     // ams handler is non statrt so times is 0
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_)).Times(0);
+    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_)).Times(1);
+
     EXPECT_TRUE(abilityRecord->GetToken());
     stackManager_->AttachAbilityThread(abilityScheduler, abilityRecord->GetToken());
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_007 end";
@@ -654,6 +675,14 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_010, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
 {
 
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
     AbilityRequest launcherAbilityRequest_ =
         GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     stackManager_->Init();
@@ -673,7 +702,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
 
     firstTopAbility->SetScheduler(scheduler);
-    // EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
+    EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1)).WillOnce(Return(nullptr));
+
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
         .Times(testing::AtLeast(2))
         .WillOnce(testing::Invoke(transactionDoneCaller))
@@ -687,6 +717,9 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
 
     auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
     EXPECT_TRUE(recordVector.empty());
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -700,6 +733,15 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
 {
     stackManager_->Init();
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     stackManager_->StartAbility(launcherAbilityRequest_);
     auto firstTopAbility = stackManager_->GetCurrentTopAbility();
@@ -715,10 +757,27 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
         stackManager_->CompleteBackground(firstTopAbility);
     };
 
+    auto transactionDoneCaller2 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteActive(firstTopAbility);
+    };
+
+    auto transactionDoneCaller3 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteInactive(firstTopAbility);
+    };
+
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
     firstTopAbility->SetScheduler(scheduler);
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
+    EXPECT_CALL(*scheduler, AsObject())
         .Times(testing::AtLeast(1))
+        .WillOnce(Return(nullptr))
+        .WillOnce(Return(nullptr))
+        .WillOnce(Return(nullptr));
+
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(3))
+        .WillOnce(testing::Invoke(transactionDoneCaller))
+        .WillOnce(testing::Invoke(transactionDoneCaller2))
+        .WillOnce(testing::Invoke(transactionDoneCaller3))
         .WillOnce(testing::Invoke(transactionDoneCaller));
 
     auto transactionDoneCaller2_1 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
@@ -735,6 +794,12 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
 
     OHOS::sptr<MockAbilityScheduler> scheduler2(new MockAbilityScheduler());
     secondTopAbility->SetScheduler(scheduler2);
+    EXPECT_CALL(*scheduler2, AsObject())
+        .Times(testing::AtLeast(1))
+        .WillOnce(Return(nullptr))
+        .WillOnce(Return(nullptr))
+        .WillOnce(Return(nullptr));
+
     EXPECT_CALL(*scheduler2, ScheduleAbilityTransaction(testing::_, testing::_))
         .Times(testing::AtLeast(3))
         .WillOnce(testing::Invoke(transactionDoneCaller2_1))
@@ -753,15 +818,401 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
 
     for (const auto &it : recordVector) {
         EXPECT_EQ(it.ability.lock()->GetRecordId(), firstTopAbility->GetRecordId());
+        EXPECT_EQ(it.ability.lock()->GetAbilityState(), OHOS::AAFwk::BACKGROUND);
     }
+
+    auto requestDone = [&](const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state) -> AppMgrResultCode {
+        firstTopAbility->Activate();
+        return AppMgrResultCode::RESULT_OK;
+    };
+
+    auto requestDone2 = [&](const sptr<IRemoteObject> &token,
+                            const AppExecFwk::AbilityState state) -> AppMgrResultCode {
+        secondTopAbility->Activate();
+        return AppMgrResultCode::RESULT_OK;
+    };
+
+    auto requestDone3 = [&](const sptr<IRemoteObject> &token,
+                            const AppExecFwk::AbilityState state) -> AppMgrResultCode {
+        return AppMgrResultCode::RESULT_OK;
+    };
+
+    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_))
+        .Times(3)
+        .WillOnce(Invoke(requestDone))
+        .WillOnce(Invoke(requestDone2))
+        .WillOnce(Invoke(requestDone3));
 
     result = stackManager_->PowerOn();
     EXPECT_EQ(ERR_OK, result);
-    // mocke appmgr caller
-    usleep(500);
-    stackManager_->OnAbilityRequestDone(secondTopAbility->GetToken(), 2);
-    // EXPECT_EQ(OHOS::AAFwk::INACTIVE, firstTopAbility->GetAbilityState());
+
+    EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState());  // end last move to background
     EXPECT_EQ(OHOS::AAFwk::ACTIVE, secondTopAbility->GetAbilityState());
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: lock a mission
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_013, TestSize.Level1)
+{
+    stackManager_->Init();
+    int sysUid = 1000;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(sysUid))
+        .WillOnce(Return(sysUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    stackManager_->StartAbility(launcherAbilityRequest_);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    stackManager_->StartAbility(musicAbilityRequest_);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // lock LauncherAbility
+    auto launcherMisionRecord = firstTopAbility->GetMissionRecord();
+    auto launcherMisionRecordId = launcherMisionRecord->GetMissionRecordId();
+    auto result = stackManager_->StartLockMission(sysUid, launcherMisionRecordId, true, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    auto topRecord = stackManager_->GetCurrentTopAbility();
+    auto abilityInfo = topRecord->GetAbilityInfo();
+    EXPECT_EQ(abilityInfo.name, "LauncherAbility");
+    topRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // unlock
+    result = stackManager_->StartLockMission(sysUid, launcherMisionRecordId, true, false);
+    EXPECT_EQ(ERR_OK, result);
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMissions
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: multiple mission lock someone
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_014, TestSize.Level1)
+{
+    stackManager_->Init();
+    int sysUid = 1000;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(sysUid))
+        .WillOnce(Return(sysUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiworld");
+    auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto redioAbilityRequest_ = GenerateAbilityRequest("device", "RadioTopAbility", "Radio", "com.ix.hiRadio");
+    ref = stackManager_->StartAbility(redioAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
+    thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto transactionDoneCaller = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteActive(secondTopAbility);
+    };
+    auto transactionDoneCaller2 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteInactive(secondTopAbility);
+    };
+
+    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
+    secondTopAbility->SetScheduler(scheduler);
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(2))
+        .WillOnce(testing::Invoke(transactionDoneCaller))
+        .WillOnce(testing::Invoke(transactionDoneCaller2));
+
+    EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1)).WillOnce(Return(nullptr));
+    auto transactionDoneCaller3 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteInactive(thirdTopAbility);
+    };
+    auto transactionDoneCaller4 = [&](const Want &want, const LifeCycleStateInfo &targetState) {
+        stackManager_->CompleteActive(thirdTopAbility);
+    };
+
+    OHOS::sptr<MockAbilityScheduler> scheduler2(new MockAbilityScheduler());
+    thirdTopAbility->SetScheduler(scheduler2);
+    EXPECT_CALL(*scheduler2, ScheduleAbilityTransaction(testing::_, testing::_))
+        .Times(testing::AtLeast(2))
+        .WillOnce(testing::Invoke(transactionDoneCaller3))
+        .WillOnce(testing::Invoke(transactionDoneCaller4));
+
+    EXPECT_CALL(*scheduler2, AsObject()).Times(testing::AtLeast(1)).WillOnce(Return(nullptr));
+
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    auto musicMisionRecord = secondTopAbility->GetMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+
+    auto result = stackManager_->StartLockMission(sysUid, musicMisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    auto topRecord = stackManager_->GetCurrentTopAbility();
+    auto abilityInfo = topRecord->GetAbilityInfo();
+    EXPECT_EQ(abilityInfo.name, "MusicAbility2th");
+
+    // unlock
+    result = stackManager_->StartLockMission(sysUid, musicMisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result);
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: when a misson locked other mission do not to statr ability
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_015, TestSize.Level1)
+{
+    stackManager_->Init();
+    int userUid = 10;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(userUid))
+        .WillOnce(Return(userUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    // start a SINGLETON ability
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    stackManager_->StartAbility(musicAbilityRequest_);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // lock
+    auto musicMisionRecord = stackManager_->GetTopMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+    auto result = stackManager_->StartLockMission(userUid, musicMisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    // not can start a ability
+    auto redioAbilityRequest_ = GenerateAbilityRequest("device", "RedioAbility", "music", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(redioAbilityRequest_);
+    EXPECT_EQ(LOCK_MISSION_STATE_DENY_REQUEST, ref);
+
+    auto topAbility = stackManager_->GetCurrentTopAbility();
+    topAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    // unlock
+    result = stackManager_->StartLockMission(userUid, musicMisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result);
+
+    // can start a ability
+    ref = stackManager_->StartAbility(redioAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: when a mission locked, you cannot delete the last one
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_016, TestSize.Level1)
+{
+    stackManager_->Init();
+    int userUid = 10;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(userUid))
+        .WillOnce(Return(userUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    // start a SINGLETON ability
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    stackManager_->StartAbility(musicAbilityRequest_);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // lock
+    auto musicMisionRecord = stackManager_->GetTopMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+    auto result = stackManager_->StartLockMission(userUid, musicMisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    result = stackManager_->TerminateAbility(secondTopAbility->GetToken(), -1, nullptr);
+    EXPECT_EQ(LOCK_MISSION_STATE_DENY_REQUEST, result);
+
+    // unlock
+    result = stackManager_->StartLockMission(userUid, musicMisionRecordId, false, false);
+    EXPECT_EQ(ERR_OK, result);
+
+    result = stackManager_->TerminateAbility(secondTopAbility->GetToken(), -1, nullptr);
+    EXPECT_EQ(ERR_OK, result);
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMissions
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: lock a  multi ability mission
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_017, TestSize.Level1)
+{
+    stackManager_->Init();
+    int sysUid = 1000;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(sysUid))
+        .WillOnce(Return(sysUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiMusic");
+    auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto redioAbilityRequest_ = GenerateAbilityRequest("device", "RadioTopAbility", "Radio", "com.ix.hiRadio");
+    ref = stackManager_->StartAbility(redioAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
+    thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    firstTopAbility->SetAbilityState(OHOS::AAFwk::BACKGROUND);
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::BACKGROUND);
+
+    auto musicMisionRecord = secondTopAbility->GetMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+
+    auto result = stackManager_->StartLockMission(sysUid, musicMisionRecordId, true, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    auto topRecord = stackManager_->GetCurrentTopAbility();
+    auto abilityInfo = topRecord->GetAbilityInfo();
+    EXPECT_EQ(abilityInfo.name, "MusicAbility2th");
+
+    // unlock
+    result = stackManager_->StartLockMission(sysUid, musicMisionRecordId, true, false);
+    EXPECT_EQ(ERR_OK, result);
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
+}
+
+/*
+ * Feature: AaFwk
+ * Function: StartLockMission
+ * SubFunction: NA
+ * FunctionPoints: lock a mission , It's locked mission top ability will be active
+ * EnvConditions: NA
+ * CaseDescription: when locked mission died
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_018, TestSize.Level1)
+{
+    stackManager_->Init();
+    int userUid = 10;
+    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
+        .Times(AtLeast(2))
+        .WillOnce(Return(userUid))
+        .WillOnce(Return(userUid));
+
+    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
+    MockAppMgrClient *mockAppMgrClient = new MockAppMgrClient();
+    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
+        .Times(AtLeast(1))
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    // start a SINGLETON ability
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    stackManager_->StartAbility(musicAbilityRequest_);
+    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
+    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // lock
+    auto musicMisionRecord = stackManager_->GetTopMissionRecord();
+    auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
+    auto result = stackManager_->StartLockMission(userUid, musicMisionRecordId, false, true);
+    EXPECT_EQ(ERR_OK, result);
+
+    // let ability die
+    stackManager_->OnAbilityDied(secondTopAbility);
+    auto state = stackManager_->lockMissionContainer_->IsLockedMissionState();
+    EXPECT_FALSE(state);
+
+    testing::Mock::AllowLeak(mockAppMgrClient);
+    testing::Mock::AllowLeak(bundleObject_);
 }
 
 }  // namespace AAFwk

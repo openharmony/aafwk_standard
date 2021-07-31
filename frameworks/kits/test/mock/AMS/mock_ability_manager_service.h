@@ -101,6 +101,15 @@ public:
     {
         return 0;
     };
+    int SetMissionDescriptionInfo(
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
+    {
+        return 0;
+    };
+    int GetMissionLockModeState()
+    {
+        return 0;
+    }
 
     AbilityLifeCycleState curstate_ = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life

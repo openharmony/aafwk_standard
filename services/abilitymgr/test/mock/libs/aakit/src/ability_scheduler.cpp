@@ -112,7 +112,5 @@ int AbilityScheduler::BatchInsert(const Uri &uri, const std::vector<ValuesBucket
     return -1;
 }
 
-void AbilityScheduler::DisplayUnlockMissionMessage(){};
-
 }  // namespace AAFwk
 }  // namespace OHOS
