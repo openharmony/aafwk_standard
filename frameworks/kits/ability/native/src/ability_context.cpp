@@ -54,10 +54,10 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
     if (CheckIfOperateRemote(want)) {
         std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> dms = GetDistributedSchedServiceProxy();
         if (dms != nullptr) {
-            AAFwk::Want innerWant;
+            AppExecFwk::AbilityInfo abilityInfo;
             APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
             want.DumpInfo(0);
-            int result = dms->StartRemoteAbility(want, innerWant, requestCode);
+            int result = dms->StartRemoteAbility(want, abilityInfo, requestCode);
             if (result != ERR_NONE) {
                 APP_LOGE("AbilityContext::StartAbility start remote ability failed, the result is %{public}d", result);
             }
