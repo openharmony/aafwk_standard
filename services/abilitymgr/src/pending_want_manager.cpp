@@ -271,7 +271,7 @@ int32_t PendingWantManager::PendingRecordIdCreate()
 
 sptr<PendingWantRecord> PendingWantManager::GetPendingWantRecordByCode(int32_t code)
 {
-    HILOG_INFO("%{public}s:begin. wantRecords_ size = %{public}d", __func__, wantRecords_.size());
+    HILOG_INFO("%{public}s:begin. wantRecords_ size = %{public}zu", __func__, wantRecords_.size());
 
     std::lock_guard<std::recursive_mutex> locker(mutex_);
     auto iter = std::find_if(wantRecords_.begin(), wantRecords_.end(), [&code](const auto &pair) {

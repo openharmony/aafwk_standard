@@ -422,14 +422,14 @@ void DataAbilityManager::DumpLocked(const char *func, int line)
         HILOG_INFO("Data ability manager dump");
     }
 
-    HILOG_INFO("Available data ability count: %{public}u", dataAbilityRecordsLoaded_.size());
+    HILOG_INFO("Available data ability count: %{public}zu", dataAbilityRecordsLoaded_.size());
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
         HILOG_INFO("'%{public}s':", it->first.c_str());
         it->second->Dump();
     }
 
-    HILOG_INFO("Loading data ability count: %{public}u", dataAbilityRecordsLoading_.size());
+    HILOG_INFO("Loading data ability count: %{public}zu", dataAbilityRecordsLoading_.size());
 
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
         HILOG_INFO("'%{public}s':", it->first.c_str());
