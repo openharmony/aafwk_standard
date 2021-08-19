@@ -272,7 +272,7 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
                 GetAbilityManagerInstance()->GetRecentMissions(async_callback_info->maxMissionNum,
                     async_callback_info->queryType,
                     async_callback_info->recentMissionInfo);
-                HILOG_INFO("size = [%{public}d]", async_callback_info->recentMissionInfo.size());
+                HILOG_INFO("size = [%{public}zu]", async_callback_info->recentMissionInfo.size());
             },
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("queryRecentAbilityMissionInfos compeleted(Promise Mode)...");
@@ -296,7 +296,7 @@ napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info 
     size_t argc = 3;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
@@ -360,7 +360,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
                 GetAbilityManagerInstance()->GetRecentMissions(async_callback_info->maxMissionNum,
                     async_callback_info->queryType,
                     async_callback_info->recentMissionInfo);
-                HILOG_INFO("size = [%{public}d]", async_callback_info->recentMissionInfo.size());
+                HILOG_INFO("size = [%{public}zu]", async_callback_info->recentMissionInfo.size());
             },
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("NAPI_QueryRunningAbilityMissionInfosWrap compeleted(CallBack Mode)...");
@@ -412,7 +412,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
                 GetAbilityManagerInstance()->GetRecentMissions(async_callback_info->maxMissionNum,
                     async_callback_info->queryType,
                     async_callback_info->recentMissionInfo);
-                HILOG_INFO("size = [%{public}d]", async_callback_info->recentMissionInfo.size());
+                HILOG_INFO("size = [%{public}zu]", async_callback_info->recentMissionInfo.size());
             },
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("queryRunningAbilityMissionInfos compeleted(Promise Mode)...");
@@ -436,7 +436,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
@@ -559,7 +559,7 @@ napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info)
     size_t argc = 1;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     bool callBackMode = false;
     if (argc >= 1) {
@@ -672,7 +672,7 @@ napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
@@ -793,7 +793,7 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
@@ -925,7 +925,7 @@ napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info)
     size_t argc = 1;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     bool callBackMode = false;
     if (argc >= 1) {
@@ -1038,7 +1038,7 @@ napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
@@ -1158,7 +1158,7 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     std::string bundleName;
     ParseBundleName(env, bundleName, argv[0]);
@@ -1279,7 +1279,7 @@ napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     std::string bundleName;
     ParseBundleName(env, bundleName, argv[0]);

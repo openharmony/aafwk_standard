@@ -410,7 +410,7 @@ void DataAbilityRecord::Dump() const
 {
     CHECK_POINTER(ability_);
 
-    HILOG_INFO("attached: %{public}s, clients: %{public}u, refcnt: %{public}d, state: %{public}s",
+    HILOG_INFO("attached: %{public}s, clients: %{public}zu, refcnt: %{public}d, state: %{public}s",
         scheduler_ ? "true" : "false",
         clients_.size(),
         scheduler_ ? scheduler_->GetSptrRefCount() : 0,
