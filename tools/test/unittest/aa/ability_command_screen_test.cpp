@@ -121,7 +121,7 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0300, Function | MediumTest | Le
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '-x'.\n" + HELP_MSG_SCREEN);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_SCREEN);
 }
 
 /**
@@ -140,7 +140,7 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0400, Function | MediumTest | Le
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '-xxx'.\n" + HELP_MSG_SCREEN);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_SCREEN);
 }
 
 /**
@@ -159,7 +159,7 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0500, Function | MediumTest | Le
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '--x'.\n" + HELP_MSG_SCREEN);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_SCREEN);
 }
 
 /**
@@ -178,7 +178,7 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0600, Function | MediumTest | Le
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '--xxx'.\n" + HELP_MSG_SCREEN);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_SCREEN);
 }
 
 /**
@@ -235,7 +235,7 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0900, Function | MediumTest | Le
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-p' requires a value.\n" + HELP_MSG_SCREEN);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_SCREEN);
 }
 
 /**
@@ -244,31 +244,6 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_0900, Function | MediumTest | Le
  * @tc.desc: Verify the "aa screen -p <state>" command.
  */
 HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1000, Function | MediumTest | Level1)
-{
-    auto managerClientPtr = AbilityManagerClient::GetInstance();
-    auto managerStubPtr = (MockAbilityManagerStub *)managerClientPtr->remoteObject_.GetRefPtr();
-
-    managerStubPtr->powerState_ = STRING_STATE_ON_INVALID;
-
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-p",
-        (char *)STRING_STATE_ON_INVALID.c_str(),
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), STRING_SCREEN_POWER_ON_NG + "\n");
-}
-
-/**
- * @tc.number: Aa_Command_Screen_1100
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa screen -p <state>" command.
- */
-HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1100, Function | MediumTest | Level1)
 {
     char *argv[] = {
         (char *)TOOL_NAME.c_str(),
@@ -284,36 +259,11 @@ HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1100, Function | MediumTest | Le
 }
 
 /**
- * @tc.number: Aa_Command_Screen_1200
+ * @tc.number: Aa_Command_Screen_1100
  * @tc.name: ExecCommand
  * @tc.desc: Verify the "aa screen -p <state>" command.
  */
-HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1200, Function | MediumTest | Level1)
-{
-    auto managerClientPtr = AbilityManagerClient::GetInstance();
-    auto managerStubPtr = (MockAbilityManagerStub *)managerClientPtr->remoteObject_.GetRefPtr();
-
-    managerStubPtr->powerState_ = STRING_STATE_OFF_INVALID;
-
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-p",
-        (char *)STRING_STATE_OFF_INVALID.c_str(),
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), STRING_SCREEN_POWER_OFF_NG + "\n");
-}
-
-/**
- * @tc.number: Aa_Command_Screen_1300
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa screen -p <state>" command.
- */
-HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1300, Function | MediumTest | Level1)
+HWTEST_F(AaCommandScreenTest, Aa_Command_Screen_1100, Function | MediumTest | Level1)
 {
     char *argv[] = {
         (char *)TOOL_NAME.c_str(),

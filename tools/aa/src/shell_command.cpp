@@ -98,15 +98,8 @@ std::string ShellCommand::GetUnknownOptionMsg(std::string &unknownOption) const
         return result;
     }
 
-    if (argv_[optind] && strlen(argv_[optind])) {
-        unknownOption = argv_[optind];
-    } else {
-        unknownOption = argv_[optind - 1];
-    }
-
-    result.append("error: unknown option '");
-    result.append(unknownOption);
-    result.append("'.\n");
+    result.append("error: unknown option");
+    result.append(".\n");
 
     return result;
 }
