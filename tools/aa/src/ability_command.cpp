@@ -235,6 +235,8 @@ ErrCode AbilityManagerShellCommand::RunAsHelpCommand()
 
 ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
 {
+    HILOG_INFO("enter");
+
     int result = OHOS::ERR_OK;
 
     int option = -1;
@@ -278,9 +280,8 @@ ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
                     // 'aa screen -p' with no argument
                     HILOG_INFO("'aa %{public}s -p' with no argument.", cmd_.c_str());
 
-                    resultReceiver_.append("error: option '");
-                    resultReceiver_.append(argv_[optind - 1]);
-                    resultReceiver_.append("' requires a value.\n");
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append("requires a value.\n");
 
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
@@ -291,8 +292,7 @@ ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                    HILOG_INFO(
-                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                    HILOG_INFO("'aa screen' with an unknown option.");
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;
@@ -304,8 +304,7 @@ ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                    HILOG_INFO(
-                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                    HILOG_INFO("'aa screen' with an unknown option.");
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;
@@ -530,9 +529,8 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
             // 'aa dump --stack' with no argument: aa dump --stack
             HILOG_INFO("'aa dump -s' with no argument.");
 
-            resultReceiver_.append("error: option '");
-            resultReceiver_.append(argv_[optind - 1]);
-            resultReceiver_.append("' requires a value.\n");
+            resultReceiver_.append("error: option ");
+            resultReceiver_.append("requires a value.\n");
             result = OHOS::ERR_INVALID_VALUE;
             break;
         }
@@ -541,9 +539,8 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
             // 'aa dump --mission' with no argument: aa dump --mission
             HILOG_INFO("'aa dump -m' with no argument.");
 
-            resultReceiver_.append("error: option '");
-            resultReceiver_.append(argv_[optind - 1]);
-            resultReceiver_.append("' requires a value.\n");
+            resultReceiver_.append("error: option ");
+            resultReceiver_.append("requires a value.\n");
             result = OHOS::ERR_INVALID_VALUE;
             break;
         }
@@ -553,7 +550,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
             std::string unknownOption = "";
             std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-            HILOG_INFO("'aa dump' with an unknown option: %{public}s", unknownOption.c_str());
+            HILOG_INFO("'aa dump' with an unknown option.");
 
             resultReceiver_.append(unknownOptionMsg);
             result = OHOS::ERR_INVALID_VALUE;
@@ -565,7 +562,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
             std::string unknownOption = "";
             std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-            HILOG_INFO("'aa dump' with an unknown option: %{public}s", unknownOption.c_str());
+            HILOG_INFO("'aa dump' with an unknown option.");
 
             resultReceiver_.append(unknownOptionMsg);
             result = OHOS::ERR_INVALID_VALUE;
@@ -626,9 +623,8 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                     // 'aa stop-service -d' with no argument
                     HILOG_INFO("'aa %{public}s -d' with no argument.", cmd_.c_str());
 
-                    resultReceiver_.append("error: option '");
-                    resultReceiver_.append(argv_[optind - 1]);
-                    resultReceiver_.append("' requires a value.\n");
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append("requires a value.\n");
 
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
@@ -636,11 +632,10 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                 case 'a': {
                     // 'aa start -a' with no argument
                     // 'aa stop-service -a' with no argument
-                    HILOG_INFO("'aa %{public}s -d' with no argument.", cmd_.c_str());
+                    HILOG_INFO("'aa %{public}s -a' with no argument.", cmd_.c_str());
 
-                    resultReceiver_.append("error: option '");
-                    resultReceiver_.append(argv_[optind - 1]);
-                    resultReceiver_.append("' requires a value.\n");
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append("requires a value.\n");
 
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
@@ -648,11 +643,10 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                 case 'b': {
                     // 'aa start -b' with no argument
                     // 'aa stop-service -b' with no argument
-                    HILOG_INFO("'aa %{public}s -d' with no argument.", cmd_.c_str());
+                    HILOG_INFO("'aa %{public}s -b' with no argument.", cmd_.c_str());
 
-                    resultReceiver_.append("error: option '");
-                    resultReceiver_.append(argv_[optind - 1]);
-                    resultReceiver_.append("' requires a value.\n");
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append("requires a value.\n");
 
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
@@ -665,8 +659,7 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                    HILOG_INFO(
-                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                    HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;
@@ -680,8 +673,7 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                     std::string unknownOption = "";
                     std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                    HILOG_INFO(
-                        "'aa %{public}s' with an unknown option: %{public}s", unknownOption.c_str(), cmd_.c_str());
+                    HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
 
                     resultReceiver_.append(unknownOptionMsg);
                     result = OHOS::ERR_INVALID_VALUE;
