@@ -39,7 +39,7 @@ napi_value ContextConstructor(napi_env env, napi_callback_info info)
 bool UnwrapParamVerifySelfPermission(
     napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s called, argc=%{public}d", __func__, argc);
+    HILOG_INFO("%{public}s called, argc=%{public}zu", __func__, argc);
 
     const size_t argcMax = 2;
     if (argc > argcMax || argc < argcMax - 1) {
@@ -159,7 +159,7 @@ napi_value NAPI_VerifySelfPermission(napi_env env, napi_callback_info info)
 bool UnwrapRequestPermissionsFromUser(
     napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s called, argc=%{public}d", __func__, argc);
+    HILOG_INFO("%{public}s called, argc=%{public}zu", __func__, argc);
 
     const size_t argcMax = 3;
     if (argc > argcMax || argc < argcMax - 1) {
@@ -339,7 +339,7 @@ napi_value NAPI_OnRequestPermissionsFromUserResultWrap(
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &jsthis, &data));
 
     if (argc > 0) {
-        HILOG_INFO("%{public}s called, argc=%{public}d", __func__, argc);
+        HILOG_INFO("%{public}s called, argc=%{public}zu", __func__, argc);
 
         napi_value resourceName = 0;
         NAPI_CALL(env,
@@ -668,7 +668,7 @@ napi_value NAPI_CanRequestPermission(napi_env env, napi_callback_info info)
 
 bool UnwrapParamVerifyPermission(napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s called, argc=%{public}d", __func__, argc);
+    HILOG_INFO("%{public}s called, argc=%{public}zu", __func__, argc);
 
     const size_t argcMax = 4;
     if (argc > argcMax || argc < argcMax - 1) {

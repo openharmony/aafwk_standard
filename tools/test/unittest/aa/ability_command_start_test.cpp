@@ -121,7 +121,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_0300, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '-x'.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_START);
 }
 
 /**
@@ -140,7 +140,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_0400, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '-xxx'.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_START);
 }
 
 /**
@@ -159,7 +159,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_0500, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '--x'.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_START);
 }
 
 /**
@@ -178,7 +178,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_0600, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option '--xxx'.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_START);
 }
 
 /**
@@ -235,7 +235,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_0900, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-d' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
@@ -277,7 +277,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_1100, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-a' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
@@ -320,7 +320,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_1300, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-b' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
@@ -365,7 +365,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_1500, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-b' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
@@ -408,7 +408,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_1700, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-a' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
@@ -429,7 +429,7 @@ HWTEST_F(AaCommandStartTest, Aa_Command_Start_1800, Function | MediumTest | Leve
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option '-b' requires a value.\n" + HELP_MSG_START);
+    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_START);
 }
 
 /**
