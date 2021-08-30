@@ -563,9 +563,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_003, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
     curMissionStack->RemoveAll();
-
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -676,8 +673,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_006, TestSize.Level1)
     abilityMgrServ_->handler_ = handler;
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
-
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -780,10 +775,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
     curMissionStack->RemoveAll();
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -837,10 +828,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -902,11 +889,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
     EXPECT_CALL(*stub2, OnAbilityDisconnectDone(_, _)).Times(2);
 
     CheckTestRecord(record1, record2, callback1, callback2);
-    testing::Mock::AllowLeak(stub1);
-    testing::Mock::AllowLeak(callback1);
-    testing::Mock::AllowLeak(stub2);
-    testing::Mock::AllowLeak(callback2);
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -977,7 +959,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     }
     EXPECT_EQ(4, testId);
     abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(scheduler);
 }
 /*
  * Feature: AaFwk
@@ -1049,10 +1030,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
 
     abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1132,8 +1109,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1177,7 +1152,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1223,10 +1197,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1272,10 +1242,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1343,9 +1309,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1408,10 +1371,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1453,8 +1412,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->connectMap_.size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1500,7 +1457,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
     testAbilityRecord = GetTopAbility();
     ASSERT_TRUE(testAbilityRecord);
     EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1545,7 +1501,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     testAbilityRecord = GetTopAbility();
     ASSERT_TRUE(testAbilityRecord);
     EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1607,7 +1562,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
     SetActive();
     auto resultFunction = abilityMgrServ_->MoveMissionToEnd(abilityTv->GetToken(), true);
     EXPECT_EQ(resultFunction, ERR_OK);
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
