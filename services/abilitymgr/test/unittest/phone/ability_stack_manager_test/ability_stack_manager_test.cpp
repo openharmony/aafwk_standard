@@ -2120,14 +2120,14 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_060, TestSize.
     auto result1 = stackManager_->StartLockMission(99, MisionRecordId, false, true);
     EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
 
-    result1 = stackManager_->StartLockMission(100, MisionRecordId, false, true);
+    result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, true);
     EXPECT_EQ(ERR_OK, result1);
 
     // unlock defferent uid(99)
     result1 = stackManager_->StartLockMission(99, MisionRecordId, false, false);
-    EXPECT_EQ(LOCK_MISSION_DENY_FAILED, result1);
+    EXPECT_EQ(UNLOCK_MISSION_DENY_FAILED, result1);
 
-    result1 = stackManager_->StartLockMission(100, MisionRecordId, false, false);
+    result1 = stackManager_->StartLockMission(1000, MisionRecordId, false, false);
     EXPECT_EQ(ERR_OK, result1);
 }
 

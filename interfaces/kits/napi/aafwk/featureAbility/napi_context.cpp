@@ -82,6 +82,7 @@ void VerifySelfPermissionExecuteCallbackWork(napi_env env, void *data)
         return;
     }
 
+    asyncCallbackInfo->native_data.data_type = NVT_INT32;
     std::string permission(asyncCallbackInfo->param.paramArgs.GetStringValue("permission"));
     asyncCallbackInfo->native_data.int32_value = asyncCallbackInfo->ability->VerifySelfPermission(permission);
 }
@@ -352,8 +353,7 @@ napi_value NAPI_OnRequestPermissionsFromUserResultWrap(
         napi_create_reference(env, args[PARAM0], 1, &aceCallbackInfoPermission.callback);
 
         NAPI_CALL(env,
-            napi_create_async_work(
-                env,
+            napi_create_async_work(env,
                 nullptr,
                 resourceName,
                 [](napi_env env, void *data) {
@@ -431,8 +431,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
         };
     work->data = (void *)onRequestPermissionCB;
 
-    uv_queue_work(
-        loop,
+    uv_queue_work(loop,
         work,
         [](uv_work_t *work) {},
         [](uv_work_t *work, int status) {
