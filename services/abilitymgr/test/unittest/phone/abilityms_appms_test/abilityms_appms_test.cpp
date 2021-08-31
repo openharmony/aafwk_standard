@@ -228,11 +228,6 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_004, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
     sptr<Token> token = nullptr;
 
-    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-    auto mockAppMgrClient = std::make_unique<MockAppMgrClient>();
-    appScheduler->appMgrClient_.reset(mockAppMgrClient.get());
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _)).Times(1);
-
     auto checkStateFun = [&scheduler, &token, &abilityRecord]() {
         auto stackManager = DelayedSingleton<AbilityManagerService>::GetInstance()->GetStackManager();
         abilityRecord = stackManager->GetCurrentTopAbility();
@@ -268,11 +263,6 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_005, TestSize.Level1)
     std::shared_ptr<AbilityStackManager> stackManager = nullptr;
     sptr<Token> sourcetoken = nullptr;
 
-    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-    auto mockAppMgrClient = std::make_shared<MockAppMgrClient>();
-    appScheduler->appMgrClient_.reset(mockAppMgrClient.get());
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _)).Times(1);
-
     auto checkSourceActivtingState = [&stackManager, &sourceAbilityRecord, &scheduler, &sourcetoken]() {
         stackManager = DelayedSingleton<AbilityManagerService>::GetInstance()->GetStackManager();
         sourceAbilityRecord = stackManager->GetCurrentTopAbility();
@@ -283,7 +273,6 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_005, TestSize.Level1)
     };
     handler->PostTask(checkSourceActivtingState);
     WaitUntilTaskFinished();
-    testing::Mock::AllowLeak(mockAppMgrClient.get());
     GTEST_LOG_(INFO) << "AbilityMsAppMsTest_AaFwk_AbilityMS_AppMS_005 end";
 }
 }  // namespace AAFwk
