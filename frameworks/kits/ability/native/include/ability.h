@@ -39,7 +39,6 @@
 #include "ability_lifecycle_interface.h"
 #include "ability_lifecycle_executor.h"
 
-#define WMS_COMPILE
 using Uri = OHOS::Uri;
 
 namespace OHOS {
@@ -310,21 +309,19 @@ public:
      */
     virtual void OnTopActiveAbilityChanged(bool topActive);
 
-#ifdef WMS_COMPILE
     /**
      * @brief Inflates UI controls by using WindowConfig.
      *
      * @param config Indicates the window config defined by the user.
      */
-    virtual void SetUIContent(const WindowConfig &config);
+    virtual void SetUIContent(const sptr<WindowOption> &config);
 
     /**
      * @brief Get the window belong to the ability.
      *
      * @return Returns a Window object pointer.
      */
-    virtual const std::unique_ptr<Window> &GetWindow();
-#endif  // WMS_COMPILE
+    virtual const sptr<Window> &GetWindow();
 
     /**
      * @brief Checks whether the main window of this ability has window focus.

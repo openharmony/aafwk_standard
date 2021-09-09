@@ -130,7 +130,7 @@ ohos_shared_library("abilitykit_native") {
   public_deps = [
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
-    "//foundation/graphic/standard:libwms_client",
+    "//foundation/graphic/standard:libwmclient",
   ]
 
   subsystem_name = "aafwk"

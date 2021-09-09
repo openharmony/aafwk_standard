@@ -26,7 +26,6 @@ AbilityWindow::AbilityWindow()
 AbilityWindow::~AbilityWindow()
 {}
 
-#ifdef WMS_COMPILE
 /**
  * @brief Init the AbilityWindow object.
  *
@@ -37,6 +36,18 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_p
     APP_LOGI("AbilityWindow::Init called.");
     handler_ = handler;
     ability_ = std::weak_ptr<IAbilityEvent>(ability);
+
+    auto wmi = WindowManager::GetInstance();
+    if (wmi == nullptr) {
+        APP_LOGE("AbilityWindow::Init WindowManager::GetInstance() is nullptr.");
+        return;
+    }
+
+    auto wret = wmi->Init();
+    if (wret != WM_OK) {
+        APP_LOGE("AbilityWindow::Init WindowManager::Init() return %d", wret);
+        return;
+    }
 }
 
 /**
@@ -44,27 +55,40 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_p
  *
  * @param config Indicates window config.
  */
-bool AbilityWindow::SetWindowConfig(const WindowConfig &config)
+bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
 {
     APP_LOGI("AbilityWindow::SetWindowConfig called.");
 
-    APP_LOGI("config format = %{public}d, width = %{public}d, height = %{public}d.",
-        config.format,
-        config.width,
-        config.height);
-    APP_LOGI("config pos_x = %{public}d, pos_y = %{public}d, stride = %{public}d, type = %{public}d.",
-        config.pos_x,
-        config.pos_y,
-        config.stride,
-        config.type);
-    window_ = (WindowManager::GetInstance()->CreateWindow(const_cast<WindowConfig *>(&config)));
-    if (window_.get() == nullptr) {
+    APP_LOGI("config width = %{public}d, height = %{public}d.", config->GetWidth(), config->GetHeight());
+    APP_LOGI("config pos_x = %{public}d, pos_y = %{public}d, type = %{public}d.",
+        config->GetX(), config->GetY(), config->GetWindowType());
+
+    auto wmi = WindowManager::GetInstance();
+    if (wmi == nullptr) {
+        APP_LOGE("AbilityWindow::Init WindowManager::GetInstance() is nullptr.");
+        return false;
+    }
+
+    APP_LOGI("%{public}s begin wms->CreateWindow.", __func__);
+    auto retvalCreate = wmi->CreateWindow(windowNew_, config);
+    APP_LOGI("%{public}s end wms->CreateWindow.", __func__);
+    if (retvalCreate != WM_OK) {
+        APP_LOGE("AbilityWindow::SetWindowConfig WindowManager::CreateWindow() return %d", retvalCreate);
+        return false;
+    }
+    if (windowNew_ == nullptr) {
         APP_LOGE("AbilityWindow::SetWindowConfig the window is nullptr.");
         return false;
     }
 
     auto callback = [abilityWindow = this](KeyEvent event) -> bool { return abilityWindow->OnKeyEvent(event); };
-    window_->RegistOnKeyCb(callback);
+    APP_LOGI("%{public}s begin windowNew_->RegistOnKeyCb.", __func__);
+    auto retvalKeyboardKey = windowNew_->OnKey(callback);
+    APP_LOGI("%{public}s end windowNew_->RegistOnKeyCb.", __func__);
+    if (retvalKeyboardKey != WM_OK) {
+        APP_LOGE("AbilityWindow::SetWindowConfig WindowManager::OnKey() return %d", retvalKeyboardKey);
+        return false;
+    }
 
     isWindowAttached = true;
     APP_LOGI("AbilityWindow::SetWindowConfig end.");
@@ -123,7 +147,6 @@ bool AbilityWindow::OnBackPressed(std::shared_ptr<IAbilityEvent> &ability)
     handler_->PostTask(task);
     return true;
 }
-#endif  // WMS_COMPILE
 
 /**
  * @brief Called when this ability is started.
@@ -137,12 +160,12 @@ void AbilityWindow::OnPostAbilityStart()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        APP_LOGI("AbilityWindow::widow::Hide called.");
-        window_->Hide();
+    if (windowNew_ != nullptr) {
+        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
+        windowNew_->Hide();
+        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
     }
-#endif  // WMS_COMPILE
+
     APP_LOGI("AbilityWindow::OnPostAbilityStart end.");
 }
 
@@ -158,14 +181,15 @@ void AbilityWindow::OnPostAbilityActive()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        APP_LOGI("AbilityWindow::widow::SwitchTop called.");
-        window_->SwitchTop();
-        APP_LOGI("AbilityWindow::widow::Show called.");
-        window_->Show();
+    if (windowNew_ != nullptr) {
+        APP_LOGI("%{public}s begin windowNew_->SwitchTop.", __func__);
+        windowNew_->SwitchTop();
+        APP_LOGI("%{public}s end windowNew_->SwitchTop.", __func__);
+        APP_LOGI("%{public}s begin windowNew_->Show.", __func__);
+        windowNew_->Show();
+        APP_LOGI("%{public}s end windowNew_->Show.", __func__);
     }
-#endif  // WMS_COMPILE
+
     APP_LOGI("AbilityWindow::OnPostAbilityActive end.");
 }
 
@@ -181,12 +205,12 @@ void AbilityWindow::OnPostAbilityInactive()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        APP_LOGI("AbilityWindow::widow::Hide called.");
-        window_->Hide();
+    if (windowNew_ != nullptr) {
+        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
+        windowNew_->Hide();
+        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
     }
-#endif  // WMS_COMPILE
+
     APP_LOGI("AbilityWindow::OnPostAbilityInactive end.");
 }
 
@@ -202,12 +226,12 @@ void AbilityWindow::OnPostAbilityBackground()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        APP_LOGI("AbilityWindow::widow::Hide called.");
-        window_->Hide();
+    if (windowNew_ != nullptr) {
+        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
+        windowNew_->Hide();
+        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
     }
-#endif  // WMS_COMPILE
+
     APP_LOGI("AbilityWindow::OnPostAbilityBackground end.");
 }
 
@@ -223,12 +247,12 @@ void AbilityWindow::OnPostAbilityForeground()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        APP_LOGI("AbilityWindow::widow::Show called.");
-        window_->Show();
+    if (windowNew_ != nullptr) {
+        APP_LOGI("%{public}s begin windowNew_->Show.", __func__);
+        windowNew_->Show();
+        APP_LOGI("%{public}s end windowNew_->Show.", __func__);
     }
-#endif  // WMS_COMPILE
+
     APP_LOGI("AbilityWindow::OnPostAbilityForeground end.");
 }
 
@@ -244,33 +268,34 @@ void AbilityWindow::OnPostAbilityStop()
         return;
     }
 
-#ifdef WMS_COMPILE
-    if (window_ != nullptr) {
-        int32_t windowID = window_->GetWindowID();
-        APP_LOGI("AbilityWindow::widow::DestroyWindow called windowID=%{public}d.", windowID);
-        WindowManager::GetInstance()->DestroyWindow(windowID);
+    if (windowNew_ != nullptr) {
+        int32_t windowID = windowNew_->GetID();
+        APP_LOGI("AbilityWindow::widow::DestroyWindow called windowID=%{public}d begin.", windowID);
+        windowNew_->Destroy();
+        APP_LOGI("AbilityWindow::widow::DestroyWindow called windowID=%{public}d end.", windowID);
+        windowNew_ = nullptr;
+        APP_LOGI("AbilityWindow::widow:: windowNew_ release end.");
     }
-#endif  // WMS_COMPILE
+
     isWindowAttached = false;
     APP_LOGI("AbilityWindow::OnPostAbilityStop end.");
 }
-#ifdef WMS_COMPILE
+
 /**
  * @brief Get the window belong to the ability.
  *
  * @return Returns a Window object pointer.
  */
-const std::unique_ptr<Window> &AbilityWindow::GetWindow()
+const sptr<Window> &AbilityWindow::GetWindow()
 {
     if (!isWindowAttached) {
         APP_LOGE("AbilityWindow::GetWindow window not attached.");
     }
 
-    if (window_.get() == nullptr) {
+    if (windowNew_ == nullptr) {
         APP_LOGE("AbilityWindow::GetWindow the window is nullptr.");
     }
-    return window_;
+    return windowNew_;
 }
-#endif  // WMS_COMPILE
 }  // namespace AppExecFwk
 }  // namespace OHOS
