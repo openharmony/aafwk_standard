@@ -16,11 +16,7 @@
 #ifndef OHOS_ABILITY_WINDOW_H
 #define OHOS_ABILITY_WINDOW_H
 
-#define WMS_COMPILE
-
-#ifdef WMS_COMPILE
 #include "window_manager.h"
-#endif  // WMS_COMPILE
 
 #include <map>
 #include "nocopyable.h"
@@ -34,7 +30,7 @@ class AbilityWindow : public NoCopyable {
 public:
     AbilityWindow();
     virtual ~AbilityWindow();
-#ifdef WMS_COMPILE
+
     /**
      * @brief Init the AbilityWindow object.
      *
@@ -47,7 +43,7 @@ public:
      *
      * @param config Indicates window config.
      */
-    bool SetWindowConfig(const WindowConfig &config);
+    bool SetWindowConfig(const sptr<WindowOption> &config);
 
     /**
      * @brief Called when the KeyEvent sent.
@@ -68,7 +64,7 @@ public:
      *
      */
     bool OnBackPressed(std::shared_ptr<IAbilityEvent> &ability);
-#endif  // WMS_COMPILE
+
     /**
      * @brief Called when this ability is started.
      *
@@ -110,15 +106,11 @@ public:
      *
      * @return Returns a Window object pointer.
      */
-#ifdef WMS_COMPILE
-    const std::unique_ptr<Window> &GetWindow();
-#endif  // WMS_COMPILE
+    const sptr<Window> &GetWindow();
 private:
-#ifdef WMS_COMPILE
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::weak_ptr<IAbilityEvent> ability_;
-    std::unique_ptr<Window> window_;
-#endif  // WMS_COMPILE
+    sptr<Window> windowNew_;
     bool isWindowAttached = false;
 };
 }  // namespace AppExecFwk

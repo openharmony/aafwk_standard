@@ -41,11 +41,9 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         abilityWindow_ = std::make_shared<AbilityWindow>();
-#ifdef WMS_COMPILE
         if (abilityWindow_ != nullptr) {
             abilityWindow_->Init(handler_, shared_from_this());
         }
-#endif
     }
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
@@ -70,36 +68,33 @@ std::shared_ptr<Global::Resource::ResourceManager> Ability::GetResourceManager()
 void Ability::OnStart(const Want &want)
 {
     APP_LOGI("Ability::OnStart called.");
-#ifdef WMS_COMPILE
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::OnStart falied abilityInfo_ is nullptr.");
         return;
     }
 
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        WindowConfig config = {};  // should called in ace ability onStart methord.
-        config.height = WindowManager::GetInstance()->GetMaxHeight();
-        config.width = WindowManager::GetInstance()->GetMaxWidth();
-        config.format = PIXEL_FMT_RGBA_8888;
-        config.pos_x = 0;
-        config.pos_y = 0;
-
+        sptr<WindowOption> config = WindowOption::Get();
+        OHOS::WindowType winType = OHOS::WindowType::WINDOW_TYPE_NORMAL;
         if (abilityInfo_->bundleName == SYSTEM_UI) {
             if (abilityInfo_->name == STATUS_BAR) {
-                config.type = OHOS::WindowType::WINDOW_TYPE_STATUS_BAR;
+                winType = OHOS::WindowType::WINDOW_TYPE_STATUS_BAR;
             }
             if (abilityInfo_->name == NAVIGATION_BAR) {
-                config.type = OHOS::WindowType::WINDOW_TYPE_NAVI_BAR;
+                winType = OHOS::WindowType::WINDOW_TYPE_NAVI_BAR;
             }
         }
         if (abilityInfo_->bundleName == OHOS_REQUEST_PERMISSION_BUNDLENAME &&
             abilityInfo_->name == OHOS_REQUEST_PERMISSION_ABILITY_NAME) {
-            config.type = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
+            winType = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
         }
+
+        config->SetWindowType(winType);
         APP_LOGI("Ability::OnStart bundleName:%{public}s abilityName:%{public}s: set config.type = %{public}d",
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
-            config.type);
+            winType);
+
         SetUIContent(config);
 
         if (abilityWindow_ != nullptr) {
@@ -107,7 +102,6 @@ void Ability::OnStart(const Want &want)
         }
     }
     // should called in ace ability onStart methord.
-#endif  // WMS_COMPILE
 
     SetWant(want);
     if (abilityLifecycleExecutor_ == nullptr) {
@@ -447,13 +441,12 @@ void Ability::SetUIContent(
 void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag)
 {}
 
-#ifdef WMS_COMPILE
 /**
  * @brief Inflates UI controls by using WindowConfig.
  *
  * @param config Indicates the window config defined by the user.
  */
-void Ability::SetUIContent(const WindowConfig &config)
+void Ability::SetUIContent(const sptr<WindowOption> &config)
 {
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::SetUIContent abilityWindow_ is nullptr");
@@ -469,11 +462,10 @@ void Ability::SetUIContent(const WindowConfig &config)
  *
  * @return Returns a IWindowsManager object pointer.
  */
-const std::unique_ptr<Window> &Ability::GetWindow()
+const sptr<Window> &Ability::GetWindow()
 {
     return abilityWindow_->GetWindow();
 }
-#endif  // WMS_COMPILE
 
 /**
  * @brief Obtains the type of audio whose volume is adjusted by the volume button.
@@ -1296,6 +1288,5 @@ void Ability::TerminateAndRemoveMission()
     }
     AbilityContext::TerminateAndRemoveMission();
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
