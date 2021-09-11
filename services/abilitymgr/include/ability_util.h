@@ -49,7 +49,15 @@ namespace AbilitUtil {
 
 [[maybe_unused]] static bool IsSystemDialogAbility(const std::string &bundleName, const std::string &abilityName)
 {
-    return (abilityName == AbilityConfig::SYSTEM_DIALOG_NAME) && (bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+    if (abilityName == AbilityConfig::SYSTEM_DIALOG_NAME && bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME) {
+        return true;
+    }
+
+    if (abilityName == AbilityConfig::DEVICE_MANAGER_NAME && bundleName == AbilityConfig::DEVICE_MANAGER_BUNDLE_NAME) {
+        return true;
+    }
+
+    return false;
 }
 }  // namespace AbilitUtil
 }  // namespace AAFwk
