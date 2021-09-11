@@ -28,6 +28,8 @@ REGISTER_AA(Ability)
 const std::string Ability::SYSTEM_UI("com.ohos.systemui");
 const std::string Ability::STATUS_BAR("com.ohos.systemui.statusbar.MainAbility");
 const std::string Ability::NAVIGATION_BAR("com.ohos.systemui.navigationbar.MainAbility");
+const std::string DEVICE_MANAGER_BUNDLE_NAME = "com.ohos.devicemanagerui";
+const std::string DEVICE_MANAGER_NAME = "com.ohos.devicemanagerui.MainAbility";
 
 void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<OHOSApplication> &application,
     std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token)
@@ -86,6 +88,11 @@ void Ability::OnStart(const Want &want)
         }
         if (abilityInfo_->bundleName == OHOS_REQUEST_PERMISSION_BUNDLENAME &&
             abilityInfo_->name == OHOS_REQUEST_PERMISSION_ABILITY_NAME) {
+            winType = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
+        }
+
+        if (abilityInfo_->bundleName == DEVICE_MANAGER_BUNDLE_NAME &&
+            abilityInfo_->name == DEVICE_MANAGER_NAME) {
             winType = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
         }
 
