@@ -14,31 +14,30 @@
  */
 
 /**
- * @name ModuleInfo
- * @since 3
- * @SysCap BMS
- * @import NA
+ * @name Stores module information about an application.
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
  * @permission NA
- * @devices phone, tablet
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface ModuleInfo {
   /**
    * The module name.
    *
-   * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
+   * @default Indicates the name of the .hap package to which the capability belongs
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    */
   readonly moduleName: string;
 
   /**
    * The module source path.
    *
-   * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
+   * @default Indicates the module source dir of this module
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    */
   readonly moduleSourceDir: string;
 }

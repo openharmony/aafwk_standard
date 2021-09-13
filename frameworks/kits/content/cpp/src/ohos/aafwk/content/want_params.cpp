@@ -244,21 +244,6 @@ bool WantParams::operator==(const WantParams &other)
     return true;
 }
 
-// #define GETWRAPDATATYPE(id, value, ret)                        \
-//     do {                                                       \
-//         if (value != nullptr && id::Query(value) != nullptr) { \
-//             return ret;                                        \
-//         } else {                                               \
-//             break;                                             \
-//         }                                                      \
-//     } while (0)
-// #define GETSPTRBYTYPE(type, typeid, typeClass, str) \
-//     do {                                            \
-//         if (type == typeid) {                       \
-//             return typeClass::Parse(str);           \
-//         }                                           \
-//     } while (0)
-
 int WantParams::GetDataType(const sptr<IInterface> iIt)
 {
     if (iIt != nullptr && IBoolean::Query(iIt) != nullptr) {

@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <cinttypes>
+
 #include "napi_form_ability.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -168,7 +171,7 @@ static napi_value ParseNapiIntoFormInfo(napi_env env,
     } else {
         formReqInfo.formId = 0;
     }
-    //HILOG_DEBUG("%{public}s, acquireForm formId=%{public}lld.", __func__, formReqInfo.formId);
+    HILOG_DEBUG("%{public}s, acquireForm formId=%{public}" PRId64 ".", __func__, formReqInfo.formId);
 
     // formReqInfo:formName property
     prop = nullptr;
@@ -320,7 +323,7 @@ static void ParseFormJsInfoIntoNapi(napi_env env, const FormJsInfo &formInfo, na
     napi_value formId;
     std::string strFormId = std::to_string(formInfo.formId);
     napi_create_string_utf8(env, strFormId.c_str(), NAPI_AUTO_LENGTH, &formId);
-    //HILOG_DEBUG("%{public}s, formId=%{public}lld.", __func__, formInfo.formId);
+    HILOG_DEBUG("%{public}s, formId=%{public}" PRId64 ".", __func__, formInfo.formId);
     napi_set_named_property(env, result, "formId", formId);
 
     // formName
@@ -487,7 +490,7 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
         napi_set_element(env, supportDimensions, iDimensionsCount, dimensionInfo);
         ++iDimensionsCount;
     }
-    //HILOG_DEBUG("%{public}s, supportDimensions size=%{public}d.", __func__, formInfo.supportDimensions.size());
+    HILOG_DEBUG("%{public}s, supportDimensions size=%{public}zu.", __func__, formInfo.supportDimensions.size());
     napi_set_named_property(env, result, "supportDimensions", supportDimensions);
 
     // customizeDatas
@@ -514,7 +517,7 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
         napi_set_element(env, customizeDatas, iCustomizeDatasCount, customizeDataInfo);
         ++iDimensionsCount;
     }
-    //HILOG_DEBUG("%{public}s, customizeDatas size=%{public}d.", __func__, formInfo.customizeDatas.size());
+    HILOG_DEBUG("%{public}s, customizeDatas size=%{public}zu.", __func__, formInfo.customizeDatas.size());
     napi_set_named_property(env, result, "supportDimensions", customizeDatas);
 
     // relatedBundleName
@@ -746,7 +749,7 @@ napi_value NAPI_AcquireForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Parse form info from JavaScript value
     FormReqInfo formReqInfo;
@@ -926,7 +929,7 @@ napi_value NAPI_DeleteForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // get global value
     napi_value global = nullptr;
@@ -1085,7 +1088,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1252,7 +1255,7 @@ napi_value NAPI_RequestForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1410,7 +1413,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1585,7 +1588,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1751,7 +1754,7 @@ napi_value NAPI_CastTempForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1904,7 +1907,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
@@ -2082,7 +2085,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
@@ -2265,7 +2268,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
@@ -2447,7 +2450,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
@@ -2625,7 +2628,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-   // HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // get global value
     napi_value global = nullptr;
@@ -2780,7 +2783,7 @@ napi_value NAPI_GetAllFormsInfo(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-   // HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     std::vector<OHOS::AppExecFwk::FormInfo> formInfos;
     formInfos.clear();
@@ -2965,7 +2968,7 @@ napi_value NAPI_GetFormsInfoByApp(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -3164,7 +3167,7 @@ napi_value NAPI_GetFormsInfoByModule(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    //HILOG_INFO("%{public}s, argc = [%{public}d]", __func__, argc);
+    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;

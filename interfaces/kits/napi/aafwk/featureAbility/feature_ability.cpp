@@ -355,6 +355,7 @@ napi_value SetResultAsync(
             if (asyncCallbackInfo->ability != nullptr) {
                 asyncCallbackInfo->ability->SetResult(
                     asyncCallbackInfo->param.requestCode, asyncCallbackInfo->param.want);
+                asyncCallbackInfo->ability->TerminateAbility();
             } else {
                 HILOG_ERROR("NAPI_SetResult, ability == nullptr");
             }
@@ -413,6 +414,7 @@ napi_value SetResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
             if (asyncCallbackInfo->ability != nullptr) {
                 asyncCallbackInfo->ability->SetResult(
                     asyncCallbackInfo->param.requestCode, asyncCallbackInfo->param.want);
+                asyncCallbackInfo->ability->TerminateAbility();
             } else {
                 HILOG_ERROR("NAPI_SetResult, ability == nullptr");
             }

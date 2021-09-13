@@ -17,55 +17,55 @@
  * Contains basic Ability information, which uniquely identifies an ability.
  * You can use this class to obtain values of the fields set in an element,
  * such as the device ID, bundle name, and ability name.
- * @name ElementName
- * @since 3
- * @sysCap AAFwk
- * @devices phone, tablet
+ * @name Contains basic Ability information, which uniquely identifies an ability
+ * @since 7
+ * @sysCap SystemCapability.Appexecfwk
+ * @devices phone, tablet, tv, wearable, car
  * @permission N/A
  */
 export interface ElementName {
   /**
    * device id
    * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @sysCap AAFwk
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @sysCap SystemCapability.Appexecfwk
    */
   deviceId?: string;
 
   /**
    * bundle name
    * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @sysCap AAFwk
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @sysCap SystemCapability.Appexecfwk
    */
   bundleName: string;
 
   /**
    * ability name
-   * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @sysCap AAFwk
+   * @default ability class name.
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @sysCap SystemCapability.Appexecfwk
    */
   abilityName: string;
 
   /**
-   * shortName name
+   * uri
    * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @sysCap AAFwk
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @sysCap SystemCapability.Appexecfwk
    */
   uri?: string;
 
   /**
-   * shortName name
+   * shortName
    * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @sysCap AAFwk
+   * @devices phone, tablet, tv, wearable, car
+   * @since 7
+   * @sysCap SystemCapability.Appexecfwk
    */
   shortName?: string;
 }
