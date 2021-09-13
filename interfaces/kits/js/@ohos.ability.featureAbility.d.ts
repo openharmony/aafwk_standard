@@ -102,27 +102,6 @@ declare namespace featureAbility {
   function hasWindowFocus(): Promise<boolean>;
 
   /**
-   * Connects an ability to a Service ability.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap AAFwk
-   * @param request Indicates the Service ability to connect.
-   * @param options Indicates the callback object when the Service ability is connected.
-   * @return Returns true if the connection is successful; returns false otherwise.
-   */
-  function connectAbility(request: Want, options:ConnectOptions): number;
-
-  /**
-   * Disconnects an ability from a Service ability.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap AAFwk
-   * @param connection Indicates the Service ability to disconnect.
-   */
-  function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
-  function disconnectAbility(connection: number): Promise<void>;
-
-  /**
    * Obtains the type of this application.
    * @devices phone, tablet
    * @since 7

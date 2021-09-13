@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include <thread>
 
 #include "ability.h"
@@ -1682,7 +1683,7 @@ bool Ability::CastTempForm(const int64_t formId)
         return false;
     }
 
-    //APP_LOGI("%{public}s, castTempForm begin of temp form %{public}lld", __func__, formId);
+    APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64 "", __func__, formId);
 
     bool result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
 
@@ -1725,7 +1726,7 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
     }
 
     // check form id
-    //APP_LOGD("%{public}s, param of formId %{public}lld.", __func__, formId);
+    APP_LOGD("%{public}s, param of formId %{public}" PRId64 ".", __func__, formId);
     if (formId < 0) {
         APP_LOGE("%{public}s error, form id should not be negative.", __func__);
         return false;
@@ -1740,7 +1741,7 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
     ElementName elementName = want.GetElement();
     std::string bundleName = elementName.GetBundleName();
     std::string abilityName = elementName.GetAbilityName();
-    //APP_LOGI("%{public}s, begin to acquire form, bundleName is %{public}s, abilityName is %{public}s, formId is %{public}lld.",__func__, bundleName.c_str(), abilityName.c_str(), formId);
+    APP_LOGI("%{public}s, begin to acquire form, bundleName is %{public}s, abilityName is %{public}s, formId is %{public}" PRId64 ".",__func__, bundleName.c_str(), abilityName.c_str(), formId);
 
     // hostClient init
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
@@ -1755,8 +1756,8 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
         APP_LOGE("%{public}s error, acquire form for fms failed.", __func__);
         return false;
     }
-    // APP_LOGI("%{public}s, end to acquire form, the formId returned from the fms is %{public}lld.",
-    //  __func__, formJsInfo.formId);
+    APP_LOGI("%{public}s, end to acquire form, the formId returned from the fms is %{public}" PRId64 ".",
+     __func__, formJsInfo.formId);
 
     // check for form presence in hostForms
     if (formHostClient->ContainsForm(formJsInfo.formId)) {
@@ -1927,7 +1928,7 @@ void Ability::ProcessFormUninstall(const int64_t formId) {
 
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
-            //APP_LOGE("%{public}s failed, callback not find, formId: %{public}lld.", __func__, formId);
+            APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formId);
             return;
         }
         formCallback = appCallbackIterator->second;
@@ -2036,8 +2037,8 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
         return false;
     }
 
-    // APP_LOGI("%{public}s, delete form begin, formId is %{public}lld and deleteType is %{public}d.",
-    //  __func__, formId, deleteType);
+    APP_LOGI("%{public}s, delete form begin, formId is %{public}" PRId64 " and deleteType is %{public}d.",
+     __func__, formId, deleteType);
     {
         // form lock
         std::lock_guard<std::mutex> lock(formLock);
@@ -2098,7 +2099,7 @@ void Ability::CleanFormResource(const int64_t formId)
         return;
     }
 
-    //APP_LOGD("%{public}s. clean id is %{public}lld.", __func__, cleanId);
+    APP_LOGD("%{public}s. clean id is %{public}" PRId64 ".", __func__, cleanId);
     // remove wantParam, callback and lostedByReconnectTempForms
     appCallbacks_.erase(cleanId);
     userReqParams_.erase(cleanId);
@@ -2177,7 +2178,7 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
 
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
-           // APP_LOGE("%{public}s failed, callback not find, formId: %{public}lld.", __func__, formJsInfo.formId);
+            APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formJsInfo.formId);
             return;
         }
         formCallback = appCallbackIterator->second;
@@ -2187,7 +2188,7 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
         return;
     }
 
-    //APP_LOGI("%{public}s, call user implement of form %{public}lld.", __func__, formJsInfo.formId);
+    APP_LOGI("%{public}s, call user implement of form %{public}" PRId64 ".", __func__, formJsInfo.formId);
 
     if (msgCode == OHOS_FORM_ACQUIRE_FORM) {
         formCallback->OnAcquired(FormCallback::OHOS_FORM_ACQUIRE_SUCCESS, formJsInfo);
@@ -2384,7 +2385,7 @@ void Ability::OnDeathReceived()
 
         bool result = ReAcquireForm(formId, want);
         if (!result) {
-           // APP_LOGI("%{public}s error, reacquire form failed, formId:%{public}lld.", __func__, formId);
+            APP_LOGI("%{public}s error, reacquire form failed, formId:%{public}" PRId64 ".", __func__, formId);
             std::shared_ptr<FormCallback> formCallback = nullptr;
             {
                 std::lock_guard<std::mutex> lock(formLock);
@@ -2392,7 +2393,7 @@ void Ability::OnDeathReceived()
                 std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator = appCallbacks_.find(formId);
                 
                 if (appCallbackIterator == appCallbacks_.end()) {
-                    //APP_LOGW("%{public}s error, lack of form callback for form, formId:%{public}lld.", __func__, formId);
+                    APP_LOGW("%{public}s error, lack of form callback for form, formId:%{public}" PRId64 ".", __func__, formId);
                     continue;
                 }
                 formCallback = appCallbackIterator->second;
@@ -2423,7 +2424,7 @@ bool Ability::ReAcquireForm(const int64_t formId, const Want &want)
     // get the form host client
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
     if (formHostClient == nullptr) {
-        //APP_LOGE("%{public}s error, formHostClient is nullptr, formId:%{public}lld.", __func__, formId);
+        APP_LOGE("%{public}s error, formHostClient is nullptr, formId:%{public}" PRId64 ".", __func__, formId);
         return false;
     }
 
@@ -2431,7 +2432,7 @@ bool Ability::ReAcquireForm(const int64_t formId, const Want &want)
     FormJsInfo formJsInfo;
     if (FormMgr::GetInstance().AddForm(formId, want, formHostClient, formJsInfo) != ERR_OK
         || formJsInfo.formId <= 0 || formJsInfo.formId != formId) {
-        //APP_LOGE("%{public}s error, fms reacquire form failed, formId:%{public}lld.", __func__, formId);
+        APP_LOGE("%{public}s error, fms reacquire form failed, formId:%{public}" PRId64 ".", __func__, formId);
         return false;
     }
 

@@ -13,7 +13,25 @@
  * limitations under the License.
  */
 
+ /**
+ * @name Indicates the custom metadata
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
+ * @permission NA
+ * @devices phone, tablet, tv, wearable, car
+ */
 export interface CustomizeData {
+  /**
+    * @default Indicates the custom metadata name
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   name: string;
+
+  /**
+    * @default Indicates the custom metadata value
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   value: string;
 }

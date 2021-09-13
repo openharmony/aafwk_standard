@@ -43,6 +43,8 @@ ohos_shared_library("napi_common") {
     "appexecfwk_standard:appexecfwk_core",
     "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "ipc_js:rpc",
     "samgr_L2:samgr_proxy",
   ]
 

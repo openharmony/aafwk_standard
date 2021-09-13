@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <cinttypes>
+
 #include "form_provider_client.h"
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
@@ -67,8 +70,8 @@ int FormProviderClient::AcquireProviderFormInfo(
     FormProviderInfo formProviderInfo = ownerAbility->OnCreate(cloneWant);
     formProviderInfo.SetFormId(formId);
     newWant.SetParam(Constants::PROVIDER_FLAG, ERR_OK);
-    // APP_LOGD("%{public}s, formId: %{public}lld, data: %{public}s",
-    //  __func__, formProviderInfo.GetFormId(), formProviderInfo.GetFormDataString().c_str());
+    APP_LOGD("%{public}s, formId: %{public}" PRId64 ", data: %{public}s",
+     __func__, formProviderInfo.GetFormId(), formProviderInfo.GetFormDataString().c_str());
     return HandleAcquire(formProviderInfo, newWant, callerToken);
 }
 
@@ -145,8 +148,8 @@ int FormProviderClient::NotifyFormsDelete(
             break;
         }
 
-        // APP_LOGI("%{public}s come,formIds size=%{public}d, abilityName:%{public}s",
-        //  __func__, formIds.size(), ownerAbility->GetAbilityName().c_str());
+        APP_LOGI("%{public}s come,formIds size=%{public}zu, abilityName:%{public}s",
+         __func__, formIds.size(), ownerAbility->GetAbilityName().c_str());
         for (int64_t formId : formIds) {
             ownerAbility->OnDelete(formId);
         }
