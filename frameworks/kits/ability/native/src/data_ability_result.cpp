@@ -85,6 +85,9 @@ int DataAbilityResult::GetCount()
 DataAbilityResult *DataAbilityResult::CreateFromParcel(Parcel &parcel)
 {
     DataAbilityResult *dataAbilityResult = new (std::nothrow) DataAbilityResult(parcel);
+    if(dataAbilityResult == nullptr){
+        APP_LOGE("DataAbilityResult::CreateFromParcel dataAbilityResult is nullptr");
+    }
     return dataAbilityResult;
 }
 

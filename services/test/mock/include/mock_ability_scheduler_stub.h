@@ -30,6 +30,7 @@ public:
     MOCK_METHOD3(ScheduleCommandAbility, void(const Want &, bool, int));
     MOCK_METHOD1(ScheduleSaveAbilityState, void(PacMap &));
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &));
+    MOCK_METHOD1(ScheduleUpdateConfiguration, void(const DummyConfiguration &));
     MOCK_METHOD2(GetFileTypes, std::vector<std::string>(const Uri &, const std::string &));
     MOCK_METHOD2(OpenFile, int(const Uri &, const std::string &));
     MOCK_METHOD2(Insert, int(const Uri &, const ValuesBucket &));
@@ -41,6 +42,10 @@ public:
     MOCK_METHOD2(OpenRawFile, int(const Uri &uri, const std::string &mode));
     MOCK_METHOD2(Reload, bool(const Uri &uri, const PacMap &extras));
     MOCK_METHOD2(BatchInsert, int(const Uri &uri, const std::vector<ValuesBucket> &values));
+    MOCK_METHOD1(NormalizeUri, Uri(const Uri &));
+    MOCK_METHOD1(DenormalizeUri, Uri(const Uri &));
+    MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
+    MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
 };
 
 }  // namespace AAFwk

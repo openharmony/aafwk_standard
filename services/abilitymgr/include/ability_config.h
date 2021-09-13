@@ -35,6 +35,14 @@ const std::string SYSTEM_DIALOG_KEY = "OHOS_RESULT_PERMISSION_KEY";
 
 const std::string DEVICE_MANAGER_BUNDLE_NAME = "com.ohos.devicemanagerui";
 const std::string DEVICE_MANAGER_NAME = "com.ohos.devicemanagerui.MainAbility";
+
+const std::string EVENT_SYSTEM_WINDOW_MODE_CHANGED = "common.event.SYSTEM_WINDOW_MODE_CHANGED";
+const int EVENT_CODE_SYSTEM_WINDOW_MODE_CHANGED = 1;
+
+const std::string MISSION_NAME_MARK_HEAD = "#";
+const std::string MISSION_NAME_SEPARATOR = ":";
+
+const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WINDOW";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

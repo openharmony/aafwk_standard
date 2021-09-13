@@ -192,6 +192,7 @@ AbilityInfo AbilityMgrModuleTest::CreateAbilityInfo(
     const std::string &name, const std::string &appName, const std::string &bundleName)
 {
     AbilityInfo abilityInfo;
+    abilityInfo.visible = true;
     abilityInfo.name = name;
     abilityInfo.applicationName = appName;
     abilityInfo.bundleName = bundleName;
@@ -341,10 +342,10 @@ void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &r
     const sptr<AbilityConnectionProxy> &callback1, const sptr<AbilityConnectionProxy> &callback2)
 {
     record = abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    ASSERT_TRUE(record);
-    ASSERT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
+    EXPECT_TRUE(record);
+    EXPECT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
         record, abilityMgrServ_->GetConnectRecordListByCallback(callback1)));
-    ASSERT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
+    EXPECT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
         record, abilityMgrServ_->GetConnectRecordListByCallback(callback2)));
     EXPECT_EQ((std::size_t)2, record->GetConnectRecordList().size());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
@@ -427,11 +428,11 @@ void AbilityMgrModuleTest::WaitAMS()
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
 
     auto stackManager = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackManager);
+    EXPECT_TRUE(stackManager);
 
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
@@ -458,7 +459,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
     EXPECT_TRUE(testToken);
 
     auto testAbilityRecord = stackManager->GetAbilityRecordByToken(testToken);
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     EXPECT_EQ(testAbilityRecord->GetRequestCode(), testRequestCode);
 }
 
@@ -488,7 +489,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_002, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord2 = AbilityRecord::CreateAbilityRecord(abilityRequest);
     abilityRecord2->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityRecord2->SetScheduler(scheduler);
 
@@ -548,7 +549,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_003, TestSize.Level1)
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
     std::shared_ptr<ConnectionRecord> connectRecord =
         ConnectionRecord::CreateConnectionRecord(abilityRecord->GetToken(), abilityRecord, callback);
-    ASSERT_TRUE(connectRecord != nullptr);
+    EXPECT_TRUE(connectRecord != nullptr);
     connectRecord->SetConnectState(ConnectionState::CONNECTED);
     abilityRecord->AddConnectRecordToList(connectRecord);
     std::list<std::shared_ptr<ConnectionRecord> > connectList;
@@ -563,6 +564,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_003, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
     curMissionStack->RemoveAll();
+
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -584,14 +588,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_004, TestSize.Level1)
     abilityMgrServ_->OnStart();
     WaitAMS();
 
-    ASSERT_TRUE(abilityMgrServ_->dataAbilityManager_);
+    EXPECT_TRUE(abilityMgrServ_->dataAbilityManager_);
     state = abilityMgrServ_->QueryServiceState();
     EXPECT_EQ(state, ServiceRunningState::STATE_RUNNING);
 
     auto handler = abilityMgrServ_->GetEventHandler();
-    ASSERT_TRUE(handler);
+    EXPECT_TRUE(handler);
     auto eventRunner = handler->GetEventRunner();
-    ASSERT_TRUE(eventRunner);
+    EXPECT_TRUE(eventRunner);
     EXPECT_TRUE(eventRunner->IsRunning());
 
     abilityMgrServ_->OnStop();
@@ -644,7 +648,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_005, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_006, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(abilityMgrServ_);
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
 
@@ -654,14 +658,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_006, TestSize.Level1)
     abilityRequest.abilityInfo = CreateAbilityInfo(abilityName, bundleName, bundleName);
     abilityRequest.appInfo = CreateAppInfo(bundleName, bundleName);
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVATING);
     std::shared_ptr<MissionRecord> mission = std::make_shared<MissionRecord>(bundleName);
-    ASSERT_TRUE(mission);
+    EXPECT_TRUE(mission);
     mission->AddAbilityRecordToTop(abilityRecord);
 
     auto stackManager_ = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackManager_);
+    EXPECT_TRUE(stackManager_);
     std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
     curMissionStack->AddMissionRecordToTop(mission);
     sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
@@ -673,6 +677,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_006, TestSize.Level1)
     abilityMgrServ_->handler_ = handler;
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
+
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -694,15 +700,15 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_007, TestSize.Level1)
     abilityRequest.abilityInfo = CreateAbilityInfo(abilityName, bundleName, bundleName);
     abilityRequest.appInfo = CreateAppInfo(bundleName, bundleName);
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVATING);
     std::shared_ptr<MissionRecord> mission = std::make_shared<MissionRecord>(bundleName);
-    ASSERT_TRUE(mission);
+    EXPECT_TRUE(mission);
     mission->AddAbilityRecordToTop(abilityRecord);
     auto stackManager_ = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackManager_);
+    EXPECT_TRUE(stackManager_);
     std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
-    ASSERT_TRUE(curMissionStack);
+    EXPECT_TRUE(curMissionStack);
     curMissionStack->AddMissionRecordToTop(mission);
 
     int result = abilityMgrServ_->AbilityTransitionDone(abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::ACTIVE);
@@ -743,19 +749,19 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->connectMap_.size());
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->connectManager_->GetServiceRecordByToken(testToken);
-    ASSERT_TRUE(record);
+    EXPECT_TRUE(record);
     ElementName element;
 
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectRecordList().front();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
 
     EXPECT_CALL(*scheduler, AsObject()).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
-    ASSERT_TRUE(record->isReady_);
+    EXPECT_TRUE(record->isReady_);
 
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
@@ -764,7 +770,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE);
-    ASSERT_TRUE(record->GetConnectingRecord());
+    EXPECT_TRUE(record->GetConnectingRecord());
     EXPECT_EQ(OHOS::AAFwk::ConnectionState::CONNECTING, connectRecord->GetConnectState());
 
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
@@ -775,6 +781,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
     curMissionStack->RemoveAll();
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -799,14 +809,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<AbilityRecord> record =
         abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    ASSERT_TRUE(record);
+    EXPECT_TRUE(record);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     connectRecord->SetConnectState(ConnectionState::CONNECTED);
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
     EXPECT_CALL(*scheduler, ScheduleDisconnectAbility(_)).Times(1);
@@ -828,6 +838,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -876,7 +890,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
     }
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(4);
     record1->SetScheduler(scheduler);
     record2->SetScheduler(scheduler);
@@ -889,6 +903,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
     EXPECT_CALL(*stub2, OnAbilityDisconnectDone(_, _)).Times(2);
 
     CheckTestRecord(record1, record2, callback1, callback2);
+    testing::Mock::AllowLeak(stub1);
+    testing::Mock::AllowLeak(callback1);
+    testing::Mock::AllowLeak(stub2);
+    testing::Mock::AllowLeak(callback2);
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -928,11 +947,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     EXPECT_FALSE(record->IsCreateByConnect());
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
-    ASSERT_TRUE(record->isReady_);
+    EXPECT_TRUE(record->isReady_);
 
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
@@ -959,6 +978,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     }
     EXPECT_EQ(4, testId);
     abilityMgrServ_->RemoveAllServiceRecord();
+    testing::Mock::AllowLeak(scheduler);
 }
 /*
  * Feature: AaFwk
@@ -993,15 +1013,15 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     EXPECT_TRUE(testToken);
 
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    ASSERT_TRUE(record);
+    EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
-    ASSERT_TRUE(record->isReady_);
+    EXPECT_TRUE(record->isReady_);
 
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
@@ -1022,7 +1042,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
 
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
@@ -1030,6 +1050,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
 
     abilityMgrServ_->RemoveAllServiceRecord();
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1092,7 +1116,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
 
@@ -1109,6 +1133,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
+
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1135,7 +1161,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
 
@@ -1152,6 +1178,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1178,7 +1205,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
 
@@ -1187,7 +1214,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
@@ -1197,6 +1224,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1223,7 +1254,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
 
@@ -1232,7 +1263,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
@@ -1242,6 +1273,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1264,13 +1299,13 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     SetActive();
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    ASSERT_TRUE(record);
+    EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->AddStartId();
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
 
@@ -1280,7 +1315,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
 
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
@@ -1309,6 +1344,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1324,7 +1362,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     std::string abilityName = "MusicAbilityService";
     std::string bundleName = "com.ix.hiservice";
     Want want = CreateWant(abilityName, bundleName);
-    ASSERT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(abilityMgrServ_);
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
@@ -1336,7 +1374,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     record->SetScheduler(scheduler);
     sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
@@ -1344,7 +1382,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
@@ -1371,6 +1409,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
+
+    testing::Mock::AllowLeak(scheduler);
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1397,10 +1439,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
     std::shared_ptr<AbilityRecord> record =
         abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    ASSERT_TRUE(record);
-    ASSERT_TRUE(record->IsCreateByConnect());
+    EXPECT_TRUE(record);
+    EXPECT_TRUE(record->IsCreateByConnect());
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    ASSERT_TRUE(connectRecord);
+    EXPECT_TRUE(connectRecord);
     connectRecord->SetConnectState(ConnectionState::CONNECTED);
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
@@ -1412,6 +1454,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->connectMap_.size());
 
     abilityMgrServ_->RemoveAllServiceRecord();
+    testing::Mock::AllowLeak(stub);
+    testing::Mock::AllowLeak(callback);
 }
 
 /*
@@ -1424,8 +1468,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
 
     std::string abilityName = "MusicSAbility";
@@ -1435,7 +1479,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
@@ -1443,20 +1487,21 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityMgrServ_->StartAbility(want);
     auto testAbilityRecord = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     abilityMgrServ_->AttachAbilityThread(scheduler, testAbilityRecord->GetToken());
     SetActive();
     abilityMgrServ_->StartAbility(want2);
     auto testAbilityRecord2 = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord2);
+    EXPECT_TRUE(testAbilityRecord2);
     auto stackMgr = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackMgr);
+    EXPECT_TRUE(stackMgr);
     stackMgr->CompleteInactive(testAbilityRecord);
     testAbilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::BACKGROUND);
     abilityMgrServ_->HandleLoadTimeOut(testAbilityRecord2->GetEventId());
     testAbilityRecord = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1469,8 +1514,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
 
     std::string abilityName = "TVAbility";
@@ -1480,7 +1525,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
@@ -1488,19 +1533,20 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityMgrServ_->StartAbility(want);
     auto testAbilityRecord = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     abilityMgrServ_->AttachAbilityThread(scheduler, testAbilityRecord->GetToken());
     SetActive();
     abilityMgrServ_->StartAbility(want2);
     auto testAbilityRecord2 = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord2);
+    EXPECT_TRUE(testAbilityRecord2);
     auto stackMgr = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackMgr);
+    EXPECT_TRUE(stackMgr);
     stackMgr->CompleteInactive(testAbilityRecord);
     abilityMgrServ_->HandleLoadTimeOut(testAbilityRecord2->GetEventId());
     testAbilityRecord = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1514,14 +1560,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     Want want = CreateWant("RadioTopAbility", COM_IX_HIRADIO);
     abilityMgrServ_->StartAbility(want);
     auto testAbilityRecord = GetTopAbility();
-    ASSERT_TRUE(testAbilityRecord);
+    EXPECT_TRUE(testAbilityRecord);
     SetActive();
     auto resultTvFunction = abilityMgrServ_->IsFirstInMission(testAbilityRecord->GetToken());
     EXPECT_EQ(resultTvFunction, true);
@@ -1539,11 +1585,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
     auto stackManager = abilityMgrServ_->GetStackManager();
-    ASSERT_TRUE(stackManager);
+    EXPECT_TRUE(stackManager);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
@@ -1551,17 +1597,18 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
     Want want = CreateWant("PhoneAbility1", COM_IX_PHONE);
     abilityMgrServ_->StartAbility(want);
     auto ability = stackManager->GetCurrentTopAbility();
-    ASSERT_TRUE(ability);
+    EXPECT_TRUE(ability);
     SetActive();
     Want want2 = CreateWant("PhoneAbility2", COM_IX_PHONE);
     abilityMgrServ_->StartAbility(want2);
-    ASSERT_TRUE(scheduler);
+    EXPECT_TRUE(scheduler);
     auto abilityTv = stackManager->GetCurrentTopAbility();
-    ASSERT_TRUE(abilityTv);
+    EXPECT_TRUE(abilityTv);
     abilityTv->SetScheduler(scheduler);
     SetActive();
     auto resultFunction = abilityMgrServ_->MoveMissionToEnd(abilityTv->GetToken(), true);
     EXPECT_EQ(resultFunction, ERR_OK);
+    testing::Mock::AllowLeak(scheduler);
 }
 
 /*
@@ -1574,13 +1621,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_025, TestSize.Level1)
 {
-    ASSERT_TRUE(abilityMgrServ_);
-    ASSERT_TRUE(mockAppMgrClient_);
+    EXPECT_TRUE(abilityMgrServ_);
+    EXPECT_TRUE(mockAppMgrClient_);
     const std::string permission = "permission";
     int pid = 100;
     int uid = 1000;
     std::string message;
-    EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(1);
+    int runTimes = 1;
+    EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(runTimes);
     auto resultFunction = abilityMgrServ_->CompelVerifyPermission(permission, pid, uid, message);
     EXPECT_EQ(resultFunction, 0);
 }

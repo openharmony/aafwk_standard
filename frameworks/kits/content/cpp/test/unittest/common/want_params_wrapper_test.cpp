@@ -152,7 +152,7 @@ HWTEST_F(WantParamWrapperBaseTest, Want_Param_Wrapper_0600, Function | MediumTes
 {
     auto wantParamsPtr = WantParamWrapper::Box({});
 
-    ASSERT_NE(wantParamsPtr, nullptr);
+    EXPECT_NE(wantParamsPtr, nullptr);
 
     WantParams wantParams;
     ErrCode result = wantParamsPtr->GetValue(wantParams);

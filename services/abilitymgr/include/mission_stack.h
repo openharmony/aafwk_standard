@@ -24,6 +24,7 @@
 #include "mission_record.h"
 #include "mission_record_info.h"
 #include "want.h"
+#include "stack_setting.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -31,7 +32,7 @@ namespace AAFwk {
  * @class MissionStack
  * MissionStack records mission info.
  */
-class MissionStack {
+class MissionStack : public ConfigurationHolder {
 public:
     MissionStack(int id, int userId);
     virtual ~MissionStack();
@@ -156,6 +157,17 @@ public:
      * Check whether there is a mission record in the mission stack
      */
     bool IsExistMissionRecord(int missionId);
+
+    bool IsTopMissionRecord(std::shared_ptr<MissionRecord> &missionRecord) const;
+
+    bool IsEqualStackId(int stackId);
+
+    bool IsEmpty();
+
+protected:
+    virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
+    virtual unsigned int GetChildSize() override;
+    virtual std::shared_ptr<ConfigurationHolder> FindChild(unsigned int index) override;
 
 private:
     int missionStackId_;

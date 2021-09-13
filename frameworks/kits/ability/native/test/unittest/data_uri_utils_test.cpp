@@ -61,7 +61,7 @@ HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_AttachId_Get001, Function | Medium
     Uri uri("scheme://authority/path1/path2/path3?id = 1&name = mingming&old#fragment");
     Uri uriRet1 = DataUriUtils::AttachId(uri, 1000);
 
-    long ret1 = DataUriUtils::GetId(uriRet1);
+    long long ret1 = DataUriUtils::GetId(uriRet1);
     EXPECT_EQ(ret1, 1000);
 
     GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_001 end";
@@ -70,7 +70,7 @@ HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_AttachId_Get001, Function | Medium
 /**
  * @tc.number: AaFwk_DataUriUtils_AttachId_GetId_0100
  * @tc.name: AttachId/DeleteId/IsAttachedId
- * @tc.desc: Test whether the return values of attachid, deleteid and isattachedidare correct. 
+ * @tc.desc: Test whether the return values of attachid, deleteid and isattachedidare correct.
  */
 HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_DeleteId_IsAttachedId001, Function | MediumTest | Level1)
 {
@@ -87,6 +87,44 @@ HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_DeleteId_IsAttachedId001, Function
     GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_DeleteId_IsAttachedId001 end";
 }
 
+/**
+ * @tc.number: AaFwk_DataUriUtils_DeleteId_IsAttachedId002
+ * @tc.name: AttachId/DeleteId/IsAttachedId
+ * @tc.desc: Test whether the return values of attachid, deleteid and isattachedidare correct.
+ */
+HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_DeleteId_IsAttachedId002, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_DeleteId_IsAttachedId002 start";
+
+    Uri uri("scheme://authority/path1/path2/path3?id = 1&name = mingming&old#fragment");
+    Uri uriRet1 = DataUriUtils::AttachId(uri, -1000);
+    Uri uriRet2 = DataUriUtils::DeleteId(uriRet1);
+    bool ret2 = DataUriUtils::IsAttachedId(uriRet2);
+    EXPECT_EQ(ret2, false);
+
+    GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_DeleteId_IsAttachedId002 end";
+}
+/**
+ * @tc.number: AaFwk_DataUriUtils_DeleteId_IsAttachedId003
+ * @tc.name: AttachId/DeleteId/IsAttachedId
+ * @tc.desc: Test whether the return values of attachid, deleteid and isattachedidare correct.
+ */
+HWTEST_F(DataUriUtilsTest, AaFwk_DataUriUtils_DeleteId_IsAttachedId003, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_DeleteId_IsAttachedId003 start";
+
+    Uri uri("scheme://authority/path1/path2/path3?id = 1&name = mingming&old#fragment");
+    Uri uriRet1 = DataUriUtils::AttachId(uri, 123456789011);
+
+    long long id = DataUriUtils::GetId(uriRet1);
+    EXPECT_EQ(id, 123456789011);
+    Uri uriRet2 = DataUriUtils::DeleteId(uriRet1);
+
+    bool ret2 = DataUriUtils::IsAttachedId(uriRet2);
+    EXPECT_EQ(ret2, false);
+
+    GTEST_LOG_(INFO) << "AaFwk_DataUriUtils_DeleteId_IsAttachedId003 end";
+}
 /**
  * @tc.number: AaFwk_DataUriUtils_AttachIdUpdateId_0100
  * @tc.name: AttachId/UpdateId/GetId

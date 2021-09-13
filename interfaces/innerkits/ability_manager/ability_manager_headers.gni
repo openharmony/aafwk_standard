@@ -29,6 +29,11 @@ ability_manager_headers = {
     "want_sender_info.h",
     "want_sender_interface.h",
     "want_receiver_interface.h",
+    "aafwk_dummy_configuration.h",
+    "ability_window_configuration.h",
+    "ability_start_setting.h",
+    "mission_option.h",
+    "stack_setting.h",
   ]
   header_base = "interfaces/innerkits/ability_manager/include"
 }

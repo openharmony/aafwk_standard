@@ -64,6 +64,9 @@ AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::
 
     AbilityRequest abilityRequest;
     abilityRequest.want = want;
+    AbilityInfo abilityInfo;
+    abilityInfo.visible = true;
+    abilityRequest.abilityInfo = abilityInfo;
 
     return abilityRequest;
 }

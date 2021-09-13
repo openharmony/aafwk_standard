@@ -31,6 +31,7 @@ ohos_shared_library("datauriutils") {
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/kits:appkit_native",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
@@ -47,7 +48,7 @@ ohos_shared_library("datauriutils") {
     "ipc:ipc_core",
   ]
 
-  relative_install_dir = "module/dataUriUtils"
+  relative_install_dir = "module/ability"
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

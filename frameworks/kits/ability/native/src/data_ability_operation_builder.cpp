@@ -23,6 +23,7 @@ DataAbilityOperationBuilder::DataAbilityOperationBuilder(const int type, const s
     type_ = type;
     uri_ = uri;
     expectedCount_ = 0;
+    interrupted_ = false;
     valuesBucket_ = nullptr;
     dataAbilityPredicates_ = nullptr;
     valuesBucketReferences_ = nullptr;

@@ -24,32 +24,54 @@
 #include <unistd.h>
 #include "context.h"
 #include "want.h"
-#include "key_event.h"
 #include "dummy_component_container.h"
 #include "pac_map.h"
-#include "touch_event.h"
 #include "dummy_notification_request.h"
 #include "dummy_data_ability_predicates.h"
 #include "dummy_values_bucket.h"
 #include "dummy_result_set.h"
-#include "dummy_continuation_state.h"
+#include "continuation_state.h"
 #include "dummy_ability_package.h"
 #include "dummy_configuration.h"
+#include "aafwk_dummy_configuration.h"
+#include "continuation_handler.h"
 #include "ability_window.h"
 #include "ability_lifecycle_interface.h"
 #include "ability_lifecycle_executor.h"
+#include "ability_continuation_interface.h"
+
+#include "form_callback_interface.h"
+#include "form_constants.h"
+#include "form_death_callback.h"
+#include "form_provider_info.h"
+#include "form_info.h"
+
+#ifndef MMI_COMPILE
+#include "key_event.h"
+#include "touch_event.h"
+#endif
 
 using Uri = OHOS::Uri;
 
 namespace OHOS {
+#ifdef MMI_COMPILE
+class KeyEvent;
+class TouchEvent;
+#endif
 namespace AppExecFwk {
+class AbilityPostEventTimeout;
 class OHOSApplication;
 class AbilityHandler;
 class AbilityWindow;
 class ILifeCycle;
+class ContinuationManager;
+class ContinuationRegisterManager;
+class IContinuationRegisterManager;
 class Ability : public IAbilityEvent,
                 public ILifeCycle,
                 public AbilityContext,
+                public FormCallbackInterface,
+                public IAbilityContinuation,
                 public std::enable_shared_from_this<Ability> {
 public:
     Ability() = default;
@@ -537,7 +559,7 @@ public:
      * @param resultData Indicates the data returned after the ability is destroyed. You can define the data returned.
      * This parameter can be null.
      */
-    virtual void SetResult(int resultCode, /*const AAFwk::Want& resultData*/ const Want &resultData) final;
+    virtual void SetResult(int resultCode, const Want &resultData) final;
 
     /**
      * @brief Sets the type of audio whose volume will be adjusted by the volume button.
@@ -600,7 +622,7 @@ public:
      *
      * @return Returns the normalized Uri object if the Data ability supports URI normalization; returns null otherwise.
      */
-    virtual const std::shared_ptr<Uri> NormalizeUri(const Uri &uri);
+    virtual Uri NormalizeUri(const Uri &uri);
 
     /**
      * @brief Deletes one or more data records. This method should be implemented by a Data ability.
@@ -700,13 +722,8 @@ public:
      * @brief Obtains the migration state of this ability.
      * @return Returns the migration state.
      */
-    virtual std::shared_ptr<ContinuationState> GetContinuationState() final;
+    virtual ContinuationState GetContinuationState() final;
 
-    /**
-     * @brief Migrates this ability from another device on the same distributed network back to the local device.
-     * @return Returns true if the migration request is successful; returns false otherwise.
-     */
-    virtual bool ReverseContinueAbility() final;
 
     /**
      * @brief Obtains the singleton AbilityPackage object to which this ability belongs.
@@ -725,7 +742,7 @@ public:
      * to this method if there is nothing to do; returns null if the data identified by the original Uri cannot be found
      * in the current environment.
      */
-    virtual std::shared_ptr<Uri> DenormalizeUri(const Uri &uri);
+    virtual Uri DenormalizeUri(const Uri &uri);
 
     /**
      * @brief Reloads data in the database.
@@ -837,22 +854,550 @@ public:
      */
     void TerminateAndRemoveMission() override;
 
+    /**
+     * @brief Create a PostEvent timeout task. The default delay is 5000ms
+     *
+     * @return Return a smart pointer to a timeout object
+     */
+    std::shared_ptr<AbilityPostEventTimeout> CreatePostEventTimeouter(std::string taskstr);
+
+    /**
+     * Releases an obtained form by its ID.
+     *
+     * <p>After this method is called, the form won't be available for use by the application, but the Form Manager
+     * Service still keeps the cache information about the form, so that the application can quickly obtain it based on
+     * the {@code formId}.</p>
+     * <p><b>Permission: </b>{@link ohos.security.SystemPermission#REQUIRE_FORM}</p>
+     *
+     * @param formId Indicates the form ID.
+     * @return Returns {@code true} if the form is successfully released; returns {@code false} otherwise.
+     *
+     * <ul>
+     * <li>The passed {@code formId} is invalid. Its value must be larger than 0.</li>
+     * <li>The specified form has not been added by the application.</li>
+     * <li>An error occurred when connecting to the Form Manager Service.</li>
+     * <li>The application is not granted with the {@link ohos.security.SystemPermission#REQUIRE_FORM} permission.</li>
+     * <li>The form has been obtained by another application and cannot be released by the current application.</li>
+     * <li>The form is being restored.</li>
+     * </ul>
+     */
+    bool ReleaseForm(const int64_t formId);
+
+    /**
+     * @brief Releases an obtained form by its ID.
+     *
+     * <p>After this method is called, the form won't be available for use by the application, if isReleaseCache is
+     * false, this method is same as {@link #releaseForm(int)}, otherwise the Form Manager Service still store this
+     * form in the cache.</p>
+     * <p><b>Permission: </b>{@link ohos.security.SystemPermission#REQUIRE_FORM}</p>
+     *
+     * @param formId Indicates the form ID.
+     * @param isReleaseCache Indicates whether to clear cache in service.
+     * @return Returns {@code true} if the form is successfully released; returns {@code false} otherwise.
+     *
+     * <ul>
+     * <li>The passed {@code formId} is invalid. Its value must be larger than 0.</li>
+     * <li>The specified form has not been added by the application.</li>
+     * <li>An error occurred when connecting to the Form Manager Service.</li>
+     * <li>The application is not granted with the {@link ohos.security.SystemPermission#REQUIRE_FORM} permission.</li>
+     * <li>The form has been obtained by another application and cannot be released by the current application.</li>
+     * <li>The form is being restored.</li>
+     * </ul>
+     */
+    bool ReleaseForm(const int64_t formId, const bool isReleaseCache);
+
+    /**
+     * @brief Deletes an obtained form by its ID.
+     *
+     * <p>After this method is called, the form won't be available for use by the application and the Form Manager
+     * Service no longer keeps the cache information about the form.</p>
+     * <p><b>Permission: </b>{@link ohos.security.SystemPermission#REQUIRE_FORM}</p>
+     *
+     * @param formId Indicates the form ID.
+     * @return Returns {@code true} if the form is successfully deleted; returns {@code false} otherwise.
+     *
+     * <ul>
+     * <li>The passed {@code formId} is invalid. Its value must be larger than 0.</li>
+     * <li>The specified form has not been added by the application.</li>
+     * <li>An error occurred when connecting to the Form Manager Service.</li>
+     * <li>The application is not granted with the {@link ohos.security.SystemPermission#REQUIRE_FORM} permission.</li>
+     * <li>The form has been obtained by another application and cannot be deleted by the current application.</li>
+     * <li>The form is being restored.</li>
+     * </ul>
+     */
+    bool DeleteForm(const int64_t formId);
+
+    /**
+     * @brief The form callback.
+     */
+    class FormCallback {
+    public:
+        static const int32_t OHOS_FORM_ACQUIRE_SUCCESS = 0;
+        static const int32_t OHOS_FORM_UPDATE_SUCCESS = 0;
+        static const int32_t OHOS_FORM_PREVIEW_FAILURE = 1;
+        static const int32_t OHOS_FORM_RESTORE_FAILURE = 2;
+
+        /**
+         * @brief Called to notify the application that the {@code FormJsInfo} instance has been obtained after
+         * the application called the asynchronous method {@link Ability#acquireForm(Want, FormCallback)}.
+         * The application must present the form information on a specific page in this callback.
+         *
+         * @param result Specifies whether the asynchronous form acquisition process is successful.
+         *               {@link FormCallback#OHOS_FORM_ACQUIRE_SUCCESS} indicates that the form
+         *               is successfully obtained, and other values indicate that the process fails.
+         * @param formJsInfo Indicates the obtained {@code FormJsInfo} instance.
+         */
+        virtual void OnAcquired(const int32_t result, const FormJsInfo &formJsInfo) const = 0;
+
+        /**
+         * @brief Called to notify the application that the {@code FormJsInfo} instance has been obtained after
+         * the application called the asynchronous method {@link Ability#acquireForm(Want, FormCallback)}.
+         * The application must present the form information on a specific page in this callback.
+         *
+         * @param result Specifies whether the asynchronous form acquisition process is successful.
+         *               {@link FormCallback#OHOS_FORM_UPDATE_SUCCESS} indicates that the form is
+         *               successfully obtained, and other values indicate that the process fails.
+         * @param formJsInfo Indicates the obtained {@code FormJsInfo} instance.
+         */
+        virtual void OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const = 0;
+
+        /**
+         * @brief Called to notify the application that the {@code Form} provider has been uninstalled and the
+         * corresponding
+         * {@code Form} instance is no longer available.
+         *
+         * @param formId Indicates the ID of the {@code Form} instance provided by the uninstalled form provider.
+         */
+        virtual void OnFormUninstall(const int64_t formId) const = 0;
+    };
+
+    /**
+     * @brief Obtains a specified form that matches the application bundle name, module name, form name, and
+     * other related information specified in the passed {@code Want}.
+     *
+     * <p>This method is asynchronous. After the {@link FormJsInfo} instance is obtained.
+     *
+     * @param formId Indicates the form ID.
+     * @param want Indicates the detailed information about the form to be obtained, including the bundle name,
+     *        module name, ability name, form name, form id, tempForm flag, form dimension, and form customize data.
+     * @param callback Indicates the callback to be invoked whenever the {@link FormJsInfo} instance is obtained.
+     * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
+     */
+    bool AcquireForm(const int64_t formId, const Want &want, const std::shared_ptr<FormCallback> callback);
+
+    /**
+     * @brief Updates the content of a specified JS form.
+     *
+     * <p>This method is called by a form provider to update JS form data as needed.
+     *
+     * @param formId Indicates the form ID.
+     * @param formProviderData The data used to update the JS form displayed on the client.
+     * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
+     */
+    bool UpdateForm(const int64_t formId, const FormProviderData &formProviderData);
+
+    /**
+     * @brief Cast temp form with formId.
+     *
+     * @param formId Indicates the form's ID.
+     *
+     * @return Returns {@code true} if the form is successfully casted; returns {@code false} otherwise.
+     */
+    bool CastTempForm(const int64_t formId);
+
+    /**
+     * @brief Sends a notification to the form framework to make the specified forms visible.
+     *
+     * <p>After this method is successfully called, {@link Ability#OnVisibilityChanged(std::map<int64_t, int>)}
+     * will be called to notify the form provider of the form visibility change event.</p>
+     *
+     * @param formIds Indicates the IDs of the forms to be made visible.
+     * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
+     */
+    bool NotifyVisibleForms(const std::vector<int64_t> &formIds);
+
+    /**
+     * @brief Sends a notification to the form framework to make the specified forms invisible.
+     *
+     * <p>After this method is successfully called, {@link Ability#OnVisibilityChanged(std::map<int64_t, int>)}
+     * will be called to notify the form provider of the form visibility change event.</p>
+     *
+     * @param formIds Indicates the IDs of the forms to be made invisible.
+     * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
+     */
+    bool NotifyInvisibleForms(const std::vector<int64_t> &formIds);
+
+    /**
+     * @brief Set form next refresh time.
+     *
+     * <p>This method is called by a form provider to set refresh time.
+     *
+     * @param formId Indicates the ID of the form to set refresh time.
+     * @param nextTime Indicates the next time gap now in seconds, can not be litter than 300 seconds.
+     * @return Returns {@code true} if seting succeed; returns {@code false} otherwise.
+     */
+
+    bool SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime);
+
+    /**
+     * @brief Update form.
+     *
+     * @param formJsInfo Indicates the obtained {@code FormJsInfo} instance.
+     */
+    void ProcessFormUpdate(const FormJsInfo &formJsInfo) override;
+
+    /**
+     * @brief Uninstall form.
+     *
+     * @param formId Indicates the ID of the form to uninstall.
+     */
+    void ProcessFormUninstall(const int64_t formId) override;
+
+    /**
+     * @brief Called to reacquire form and update the form host after the death callback is received.
+     *
+     */
+    void OnDeathReceived() override;
+
+    /**
+     * @brief Called to return a FormProviderInfo object.
+     *
+     * <p>You must override this method if your ability will serve as a form provider to provide a form for clients.
+     * The default implementation returns nullptr. </p>
+     *
+     * @param want   Indicates the detailed information for creating a FormProviderInfo.
+     *               The Want object must include the form ID, form name of the form,
+     *               which can be obtained from Ability#PARAM_FORM_IDENTITY_KEY,
+     *               Ability#PARAM_FORM_NAME_KEY, and Ability#PARAM_FORM_DIMENSION_KEY,
+     *               respectively. Such form information must be managed as persistent data for further form
+     *               acquisition, update, and deletion.
+     *
+     * @return Returns the created FormProviderInfo object.
+     */
+    virtual FormProviderInfo OnCreate(const Want &want);
+
+    /**
+     * @brief Called to notify the form provider that a specified form has been deleted. Override this method if
+     * you want your application, as the form provider, to be notified of form deletion.
+     *
+     * @param formId Indicates the ID of the deleted form.
+     * @return None.
+     */
+    virtual void OnDelete(const int64_t formId);
+
+    /**
+     * @brief Called when the form provider is notified that a temporary form is successfully converted to
+     * a normal form.
+     *
+     * @param formId Indicates the ID of the form.
+     * @return None.
+     */
+    virtual void OnCastTemptoNormal(const int64_t formId);
+
+    /**
+     * @brief Called to notify the form provider to update a specified form.
+     *
+     * @param formId Indicates the ID of the form to update.
+     * @return none.
+     */
+    virtual void OnUpdate(const int64_t formId);
+
+    /**
+     * @brief Called when the form provider receives form events from the fms.
+     *
+     * @param formEventsMap Indicates the form events occurred. The key in the Map object indicates the form ID,
+     *                      and the value indicates the event type, which can be either FORM_VISIBLE
+     *                      or FORM_INVISIBLE. FORM_VISIBLE means that the form becomes visible,
+     *                      and FORM_INVISIBLE means that the form becomes invisible.
+     * @return none.
+     */
+    virtual void OnVisibilityChanged(const std::map<int64_t, int32_t> &formEventsMap);
+    /**
+     * @brief Called to notify the form provider to update a specified form.
+     *
+     * @param formId Indicates the ID of the form to update.
+     * @param message Form event message.
+     */
+    virtual void OnTriggerEvent(const int64_t formId, const std::string &message);
+    /**
+     * @brief Requests for form data update.
+     *
+     * This method must be called when the application has detected that a system setting item (such as the language,
+     * resolution, or screen orientation) being listened for has changed. Upon receiving the update request, the form
+     * provider automatically updates the form data (if there is any update) through the form framework, with the update
+     * process being unperceivable by the application.
+     *
+     * @param formId Indicates the ID of the form to update.
+     * @return Returns true if the update request is successfully initiated, returns false otherwise.
+     */
+    bool RequestForm(const int64_t formId);
+
+    /**
+     * @brief Requests for form data update, by passing a set of parameters (using Want) to the form provider.
+     *
+     * This method must be called when the application has detected that a system setting item (such as the language,
+     * resolution, or screen orientation) being listened for has changed. Upon receiving the update request, the form
+     * provider automatically updates the form data (if there is any update) through the form framework, with the update
+     * process being unperceivable by the application.
+     *
+     * @param formId Indicates the ID of the form to update.
+     * @param want Indicates a set of parameters to be transparently passed to the form provider.
+     * @return Returns true if the update request is successfully initiated, returns false otherwise.
+     */
+    bool RequestForm(const int64_t formId, const Want &want);
+    /**
+     * @brief Enable form update.
+     *
+     * @param formIds formIds of hostclient.
+     */
+    bool EnableUpdateForm(const std::vector<int64_t> &formIds);
+
+    /**
+     * @brief Disable form update.
+     *
+     * @param formIds formIds of hostclient.
+     */
+    bool DisableUpdateForm(const std::vector<int64_t> &formIds);
+
+    /**
+     * @brief Check form manager service ready.
+     *
+     * @return Returns true if form manager service ready; returns false otherwise.
+     */
+    bool CheckFMSReady();
+
+    /**
+     * @brief Get All FormsInfo.
+     *
+     * @param formInfos Returns the forms' information of all forms provided.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    bool GetAllFormsInfo(std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Get forms info by application name.
+     *
+     * @param bundleName Application name.
+     * @param formInfos Returns the forms' information of the specify application name.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    bool GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Get forms info by application name and module name.
+     *
+     * @param bundleName Application name.
+     * @param moduleName Module name of hap.
+     * @param formInfos Returns the forms' information of the specify application name and module name.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    bool GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Acquire a bundle manager, if it not existed,
+     * @return returns the bundle manager ipc object, or nullptr for failed.
+     */
+    sptr<IBundleMgr> GetBundleMgr();
+
+    /**
+     * @brief check permission of bundle, if it not existed.
+     * @return returns the permission is vaild, or false for failed.
+     */
+    bool CheckPermission();
+
+    /**
+     * @brief Add the bundle manager instance for debug.
+     * @param bundleManager the bundle manager ipc object.
+     */
+    void SetBundleManager(const sptr<IBundleMgr> &bundleManager);
+
+    /**
+     * @brief You can use the IContinuationRegisterManager object to interact with the Device+ control center,
+     * including registering and unregistering the ability to migrate, updating the device connection state, and
+     * showing the list of devices that can be selected for ability migration.
+     *
+     * @return Returns true if the migration request is successful; returns false otherwise.
+     */
+    std::weak_ptr<IContinuationRegisterManager> GetContinuationRegisterManager();
+
+    /**
+     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
+     * ability slices must implement the IAbilityContinuation interface.
+     *
+     * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
+     * is null, this method has the same effect as continueAbility().
+     *
+     */
+    virtual void ContinueAbility(const std::string &deviceId) final;
+
+    /**
+     * @brief Callback function to ask the user whether to start the migration .
+     *
+     * @return If the user allows migration, it returns true; otherwise, it returns false.
+     */
+    virtual bool OnStartContinuation() override;
+
+    /**
+     * @brief Save user data of local Ability generated at runtime.
+     *
+     * @param saveData Indicates the user data to be saved.
+     * @return If the data is saved successfully, it returns true; otherwise, it returns false.
+     */
+    virtual bool OnSaveData(WantParams &saveData) override;
+
+    /**
+     * @brief After creating the Ability on the remote device,
+     *      immediately restore the user data saved during the migration of the Ability on the remote device.
+     * @param restoreData Indicates the user data to be restored.
+     * @return If the data is restored successfully, it returns true; otherwise, it returns false .
+     */
+    virtual bool OnRestoreData(WantParams &restoreData) override;
+
+    /**
+     * @brief This function can be used to implement the processing logic after the migration is completed.
+     *
+     * @param result Migration result code. 0 means the migration was successful, -1 means the migration failed.
+     * @return None.
+     */
+    virtual void OnCompleteContinuation(int result) override;
+
+    /**
+     * @brief Used to notify the local Ability that the remote Ability has been destroyed.
+     *
+     * @return None.
+     */
+    virtual void OnRemoteTerminated() override;
+
+protected:
+    /**
+     * @brief Acquire a form provider remote object.
+     * @return Returns form provider remote object.
+     */
+    sptr<IRemoteObject> GetFormRemoteObject();
+
 private:
+    friend class AbilityImpl;
+    bool VerifySupportForContinuation();
+    void HandleCreateAsContinuation(const Want &want);
+    bool IsFlagExists(int flag, int flagSet);
+    std::shared_ptr<ContinuationHandler> continuationHandler_ = nullptr;
+    std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
+    std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
-    std::shared_ptr<Context> context_;
-    std::shared_ptr<AbilityHandler> handler_;
+    std::shared_ptr<Context> context_ = nullptr;
+    std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::shared_ptr<LifeCycle> lifecycle_ = nullptr;
     std::shared_ptr<AbilityLifecycleExecutor> abilityLifecycleExecutor_ = nullptr;
-    std::shared_ptr<OHOSApplication> application_;
+    std::shared_ptr<OHOSApplication> application_ = nullptr;
     std::vector<std::string> types_;
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
-    std::shared_ptr<AAFwk::Want> setWant_;
+    std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
+    sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
     bool bWindowFocus_ = false;
 
     static const std::string SYSTEM_UI;
     static const std::string STATUS_BAR;
     static const std::string NAVIGATION_BAR;
+    sptr<IRemoteObject> providerRemoteObject_ = nullptr;
+    // Keep consistent with DMS defines. Used to callback to DMS.
+    static const std::string DMS_SESSION_ID;
+
+    // The originating deviceId passed by DMS using intent param.
+    static const std::string DMS_ORIGIN_DEVICE_ID;
+
+    // If session id cannot get from intent, assign it as default.
+    static const int DEFAULT_DMS_SESSION_ID;
+
+    std::vector<int64_t> lostedByReconnectTempForms_;
+    std::map<int64_t, std::shared_ptr<FormCallback>> appCallbacks_;
+    std::map<int64_t, Want> userReqParams_;
+    sptr<IBundleMgr> iBundleMgr_;
+
+    static const int32_t OHOS_FORM_ACQUIRE_FORM = 0;
+    static const int32_t OHOS_FORM_UPDATE_FORM = 1;
+
+    static const int32_t DELETE_FORM = 3;
+    static const int32_t ENABLE_FORM_UPDATE = 5;
+    static const int32_t DISABLE_FORM_UPDATE = 6;
+    static const int32_t RELEASE_FORM = 8;
+    static const int32_t RELEASE_CACHED_FORM = 9;
+    static const int64_t MIN_NEXT_TIME = 5;
+
+private:
+    /**
+     * @brief Delete or release form with formId.
+     *
+     * @param formId Indicates the form's ID.
+     * @param deleteType Indicates the type of delete or release.
+     * @return Returns {@code true} if the form is successfully deleted; returns {@code false} otherwise.
+     */
+    bool DeleteForm(const int64_t formId, const int32_t deleteType);
+
+    /**
+     * @brief Clean form resource with formId.
+     *
+     * @param formId Indicates the form's ID.
+     */
+    void CleanFormResource(const int64_t formId);
+
+    /**
+     * @brief Handle acquire result of the obtained form instance.
+     *
+     * @param want Indicates the detailed information about the form to be obtained, including the bundle name,
+     *        module name, ability name, form name, form id, tempForm flag, form dimension, and form customize data.
+     * @param formJsInfo Indicates the obtained {@code FormJsInfo} instance.
+     * @param callback Indicates the callback to be invoked whenever the {@link FormJsInfo} instance is obtained.
+     */
+    void HandleAcquireResult(
+        const Want &want, const FormJsInfo &formJsInfo, const std::shared_ptr<FormCallback> callback);
+
+    /**
+     * @brief Handle acquire message of the obtained form instance.
+     *
+     * @param msgCode Indicates the code of message type.
+     * @param formJsInfo Indicates the obtained {@code FormJsInfo} instance.
+     */
+    void HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsInfo);
+
+    /**
+     * @brief Notify the forms visibility change event.
+     *
+     * @param formIds Indicates the IDs of the forms to be made visible or invisible.
+     * @param eventType Indicates the form events occurred. FORM_VISIBLE means that the form becomes visible,
+     *                  and FORM_INVISIBLE means that the form becomes invisible.
+     * @return none.
+     */
+    bool NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType);
+
+    /**
+     * @brief Check the param of want.
+     *
+     * @param formId Indicates the form's ID.
+     * @param want Indicates the detailed information about the form to be obtained, including the bundle name,
+     *        module name, ability name, form name, form id, tempForm flag, form dimension, and form customize data.
+     * @return Returns {@code true} if the check result is ok; returns {@code false} ng.
+     */
+    bool CheckWantValid(const int64_t formId, const Want &want);
+
+    /**
+     * @brief Handle enable/disable form update.
+     *
+     * @param formIds Indicates the IDs of the forms to be made visible.
+     * @param updateType Update type.
+     * @return Returns true if the result is ok; returns false otherwise.
+     */
+    bool LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType);
+
+    /**
+     * @brief Reacquire a specified form when the death callback is received.
+     *
+     * @param formId Indicates the form ID.
+     * @param want Indicates the detailed information about the form to be obtained.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    bool ReAcquireForm(const int64_t formId, const Want &want);
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_H

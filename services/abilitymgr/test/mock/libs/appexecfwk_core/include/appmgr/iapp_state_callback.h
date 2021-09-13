@@ -13,30 +13,43 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_APPEXECFWK_IAPP_STATE_CALLBACK_H
-#define OHOS_APPEXECFWK_IAPP_STATE_CALLBACK_H
+#ifndef FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_IAPP_STATE_CALLBACK_H
+#define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_IAPP_STATE_CALLBACK_H
 
-#include <refbase.h>
-#include "app_mgr_constants.h"
-#include "iapp_state_callback.h"
+#include "iremote_broker.h"
 #include "iremote_object.h"
+
+#include "app_mgr_constants.h"
+#include "app_process_data.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 
-class IAppStateCallback : public virtual RefBase {
+class IAppStateCallback : public IRemoteBroker {
 public:
-    /**
-     * MOCApplication state changed callback.
-     */
-    virtual void OnAppStateChanged(const std::string &appName, const ApplicationState state) = 0;
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.AppStateCallback");
 
     /**
-     * mock AbilityMgr's request is done.
+     * Application state changed callback.
+     *
+     * @param appProcessData Process data
+     */
+    virtual void OnAppStateChanged(const AppProcessData &appProcessData) = 0;
+
+    /**
+     * AbilityMgr's request is done.
+     *
+     * @param token Ability token.
+     * @param state Application state.
      */
     virtual void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const AbilityState state) = 0;
+
+    enum class Message {
+        TRANSACT_ON_APP_STATE_CHANGED = 0,
+        TRANSACT_ON_ABILITY_REQUEST_DONE,
+    };
 };
 
 }  // namespace AppExecFwk
 }  // namespace OHOS
-#endif  // OHOS_APPEXECFWK_IAPP_STATE_CALLBACK_H
+#endif  // FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_IAPP_STATE_CALLBACK_H

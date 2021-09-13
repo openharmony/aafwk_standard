@@ -125,7 +125,7 @@ void ConnectionRecord::CompleteConnect(int resultCode)
     if (connCallback_) {
         connCallback_->OnAbilityConnectDone(element, remoteObject, resultCode);
     }
-    HILOG_INFO("%{public}s, result: %{public}d. connectstate:%{public}d.", __func__, resultCode, state_);
+    HILOG_INFO("result: %{public}d. connectstate:%{public}d.", resultCode, state_);
 }
 
 void ConnectionRecord::CompleteDisconnect(int resultCode)
@@ -139,7 +139,7 @@ void ConnectionRecord::CompleteDisconnect(int resultCode)
     if (connCallback_) {
         connCallback_->OnAbilityDisconnectDone(element, resultCode);
     }
-    HILOG_INFO("%{public}s, result: %{public}d. connectstate:%{public}d.", __func__, resultCode, state_);
+    HILOG_INFO("result: %{public}d. connectstate:%{public}d.", resultCode, state_);
 }
 
 void ConnectionRecord::ScheduleDisconnectAbilityDone()

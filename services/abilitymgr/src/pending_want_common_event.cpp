@@ -34,7 +34,7 @@ void PendingWantCommonEvent::SetFinishedReceiver(const sptr<IWantReceiver> &fini
 
 void PendingWantCommonEvent::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {
-    HILOG_INFO("%{public}s:receive common event callback.", __func__);
+    HILOG_INFO("Receive common event callback.");
     if (finishedReceiver_ != nullptr) {
         HILOG_INFO("PendingWantCommonEvent::OnReceiveEvent begin.");
         finishedReceiver_->PerformReceive(data.GetWant(), data.GetCode(), "", wantParams_, false, false, 0);

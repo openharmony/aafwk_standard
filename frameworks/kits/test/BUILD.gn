@@ -38,6 +38,7 @@ config("module_private_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility",
     "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//third_party/jsoncpp/include",
   ]
 }
 
@@ -50,6 +51,7 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS/mock_ability_manager_service.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
@@ -61,11 +63,13 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/services/abilitymgr/src/image_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_description_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_option.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/stack_setting.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "moduletest/cpp/abilitytest/ability_test.cpp",
@@ -90,6 +94,7 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 
@@ -108,6 +113,7 @@ ohos_moduletest("ability_conetxt_test") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS/mock_serviceability_manager_service.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
@@ -143,6 +149,7 @@ ohos_moduletest("ability_conetxt_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 
@@ -163,6 +170,7 @@ ohos_moduletest("data_ability_operation_moduletest") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS/mock_ability_manager_service.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/demo_ability_test.cpp",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility/mock_lifecycle_observer.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_stub.cpp",
@@ -204,7 +212,48 @@ ohos_moduletest("data_ability_operation_moduletest") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_moduletest("data_ability_helper_module_test") {
+  module_out_path = module_output_path
+
+  include_dirs = [
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility",
+    "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoObServer",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
+    "//foundation/aafwk/standard/services/dataobsmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "//foundation/distributedschedule/samgr/services/samgr/native/include",
+    "//foundation/communication/ipc/interfaces/innerkits/libdbinder/include",
+  ]
+
+  sources = [ "//foundation/aafwk/standard/frameworks/kits/test/moduletest/cpp/abilitytest/data_ability_helper_module_test.cpp" ]
+
+  configs = [
+    ":module_private_config",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want_public_config",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:ability_config",
+  ]
+
+  deps = [
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/appexecfwk/standard/kits:appkit_native",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -223,6 +272,7 @@ group("moduletest") {
     deps += [
       ":ability_conetxt_test",
       ":ability_moduletest",
+      ":data_ability_helper_module_test",
       ":data_ability_operation_moduletest",
     ]
   }

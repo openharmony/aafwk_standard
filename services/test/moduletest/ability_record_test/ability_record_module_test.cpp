@@ -179,7 +179,7 @@ HWTEST_F(AbilityRecordModuleTest, Init_001, TestSize.Level2)
 
     for (int i = 0; i < COUNT; ++i) {
         auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-        ASSERT_TRUE(abilityRecord);
+        EXPECT_TRUE(abilityRecord);
         EXPECT_TRUE(abilityRecord->GetToken());
         EXPECT_TRUE(abilityRecord->GetRecordId() >= 0);
         EXPECT_FALSE(abilityRecord->IsLauncherAbility());
@@ -203,7 +203,7 @@ HWTEST_F(AbilityRecordModuleTest, Init_002, TestSize.Level2)
 
     for (int i = 0; i < COUNT; ++i) {
         auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-        ASSERT_TRUE(abilityRecord);
+        EXPECT_TRUE(abilityRecord);
         EXPECT_TRUE(abilityRecord->GetToken());
         EXPECT_TRUE(abilityRecord->IsLauncherAbility());
         EXPECT_EQ(abilityRecord->GetAbilityState(), INITIAL);
@@ -226,10 +226,10 @@ HWTEST_F(AbilityRecordModuleTest, LoadAbility_001, TestSize.Level3)
 
     for (int i = 0; i < COUNT; ++i) {
         auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-        ASSERT_TRUE(abilityRecord);
+        EXPECT_TRUE(abilityRecord);
 
         std::unique_ptr<MockAppMgrClient> mockAppMgrClient(new MockAppMgrClient);
-        ASSERT_TRUE(mockAppMgrClient);
+        EXPECT_TRUE(mockAppMgrClient);
 
         auto mockHandler = [&](const sptr<IRemoteObject> &token,
                                const sptr<IRemoteObject> &preToken,
@@ -273,10 +273,10 @@ HWTEST_F(AbilityRecordModuleTest, TerminateAbility_001, TestSize.Level3)
 
     for (int i = 0; i < COUNT; ++i) {
         auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-        ASSERT_TRUE(abilityRecord);
+        EXPECT_TRUE(abilityRecord);
 
         auto mockAppMgrClient = std::make_unique<MockAppMgrClient>();
-        ASSERT_TRUE(mockAppMgrClient);
+        EXPECT_TRUE(mockAppMgrClient);
 
         EXPECT_CALL(*mockAppMgrClient, TerminateAbility(_)).Times(1).WillOnce(Return(RESULT_OK));
 
@@ -302,10 +302,10 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
 {
     auto &abilityRequest = MakeDefaultAbilityRequest();
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     sptr<MockAbilitySchedulerStub> mockAbilityScheduerStub(new MockAbilitySchedulerStub);
-    ASSERT_TRUE(mockAbilityScheduerStub);
+    EXPECT_TRUE(mockAbilityScheduerStub);
 
     bool testResult = false;
     abilityRecord->SetScheduler(mockAbilityScheduerStub);
@@ -322,7 +322,7 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
             .WillOnce(Invoke(mockActivateHandler));
 
         abilityRecord->Activate();
-        ASSERT_TRUE(testResult);
+        EXPECT_TRUE(testResult);
         EXPECT_EQ(abilityRecord->GetAbilityState(), ACTIVATING);
 
         // Inactivate
@@ -382,7 +382,7 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
         EXPECT_CALL(*mockAbilityScheduerStub, SendResult(_, _, _)).Times(1).WillOnce(Invoke(mockSendResultHandler));
         auto abilityResult =
             std::make_shared<AbilityResult>(abilityRequest.requestCode, testResultCode, abilityRequest.want);
-        ASSERT_TRUE(abilityResult);
+        EXPECT_TRUE(abilityResult);
         abilityRecord->SetResult(abilityResult);
         abilityRecord->SendResult();
         EXPECT_TRUE(testResult);
@@ -403,10 +403,10 @@ HWTEST_F(AbilityRecordModuleTest, MissionRecord_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     auto missionRecord = std::make_shared<MissionRecord>("test");
-    ASSERT_TRUE(missionRecord);
+    EXPECT_TRUE(missionRecord);
 
     abilityRecord->SetMissionRecord(missionRecord);
     EXPECT_EQ(missionRecord, abilityRecord->GetMissionRecord());
@@ -424,13 +424,13 @@ HWTEST_F(AbilityRecordModuleTest, PreNextAbilities_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     auto preAbilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(preAbilityRecord);
+    EXPECT_TRUE(preAbilityRecord);
 
     auto nextAbilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(nextAbilityRecord);
+    EXPECT_TRUE(nextAbilityRecord);
 
     for (int i = 0; i < COUNT; ++i) {
         abilityRecord->SetPreAbilityRecord(preAbilityRecord);
@@ -452,7 +452,7 @@ HWTEST_F(AbilityRecordModuleTest, EventId_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     for (int i = 0; i < COUNT; ++i) {
         abilityRecord->SetEventId(i);
@@ -472,7 +472,7 @@ HWTEST_F(AbilityRecordModuleTest, AbilityState_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     for (int i = 0; i < COUNT; ++i) {
         abilityRecord->SetAbilityState(INITIAL);
@@ -492,7 +492,7 @@ HWTEST_F(AbilityRecordModuleTest, Want_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     auto initWant = abilityRecord->GetWant();
     EXPECT_EQ(initWant, abilityRequest.want);
@@ -520,11 +520,11 @@ HWTEST_F(AbilityRecordModuleTest, ConnectionRecord_001, TestSize.Level2)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     EXPECT_TRUE(abilityRecord->IsConnectListEmpty());
 
     auto connectionRecord = ConnectionRecord::CreateConnectionRecord(nullptr, nullptr, nullptr);
-    ASSERT_TRUE(connectionRecord);
+    EXPECT_TRUE(connectionRecord);
 
     for (int i = 0; i < COUNT; ++i) {
         abilityRecord->AddConnectRecordToList(connectionRecord);
@@ -561,7 +561,7 @@ HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     EXPECT_FALSE(abilityRecord->GetWindowInfo());
 
     for (int i = 0; i < COUNT; ++i) {
@@ -584,7 +584,7 @@ HWTEST_F(AbilityRecordModuleTest, Terminating_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     EXPECT_FALSE(abilityRecord->IsTerminating());
     abilityRecord->SetTerminatingState();
@@ -603,7 +603,7 @@ HWTEST_F(AbilityRecordModuleTest, NewWant_001, TestSize.Level1)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     EXPECT_FALSE(abilityRecord->IsNewWant());
 
     for (int i = 0; i < COUNT; ++i) {
@@ -695,11 +695,12 @@ HWTEST_F(AbilityRecordModuleTest, Dump_001, TestSize.Level2)
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     std::vector<std::string> info;
     abilityRecord->Dump(info);
     EXPECT_FALSE(info.empty());
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

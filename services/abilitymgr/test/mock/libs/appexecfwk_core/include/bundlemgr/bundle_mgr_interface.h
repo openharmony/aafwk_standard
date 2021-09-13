@@ -13,292 +13,213 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_BUNDLEMGR_BUNDLE_MGR_INTERFACE_H
-#define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_BUNDLEMGR_BUNDLE_MGR_INTERFACE_H
+#ifndef FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_BUNDLEMGR_INCLUDE_MOCK_BUNDLE_MGR_INTERFACE_H
+#define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_BUNDLEMGR_INCLUDE_MOCK_BUNDLE_MGR_INTERFACE_H
 
 #include "ability_info.h"
 #include "application_info.h"
+#include "iremote_broker.h"
+#include "iremote_object.h"
+
 #include "bundle_info.h"
 #include "hap_module_info.h"
-#include "permission_def.h"
-#include "bundle_installer_interface.h"
-#include "bundle_status_callback_interface.h"
-#include "clean_cache_callback_interface.h"
 #include "ohos/aafwk/content/want.h"
+#include "permission_def.h"
+#include "module_usage_record.h"
+
+using OHOS::AAFwk::Want;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 enum class DumpFlag {
-    DUMP_BUNDLE_LIST = 1,  // corresponse to option "-bundle-list"
-    DUMP_ALL_BUNDLE_INFO,  // corresponse to option "-bundle"
-    DUMP_BUNDLE_INFO,      // corresponse to option "-bundle [name]"
+    DUMP_BUNDLE_LIST = 1,
+    DUMP_ALL_BUNDLE_INFO,
+    DUMP_BUNDLE_INFO,
+};
+
+enum class InstallFlag {
+    NORMAL = 0,
+    // Allow to replace the existing bundle when the new version isn't lower than the old one.
+    // If the bundle does not exist, just like normal flag.
+    REPLACE_EXISTING = 1,
+};
+
+enum class InstallLocation {
+    INTERNAL_ONLY = 1,
+    PREFER_EXTERNAL = 2,
+};
+
+struct InstallParam : public Parcelable {
+    InstallFlag installFlag = InstallFlag::NORMAL;
+    InstallLocation installLocation = InstallLocation::INTERNAL_ONLY;
+    int userId = -1;
+    // Is keep user data while uninstall.
+    bool isKeepData = false;
+    bool noCheckSignature = false;
+
+    // the parcel object function is not const.
+    bool ReadFromParcel(Parcel &parcel);
+    virtual bool Marshalling(Parcel &parcel) const override;
+    static InstallParam *Unmarshalling(Parcel &parcel);
+};
+class IBundleStatusCallback : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.BundleStatusCallback");
+
+    virtual void OnBundleStateChanged(const uint8_t installType, const int32_t resultCode, const std::string &resultMsg,
+        const std::string &bundleName) = 0;
+
+    enum class Message {
+        ON_BUNDLE_STATE_CHANGED,
+    };
+};
+
+class ICleanCacheCallback : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.CleanCacheCallback");
+
+    virtual void OnCleanCacheFinished(bool succeeded) = 0;
+
+    enum class Message {
+        ON_CLEAN_CACHE_CALLBACK,
+    };
+};
+
+class OnPermissionChangedCallback : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.OnPermissionChangedCallback");
+    /**
+     * @brief Called when an application's permission changed.
+     * @param uid Indicates the uid of the application which permission changed.
+     */
+    virtual void OnChanged(const int32_t uid) = 0;
+
+    enum class Message {
+        ON_CHANGED,
+    };
+};
+
+class IStatusReceiver : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.StatusReceiver");
+
+    virtual void OnStatusNotify(const int progress) = 0;
+    virtual void OnFinished(const int32_t resultCode, const std::string &resultMsg) = 0;
+
+    enum class Message {
+        ON_STATUS_NOTIFY,
+        ON_FINISHED,
+    };
+
+    enum {
+        SUCCESS = 0,
+        ERR_INSTALL_INTERNAL_ERROR,
+        ERR_INSTALL_PARSE_FAILED,
+        ERR_INSTALL_VERSION_DOWNGRADE,
+        ERR_INSTALL_VERIFICATION_FAILED,
+        ERR_INSTALL_NO_SIGNATURE_INFO,
+        ERR_INSTALL_UPDATE_INCOMPATIBLE,
+        ERR_INSTALL_INVALID_BUNDLE_FILE,
+        ERR_INSTALL_MISSING_INSTALLED_BUNDLE,
+        ERR_INSTALL_ALREADY_EXIST,
+        ERR_INSTALL_PARSE_UNEXPECTED,
+        ERR_INSTALL_PARSE_MISSING_BUNDLE,
+        ERR_INSTALL_PARSE_MISSING_ABILITY,
+        ERR_INSTALL_PARSE_NO_PROFILE,
+        ERR_INSTALL_PARSE_BAD_PROFILE,
+        ERR_INSTALL_PARSE_PROFILE_PROP_TYPE_ERROR,
+        ERR_INSTALL_PARSE_PROFILE_MISSING_PROP,
+        ERR_UNINSTALL_INVALID_NAME,
+        ERR_UNKNOW,
+    };
+};
+
+class IBundleInstaller : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.BundleInstaller");
+
+    virtual bool Install(const std::string &bundleFilePath, const InstallParam &installParam,
+        const sptr<IStatusReceiver> &statusReceiver) = 0;
+    virtual bool Uninstall(const std::string &bundleName, const InstallParam &installParam,
+        const sptr<IStatusReceiver> &statusReceiver) = 0;
+
+    enum class Message {
+        INSTALL,
+        UNINSTALL,
+    };
 };
 
 class IBundleMgr : public IRemoteBroker {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.BundleMgr");
-
-    using Want = OHOS::AAFwk::Want;
-    /**
-     * @brief Obtains the ApplicationInfo based on a given bundle name.
-     * @param appName Indicates the application bundle name to be queried.
-     * @param flag Indicates the flag used to specify information contained
-     *             in the ApplicationInfo object that will be returned.
-     * @param userId Indicates the user ID.
-     * @param appInfo Indicates the obtained ApplicationInfo object.
-     * @return Returns true if the application is successfully obtained; returns false otherwise.
-     */
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.BundleMgr");
     virtual bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) = 0;
-    /**
-     * @brief Obtains information about all installed applications of a specified user.
-     * @param flag Indicates the flag used to specify information contained
-     *             in the ApplicationInfo objects that will be returned.
-     * @param userId Indicates the user ID.
-     * @param appInfos Indicates all of the obtained ApplicationInfo objects.
-     * @return Returns true if the application is successfully obtained; returns false otherwise.
-     */
     virtual bool GetApplicationInfos(
         const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos) = 0;
-    /**
-     * @brief Obtains the BundleInfo based on a given bundle name.
-     * @param bundleName Indicates the application bundle name to be queried.
-     * @param flag Indicates the information contained in the BundleInfo object to be returned.
-     * @param bundleInfo Indicates the obtained BundleInfo object.
-     * @return Returns true if the BundleInfo is successfully obtained; returns false otherwise.
-     */
     virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) = 0;
-    /**
-     * @brief Obtains BundleInfo of all bundles available in the system.
-     * @param flag Indicates the flag used to specify information contained in the BundleInfo that will be returned.
-     * @param bundleInfos Indicates all of the obtained BundleInfo objects.
-     * @return Returns true if the BundleInfos is successfully obtained; returns false otherwise.
-     */
     virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) = 0;
-    /**
-     * @brief Obtains the application UID based on the given bundle name and user ID.
-     * @param bundleName Indicates the bundle name of the application.
-     * @param userId Indicates the user ID.
-     * @return Returns the uid if successfully obtained; returns -1 otherwise.
-     */
     virtual int GetUidByBundleName(const std::string &bundleName, const int userId) = 0;
-    /**
-     * @brief Obtains the bundle name of a specified application based on the given UID.
-     * @param uid Indicates the uid.
-     * @param bundleName Indicates the obtained bundle name.
-     * @return Returns true if the bundle name is successfully obtained; returns false otherwise.
-     */
+    virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) = 0;
     virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) = 0;
-    /**
-     * @brief Obtains an array of all group IDs associated with a specified bundle.
-     * @param bundleName Indicates the bundle name.
-     * @param gids Indicates the group IDs associated with the specified bundle.
-     * @return Returns true if the gids is successfully obtained; returns false otherwise.
-     */
+    virtual bool GetBundlesForUid(const int uid, std::vector<std::string> &bundleNames) = 0;
+    virtual bool GetNameForUid(const int uid, std::string &name) = 0;
     virtual bool GetBundleGids(const std::string &bundleName, std::vector<int> &gids) = 0;
-    /**
-     * @brief Obtains the type of a specified application based on the given bundle name.
-     * @param bundleName Indicates the bundle name.
-     * @return Returns "system" if the bundle is a system application; returns "third-party" otherwise.
-     */
     virtual std::string GetAppType(const std::string &bundleName) = 0;
-    /**
-     * @brief Check whether the app is system app by it's UID.
-     * @param uid Indicates the uid.
-     * @return Returns true if the bundle is a system application; returns false otherwise.
-     */
     virtual bool CheckIsSystemAppByUid(const int uid) = 0;
-    /**
-     * @brief Obtains the BundleInfo of application bundles based on the specified metaData.
-     * @param metaData Indicates the metadata to get in the bundle.
-     * @param bundleInfos Indicates all of the obtained BundleInfo objects.
-     * @return Returns true if the BundleInfos is successfully obtained; returns false otherwise.
-     */
     virtual bool GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos) = 0;
-    /**
-     * @brief Query the AbilityInfo by the given Want.
-     * @param want Indicates the information of the ability.
-     * @param abilityInfo Indicates the obtained AbilityInfo object.
-     * @return Returns true if the AbilityInfo is successfully obtained; returns false otherwise.
-     */
     virtual bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) = 0;
-    /**
-     * @brief Query the AbilityInfo by ability.uri in config.json.
-     * @param abilityUri Indicates the uri of the ability.
-     * @param abilityInfo Indicates the obtained AbilityInfo object.
-     * @return Returns true if the AbilityInfo is successfully obtained; returns false otherwise.
-     */
+    virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) = 0;
     virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) = 0;
-    /**
-     * @brief Obtains the BundleInfo of all keep-alive applications in the system.
-     * @param bundleInfos Indicates all of the obtained BundleInfo objects.
-     * @return Returns true if the BundleInfos is successfully obtained; returns false otherwise.
-     */
     virtual bool QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleInfos) = 0;
-    /**
-     * @brief Obtains the label of a specified ability.
-     * @param bundleName Indicates the bundle name.
-     * @param className Indicates the ability class name.
-     * @return Returns the label of the ability if exist; returns empty string otherwise.
-     */
     virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) = 0;
-    /**
-     * @brief Obtains information about an application bundle contained in a ohos Ability Package (HAP).
-     * @param hapFilePath Indicates the absolute file path of the HAP.
-     * @param flag Indicates the information contained in the BundleInfo object to be returned.
-     * @param bundleInfo Indicates the obtained BundleInfo object.
-     * @return Returns true if the BundleInfo is successfully obtained; returns false otherwise.
-     */
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) = 0;
-    /**
-     * @brief Obtain the HAP module info of a specific ability.
-     * @param abilityInfo Indicates the ability.
-     * @param hapModuleInfo Indicates the obtained HapModuleInfo object.
-     * @return Returns true if the HapModuleInfo is successfully obtained; returns false otherwise.
-     */
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) = 0;
-    /**
-     * @brief Obtains the Want for starting the main ability of an application based on the given bundle name.
-     * @param bundleName Indicates the bundle name.
-     * @param want Indicates the obtained launch Want object.
-     * @return Returns true if the launch Want object is successfully obtained; returns false otherwise.
-     */
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) = 0;
-    /**
-     * @brief Checks whether the publickeys of two bundles are the same.
-     * @param firstBundleName Indicates the first bundle name.
-     * @param secondBundleName Indicates the second bundle name.
-     * @return Returns SIGNATURE_UNKNOWN_BUNDLE if at least one of the given bundles is not found;
-     *         returns SIGNATURE_NOT_MATCHED if their publickeys are different;
-     *         returns SIGNATURE_MATCHED if their publickeys are the same.
-     */
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) = 0;
-    /**
-     * @brief Checks whether a specified bundle has been granted a specific permission.
-     * @param bundleName Indicates the name of the bundle to check.
-     * @param permission Indicates the permission to check.
-     * @return Returns 0 if the bundle has the permission; returns -1 otherwise.
-     */
     virtual int CheckPermission(const std::string &bundleName, const std::string &permission) = 0;
-    /**
-     * @brief Obtains detailed information about a specified permission.
-     * @param permissionName Indicates the name of the ohos permission.
-     * @param permissionDef Indicates the object containing detailed information about the given ohos permission.
-     * @return Returns true if the PermissionDef object is successfully obtained; returns false otherwise.
-     */
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) = 0;
-    /**
-     * @brief Obtains all known permission groups in the system.
-     * @param permissionDefs Indicates the list of objects containing the permission group information.
-     * @return Returns true if the PermissionDef objects is successfully obtained; returns false otherwise.
-     */
     virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) = 0;
-    /**
-     * @brief Obtains all known permission groups in the system.
-     * @param permissions Indicates the permission array.
-     * @param appNames Indicates the list of application names that have the specified permissions.
-     * @return Returns true if the application names is successfully obtained; returns false otherwise.
-     */
     virtual bool GetAppsGrantedPermissions(
         const std::vector<std::string> &permissions, std::vector<std::string> &appNames) = 0;
-    /**
-     * @brief Checks whether the system has a specified capability.
-     * @param capName Indicates the name of the system feature to check.
-     * @return Returns true if the given feature specified by name is available in the system; returns false otherwise.
-     */
     virtual bool HasSystemCapability(const std::string &capName) = 0;
-    /**
-     * @brief Obtains the capabilities that are available in the system.
-     * @param systemCaps Indicates the list of capabilities available in the system.
-     * @return Returns true if capabilities in the system are successfully obtained; returns false otherwise.
-     */
     virtual bool GetSystemAvailableCapabilities(std::vector<std::string> &systemCaps) = 0;
-    /**
-     * @brief Checks whether the current device has been started in safe mode.
-     * @return Returns true if the device is in safe mode; returns false otherwise.
-     */
     virtual bool IsSafeMode() = 0;
-    /**
-     * @brief Clears cache data of a specified application.
-     * @param bundleName Indicates the bundle name of the application whose cache data is to be cleared.
-     * @param cleanCacheCallback Indicates the callback to be invoked for returning the operation result.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) = 0;
-    /**
-     * @brief Clears application running data of a specified application.
-     * @param bundleName Indicates the bundle name of the application whose data is to be cleared.
-     * @return Returns true if the data cleared successfully; returns false otherwise.
-     */
     virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
-    /**
-     * @brief Register the specific bundle status callback.
-     * @param bundleStatusCallback Indicates the callback to be invoked for returning the bundle status changed result.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
-    /**
-     * @brief Clear the specific bundle status callback.
-     * @param bundleStatusCallback Indicates the callback to be cleared.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
-    /**
-     * @brief Unregister all the callbacks of status changed.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
     virtual bool UnregisterBundleStatusCallback() = 0;
-    /**
-     * @brief Dump the bundle informations with specific flags.
-     * @param flag Indicates the information contained in the dump result.
-     * @param bundleName Indicates the bundle name if needed.
-     * @param result Indicates the dump information result.
-     * @return Returns true if the dump result is successfully obtained; returns false otherwise.
-     */
     virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) = 0;
-    /**
-     * @brief Checks whether a specified application is enabled.
-     * @param bundleName Indicates the bundle name of the application.
-     * @return Returns true if the application is enabled; returns false otherwise.
-     */
     virtual bool IsApplicationEnabled(const std::string &bundleName) = 0;
-    /**
-     * @brief Sets whether to enable a specified application.
-     * @param bundleName Indicates the bundle name of the application.
-     * @param isEnable Specifies whether to enable the application.
-     *                 The value true means to enable it, and the value false means to disable it.
-     * @return Returns true if the application is enabled; returns false otherwise.
-     */
     virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) = 0;
-    /**
-     * @brief Obtains the interface used to install and uninstall bundles.
-     * @return Returns a pointer to IBundleInstaller class if exist; returns nullptr otherwise.
-     */
-    virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
-
-    /**
-     * @brief Requests a certain permission from user.
-     * @param bundleName Indicates the name of the bundle to request permission.
-     * @param permission Indicates the permission to request permission.
-     * @param userId Indicates the user id.
-     * @return Returns true if the permission request successfully; returns false otherwise.
-     */
+    virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) = 0;
+    virtual bool SetAbilityEnabled(const AbilityInfo &abilityInfo, bool isEnabled) = 0;
+    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) = 0;
+    virtual bool CanRequestPermission(
+        const std::string &bundleName, const std::string &permissionName, const int userId) = 0;
     virtual bool RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId)
-    {
-        return true;
-    }
-
+        const std::string &bundleName, const std::string &permission, const int userId) = 0;
+    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual bool RegisterPermissionsChanged(
+        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
+    virtual bool GetModuleUsageRecords(
+        const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
     enum class Message {
         GET_APPLICATION_INFO,
         GET_APPLICATION_INFOS,
         GET_BUNDLE_INFO,
         GET_BUNDLE_INFOS,
         GET_UID_BY_BUNDLE_NAME,
+        GET_APPID_BY_BUNDLE_NAME,
         GET_BUNDLE_NAME_FOR_UID,
+        GET_BUNDLES_FOR_UID,
+        GET_NAME_FOR_UID,
         GET_BUNDLE_GIDS,
         GET_APP_TYPE,
         CHECK_IS_SYSTEM_APP_BY_UID,
@@ -326,10 +247,17 @@ public:
         DUMP_INFOS,
         IS_APPLICATION_ENABLED,
         SET_APPLICATION_ENABLED,
+        IS_ABILITY_ENABLED,
+        SET_ABILITY_ENABLED,
+        GET_ABILITY_ICON,
+        CAN_REQUEST_PERMISSION,
+        REQUEST_PERMISSION_FROM_USER,
+        REGISTER_ALL_PERMISSIONS_CHANGED,
+        REGISTER_PERMISSIONS_CHANGED,
+        UNREGISTER_PERMISSIONS_CHANGED,
         GET_BUNDLE_INSTALLER,
     };
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
-#endif  // FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_BUNDLEMGR_BUNDLE_MGR_INTERFACE_H
+#endif  // FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_BUNDLEMGR_INCLUDE_MOCK_BUNDLE_MGR_INTERFACE_H

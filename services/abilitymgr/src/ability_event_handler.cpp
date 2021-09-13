@@ -25,13 +25,13 @@ AbilityEventHandler::AbilityEventHandler(
     const std::shared_ptr<AppExecFwk::EventRunner> &runner, const std::weak_ptr<AbilityManagerService> &server)
     : AppExecFwk::EventHandler(runner), server_(server)
 {
-    HILOG_INFO("AbilityEventHandler::AbilityEventHandler::instance created.");
+    HILOG_INFO("Constructors.");
 }
 
 void AbilityEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
     CHECK_POINTER(event);
-    HILOG_DEBUG("AMSEventHandler::ProcessEvent::inner event id obtained: %u.", event->GetInnerEventId());
+    HILOG_DEBUG("Event id obtained: %{public}u.", event->GetInnerEventId());
     switch (event->GetInnerEventId()) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG: {
             ProcessLoadTimeOut(event->GetParam());
@@ -42,13 +42,13 @@ void AbilityEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
             break;
         }
         case AbilityManagerService::INACTIVE_TIMEOUT_MSG: {
-            HILOG_INFO("inactive timeout.");
+            HILOG_INFO("Inactive timeout.");
             // inactivate pre ability immediately in case blocking next ability start
             ProcessInactiveTimeOut(event->GetParam());
             break;
         }
         default: {
-            HILOG_WARN("unsupported timeout message.");
+            HILOG_WARN("Unsupported timeout message.");
             break;
         }
     }
@@ -56,7 +56,7 @@ void AbilityEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
 
 void AbilityEventHandler::ProcessLoadTimeOut(int64_t eventId)
 {
-    HILOG_INFO("attach timeout.");
+    HILOG_INFO("Attach timeout.");
     auto server = server_.lock();
     CHECK_POINTER(server);
     server->HandleLoadTimeOut(eventId);
@@ -64,14 +64,14 @@ void AbilityEventHandler::ProcessLoadTimeOut(int64_t eventId)
 
 void AbilityEventHandler::ProcessActiveTimeOut(int64_t eventId)
 {
-    HILOG_INFO("active timeout.");
+    HILOG_INFO("Active timeout.");
     auto server = server_.lock();
     CHECK_POINTER(server);
     server->HandleActiveTimeOut(eventId);
 }
 void AbilityEventHandler::ProcessInactiveTimeOut(int64_t eventId)
 {
-    HILOG_INFO("inactive timeout.");
+    HILOG_INFO("Inactive timeout.");
     auto server = server_.lock();
     CHECK_POINTER(server);
     server->HandleInactiveTimeOut(eventId);

@@ -27,6 +27,7 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/ability_token_stub.cpp",
   "${services_path}/abilitymgr/src/app_scheduler.cpp",
   "${services_path}/abilitymgr/src/connection_record.cpp",
+  "${services_path}/abilitymgr/src/data_ability_caller_recipient.cpp",
   "${services_path}/abilitymgr/src/data_ability_manager.cpp",
   "${services_path}/abilitymgr/src/data_ability_record.cpp",
   "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
@@ -56,4 +57,10 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/pending_want_manager.cpp",
   "${services_path}/abilitymgr/src/pending_want_common_event.cpp",
   "${services_path}/abilitymgr/src/lock_mission_container.cpp",
+  "${services_path}/abilitymgr/src/ability_start_setting.cpp",
+  "${services_path}/abilitymgr/src/mission_option.cpp",
+  "${services_path}/abilitymgr/src/stack_setting.cpp",
+  "${services_path}/abilitymgr/src/aafwk_dummy_configuration.cpp",
+  "${services_path}/abilitymgr/src/configuration_holder.cpp",
+  "${services_path}/abilitymgr/src/resume_mission_container.cpp",
 ]

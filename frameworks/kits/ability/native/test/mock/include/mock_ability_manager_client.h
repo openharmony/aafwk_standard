@@ -37,6 +37,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+using DummyConfiguration = AAFwk::DummyConfiguration;
 class MockAbility : public AbilityContext {
 public:
     MockAbility() = default;
@@ -61,6 +62,9 @@ public:
     {}
 
     void ScheduleRestoreAbilityState(const PacMap &inState)
+    {}
+
+    void ScheduleUpdateConfiguration(const DummyConfiguration &config)
     {}
 
     void ScheduleDisconnectAbility(const Want &want)
@@ -133,6 +137,24 @@ public:
     {
         return "Type1";
     }
+
+    Uri NormalizeUri(const Uri &uri)
+    {
+        Uri urireturn("dataability:///test.aaa");
+        return urireturn;
+    }
+
+    Uri DenormalizeUri(const Uri &uri)
+    {
+        Uri urireturn("dataability:///test.aaa");
+        return urireturn;
+    }
+
+    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
+    {}
+
+    void NotifyTopActiveAbilityChanged(bool flag)
+    {}
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

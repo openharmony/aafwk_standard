@@ -32,6 +32,12 @@ bool LifeCycleStateInfo::ReadFromParcel(Parcel &parcel)
         return false;
     }
     caller = *callerInfo;
+    AbilityStartSetting *pSetting = parcel.ReadParcelable<AbilityStartSetting>();
+    if (pSetting != nullptr) {
+        setting = std::shared_ptr<AbilityStartSetting>(pSetting);
+    } else {
+        setting = nullptr;
+    }
     return true;
 }
 
@@ -68,7 +74,11 @@ bool LifeCycleStateInfo::Marshalling(Parcel &parcel) const
         return false;
     }
     // write caller
-    if (parcel.WriteParcelable(&caller)) {
+    if (!parcel.WriteParcelable(&caller)) {
+        return false;
+    }
+    // write setting
+    if (!parcel.WriteParcelable(setting.get())) {
         return false;
     }
     return true;
