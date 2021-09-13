@@ -115,13 +115,13 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Flow_001, TestSize.Lev
 
     std::thread(func).detach();
     EXPECT_CALL(*abilitySchedulerMock_, ScheduleAbilityTransaction(_, _)).Times(1);
-    EXPECT_NE(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken()), nullptr);
+    EXPECT_NE(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken(), false), nullptr);
 
     sptr<IRemoteObject> token =
         (reinterpret_cast<MockAppMgrClient *>(DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_.get()))
             ->GetToken();
     std::shared_ptr<AbilityRecord> abilityRecord = Token::GetAbilityRecordByToken(token);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
 
     // existing ability record
     EXPECT_NE(dataAbilityManager->GetAbilityRecordByToken(token), nullptr);
@@ -153,7 +153,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_001, TestSize.
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
 
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, nullptr), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, nullptr, false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_001 end.");
 }
@@ -174,7 +174,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_002, TestSize.
 
     // page ability type
     abilityRequest_.abilityInfo.type = AbilityType::PAGE;
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken()), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken(), false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_002 end.");
 }
@@ -195,7 +195,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_003, TestSize.
 
     // appinfo bundle name empty
     abilityRequest_.appInfo.bundleName = "";
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken()), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken(), false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_003 end.");
 }
@@ -216,7 +216,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_004, TestSize.
 
     // ability name empty
     abilityRequest_.abilityInfo.name = "";
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken()), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken(), false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_004 end.");
 }
@@ -246,7 +246,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_005, TestSize.
     std::shared_ptr abilityRecordClient = std::make_shared<AbilityRecord>(want, abilityInfo, applicationInfo);
     abilityRecordClient->Init();
 
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient->GetToken()), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient->GetToken(), false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_005 end.");
 }
@@ -265,7 +265,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Acquire_006, TestSize.
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
 
-    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken()), nullptr);
+    EXPECT_EQ(dataAbilityManager->Acquire(abilityRequest_, true, abilityRecordClient_->GetToken(), false), nullptr);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Acquire_006 end.");
 }
@@ -284,7 +284,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_001, TestSize.
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
 
-    EXPECT_EQ(dataAbilityManager->Release(abilitySchedulerMock_, nullptr), ERR_NULL_OBJECT);
+    EXPECT_EQ(dataAbilityManager->Release(abilitySchedulerMock_, nullptr, false), ERR_NULL_OBJECT);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Release_001 end.");
 }
@@ -303,7 +303,7 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_002, TestSize.
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
 
-    EXPECT_EQ(dataAbilityManager->Release(nullptr, abilityRecordClient_->GetToken()), ERR_NULL_OBJECT);
+    EXPECT_EQ(dataAbilityManager->Release(nullptr, abilityRecordClient_->GetToken(), false), ERR_NULL_OBJECT);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Release_002 end.");
 }
@@ -322,7 +322,8 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_Release_003, TestSize.
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
 
-    EXPECT_EQ(dataAbilityManager->Release(abilitySchedulerMock_, abilityRecordClient_->GetToken()), ERR_UNKNOWN_OBJECT);
+    EXPECT_EQ(dataAbilityManager->Release(abilitySchedulerMock_, abilityRecordClient_->GetToken(), false),
+        ERR_UNKNOWN_OBJECT);
 
     HILOG_INFO("AaFwk_DataAbilityManager_Release_003 end.");
 }

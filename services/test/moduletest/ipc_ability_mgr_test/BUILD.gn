@@ -18,7 +18,7 @@ module_output_path = "aafwk_standard/mstabilitymgrservice"
 
 ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
   module_out_path = module_output_path
-
+  include_dirs = [ "//third_party/jsoncpp/include" ]
   sources = [ "ipc_ability_mgr_module_test.cpp" ]
 
   configs = [
@@ -38,6 +38,7 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 

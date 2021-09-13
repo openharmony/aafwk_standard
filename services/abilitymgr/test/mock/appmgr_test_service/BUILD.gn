@@ -15,7 +15,16 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 config("appmgr_test_service_config") {
-  include_dirs = [ "include/" ]
+  include_dirs = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/appmgr_test_service/include/",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/aafwk/standard/services/common/include",
+    "//base/notification/ces_standard/frameworks/core/include",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include",
+  ]
 }
 
 ohos_source_set("appmgr_test_service") {
@@ -23,15 +32,12 @@ ohos_source_set("appmgr_test_service") {
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include",
+    "//third_party/jsoncpp/include",
   ]
 
   sources = [ "src/appmgr_test_service.cpp" ]
 
-  configs = [
-    ":appmgr_test_service_config",
-    "${services_path}/abilitymgr:abilityms_config",
-    "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_core_mock_config",
-  ]
+  configs = [ ":appmgr_test_service_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -40,10 +46,8 @@ ohos_source_set("appmgr_test_service") {
     "${innerkits_path}/want:want",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
-
-    # "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    # "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
   ]
 
   external_deps = [

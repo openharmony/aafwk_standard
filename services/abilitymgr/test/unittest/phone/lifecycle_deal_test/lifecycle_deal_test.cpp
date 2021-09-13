@@ -14,6 +14,7 @@
  */
 
 #include <gtest/gtest.h>
+#include "app_process_data.h"
 #include "lifecycle_deal.h"
 #include "ability_scheduler_mock.h"
 

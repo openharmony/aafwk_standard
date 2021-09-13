@@ -618,23 +618,18 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_Marshalling_0100, 
 HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_Unmarshalling_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_Unmarshalling_0100 start";
-    Parcel in;
-    for (int i = 0; i < 6; i++) {
-        in.WriteInt32(0);
-    }
-    in.WriteInt32(1);
-    in.WriteInt32(3 * 1024 * 1024 + 1);
-    in.WriteBool(false);
 
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation = DataAbilityOperation::NewAssertBuilder(uri)
                                                                      ->WithInterruptionAllowed(true)
                                                                      ->WithPredicatesBackReference(0, 0)
                                                                      ->Build();
-    DataAbilityOperation::Unmarshalling(in);
+    Parcel in;                                                                 
+    dataAbilityOperation->Marshalling(in);
+    DataAbilityOperation *pDataAbilityOperation = DataAbilityOperation::Unmarshalling(in);
     std::map<int, int> references = dataAbilityOperation->GetDataAbilityPredicatesBackReferences();
     EXPECT_TRUE(references.size() == 1);
-
+    delete pDataAbilityOperation;
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_Unmarshalling_0100 end";
 }
 /**

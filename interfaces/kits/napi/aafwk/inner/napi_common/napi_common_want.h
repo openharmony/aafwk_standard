@@ -25,6 +25,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+EXTERN_C_START
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName);
 bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName);
@@ -35,6 +36,7 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
 napi_value WrapWant(napi_env env, const Want &want);
 bool UnwrapWant(napi_env env, napi_value param, Want &want);
 
+EXTERN_C_END
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // OHOS_APPEXECFWK_NAPI_COMMON_WANT_H

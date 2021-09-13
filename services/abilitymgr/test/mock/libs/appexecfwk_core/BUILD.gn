@@ -16,22 +16,26 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("appexecfwk_core_mock_config") {
   include_dirs = [
-    "include/",
-    "include/appmgr",
-    "include/bundlemgr",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/include/",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/include/appmgr",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/include/bundlemgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
+    "//base/telephony/core_service/sim/include/",
+    "//base/notification/ces_standard/frameworks/core/include/",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include/",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include/",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
   ]
 }
 
 ohos_source_set("appexecfwk_appmgr_mock") {
-  sources = [ "src/appmgr/mock_app_manager.cpp" ]
+  # sources = [ "src/appmgr/mock_app_manager.cpp" ]
 
-  configs = [
-    ":appexecfwk_core_mock_config",
-    "${services_path}/abilitymgr:abilityms_config",
-    "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock_config",
-    "${services_path}/common:common_config",
-  ]
+  configs = [ ":appexecfwk_core_mock_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -56,8 +60,6 @@ ohos_source_set("appexecfwk_bundlemgr_mock") {
   testonly = true
   configs = [
     ":appexecfwk_core_mock_config",
-    "${services_path}/abilitymgr:abilityms_config",
-    "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock_config",
     "${services_path}/common:common_config",
   ]
   cflags = []

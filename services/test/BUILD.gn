@@ -21,7 +21,10 @@ config("aafwk_module_test_config") {
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
 
-  include_dirs = [ "${services_path}/test/mock/include" ]
+  include_dirs = [
+    "${services_path}/test/mock/include",
+    "//third_party/jsoncpp/include",
+  ]
 }
 
 group("moduletest") {
@@ -36,5 +39,6 @@ group("moduletest") {
     "moduletest/ipc_ability_mgr_test:moduletest",
     "moduletest/module_test_dump_util:module_test_dump_util",
     "moduletest/panding_want_manager_test:moduletest",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 }

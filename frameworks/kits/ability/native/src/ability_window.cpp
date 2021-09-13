@@ -33,7 +33,7 @@ AbilityWindow::~AbilityWindow()
  */
 void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_ptr<Ability> ability)
 {
-    APP_LOGI("AbilityWindow::Init called.");
+    APP_LOGI("%{public}s begin.", __func__);
     handler_ = handler;
     ability_ = std::weak_ptr<IAbilityEvent>(ability);
 
@@ -48,6 +48,7 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_p
         APP_LOGE("AbilityWindow::Init WindowManager::Init() return %d", wret);
         return;
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -57,7 +58,7 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_p
  */
 bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
 {
-    APP_LOGI("AbilityWindow::SetWindowConfig called.");
+    APP_LOGI("%{public}s begin.", __func__);
 
     APP_LOGI("config width = %{public}d, height = %{public}d.", config->GetWidth(), config->GetHeight());
     APP_LOGI("config pos_x = %{public}d, pos_y = %{public}d, type = %{public}d.",
@@ -76,6 +77,7 @@ bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
         APP_LOGE("AbilityWindow::SetWindowConfig WindowManager::CreateWindow() return %d", retvalCreate);
         return false;
     }
+
     if (windowNew_ == nullptr) {
         APP_LOGE("AbilityWindow::SetWindowConfig the window is nullptr.");
         return false;
@@ -91,7 +93,7 @@ bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
     }
 
     isWindowAttached = true;
-    APP_LOGI("AbilityWindow::SetWindowConfig end.");
+    APP_LOGI("%{public}s end.", __func__);
 
     return true;
 }
@@ -106,7 +108,8 @@ bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
  */
 bool AbilityWindow::OnKeyEvent(KeyEvent event)
 {
-    APP_LOGI("AbilityWindow::OnKeyEvent called.");
+    APP_LOGI("%{public}s begin.", __func__);
+
     bool ret = false;
     std::shared_ptr<IAbilityEvent> ability = nullptr;
     ability = ability_.lock();
@@ -115,7 +118,11 @@ bool AbilityWindow::OnKeyEvent(KeyEvent event)
         return ret;
     }
     switch (event.GetKeyCode()) {
+#ifdef MMI_COMPILE
+        case OHOS::KeyEventEnum::KEY_BACK:
+#else
         case KeyEvent::CODE_BACK:
+#endif
             APP_LOGI("AbilityWindow::OnKeyEvent Back key pressed.");
             if (!event.IsKeyDown()) {
                 ret = OnBackPressed(ability);
@@ -125,6 +132,7 @@ bool AbilityWindow::OnKeyEvent(KeyEvent event)
             APP_LOGI("AbilityWindow::OnKeyEvent the key event is %{public}d.", event.GetKeyCode());
             break;
     }
+    APP_LOGI("%{public}s end.", __func__);
     return ret;
 }
 
@@ -138,13 +146,14 @@ bool AbilityWindow::OnKeyEvent(KeyEvent event)
  */
 bool AbilityWindow::OnBackPressed(std::shared_ptr<IAbilityEvent> &ability)
 {
-    APP_LOGI("AbilityWindow::OnBackPressed called.");
+    APP_LOGI("%{public}s begin.", __func__);
     if (handler_ == nullptr) {
         APP_LOGE("AbilityWindow::OnBackPressed handler_ is nullptr.");
         return false;
     }
     auto task = [abilityRun = ability]() { abilityRun->OnBackPressed(); };
     handler_->PostTask(task);
+    APP_LOGI("%{public}s end.", __func__);
     return true;
 }
 
@@ -154,7 +163,7 @@ bool AbilityWindow::OnBackPressed(std::shared_ptr<IAbilityEvent> &ability)
  */
 void AbilityWindow::OnPostAbilityStart()
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityStart called.");
+    APP_LOGI("%{public}s begin.", __func__);
     if (!isWindowAttached) {
         APP_LOGE("AbilityWindow::OnPostAbilityStart window not attached.");
         return;
@@ -166,7 +175,7 @@ void AbilityWindow::OnPostAbilityStart()
         APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
     }
 
-    APP_LOGI("AbilityWindow::OnPostAbilityStart end.");
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -185,6 +194,7 @@ void AbilityWindow::OnPostAbilityActive()
         APP_LOGI("%{public}s begin windowNew_->SwitchTop.", __func__);
         windowNew_->SwitchTop();
         APP_LOGI("%{public}s end windowNew_->SwitchTop.", __func__);
+
         APP_LOGI("%{public}s begin windowNew_->Show.", __func__);
         windowNew_->Show();
         APP_LOGI("%{public}s end windowNew_->Show.", __func__);

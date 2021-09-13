@@ -158,7 +158,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, wantSenderInfo, nullptr), nullptr);
+    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -173,7 +173,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0200, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, wantSenderInfo, nullptr), nullptr);
+    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -188,7 +188,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0300, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, wantSenderInfo, nullptr), nullptr);
+    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -203,7 +203,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0400, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, wantSenderInfo, nullptr), nullptr);
+    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -217,7 +217,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0500, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, static_cast<int32_t>(Flags::NO_BUILD_FLAG), 0);
-    EXPECT_TRUE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_TRUE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_EQ(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -234,7 +234,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0600, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -251,7 +251,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0700, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -273,7 +273,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0800, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -295,7 +295,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0900, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -327,7 +327,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_1000, TestSize.Level1)
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
     wantSenderInfo.allWants.clear();
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -492,7 +492,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_1500, TestSize.Level1)
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
     wantSenderInfo.allWants.clear();
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -526,7 +526,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_1700, TestSize.Level1)
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
     wantSenderInfo.allWants.clear();
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
@@ -557,7 +557,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_1900, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -588,7 +588,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2100, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -619,7 +619,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2300, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -650,7 +650,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2500, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -681,7 +681,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2700, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr);
@@ -701,7 +701,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2800, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
@@ -723,7 +723,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_2900, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
@@ -746,7 +746,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3000, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
@@ -770,14 +770,14 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3100, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
         pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)->AsObject());
     EXPECT_NE(pendingRecord, nullptr);
     pendingManager_->RegisterCancelListener(pendingRecord, cance);
-    pendingManager_->CancelWantSender(0, 0, pendingRecord);
+    pendingManager_->CancelWantSender(0, 0, false, pendingRecord);
     EXPECT_TRUE(CancelReceiver::sendCount == 100);
     EXPECT_TRUE((int)pendingManager_->wantRecords_.size() == 0);
 }
@@ -793,7 +793,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3200, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
@@ -816,7 +816,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3300, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(
@@ -837,7 +837,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3400, TestSize.Level1)
     ElementName element("device", "bundleName", "abilityName");
     want.SetElement(element);
     WantSenderInfo wantSenderInfo = MakeWantSenderInfo(want, 0, 0);
-    EXPECT_FALSE(((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
     auto pendingRecord = iface_cast<PendingWantRecord>(

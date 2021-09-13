@@ -26,10 +26,12 @@ namespace AAFwk {
 
 class AppStateCallbackMock : public AppStateCallback {
 public:
+    AppStateCallbackMock()
+    {}
     virtual ~AppStateCallbackMock()
     {}
-
     MOCK_METHOD2(OnAbilityRequestDone, void(const sptr<IRemoteObject> &, const int32_t));
+    MOCK_METHOD1(OnAppStateChanged, void(const AppInfo &info));
 };
 
 }  // namespace AAFwk

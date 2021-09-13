@@ -124,7 +124,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_002, TestSize.Level1)
     std::string bundleName = "com.ix.aafwk.moduletest";
     auto abilityRequest = CreateAbilityRequest(abilityName, bundleName);
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    ASSERT_TRUE(abilityRecord);
+    EXPECT_TRUE(abilityRecord);
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);

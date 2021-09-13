@@ -12,12 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AsyncCallback } from './.basic';
-import { ApplicationInfo } from './bundle/applicationinfo';
-import { BundleInfo } from './bundle/bundleinfo';
-import { AbilityInfo } from './bundle/abilityinfo';
+import { AsyncCallback } from './basic';
+import { ApplicationInfo } from './bundle/applicationInfo';
+import { BundleInfo } from './bundle/bundleInfo';
+import { AbilityInfo } from './bundle/abilityInfo';
 import { Want } from './ability/want';
-import { BundleInstaller } from './bundle/bundleinstaller';
+import { BundleInstaller } from './bundle/bundleInstaller';
+import { ElementName } from './bundle/elementName';
+import { ShortcutInfo } from './bundle/shortcutInfo';
+import { ModuleUsageRecord } from './bundle/moduleUsageRecord';
 import permission from './@ohos.security.permission';
 
 /**
@@ -28,20 +31,7 @@ import permission from './@ohos.security.permission';
  * @permission NA
  * @devices phone, tablet
  */
-export declare interface BundleFlag {
-  getBundleDefault: boolean;
-  getBundleWithAbilities: boolean;
-  getAbilityInfoWithPermission: boolean;
-  getAbilityInfoWithApplication: boolean;
-  getApplicationInfoWithPermission: boolean;
-  getBundleWithRequestedPermission: boolean;
-  getAllApplicationInfo: boolean;
-}
-
-export declare interface QueryParameter {
-  flags?: number;
-  userId?: string;
-}
+type PermissionEvent = 'permissionChange' | 'anyPermissionChange';
 
 /**
  * bundle.
@@ -52,49 +42,16 @@ export declare interface QueryParameter {
  * @permission N/A
  */
 declare namespace bundle {
-  export enum ModuleUpdateFlag {
-    FLAG_MODULE_UPGRADE_CHECK = 0,
-    FLAG_MODULE_UPGRADE_INSTALL = 1,
-    FLAG_MODULE_UPGRADE_INSTALL_WITH_CONFIG_WINDOWS = 2,
-  }
 
-  export enum FormType {
-    JAVA = 0,
-    JS = 1,
-  }
-
-  export enum ColorMode {
-    AUTO_MODE = -1,
-    DARK_MODE = 0,
-    LIGHT_MODE = 1,
+  enum BundleFlag {
+    GET_BUNDLE_DEFAULT = 0x00000000,
+    GET_BUNDLE_WITH_ABILITIES = 0x00000001,
+    GET_APPLICATION_INFO_WITH_PERMISSION = 0x00000008,
   }
 
   export enum GrantStatus {
     PERMISSION_DENIED = -1,
     PERMISSION_GRANTED = 0,
-  }
-
-  export enum ModuleRemoveFlag {
-    FLAG_MODULE_NOT_USED_BY_FORM = 0,
-    FLAG_MODULE_USED_BY_FORM = 1,
-    FLAG_MODULE_NOT_USED_BY_SHORTCUT = 2,
-    FLAG_MODULE_USED_BY_SHORTCUT = 3,
-  }
-
-  export enum SignatureCompareResult {
-    SIGNATURE_MATCHED = 0,
-    SIGNATURE_NOT_MATCHED = 1,
-    SIGNATURE_UNKNOWN_BUNDLE = 2,
-  }
-
-  export enum ShortcutExistence {
-    SHORTCUT_EXISTENCE_EXISTS = 0,
-    SHORTCUT_EXISTENCE_NOT_EXISTS = 1,
-    SHORTCUT_EXISTENCE_UNKNOW = 2,
-  }
-
-  export enum QueryShortCutFlag {
-    QUERY_SHORTCUT_HOME = 0,
   }
 
   /**
@@ -149,8 +106,8 @@ declare namespace bundle {
    * @devices phone, tablet
    */
   export enum LaunchMode {
-      SINGLETON = 0,
-      STANDARD = 1,
+    SINGLETON = 0,
+    STANDARD = 1,
   }
 
   export enum InstallErrorCode{
@@ -180,18 +137,7 @@ declare namespace bundle {
    * @param bundleName Indicates the bundle name.
    * @param callback Specified callback method.
    */
-  function getBundleInfo(bundleName: string, flags: number, callback: AsyncCallback<BundleInfo>) : void;
-
-  /**
-   * Obtains BundleInfo based on a given bundle name.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the bundle name.
-   * @return BundleInfo.
-   */
-  function getBundleInfo(bundleName: string, flags: number) : Promise<BundleInfo>;
+   function getBundleInfo(bundleName: string, bundelFlags: number, callback: AsyncCallback<BundleInfo>): void;
 
   /**
    * Obtains Bundle installer to install or uninstall hap.
@@ -202,15 +148,6 @@ declare namespace bundle {
    * @return BundleInstaller.
    */
   function getBundleInstaller(callback: AsyncCallback<BundleInstaller>): void;
-
-  /**
-   * Obtains Bundle installer to install or uninstall hap.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @return BundleInstaller.
-   */
   function getBundleInstaller(): Promise<BundleInstaller>;
 
   /**
@@ -222,40 +159,11 @@ declare namespace bundle {
    * @param bundleName Indicates the application name.
    * @param callback Specified callback method.
    */
-  function getApplicationInfo(bundleName: string, flags: number, userId: number, callback: AsyncCallback<ApplicationInfo>) : void;
+  function getApplicationInfo(bundleName: string, bundelFlags: number, userId: number, callback: AsyncCallback<ApplicationInfo>) : void;
+  function getApplicationInfo(bundleName: string, bundelFlags: number, userId?: number) : Promise<ApplicationInfo>;
 
-  /**
-   * Obtains the ApplicationInfo based on a given application name.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the application name.
-   * @return ApplicationInfo.
-   */
-  function getApplicationInfo(bundleName: string, flags: number, userId: number) : Promise<ApplicationInfo>;
-
-  /**
-   * Query the AbilityInfo by the given Want.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param want Indicates the Want for the ability to be queried.
-   * @param callback Specified callback method.
-   */
-  function queryAbilityByWant(want: Want, params: QueryParameter, callback: AsyncCallback<Array<AbilityInfo>>): void;
-
-  /**
-   * Query the AbilityInfo by the given Want.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param want Indicates the Want for the ability to be queried.
-   * @return AbilityInfo.
-   */
-  function queryAbilityByWant(want: Want, params: QueryParameter): Promise<AbilityInfo>;
+  function checkPermission(bundleName: string, permission: string, callback: AsyncCallback<GrantStatus>): void;
+  function checkPermission(bundleName: string, permission: string): Promise<GrantStatus>;
 
   /**
    * Obtains BundleInfo of all bundles available in the system.
@@ -265,17 +173,16 @@ declare namespace bundle {
    * @SysCap BMS
    * @param callback Specified callback method.
    */
-  function getBundleInfos(flags: BundleFlag, callback: AsyncCallback<Array<BundleInfo>>) : void;
+  function getBundleInfos(bundelFlag: BundleFlag, callback: AsyncCallback<Array<BundleInfo>>) : void;
+  function getBundleInfos(bundelFlag: BundleFlag) : Promise<Array<BundleInfo>>;
 
-  /**
-   * Obtains BundleInfo of all bundles available in the system.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @return Array of BundleInfo.
-   */
-  function getBundleInfos(flags: BundleFlag) : Promise<Array<BundleInfo>>;
+  // void registerAllPermissionsChanged(IRemoteObject callback) throws RemoteException;
+  function on(type: PermissionEvent, callback: AsyncCallback<number>): void;
+  function on(type: PermissionEvent, uids: Array<number>, callback: AsyncCallback<number>): void;
+
+  // void unregisterPermissionsChanged(IRemoteObject callback) throws RemoteException;
+  function off(type: PermissionEvent, callback: AsyncCallback<number>):void;
+  function off(type: PermissionEvent, uids: Array<number>, callback: AsyncCallback<number>): void;
 
   /**
    * Obtains information about all installed applications.
@@ -285,18 +192,9 @@ declare namespace bundle {
    * @SysCap BMS
    * @param callback Specified callback method.
    */
-  function getApplicationInfos(flags: number, userId: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
-
-  /**
-   * Obtains information about all installed applications.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param NA
-   * @return Array of ApplicationInfo.
-   */
-  function getApplicationInfos(flags: number, userId: number) : Promise<Array<ApplicationInfo>>;
+  function getApplicationInfos(bundelFlags: number, userId: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
+  function getApplicationInfos(bundelFlags: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
+  function getApplicationInfos(bundelFlags: number, userId?: number) : Promise<Array<ApplicationInfo>>;
 
   /**
    * Obtains information about a bundle contained in a HAP.
@@ -307,18 +205,12 @@ declare namespace bundle {
    * @param hapFilePath Indicates the path of the HAP.
    * @param callback Specified callback method.
    */
-  function getBundleArchiveInfo(hapFilePath: string, flags: number, callback: AsyncCallback<BundleInfo>) : void;
+  function getBundleArchiveInfo(hapFilePath: string, bundelFlags: number, callback: AsyncCallback<BundleInfo>) : void
+  function getBundleArchiveInfo(hapFilePath: string, bundelFlags: number) : Promise<BundleInfo>;
 
-  /**
-   * Obtains information about a bundle contained in a HAP.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param hapFilePath Indicates the path of the HAP.
-   * @return BundleInfo.
-   */
-  function getBundleArchiveInfo(hapFilePath: string, flags: number) : Promise<BundleInfo>;
+  // List<ShortcutInfo> getShortcutInfos(String bundleName) throws RemoteException;
+  function getShortcutInfos(bundleName: string, callback: AsyncCallback<Array<ShortcutInfo>>): void;
+  function getShortcutInfos(bundleName: string): Promise<Array<ShortcutInfo>>;
 
   /**
    * Obtains detailed information about a specified permission.
@@ -330,16 +222,14 @@ declare namespace bundle {
    * @param callback Specified callback method.
    */
   function getPermissionDef(permissionName: string, callback: AsyncCallback<permission.PermissionDef>) : void;
-  /**
-   * Obtains detailed information about a specified permission.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param permissionName Indicates the name of the permission.
-   * @return PermissionDef.
-   */
   function getPermissionDef(permissionName: string) : Promise<permission.PermissionDef>;
+
+  function getHomeShortcutInfos(callback: AsyncCallback<Array<ShortcutInfo>>): void;
+  function getHomeShortcutInfos(): Promise<void>;
+
+  // List<ModuleUsageRecord> getModuleUsageRecords(int maxNum) throws RemoteException, IllegalArgumentException;
+  function getModuleUsageRecords(maxNum: number, callback: AsyncCallback<Array<ModuleUsageRecord>>): void;
+  function getModuleUsageRecords(maxNum: number): Promise<Array<ModuleUsageRecord>>;
 }
 
 export default bundle;

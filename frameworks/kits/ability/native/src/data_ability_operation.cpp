@@ -360,7 +360,7 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
     if (!in.ReadInt32(type_)) {
         return false;
     }
-    int empty;
+    int empty = VALUE_NULL;
     if (in.ReadInt32(empty)) {
         return false;
     }

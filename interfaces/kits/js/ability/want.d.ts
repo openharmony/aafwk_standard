@@ -14,69 +14,19 @@
  */
 
 /**
- * @name WantOptions
- * @since 3
- * @SysCap AAFwk
- * @import
- * @permission N/A
- * @devices phone, tablet
- */
-export declare interface WantOptions {
-  // indicates the grant to perform read operations on the URI
-  authReadUriPermission: boolean;
-
-  // indicates the grant to perform write operations on the URI
-  authWriteUriPermission: boolean;
-
-  // support forward intent result to origin ability
-  abilityForwardResult: boolean;
-
-  // used for marking the ability start-up is triggered by continuation
-  abilityContinuation: boolean;
-
-  // specifies whether a component does not belong to ohos
-  notOhosComponent: boolean;
-
-  // specifies whether an ability is started
-  abilityFormEnabled: boolean;
-
-  // indicates the grant for possible persisting on the URI.
-  authPersistableUriPermission: boolean;
-
-  // indicates the grant for possible persisting on the URI.
-  authPrefixUriPermission: boolean;
-
-  // support distributed scheduling system start up multiple devices
-  abilitySliceMultiDevice: boolean;
-
-  // indicates that an ability using the service template is started regardless of whether the
-  // host application has been started.
-  startForegroundAbility: boolean;
-
-  // install the specified ability if it's not installed.
-  installOnDemand: boolean;
-
-  // return result to origin ability slice
-  abilitySliceForwardResult: boolean;
-
-  // install the specified ability with background mode if it's not installed.
-  installWithBackgroundMode: boolean;
-}
-
-/**
   * Want is the basic communication component of the system.
   * @name Want
-  * @since 3
+  * @since 6
   * @sysCap AAFwk
   * @devices phone, tablet
   * @permission N/A
   */
-export declare interface Want {
+ export declare interface Want {
   /**
    * device id
    * @default -
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    */
   deviceId?: string;
@@ -85,7 +35,7 @@ export declare interface Want {
    * bundle name
    * @default -
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    */
   bundleName?: string;
@@ -94,7 +44,7 @@ export declare interface Want {
    * ability name
    * @default -
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    */
   abilityName?: string;
@@ -102,7 +52,7 @@ export declare interface Want {
   /**
    * The description of a URI in a Want.
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */
@@ -111,7 +61,7 @@ export declare interface Want {
   /**
    * The description of the type in this Want.
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */
@@ -120,16 +70,16 @@ export declare interface Want {
   /**
    * The options of the flags in this Want.
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */
-  options?: WantOptions;
+  flags?: number;
 
   /**
    * The description of an action in an want.
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */
@@ -138,7 +88,7 @@ export declare interface Want {
   /**
    * The description of the WantParams object in an Want
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */
@@ -147,7 +97,7 @@ export declare interface Want {
   /**
    * The description of a entities in a Want.
    * @devices phone, tablet
-   * @since 3
+   * @since 6
    * @sysCap AAFwk
    * @default -
    */

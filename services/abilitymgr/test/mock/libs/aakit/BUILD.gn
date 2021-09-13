@@ -16,8 +16,16 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("aakit_mock_config") {
   include_dirs = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
     "include/",
+    "//third_party/jsoncpp/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/",
+    "//foundation/aafwk/standard/services/common/include/",
   ]
 }
 
@@ -27,21 +35,18 @@ ohos_source_set("aakit_mock") {
     "src/mock_ability_connect_callback.cpp",
   ]
 
-  configs = [
-    ":aakit_mock_config",
-    "${services_path}/abilitymgr:abilityms_config",
-    "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_core_mock_config",
-    "${services_path}/common:common_config",
-  ]
+  configs = [ ":aakit_mock_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${innerkits_path}/want:want",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
   external_deps = [

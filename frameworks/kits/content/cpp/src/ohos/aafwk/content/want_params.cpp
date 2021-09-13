@@ -30,11 +30,81 @@
 #include "want_params_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
 #include "app_log_wrapper.h"
+#include "securec.h"
 
 using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
+UnsupportedData::~UnsupportedData()
+{
+    if (buffer != nullptr) {
+        delete[] buffer;
+        buffer = nullptr;
+    }
+}
+
+UnsupportedData::UnsupportedData() = default;
+
+UnsupportedData::UnsupportedData(const UnsupportedData &other) : key(other.key), type(other.type), size(other.size)
+{
+    buffer = new uint8_t[size];
+    if (memcpy_s(buffer, size, other.buffer, size) != EOK) {
+        APP_LOGI("copy construct fail due to memcpy");
+
+        key.clear();
+        type = 0;
+        size = 0;
+        delete[] buffer;
+        buffer = nullptr;
+    }
+}
+
+UnsupportedData::UnsupportedData(UnsupportedData &&other)
+    : key(std::move(other.key)), type(other.type), size(other.size), buffer(other.buffer)
+{
+    other.type = 0;
+    other.size = 0;
+    other.buffer = nullptr;
+}
+
+UnsupportedData &UnsupportedData::operator=(const UnsupportedData &other)
+{
+    if (this == &other) {
+        return *this;
+    }
+    key = other.key;
+    type = other.type;
+    size = other.size;
+    buffer = new uint8_t[size];
+    if (memcpy_s(buffer, size, other.buffer, size) != EOK) {
+        APP_LOGI("copy assignment fail due to memcpy");
+
+        key.clear();
+        type = 0;
+        size = 0;
+        delete[] buffer;
+        buffer = nullptr;
+    }
+    return *this;
+}
+
+UnsupportedData &UnsupportedData::operator=(UnsupportedData &&other)
+{
+    key = std::move(other.key);
+    type = other.type;
+    size = other.size;
+    std::swap(buffer, other.buffer);
+
+    other.type = 0;
+    other.size = 0;
+    if (other.buffer) {
+        delete[] other.buffer;
+        other.buffer = nullptr;
+    }
+    return *this;
+}
+
 std::string WantParams::GetStringByType(const sptr<IInterface> iIt, int typeId)
 {
     if (typeId == VALUE_TYPE_BOOLEAN) {
@@ -174,50 +244,74 @@ bool WantParams::operator==(const WantParams &other)
     return true;
 }
 
-#define GETWRAPDATATYPE(id, value, ret)                        \
-    do {                                                       \
-        if (value != nullptr && id::Query(value) != nullptr) { \
-            return ret;                                        \
-        } else {                                               \
-            break;                                             \
-        }                                                      \
-    } while (0)
-
-#define GETSPTRBYTYPE(type, typeid, typeClass, str) \
-    do {                                            \
-        if (type == typeid) {                       \
-            return typeClass::Parse(str);           \
-        }                                           \
-    } while (0)
+// #define GETWRAPDATATYPE(id, value, ret)                        \
+//     do {                                                       \
+//         if (value != nullptr && id::Query(value) != nullptr) { \
+//             return ret;                                        \
+//         } else {                                               \
+//             break;                                             \
+//         }                                                      \
+//     } while (0)
+// #define GETSPTRBYTYPE(type, typeid, typeClass, str) \
+//     do {                                            \
+//         if (type == typeid) {                       \
+//             return typeClass::Parse(str);           \
+//         }                                           \
+//     } while (0)
 
 int WantParams::GetDataType(const sptr<IInterface> iIt)
 {
-    GETWRAPDATATYPE(IBoolean, iIt, VALUE_TYPE_BOOLEAN);
-    GETWRAPDATATYPE(IByte, iIt, VALUE_TYPE_BYTE);
-    GETWRAPDATATYPE(IChar, iIt, VALUE_TYPE_CHAR);
-    GETWRAPDATATYPE(IShort, iIt, VALUE_TYPE_SHORT);
-    GETWRAPDATATYPE(IInteger, iIt, VALUE_TYPE_INT);
-    GETWRAPDATATYPE(ILong, iIt, VALUE_TYPE_LONG);
-    GETWRAPDATATYPE(IFloat, iIt, VALUE_TYPE_FLOAT);
-    GETWRAPDATATYPE(IDouble, iIt, VALUE_TYPE_DOUBLE);
-    GETWRAPDATATYPE(IString, iIt, VALUE_TYPE_STRING);
-    GETWRAPDATATYPE(IArray, iIt, VALUE_TYPE_ARRAY);
-    GETWRAPDATATYPE(IWantParams, iIt, VALUE_TYPE_WANTPARAMS);
+    if (iIt != nullptr && IBoolean::Query(iIt) != nullptr) {
+        return VALUE_TYPE_BOOLEAN;
+    } else if (iIt != nullptr && IByte::Query(iIt) != nullptr) {
+        return VALUE_TYPE_BYTE;
+    } else if (iIt != nullptr && IChar::Query(iIt) != nullptr) {
+        return VALUE_TYPE_CHAR;
+    } else if (iIt != nullptr && IShort::Query(iIt) != nullptr) {
+        return VALUE_TYPE_SHORT;
+    } else if (iIt != nullptr && IInteger::Query(iIt) != nullptr) {
+        return VALUE_TYPE_INT;
+    } else if (iIt != nullptr && ILong::Query(iIt) != nullptr) {
+        return VALUE_TYPE_LONG;
+    } else if (iIt != nullptr && IFloat::Query(iIt) != nullptr) {
+        return VALUE_TYPE_FLOAT;
+    } else if (iIt != nullptr && IDouble::Query(iIt) != nullptr) {
+        return VALUE_TYPE_DOUBLE;
+    } else if (iIt != nullptr && IString::Query(iIt) != nullptr) {
+        return VALUE_TYPE_STRING;
+    } else if (iIt != nullptr && IArray::Query(iIt) != nullptr) {
+        return VALUE_TYPE_ARRAY;
+    } else if (iIt != nullptr && IWantParams::Query(iIt) != nullptr) {
+        return VALUE_TYPE_WANTPARAMS;
+    }
+
     return VALUE_TYPE_NULL;
 }
 
 sptr<IInterface> WantParams::GetInterfaceByType(int typeId, const std::string &value)
 {
-    GETSPTRBYTYPE(VALUE_TYPE_BOOLEAN, typeId, Boolean, value);
-    GETSPTRBYTYPE(VALUE_TYPE_BYTE, typeId, Byte, value);
-    GETSPTRBYTYPE(VALUE_TYPE_CHAR, typeId, Char, value);
-    GETSPTRBYTYPE(VALUE_TYPE_SHORT, typeId, Short, value);
-    GETSPTRBYTYPE(VALUE_TYPE_INT, typeId, Integer, value);
-    GETSPTRBYTYPE(VALUE_TYPE_LONG, typeId, Long, value);
-    GETSPTRBYTYPE(VALUE_TYPE_FLOAT, typeId, Float, value);
-    GETSPTRBYTYPE(VALUE_TYPE_DOUBLE, typeId, Double, value);
-    GETSPTRBYTYPE(VALUE_TYPE_STRING, typeId, String, value);
-    GETSPTRBYTYPE(VALUE_TYPE_ARRAY, typeId, Array, value);
+    if (typeId == VALUE_TYPE_BOOLEAN) {
+        return Boolean::Parse(value);
+    } else if (typeId == VALUE_TYPE_BYTE) {
+        return Byte::Parse(value);
+    } else if (typeId == VALUE_TYPE_CHAR) {
+        return Char::Parse(value);
+    } else if (typeId == VALUE_TYPE_SHORT) {
+        return Short::Parse(value);
+    } else if (typeId == VALUE_TYPE_INT) {
+        return Integer::Parse(value);
+    } else if (typeId == VALUE_TYPE_LONG) {
+        return Long::Parse(value);
+    } else if (typeId == VALUE_TYPE_FLOAT) {
+        return Float::Parse(value);
+    } else if (typeId == VALUE_TYPE_DOUBLE) {
+        return Double::Parse(value);
+    } else if (typeId == VALUE_TYPE_STRING) {
+        return String::Parse(value);
+    } else if (typeId == VALUE_TYPE_ARRAY) {
+        return Array::Parse(value);
+    }
+
     return nullptr;
 }
 
@@ -461,8 +555,6 @@ bool WantParams::WriteMarshalling(Parcel &parcel, sptr<IInterface> &o) const
         return WriteToParcelLong(parcel, o);
     } else if (IFloat::Query(o) != nullptr) {
         return WriteToParcelFloat(parcel, o);
-    } else if (IWantParams::Query(o) != nullptr) {
-        return WriteToParcelWantParams(parcel, o);
     } else if (IDouble::Query(o) != nullptr) {
         return WriteToParcelDouble(parcel, o);
     } else {
@@ -476,14 +568,13 @@ bool WantParams::WriteMarshalling(Parcel &parcel, sptr<IInterface> &o) const
     }
 }
 
-/**
- * @description: Marshals an IntentParams object into a Parcel.
- * @param Key-value pairs in the IntentParams are marshalled separately.
- * @return If any key-value pair fails to be marshalled, false is returned.
- */
-bool WantParams::Marshalling(Parcel &parcel) const
+bool WantParams::DoMarshalling(Parcel &parcel) const
 {
     size_t size = params_.size();
+    if (!cachedUnsupportedData_.empty()) {
+        size += cachedUnsupportedData_.size();
+    }
+
     if (!parcel.WriteInt32(size)) {
         return false;
     }
@@ -499,21 +590,72 @@ bool WantParams::Marshalling(Parcel &parcel) const
         if (!WriteMarshalling(parcel, o)) {
             return false;
         }
-
         iter++;
+    }
+
+    if (!cachedUnsupportedData_.empty()) {
+        for (const UnsupportedData &data : cachedUnsupportedData_) {
+            if (!parcel.WriteString16(data.key)) {
+                return false;
+            }
+            if (!parcel.WriteInt32(data.type)) {
+                return false;
+            }
+            if (!parcel.WriteInt32(data.size)) {
+                return false;
+            }
+            // Corresponding to Parcel#writeByteArray() in Java.
+            if (!parcel.WriteInt32(data.size)) {
+                return false;
+            }
+            if (!parcel.WriteBuffer(data.buffer, data.size)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * @description: Marshals an IntentParams object into a Parcel.
+ * @param Key-value pairs in the IntentParams are marshalled separately.
+ * @return If any key-value pair fails to be marshalled, false is returned.
+ */
+bool WantParams::Marshalling(Parcel &parcel) const
+{
+    Parcel tempParcel;
+    if (!DoMarshalling(tempParcel)) {
+        return false;
+    }
+
+    int size = static_cast<int>(tempParcel.GetDataSize());
+    if (!parcel.WriteInt32(size)) {
+        return false;
+    }
+    const uint8_t *buffer = tempParcel.ReadUnpadBuffer(size);
+    if (buffer == nullptr) {
+        return false;
+    }
+
+    // Corresponding to Parcel#writeByteArray() in Java.
+    if (!parcel.WriteInt32(size)) {
+        return false;
+    }
+    if (!parcel.WriteBuffer(buffer, size)) {
+        return false;
     }
 
     return true;
 }
 
-template <typename T1, typename T2>
-static bool SetArray(const InterfaceID &id, const std::vector<T1> &value, sptr<IArray> &ao)
+template <typename dataType, typename className>
+static bool SetArray(const InterfaceID &id, const std::vector<dataType> &value, sptr<IArray> &ao)
 {
-    typename std::vector<T1>::size_type size = value.size();
+    typename std::vector<dataType>::size_type size = value.size();
     ao = new (std::nothrow) Array(size, id);
     if (ao != nullptr) {
-        for (typename std::vector<T1>::size_type i = 0; i < size; i++) {
-            ao->Set(i, T2::Box(value[i]));
+        for (typename std::vector<dataType>::size_type i = 0; i < size; i++) {
+            ao->Set(i, className::Box(value[i]));
         }
         return true;
     }
@@ -813,6 +955,7 @@ bool WantParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
 {
     switch (type) {
         case VALUE_TYPE_STRINGARRAY:
+        case VALUE_TYPE_CHARSEQUENCEARRAY:
             return ReadFromParcelArrayString(parcel, ao);
         case VALUE_TYPE_BOOLEANARRAY:
             return ReadFromParcelArrayBool(parcel, ao);
@@ -831,8 +974,7 @@ bool WantParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
         case VALUE_TYPE_DOUBLEARRAY:
             return ReadFromParcelArrayDouble(parcel, ao);
         default:
-            // ignore
-            ;
+            break;
     }
 
     return true;
@@ -968,9 +1110,46 @@ bool WantParams::ReadFromParcelDouble(Parcel &parcel, const std::string &key)
     }
 }
 
+bool WantParams::ReadUnsupportedData(Parcel &parcel, const std::string &key, int type)
+{
+    int bufferSize = 0;
+    if (!parcel.ReadInt32(bufferSize)) {
+        return false;
+    }
+    if (bufferSize < 0) {
+        return false;
+    }
+
+    // Corresponding to Parcel#writeByteArray() in Java.
+    int32_t length = 0;
+    if (!parcel.ReadInt32(length)) {
+        return false;
+    }
+    const uint8_t *bufferP = parcel.ReadUnpadBuffer(bufferSize);
+    if (bufferP == nullptr) {
+        return false;
+    }
+
+    UnsupportedData data;
+    data.key = Str8ToStr16(key);
+    data.type = type;
+    data.size = bufferSize;
+    data.buffer = new (std::nothrow) uint8_t[bufferSize];
+    if (data.buffer == nullptr) {
+        return false;
+    }
+
+    if (memcpy_s(data.buffer, bufferSize, bufferP, bufferSize) != EOK) {
+        return false;
+    }
+    cachedUnsupportedData_.emplace_back(std::move(data));
+    return true;
+}
+
 bool WantParams::ReadFromParcelParam(Parcel &parcel, const std::string &key, int type)
 {
     switch (type) {
+        case VALUE_TYPE_CHARSEQUENCE:
         case VALUE_TYPE_STRING:
             return ReadFromParcelString(parcel, key);
         case VALUE_TYPE_BOOLEAN:
@@ -989,9 +1168,15 @@ bool WantParams::ReadFromParcelParam(Parcel &parcel, const std::string &key, int
             return ReadFromParcelFloat(parcel, key);
         case VALUE_TYPE_DOUBLE:
             return ReadFromParcelDouble(parcel, key);
-        case VALUE_TYPE_WANTPARAMS:
-            return ReadFromParcelWantParamWrapper(parcel, key);
         case VALUE_TYPE_NULL:
+            break;
+        case VALUE_TYPE_PARCELABLE:
+        case VALUE_TYPE_PARCELABLEARRAY:
+        case VALUE_TYPE_SERIALIZABLE:
+        case VALUE_TYPE_LIST:
+            if (!ReadUnsupportedData(parcel, key, type)) {
+                return false;
+            }
             break;
         default: {
             // handle array
@@ -1039,8 +1224,28 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
  */
 WantParams *WantParams::Unmarshalling(Parcel &parcel)
 {
+    int32_t bufferSize;
+    if (!parcel.ReadInt32(bufferSize)) {
+        return nullptr;
+    }
+
+    // Corresponding to Parcel#writeByteArray() in Java.
+    int32_t length;
+    if (!parcel.ReadInt32(length)) {
+        return nullptr;
+    }
+    const uint8_t *dataInBytes = parcel.ReadUnpadBuffer(bufferSize);
+    if (dataInBytes == nullptr) {
+        return nullptr;
+    }
+
+    Parcel tempParcel;
+    if (!tempParcel.WriteBuffer(dataInBytes, bufferSize)) {
+        return nullptr;
+    }
+
     WantParams *wantParams = new (std::nothrow) WantParams();
-    if (wantParams != nullptr && !wantParams->ReadFromParcel(parcel)) {
+    if (wantParams != nullptr && !wantParams->ReadFromParcel(tempParcel)) {
         delete wantParams;
         wantParams = nullptr;
     }

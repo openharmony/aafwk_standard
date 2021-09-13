@@ -24,6 +24,7 @@
 #include "app_state_call_back_mock.h"
 #include "ability_record.h"
 #include "element_name.h"
+#include "app_process_data.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;

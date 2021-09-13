@@ -36,9 +36,12 @@ public:
     MOCK_METHOD1(ScheduleDisconnectAbility, void(const Want &));
     MOCK_METHOD1(ScheduleSaveAbilityState, void(PacMap &));
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &));
+    MOCK_METHOD1(ScheduleUpdateConfiguration, void(const DummyConfiguration &));
     MOCK_METHOD1(ScheduleNewWant, void(const Want &));
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD3(ScheduleCommandAbility, void(const Want &, bool, int));
+    MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
+    MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {
@@ -102,6 +105,18 @@ public:
     int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
     {
         return -1;
+    }
+
+    Uri NormalizeUri(const Uri &uri)
+    {
+        Uri urivalue("");
+        return urivalue;
+    }
+
+    Uri DenormalizeUri(const Uri &uri)
+    {
+        Uri urivalue("");
+        return urivalue;
     }
 
     int code_ = 0;

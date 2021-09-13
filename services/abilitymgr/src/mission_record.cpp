@@ -25,6 +25,18 @@ int MissionRecord::nextMissionId_ = 0;
 MissionRecord::MissionRecord(const std::string &bundleName) : bundleName_(bundleName)
 {
     missionId_ = GetNextMissionId();
+    option_.missionId = missionId_;
+}
+
+MissionRecord::MissionRecord(const std::shared_ptr<MissionRecord> &mission)
+{
+    bundleName_ = mission->bundleName_;
+    missionId_ = mission->missionId_;
+    abilities_.insert(abilities_.begin(), mission->abilities_.begin(), mission->abilities_.end());
+    isLauncherCreate_ = mission->isLauncherCreate_;
+    preMissionRecord_ = mission->preMissionRecord_;
+    parentMissionStack_ = mission->parentMissionStack_;
+    missionDescriptionInfo_ = mission->missionDescriptionInfo_;
 }
 
 MissionRecord::~MissionRecord()
@@ -61,6 +73,16 @@ std::shared_ptr<AbilityRecord> MissionRecord::GetTopAbilityRecord() const
         return nullptr;
     }
     return abilities_.front();
+}
+
+std::shared_ptr<AbilityRecord> MissionRecord::GetLastTopAbility() const
+{
+    if (abilities_.empty() || abilities_.size() == 1) {
+        HILOG_WARN("no last top ability.");
+        return nullptr;
+    }
+    auto iter = abilities_.begin();
+    return (*(++iter));
 }
 
 std::shared_ptr<AbilityRecord> MissionRecord::GetAbilityRecordByToken(const sptr<IRemoteObject> &token) const
@@ -119,6 +141,7 @@ void MissionRecord::AddAbilityRecordToTop(std::shared_ptr<AbilityRecord> ability
     auto iter = std::find_if(abilities_.begin(), abilities_.end(), isExist);
     if (iter == abilities_.end()) {
         abilities_.push_front(ability);
+        ability->ForceProcessConfigurationChange(GetConfiguration());
     }
 }
 
@@ -220,18 +243,108 @@ bool MissionRecord::IsExistAbilityRecord(int32_t id)
     return false;
 }
 
-void MissionRecord::SetParentStack(const std::shared_ptr<MissionStack> &parent, int stackId)
+bool MissionRecord::SupportMultWindow() const
 {
-    CHECK_POINTER(parent);
-    parentMissionStack_ = parent;
+    auto bottom = GetBottomAbilityRecord();
+    if (bottom != nullptr) {
+        return bottom->SupportMultWindow();
+    }
+    return false;
+}
+
+void MissionRecord::SetMissionStack(const std::shared_ptr<MissionStack> &missionStack, int stackId)
+{
+    CHECK_POINTER(missionStack);
+    parentMissionStack_ = missionStack;
+    UpdateConfiguration(missionStack->GetConfiguration());
     for (auto &it : abilities_) {
         it->SetMissionStackId(stackId);
     }
 }
 
-std::shared_ptr<MissionStack> MissionRecord::GetParentStack() const
+std::shared_ptr<MissionStack> MissionRecord::GetMissionStack() const
 {
     return parentMissionStack_.lock();
+}
+
+void MissionRecord::SetMissionOption(const MissionOption &option)
+{
+    if (option.winModeKey != option_.winModeKey) {
+        HILOG_ERROR("Batch processing notify multi window mode changed.");
+        for (auto &it : abilities_) {
+            CHECK_POINTER(it);
+            bool flag = option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
+                        option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY ||
+                        option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+            // true : old is multi win, target is fullscreen.
+            // false : old is fullscreen, target is multi win.
+            auto key = flag ? option.winModeKey : option_.winModeKey;
+            if (it->IsReady()) {
+                it->NotifyMultiWinModeChanged(key, flag);
+            }
+        }
+    }
+
+    option_ = option;
+}
+
+const MissionOption &MissionRecord::GetMissionOption() const
+{
+    return option_;
+}
+
+bool MissionRecord::IsEmpty()
+{
+    return abilities_.empty();
+}
+
+std::shared_ptr<ConfigurationHolder> MissionRecord::GetParent()
+{
+    return parentMissionStack_.lock();
+}
+
+unsigned int MissionRecord::GetChildSize()
+{
+    return abilities_.size();
+}
+
+std::shared_ptr<ConfigurationHolder> MissionRecord::FindChild(unsigned int index)
+{
+    if (index < abilities_.size() && index >= 0) {
+        auto iter = abilities_.begin();
+        std::advance(iter, index);
+        return (*iter);
+    }
+    return nullptr;
+}
+
+void MissionRecord::Resume(const std::shared_ptr<MissionRecord> &backup)
+{
+    HILOG_INFO("mission resume.");
+    // backup abilities_ size = 1, singleton ability need resume
+    if (std::equal(abilities_.begin(), abilities_.end(), backup->abilities_.begin()) && backup->abilities_.size() > 1) {
+        HILOG_ERROR("List equality, no resume");
+        return;
+    }
+
+    std::list<std::shared_ptr<AbilityRecord>> diffAbilitys;
+    for (auto &ability : backup->abilities_) {
+        if (abilities_.front() == ability) {
+            break;
+        }
+
+        ability->SetAbilityState(AbilityState::INITIAL);
+        // ability->ClearFlag();
+        diffAbilitys.emplace_back(ability);
+    }
+
+    abilities_.insert(abilities_.begin(), diffAbilitys.begin(), diffAbilitys.end());
+
+    for (auto &ability : abilities_) {
+        if (ability->IsAbilityState(AbilityState::INITIAL)) {
+            ability->SetRestarting(true);
+        }
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS

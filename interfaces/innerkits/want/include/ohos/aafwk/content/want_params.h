@@ -18,13 +18,29 @@
 #include <iostream>
 #include <map>
 #include <set>
-
+#include <vector>
 #include "ohos/aafwk/base/base_interfaces.h"
 #include "refbase.h"
 #include "parcel.h"
 
 namespace OHOS {
 namespace AAFwk {
+class UnsupportedData {
+public:
+    std::u16string key;
+    int type = 0;
+    int size = 0;
+    uint8_t *buffer = nullptr;
+
+    ~UnsupportedData();
+
+    UnsupportedData();
+    UnsupportedData(const UnsupportedData &other);
+    UnsupportedData(UnsupportedData &&other);
+
+    UnsupportedData &operator=(const UnsupportedData &other);
+    UnsupportedData &operator=(UnsupportedData &&other);
+};
 
 class WantParams final : public Parcelable {
 public:
@@ -89,8 +105,14 @@ private:
         VALUE_TYPE_DOUBLEARRAY = 18,
         VALUE_TYPE_STRINGARRAY = 19,
         VALUE_TYPE_CHARSEQUENCEARRAY = 20,
-        VALUE_TYPE_WANTPARAMS = 21,
-        VALUE_TYPE_ARRAY = 22,
+
+        VALUE_TYPE_PARCELABLE = 21,
+        VALUE_TYPE_PARCELABLEARRAY = 22,
+        VALUE_TYPE_SERIALIZABLE = 23,
+        VALUE_TYPE_LIST = 50,
+
+        VALUE_TYPE_WANTPARAMS = 101,
+        VALUE_TYPE_ARRAY = 102,
     };
 
     bool WriteArrayToParcel(Parcel &parcel, IArray *ao) const;
@@ -141,11 +163,15 @@ private:
     bool WriteToParcelDouble(Parcel &parcel, sptr<IInterface> &o) const;
     bool WriteToParcelWantParams(Parcel &parcel, sptr<IInterface> &o) const;
 
+    bool DoMarshalling(Parcel &parcel) const;
+    bool ReadUnsupportedData(Parcel &parcel, const std::string &key, int type);
+
     friend class WantParamWrapper;
     // inner use function
     bool NewArrayData(IArray *source, sptr<IArray> &dest);
     bool NewParams(const WantParams &source, WantParams &dest);
     std::map<std::string, sptr<IInterface>> params_;
+    std::vector<UnsupportedData> cachedUnsupportedData_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

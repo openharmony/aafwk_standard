@@ -375,11 +375,6 @@ std::shared_ptr<ContinuationState> Ability::GetContinuationState()
     return nullptr;
 }
 
-bool Ability::ReverseContinueAbility()
-{
-    return false;
-}
-
 std::shared_ptr<AbilityPackage> Ability::GetAbilityPackage()
 {
     return nullptr;

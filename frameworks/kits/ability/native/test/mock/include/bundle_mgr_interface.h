@@ -25,6 +25,7 @@
 #include "hap_module_info.h"
 #include "ohos/aafwk/content/want.h"
 #include "permission_def.h"
+#include "module_usage_record.h"
 
 using OHOS::AAFwk::Want;
 
@@ -54,6 +55,7 @@ struct InstallParam : public Parcelable {
     int userId = -1;
     // Is keep user data while uninstall.
     bool isKeepData = false;
+    bool noCheckSignature = false;
 
     // the parcel object function is not const.
     bool ReadFromParcel(Parcel &parcel);
@@ -166,6 +168,7 @@ public:
     virtual bool CheckIsSystemAppByUid(const int uid) = 0;
     virtual bool GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos) = 0;
     virtual bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) = 0;
+    virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) = 0;
     virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) = 0;
     virtual bool QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleInfos) = 0;
     virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) = 0;
@@ -203,7 +206,10 @@ public:
         const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) = 0;
     virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
-
+    virtual bool GetModuleUsageRecords(
+        const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
     enum class Message {
         GET_APPLICATION_INFO,
         GET_APPLICATION_INFOS,

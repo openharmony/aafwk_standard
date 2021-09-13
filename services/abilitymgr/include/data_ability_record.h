@@ -24,6 +24,7 @@
 #include <chrono>
 
 #include "ability_record.h"
+#include "data_ability_caller_recipient.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -38,10 +39,10 @@ public:
     sptr<IAbilityScheduler> GetScheduler();
     int Attach(const sptr<IAbilityScheduler> &scheduler);
     int OnTransitionDone(int state);
-    int AddClient(const std::shared_ptr<AbilityRecord> &client, bool tryBind);
-    int RemoveClient(const std::shared_ptr<AbilityRecord> &client);
+    int AddClient(const sptr<IRemoteObject> &client, bool tryBind, bool isSystem);
+    int RemoveClient(const sptr<IRemoteObject> &client, bool isSystem);
     int RemoveClients(const std::shared_ptr<AbilityRecord> &client = nullptr);
-    size_t GetClientCount(const std::shared_ptr<AbilityRecord> &client = nullptr) const;
+    size_t GetClientCount(const sptr<IRemoteObject> &client = nullptr) const;
     int KillBoundClientProcesses();
     const AbilityRequest &GetRequest() const;
     std::shared_ptr<AbilityRecord> GetAbilityRecord();
@@ -50,12 +51,15 @@ public:
     void Dump(std::vector<std::string> &info) const;
 
 private:
+    using IRemoteObjectPtr = sptr<IRemoteObject>;
     using AbilityRecordPtr = std::shared_ptr<AbilityRecord>;
 
     struct ClientInfo {
-        AbilityRecordPtr ability;
+        IRemoteObjectPtr client;
         bool tryBind;
+        bool isSystem;
     };
+    void OnSchedulerDied(const wptr<IRemoteObject> &remote);
 
 private:
     std::condition_variable_any loadedCond_{};
@@ -63,6 +67,7 @@ private:
     AbilityRecordPtr ability_{};
     sptr<IAbilityScheduler> scheduler_{};
     std::list<ClientInfo> clients_{};
+    sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_;  // caller binderDied Recipient
 };
 }  // namespace AAFwk
 }  // namespace OHOS

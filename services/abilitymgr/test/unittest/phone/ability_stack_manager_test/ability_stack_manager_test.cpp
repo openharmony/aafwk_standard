@@ -23,6 +23,7 @@
 #undef private
 #undef protected
 
+#include "app_process_data.h"
 #include "mock_bundle_manager.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
@@ -35,6 +36,15 @@ using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
+
+namespace {
+const std::string LANGUAGE = "locale";
+const std::string LAYOUT = "layout";
+const std::string FONTSIZE = "fontsize";
+const std::string ORIENTATION = "orientation";
+const std::string DENSITY = "density";
+}  // namespace
+
 class AbilityStackManagerTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -44,7 +54,7 @@ public:
     void init();
 
     AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
-        const std::string &appName, const std::string &bundleName);
+        const std::string &appName, const std::string &bundleName, const std::vector<std::string> config);
 
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
 
@@ -55,6 +65,9 @@ public:
     AbilityRequest musicSAbilityRequest_;
     AbilityRequest radioAbilityRequest_;
     AbilityRequest radioTopAbilityRequest_;
+    Want want_;
+    AbilityInfo abilityInfo_;
+    ApplicationInfo appInfo_;
 };
 
 void AbilityStackManagerTest::SetUpTestCase(void)
@@ -76,7 +89,7 @@ void AbilityStackManagerTest::SetUp()
         OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
 
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    // stackManager_ = ams->GetStackManager();
+    ams->Init();
     stackManager_ = std::make_shared<AbilityStackManager>(0);
     auto bms = ams->GetBundleManager();
     EXPECT_NE(bms, nullptr);
@@ -84,17 +97,18 @@ void AbilityStackManagerTest::SetUp()
 
 void AbilityStackManagerTest::init()
 {
-    launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    std::vector<std::string> config;
+    launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld", config);
 
-    musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic", config);
 
-    musicTopAbilityRequest_ = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic");
+    musicTopAbilityRequest_ = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic", config);
 
-    musicSAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    musicSAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic", config);
 
-    radioAbilityRequest_ = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
+    radioAbilityRequest_ = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio", config);
 
-    radioTopAbilityRequest_ = GenerateAbilityRequest("device", "RadioTopAbility", "radio", "com.ix.hiRadio");
+    radioTopAbilityRequest_ = GenerateAbilityRequest("device", "RadioTopAbility", "radio", "com.ix.hiRadio", config);
 }
 
 void AbilityStackManagerTest::makeScene(
@@ -139,7 +153,8 @@ void AbilityStackManagerTest::makeScene(
 }
 
 AbilityRequest AbilityStackManagerTest::GenerateAbilityRequest(const std::string &deviceName,
-    const std::string &abilityName, const std::string &appName, const std::string &bundleName)
+    const std::string &abilityName, const std::string &appName, const std::string &bundleName,
+    const std::vector<std::string> config)
 {
     ElementName element(deviceName, abilityName, bundleName);
     Want want;
@@ -147,12 +162,13 @@ AbilityRequest AbilityStackManagerTest::GenerateAbilityRequest(const std::string
 
     AbilityInfo abilityInfo;
     ApplicationInfo appinfo;
-
+    abilityInfo.visible = true;
     abilityInfo.name = abilityName;
     abilityInfo.bundleName = bundleName;
     abilityInfo.applicationName = appName;
     abilityInfo.applicationInfo.bundleName = bundleName;
     abilityInfo.applicationInfo.name = appName;
+    abilityInfo.configChanges = config;
 
     makeScene(abilityName, bundleName, abilityInfo, want);
 
@@ -350,7 +366,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_009, TestSize.
     EXPECT_EQ(0, missionStack->GetMissionStackId());
     EXPECT_EQ(1, missionStack->GetMissionRecordCount());
     auto missionRecord = missionStack->GetTopMissionRecord();
-    ASSERT_TRUE(missionRecord != nullptr);
+    EXPECT_TRUE(missionRecord != nullptr);
     EXPECT_EQ(1, missionRecord->GetAbilityRecordCount());
     auto topAbility = stackManager_->GetCurrentTopAbility();
     auto realAppinfo = topAbility->GetApplicationInfo();
@@ -848,7 +864,8 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_022, TestSize.
     std::string abilityName = "otherAbility";
     std::string appName = "otherApp";
     std::string bundleName = "com.ix.other";
-    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName);
+    std::vector<std::string> config;
+    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName, config);
     auto record = AbilityRecord::CreateAbilityRecord(abilityReq);
     auto nullToken = new Token(record);
     EXPECT_NE(0, stackManager_->TerminateAbility(nullToken, -1, &want));
@@ -912,7 +929,8 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_024, TestSize.
     std::string abilityName = "otherAbility";
     std::string appName = "otherApp";
     std::string bundleName = "com.ix.other";
-    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName);
+    std::vector<std::string> config;
+    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName, config);
     auto record = AbilityRecord::CreateAbilityRecord(abilityReq);
     auto token = topAbility->GetToken();
     stackManager_->GetTopMissionRecord()->RemoveTopAbilityRecord();
@@ -1010,7 +1028,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.
     auto token = topAbility->GetToken();
 
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(stackManager_->AttachAbilityThread(scheduler, token), ERR_INVALID_VALUE);
+    EXPECT_EQ(stackManager_->AttachAbilityThread(scheduler, token), ERR_OK);
 
     std::shared_ptr<AbilityRecord> record = nullptr;
     auto nullToken = new Token(record);
@@ -1662,7 +1680,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
     auto missionInfo2 = stackManager_->GetMissionRecordFromAllStacks(secondMissionId);
     EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
 
-    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffInActiveRecord();
     int size = recordVector.size();
     EXPECT_EQ(size, 1);  // Because we only focus on the top of the stack
 
@@ -1736,7 +1754,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.
     auto missionInfo3 = stackManager_->GetMissionRecordFromAllStacks(fourthMissionId);
     EXPECT_EQ(missionInfo1->GetTopAbilityRecord()->GetAbilityState(), OHOS::AAFwk::MOVING_BACKGROUND);
 
-    auto recordVector = stackManager_->powerStorage_->GetPowerOffRecord();
+    auto recordVector = stackManager_->powerStorage_->GetPowerOffInActiveRecord();
     int size = recordVector.size();
     EXPECT_EQ(size, 2);
 
@@ -1865,7 +1883,9 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_053, TestSize.
     topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
     // 2
-    auto musicAbilityRequest2th = GenerateAbilityRequest("device", "MusicAbility2th", "music", "com.ix.hiMusic");
+    std::vector<std::string> config;
+    auto musicAbilityRequest2th =
+        GenerateAbilityRequest("device", "MusicAbility2th", "music", "com.ix.hiMusic", config);
     result = stackManager_->StartAbility(musicAbilityRequest2th);
     EXPECT_EQ(0, result);
     auto musicMisionRecord2th = stackManager_->GetTopMissionRecord();
@@ -2133,12 +2153,1017 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_060, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function:  SetMissionDescriptionInfo
+ * Function:  StartAbility
  * SubFunction: NA
- * FunctionPoints: SetMissionDescriptionInfo
+ * FunctionPoints: Start the floating window according to the parameters
  * EnvConditions: NA
- * CaseDescription: when the uid defferent
+ * CaseDescription: Start a floating window application
  */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_061, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // defult mission id
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
+
+    // promary mission id
+    abilityStartSetting->AddProperty(
+        AbilityStartSetting::WINDOW_MODE_KEY, std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), SPLIT_SCREEN_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartAbility
+ * SubFunction: NA
+ * FunctionPoints: Start the floating window according to the parameters
+ * EnvConditions: NA
+ * CaseDescription:  a lunchr + Start a floating window application
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_062, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    // start a luncher
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // Set floating window identification
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartAbility
+ * SubFunction: NA
+ * FunctionPoints: Start the floating window according to the parameters
+ * EnvConditions: NA
+ * CaseDescription: a defult ability + Start a floating window application
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_063, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    // start a ability
+    auto result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // Set floating window identification
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartAbility
+ * SubFunction: NA
+ * FunctionPoints: Start the floating window according to the parameters
+ * EnvConditions: NA
+ * CaseDescription: When an application starts a floating window, it is put on the floating window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_064, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto redioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto redioAbilityRecord = redioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(redioMissionRecord);
+    EXPECT_TRUE(redioAbilityRecord);
+    redioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // Set floating window identification
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    // radioAbility move to floating stack
+    EXPECT_EQ(redioMissionRecord->GetMissionStack()->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  StartAbility
+ * SubFunction: NA
+ * FunctionPoints: Start the floating window according to the parameters
+ * EnvConditions: NA
+ * CaseDescription: When an singlton application starts a floating window, it is ont put on the together
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_065, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    // singlton ability
+    auto result = stackManager_->StartAbility(radioTopAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto redioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto redioAbilityRecord = redioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(redioMissionRecord);
+    EXPECT_TRUE(redioAbilityRecord);
+    redioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // Set floating window identification
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    // radioAbility in the defult stack
+    EXPECT_EQ(redioMissionRecord->GetMissionStack()->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToFloatingStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to floating window stack
+ * EnvConditions: NA
+ * CaseDescription: a ability move to floating window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_066, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(radioTopAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto redioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto redioAbilityRecord = redioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(redioMissionRecord);
+    EXPECT_TRUE(redioAbilityRecord);
+    redioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = -10;
+
+    auto ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.missionId = 13;
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN;
+    ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
+    ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY;
+    ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+    ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToFloatingStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to floating window stack
+ * EnvConditions: NA
+ * CaseDescription: a ability move to floating window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_067, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto musicMissionRecord = stackManager_->GetTopMissionRecord();
+    auto musicAbilityRecord = musicMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(musicMissionRecord);
+    EXPECT_TRUE(musicAbilityRecord);
+    musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = musicMissionRecord->GetMissionRecordId();
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+    auto ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, ERR_NONE);
+
+    auto stack = musicMissionRecord->GetMissionStack();
+    EXPECT_EQ(stack->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToFloatingStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to floating window stack
+ * EnvConditions: NA
+ * CaseDescription: a luncher ability move to floating window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_068, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto launcherMissionRecord = stackManager_->GetTopMissionRecord();
+    auto launcherAbilityRecord = launcherMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(launcherMissionRecord);
+    EXPECT_TRUE(launcherAbilityRecord);
+    launcherAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = launcherMissionRecord->GetMissionRecordId();
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+    auto ref = stackManager_->MoveMissionToFloatingStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN);
+
+    auto stack = launcherMissionRecord->GetMissionStack();
+    EXPECT_EQ(stack->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  ChangeFocusAbility
+ * SubFunction: NA
+ * FunctionPoints: Change Focus Ability
+ * EnvConditions: NA
+ * CaseDescription: Move focus from one application to another
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_069, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stactLuncher = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stactLuncher);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    // Set floating window identification
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = topMissionRecord2->GetMissionStack();
+    EXPECT_TRUE(stact);
+
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+    EXPECT_EQ(stactLuncher->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+
+    // luncher get focus
+    auto ref = stackManager_->ChangeFocusAbility(topAbilityRecord2->GetToken(), topAbilityRecord->GetToken());
+    EXPECT_EQ(0, ref);
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  ChangeFocusAbility
+ * SubFunction: NA
+ * FunctionPoints: Change Focus Ability
+ * EnvConditions: NA
+ * CaseDescription: Move focus from one application to another
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_070, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto ref = stackManager_->ChangeFocusAbility(nullptr, nullptr);
+    EXPECT_EQ(ref, ERR_INVALID_VALUE);
+
+    auto abilityrecord = AbilityRecord::CreateAbilityRecord(musicAbilityRequest_);
+    auto abilityrecord1 = AbilityRecord::CreateAbilityRecord(radioAbilityRequest_);
+    EXPECT_TRUE(abilityrecord);
+    EXPECT_TRUE(abilityrecord1);
+    abilityrecord->Init();
+    abilityrecord1->Init();
+
+    ref = stackManager_->ChangeFocusAbility(abilityrecord->GetToken(), abilityrecord1->GetToken());
+    EXPECT_EQ(ref, CHANGE_FOCUS_ABILITY_FAILED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToSplitScreenStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to Split window stack
+ * EnvConditions: NA
+ * CaseDescription: a ability move to Split window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_071, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(radioTopAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto redioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto redioAbilityRecord = redioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(redioMissionRecord);
+    EXPECT_TRUE(redioAbilityRecord);
+    redioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = -10;
+
+    auto ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.missionId = 13;
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN;
+    ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
+    ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY;
+    ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION);
+
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+    ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, ERR_INVALID_DATA);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToSplitScreenStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to Split window stack
+ * EnvConditions: NA
+ * CaseDescription: a ability move to Split window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_072, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto musicMissionRecord = stackManager_->GetTopMissionRecord();
+    auto musicAbilityRecord = musicMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(musicMissionRecord);
+    EXPECT_TRUE(musicAbilityRecord);
+    musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = musicMissionRecord->GetMissionRecordId();
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
+    auto ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, ERR_NONE);
+
+    auto stack = musicMissionRecord->GetMissionStack();
+    EXPECT_EQ(stack->GetMissionStackId(), SPLIT_SCREEN_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToSplitScreenStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to Split window stack
+ * EnvConditions: NA
+ * CaseDescription: a luncher ability move to Split window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_073, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto launcherMissionRecord = stackManager_->GetTopMissionRecord();
+    auto launcherAbilityRecord = launcherMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(launcherMissionRecord);
+    EXPECT_TRUE(launcherAbilityRecord);
+    launcherAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = launcherMissionRecord->GetMissionRecordId();
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY;
+    auto ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN);
+
+    auto stack = launcherMissionRecord->GetMissionStack();
+    EXPECT_EQ(stack->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MoveMissionToSplitScreenStack
+ * SubFunction: NA
+ * FunctionPoints: Move misson to Split window stack
+ * EnvConditions: NA
+ * CaseDescription: a luncher ability move to Split window stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_074, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto launcherMissionRecord = stackManager_->GetTopMissionRecord();
+    auto launcherAbilityRecord = launcherMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(launcherMissionRecord);
+    EXPECT_TRUE(launcherAbilityRecord);
+    launcherAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    MissionOption missionOption;
+    missionOption.missionId = launcherMissionRecord->GetMissionRecordId();
+    missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY;
+    auto ref = stackManager_->MoveMissionToSplitScreenStack(missionOption);
+    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN);
+
+    auto stack = launcherMissionRecord->GetMissionStack();
+    EXPECT_EQ(stack->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MinimizeMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Move the floating window to the background
+ * EnvConditions: NA
+ * CaseDescription: Move the floating window to the background
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_075, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto ref = stackManager_->MinimizeMultiWindow(-1);
+    EXPECT_EQ(ref, MINIMIZE_MULTI_WINDOW_FAILED);
+
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto musicMissionRecord = stackManager_->GetTopMissionRecord();
+    auto musicAbilityRecord = musicMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(musicMissionRecord);
+    EXPECT_TRUE(musicAbilityRecord);
+    musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    ref = stackManager_->MinimizeMultiWindow(musicMissionRecord->GetMissionRecordId());
+    EXPECT_EQ(ref, MINIMIZE_MULTI_WINDOW_FAILED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MinimizeMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Move the floating window to the background
+ * EnvConditions: NA
+ * CaseDescription: Move the floating window to the background
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_076, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = topMissionRecord2->GetMissionStack();
+    EXPECT_TRUE(stact);
+
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    auto topStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(topStack);
+    EXPECT_EQ(topStack->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+    // luncher move to top
+    auto ref = stackManager_->MinimizeMultiWindow(topMissionRecord2->GetMissionRecordId());
+    EXPECT_EQ(0, ref);
+
+    //
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    EXPECT_EQ(stact->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MinimizeMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Move the floating window to the background
+ * EnvConditions: NA
+ * CaseDescription: Move the floating window to the background
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_077, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    // start luncher
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start top ability
+    result = stackManager_->StartAbility(radioTopAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto radioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto radioAbilityRecord = radioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(radioMissionRecord);
+    EXPECT_TRUE(radioAbilityRecord);
+    radioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start float ability
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = topMissionRecord2->GetMissionStack();
+    EXPECT_TRUE(stact);
+
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    auto topStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(topStack);
+    EXPECT_EQ(topStack->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+    // ton ability move to top
+    auto ref = stackManager_->MinimizeMultiWindow(topMissionRecord2->GetMissionRecordId());
+    EXPECT_EQ(0, ref);
+
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    // current top
+    EXPECT_EQ(stact->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MaximizeMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Move the floating window to the default stack
+ * EnvConditions: NA
+ * CaseDescription: move the ability form float stack to default stack
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_078, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto ref = stackManager_->MaximizeMultiWindow(-1);
+    EXPECT_EQ(ref, MAXIMIZE_MULTIWINDOW_NOT_EXIST);
+
+    auto result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto musicMissionRecord = stackManager_->GetTopMissionRecord();
+    auto musicAbilityRecord = musicMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(musicMissionRecord);
+    EXPECT_TRUE(musicAbilityRecord);
+    musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    ref = stackManager_->MaximizeMultiWindow(musicMissionRecord->GetMissionRecordId());
+    EXPECT_EQ(ref, MAXIMIZE_MULTIWINDOW_NOT_EXIST);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  MaximizeMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Move the floating window to the background
+ * EnvConditions: NA
+ * CaseDescription: Move the floating window to the background
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_079, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    // start luncher
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start top ability
+    result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto radioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto radioAbilityRecord = radioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(radioMissionRecord);
+    EXPECT_TRUE(radioAbilityRecord);
+    radioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start float ability
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = topMissionRecord2->GetMissionStack();
+    EXPECT_TRUE(stact);
+    auto stack1 = radioMissionRecord->GetMissionStack();
+    EXPECT_TRUE(stact);
+
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+    EXPECT_EQ(stack1->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    stackManager_->isMultiWinMoving_ = false;
+    auto topStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(topStack);
+    EXPECT_EQ(topStack->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    auto ref = stackManager_->MaximizeMultiWindow(topMissionRecord2->GetMissionRecordId());
+    EXPECT_EQ(0, ref);
+
+    stact = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(stact);
+    // current top
+    EXPECT_EQ(stact->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
+
+    auto topAbility = stackManager_->GetTopMissionRecord()->GetTopAbilityRecord();
+    EXPECT_TRUE(topAbility);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  CloseMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Close multiple windows
+ * EnvConditions: NA
+ * CaseDescription: Can I exit the front desk by closing the floating window
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_080, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto ref = stackManager_->CloseMultiWindow(-1);
+    EXPECT_EQ(ref, CLOSE_MULTI_WINDOW_FAILED);
+
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto musicMissionRecord = stackManager_->GetTopMissionRecord();
+    auto musicAbilityRecord = musicMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(musicMissionRecord);
+    EXPECT_TRUE(musicAbilityRecord);
+    musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    ref = stackManager_->CloseMultiWindow(musicMissionRecord->GetMissionRecordId());
+    EXPECT_EQ(ref, CLOSE_MULTI_WINDOW_FAILED);
+
+    result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    ref = stackManager_->CloseMultiWindow(musicMissionRecord->GetMissionRecordId());
+    EXPECT_EQ(ref, CLOSE_MULTI_WINDOW_FAILED);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  CloseMultiWindow
+ * SubFunction: NA
+ * FunctionPoints: Close multiple windows
+ * EnvConditions: NA
+ * CaseDescription: Can I exit the front desk by closing the floating window
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_081, TestSize.Level1)
+{
+    stackManager_->Init();
+
+    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord = topMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topMissionRecord);
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start top ability
+    result = stackManager_->StartAbility(radioAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto radioMissionRecord = stackManager_->GetTopMissionRecord();
+    auto radioAbilityRecord = radioMissionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(radioMissionRecord);
+    EXPECT_TRUE(radioAbilityRecord);
+    radioAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    // start float ability
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+    EXPECT_TRUE(abilityStartSetting);
+
+    musicAbilityRequest_.startSetting = abilityStartSetting;
+    result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto topMissionRecord2 = stackManager_->GetTopMissionRecord();
+    auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topMissionRecord2);
+    EXPECT_TRUE(topAbilityRecord2);
+    topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
+
+    auto stact = topMissionRecord2->GetMissionStack();
+    EXPECT_TRUE(stact);
+    auto stack1 = radioMissionRecord->GetMissionStack();
+    EXPECT_TRUE(stact);
+
+    EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+    EXPECT_EQ(stack1->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
+
+    // stackManager_->isMultiWinMoving_ = false;
+
+    auto ref = stackManager_->CloseMultiWindow(topMissionRecord2->GetMissionRecordId());
+    EXPECT_EQ(0, ref);
+
+    auto topRecord = stackManager_->GetCurrentTopAbility();
+    int state = topRecord->GetAbilityState();
+    EXPECT_EQ(OHOS::AAFwk::INACTIVATING, state);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RestartAbility
+ * SubFunction: NA
+ * FunctionPoints: Restart ability
+ * EnvConditions: NA
+ * CaseDescription: Restart ability
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_082, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    ability->Init();
+    ability->SetAbilityState(AbilityState::ACTIVE);
+    stackManager_->RestartAbility(ability);
+    EXPECT_EQ(AbilityState::INACTIVATING, ability->GetAbilityState());
+
+    ability->SetAbilityState(AbilityState::ACTIVATING);
+    stackManager_->RestartAbility(ability);
+    EXPECT_EQ(AbilityState::INACTIVATING, ability->GetAbilityState());
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RestartAbility
+ * SubFunction: NA
+ * FunctionPoints: Restart ability
+ * EnvConditions: NA
+ * CaseDescription: Restart ability
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_083, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    ability->Init();
+    ability->SetAbilityState(AbilityState::INACTIVE);
+    stackManager_->RestartAbility(ability);
+    EXPECT_FALSE(ability->IsNewWant());
+
+    ability->SetAbilityState(AbilityState::INACTIVATING);
+    stackManager_->RestartAbility(ability);
+    EXPECT_FALSE(ability->IsNewWant());
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  RestartAbility
+ * SubFunction: NA
+ * FunctionPoints: Restart ability
+ * EnvConditions: NA
+ * CaseDescription: Restart ability
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_084, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    ability->Init();
+    ability->SetAbilityState(AbilityState::BACKGROUND);
+    stackManager_->RestartAbility(ability);
+    EXPECT_EQ(AbilityState::TERMINATING, ability->GetAbilityState());
+
+    ability->SetAbilityState(AbilityState::MOVING_BACKGROUND);
+    stackManager_->RestartAbility(ability);
+    EXPECT_EQ(AbilityState::TERMINATING, ability->GetAbilityState());
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  ProcessConfigurationChange
+ * SubFunction: NA
+ * FunctionPoints: Process Configuration Change
+ * EnvConditions: NA
+ * CaseDescription: Process Configuration Change
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_085, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    stackManager_->missionStackList_.clear();
+    std::shared_ptr<MissionStack> mission = nullptr;
+    stackManager_->missionStackList_.push_back(mission);
+    EXPECT_EQ(ERR_INVALID_VALUE, stackManager_->ProcessConfigurationChange());
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function:  ProcessConfigurationChange
+ * SubFunction: NA
+ * FunctionPoints: Process Configuration Change
+ * EnvConditions: NA
+ * CaseDescription: Process Configuration Change
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_086, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    stackManager_->missionStackList_.clear();
+    stackManager_->missionStackList_.push_back(stackManager_->launcherMissionStack_);
+
+    std::string bundleName = "ddddd";
+    auto mission = std::make_shared<MissionRecord>(bundleName);
+    EXPECT_TRUE(mission);
+    mission->RemoveAll();
+    Want want_;
+    AbilityInfo abilityInfo_;
+    ApplicationInfo appInfo_;
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    EXPECT_TRUE(ability);
+    mission->abilities_.push_back(ability);
+    stackManager_->launcherMissionStack_->RemoveAll();
+    stackManager_->launcherMissionStack_->AddMissionRecordToTop(mission);
+    AbilityRecordInfo abilityInfo;
+    ability->GetAbilityRecordInfo(abilityInfo);
+    auto abilityRecord = mission->GetAbilityRecordById(abilityInfo.id);
+    EXPECT_TRUE(abilityRecord);
+    abilityRecord->SetAbilityState(AbilityState::ACTIVE);
+}
 
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -40,6 +40,9 @@ using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
 namespace OHOS {
 namespace AppExecFwk {
 
+const uint8_t NUMBER_OF_PARAMETERS_TWO = 2;
+const uint8_t NUMBER_OF_PARAMETERS_THREE = 3;
+
 struct AsyncCallbackInfo {
     napi_env env;
     napi_async_work asyncWork;
@@ -99,7 +102,7 @@ struct AsyncKillProcessCallbackInfo {
     napi_deferred deferred;
     napi_ref callback[2] = {0};
     std::string bundleName;
-    int32_t result;
+    int32_t result = -1;
 };
 
 struct AsyncClearUpApplicationDataCallbackInfo {
@@ -108,12 +111,22 @@ struct AsyncClearUpApplicationDataCallbackInfo {
     napi_deferred deferred;
     napi_ref callback[2] = {0};
     std::string bundleName;
-    int32_t result;
+    int32_t result = -1;
+};
+
+struct AsyncPreviousMissionInfosCallbackInfo {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback[2] = {0};
+    int32_t maxMissionNum = 0;
+    std::vector<AbilityMissionInfo> previousMissionInfo;
 };
 
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info info);
+napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info);
 napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info);
