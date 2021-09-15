@@ -22,6 +22,7 @@
 #undef protected
 
 #include "ability_scheduler_mock.h"
+#include "app_process_data.h"
 
 using namespace testing::ext;
 using namespace testing;
@@ -392,7 +393,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_001, TestSize.
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_001 start.");
 
     std::unique_ptr<DataAbilityRecord> dataAbilityRecord = std::make_unique<DataAbilityRecord>(abilityRequest_);
-    EXPECT_EQ(dataAbilityRecord->AddClient(nullptr, true), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->AddClient(nullptr, true, false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_001 end.");
 }
@@ -412,7 +413,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_002, TestSize.
     std::unique_ptr<DataAbilityRecord> dataAbilityRecord = std::make_unique<DataAbilityRecord>(abilityRequest_);
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_002 end.");
 }
@@ -433,7 +434,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_003, TestSize.
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_003 end.");
 }
@@ -456,7 +457,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_004, TestSize.
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
     EXPECT_CALL(*abilitySchedulerMock_, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_004 end.");
 }
@@ -481,9 +482,9 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_AddClient_005, TestSize.
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
     abilityState_ = ACTIVE;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
     unsigned int count = 1;
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), count);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), count);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_AddClient_005 end.");
 }
@@ -501,7 +502,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_001, TestSi
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_001 start.");
 
     std::unique_ptr<DataAbilityRecord> dataAbilityRecord = std::make_unique<DataAbilityRecord>(abilityRequest_);
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(nullptr), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(nullptr, false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_001 end.");
 }
@@ -521,7 +522,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_002, TestSi
     std::unique_ptr<DataAbilityRecord> dataAbilityRecord = std::make_unique<DataAbilityRecord>(abilityRequest_);
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_002 end.");
 }
@@ -542,7 +543,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_003, TestSi
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_003 end.");
 }
@@ -565,7 +566,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_004, TestSi
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
     EXPECT_CALL(*abilitySchedulerMock_, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_INVALID_STATE);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_INVALID_STATE);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_004 end.");
 }
@@ -590,7 +591,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_005, TestSi
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
     abilityState_ = ACTIVE;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_OK);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_005 end.");
 }
@@ -615,12 +616,12 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_006, TestSi
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
     abilityState_ = ACTIVE;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
     unsigned int count = 1;
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), count);
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), count);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_OK);
     count = 0;
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), count);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), count);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_006 end.");
 }
@@ -647,20 +648,20 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClient_007, TestSi
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_OK);
 
     // first add client
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)1);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)1);
 
     // second add client
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)2);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)2);
 
     // first remove client
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)1);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)1);
 
     // second remove client
-    EXPECT_EQ(dataAbilityRecord->RemoveClient(client), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)0);
+    EXPECT_EQ(dataAbilityRecord->RemoveClient(abilityRecord_->GetToken(), false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)0);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClient_007 end.");
 }
@@ -776,16 +777,16 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_RemoveClients_006, TestS
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_OK);
 
     // first add client
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)1);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)1);
 
     // second add client
-    EXPECT_EQ(dataAbilityRecord->AddClient(client, true), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)2);
+    EXPECT_EQ(dataAbilityRecord->AddClient(abilityRecord_->GetToken(), true, false), ERR_OK);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)2);
 
     // remove the same client
     EXPECT_EQ(dataAbilityRecord->RemoveClients(client), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)0);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)0);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_RemoveClients_005 end.");
 }
@@ -805,7 +806,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_001, Test
     std::unique_ptr<DataAbilityRecord> dataAbilityRecord = std::make_unique<DataAbilityRecord>(abilityRequest_);
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)0);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)0);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_001 end.");
 }
@@ -826,7 +827,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_002, Test
     auto client = Token::GetAbilityRecordByToken(abilityRecord_->GetToken());
 
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)0);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)0);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_002 end.");
 }
@@ -849,7 +850,7 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_GetClientCount_003, Test
     EXPECT_EQ(dataAbilityRecord->StartLoading(), ERR_OK);
     EXPECT_CALL(*abilitySchedulerMock_, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_EQ(dataAbilityRecord->Attach(abilitySchedulerMock_), ERR_OK);
-    EXPECT_EQ(dataAbilityRecord->GetClientCount(client), (uint32_t)0);
+    EXPECT_EQ(dataAbilityRecord->GetClientCount(abilityRecord_->GetToken()), (uint32_t)0);
 
     HILOG_INFO("AaFwk_DataAbilityRecord_GetClientCount_003 end.");
 }

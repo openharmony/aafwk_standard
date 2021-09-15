@@ -152,13 +152,13 @@ private:
     // object exist in parcel
     static constexpr int VALUE_OBJECT = 1;
     static constexpr int REFERENCE_THRESHOLD = 3 * 1024 * 1024;
-    int type_;
-    int expectedCount_;
-    bool interrupted_;
-    std::shared_ptr<Uri> uri_;
-    std::shared_ptr<ValuesBucket> valuesBucket_;
-    std::shared_ptr<DataAbilityPredicates> dataAbilityPredicates_;
-    std::shared_ptr<ValuesBucket> valuesBucketReferences_;
+    int type_ = -1;
+    int expectedCount_ = 0;
+    bool interrupted_ = false;
+    std::shared_ptr<Uri> uri_ = nullptr;
+    std::shared_ptr<ValuesBucket> valuesBucket_ = nullptr;
+    std::shared_ptr<DataAbilityPredicates> dataAbilityPredicates_ = nullptr;
+    std::shared_ptr<ValuesBucket> valuesBucketReferences_ = nullptr;
     std::map<int, int> dataAbilityPredicatesBackReferences_;
 };
 }  // namespace AppExecFwk

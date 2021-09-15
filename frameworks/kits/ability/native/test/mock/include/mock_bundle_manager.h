@@ -45,6 +45,10 @@ public:
     {
         return true;
     };
+    bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
+    {
+        return true;
+    };
     bool CheckIsSystemAppByUid(const int uid) override
     {
         return true;
@@ -215,6 +219,16 @@ public:
     {
         return true;
     }
+    virtual bool GetModuleUsageRecords(
+        const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override
+    {
+        return true;
+    }
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override
+    {
+        return true;
+    }
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -237,6 +251,10 @@ public:
         const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos) override
     {
         return true;
+    };
+    virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
+    {
+         return true;
     };
     virtual bool CheckIsSystemAppByUid(const int uid) override
     {
@@ -405,6 +423,16 @@ public:
         return true;
     }
     virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) override
+    {
+        return true;
+    }
+    virtual bool GetModuleUsageRecords(
+        const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override
+    {
+        return true;
+    }
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override
     {
         return true;
     }

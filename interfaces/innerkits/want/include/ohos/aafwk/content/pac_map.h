@@ -23,22 +23,53 @@
 #include <memory>
 #include <mutex>
 #include <set>
-
+#include "securec.h"
+#include "json/json.h"
 #include "parcel.h"
-#include "ohos/aafwk/base/pac_map_node.h"
-#include "ohos/aafwk/base/pac_map_node_base.h"
-#include "ohos/aafwk/base/pac_map_node_array.h"
-#include "ohos/aafwk/base/pac_map_node_user_object.h"
+#include "ohos/aafwk/base/base_def.h"
+#include "ohos/aafwk/base/base_object.h"
+#include "ohos/aafwk/base/base_interfaces.h"
+
+// json key define
+// base:   0x00000001 ~ 0x000000FF
+// array:  0x00000100 ~ 0x0000FF00
+// boject: 0x00010000 ~ 0x00FF0000
+#define PACMAP_DATA_NONE 0x00
+// base data
+#define PACMAP_DATA_SHORT 0x00000001
+#define PACMAP_DATA_INTEGER 0x00000002
+#define PACMAP_DATA_LONG 0x00000003
+#define PACMAP_DATA_CHAR 0x00000004
+#define PACMAP_DATA_BYTE 0x00000005
+#define PACMAP_DATA_BOOLEAN 0x00000007
+#define PACMAP_DATA_FLOAT 0x00000008
+#define PACMAP_DATA_DOUBLE 0x00000009
+#define PACMAP_DATA_STRING 0x0000000A
+// array data
+#define PACMAP_DATA_ARRAY_SHORT 0x00000100
+#define PACMAP_DATA_ARRAY_INTEGER 0x00000200
+#define PACMAP_DATA_ARRAY_LONG 0x00000300
+#define PACMAP_DATA_ARRAY_CHAR 0x00000400
+#define PACMAP_DATA_ARRAY_BYTE 0x00000500
+#define PACMAP_DATA_ARRAY_BOOLEAN 0x00000600
+#define PACMAP_DATA_ARRAY_FLOAT 0x00000700
+#define PACMAP_DATA_ARRAY_DOUBLE 0x00000800
+#define PACMAP_DATA_ARRAY_STRING 0x00000900
+// object data
+#define PACMAP_DATA_USEROBJECT 0x00010000
+#define PACMAP_DATA_PACMAP 0x00020000
 
 namespace OHOS {
 namespace AppExecFwk {
 namespace PacMapObject {
-using Object = std::shared_ptr<PacMapNode>;
-}  // namespace PacMapObject
+using INTERFACE = sptr<OHOS::AAFwk::IInterface>;
+};  // namespace PacMapObject
 
-using PacMapList = std::map<std::string, PacMapObject::Object>;
+using namespace AAFwk;
+using UserObjectBase = AAFwk::UserObjectBase;
+using PacMapList = std::map<std::string, PacMapObject::INTERFACE>;
 
-class PacMap : public Parcelable {
+class PacMap final : public Parcelable, public Object, public IPacMap {
 public:
     /**
      * @brief Default constructor used to create a PacMap instance, in which the Map object has no key-value pair.
@@ -51,6 +82,8 @@ public:
     PacMap(const PacMap &other);
 
     ~PacMap();
+
+    IINTERFACE_DECL();
 
     /**
      * @brief A overload operation with shallow copy.
@@ -74,6 +107,7 @@ public:
      * @param pacMap Returns the constructed object.
      */
     PacMap DeepCopy(void);
+    void DeepCopy(PacMap &other);
 
     /**
      * @brief Adds a short value matching a specified key.
@@ -139,11 +173,18 @@ public:
     void PutStringValue(const std::string &key, const std::string &value);
 
     /**
-     * @brief Adds an object value matching a specified key. The object must be a subclass of TUserMapObject.
+     * @brief Adds an object value matching a specified key. The object must be a subclass of UserObjectBase.
      * @param key A specified key.
      * @param value A smart pointer to the object that matches the specified key.
      */
-    void PutObject(const std::string &key, const std::shared_ptr<TUserMapObject> &value);
+    void PutObject(const std::string &key, const std::shared_ptr<UserObjectBase> &value);
+
+    /**
+     * @brief Adds an PacMap value matching a specified key.
+     * @param key A specified key.
+     * @param value The value that matches the specified key.
+     */
+    bool PutPacMap(const std::string &key, const PacMap &value);
 
     /**
      * @brief Adds some short values matching a specified key.
@@ -213,7 +254,7 @@ public:
      * Duplicate key values will be replaced.
      * @param mapData Store a list of key-value pairs.
      */
-    void PutAll(const std::map<std::string, PacMapObject::Object> &mapData);
+    void PutAll(std::map<std::string, PacMapObject::INTERFACE> &mapData);
 
     /**
      * @brief Saves the data in a PacMap object to the current object. Duplicate key values will be replaced.
@@ -361,14 +402,21 @@ public:
      * @param key A specified key.
      * @return Returns the smart pointer to object that matches the key.
      */
-    std::shared_ptr<TUserMapObject> GetObject(const std::string &key);
+    std::shared_ptr<UserObjectBase> GetObject(const std::string &key);
+
+    /**
+     * @brief Obtains the PacMap matching a specified key.
+     * @param key A specified key.
+     * @return Returns PacMap that matches the key.
+     */
+    PacMap GetPacMap(const std::string &key);
 
     /**
      * @brief Obtains all the data that has been stored with shallow copy.
      * @return Returns all data in current PacMap. There is no dependency between the returned data and
      * the original data.
      */
-    std::map<std::string, PacMapObject::Object> GetAll(void);
+    std::map<std::string, PacMapObject::INTERFACE> GetAll(void);
 
     /**
      * @brief Indicates whether some other object is "equal to" this one.
@@ -422,21 +470,92 @@ public:
      */
     static PacMap *Unmarshalling(Parcel &parcel);
 
-private:
-    PacMapList data_list_;
-    std::mutex mapLock_;
+    /**
+     * @brief Save pacmap to string.
+     * @return Returns the string.
+     */
+    virtual std::string ToString() override;
 
-    void DeepCopyData(PacMapList &desPacMapList, const PacMapList &srcPacMapList);
-    void ShallowCopyData(PacMapList &desPacMapList, const PacMapList &srcPacMapList);
-    void RemoveDataNode(const std::string &key);
+    /**
+     * @brief Restore pacmap from the string.
+     * @return Return true if successful, otherwise false.
+     */
+    virtual bool FromString(const std::string &str) override;
+
+    ErrCode GetValue(PacMap &value);
+
+    virtual bool Equals(IObject &other) override;
+
+    static sptr<IPacMap> Parse(const std::string &str);
+
+    static constexpr char SIGNATURE = 'P';
+
+private:
+    PacMapList dataList_;
+    std::mutex mapLock_;
+    bool GetBaseJsonValue(PacMapList::const_iterator &it, Json::Value &json) const;
+    bool GetArrayJsonValue(PacMapList::const_iterator &it, Json::Value &json) const;
+    bool GetUserObjectJsonValue(PacMapList::const_iterator &it, Json::Value &json) const;
+    void ShallowCopyData(PacMapList &desPacMap, const PacMapList &srcPacMap);
+    void RemoveData(PacMapList &srcPacMap, const std::string &key);
     bool EqualPacMapData(const PacMapList &leftPacMapList, const PacMapList &rightPacMapList);
-    bool WriteBaseToParcel(const std::string &key, const std::shared_ptr<PacMapNode> &nodeData, Parcel &parcel) const;
-    bool WriteArrayToParcel(const std::string &key, const std::shared_ptr<PacMapNode> &nodeData, Parcel &parcel) const;
-    bool WriteObjectToParcel(const std::string &key, const std::shared_ptr<PacMapNode> &nodeData, Parcel &parcel) const;
     bool ReadFromParcel(Parcel &parcel);
-    bool ReadBaseFromParcel(const std::string &key, int32_t dataType, Parcel &parcel);
-    bool ReadArrayFromParcel(const std::string &key, int32_t dataType, Parcel &parcel);
-    bool ReadObjectFromParcel(const std::string &key, int32_t dataType, Parcel &parcel);
+
+    bool ParseJson(Json::Value &data, PacMapList &mapList);
+    bool ParseJsonItem(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArray(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayShort(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayInteger(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayLong(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayChar(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayByte(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayBoolean(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayFloat(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayDouble(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool ParseJsonItemArrayString(PacMapList &mapList, const std::string &key, Json::Value &item);
+
+    bool InnerPutObjectValue(PacMapList &mapList, const std::string &key, Json::Value &item);
+    bool InnerPutPacMapValue(PacMapList &mapList, const std::string &key, Json::Value &item);
+
+    bool ToJson(const PacMapList &mapList, Json::Value &dataObject) const;
+
+    std::string MapListToString(const PacMapList &mapList) const;
+    bool StringToMapList(const std::string &str, PacMapList &mapList);
+
+    void InnerPutShortValue(PacMapList &mapList, const std::string &key, short value);
+    void InnerPutIntValue(PacMapList &mapList, const std::string &key, int value);
+    void InnerPutLongValue(PacMapList &mapList, const std::string &key, long value);
+    void InnerPutBooleanValue(PacMapList &mapList, const std::string &key, bool value);
+    void InnerPutCharValue(PacMapList &mapList, const std::string &key, char value);
+    void InnerPutByteValue(PacMapList &mapList, const std::string &key, AAFwk::byte value);
+    void InnerPutFloatValue(PacMapList &mapList, const std::string &key, float value);
+    void InnerPutDoubleValue(PacMapList &mapList, const std::string &key, double value);
+    void InnerPutStringValue(PacMapList &mapList, const std::string &key, const std::string &value);
+    void InnerPutObject(PacMapList &mapList, const std::string &key, const std::shared_ptr<UserObjectBase> &value);
+    bool InnerPutPacMap(PacMapList &mapList, const std::string &key, PacMap &value);
+
+    void InnerPutShortValueArray(PacMapList &mapList, const std::string &key, const std::vector<short> &value);
+    void InnerPutIntValueArray(PacMapList &mapList, const std::string &key, const std::vector<int> &value);
+    void InnerPutLongValueArray(PacMapList &mapList, const std::string &key, const std::vector<long> &value);
+    void InnerPutBooleanValueArray(PacMapList &mapList, const std::string &key, const std::vector<bool> &value);
+    void InnerPutCharValueArray(PacMapList &mapList, const std::string &key, const std::vector<char> &value);
+    void InnerPutByteValueArray(PacMapList &mapList, const std::string &key, const std::vector<AAFwk::byte> &value);
+    void InnerPutFloatValueArray(PacMapList &mapList, const std::string &key, const std::vector<float> &value);
+    void InnerPutDoubleValueArray(PacMapList &mapList, const std::string &key, const std::vector<double> &value);
+    void InnerPutStringValueArray(PacMapList &mapList, const std::string &key, const std::vector<std::string> &value);
+
+    // char data:none
+    bool ToJsonArrayShort(std::vector<short> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayInt(std::vector<int> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayLong(std::vector<long> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayByte(std::vector<byte> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayBoolean(std::vector<bool> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayFloat(std::vector<float> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayDouble(std::vector<double> &array, Json::Value &item, int type) const;
+    bool ToJsonArrayString(std::vector<std::string> &array, Json::Value &item, int type) const;
+
+    bool IsNumber(const std::string &str);
+    bool CompareArrayData(AAFwk::IInterface *one_interface, AAFwk::IInterface *two_interface);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -37,13 +37,13 @@ PendingWantManager::~PendingWantManager()
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 }
 
-sptr<IWantSender> PendingWantManager::GetWantSender(const int32_t callingUid, const int32_t uid,
+sptr<IWantSender> PendingWantManager::GetWantSender(const int32_t callingUid, const int32_t uid, const bool isSystemApp,
     const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("PendingWantManager::GetWantSender begin.");
 
     std::lock_guard<std::recursive_mutex> locker(mutex_);
-    if (callingUid != 0 && callingUid != SYSTEM_UID) {
+    if (callingUid != 0 && callingUid != SYSTEM_UID && !isSystemApp) {
         if (callingUid != uid) {
             HILOG_INFO("is not allowed to send");
             return nullptr;
@@ -59,9 +59,9 @@ sptr<IWantSender> PendingWantManager::GetWantSenderLocked(const int32_t callingU
 {
     HILOG_INFO("%{public}s:begin.", __func__);
 
-    bool needCreate = ((int)wantSenderInfo.flags & (int)Flags::NO_BUILD_FLAG) != 0;
-    bool needCancel = ((int)wantSenderInfo.flags & (int)Flags::CANCEL_PRESENT_FLAG) != 0;
-    bool needUpdate = ((int)wantSenderInfo.flags & (int)Flags::UPDATE_PRESENT_FLAG) != 0;
+    bool needCreate = ((uint32_t)wantSenderInfo.flags & (uint32_t)Flags::NO_BUILD_FLAG) != 0;
+    bool needCancel = ((uint32_t)wantSenderInfo.flags & (uint32_t)Flags::CANCEL_PRESENT_FLAG) != 0;
+    bool needUpdate = ((uint32_t)wantSenderInfo.flags & (uint32_t)Flags::UPDATE_PRESENT_FLAG) != 0;
 
     wantSenderInfo.flags &=
         ~((uint32_t)Flags::NO_BUILD_FLAG | (uint32_t)Flags::CANCEL_PRESENT_FLAG | (uint32_t)Flags::UPDATE_PRESENT_FLAG);
@@ -180,7 +180,8 @@ int32_t PendingWantManager::SendWantSender(const sptr<IWantSender> &target, cons
     return record->SenderInner(info);
 }
 
-void PendingWantManager::CancelWantSender(const int32_t callingUid, const int32_t uid, const sptr<IWantSender> &sender)
+void PendingWantManager::CancelWantSender(
+    const int32_t callingUid, const int32_t uid, const bool isSystemApp, const sptr<IWantSender> &sender)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
 
@@ -190,9 +191,11 @@ void PendingWantManager::CancelWantSender(const int32_t callingUid, const int32_
     }
 
     std::lock_guard<std::recursive_mutex> locker(mutex_);
-    if (callingUid != uid) {
-        HILOG_DEBUG("is not allowed to send");
-        return;
+    if (callingUid != 0 && callingUid != SYSTEM_UID && !isSystemApp) {
+        if (callingUid != uid) {
+            HILOG_INFO("is not allowed to send");
+            return;
+        }
     }
     sptr<PendingWantRecord> record = iface_cast<PendingWantRecord>(sender->AsObject());
     CancelWantSenderLocked(*record, true);
@@ -209,21 +212,23 @@ void PendingWantManager::CancelWantSenderLocked(PendingWantRecord &record, bool 
 }
 
 int32_t PendingWantManager::PendingWantStartAbility(
-    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, int32_t callerUid)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
-    return DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(want, callerToken, requestCode);
+    return DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
+        want, callerToken, requestCode, callerUid);
 }
 
-int32_t PendingWantManager::PendingWantStartAbilitys(
-    const std::vector<WantsInfo> wantsInfo, const sptr<IRemoteObject> &callerToken, int32_t requestCode)
+int32_t PendingWantManager::PendingWantStartAbilitys(const std::vector<WantsInfo> wantsInfo,
+    const sptr<IRemoteObject> &callerToken, int32_t requestCode, int32_t callerUid)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
 
     int32_t result = ERR_OK;
     for (const auto &item : wantsInfo) {
         const auto &want = item.want;
-        result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(want, callerToken, requestCode);
+        result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
+            want, callerToken, requestCode, callerUid);
         if (result != ERR_OK && result != START_ABILITY_WAITING) {
             HILOG_ERROR("%{public}s:result != ERR_OK && result != START_ABILITY_WAITING.", __func__);
             return result;

@@ -94,7 +94,7 @@ HWTEST_F(InfoTest, stack_info_oprator_002, TestSize.Level0)
     Parcel parcel;
     missionStackInfo_.Marshalling(parcel);
     MissionStackInfo *obj = missionStackInfo_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
     EXPECT_EQ(obj->id, missionStackInfo_.id);
     EXPECT_EQ(obj->missionRecords[0].id, info.id);
 }
@@ -129,7 +129,7 @@ HWTEST_F(InfoTest, stack_info_oprator_003, TestSize.Level0)
     Parcel parcel;
     missionRecordInfo_.Marshalling(parcel);
     MissionRecordInfo *obj = missionRecordInfo_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
     EXPECT_EQ(obj->id, missionRecordInfo_.id);
     EXPECT_EQ(obj->abilityRecordInfos[0].id, info.id);
     EXPECT_EQ(obj->abilityRecordInfos[0].elementName, info.elementName);
@@ -174,7 +174,7 @@ HWTEST_F(InfoTest, stack_info_oprator_004, TestSize.Level0)
     Parcel parcel;
     abilityRecordInfo_.Marshalling(parcel);
     AbilityRecordInfo *obj = abilityRecordInfo_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
 
     EXPECT_EQ(obj->id, abilityRecordInfo_.id);
     EXPECT_EQ(obj->elementName, abilityRecordInfo_.elementName);
@@ -207,7 +207,7 @@ HWTEST_F(InfoTest, stack_info_oprator_005, TestSize.Level0)
     Parcel parcel;
     lifeCycleStateInfo_.Marshalling(parcel);
     LifeCycleStateInfo *obj = lifeCycleStateInfo_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
 
     EXPECT_EQ(obj->isNewWant, lifeCycleStateInfo_.isNewWant);
     EXPECT_EQ(obj->state, lifeCycleStateInfo_.state);
@@ -230,7 +230,7 @@ HWTEST_F(InfoTest, stack_info_oprator_007, TestSize.Level0)
     Parcel parcel;
     imageHeader_.Marshalling(parcel);
     ImageHeader *obj = imageHeader_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
     EXPECT_EQ(obj->colorMode, imageHeader_.colorMode);
     EXPECT_EQ(obj->reserved, imageHeader_.reserved);
     EXPECT_EQ(obj->width, imageHeader_.width);
@@ -276,7 +276,7 @@ HWTEST_F(InfoTest, stack_info_oprator_009, TestSize.Level0)
     Parcel parcel;
     recentMissionInfo_.Marshalling(parcel);
     AbilityMissionInfo *obj = recentMissionInfo_.Unmarshalling(parcel);
-    ASSERT_TRUE(obj);
+    EXPECT_TRUE(obj);
     EXPECT_EQ(obj->id, recentMissionInfo_.id);
     EXPECT_EQ(obj->runingState, recentMissionInfo_.runingState);
     EXPECT_EQ(obj->size, recentMissionInfo_.size);

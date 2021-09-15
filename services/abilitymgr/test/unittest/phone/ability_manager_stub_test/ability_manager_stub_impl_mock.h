@@ -64,6 +64,12 @@ public:
         return 0;
     }
 
+    int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE)
+    {
+        return 0;
+    }
+
     virtual int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant = nullptr)
     {
         return 0;
@@ -226,6 +232,51 @@ public:
     }
 
     int GetMissionLockModeState()
+    {
+        return 0;
+    }
+
+    int UpdateConfiguration(const DummyConfiguration &config)
+    {
+        return 0;
+    }
+
+    int MoveMissionToFloatingStack(const MissionOption &missionOption)
+    {
+        return 0;
+    }
+
+    int MoveMissionToSplitScreenStack(const MissionOption &missionOption)
+    {
+        return 0;
+    }
+
+    int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
+    {
+        return 0;
+    }
+
+    int MinimizeMultiWindow(int missionId)
+    {
+        return 0;
+    }
+
+    int MaximizeMultiWindow(int missionId)
+    {
+        return 0;
+    }
+
+    int GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
+    {
+        return 0;
+    }
+
+    int CloseMultiWindow(int missionId)
+    {
+        return 0;
+    }
+
+    int SetMissionStackSetting(const StackSetting &stackSetting)
     {
         return 0;
     }

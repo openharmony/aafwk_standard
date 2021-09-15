@@ -19,7 +19,6 @@
 #include "gmock/gmock.h"
 #include "app_mgr_client.h"
 #include "hilog_wrapper.h"
-#include "app_mgr_constants.h"
 
 namespace OHOS {
 namespace AAFwk {

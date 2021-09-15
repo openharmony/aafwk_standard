@@ -18,6 +18,7 @@ config("ability_manager_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include/",
+    "//third_party/jsoncpp/include",
     "${innerkits_path}/want/include",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
@@ -36,6 +37,7 @@ config("ability_manager_public_config") {
 
 ohos_shared_library("ability_manager") {
   sources = [
+    "${services_path}/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "${services_path}/abilitymgr/src/ability_connect_callback_stub.cpp",
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
     "${services_path}/abilitymgr/src/ability_manager_proxy.cpp",
@@ -44,15 +46,18 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_record_info.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
+    "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
     "${services_path}/abilitymgr/src/mission_description_info.cpp",
+    "${services_path}/abilitymgr/src/mission_option.cpp",
     "${services_path}/abilitymgr/src/mission_record_info.cpp",
     "${services_path}/abilitymgr/src/mission_snapshot_info.cpp",
     "${services_path}/abilitymgr/src/mission_stack_info.cpp",
     "${services_path}/abilitymgr/src/sender_info.cpp",
     "${services_path}/abilitymgr/src/stack_info.cpp",
+    "${services_path}/abilitymgr/src/stack_setting.cpp",
     "${services_path}/abilitymgr/src/want_sender_info.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/task_handler.cpp",
@@ -72,6 +77,7 @@ ohos_shared_library("ability_manager") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 

@@ -19,10 +19,14 @@ module_output_path = "aafwk_standard/mstabilitymgrservice"
 ohos_moduletest("ability_mgr_module_test") {
   module_out_path = module_output_path
 
-  include_dirs = [ "${services_path}/test/mock/include" ]
+  include_dirs = [
+    "${services_path}/test/mock/include",
+    "//third_party/jsoncpp/include",
+  ]
 
   sources = [ "ability_mgr_module_test.cpp" ]
   sources += [
+    "//foundation/aafwk/standard/services/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_event_handler.cpp",
@@ -46,6 +50,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_deal.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_description_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_option.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
@@ -62,6 +67,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/services/test/mock/src/mock_app_mgr_client.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
   ]
 
@@ -88,6 +94,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 

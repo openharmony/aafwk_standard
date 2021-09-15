@@ -26,6 +26,8 @@ ohos_moduletest("PandingWantMgrTest") {
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmg",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
+    "//base/notification/ns_standard/interfaces/innerkits/wantagent/include",
+    "//third_party/jsoncpp/include",
     "//base/notification/ans_standard/interfaces/innerkits/wantagent/include",
   ]
 
@@ -40,6 +42,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "//base/notification/ans_standard/frameworks/wantagent/src/want_agent_log_wrapper.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_manager_client.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/services/test/mock/src/mock_app_mgr_client.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
     "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
     "panding_want_manager_test.cpp",
@@ -63,6 +66,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 

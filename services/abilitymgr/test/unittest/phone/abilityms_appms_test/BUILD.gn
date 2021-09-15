@@ -23,6 +23,7 @@ ohos_unittest("abilityms_appms_test") {
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
   ]
 
   sources = [ "abilityms_appms_test.cpp" ]

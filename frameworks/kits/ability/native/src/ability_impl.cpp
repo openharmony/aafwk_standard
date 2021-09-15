@@ -15,6 +15,8 @@
 
 #include "ability_impl.h"
 #include "app_log_wrapper.h"
+#include "ability_keyevent.h"
+#include "ability_touchevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -39,6 +41,13 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     abilityLifecycleCallbacks_ = application;
     contextDeal_ = contextDeal;
 
+    // Multimodal Events
+#ifdef MMI_COMPILE
+    abilityKeyEventHandle_ = sptr<AbilityKeyEventHandle>(new (std::nothrow) AbilityKeyEventHandle(shared_from_this()));
+    abilityTouchEventHandle_ =
+        sptr<AbilityTouchEventHandle>(new (std::nothrow) AbilityTouchEventHandle(shared_from_this()));
+#endif
+
     APP_LOGI("AbilityImpl::init end");
 }
 
@@ -50,9 +59,14 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
  */
 void AbilityImpl::Start(const Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Start ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
+    }
+
+    if (ability_->GetAbilityInfo()->type == AbilityType::PAGE) {
+        ability_->HandleCreateAsContinuation(want);
     }
 
     APP_LOGI("AbilityImpl::Start");
@@ -64,6 +78,10 @@ void AbilityImpl::Start(const Want &want)
     }
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
+
+    // Multimodal Events Register
+    MMIRegister();
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -73,15 +91,20 @@ void AbilityImpl::Start(const Want &want)
  */
 void AbilityImpl::Stop()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Stop ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::Stop");
+    APP_LOGI("AbilityImpl::Stop");
     ability_->OnStop();
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_->OnAbilityStop(ability_);
+
+    // Multimodal Events UnRegister
+    MMIUnRegister();
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -91,12 +114,13 @@ void AbilityImpl::Stop()
  */
 void AbilityImpl::Active()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Active ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::Active");
+    APP_LOGI("AbilityImpl::Active");
     ability_->OnActive();
 
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
@@ -106,6 +130,7 @@ void AbilityImpl::Active()
 
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -115,12 +140,13 @@ void AbilityImpl::Active()
  */
 void AbilityImpl::Inactive()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Inactive ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::Inactive");
+    APP_LOGI("AbilityImpl::Inactive");
     ability_->OnInactive();
 
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
@@ -130,6 +156,7 @@ void AbilityImpl::Inactive()
 
     lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
     abilityLifecycleCallbacks_->OnAbilityInactive(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -140,15 +167,17 @@ void AbilityImpl::Inactive()
  */
 void AbilityImpl::Foreground(const Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Foreground ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::Foreground");
+    APP_LOGI("AbilityImpl::Foreground");
     ability_->OnForeground(want);
     lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
     abilityLifecycleCallbacks_->OnAbilityForeground(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -158,16 +187,18 @@ void AbilityImpl::Foreground(const Want &want)
  */
 void AbilityImpl::Background()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Background ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::Background");
+    APP_LOGI("AbilityImpl::Background");
     ability_->OnLeaveForeground();
     ability_->OnBackground();
     lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
     abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -178,14 +209,16 @@ void AbilityImpl::Background()
  */
 void AbilityImpl::DispatchSaveAbilityState(PacMap &outState)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::DispatchSaveAbilityState ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl::DispatchSaveAbilityState");
+    APP_LOGI("AbilityImpl::DispatchSaveAbilityState");
     ability_->OnSaveAbilityState(outState);
     abilityLifecycleCallbacks_->OnAbilitySaveState(outState);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -196,13 +229,15 @@ void AbilityImpl::DispatchSaveAbilityState(PacMap &outState)
  */
 void AbilityImpl::DispatchRestoreAbilityState(const PacMap &inState)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::DispatchRestoreAbilityState ability_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl:: DispatchRestoreAbilityState");
-    ability_->OnRestoreAbilityState(inState);
+    hasSaveData_ = true;
+    restoreData_ = inState;
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 void AbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
@@ -216,15 +251,17 @@ void AbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCy
  */
 sptr<IRemoteObject> AbilityImpl::ConnectAbility(const Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::ConnectAbility ability_ is nullptr");
         return nullptr;
     }
 
-    APP_LOGD("AbilityImpl:: ConnectAbility");
+    APP_LOGI("AbilityImpl:: ConnectAbility");
     sptr<IRemoteObject> object = ability_->OnConnect(want);
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 
     return object;
 }
@@ -236,12 +273,14 @@ sptr<IRemoteObject> AbilityImpl::ConnectAbility(const Want &want)
  */
 void AbilityImpl::DisconnectAbility(const Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::DisconnectAbility ability_ is nullptr");
         return;
     }
 
     ability_->OnDisconnect(want);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -258,15 +297,17 @@ void AbilityImpl::DisconnectAbility(const Want &want)
  */
 void AbilityImpl::CommandAbility(const Want &want, bool restart, int startId)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::CommandAbility ability_ is nullptr");
         return;
     }
 
-    APP_LOGD("AbilityImpl:: CommandAbility");
+    APP_LOGI("AbilityImpl:: CommandAbility");
     ability_->OnCommand(want, restart, startId);
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -289,7 +330,7 @@ int AbilityImpl::GetCurrentState()
  */
 bool AbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
 {
-    APP_LOGD("AbilityImpl::DoKeyDown called");
+    APP_LOGI("AbilityImpl::DoKeyDown called");
     return false;
 }
 
@@ -304,7 +345,7 @@ bool AbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
  */
 bool AbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
 {
-    APP_LOGD("AbilityImpl::DoKeyUp called");
+    APP_LOGI("AbilityImpl::DoKeyUp called");
     return false;
 }
 
@@ -318,7 +359,7 @@ bool AbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
  */
 bool AbilityImpl::DoTouchEvent(const TouchEvent &touchEvent)
 {
-    APP_LOGD("AbilityImpl::DoTouchEvent called");
+    APP_LOGI("AbilityImpl::DoTouchEvent called");
     return false;
 }
 
@@ -335,6 +376,7 @@ bool AbilityImpl::DoTouchEvent(const TouchEvent &touchEvent)
  */
 void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &resultData)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::SendResult ability_ is nullptr");
         return;
@@ -359,13 +401,16 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
                 }
                 grantResult.push_back(intOK);
             }
+            APP_LOGI("%{public}s begin OnRequestPermissionsFromUserResult.", __func__);
             ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grantResult);
+            APP_LOGI("%{public}s end OnRequestPermissionsFromUserResult.", __func__);
         } else {
-            APP_LOGE("AbilityImpl::SendResult user cancel permissions");
+            APP_LOGI("%{public}s user cancel permissions.", __func__);
         }
     } else {
         ability_->OnAbilityResult(requestCode, resultCode, resultData);
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -376,12 +421,14 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
  */
 void AbilityImpl::NewWant(const Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::NewWant ability_ is nullptr");
         return;
     }
     ability_->SetWant(want);
     ability_->OnNewWant(want);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -532,11 +579,13 @@ int AbilityImpl::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &va
  */
 void AbilityImpl::SerUriString(const std::string &uri)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (contextDeal_ == nullptr) {
         APP_LOGE("AbilityImpl::SerUriString contextDeal_ is nullptr");
         return;
     }
     contextDeal_->SerUriString(uri);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -554,6 +603,31 @@ void AbilityImpl::SetLifeCycleStateInfo(const AAFwk::LifeCycleStateInfo &info)
 }
 
 /**
+ * @brief Check if it needs to restore the data to the ability.
+ *
+ * @return Return true if need and success, otherwise return false.
+ */
+bool AbilityImpl::CheckAndRestore()
+{
+    APP_LOGI("AbilityImpl::CheckAndRestore called start");
+    if (!hasSaveData_) {
+        APP_LOGE("AbilityImpl::CheckAndRestore hasSaveData_ is false");
+        return false;
+    }
+
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::CheckAndRestore ability_ is nullptr");
+        return false;
+    }
+
+    APP_LOGI("AbilityImpl::CheckAndRestore ready to restore");
+    ability_->OnRestoreAbilityState(restoreData_);
+
+    APP_LOGI("AbilityImpl::CheckAndRestore called end");
+    return true;
+}
+
+/**
  * @brief Set deviceId/bundleName/abilityName of the calling ability
  *
  * @param deviceId deviceId of the calling ability
@@ -568,6 +642,123 @@ void AbilityImpl::SetCallingContext(
     if (ability_ != nullptr) {
         ability_->SetCallingContext(deviceId, bundleName, abilityName);
     }
+}
+
+/**
+ * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
+ * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
+ * context has changed. If you implement URI normalization for a Data ability, you must also implement
+ * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to any
+ * method that is called on the Data ability must require normalization verification and denormalization. The default
+ * implementation of this method returns null, indicating that this Data ability does not support URI normalization.
+ *
+ * @param uri Indicates the Uri object to normalize.
+ *
+ * @return Returns the normalized Uri object if the Data ability supports URI normalization; returns null otherwise.
+ */
+Uri AbilityImpl::NormalizeUri(const Uri &uri)
+{
+    return uri;
+}
+
+/**
+ * @brief Converts the given normalized uri generated by normalizeUri(ohos.utils.net.Uri) into a denormalized one.
+ * The default implementation of this method returns the original URI passed to it.
+ *
+ * @param uri uri Indicates the Uri object to denormalize.
+ *
+ * @return Returns the denormalized Uri object if the denormalization is successful; returns the original Uri passed to
+ * this method if there is nothing to do; returns null if the data identified by the original Uri cannot be found in the
+ * current environment.
+ */
+Uri AbilityImpl::DenormalizeUri(const Uri &uri)
+{
+    return uri;
+}
+/*
+ * @brief ScheduleUpdateConfiguration, scheduling update configuration.
+ */
+void AbilityImpl::ScheduleUpdateConfiguration(const AAFwk::DummyConfiguration &config)
+{
+    APP_LOGI("%{public}s begin.", __func__);
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
+    }
+
+    Configuration configtest;
+    ability_->OnConfigurationUpdated(configtest);
+    APP_LOGI("%{public}s end.", __func__);
+}
+/**
+ * @brief Multimodal Events Register.
+ */
+void AbilityImpl::MMIRegister()
+{
+#ifdef MMI_COMPILE
+    APP_LOGI("%{public}s called.", __func__);
+    int32_t ret = 0;
+    int32_t windowID = 0;
+    if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
+        if (ability_->GetWindow() != nullptr) {
+            windowID = ability_->GetWindow()->GetWindowID();
+        }
+    }
+
+    // register keyEvent
+    ret = MMIEventHdl->RegisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
+    APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
+    APP_LOGI("MMIRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
+    APP_LOGI("MMIRegister :RegisterkeyEventHandler ret:%{public}d", ret);
+
+    // register touchEvent
+    ret = MMIEventHdl->RegisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
+    APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
+    APP_LOGI("MMIRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
+    APP_LOGI("MMIRegister :RegistertouchEventHandler ret:%{public}d", ret);
+#endif
+}
+
+/**
+ * @brief Multimodal Events UnRegister.
+ */
+void AbilityImpl::MMIUnRegister()
+{
+#ifdef MMI_COMPILE
+    APP_LOGI("%{public}s called.", __func__);
+    int32_t ret = 0;
+    int32_t windowID = 0;
+    if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
+        if (ability_->GetWindow() != nullptr) {
+            windowID = ability_->GetWindow()->GetWindowID();
+        }
+    }
+    // unregister keyEvent
+    ret = MMIEventHdl->UnregisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
+    APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
+    APP_LOGI("MMIUnRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
+    APP_LOGI("MMIUnRegister :UnRegisterkeyEventHandler ret:%{public}d", ret);
+
+    // unregister touchEvent
+    ret = MMIEventHdl->UnregisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
+    APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
+    APP_LOGI("MMIUnRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
+    APP_LOGI("MMIUnRegister :UnRegistertouchEventHandler ret:%{public}d", ret);
+#endif
+}
+
+/**
+ * @brief Create a PostEvent timeout task. The default delay is 5000ms
+ *
+ * @return Return a smart pointer to a timeout object
+ */
+std::shared_ptr<AbilityPostEventTimeout> AbilityImpl::CreatePostEventTimeouter(std::string taskstr)
+{
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::CreatePostEventTimeouter ability_ is nullptr");
+        return nullptr;
+    }
+
+    return ability_->CreatePostEventTimeouter(taskstr);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

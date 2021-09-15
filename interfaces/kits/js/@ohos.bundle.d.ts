@@ -12,113 +12,106 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AsyncCallback } from './.basic';
-import { ApplicationInfo } from './bundle/applicationinfo';
-import { BundleInfo } from './bundle/bundleinfo';
-import { AbilityInfo } from './bundle/abilityinfo';
+import { AsyncCallback, Callback } from './basic';
+import { ApplicationInfo } from './bundle/applicationInfo';
+import { BundleInfo } from './bundle/bundleInfo';
+import { AbilityInfo } from './bundle/abilityInfo';
 import { Want } from './ability/want';
-import { BundleInstaller } from './bundle/bundleinstaller';
+import { BundleInstaller } from './bundle/bundleInstaller';
+import { ElementName } from './bundle/elementName';
+import { ShortcutInfo } from './bundle/shortcutInfo';
+import { ModuleUsageRecord } from './bundle/moduleUsageRecord';
 import permission from './@ohos.security.permission';
 
 /**
- * @name BundleFlag
- * @since 3
- * @SysCap BMS
- * @import NA
- * @permission NA
- * @devices phone, tablet
- */
-export declare interface BundleFlag {
-  getBundleDefault: boolean;
-  getBundleWithAbilities: boolean;
-  getAbilityInfoWithPermission: boolean;
-  getAbilityInfoWithApplication: boolean;
-  getApplicationInfoWithPermission: boolean;
-  getBundleWithRequestedPermission: boolean;
-  getAllApplicationInfo: boolean;
-}
-
-export declare interface QueryParameter {
-  flags?: number;
-  userId?: string;
-}
+  * @default Indicates the permission event
+  * @since 7
+  * @SysCap SystemCapability.Appexecfwk
+  */
+type PermissionEvent = 'permissionChange' | 'anyPermissionChange';
 
 /**
  * bundle.
  * @name bundle
- * @since 3
- * @sysCap appexecfwk
- * @devices phone, tablet
- * @permission N/A
+ * @since 7
+ * @sysCap SystemCapability.Appexecfwk
+ * @devices phone, tablet, tv, wearable
+ * @permission NA
  */
 declare namespace bundle {
-  export enum ModuleUpdateFlag {
-    FLAG_MODULE_UPGRADE_CHECK = 0,
-    FLAG_MODULE_UPGRADE_INSTALL = 1,
-    FLAG_MODULE_UPGRADE_INSTALL_WITH_CONFIG_WINDOWS = 2,
+
+ /**
+  * @name BundleFlag
+  * @since 7
+  * @SysCap SystemCapability.Appexecfwk
+  * @import NA
+  * @permission NA
+  * @devices phone, tablet, tv, wearable
+  */
+  enum BundleFlag {
+    GET_BUNDLE_DEFAULT = 0x00000000,
+    GET_BUNDLE_WITH_ABILITIES = 0x00000001,
+    GET_APPLICATION_INFO_WITH_PERMISSION = 0x00000008,
   }
 
-  export enum FormType {
-    JAVA = 0,
-    JS = 1,
-  }
-
-  export enum ColorMode {
-    AUTO_MODE = -1,
-    DARK_MODE = 0,
-    LIGHT_MODE = 1,
-  }
-
+  /**
+  * @name GrantStatus
+  * @since 7
+  * @SysCap SystemCapability.Appexecfwk
+  * @import NA
+  * @permission NA
+  * @devices phone, tablet, tv, wearable
+  */
   export enum GrantStatus {
     PERMISSION_DENIED = -1,
     PERMISSION_GRANTED = 0,
   }
 
-  export enum ModuleRemoveFlag {
-    FLAG_MODULE_NOT_USED_BY_FORM = 0,
-    FLAG_MODULE_USED_BY_FORM = 1,
-    FLAG_MODULE_NOT_USED_BY_SHORTCUT = 2,
-    FLAG_MODULE_USED_BY_SHORTCUT = 3,
-  }
-
-  export enum SignatureCompareResult {
-    SIGNATURE_MATCHED = 0,
-    SIGNATURE_NOT_MATCHED = 1,
-    SIGNATURE_UNKNOWN_BUNDLE = 2,
-  }
-
-  export enum ShortcutExistence {
-    SHORTCUT_EXISTENCE_EXISTS = 0,
-    SHORTCUT_EXISTENCE_NOT_EXISTS = 1,
-    SHORTCUT_EXISTENCE_UNKNOW = 2,
-  }
-
-  export enum QueryShortCutFlag {
-    QUERY_SHORTCUT_HOME = 0,
-  }
-
   /**
    * @name AbilityType
-   * @since 3
-   * @SysCap BMS
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    * @import NA
    * @permission NA
-   * @devices phone, tablet
+   * @devices phone, tablet, tv, wearable
    */
   export enum AbilityType {
+    /**
+      * @default Indicates an unknown ability type
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     UNKNOWN,
+
+    /**
+      * @default Indicates that the ability has a UI
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     PAGE,
+
+    /**
+      * @default Indicates that the ability does not have a UI
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     SERVICE,
+
+    /**
+      * @default Indicates that the ability is used to provide data access services
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     DATA,
   }
 
   /**
    * @name AbilitySubType
-   * @since 3
-   * @SysCap BMS
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    * @import NA
    * @permission NA
-   * @devices phone, tablet
+   * @devices phone, tablet, tv, wearable
    */
   export enum AbilitySubType {
     UNSPECIFIED = 0,
@@ -127,32 +120,74 @@ declare namespace bundle {
 
   /**
    * @name DisplayOrientation
-   * @since 3
-   * @SysCap BMS
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    * @import NA
    * @permission NA
-   * @devices phone, tablet
+   * @devices phone, tablet, tv, wearable
    */
   export enum DisplayOrientation {
+    /**
+      * @default Indicates that the system automatically determines the display orientation
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     UNSPECIFIED,
+
+    /**
+      * @default Indicates the landscape orientation
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     LANDSCAPE,
+
+    /**
+      * @default Indicates the portrait orientation
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
     PORTRAIT,
-    FOLLOWRECENT,
+
+    /**
+      * @default Indicates the page ability orientation is the same as that of the nearest ability in the stack
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
+    FOLLOW_RECENT,
   }
 
   /**
    * @name LaunchMode
-   * @since 3
-   * @SysCap BMS
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    * @import NA
    * @permission NA
-   * @devices phone, tablet
+   * @devices phone, tablet, tv, wearable
    */
   export enum LaunchMode {
-      SINGLETON = 0,
-      STANDARD = 1,
+    /**
+      * @default Indicates that the ability has only one instance
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
+    SINGLETON = 0,
+
+    /**
+      * @default Indicates that the ability can have multiple instances
+      * @since 7
+      * @SysCap SystemCapability.Appexecfwk
+      */
+    STANDARD = 1,
   }
 
+  /**
+   * @name InstallErrorCode
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @import NA
+   * @permission NA
+   * @devices phone, tablet, tv, wearable
+   */
   export enum InstallErrorCode{
     SUCCESS = 0,
     STATUS_INSTALL_FAILURE = 1,
@@ -172,173 +207,167 @@ declare namespace bundle {
   }
 
   /**
-   * Obtains BundleInfo based on a given bundle name.
+   * Obtains based on a given networkId and bundle name.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the bundle name.
-   * @param callback Specified callback method.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param networkId Indicates the device networkId in area network.
+   * @param bundleName Indicates the application bundle name to be queried.
+   * @param flags Indicates the flag used to specify information contained in that will be
+   *              returned.
+   * @return Returns the BundleInfo object.
+   * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED,ohos.permission.GET_BUNDLE_INFO
    */
-  function getBundleInfo(bundleName: string, flags: number, callback: AsyncCallback<BundleInfo>) : void;
+   function getBundleInfo(bundleName: string, bundleFlags: number, callback: AsyncCallback<BundleInfo>): void;
 
   /**
-   * Obtains BundleInfo based on a given bundle name.
+   * Obtains the interface used to install bundles.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the bundle name.
-   * @return BundleInfo.
-   */
-  function getBundleInfo(bundleName: string, flags: number) : Promise<BundleInfo>;
-
-  /**
-   * Obtains Bundle installer to install or uninstall hap.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @return BundleInstaller.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @return Returns the IBundleInstaller interface.
+   * @permission ohos.permission.INSTALL_BUNDLE
    */
   function getBundleInstaller(callback: AsyncCallback<BundleInstaller>): void;
-
-  /**
-   * Obtains Bundle installer to install or uninstall hap.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @return BundleInstaller.
-   */
   function getBundleInstaller(): Promise<BundleInstaller>;
 
   /**
-   * Obtains the ApplicationInfo based on a given application name.
+   * Obtains based on a given bundle name.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the application name.
-   * @param callback Specified callback method.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param bundleName Indicates the application bundle name to be queried.
+   * @param flags Indicates the flag used to specify information contained in the ApplicationInfo object
+   *              that will be returned.
+   * @param userId Indicates the user ID.
+   * @return Returns the ApplicationInfo object.
+   * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED, ohos.permission.GET_BUNDLE_INFO
    */
-  function getApplicationInfo(bundleName: string, flags: number, userId: number, callback: AsyncCallback<ApplicationInfo>) : void;
+  function getApplicationInfo(bundleName: string, bundleFlags: number, userId: number, callback: AsyncCallback<ApplicationInfo>) : void;
+  function getApplicationInfo(bundleName: string, bundleFlags: number, userId?: number) : Promise<ApplicationInfo>;
 
   /**
-   * Obtains the ApplicationInfo based on a given application name.
+   * Checks whether a specified bundle has been granted a specific permission.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the application name.
-   * @return ApplicationInfo.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param bundleName Indicates the name of the bundle to check.
+   * @param permission Indicates the permission to check.
+   * @return Returns 0 if the bundle has the permission; returns -1 otherwise.
    */
-  function getApplicationInfo(bundleName: string, flags: number, userId: number) : Promise<ApplicationInfo>;
-
-  /**
-   * Query the AbilityInfo by the given Want.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param want Indicates the Want for the ability to be queried.
-   * @param callback Specified callback method.
-   */
-  function queryAbilityByWant(want: Want, params: QueryParameter, callback: AsyncCallback<Array<AbilityInfo>>): void;
-
-  /**
-   * Query the AbilityInfo by the given Want.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param want Indicates the Want for the ability to be queried.
-   * @return AbilityInfo.
-   */
-  function queryAbilityByWant(want: Want, params: QueryParameter): Promise<AbilityInfo>;
+  function checkPermission(bundleName: string, permission: string, callback: AsyncCallback<GrantStatus>): void;
+  function checkPermission(bundleName: string, permission: string): Promise<GrantStatus>;
 
   /**
    * Obtains BundleInfo of all bundles available in the system.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param callback Specified callback method.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param flags Indicates the flag used to specify information contained in the BundleInfo that will be
+   *              returned.
+   * @return Returns a list of BundleInfo objects.
+   * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED
    */
-  function getBundleInfos(flags: BundleFlag, callback: AsyncCallback<Array<BundleInfo>>) : void;
+  function getAllBundleInfo(bundlelFlag: BundleFlag, callback: AsyncCallback<Array<BundleInfo>>) : void;
+  function getAllBundleInfo(bundlelFlag: BundleFlag) : Promise<Array<BundleInfo>>;
 
   /**
-   * Obtains BundleInfo of all bundles available in the system.
+   * Registers a callback for listening for permission changes of all UIDs.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @return Array of BundleInfo.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param
+   * @return
+   * @permission ohos.permission.LISTEN_PERMISSION_CHANGE
    */
-  function getBundleInfos(flags: BundleFlag) : Promise<Array<BundleInfo>>;
+  function on(type: PermissionEvent, callback: Callback<number>): void;
+  function on(type: PermissionEvent, uids: Array<number>, callback: Callback<number>): void;
 
   /**
-   * Obtains information about all installed applications.
+   * Unregister a specified callback for listening for permission changes.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param callback Specified callback method.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param
+   * @return
+   * @permission ohos.permission.LISTEN_PERMISSION_CHANGE
    */
-  function getApplicationInfos(flags: number, userId: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
+  function off(type: PermissionEvent, callback?: Callback<number>):void;
+  function off(type: PermissionEvent, uids: Array<number>, callback?: Callback<number>): void;
 
   /**
-   * Obtains information about all installed applications.
+   * Obtains information about all installed applications of a specified user.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param NA
-   * @return Array of ApplicationInfo.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param flags Indicates the flag used to specify information contained in the ApplicationInfo objects
+   *              that will be returned.
+   * @param userId Indicates the user ID.
+   * @return Returns a list of ApplicationInfo objects.
+   * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED
    */
-  function getApplicationInfos(flags: number, userId: number) : Promise<Array<ApplicationInfo>>;
+  function getAllApplicationInfo(bundleFlags: number, userId: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
+  function getAllApplicationInfo(bundleFlags: number, userId?: number) : Promise<Array<ApplicationInfo>>;
 
   /**
-   * Obtains information about a bundle contained in a HAP.
+   * Obtains information about an application bundle contained in an ohos Ability Package (HAP).
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param hapFilePath Indicates the path of the HAP.
-   * @param callback Specified callback method.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param hapFilePath Indicates the path storing the HAP. The path should be the relative path to the data
+   *                    directory of the current application.
+   * @param flags Indicates the flag used to specify information contained in the BundleInfo object to be
+   *              returned.
+   * @return Returns the BundleInfo object.
    */
-  function getBundleArchiveInfo(hapFilePath: string, flags: number, callback: AsyncCallback<BundleInfo>) : void;
+  function getBundleArchiveInfo(hapFilePath: string, bundleFlags: number, callback: AsyncCallback<BundleInfo>) : void
+  function getBundleArchiveInfo(hapFilePath: string, bundleFlags: number) : Promise<BundleInfo>;
 
   /**
-   * Obtains information about a bundle contained in a HAP.
+   * Obtains information about the shortcuts of the application.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param hapFilePath Indicates the path of the HAP.
-   * @return BundleInfo.
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param bundleName Indicates the bundle name of the application.
+   * @return Returns a list of ShortcutInfo objects containing shortcut information about the application.
+   * @permission ohos.permission.MANAGE_SHORTCUTS
    */
-  function getBundleArchiveInfo(hapFilePath: string, flags: number) : Promise<BundleInfo>;
+  function getAllShortcutInfo(bundleName: string, callback: AsyncCallback<Array<ShortcutInfo>>): void;
+  function getAllShortcutInfo(bundleName: string): Promise<Array<ShortcutInfo>>;
+
+  /**
+   * get module usage record list in descending order of lastLaunchTime.
+   *
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param maxNum the return size of the records, must be in range of 1 to 1000.
+   * @return Returns ability usage record list.
+   * @systemapi hide this for inner system use
+   */
+  function getModuleUsageRecords(maxNum: number, callback: AsyncCallback<Array<ModuleUsageRecord>>): void;
+  function getModuleUsageRecords(maxNum: number): Promise<Array<ModuleUsageRecord>>;
 
   /**
    * Obtains detailed information about a specified permission.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
    * @param permissionName Indicates the name of the permission.
-   * @param callback Specified callback method.
+   * @return Returns PermissionDef.
    */
   function getPermissionDef(permissionName: string, callback: AsyncCallback<permission.PermissionDef>) : void;
-  /**
-   * Obtains detailed information about a specified permission.
-   *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param permissionName Indicates the name of the permission.
-   * @return PermissionDef.
-   */
   function getPermissionDef(permissionName: string) : Promise<permission.PermissionDef>;
 }
 

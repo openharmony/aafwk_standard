@@ -19,6 +19,7 @@
 #include <string>
 
 #include "parcel.h"
+#include "ability_start_setting.h"
 #include "caller_info.h"
 
 namespace OHOS {
@@ -45,6 +46,7 @@ struct LifeCycleStateInfo : public Parcelable {
     int missionId = -1;
     int stackId = -1;
     CallerInfo caller;
+    std::shared_ptr<AbilityStartSetting> setting = nullptr;
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

@@ -266,5 +266,50 @@ int DataAbilityImpl::BatchInsert(const Uri &uri, const std::vector<ValuesBucket>
     ret = ability_->BatchInsert(uri, values);
     return ret;
 }
+/**
+ * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
+ * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
+ * context has changed. If you implement URI normalization for a Data ability, you must also implement
+ * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to any
+ * method that is called on the Data ability must require normalization verification and denormalization. The default
+ * implementation of this method returns null, indicating that this Data ability does not support URI normalization.
+ *
+ * @param uri Indicates the Uri object to normalize.
+ *
+ * @return Returns the normalized Uri object if the Data ability supports URI normalization; returns null otherwise.
+ */
+Uri DataAbilityImpl::NormalizeUri(const Uri &uri)
+{
+    Uri urivalue("");
+    if (ability_ == nullptr) {
+        APP_LOGE("DataAbilityImpl::NormalizeUri ability_ is nullptr");
+        return urivalue;
+    }
+    urivalue = ability_->NormalizeUri(uri); 
+    return urivalue;   
+}
+
+/**
+ * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
+ * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
+ * context has changed. If you implement URI normalization for a Data ability, you must also implement
+ * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to any
+ * method that is called on the Data ability must require normalization verification and denormalization. The default
+ * implementation of this method returns null, indicating that this Data ability does not support URI normalization.
+ *
+ * @param uri Indicates the Uri object to normalize.
+ *
+ * @return Returns the normalized Uri object if the Data ability supports URI normalization; returns null otherwise.
+ */
+Uri DataAbilityImpl::DenormalizeUri(const Uri &uri)
+{
+    Uri urivalue("");
+    if (ability_ == nullptr) {
+        APP_LOGE("DataAbilityImpl::DenormalizeUri ability_ is nullptr");
+        return urivalue;
+    }
+    urivalue = ability_->DenormalizeUri(uri); 
+    return urivalue;   
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -19,17 +19,13 @@
 
 namespace OHOS {
 namespace AAFwk {
-PendingWantRecord::PendingWantRecord()
+PendingWantRecord::PendingWantRecord() : pendingWantManager_{}, uid_{}, callerToken_{}, key_{}
 {}
 
 PendingWantRecord::PendingWantRecord(const std::shared_ptr<PendingWantManager> &pendingWantManager, int32_t uid,
     const sptr<IRemoteObject> &callerToken, std::shared_ptr<PendingWantKey> key)
-{
-    pendingWantManager_ = pendingWantManager;
-    uid_ = uid;
-    callerToken_ = callerToken;
-    key_ = key;
-}
+    : pendingWantManager_(pendingWantManager), uid_(uid), callerToken_(callerToken), key_(key)
+{}
 
 PendingWantRecord::~PendingWantRecord()
 {}
@@ -74,7 +70,7 @@ int32_t PendingWantRecord::SenderInner(SenderInfo &senderInfo)
         return ERR_INVALID_VALUE;
     }
 
-    if ((key_->GetFlags() & (int32_t)Flags::ONE_TIME_FLAG) != 0) {
+    if (((uint32_t)key_->GetFlags() & (uint32_t)Flags::ONE_TIME_FLAG) != 0) {
         pendingWantManager->CancelWantSenderLocked(*this, true);
     }
 
@@ -82,7 +78,7 @@ int32_t PendingWantRecord::SenderInner(SenderInfo &senderInfo)
     if (key_->GetAllWantsInfos().size() != 0) {
         want = key_->GetRequestWant();
     }
-    bool immutable = (key_->GetFlags() & (int32_t)Flags::CONSTANT_FLAG) != 0;
+    bool immutable = ((uint32_t)key_->GetFlags() & (uint32_t)Flags::CONSTANT_FLAG) != 0;
     senderInfo.resolvedType = key_->GetRequestResolvedType();
     if (!immutable) {
         want.AddFlags(key_->GetFlags());
@@ -92,17 +88,17 @@ int32_t PendingWantRecord::SenderInner(SenderInfo &senderInfo)
     int res = NO_ERROR;
     switch (key_->GetType()) {
         case (int32_t)OperationType::START_ABILITY:
-            res = pendingWantManager->PendingWantStartAbility(want, callerToken_, -1);
+            res = pendingWantManager->PendingWantStartAbility(want, callerToken_, -1, callerUid_);
             break;
         case (int32_t)OperationType::START_ABILITIES: {
             std::vector<WantsInfo> allWantsInfos = key_->GetAllWantsInfos();
             allWantsInfos.back().want = want;
-            res = pendingWantManager->PendingWantStartAbilitys(allWantsInfos, callerToken_, -1);
+            res = pendingWantManager->PendingWantStartAbilitys(allWantsInfos, callerToken_, -1, callerUid_);
             break;
         }
         case (int32_t)OperationType::START_SERVICE:
         case (int32_t)OperationType::START_FOREGROUND_SERVICE:
-            res = pendingWantManager->PendingWantStartAbility(want, callerToken_, -1);
+            res = pendingWantManager->PendingWantStartAbility(want, callerToken_, -1, callerUid_);
             break;
         case (int32_t)OperationType::SEND_COMMON_EVENT:
             res = pendingWantManager->PendingWantPublishCommonEvent(want, senderInfo, callerUid_);
