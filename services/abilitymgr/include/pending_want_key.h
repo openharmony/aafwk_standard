@@ -44,12 +44,12 @@ public:
     void SetUserId(int32_t userId);
 
     int32_t GetType();
-    std::string &GetBundleName();
-    std::string &GetRequestWho();
+    std::string GetBundleName();
+    std::string GetRequestWho();
     int32_t GetRequestCode();
-    Want &GetRequestWant();
-    std::string &GetRequestResolvedType();
-    std::vector<WantsInfo> &GetAllWantsInfos();
+    Want GetRequestWant();
+    std::string GetRequestResolvedType();
+    std::vector<WantsInfo> GetAllWantsInfos();
     int32_t GetFlags();
     int32_t GetCode();
     int32_t GetUserId();

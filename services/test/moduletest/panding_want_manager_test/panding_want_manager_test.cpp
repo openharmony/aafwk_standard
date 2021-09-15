@@ -452,6 +452,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_003, TestSize.Level1)
     EXPECT_TRUE(serviceRecord);
     Want serviceWant = serviceRecord->GetWant();
     ElementName element = serviceWant.GetElement();
+
     EXPECT_EQ(element.GetAbilityName(), "hiService");
     EXPECT_EQ(element.GetBundleName(), "com.ix.hiService");
 }

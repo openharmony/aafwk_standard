@@ -23,6 +23,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
   include_dirs = [
     "${EVENT_DIR}/frameworks/core/include",
     "${EVENT_DIR}/interfaces/innerkits/native/include",
+    "//third_party/jsoncpp/include",
   ]
 
   sources = [
@@ -44,6 +45,8 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/connection_record.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
+
+    # "${services_path}/abilitymgr/src/dummy_configuration.cpp",
     "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/kernal_system_app_manager.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
@@ -65,6 +68,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/want_sender_info.cpp",
     "${services_path}/abilitymgr/src/want_sender_stub.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
+    "//foundation/aafwk/standard/services/test/mock/src/mock_app_mgr_client.cpp",
   ]
 
   sources += [ "ability_record_module_test.cpp" ]
@@ -93,6 +97,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",
   ]
 

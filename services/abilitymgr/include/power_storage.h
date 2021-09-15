@@ -33,11 +33,14 @@ public:
     PowerStorage() = default;
     virtual ~PowerStorage() = default;
 
-    void SetPowerOffRecord(const std::shared_ptr<AbilityRecord> &ability);
-    std::vector<PowerOffRecord> GetPowerOffRecord() const;
+    void SetPowerOffInActiveRecord(const std::shared_ptr<AbilityRecord> &ability);
+    std::vector<PowerOffRecord> GetPowerOffInActiveRecord() const;
+    void SetPowerOffActiveRecord(const std::shared_ptr<AbilityRecord> &ability);
+    std::vector<PowerOffRecord> GetPowerOffActiveRecord() const;
 
 private:
-    std::vector<PowerOffRecord> record_;
+    std::vector<PowerOffRecord> inActiveRecord_;
+    std::vector<PowerOffRecord> activeRecord_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

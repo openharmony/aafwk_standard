@@ -48,6 +48,7 @@ struct OnRequestPermissionsFromUserResultCallback {
  */
 napi_value ContextPermissionInit(napi_env env, napi_value exports);
 
+EXTERN_C_START
 /**
  * @brief The interface of onRequestPermissionsFromUserResult provided for ACE to call back to JS.
  *
@@ -58,7 +59,7 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports);
  */
 void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<std::string> &permissions,
     const std::vector<int> &grantResults, OHOS::AppExecFwk::CallbackInfo callbackInfo);
-
+EXTERN_C_END
 napi_value ContextConstructor(napi_env env, napi_callback_info info);
 
 }  // namespace AppExecFwk

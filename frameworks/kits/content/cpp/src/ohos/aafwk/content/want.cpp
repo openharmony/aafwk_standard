@@ -48,7 +48,7 @@ const std::string Want::FLAG_HOME_INTENT_FROM_SYSTEM("flag.home.intent.from.syst
 const std::string Want::OCT_EQUALSTO("075");   // '='
 const std::string Want::OCT_SEMICOLON("073");  // ';'
 const std::string Want::MIME_TYPE("mime-type");
-const std::string Want::WANT_HEADER("#Want;");
+const std::string Want::WANT_HEADER("#Intent;");
 
 /**
  * @description:Default construcotr of Want class, which is used to initialzie flags and URI.
@@ -1159,18 +1159,14 @@ Want *Want::ParseUri(const std::string &uri)
     if (uri.length() <= 0) {
         return nullptr;
     }
-
     std::string head = WANT_HEADER;
     std::string end = ";end";
-
     if (uri.find(head) != 0) {
         return nullptr;
     }
-
     if (uri.rfind(end) != (uri.length() - end.length())) {
         return nullptr;
     }
-
     bool ret = true;
     std::string content;
     std::size_t pos;
@@ -1180,11 +1176,17 @@ Want *Want::ParseUri(const std::string &uri)
     if (want == nullptr) {
         return nullptr;
     }
-
+    Want *baseWant = want;
+    bool inPicker = false;
     pos = uri.find_first_of(";", begin);
     do {
         if (pos != std::string::npos) {
             content = uri.substr(begin, pos - begin);
+            if (content.compare("PICK") == 0) {
+                want = new (std::nothrow) Want();
+                inPicker = true;
+                continue;
+            }
             ret = ParseUriInternal(content, element, *want);
             if (!ret) {
                 break;
@@ -1198,14 +1200,17 @@ Want *Want::ParseUri(const std::string &uri)
             break;
         }
     } while (true);
-
+    if (inPicker) {
+        if (baseWant->GetBundle().empty()) {
+        }
+        want = baseWant;
+    }
     if (ret) {
         want->SetElement(element);
     } else {
         delete want;
         want = nullptr;
     }
-
     return want;
 }
 
@@ -1294,6 +1299,18 @@ std::string Want::WantToUri(Want &want)
 std::string Want::ToUri() const
 {
     std::string uriString = WANT_HEADER;
+    ToUriStringInner(uriString);
+
+    if (picker_ != nullptr) {
+        uriString.append("PICK;");
+        picker_->ToUriStringInner(uriString);
+    }
+    uriString += "end";
+
+    return uriString;
+}
+void Want::ToUriStringInner(std::string &uriString) const
+{
     if (operation_.GetAction().length() > 0) {
         uriString += "action=" + Encode(operation_.GetAction()) + ";";
     }
@@ -1305,6 +1322,15 @@ std::string Want::ToUri() const
             uriString += "entity=" + Encode(entity) + ";";
         }
     }
+    if (operation_.GetDeviceId().length() > 0) {
+        uriString += "device=" + Encode(operation_.GetDeviceId()) + ";";
+    }
+    if (operation_.GetBundleName().length() > 0) {
+        uriString += "bundle=" + Encode(operation_.GetBundleName()) + ";";
+    }
+    if (operation_.GetAbilityName().length() > 0) {
+        uriString += "ability=" + Encode(operation_.GetAbilityName()) + ";";
+    }
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
         char buf[HEX_STRING_BUF_LEN]{0};
@@ -1315,14 +1341,10 @@ std::string Want::ToUri() const
             uriString += ";";
         }
     }
-    if (operation_.GetDeviceId().length() > 0) {
-        uriString += "device=" + Encode(operation_.GetDeviceId()) + ";";
-    }
-    if (operation_.GetBundleName().length() > 0) {
-        uriString += "bundle=" + Encode(operation_.GetBundleName()) + ";";
-    }
-    if (operation_.GetAbilityName().length() > 0) {
-        uriString += "ability=" + Encode(operation_.GetAbilityName()) + ";";
+    if (!operation_.GetBundleName().empty()) {
+        uriString.append("package=");
+        uriString.append(Encode(operation_.GetBundleName()));
+        uriString.append(";");
     }
     auto params = parameters_.GetParams();
     auto iter = params.cbegin();
@@ -1352,12 +1374,7 @@ std::string Want::ToUri() const
         uriString += "." + Encode(iter->first) + "=" + Encode(Object::ToString(*(o.GetRefPtr()))) + ";";
         iter++;
     }
-
-    uriString += "end";
-
-    return uriString;
 }
-
 /**
  * @description: Formats a specified URI.
  * This method uses the Uri.getLowerCaseScheme() method to format a URI and then saves
@@ -1688,6 +1705,8 @@ bool Want::ParseUriInternal(const std::string &content, ElementName &element, Wa
         element.SetBundleName(value);
     } else if (prop == "ability") {
         element.SetAbilityName(value);
+    } else if (prop == "package") {
+        want.SetBundle(Decode(value));
     } else if (prop.length() > TYPE_TAG_SIZE) {
         std::string key = prop.substr(TYPE_TAG_SIZE);
         if (!Want::CheckAndSetParameters(want, key, prop, value)) {

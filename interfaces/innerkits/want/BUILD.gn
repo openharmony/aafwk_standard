@@ -37,6 +37,7 @@ config("want_public_config") {
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
+    "//third_party/jsoncpp/include",
   ]
 }
 
@@ -44,6 +45,7 @@ wantImpl = "//foundation/aafwk/standard/frameworks/kits/content/cpp/src/ohos/aaf
 
 ohos_shared_library("want") {
   sources = [
+    "${wantImpl}/extra_params.cpp",
     "${wantImpl}/operation.cpp",
     "${wantImpl}/operation_builder.cpp",
     "${wantImpl}/pac_map.cpp",
@@ -63,6 +65,7 @@ ohos_shared_library("want") {
 
     #"//foundation/distributeddatamgr/distributeddatamgr:build_module",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/lsamgr:lsamgr",
+    "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 

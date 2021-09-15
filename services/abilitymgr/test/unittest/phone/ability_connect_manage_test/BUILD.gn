@@ -23,7 +23,6 @@ ohos_unittest("ability_connect_manage_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_data_ability_predicates.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_result_set.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_values_bucket.cpp",
-    "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
     "ability_connect_manage_test.cpp",
   ]
 

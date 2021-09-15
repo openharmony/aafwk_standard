@@ -20,6 +20,7 @@
 #include <unordered_set>
 
 #include "ability_info.h"
+// #include "app_process_data.h"
 #include "appmgr/app_mgr_client.h"
 #include "appmgr/app_state_callback_host.h"
 #include "application_info.h"
@@ -40,6 +41,22 @@ enum class AppAbilityState {
     ABILITY_STATE_END,
 };
 
+enum class AppState {
+    BEGIN = 0,
+    READY,
+    FOREGROUND,
+    BACKGROUND,
+    SUSPENDED,
+    TERMINATED,
+    END,
+};
+
+struct AppInfo {
+    std::string appName;
+    std::string processName;
+    int32_t uid;
+    AppState state;
+};
 /**
  * @class AppStateCallback
  * AppStateCallback.
@@ -52,6 +69,8 @@ public:
     {}
 
     virtual void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) = 0;
+
+    virtual void OnAppStateChanged(const AppInfo &info) = 0;
 };
 
 /**
@@ -167,6 +186,13 @@ protected:
      * @param state,the state of ability lift cycle.
      */
     virtual void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state) override;
+
+    /**
+     * Application state changed callback.
+     *
+     * @param appProcessData Process data
+     */
+    virtual void OnAppStateChanged(const AppExecFwk::AppProcessData &appData) override;
 
 private:
     std::weak_ptr<AppStateCallback> callback_;

@@ -34,7 +34,10 @@ public:
     MOCK_METHOD0(AsObject, sptr<IRemoteObject>());
     MOCK_METHOD1(ScheduleSaveAbilityState, void(PacMap &outState));
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &inState));
+    MOCK_METHOD1(ScheduleUpdateConfiguration, void(const DummyConfiguration &));
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
+    MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
+    MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
 
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
@@ -86,6 +89,18 @@ public:
     virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override
     {
         return -1;
+    }
+
+    virtual Uri NormalizeUri(const Uri &uri) override
+    {
+        Uri urivalue("");
+        return urivalue;
+    }
+
+    virtual Uri DenormalizeUri(const Uri &uri) override
+    {
+        Uri urivalue("");
+        return urivalue;
     }
 };
 

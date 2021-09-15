@@ -73,6 +73,12 @@ public:
      * been started.
      */
     static constexpr unsigned int FLAG_START_FOREGROUND_ABILITY = 0x00000200;
+
+    /**
+     * Indicates the continuation is reversible.
+     */
+    static constexpr unsigned int FLAG_ABILITY_CONTINUATION_REVERSIBLE = 0x00000400;
+
     /**
      * Install the specified ability if it's not installed.
      */
@@ -790,6 +796,7 @@ private:
     bool ReadFromParcel(Parcel &parcel);
     static bool CheckAndSetParameters(Want &want, const std::string &key, std::string &prop, const std::string &value);
     Uri GetLowerCaseScheme(const Uri &uri);
+    void ToUriStringInner(std::string &uriString) const;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

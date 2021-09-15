@@ -25,6 +25,7 @@
 #undef private
 #undef protected
 
+#include "app_process_data.h"
 #include "mock_bundle_manager.h"
 #include "mock_app_manager_client.h"
 #include "sa_mgr_client.h"
@@ -69,6 +70,7 @@ public:
     ~AppStateCallbackS()
     {}
     MOCK_METHOD2(OnAbilityRequestDone, void(const sptr<IRemoteObject> &token, const int32_t state));
+    MOCK_METHOD1(OnAppStateChanged, void(const AppInfo &info));
 };
 
 class AbilityMsAppmsTest : public testing::Test {
@@ -102,17 +104,15 @@ void AbilityMsAppmsTest::SetUp(void)
     callback_ = std::make_shared<AppStateCallbackS>();
 
     DelayedSingleton<AppScheduler>::GetInstance()->Init(callback_);
-
     DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    WaitUntilTaskFinished();
     startAbility();
+    GTEST_LOG_(INFO) << "SetUp";
 }
 
 void AbilityMsAppmsTest::TearDown(void)
 {
-    DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
     DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    GTEST_LOG_(INFO) << "TearDown";
 }
 
 std::shared_ptr<AbilityRecord> AbilityMsAppmsTest::GetAbilityRecord() const

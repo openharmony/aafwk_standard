@@ -42,6 +42,7 @@ public:
     std::shared_ptr<AbilityRecord> abilityRecord_;
     std::shared_ptr<AbilityResult> abilityResult_;
     std::shared_ptr<AbilityRequest> abilityRequest_;
+    static constexpr unsigned int CHANGE_CONFIG_LOCALE = 0x00000001;
 };
 
 void AbilityRecordTest::SetUpTestCase(void)
@@ -686,5 +687,36 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CreateByConnect, TestSize.Level1)
     abilityRecord_->SetCreateByConnectMode();
     EXPECT_EQ(true, abilityRecord_->IsCreateByConnect());
 }
+
+/*
+ * Feature: AbilityRecord
+ * Function: OnConfigurationChanged
+ * SubFunction: Configuration Changed
+ * FunctionPoints: NA
+ * EnvConditions:NA
+ * CaseDescription: Verify Configuration Changed UT
+ */
+HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_001, TestSize.Level1)
+{
+    const DummyConfiguration config;
+    abilityRecord_->abilityInfo_.configChanges.push_back("locale");
+    EXPECT_EQ(false, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
+}
+
+/*
+ * Feature: AbilityRecord
+ * Function: OnConfigurationChanged
+ * SubFunction: Configuration Changed
+ * FunctionPoints: NA
+ * EnvConditions:NA
+ * CaseDescription: Verify Configuration Changed UT
+ */
+HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_002, TestSize.Level1)
+{
+    const DummyConfiguration config;
+    abilityRecord_->abilityInfo_.configChanges.push_back("local");
+    EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

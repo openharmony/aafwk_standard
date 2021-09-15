@@ -23,10 +23,13 @@
 #include <vector>
 
 #include "ability_info.h"
+#include "ability_start_setting.h"
 #include "ability_token_stub.h"
+#include "ability_window_configuration.h"
 #include "app_scheduler.h"
 #include "application_info.h"
 #include "ability_record_info.h"
+#include "configuration_holder.h"
 #include "lifecycle_deal.h"
 #include "lifecycle_state_info.h"
 #include "want.h"
@@ -114,6 +117,7 @@ struct AbilityRequest {
     int requestCode = -1;
     bool restart = false;
     sptr<IRemoteObject> callerToken;
+    std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
     void Dump(std::vector<std::string> &state)
     {
         std::string dumpInfo = "      want [" + want.ToUri() + "]";
@@ -131,7 +135,7 @@ struct AbilityRequest {
  * @class AbilityRecord
  * AbilityRecord records ability info and states and used to schedule ability life.
  */
-class AbilityRecord : public std::enable_shared_from_this<AbilityRecord> {
+class AbilityRecord : public ConfigurationHolder, public std::enable_shared_from_this<AbilityRecord> {
 public:
     AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
         const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1);
@@ -182,11 +186,18 @@ public:
     void SetMissionStackId(const int stackId);
 
     /**
+     * Get ability's mission stack id.
+     */
+    int GetMissionStackId() const;
+
+    /**
      * get ability's mission record.
      *
      * @return missionRecord, mission record.
      */
     std::shared_ptr<MissionRecord> GetMissionRecord() const;
+
+    int GetMissionRecordId() const;
 
     /**
      * get ability's info.
@@ -368,10 +379,22 @@ public:
     void ProcessActivate();
 
     /**
+     * process request of activing the ability in moving.
+     *
+     */
+    void ProcessActivateInMoving();
+
+    /**
      * process request of inactiving the ability.
      *
      */
     void ProcessInactivate();
+
+    /**
+     * process request of inactiving the ability in moving.
+     *
+     */
+    void ProcessInactivateInMoving();
 
     /**
      * inactive the ability.
@@ -409,8 +432,23 @@ public:
      */
     void CommandAbility();
 
+    /**
+     * save ability state.
+     *
+     */
     void SaveAbilityState();
+
+    /**
+     * restore ability state.
+     *
+     */
     void RestoreAbilityState();
+
+    /**
+     * notify top active ability updated.
+     *
+     */
+    void TopActiveAbilityChanged(bool flag);
 
     /**
      * set the want for start ability.
@@ -538,6 +576,8 @@ public:
      */
     static std::string ConvertAbilityState(const AbilityState &state);
 
+    static std::string ConvertAppState(const AppState &state);
+
     /**
      * convert life cycle state to ability state .
      *
@@ -606,16 +646,35 @@ public:
 
     bool IsAbilityState(const AbilityState &state) const;
 
+    bool SupportMultWindow() const;
+    void NotifyMultiWinModeChanged(const AbilityWindowConfiguration &winModeKey, bool flag);
+    void SetInMovingState(bool isMoving);
+    bool GetInMovingState() const;
+
+    bool IsToEnd() const;
+    void SetToEnd(bool isToEnd);
+
+    void SetStartSetting(const std::shared_ptr<AbilityStartSetting> &setting);
+    std::shared_ptr<AbilityStartSetting> GetStartSetting() const;
+
     void SetPowerState(const bool isPower);
     bool GetPowerState() const;
 
-private:
-    /**
-     * get system time.
-     *
-     */
-    int64_t SystemTimeMillis();
+    void SetRestarting(const bool isRestart);
+    bool IsRestarting() const;
+    void SetAppState(const AppState &state);
+    AppState GetAppState() const;
 
+    unsigned int GetIntConfigChanges();
+    void ClearFlag();
+
+protected:
+    virtual bool OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges) override;
+    virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
+    virtual unsigned int GetChildSize() override;
+    virtual std::shared_ptr<ConfigurationHolder> FindChild(unsigned int index) override;
+
+private:
     /**
      * get the type of ability.
      *
@@ -625,30 +684,29 @@ private:
     void SendEvent(uint32_t msg, uint32_t timeOut);
 
     static int64_t abilityRecordId;
-    int recordId_;                                      // record id
-    Want want_;                                         // want to start this ability
-    AppExecFwk::AbilityInfo abilityInfo_;               // the ability info get from BMS
-    AppExecFwk::ApplicationInfo applicationInfo_;       // the ability info get from BMS
-    sptr<Token> token_;                                 // used to interact with kit and wms
-    std::weak_ptr<MissionRecord> missionRecord_;        // mission of this ability
-    std::weak_ptr<AbilityRecord> preAbilityRecord_;     // who starts this ability record
-    std::weak_ptr<AbilityRecord> nextAbilityRecord_;    // ability that started by this ability
-    std::weak_ptr<AbilityRecord> backAbilityRecord_;    // who back to this ability record
-    std::unique_ptr<LifecycleDeal> lifecycleDeal_;      // life manager used to schedule life
-    int64_t startTime_ = 0;                             // records first time of ability start
-    bool isReady_ = false;                              // is ability thread attached?
-    bool isWindowAttached_ = false;                     // Is window of this ability attached?
-    bool isLauncherAbility_ = false;                    // is launcher?
-    int64_t eventId_ = 0;                               // post event id
-    static constexpr int64_t NANOSECONDS = 1000000000;  // NANOSECONDS mean 10^9 nano second
-    static constexpr int64_t MICROSECONDS = 1000000;    // MICROSECONDS mean 10^6 millias second
+    int recordId_;                                    // record id
+    Want want_;                                       // want to start this ability
+    AppExecFwk::AbilityInfo abilityInfo_;             // the ability info get from BMS
+    AppExecFwk::ApplicationInfo applicationInfo_;     // the ability info get from BMS
+    sptr<Token> token_;                               // used to interact with kit and wms
+    std::weak_ptr<MissionRecord> missionRecord_;      // mission of this ability
+    std::weak_ptr<AbilityRecord> preAbilityRecord_;   // who starts this ability record
+    std::weak_ptr<AbilityRecord> nextAbilityRecord_;  // ability that started by this ability
+    std::weak_ptr<AbilityRecord> backAbilityRecord_;  // who back to this ability record
+    std::unique_ptr<LifecycleDeal> lifecycleDeal_;    // life manager used to schedule life
+    int64_t startTime_ = 0;                           // records first time of ability start
+    bool isReady_ = false;                            // is ability thread attached?
+    bool isWindowAttached_ = false;                   // Is window of this ability attached?
+    bool isLauncherAbility_ = false;                  // is launcher?
+    int64_t eventId_ = 0;                             // post event id
     static int64_t g_abilityRecordEventId_;
     sptr<IAbilityScheduler> scheduler_;       // kit scheduler
     bool isTerminating_ = false;              // is terminating ?
     LifeCycleStateInfo lifeCycleStateInfo_;   // target life state info
     AbilityState currentState_;               // current life state
     std::shared_ptr<WindowInfo> windowInfo_;  // add window info
-    bool isCreateByConnect = false;           // is created by connect ability mode?
+    bool isCreateByConnect_ = false;          // is created by connect ability mode?
+    bool isToEnd_ = false;                    // is to end ?
 
     int requestCode_ = -1;  // requestCode_: >= 0 for-result start mode; <0 for normal start mode in default.
     sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_;  // scheduler binderDied Recipient
@@ -669,14 +727,20 @@ private:
     // page(ability) can be started by multi-pages(abilites), so need to store this ability's caller
     std::list<std::shared_ptr<CallerRecord>> callerList_;
 
-    bool isUninstall = false;
+    bool isUninstall_ = false;
     bool isForceTerminate_ = false;
     const static std::map<AbilityState, std::string> stateToStrMap;
     const static std::map<AbilityLifeCycleState, AbilityState> convertStateMap;
+    const static std::map<AppState, std::string> appStateToStrMap_;
 
-    bool isKernalSystemAbility = false;
+    bool isKernalSystemAbility_ = false;
     bool isLauncherRoot_ = false;
     bool isPowerState_ = false;  // ability to change state when poweroff and poweron.
+
+    PacMap stateDatas_;             // ability saved ability state data
+    bool isRestarting_ = false;     // is restarting ?
+    bool isInMovingState_ = false;  // whether complete multi window moving state.
+    AppState appState_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -18,52 +18,11 @@
 #include "application_info.h"
 #include "hilog_wrapper.h"
 #include "ability_config.h"
+
 using namespace OHOS::AAFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-
-int BundleMgrProxy::QueryWantAbility(
-    const AAFwk::Want &__attribute__((unused)) want, std::vector<AbilityInfo> &__attribute__((unused)) abilityInfos)
-{
-    return 0;
-}
-
-bool BundleMgrProxy::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo)
-{
-    ElementName eleName = want.GetElement();
-    if (eleName.GetBundleName().empty()) {
-        return false;
-    }
-    abilityInfo.name = eleName.GetAbilityName();
-    abilityInfo.bundleName = eleName.GetBundleName();
-    abilityInfo.applicationName = eleName.GetAbilityName() + "App";
-    if (abilityInfo.bundleName != "com.ix.hiworld") {
-        abilityInfo.applicationInfo.isLauncherApp = false;
-    }
-    return true;
-}
-
-bool BundleMgrProxy::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
-{
-    return true;
-}
-
-bool BundleMgrProxy::QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo)
-{
-    return false;
-}
-
-bool BundleMgrProxy::GetApplicationInfo(
-    const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
-{
-    if (appName.empty()) {
-        return false;
-    }
-    appInfo.name = "Helloworld";
-    appInfo.bundleName = "com.ix.hiworld";
-    return true;
-}
 
 int BundleMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
@@ -85,6 +44,7 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
     std::string abilityNameTemp = elementTemp.GetAbilityName();
     std::string bundleNameTemp = elementTemp.GetBundleName();
     abilityInfo.deviceId = elementTemp.GetDeviceID();
+    abilityInfo.visible = true;
 
     if (bundleNameTemp.empty() || abilityNameTemp.empty()) {
         return false;

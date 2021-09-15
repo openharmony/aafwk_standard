@@ -19,6 +19,7 @@ config("ability_command_config") {
     "include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//utils/system/safwk/native/include",
+    "//third_party/jsoncpp/include",
   ]
 }
 

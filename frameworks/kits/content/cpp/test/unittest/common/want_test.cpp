@@ -113,7 +113,7 @@ void WantBaseTest::SetUp(void)
 void WantBaseTest::TearDown(void)
 {}
 
-const std::string WantBaseTest::URI_STRING_HEAD("#Want;");
+const std::string WantBaseTest::URI_STRING_HEAD("#Intent;");
 const std::string WantBaseTest::URI_STRING_END(";end");
 
 /**
@@ -126,7 +126,7 @@ HWTEST_F(WantBaseTest, AaExecFwk_Want_Type_0100, Function | MediumTest | Level1)
     if (want_ != nullptr) {
         std::string description = "liuuy";
         want_->SetType(description);
-        EXPECT_EQ(description, want_->GetType());
+        EXPECT_STREQ(description.c_str(), want_->GetType().c_str());
     }
 }
 
@@ -140,7 +140,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Action_0100, Function | MediumTest | Level1)
     if (want_ != nullptr) {
         std::string actiondescription = "liuuy";
         want_->SetAction(actiondescription);
-        EXPECT_EQ(actiondescription, want_->GetAction());
+        EXPECT_STREQ(actiondescription.c_str(), want_->GetAction().c_str());
     }
 }
 
@@ -154,7 +154,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Bundle_0100, Function | MediumTest | Level1)
     if (want_ != nullptr) {
         std::string bundleName = "liuuy";
         want_->SetBundle(bundleName);
-        EXPECT_EQ(bundleName, want_->GetBundle());
+        EXPECT_STREQ(bundleName.c_str(), want_->GetBundle().c_str());
     }
 }
 
@@ -1131,10 +1131,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0100, Function | MediumTest | L
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0200, Function | MediumTest | Level1)
 {
     std::string search;
-    std::size_t pos = 0;
-    std::size_t length = 0;
-    std::size_t result = 0;
-    std::size_t head = 0;
 
     std::string action = Want::ACTION_PLAY;
     std::string entity = Want::ENTITY_VIDEO;
@@ -1152,73 +1148,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0200, Function | MediumTest | L
     wantOrigin.SetElement(element);
 
     std::string uri = wantOrigin.ToUri();
-
-    search = WantBaseTest::URI_STRING_HEAD;
-    result = uri.find(search, pos);
-    EXPECT_EQ(result, pos);
-    if (result != std::string::npos) {
-        head = result + search.length();
-    }
-    length += head;
-
-    search = std::string("action=") + action + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = std::string("entity=") + entity + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = std::string("flag=") + flagStr + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = std::string("device=") + device + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = std::string("bundle=") + bundle + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = std::string("ability=") + ability + std::string(";");
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length();
-    }
-
-    search = WantBaseTest::URI_STRING_END;
-    result = uri.find(search);
-    EXPECT_NE(result, std::string::npos);
-    EXPECT_GE(result, head);
-    if (result != std::string::npos) {
-        length += search.length() - 1;
-    }
-
-    EXPECT_EQ(uri.length(), length);
-
     Want *wantNew = Want::ParseUri(uri);
     EXPECT_NE(wantNew, nullptr);
 
@@ -1233,6 +1162,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0200, Function | MediumTest | L
         EXPECT_EQ(wantNew->GetFlags(), flag);
 
         delete wantNew;
+        wantNew = nullptr;
     }
 }
 
@@ -1594,7 +1524,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0700, Function | MediumTest | L
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0800, Function | MediumTest | Level1)
 {
     std::string empty;
-    std::string uri = "#Want;action=;entity=;device=;bundle=;ability=;flag=;end";
+    std::string uri = "#Intent;action=;entity=;device=;bundle=;ability=;flag=;end";
     EXPECT_NE(static_cast<int>(uri.length()), 0);
 
     Want *want = Want::ParseUri(uri);
@@ -1621,7 +1551,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0800, Function | MediumTest | L
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0900, Function | MediumTest | Level1)
 {
     std::string empty;
-    std::string uri = "#Want;action=want.action.VIEW;flag=\"123\";end";
+    std::string uri = "#Intent;action=want.action.VIEW;flag=\"123\";end";
     EXPECT_NE(static_cast<int>(uri.length()), 0);
 
     Want *want = Want::ParseUri(uri);
@@ -1635,7 +1565,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_0900, Function | MediumTest | L
 /**
  * @tc.number:  AaFwk_Want_ParseUri_ToUri_1000
  * @tc.name: ParseUri and ToUri
- * @tc.desc: Verify the function when head is not "#Want".
+ * @tc.desc: Verify the function when head is not "#Intent".
  */
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1000, Function | MediumTest | Level1)
 {
@@ -1659,7 +1589,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1000, Function | MediumTest | L
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1100, Function | MediumTest | Level1)
 {
     std::string empty;
-    std::string uri = "#Want;flag=;end";
+    std::string uri = "#Intent;flag=;end";
     EXPECT_NE(static_cast<int>(uri.length()), 0);
 
     Want *want = Want::ParseUri(uri);
@@ -1680,7 +1610,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1200, Function | MediumTest | L
 {
     std::string empty;
     unsigned int flag = 0X12345678;
-    std::string uri = "#Want;flag=0X12345678;end";
+    std::string uri = "#Intent;flag=0X12345678;end";
     EXPECT_NE(static_cast<int>(uri.length()), 0);
 
     Want *want = Want::ParseUri(uri);
@@ -1737,7 +1667,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1300, Function | MediumTest | L
  */
 HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | Level1)
 {
-    std::string uri = "#Want;action;end";
+    std::string uri = "#Intent;action;end";
     Want *want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1745,7 +1675,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;entity;end";
+    uri = "#Intent;entity;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1753,7 +1683,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;device;end";
+    uri = "#Intent;device;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1761,7 +1691,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;bundle;end";
+    uri = "#Intent;bundle;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1769,7 +1699,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;ability;end";
+    uri = "#Intent;ability;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1777,7 +1707,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;flag;end";
+    uri = "#Intent;flag;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1785,7 +1715,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;param;end";
+    uri = "#Intent;param;end";
     want = Want::ParseUri(uri);
     EXPECT_EQ(want, nullptr);
     if (want != nullptr) {
@@ -1793,7 +1723,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;=;end";
+    uri = "#Intent;=;end";
     want = Want::ParseUri(uri);
     EXPECT_NE(want, nullptr);
     if (want != nullptr) {
@@ -1801,7 +1731,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;abc=;end";
+    uri = "#Intent;abc=;end";
     want = Want::ParseUri(uri);
     EXPECT_NE(want, nullptr);
     if (want != nullptr) {
@@ -1809,7 +1739,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;=abc;end";
+    uri = "#Intent;=abc;end";
     want = Want::ParseUri(uri);
     EXPECT_NE(want, nullptr);
     if (want != nullptr) {
@@ -1817,7 +1747,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;xxxx=yyy;end";
+    uri = "#Intent;xxxx=yyy;end";
     want = Want::ParseUri(uri);
     EXPECT_NE(want, nullptr);
     if (want != nullptr) {
@@ -1825,7 +1755,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_ParseUri_ToUri_1400, Function | MediumTest | L
         want = nullptr;
     }
 
-    uri = "#Want;;;;;;end";
+    uri = "#Intent;;;;;;end";
     want = Want::ParseUri(uri);
     EXPECT_NE(want, nullptr);
     if (want != nullptr) {
@@ -3882,7 +3812,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0100, Function | MediumTest | Lev
  */
 HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0200, Function | MediumTest | Level1)
 {
-    std::string key = std::to_string(Array::SIGNATURE) + ".#Want;key=3{\"\\b\\\";end";
+    std::string key = std::to_string(Array::SIGNATURE) + ".#Intent;key=3{\"\\b\\\";end";
     std::vector<zchar> arrayValue = {'.', '=', ';'};
     std::shared_ptr<Want> p1 = std::make_shared<Want>();
     if (p1 == nullptr) {

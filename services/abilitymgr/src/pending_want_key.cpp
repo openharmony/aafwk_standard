@@ -20,6 +20,16 @@ namespace OHOS {
 namespace AAFwk {
 
 PendingWantKey::PendingWantKey()
+    : type_{},
+      bundleName_{},
+      requestWho_{},
+      requestCode_{},
+      requestWant_{},
+      requestResolvedType_{},
+      allWantsInfos_{},
+      flags_{},
+      code_{},
+      userId_{}
 {}
 
 void PendingWantKey::SetType(const int32_t type)
@@ -77,12 +87,12 @@ int32_t PendingWantKey::GetType()
     return type_;
 }
 
-std::string &PendingWantKey::GetBundleName()
+std::string PendingWantKey::GetBundleName()
 {
     return bundleName_;
 }
 
-std::string &PendingWantKey::GetRequestWho()
+std::string PendingWantKey::GetRequestWho()
 {
     return requestWho_;
 }
@@ -92,17 +102,17 @@ int32_t PendingWantKey::GetRequestCode()
     return requestCode_;
 }
 
-Want &PendingWantKey::GetRequestWant()
+Want PendingWantKey::GetRequestWant()
 {
     return requestWant_;
 }
 
-std::string &PendingWantKey::GetRequestResolvedType()
+std::string PendingWantKey::GetRequestResolvedType()
 {
     return requestResolvedType_;
 }
 
-std::vector<WantsInfo> &PendingWantKey::GetAllWantsInfos()
+std::vector<WantsInfo> PendingWantKey::GetAllWantsInfos()
 {
     return allWantsInfos_;
 }

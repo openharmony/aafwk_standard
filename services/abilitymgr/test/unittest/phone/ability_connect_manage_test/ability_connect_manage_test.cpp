@@ -92,6 +92,7 @@ AbilityRequest AbilityConnectManagerTest::GenerateAbilityRequest(const std::stri
     want.SetElement(element);
 
     AbilityInfo abilityInfo;
+    abilityInfo.visible = true;
     abilityInfo.applicationName = appName;
     abilityInfo.type = AbilityType::SERVICE;
     abilityInfo.name = abilityName;
@@ -638,7 +639,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_017, TestSize.Level1)
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     ConnectManager()->ScheduleConnectAbilityDoneLocked(token, callback);
     auto abilityRecordB = Token::GetAbilityRecordByToken(token);
-    ASSERT_TRUE(abilityRecordB);
+    EXPECT_TRUE(abilityRecordB);
     auto connectRecordList = abilityRecordB->GetConnectRecordList();
     int size = connectRecordList.size();
     EXPECT_EQ(1, size);

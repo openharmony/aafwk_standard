@@ -63,7 +63,7 @@ public:
      * @param requestCode, Ability request code.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, int requestCode = -1) override;
+    virtual int StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * StartAbility with want, send want to ability manager service.
@@ -73,7 +73,20 @@ public:
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1) override;
+    virtual int StartAbility(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+
+    /**
+     * Starts a new ability with specific start settings.
+     *
+     * @param want Indicates the ability to start.
+     * @param abilityStartSetting Indicates the setting ability used to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode the resultCode of the ability to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -83,8 +96,8 @@ public:
      * @param resultWant, the Want of the ability to return.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int TerminateAbility(
-        const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
+    virtual int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr) override;
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -322,6 +335,64 @@ public:
     virtual int UninstallApp(const std::string &bundleName) override;
 
     /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToFloatingStack(const MissionOption &missionOption) override;
+
+    /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToSplitScreenStack(const MissionOption &missionOption) override;
+
+    /**
+     * Change the focus of ability in the mission stack.
+     * @param lostToken, the token of lost focus ability
+     * @param getToken, the token of get focus ability
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ChangeFocusAbility(
+        const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken) override;
+
+    /**
+     * minimize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MinimizeMultiWindow(int missionId) override;
+
+    /**
+     * maximize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MaximizeMultiWindow(int missionId) override;
+
+    /**
+     * get missions info of floating mission stack.
+     * @param list, mission info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFloatingMissions(std::vector<AbilityMissionInfo> &list) override;
+
+    /**
+     * close multiwindow by mission id.
+     * @param missionId, the id of target mission.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int CloseMultiWindow(int missionId) override;
+
+    /**
+     * set special mission stack default settings.
+     * @param stackSetting, mission stack default settings.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetMissionStackSetting(const StackSetting &stackSetting) override;
+
+    /**
      * @brief Checks whether this ability is the first ability in a mission.
      *
      * @return Returns true is first in Mission.
@@ -384,6 +455,14 @@ public:
     virtual int GetMissionLockModeState() override;
 
     /**
+     * Updates the configuration by modifying the configuration.
+     *
+     * @param config Indicates the new configuration
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UpdateConfiguration(const DummyConfiguration &config) override;
+
+    /**
      * remove all service record.
      *
      */
@@ -432,6 +511,14 @@ public:
     void HandleActiveTimeOut(int64_t eventId);
     void HandleInactiveTimeOut(int64_t eventId);
 
+    void RestartAbility(const sptr<IRemoteObject> &token);
+    void NotifyBmsAbilityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime);
+
+    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid = -1);
+
+    int CheckPermission(const std::string &bundleName, const std::string &permission);
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;
@@ -439,16 +526,17 @@ public:
     static constexpr uint32_t BACKGROUND_TIMEOUT_MSG = 3;
     static constexpr uint32_t TERMINATE_TIMEOUT_MSG = 4;
 
-    static constexpr uint32_t LOAD_TIMEOUT = 1000;          // ms
-    static constexpr uint32_t ACTIVE_TIMEOUT = 5000;       // ms
-    static constexpr uint32_t INACTIVE_TIMEOUT = 500;      // ms
-    static constexpr uint32_t BACKGROUND_TIMEOUT = 10000;  // ms
-    static constexpr uint32_t TERMINATE_TIMEOUT = 10000;   // ms
-    static constexpr uint32_t CONNECT_TIMEOUT = 500;       // ms
-    static constexpr uint32_t DISCONNECT_TIMEOUT = 500;    // ms
-    static constexpr uint32_t COMMAND_TIMEOUT = 5000;      // ms
-    static constexpr uint32_t SYSTEM_UI_TIMEOUT = 5000;    // ms
-    static constexpr uint32_t RESTART_TIMEOUT = 5000;      // ms
+    static constexpr uint32_t LOAD_TIMEOUT = 3000;            // ms
+    static constexpr uint32_t ACTIVE_TIMEOUT = 5000;          // ms
+    static constexpr uint32_t INACTIVE_TIMEOUT = 500;         // ms
+    static constexpr uint32_t BACKGROUND_TIMEOUT = 10000;     // ms
+    static constexpr uint32_t TERMINATE_TIMEOUT = 10000;      // ms
+    static constexpr uint32_t CONNECT_TIMEOUT = 500;          // ms
+    static constexpr uint32_t DISCONNECT_TIMEOUT = 500;       // ms
+    static constexpr uint32_t COMMAND_TIMEOUT = 5000;         // ms
+    static constexpr uint32_t SYSTEM_UI_TIMEOUT = 5000;       // ms
+    static constexpr uint32_t RESTART_TIMEOUT = 5000;         // ms
+    static constexpr uint32_t RESTART_ABILITY_TIMEOUT = 500;  // ms
 
     static constexpr uint32_t MIN_DUMP_ARGUMENT_NUM = 2;
     static constexpr uint32_t MAX_WAIT_SYSTEM_UI_NUM = 600;
@@ -462,7 +550,8 @@ public:
         KEY_DUMP_WAIT_QUEUE,
         KEY_DUMP_SERVICE,
         KEY_DUMP_DATA,
-        KEY_DUMP_SYSTEM_UI
+        KEY_DUMP_SYSTEM_UI,
+        KEY_DUMP_FOCUS_ABILITY,
     };
 
     friend class AbilityStackManager;
@@ -470,6 +559,8 @@ public:
 protected:
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) override;
     int GetUidByBundleName(std::string bundleName);
+
+    void OnAppStateChanged(const AppInfo &info) override;
 
 private:
     /**
@@ -511,6 +602,7 @@ private:
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void SystemDumpStateInner(const std::string &args, std::vector<std::string> &info);
+    void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
