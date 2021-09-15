@@ -27,6 +27,7 @@ bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectTyp
 bool IsArrayForNapiValue(napi_env env, napi_value param, uint32_t &arraySize);
 
 napi_value WrapVoidToJS(napi_env env);
+napi_value WrapUndefinedToJS(napi_env env);
 
 napi_value CreateJSObject(napi_env env);
 
@@ -164,6 +165,7 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode);
  * @return Return a pointer to AsyncJSCallbackInfo on success, nullptr on failure
  */
 AsyncJSCallbackInfo *CreateAsyncJSCallbackInfo(napi_env env);
+void FreeAsyncJSCallbackInfo(AsyncJSCallbackInfo **asyncCallbackInfo);
 
 /**
  * @brief Convert local data to JS data.

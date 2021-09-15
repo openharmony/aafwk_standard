@@ -19,20 +19,36 @@
 
 namespace OHOS {
 namespace AAFwk {
-void PowerStorage::SetPowerOffRecord(const std::shared_ptr<AbilityRecord> &ability)
+void PowerStorage::SetPowerOffInActiveRecord(const std::shared_ptr<AbilityRecord> &ability)
 {
     CHECK_POINTER(ability);
     PowerOffRecord record;
     record.ability = ability;
-    record.StackId = ability->GetMissionRecord()->GetParentStack()->GetMissionStackId();
+    record.StackId = ability->GetMissionRecord()->GetMissionStack()->GetMissionStackId();
     record.missionId = ability->GetMissionRecord()->GetMissionRecordId();
     record.state = ability->GetAbilityState();
-    record_.emplace_back(record);
+    inActiveRecord_.emplace_back(record);
 }
 
-std::vector<PowerOffRecord> PowerStorage::GetPowerOffRecord() const
+std::vector<PowerOffRecord> PowerStorage::GetPowerOffInActiveRecord() const
 {
-    return record_;
+    return inActiveRecord_;
+}
+
+void PowerStorage::SetPowerOffActiveRecord(const std::shared_ptr<AbilityRecord> &ability)
+{
+    CHECK_POINTER(ability);
+    PowerOffRecord record;
+    record.ability = ability;
+    record.StackId = ability->GetMissionRecord()->GetMissionStack()->GetMissionStackId();
+    record.missionId = ability->GetMissionRecord()->GetMissionRecordId();
+    record.state = ability->GetAbilityState();
+    activeRecord_.emplace_back(record);
+}
+
+std::vector<PowerOffRecord> PowerStorage::GetPowerOffActiveRecord() const
+{
+    return activeRecord_;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -40,6 +40,15 @@ const std::map<AbilityState, std::string> AbilityRecord::stateToStrMap = {
     std::map<AbilityState, std::string>::value_type(MOVING_BACKGROUND, "MOVING_BACKGROUND"),
     std::map<AbilityState, std::string>::value_type(TERMINATING, "TERMINATING"),
 };
+const std::map<AppState, std::string> AbilityRecord::appStateToStrMap_ = {
+    std::map<AppState, std::string>::value_type(AppState::BEGIN, "BEGIN"),
+    std::map<AppState, std::string>::value_type(AppState::READY, "READY"),
+    std::map<AppState, std::string>::value_type(AppState::FOREGROUND, "FOREGROUND"),
+    std::map<AppState, std::string>::value_type(AppState::BACKGROUND, "BACKGROUND"),
+    std::map<AppState, std::string>::value_type(AppState::SUSPENDED, "SUSPENDED"),
+    std::map<AppState, std::string>::value_type(AppState::TERMINATED, "TERMINATED"),
+    std::map<AppState, std::string>::value_type(AppState::END, "END"),
+};
 const std::map<AbilityLifeCycleState, AbilityState> AbilityRecord::convertStateMap = {
     std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_INITIAL, INITIAL),
     std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_INACTIVE, INACTIVE),
@@ -92,6 +101,10 @@ std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityR
         HILOG_ERROR("failed to init new ability record");
         return nullptr;
     }
+    if (abilityRequest.startSetting != nullptr) {
+        HILOG_INFO("abilityRequest.startSetting...");
+        abilityRecord->SetStartSetting(abilityRequest.startSetting);
+    }
     return abilityRecord;
 }
 
@@ -112,7 +125,7 @@ bool AbilityRecord::Init()
 int AbilityRecord::LoadAbility()
 {
     HILOG_INFO("%s", __func__);
-    startTime_ = SystemTimeMillis();
+    startTime_ = AbilityUtil::SystemTimeMillis();
     CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
     std::string appName = applicationInfo_.name;
     if (appName.empty()) {
@@ -121,7 +134,7 @@ int AbilityRecord::LoadAbility()
     }
 
     if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
-        if (isKernalSystemAbility) {
+        if (isKernalSystemAbility_) {
             SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::SYSTEM_UI_TIMEOUT);
         } else {
             SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
@@ -137,7 +150,7 @@ int AbilityRecord::LoadAbility()
 
 int AbilityRecord::TerminateAbility()
 {
-    HILOG_INFO("%s", __func__);
+    HILOG_INFO("%{public}s", __func__);
     return DelayedSingleton<AppScheduler>::GetInstance()->TerminateAbility(token_);
 }
 
@@ -154,9 +167,22 @@ void AbilityRecord::SetMissionStackId(const int stackId)
     lifeCycleStateInfo_.stackId = stackId;
 }
 
+int AbilityRecord::GetMissionStackId() const
+{
+    return lifeCycleStateInfo_.stackId;
+}
+
 std::shared_ptr<MissionRecord> AbilityRecord::GetMissionRecord() const
 {
     return missionRecord_.lock();
+}
+
+int AbilityRecord::GetMissionRecordId() const
+{
+    if (missionRecord_.lock()) {
+        return missionRecord_.lock()->GetMissionRecordId();
+    }
+    return DEFAULT_INVAL_VALUE;
 }
 
 const AppExecFwk::AbilityInfo &AbilityRecord::GetAbilityInfo() const
@@ -181,7 +207,7 @@ void AbilityRecord::SetAbilityState(AbilityState state)
 
 void AbilityRecord::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
 {
-    HILOG_INFO("%s", __func__);
+    HILOG_INFO("%{public}s", __func__);
     CHECK_POINTER(lifecycleDeal_);
     if (scheduler != nullptr) {
         if (scheduler_ != nullptr && schedulerDeathRecipient_ != nullptr) {
@@ -204,6 +230,15 @@ void AbilityRecord::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
     } else {
         HILOG_ERROR("scheduler is nullptr");
         isReady_ = false;
+        isWindowAttached_ = false;
+        SetIsNewWant(false);
+        if (scheduler_ != nullptr && schedulerDeathRecipient_ != nullptr) {
+            auto schedulerObject = scheduler_->AsObject();
+            if (schedulerObject != nullptr) {
+                schedulerObject->RemoveDeathRecipient(schedulerDeathRecipient_);
+            }
+        }
+        scheduler_ = scheduler;
     }
 }
 
@@ -276,6 +311,7 @@ bool AbilityRecord::IsForceTerminate() const
 {
     return isForceTerminate_;
 }
+
 void AbilityRecord::SetForceTerminate(bool flag)
 {
     isForceTerminate_ = flag;
@@ -298,17 +334,17 @@ void AbilityRecord::SetIsNewWant(bool isNewWant)
 
 bool AbilityRecord::IsCreateByConnect() const
 {
-    return isCreateByConnect;
+    return isCreateByConnect_;
 }
 
 void AbilityRecord::SetCreateByConnectMode()
 {
-    isCreateByConnect = true;
+    isCreateByConnect_ = true;
 }
 
 void AbilityRecord::Activate()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Activate.");
     CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::ACTIVE_TIMEOUT_MSG, AbilityManagerService::ACTIVE_TIMEOUT);
@@ -328,6 +364,24 @@ void AbilityRecord::Activate()
     }
 }
 
+void AbilityRecord::ProcessActivateInMoving()
+{
+    HILOG_DEBUG("ProcessActivateInMovingState.");
+    if (!IsAbilityState(AbilityState::ACTIVE) && !IsAbilityState(AbilityState::ACTIVATING)) {
+        SetInMovingState(true);
+        ProcessActivate();
+    }
+}
+
+void AbilityRecord::ProcessInactivateInMoving()
+{
+    HILOG_DEBUG("ProcessActivateInMovingState.");
+    if (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING)) {
+        SetInMovingState(true);
+        ProcessInactivate();
+    }
+}
+
 void AbilityRecord::ProcessActivate()
 {
     std::string element = GetWant().GetElement().GetURI();
@@ -335,8 +389,12 @@ void AbilityRecord::ProcessActivate()
 
     if (isReady_) {
         if (IsAbilityState(AbilityState::BACKGROUND)) {
-            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+            // background to activte state
+            if (!ProcessConfigurationChange()) {
+                // true: restartability, false: continue activate
+                HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+                DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+            }
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
             Activate();
@@ -353,8 +411,12 @@ void AbilityRecord::ProcessInactivate()
 
     if (isReady_) {
         if (IsAbilityState(AbilityState::BACKGROUND)) {
-            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+            // background to activte state
+            if (!ProcessConfigurationChange()) {
+                // true: restartability, false: continue activate
+                HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+                DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+            }
         } else if (!IsAbilityState(AbilityState::INACTIVE) && !IsAbilityState(AbilityState::INACTIVATING)) {
             HILOG_DEBUG("Inactivate %{public}s", element.c_str());
             Inactivate();
@@ -366,7 +428,7 @@ void AbilityRecord::ProcessInactivate()
 
 void AbilityRecord::Inactivate()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Inactivate.");
     CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::INACTIVE_TIMEOUT_MSG, AbilityManagerService::INACTIVE_TIMEOUT);
@@ -379,7 +441,7 @@ void AbilityRecord::Inactivate()
 
 void AbilityRecord::MoveToBackground(const Closure &task)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Move to background.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr || task == nullptr) {
@@ -392,6 +454,12 @@ void AbilityRecord::MoveToBackground(const Closure &task)
         // eventId_ is a unique id of the task.
         handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUND_TIMEOUT);
     }
+
+    if (!IsTerminating() || IsRestarting()) {
+        // schedule save ability state before moving to background.
+        SaveAbilityState();
+    }
+
     // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
     // earlier than above actions.
     currentState_ = AbilityState::MOVING_BACKGROUND;
@@ -400,7 +468,7 @@ void AbilityRecord::MoveToBackground(const Closure &task)
 
 void AbilityRecord::Terminate(const Closure &task)
 {
-    HILOG_INFO("terminate ability : %{public}s", __func__);
+    HILOG_INFO("Terminate ability.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler == nullptr || task == nullptr) {
@@ -421,21 +489,21 @@ void AbilityRecord::Terminate(const Closure &task)
 
 void AbilityRecord::ConnectAbility()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Connect ability.");
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->ConnectAbility(want_);
 }
 
 void AbilityRecord::DisconnectAbility()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Disconnect ability.");
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->DisconnectAbility(want_);
 }
 
 void AbilityRecord::CommandAbility()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Command ability.");
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->CommandAbility(want_, false, startId_);
 }
@@ -443,11 +511,24 @@ void AbilityRecord::CommandAbility()
 void AbilityRecord::SaveAbilityState()
 {
     HILOG_INFO("%{public}s", __func__);
+    CHECK_POINTER(lifecycleDeal_);
+    lifecycleDeal_->SaveAbilityState(stateDatas_);
 }
 
 void AbilityRecord::RestoreAbilityState()
 {
     HILOG_INFO("%{public}s", __func__);
+    CHECK_POINTER(lifecycleDeal_);
+    lifecycleDeal_->RestoreAbilityState(stateDatas_);
+    stateDatas_.Clear();
+    isRestarting_ = false;
+}
+
+void AbilityRecord::TopActiveAbilityChanged(bool flag)
+{
+    HILOG_INFO("%{public}s called, isTop: %{public}d", __func__, flag);
+    CHECK_POINTER(scheduler_);
+    scheduler_->NotifyTopActiveAbilityChanged(flag);
 }
 
 void AbilityRecord::SetWant(const Want &want)
@@ -477,7 +558,7 @@ std::shared_ptr<AbilityResult> AbilityRecord::GetResult() const
 
 void AbilityRecord::SendResult()
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Send result.");
     CHECK_POINTER(scheduler_);
     CHECK_POINTER(result_);
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
@@ -512,12 +593,11 @@ void AbilityRecord::AddConnectRecordToList(const std::shared_ptr<ConnectionRecor
     auto it = std::find(connRecordList_.begin(), connRecordList_.end(), connRecord);
     // found it
     if (it != connRecordList_.end()) {
-        HILOG_DEBUG(
-            "%{public}s: found it in list, so no need to add same connection(%{public}p)", __func__, connRecord.get());
+        HILOG_DEBUG("Found it in list, so no need to add same connection(%{public}p)", connRecord.get());
         return;
     }
     // no found then add new connection to list
-    HILOG_DEBUG("%{public}s: no found in list, so add new connection(%{public}p) to list", __func__, connRecord.get());
+    HILOG_DEBUG("No found in list, so add new connection(%{public}p) to list", connRecord.get());
     connRecordList_.push_back(connRecord);
 }
 
@@ -530,12 +610,11 @@ void AbilityRecord::RemoveConnectRecordFromList(const std::shared_ptr<Connection
 {
     CHECK_POINTER(connRecord);
     connRecordList_.remove(connRecord);
-    HILOG_INFO("%{public}s: remove member(%{public}p) from list", __func__, connRecord.get());
 }
 
 void AbilityRecord::AddCallerRecord(const sptr<IRemoteObject> &callerToken, int requestCode)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Add caller record.");
     auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
     CHECK_POINTER(abilityRecord);
 
@@ -554,8 +633,7 @@ void AbilityRecord::AddCallerRecord(const sptr<IRemoteObject> &callerToken, int 
     lifeCycleStateInfo_.caller.deviceId = abilityRecord->GetAbilityInfo().deviceId;
     lifeCycleStateInfo_.caller.bundleName = abilityRecord->GetAbilityInfo().bundleName;
     lifeCycleStateInfo_.caller.abilityName = abilityRecord->GetAbilityInfo().name;
-    HILOG_INFO("%{public}s, caller %{public}s, %{public}s, %{public}s",
-        __func__,
+    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
         abilityRecord->GetAbilityInfo().deviceId.c_str(),
         abilityRecord->GetAbilityInfo().bundleName.c_str(),
         abilityRecord->GetAbilityInfo().name.c_str());
@@ -569,6 +647,7 @@ std::list<std::shared_ptr<CallerRecord>> AbilityRecord::GetCallerRecordList() co
 void AbilityRecord::AddWindowInfo(int windowToken)
 {
     windowInfo_ = std::make_shared<WindowInfo>(windowToken);
+    isWindowAttached_ = true;
 }
 
 void AbilityRecord::RemoveWindowInfo()
@@ -615,15 +694,6 @@ std::shared_ptr<ConnectionRecord> AbilityRecord::GetDisconnectingRecord() const
     return (connect != connRecordList_.end()) ? *connect : nullptr;
 }
 
-int64_t AbilityRecord::SystemTimeMillis()
-{
-    struct timespec t;
-    t.tv_sec = 0;
-    t.tv_nsec = 0;
-    clock_gettime(CLOCK_MONOTONIC, &t);
-    return (int64_t)((t.tv_sec) * NANOSECONDS + t.tv_nsec) / MICROSECONDS;
-}
-
 void AbilityRecord::GetAbilityTypeString(std::string &typeStr)
 {
     AppExecFwk::AbilityType type = GetAbilityInfo().type;
@@ -657,13 +727,22 @@ std::string AbilityRecord::ConvertAbilityState(const AbilityState &state)
     return "INVALIDSTATE";
 }
 
+std::string AbilityRecord::ConvertAppState(const AppState &state)
+{
+    auto it = appStateToStrMap_.find(state);
+    if (it != appStateToStrMap_.end()) {
+        return it->second;
+    }
+    return "INVALIDSTATE";
+}
+
 int AbilityRecord::ConvertLifeCycleToAbilityState(const AbilityLifeCycleState &state)
 {
     auto it = convertStateMap.find(state);
     if (it != convertStateMap.end()) {
         return it->second;
     }
-    return -1;
+    return DEFAULT_INVAL_VALUE;
 }
 
 void AbilityRecord::Dump(std::vector<std::string> &info)
@@ -704,6 +783,8 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
     dumpInfo = "        state #" + AbilityRecord::ConvertAbilityState(GetAbilityState()) + "  start time [" +
                std::to_string(startTime_) + "]";
     info.push_back(dumpInfo);
+    dumpInfo = "        app state #" + AbilityRecord::ConvertAppState(appState_);
+    info.push_back(dumpInfo);
     dumpInfo = "        ready #" + std::to_string(isReady_) + "  window attached #" +
                std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
     info.push_back(dumpInfo);
@@ -712,7 +793,7 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
 void AbilityRecord::SetStartTime()
 {
     if (startTime_ == 0) {
-        startTime_ = SystemTimeMillis();
+        startTime_ = AbilityUtil::SystemTimeMillis();
     }
 }
 
@@ -729,6 +810,7 @@ void AbilityRecord::DumpService(std::vector<std::string> &info) const
     info.emplace_back("    main name [" + GetAbilityInfo().name + "]");
     info.emplace_back("    bundle name [" + GetAbilityInfo().bundleName + "]");
     info.emplace_back("    ability type [SERVICE]");
+    info.emplace_back("    app state #" + AbilityRecord::ConvertAppState(appState_));
     info.emplace_back("    Connections: " + std::to_string(connRecordList_.size()));
 
     for (auto &&conn : connRecordList_) {
@@ -767,7 +849,7 @@ void AbilityRecord::GetAbilityRecordInfo(AbilityRecordInfo &recordInfo)
 
 void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
 {
-    HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
+    HILOG_DEBUG("On scheduler died.");
     CHECK_POINTER(scheduler_);
 
     auto object = remote.promote();
@@ -788,6 +870,7 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
     scheduler_.clear();
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->SetScheduler(nullptr);
+    isWindowAttached_ = false;
 
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);
@@ -823,22 +906,22 @@ int AbilityRecord::GetStartId() const
 
 void AbilityRecord::SetIsUninstallAbility()
 {
-    isUninstall = true;
+    isUninstall_ = true;
 }
 
 bool AbilityRecord::IsUninstallAbility() const
 {
-    return isUninstall;
+    return isUninstall_;
 }
 
 void AbilityRecord::SetKernalSystemAbility()
 {
-    isKernalSystemAbility = true;
+    isKernalSystemAbility_ = true;
 }
 
 bool AbilityRecord::IsKernalSystemAbility() const
 {
-    return isKernalSystemAbility;
+    return isKernalSystemAbility_;
 }
 
 void AbilityRecord::SetLauncherRoot()
@@ -865,6 +948,54 @@ void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
     handler->SendEvent(msg, eventId_, timeOut);
 }
 
+bool AbilityRecord::SupportMultWindow() const
+{
+    // LauncherAbility don't support multi window display.
+    if (isLauncherAbility_) {
+        return false;
+    }
+
+    // return (ERR_OK == DelayedSingleton<AbilityManagerService>::GetInstance()->CheckPermission(
+    //                       abilityInfo_.bundleName, AbilityConfig::FLOATING_WINDOW_PERMISSION));
+    return true;
+}
+
+void AbilityRecord::NotifyMultiWinModeChanged(const AbilityWindowConfiguration &winModeKey, bool flag)
+{
+    HILOG_INFO("Notify multi window mode changed.");
+    CHECK_POINTER(scheduler_);
+    scheduler_->NotifyMultiWinModeChanged(static_cast<int32_t>(winModeKey), flag);
+}
+
+void AbilityRecord::SetInMovingState(bool isMoving)
+{
+    isInMovingState_ = isMoving;
+}
+
+bool AbilityRecord::GetInMovingState() const
+{
+    return isInMovingState_;
+}
+
+bool AbilityRecord::IsToEnd() const
+{
+    return isToEnd_;
+}
+void AbilityRecord::SetToEnd(bool isToEnd)
+{
+    isToEnd_ = isToEnd;
+}
+
+void AbilityRecord::SetStartSetting(const std::shared_ptr<AbilityStartSetting> &setting)
+{
+    lifeCycleStateInfo_.setting = setting;
+}
+
+std::shared_ptr<AbilityStartSetting> AbilityRecord::GetStartSetting() const
+{
+    return lifeCycleStateInfo_.setting;
+}
+
 void AbilityRecord::SetPowerState(const bool isPower)
 {
     isPowerState_ = isPower;
@@ -873,6 +1004,109 @@ void AbilityRecord::SetPowerState(const bool isPower)
 bool AbilityRecord::GetPowerState() const
 {
     return isPowerState_;
+}
+
+void AbilityRecord::SetRestarting(const bool isRestart)
+{
+    isRestarting_ = isRestart;
+}
+
+bool AbilityRecord::IsRestarting() const
+{
+    return isRestarting_;
+}
+
+void AbilityRecord::SetAppState(const AppState &state)
+{
+    appState_ = state;
+}
+
+AppState AbilityRecord::GetAppState() const
+{
+    return appState_;
+}
+
+bool AbilityRecord::OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges)
+{
+    HILOG_INFO("%{public}s called", __FUNCTION__);
+
+    HILOG_INFO("targetConfig: %{public}s, changeTypes:%{public}d", config.GetName().c_str(), configChanges);
+
+    unsigned int focusChanges = GetIntConfigChanges();
+    bool isFocused = ((focusChanges & configChanges) > 0);
+    if (isFocused) {
+        CHECK_POINTER_RETURN_BOOL(lifecycleDeal_);
+        if (isReady_) {
+            lifecycleDeal_->UpdateConfiguration(config);
+            return false;
+        }
+    }
+
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER_RETURN_BOOL(abilityManagerService);
+    auto handler = abilityManagerService->GetEventHandler();
+    g_abilityRecordEventId_++;
+    eventId_ = g_abilityRecordEventId_;
+
+    CHECK_POINTER_RETURN_BOOL(handler);
+    auto task = [abilityManagerService, token = token_]() { abilityManagerService->RestartAbility(token); };
+    // eventId_ is a unique id of the task.
+    handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::RESTART_ABILITY_TIMEOUT);
+    return true;
+}
+
+std::shared_ptr<ConfigurationHolder> AbilityRecord::GetParent()
+{
+    return missionRecord_.lock();
+}
+
+unsigned int AbilityRecord::GetChildSize()
+{
+    return 0;
+}
+
+std::shared_ptr<ConfigurationHolder> AbilityRecord::FindChild(unsigned int index)
+{
+    return nullptr;
+}
+
+unsigned int AbilityRecord::GetIntConfigChanges()
+{
+    auto changes = abilityInfo_.configChanges;
+    unsigned int intChangs = CHANGE_CONFIG_NONE;
+
+    for (auto item : changes) {
+        HILOG_INFO("configChange: %{public}s", item.c_str());
+        if (item == "locale") {
+            intChangs |= CHANGE_CONFIG_LOCALE;
+        } else if (item == "layout") {
+            intChangs |= CHANGE_CONFIG_LAYOUT;
+        } else if (item == "fontSize") {
+            intChangs |= CHANGE_CONFIG_FONTSIZE;
+        } else if (item == "orientation") {
+            intChangs |= CHANGE_CONFIG_ORIENTATION;
+        } else if (item == "density") {
+            intChangs |= CHANGE_CONFIG_DENSITY;
+        } else {
+            ;
+        }
+    }
+    return intChangs;
+}
+
+void AbilityRecord::ClearFlag()
+{
+    isRestarting_ = false;
+    isPowerState_ = false;
+    isForceTerminate_ = false;
+    isUninstall_ = false;
+    isTerminating_ = false;
+    isInMovingState_ = false;
+    preAbilityRecord_.reset();
+    nextAbilityRecord_.reset();
+    backAbilityRecord_.reset();
+    startTime_ = 0;
+    appState_ = AppState::END;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

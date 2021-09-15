@@ -127,6 +127,8 @@ public:
      */
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state);
 
+    void OnAppStateChanged(const AppInfo &info);
+
     /**
      * AbilityTransitionDone, ability call this interface after lift cycle was changed.
      *

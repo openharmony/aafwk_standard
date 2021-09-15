@@ -34,45 +34,62 @@ napi_value WantConstantInit(napi_env env, napi_value exports)
     HILOG_INFO("%{public}s,called1", __func__);
     napi_value action = nullptr;
     napi_value entity = nullptr;
+    napi_value Flags = nullptr;
     napi_create_object(env, &action);
     napi_create_object(env, &entity);
+    napi_create_object(env, &Flags);
 
-    SetNamedProperty(env, action, "action.system.home", "ACTION_HOME");
-    SetNamedProperty(env, action, "action.system.play", "ACTION_PLAY");
-    SetNamedProperty(env, action, "action.bundle.add", "ACTION_BUNDLE_ADD");
-    SetNamedProperty(env, action, "action.bundle.remove", "ACTION_BUNDLE_REMOVE");
-    SetNamedProperty(env, action, "action.bundle.update", "ACTION_BUNDLE_UPDATE");
-    SetNamedProperty(env, action, "ability.intent.ORDER_TAXI", "ACTION_ORDER_TAXI");
-    SetNamedProperty(env, action, "ability.intent.QUERY_TRAFFIC_RESTRICTION", "ACTION_QUERY_TRAFFIC_RESTRICTION");
-    SetNamedProperty(env, action, "ability.intent.PLAN_ROUTE", "ACTION_PLAN_ROUTE");
-    SetNamedProperty(env, action, "ability.intent.BOOK_FLIGHT", "ACTION_BOOK_FLIGHT");
-    SetNamedProperty(env, action, "ability.intent.BOOK_TRAIN_TICKET", "ACTION_BOOK_TRAIN_TICKET");
-    SetNamedProperty(env, action, "ability.intent.BOOK_HOTEL", "ACTION_BOOK_HOTEL");
-    SetNamedProperty(env, action, "ability.intent.QUERY_TRAVELLING_GUIDELINE", "ACTION_QUERY_TRAVELLING_GUIDELINE");
-    SetNamedProperty(env, action, "ability.intent.QUERY_POI_INFO", "ACTION_QUERY_POI_INFO");
-    SetNamedProperty(env, action, "ability.intent.QUERY_CONSTELLATION_FORTUNE", "ACTION_QUERY_CONSTELLATION_FORTUNE");
-    SetNamedProperty(env, action, "ability.intent.QUERY_ALMANC", "ACTION_QUERY_ALMANC");
-    SetNamedProperty(env, action, "ability.intent.QUERY_WEATHER", "ACTION_QUERY_WEATHER");
-    SetNamedProperty(env, action, "ability.intent.QUERY_ENCYCLOPEDIA", "ACTION_QUERY_ENCYCLOPEDIA");
-    SetNamedProperty(env, action, "ability.intent.QUERY_RECIPE", "ACTION_QUERY_RECIPE");
-    SetNamedProperty(env, action, "ability.intent.BUY_TAKEOUT", "ACTION_BUY_TAKEOUT");
-    SetNamedProperty(env, action, "ability.intent.TRANSLATE_TEXT", "ACTION_TRANSLATE_TEXT");
-    SetNamedProperty(env, action, "ability.intent.BUY", "ACTION_BUY");
-    SetNamedProperty(env, action, "ability.intent.QUERY_LOGISTICS_INFO", "ACTION_QUERY_LOGISTICS_INFO");
-    SetNamedProperty(env, action, "ability.intent.SEND_LOGISTICS", "ACTION_SEND_LOGISTICS");
-    SetNamedProperty(env, action, "ability.intent.QUERY_SPORTS_INFO", "ACTION_QUERY_SPORTS_INFO");
-    SetNamedProperty(env, action, "ability.intent.QUERY_NEWS", "ACTION_QUERY_NEWS");
-    SetNamedProperty(env, action, "ability.intent.QUERY_JOKE", "ACTION_QUERY_JOKE");
-    SetNamedProperty(env, action, "ability.intent.WATCH_VIDEO_CLIPS", "ACTION_WATCH_VIDEO_CLIPS");
-    SetNamedProperty(env, action, "ability.intent.QUERY_STOCK_INFO", "ACTION_QUERY_STOCK_INFO");
-    SetNamedProperty(env, action, "ability.intent.LOCALE_CHANGED", "ACTION_LOCALE_CHANGED");
+    SetNamedProperty(env, action, "ohos.want.action.home", "ACTION_HOME");
+    SetNamedProperty(env, action, "ohos.want.action.dial", "ACTION_DIAL");
+    SetNamedProperty(env, action, "ohos.want.action.search", "ACTION_SEARCH");
+    SetNamedProperty(env, action, "ohos.settings.wireless", "ACTION_WIRELESS_SETTINGS");
+    SetNamedProperty(env, action, "ohos.settings.manage.applications", "ACTION_MANAGE_APPLICATIONS_SETTINGS");
+    SetNamedProperty(env, action, "ohos.settings.application.details", "ACTION_APPLICATION_DETAILS_SETTINGS");
+    SetNamedProperty(env, action, "ohos.want.action.setAlarm", "ACTION_SET_ALARM");
+    SetNamedProperty(env, action, "ohos.want.action.showAlarms", "ACTION_SHOW_ALARMS");
+    SetNamedProperty(env, action, "ohos.want.action.snoozeAlarm", "ACTION_SNOOZE_ALARM");
+    SetNamedProperty(env, action, "ohos.want.action.dismissAlarm", "ACTION_DISMISS_ALARM");
+    SetNamedProperty(env, action, "ohos.want.action.dismissTimer", "ACTION_DISMISS_TIMER");
+    SetNamedProperty(env, action, "ohos.want.action.sendSms", "ACTION_SEND_SMS");
+    SetNamedProperty(env, action, "ohos.want.action.choose", "ACTION_CHOOSE");
+    SetNamedProperty(env, action, "ohos.want.action.select", "ACTION_SELECT");
+    SetNamedProperty(env, action, "ohos.want.action.sendData", "ACTION_SEND_DATA");
+    SetNamedProperty(env, action, "ohos.want.action.sendMultipleData", "ACTION_SEND_MULTIPLE_DATA");
+    SetNamedProperty(env, action, "ohos.want.action.scanMediaFile", "ACTION_SCAN_MEDIA_FILE");
+    SetNamedProperty(env, action, "ohos.want.action.viewData", "ACTION_VIEW_DATA");
+    SetNamedProperty(env, action, "ohos.want.action.editData", "ACTION_EDIT_DATA");
+    SetNamedProperty(env, action, "ability.want.params.INTENT", "INTENT_PARAMS_INTENT");
+    SetNamedProperty(env, action, "ability.want.params.TITLE", "INTENT_PARAMS_TITLE");
+    SetNamedProperty(env, action, "ohos.action.fileSelect", "ACTION_FILE_SELECT");
+    SetNamedProperty(env, action, "ability.params.stream", "PARAMS_STREAM");
 
+    SetNamedProperty(env, entity, "entity.system.default", "ENTITY_DEFAULT");
     SetNamedProperty(env, entity, "entity.system.home", "ENTITY_HOME");
+    SetNamedProperty(env, entity, "entity.system.voice", "ENTITY_VOICE");
+    SetNamedProperty(env, entity, "entity.system.browsable", "ENTITY_BROWSABLE");
     SetNamedProperty(env, entity, "entity.system.video", "ENTITY_VIDEO");
+
+    SetNamedProperty(env, Flags, 0x00000001, "FLAG_AUTH_READ_URI_PERMISSION");
+    SetNamedProperty(env, Flags, 0x00000002, "FLAG_AUTH_WRITE_URI_PERMISSION");
+    SetNamedProperty(env, Flags, 0x00000004, "FLAG_ABILITY_FORWARD_RESULT");
+    SetNamedProperty(env, Flags, 0x00000008, "FLAG_ABILITY_CONTINUATION");
+    SetNamedProperty(env, Flags, 0x00000010, "FLAG_NOT_OHOS_COMPONENT");
+    SetNamedProperty(env, Flags, 0x00000020, "FLAG_ABILITY_FORM_ENABLED");
+    SetNamedProperty(env, Flags, 0x00000040, "FLAG_AUTH_PERSISTABLE_URI_PERMISSION");
+    SetNamedProperty(env, Flags, 0x00000080, "FLAG_AUTH_PREFIX_URI_PERMISSION");
+    SetNamedProperty(env, Flags, 0x00000100, "FLAG_ABILITYSLICE_MULTI_DEVICE");
+    SetNamedProperty(env, Flags, 0x00000200, "FLAG_START_FOREGROUND_ABILITY");
+    SetNamedProperty(env, Flags, 0x00000400, "FLAG_ABILITY_CONTINUATION_REVERSIBLE");
+    SetNamedProperty(env, Flags, 0x00000800, "FLAG_INSTALL_ON_DEMAND");
+    SetNamedProperty(env, Flags, 0x80000000, "FLAG_INSTALL_WITH_BACKGROUND_MODE");
+    SetNamedProperty(env, Flags, 0x00008000, "FLAG_ABILITY_CLEAR_MISSION");
+    SetNamedProperty(env, Flags, 0x10000000, "FLAG_ABILITY_NEW_MISSION");
+    SetNamedProperty(env, Flags, 0x20000000, "FLAG_ABILITY_MISSION_TOP");
 
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("Action", action),
         DECLARE_NAPI_PROPERTY("Entity", entity),
+        DECLARE_NAPI_PROPERTY("Flags", Flags),
     };
     napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
 
@@ -83,6 +100,13 @@ void SetNamedProperty(napi_env env, napi_value dstObj, const char *objName, cons
 {
     napi_value prop = nullptr;
     napi_create_string_utf8(env, objName, NAPI_AUTO_LENGTH, &prop);
+    napi_set_named_property(env, dstObj, propName, prop);
+}
+
+void SetNamedProperty(napi_env env, napi_value dstObj, const int32_t objValue, const char *propName)
+{
+    napi_value prop = nullptr;
+    napi_create_int32(env, objValue, &prop);
     napi_set_named_property(env, dstObj, propName, prop);
 }
 

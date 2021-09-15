@@ -23,6 +23,7 @@
 #undef private
 #undef protected
 
+#include "app_process_data.h"
 #include "ability_manager_errors.h"
 #include "ability_connect_callback_stub.h"
 #include "ability_scheduler.h"

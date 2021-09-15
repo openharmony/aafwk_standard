@@ -13,27 +13,24 @@
  * limitations under the License.
  */
 
-#include "data_ability_helper.h"
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-#include <gmock/gmock-more-actions.h>
+#include "gtest/gtest.h"
+
+#include "mock_ability_manager_client_for_data_ability_observer.h"
+#include "mock_ability_scheduler_for_observer.h"
 #include "mock_ability_manager_client.h"
-#include "mock_ability_token.h"
+#include "context.h"
+#include "ability_context.h"
+#include "data_ability_helper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 using namespace testing::ext;
-using namespace OHOS;
-using namespace OHOS::AppExecFwk;
-using testing::_;
-using testing::Invoke;
-using testing::Return;
 
-class DataAbilityHelperTest : public testing::Test {
+class DataAbilityHelperForObserverTest : public testing::Test {
 public:
-    DataAbilityHelperTest()
+    DataAbilityHelperForObserverTest()
     {}
-    ~DataAbilityHelperTest()
+    virtual ~DataAbilityHelperForObserverTest()
     {}
 
     static void SetUpTestCase(void);
@@ -42,133 +39,51 @@ public:
     void TearDown();
 };
 
-void DataAbilityHelperTest::SetUpTestCase(void)
+void DataAbilityHelperForObserverTest::SetUpTestCase(void)
 {}
 
-void DataAbilityHelperTest::TearDownTestCase(void)
-{}
-
-void DataAbilityHelperTest::SetUp(void)
-{}
-
-void DataAbilityHelperTest::TearDown(void)
-{}
-
-/**
- * @tc.number: AaFwk_DataAbilityHelper_Create_0100
- * @tc.name: DataAbilityHelper
- * @tc.desc: Test the dataabilityhelper object.
- */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Create_0100, Function | MediumTest | Level1)
+void DataAbilityHelperForObserverTest::TearDownTestCase(void)
 {
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Create_0100 start";
-
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper1 = DataAbilityHelper::Creator(nullptr);
-    EXPECT_EQ(helper1, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper2 = DataAbilityHelper::Creator(context);
-    EXPECT_NE(helper2, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper3 = DataAbilityHelper::Creator(nullptr, uri);
-    EXPECT_EQ(helper3, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper4 = DataAbilityHelper::Creator(nullptr, nullptr);
-    EXPECT_EQ(helper4, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper5 = DataAbilityHelper::Creator(context, nullptr);
-    EXPECT_EQ(helper5, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper6 = DataAbilityHelper::Creator(context, uri);
-    EXPECT_NE(helper6, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper7 = DataAbilityHelper::Creator(nullptr, nullptr, false);
-    EXPECT_EQ(helper7, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper8 = DataAbilityHelper::Creator(context, nullptr, false);
-    EXPECT_EQ(helper8, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper9 = DataAbilityHelper::Creator(nullptr, uri, false);
-    EXPECT_EQ(helper9, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper10 = DataAbilityHelper::Creator(context, uri, false);
-    EXPECT_NE(helper10, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper11 = DataAbilityHelper::Creator(nullptr, nullptr, true);
-    EXPECT_EQ(helper11, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper12 = DataAbilityHelper::Creator(context, nullptr, true);
-    EXPECT_EQ(helper12, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper13 = DataAbilityHelper::Creator(nullptr, uri, true);
-    EXPECT_EQ(helper13, nullptr);
-    std::shared_ptr<DataAbilityHelper> helper14 = DataAbilityHelper::Creator(context, uri, true);
-    EXPECT_NE(helper14, nullptr);
-
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Create_0100 end";
+    MockAbilitySchedulerTools::GetInstance()->SetMockStatus(false);
 }
 
-/**
- * @tc.number: AaFwk_DataAbilityHelper_Release_0100
- * @tc.name: Release
- * @tc.desc: Test whether the return value of release is true when the parameter passed by Creator is true.
- */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Release_0100, Function | MediumTest | Level1)
+void DataAbilityHelperForObserverTest::SetUp(void)
+{}
+
+void DataAbilityHelperForObserverTest::TearDown(void)
 {
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Release_0100 start";
-
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        EXPECT_EQ(true, helper->Release());
-    }
-
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Release_0100 end";
-}
-
-/**
- * @tc.number: AaFwk_DataAbilityHelper_Release_0200
- * @tc.name: Release
- * @tc.desc: Test whether the return value of release is false when the parameter passed by Creator is false.
- */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Release_0200, Function | MediumTest | Level3)
-{
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Release_0200 start";
-
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        EXPECT_EQ(false, helper->Release());
-    }
-
-    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Release_0200 end";
+    MockAbilitySchedulerTools::DestoryInstance();
 }
 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_GetFileTypes_0100
  * @tc.name: GetFileTypes
- * @tc.desc: When the parameter passed by Creator is true, test whether the return value of getfiletypes is correct.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetFileTypes_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    std::string mimeTypeFilter("mimeTypeFiltertest");
+    // Test to AbilityThread interface
+    auto returnGetFileTypes = [&](const Uri &uri, const std::string &mimeTypeFilter) {
+        std::vector<std::string> matchedMIMEs;
+        matchedMIMEs.push_back("test1");
+        matchedMIMEs.push_back("test2");
+        matchedMIMEs.push_back("test3");
+        return matchedMIMEs;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), GetFileTypes(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetFileTypes));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::string mimeTypeFilter("mimeTypeFiltertest");
-        std::vector<std::string> result = helper->GetFileTypes(uri2, mimeTypeFilter);
-
-        int count = result.size();
-        EXPECT_EQ(count, 3);
-
-        std::vector<std::string> list;
-        list.push_back("Types1");
-        list.push_back("Types2");
-        list.push_back("Types3");
-
-        for (int i = 0; i < count; i++) {
-            EXPECT_STREQ(result.at(i).c_str(), list.at(i).c_str());
-        }
-    }
+    dataAbilityHelper->GetFileTypes(*uri, mimeTypeFilter);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0100 end";
 }
@@ -176,25 +91,32 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetFileTypes_0100, Funct
 /**
  * @tc.number: AaFwk_DataAbilityHelper_GetFileTypes_0200
  * @tc.name: GetFileTypes
- * @tc.desc: Test whether the return value of GetFileTypes is 0 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetFileTypes_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    std::string mimeTypeFilter("mimeTypeFiltertest");
+    // Test to AbilityThread interface
+    auto returnGetFileTypes = [&](const Uri &uri, const std::string &mimeTypeFilter) {
+        std::vector<std::string> matchedMIMEs;
+        matchedMIMEs.push_back("test1");
+        matchedMIMEs.push_back("test2");
+        matchedMIMEs.push_back("test3");
+        return matchedMIMEs;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), GetFileTypes(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetFileTypes));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::string mimeTypeFilter("mimeTypeFiltertest");
-        std::vector<std::string> result = helper->GetFileTypes(uri2, mimeTypeFilter);
-
-        int count = result.size();
-        EXPECT_EQ(count, 0);
-    }
+    dataAbilityHelper->GetFileTypes(*uri, mimeTypeFilter);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0200 end";
 }
@@ -202,24 +124,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetFileTypes_0200, Funct
 /**
  * @tc.number: AaFwk_DataAbilityHelper_OpenFile_0100
  * @tc.name: OpenFile
- * @tc.desc: Test whether the return value of OpenFile is 1246 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    std::string mode("modetest");
+    // Test to AbilityThread interface
+    auto returnOpenFile = [&](const Uri &uri, const std::string &mode) {
+        int fd = 1234;
+        return fd;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), OpenFile(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnOpenFile));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::string mode("modetest");
-        int fd = helper->OpenFile(uri2, mode);
-
-        EXPECT_EQ(fd, 1246);
-    }
+    dataAbilityHelper->OpenFile(*uri, mode);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0100 end";
 }
@@ -227,24 +154,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_0100, Function 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_OpenFile_0200
  * @tc.name: OpenFile
- * @tc.desc: Test whether the return value of OpenFile is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    std::string mode("modetest");
+    // Test to AbilityThread interface
+    auto returnOpenFile = [&](const Uri &uri, const std::string &mode) {
+        int fd = 1234;
+        return fd;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), OpenFile(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnOpenFile));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::string mode("modetest");
-        int fd = helper->OpenFile(uri2, mode);
-
-        EXPECT_EQ(fd, -1);
-    }
+    dataAbilityHelper->OpenFile(*uri, mode);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0200 end";
 }
@@ -252,24 +184,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_0200, Function 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Insert_0100
  * @tc.name: Insert
- * @tc.desc: Test whether the return value of Insert is 2345 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    ValuesBucket val("valtest");
+    // Test to AbilityThread interface
+    auto returnInsert = [&](const Uri &uri, const ValuesBucket &val) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Insert(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnInsert));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        ValuesBucket val("valtest");
-        int index = helper->Insert(uri2, val);
-
-        EXPECT_EQ(index, 2345);
-    }
+    dataAbilityHelper->Insert(*uri, val);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0100 end";
 }
@@ -277,24 +214,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_0100, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Insert_0200
  * @tc.name: Insert
- * @tc.desc: Test whether the return value of Insert is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    ValuesBucket val("valtest");
+    // Test to AbilityThread interface
+    auto returnInsert = [&](const Uri &uri, const ValuesBucket &val) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Insert(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnInsert));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        ValuesBucket val("valtest");
-        int index = helper->Insert(uri2, val);
-
-        EXPECT_EQ(index, -1);
-    }
+    dataAbilityHelper->Insert(*uri, val);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0200 end";
 }
@@ -302,25 +244,30 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_0200, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Update_0100
  * @tc.name: Update
- * @tc.desc: Test whether the return value of Update is 3456 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    ValuesBucket val("valtest");
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnUpdate = [&](const Uri &uri, const ValuesBucket &val, const DataAbilityPredicates &predicates) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Update(testing::_, testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnUpdate));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        ValuesBucket val("valtest");
-        DataAbilityPredicates predicates("predicatestest");
-        int index = helper->Update(uri2, val, predicates);
-
-        EXPECT_EQ(index, 3456);
-    }
+    dataAbilityHelper->Update(*uri, val, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0100 end";
 }
@@ -328,25 +275,30 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_0100, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Update_0200
  * @tc.name: Update
- * @tc.desc: Test whether the return value of Update is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    ValuesBucket val("valtest");
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnUpdate = [&](const Uri &uri, const ValuesBucket &val, const DataAbilityPredicates &predicates) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Update(testing::_, testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnUpdate));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        ValuesBucket val("valtest");
-        DataAbilityPredicates predicates("predicatestest");
-        int index = helper->Update(uri2, val, predicates);
-
-        EXPECT_EQ(index, -1);
-    }
+    dataAbilityHelper->Update(*uri, val, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0200 end";
 }
@@ -354,24 +306,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_0200, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Delete_0100
  * @tc.name: Delete
- * @tc.desc: Test whether the return value of Delete is 6789 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnDelete = [&](const Uri &uri, const DataAbilityPredicates &predicates) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Delete(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnDelete));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        DataAbilityPredicates predicates("predicatestest");
-        int index = helper->Delete(uri2, predicates);
-
-        EXPECT_EQ(index, 6789);
-    }
+    dataAbilityHelper->Delete(*uri, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0100 end";
 }
@@ -379,24 +336,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_0100, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Delete_0200
  * @tc.name: Delete
- * @tc.desc: Test whether the return value of Delete is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnDelete = [&](const Uri &uri, const DataAbilityPredicates &predicates) {
+        int index = 1234;
+        return index;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Delete(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnDelete));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        DataAbilityPredicates predicates("predicatestest");
-        int index = helper->Delete(uri2, predicates);
-
-        EXPECT_EQ(index, -1);
-    }
+    dataAbilityHelper->Delete(*uri, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0200 end";
 }
@@ -404,25 +366,31 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_0200, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Query_0100
  * @tc.name: Query
- * @tc.desc: Test whether the return value of Query is null when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    std::vector<std::string> columns;
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnQuery =
+        [&](const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates) {
+            std::shared_ptr<ResultSet> set = std::make_shared<ResultSet>("resultset");
+            return set;
+        };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Query(testing::_, testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnQuery));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::vector<std::string> columns;
-        DataAbilityPredicates predicates("predicatestest");
-        std::shared_ptr<ResultSet> set = helper->Query(uri2, columns, predicates);
-
-        EXPECT_NE(set, nullptr);
-    }
+    dataAbilityHelper->Query(*uri, columns, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0100 end";
 }
@@ -430,25 +398,31 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_0100, Function | M
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Query_0200
  * @tc.name: Query
- * @tc.desc: Test whether the return value of Query is null when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    std::vector<std::string> columns;
+    DataAbilityPredicates predicates("predicatestest");
+    // Test to AbilityThread interface
+    auto returnQuery =
+        [&](const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates) {
+            std::shared_ptr<ResultSet> set = std::make_shared<ResultSet>("resultset");
+            return set;
+        };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Query(testing::_, testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnQuery));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::vector<std::string> columns;
-        DataAbilityPredicates predicates("predicatestest");
-        std::shared_ptr<ResultSet> set = helper->Query(uri2, columns, predicates);
-
-        EXPECT_EQ(set, nullptr);
-    }
+    dataAbilityHelper->Query(*uri, columns, predicates);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0200 end";
 }
@@ -456,23 +430,28 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_0200, Function | M
 /**
  * @tc.number: AaFwk_DataAbilityHelper_GetType_0100
  * @tc.name: GetType
- * @tc.desc: Test whether the return value of GetType is Type1 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetType_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    auto returnGetType = [&](const Uri &uri) {
+        std::string type("Type1");
+        return type;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), GetType(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetType));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::string type = helper->GetType(uri2);
-
-        EXPECT_STREQ(type.c_str(), "Type1");
-    }
+    dataAbilityHelper->GetType(*uri);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0100 end";
 }
@@ -480,23 +459,28 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetType_0100, Function |
 /**
  * @tc.number: AaFwk_DataAbilityHelper_GetType_0200
  * @tc.name: GetType
- * @tc.desc: Test whether the return value of GetType is Type1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetType_0200, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    auto returnGetType = [&](const Uri &uri) {
+        std::string type("Type1");
+        return type;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), GetType(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetType));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::string type = helper->GetType(uri2);
-
-        EXPECT_STRNE(type.c_str(), "Type1");
-    }
+    dataAbilityHelper->GetType(*uri);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0200 end";
 }
@@ -504,24 +488,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetType_0200, Function |
 /**
  * @tc.number: AaFwk_DataAbilityHelper_OpenRawFile_0100
  * @tc.name: OpenRawFile
- * @tc.desc: Test whether the return value of OpenRawFile is 5678 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenRawFile_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    std::string mode("modetest");
+    auto returnOpenRawFile = [&](const Uri &uri, const std::string &mode) {
+        int fd = 1234;
+        return fd;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), OpenRawFile(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnOpenRawFile));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::string mode("modetest");
-        int fd = helper->OpenRawFile(uri2, mode);
-
-        EXPECT_EQ(fd, 5678);
-    }
+    dataAbilityHelper->OpenRawFile(*uri, mode);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0100 end";
 }
@@ -529,24 +518,29 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenRawFile_0100, Functi
 /**
  * @tc.number: AaFwk_DataAbilityHelper_OpenRawFile_0200
  * @tc.name: OpenRawFile
- * @tc.desc: Test whether the return value of OpenRawFile is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenRawFile_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    std::string mode("modetest");
+    auto returnOpenRawFile = [&](const Uri &uri, const std::string &mode) {
+        int fd = 1234;
+        return fd;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), OpenRawFile(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnOpenRawFile));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::string mode("modetest");
-        int fd = helper->OpenRawFile(uri2, mode);
-
-        EXPECT_EQ(fd, -1);
-    }
+    dataAbilityHelper->OpenRawFile(*uri, mode);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0200 end";
 }
@@ -554,24 +548,26 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenRawFile_0200, Functi
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Reload_0100
  * @tc.name: Reload
- * @tc.desc: Test whether the return value of Reload is true when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Reload_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    PacMap extras;
+    auto returnReload = [&](const Uri &uri, const PacMap &extras) { return true; };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Reload(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnReload));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        PacMap extras;
-        bool ret = helper->Reload(uri2, extras);
-
-        EXPECT_EQ(ret, true);
-    }
+    dataAbilityHelper->Reload(*uri, extras);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0100 end";
 }
@@ -579,24 +575,26 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Reload_0100, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Reload_0200
  * @tc.name: Reload
- * @tc.desc: Test whether the return value of Reload is false when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Reload_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    PacMap extras;
+    auto returnReload = [&](const Uri &uri, const PacMap &extras) { return true; };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), Reload(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnReload));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        PacMap extras;
-        bool ret = helper->Reload(uri2, extras);
-
-        EXPECT_EQ(ret, false);
-    }
+    dataAbilityHelper->Reload(*uri, extras);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0200 end";
 }
@@ -604,24 +602,26 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Reload_0200, Function | 
 /**
  * @tc.number: AaFwk_DataAbilityHelper_BatchInsert_0100
  * @tc.name: BatchInsert
- * @tc.desc: Test whether the return value of BatchInsert is 789 when the parameter passed by Creator is true.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_BatchInsert_0100, Function | MediumTest | Level1)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    std::vector<ValuesBucket> values;
+    auto returnBatchInsert = [&](const Uri &uri, const std::vector<ValuesBucket> &values) { return true; };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), BatchInsert(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnBatchInsert));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, true);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataability://com.example.myapplication5.DataAbilityTest");
-        std::vector<ValuesBucket> values;
-        int ret = helper->BatchInsert(uri2, values);
-
-        EXPECT_EQ(ret, 789);
-    }
+    dataAbilityHelper->BatchInsert(*uri, values);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0100 end";
 }
@@ -629,26 +629,145 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_BatchInsert_0100, Functi
 /**
  * @tc.number: AaFwk_DataAbilityHelper_BatchInsert_0200
  * @tc.name: BatchInsert
- * @tc.desc: Test whether the return value of BatchInsert is -1 when the parameter passed by Creator is false.
+ * @tc.desc: Simulate successful test cases
  */
-HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_BatchInsert_0200, Function | MediumTest | Level3)
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    std::vector<ValuesBucket> values;
+    auto returnBatchInsert = [&](const Uri &uri, const std::vector<ValuesBucket> &values) { return true; };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), BatchInsert(testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnBatchInsert));
 
-    std::shared_ptr<MockAbility> context = std::make_shared<MockAbility>();
-    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
-    std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(context, uri, false);
-
-    EXPECT_NE(helper, nullptr);
-    if (helper != nullptr) {
-        Uri uri2("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-        std::vector<ValuesBucket> values;
-        int ret = helper->BatchInsert(uri2, values);
-
-        EXPECT_EQ(ret, -1);
-    }
+    dataAbilityHelper->BatchInsert(*uri, values);
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0200 end";
 }
+
+/**
+ * @tc.number: AaFwk_DataAbilityHelper_NormalizeUri_0100
+ * @tc.name: NormalizeUri
+ * @tc.desc: Simulate successful test cases
+ */
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    auto returnNormalizeUri = [&](const Uri &uri) { 
+        Uri uriValue("dataability://device_id/com.domainname.dataability.");
+        return uriValue;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), NormalizeUri(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnNormalizeUri));
+
+    dataAbilityHelper->NormalizeUri(*uri);
+    
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0100 end";
+}
+
+/**
+ * @tc.number: AaFwk_DataAbilityHelper_NormalizeUri_0200
+ * @tc.name: NormalizeUri
+ * @tc.desc: Simulate successful test cases
+ */
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_0200, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    auto returnNormalizeUri = [&](const Uri &uri) { 
+        Uri uriValue("dataability://device_id/com.domainname.dataability.");
+        return uriValue;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), NormalizeUri(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnNormalizeUri));
+
+    dataAbilityHelper->NormalizeUri(*uri);
+
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0200 end";
+}
+
+/**
+ * @tc.number: AaFwk_DataAbilityHelper_DenormalizeUri_0100
+ * @tc.name: DenormalizeUri
+ * @tc.desc: Simulate successful test cases
+ */
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUri_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0100 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
+    // Test to AbilityThread interface
+    auto returnDenormalizeUri = [&](const Uri &uri) { 
+        Uri uriValue("dataability://device_id/com.domainname.dataability.");
+        return uriValue;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), DenormalizeUri(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnDenormalizeUri));
+
+    dataAbilityHelper->DenormalizeUri(*uri);
+
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0100 end";
+}
+
+/**
+ * @tc.number: AaFwk_DataAbilityHelper_DenormalizeUri_0200
+ * @tc.name: DenormalizeUri
+ * @tc.desc: Simulate successful test cases
+ */
+HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUri_0200, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0200 start";
+    
+    std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
+    mockTools->SetMockStatus(true);
+    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<Uri> uri =
+        std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
+    // Test to AbilityThread interface
+    auto returnDenormalizeUri = [&](const Uri &uri) { 
+        Uri uriValue("dataability://device_id/com.domainname.dataability.");
+        return uriValue;
+    };
+    EXPECT_CALL(*mockTools->GetMockAbilityScheduler(), DenormalizeUri(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnDenormalizeUri));
+
+    dataAbilityHelper->DenormalizeUri(*uri);
+
+    GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0200 end";
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

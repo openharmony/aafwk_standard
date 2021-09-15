@@ -306,11 +306,7 @@ ohos_unittest("want_params_wrapper_test") {
 
 ohos_unittest("want_test") {
   module_out_path = module_output_path
-  sources = [
-    "../src/ohos/aafwk/content/want.cpp",
-    "../src/ohos/aafwk/content/want_params.cpp",
-    "unittest/common/want_test.cpp",
-  ]
+  sources = [ "unittest/common/want_test.cpp" ]
 
   configs = [
     ":module_private_config",

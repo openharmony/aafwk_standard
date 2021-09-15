@@ -209,6 +209,73 @@ enum {
      * Result(2097193) for system is lock mission state.
      */
     LOCK_MISSION_STATE_DENY_REQUEST,
+    /**
+     * Result(2097190) for move mission to stack: out of size of moving mission.
+     */
+    MOVE_MISSION_TO_STACK_OUT_OF_SIZE,
+    /**
+     * Result(2097191) for move mission to stack: moving missions are not same window mode.
+     */
+    MOVE_MISSION_TO_STACK_NOT_SAME_WIN_MODE,
+    /**
+     * Result(2097192) for move mission to stack: moving mission is not exist.
+     */
+    MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION,
+    /**
+     * Result(2097193) for move mission to stack: target mission or ability can't support multi window display.
+     */
+    MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN,
+    /**
+     * Result(2097194) for move mission to stack: target mission stack size is overflow.
+     */
+    MOVE_MISSION_TO_STACK_TARGET_STACK_OVERFLOW,
+    /**
+     * Result(2097195) for move mission to stack: already in moving state, request is denied.
+     */
+    MOVE_MISSION_TO_STACK_MOVING_DENIED,
+    /**
+     * Result(2097196) for minimize multi window failed.
+     */
+    MINIMIZE_MULTI_WINDOW_FAILED,
+    /**
+     * Result(2097197) for maximize multiwindow: target mission is not exist in multiwindow stack.
+     */
+    MAXIMIZE_MULTIWINDOW_NOT_EXIST,
+    /**
+     * Result(2097198) for maximize multi window failed.
+     */
+    MAXIMIZE_MULTIWINDOW_FAILED,
+    /**
+     * Result(2097199) for change focus ability failed.
+     */
+    CHANGE_FOCUS_ABILITY_FAILED,
+    /**
+     * Result(2097200) for get floating stack failed
+     */
+    GET_FLOATING_STACK_FAILED,
+    /**
+     * Result(2097201) for close mutli window failed
+     */
+    CLOSE_MULTI_WINDOW_FAILED,
+    /**
+     * Result(2097202) for start ability by setting failed
+     */
+    START_ABILITY_SETTING_FAILED,
+    /**
+     * Result(2097203) for start ability by setting ,the ability not support multiwindow.
+     */
+    START_ABILITY_SETTING_NOT_SUPPORT_MULTI_WIN,
+
+    /**
+     * Result(2097194) for no found abilityrecord by caller
+     */
+    NO_FOUND_ABILITY_BY_CALLER,
+
+    /**
+     * Result(2097195) for ability visible attribute is false.
+     */
+    ABILITY_VISIBLE_FALSE_DENY_REQUEST,
+
 };
 
 enum {

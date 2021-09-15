@@ -15,9 +15,17 @@
 
 #include "ability_process.h"
 #include "app_log_wrapper.h"
-
+#include <dlfcn.h>
 namespace OHOS {
 namespace AppExecFwk {
+static void *g_handle = nullptr;
+constexpr char SHARED_LIBRARY_FEATURE_ABILITY[] = "/system/lib/module/ability/libfeatureability.z.so";
+constexpr char FUNC_CALL_ON_ABILITY_RESULT[] = "CallOnAbilityResult";
+using NAPICallOnAbilityResult = void (*)(int requestCode, int resultCode, const Want &resultData, CallbackInfo cb);
+constexpr char FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT[] = "CallOnRequestPermissionsFromUserResult";
+using NAPICallOnRequestPermissionsFromUserResult = void (*)(int requestCode,
+    const std::vector<std::string> &permissions, const std::vector<int> &grantResults, CallbackInfo callbackInfo);
+
 std::shared_ptr<AbilityProcess> AbilityProcess::instance_ = nullptr;
 std::map<Ability *, std::map<int, CallbackInfo>> AbilityProcess::abilityResultMap_;
 std::map<Ability *, std::map<int, CallbackInfo>> AbilityProcess::abilityRequestPermissionsForUserMap_;
@@ -41,7 +49,7 @@ AbilityProcess::~AbilityProcess()
 
 void AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, CallbackInfo callback)
 {
-    APP_LOGI("AbilityProcess::StartAbility called");
+    APP_LOGI("AbilityProcess::StartAbility begin");
     if (ability == nullptr) {
         APP_LOGE("AbilityProcess::StartAbility ability is nullptr");
         return;
@@ -74,11 +82,12 @@ void AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, Call
             ability->StartAbility(param.want, *(param.setting.get()));
         }
     }
+    APP_LOGI("AbilityProcess::StartAbility end");
 }
 
 void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resultCode, const Want &resultData)
 {
-    APP_LOGI("AbilityProcess::OnAbilityResult called");
+    APP_LOGI("AbilityProcess::OnAbilityResult begin");
 
     std::lock_guard<std::mutex> lock_l(mutex_);
 
@@ -96,17 +105,38 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
     }
     CallbackInfo callbackInfo = callback->second;
 
-    CallOnAbilityResult(requestCode, resultCode, resultData, callbackInfo);
+    // start open featureability lib
+    if (g_handle == nullptr) {
+        g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
+        if (g_handle == nullptr) {
+            APP_LOGE("%{public}s, dlopen failed %{public}s. %{public}s",
+                __func__,
+                SHARED_LIBRARY_FEATURE_ABILITY,
+                dlerror());
+            return;
+        }
+    }
+
+    // get function
+    auto func = reinterpret_cast<NAPICallOnAbilityResult>(dlsym(g_handle, FUNC_CALL_ON_ABILITY_RESULT));
+    if (func == nullptr) {
+        APP_LOGE("%{public}s, dlsym failed %{public}s. %{public}s", __func__, FUNC_CALL_ON_ABILITY_RESULT, dlerror());
+        dlclose(g_handle);
+        g_handle = nullptr;
+        return;
+    }
+    func(requestCode, resultCode, resultData, callbackInfo);
 
     map.erase(requestCode);
 
     abilityResultMap_[ability] = map;
+    APP_LOGI("AbilityProcess::OnAbilityResult end");
 }
 
 void AbilityProcess::RequestPermissionsFromUser(
     Ability *ability, CallAbilityPermissionParam &param, CallbackInfo callbackInfo)
 {
-    APP_LOGI("AbilityProcess::RequestPermissionsFromUser called");
+    APP_LOGI("AbilityProcess::RequestPermissionsFromUser begin");
     if (ability == nullptr) {
         APP_LOGE("AbilityProcess::RequestPermissionsFromUser ability is nullptr");
         return;
@@ -132,11 +162,13 @@ void AbilityProcess::RequestPermissionsFromUser(
         map[param.requestCode] = callbackInfo;
         abilityRequestPermissionsForUserMap_[ability] = map;
     }
+    APP_LOGI("AbilityProcess::RequestPermissionsFromUser end");
 }
 
 void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int requestCode,
     const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {
+    APP_LOGI("AbilityProcess::OnRequestPermissionsFromUserResult begin");
     if (ability == nullptr) {
         APP_LOGE("AbilityProcess::OnRequestPermissionsFromUserResult ability is nullptr");
         return;
@@ -160,10 +192,36 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
         return;
     }
     CallbackInfo callbackInfo = callback->second;
-    CallOnRequestPermissionsFromUserResult(requestCode, permissions, grantResults, callbackInfo);
+
+    // start open featureability lib
+    if (g_handle == nullptr) {
+        g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
+        if (g_handle == nullptr) {
+            APP_LOGE("%{public}s, dlopen failed %{public}s. %{public}s",
+                __func__,
+                SHARED_LIBRARY_FEATURE_ABILITY,
+                dlerror());
+            return;
+        }
+    }
+
+    // get function
+    auto func = reinterpret_cast<NAPICallOnRequestPermissionsFromUserResult>(
+        dlsym(g_handle, FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT));
+    if (func == nullptr) {
+        APP_LOGE("%{public}s, dlsym failed %{public}s. %{public}s",
+            __func__,
+            FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT,
+            dlerror());
+        dlclose(g_handle);
+        g_handle = nullptr;
+        return;
+    }
+    func(requestCode, permissions, grantResults, callbackInfo);
     map.erase(requestCode);
 
     abilityRequestPermissionsForUserMap_[ability] = map;
+    APP_LOGI("AbilityProcess::OnRequestPermissionsFromUserResult end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -25,30 +25,21 @@ namespace AppExecFwk {
 
 class MockAppMgrClient : public AppMgrClient {
 public:
+    MockAppMgrClient();
+    ~MockAppMgrClient();
     MOCK_METHOD4(LoadAbility, AppMgrResultCode(const sptr<IRemoteObject> &, const sptr<IRemoteObject> &,
                                   const AbilityInfo &, const ApplicationInfo &));
-
     MOCK_METHOD1(TerminateAbility, AppMgrResultCode(const sptr<IRemoteObject> &));
     MOCK_METHOD2(UpdateAbilityState, AppMgrResultCode(const sptr<IRemoteObject> &token, const AbilityState state));
     MOCK_METHOD1(KillApplication, AppMgrResultCode(const std::string &));
     MOCK_METHOD1(KillProcessByAbilityToken, AppMgrResultCode(const sptr<IRemoteObject> &token));
     MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD1(AbilityAttachTimeOut, void(const sptr<IRemoteObject> &token));
+
     AppMgrResultCode AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-        const int32_t visibility, const int32_t perceptibility, const int32_t connectionState) override
-    {
-        return AppMgrResultCode::RESULT_OK;
-    }
-
-    AppMgrResultCode ConnectAppMgrService() override
-    {
-        return AppMgrResultCode::RESULT_OK;
-    }
-
-    AppMgrResultCode RegisterAppStateCallback(const sptr<IAppStateCallback> &callback) override
-    {
-        return AppMgrResultCode::RESULT_OK;
-    }
+        const int32_t visibility, const int32_t perceptibility, const int32_t connectionState) override;
+    AppMgrResultCode ConnectAppMgrService() override;
+    AppMgrResultCode RegisterAppStateCallback(const sptr<IAppStateCallback> &callback) override;
 };
 
 }  // namespace AppExecFwk

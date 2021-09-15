@@ -179,7 +179,7 @@ int DataAbilityRecord::OnTransitionDone(int state)
     return ERR_OK;
 }
 
-int DataAbilityRecord::AddClient(const std::shared_ptr<AbilityRecord> &client, bool tryBind)
+int DataAbilityRecord::AddClient(const sptr<IRemoteObject> &client, bool tryBind, bool isSystem)
 {
     HILOG_INFO("Adding data ability client...");
 
@@ -204,28 +204,47 @@ int DataAbilityRecord::AddClient(const std::shared_ptr<AbilityRecord> &client, b
         return ERR_NULL_OBJECT;
     }
 
+    if (isSystem) {
+        HILOG_ERROR("When the caller is system,add death monitoring");
+        if (client != nullptr && callerDeathRecipient_ != nullptr) {
+            client->RemoveDeathRecipient(callerDeathRecipient_);
+        }
+        if (callerDeathRecipient_ == nullptr) {
+            callerDeathRecipient_ = new DataAbilityCallerRecipient(
+                std::bind(&DataAbilityRecord::OnSchedulerDied, this, std::placeholders::_1));
+        }
+        if (client != nullptr) {
+            client->AddDeathRecipient(callerDeathRecipient_);
+        }
+    }
+
     // One client can be added multi-times, so 'RemoveClient()' must be called in corresponding times.
     auto &clientInfo = clients_.emplace_back();
-    clientInfo.ability = client;
+    clientInfo.client = client;
     clientInfo.tryBind = tryBind;
-
-    appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), client->GetToken(), 0, 0, 1);
+    clientInfo.isSystem = isSystem;
+    if (!isSystem) {
+        auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
+        CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
+        appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 1);
+        HILOG_INFO("Ability ability '%{public}s|%{public}s'.",
+            clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
+            clientAbilityRecord->GetAbilityInfo().name.c_str());
+    }
 
     if (clients_.size() == 1) {
         HILOG_INFO("Moving data ability app to foreground...");
         appScheduler->MoveToForground(ability_->GetToken());
     }
 
-    HILOG_INFO("Ability '%{public}s|%{public}s' ----> Data ability '%{public}s|%{public}s'.",
-        client->GetApplicationInfo().bundleName.c_str(),
-        client->GetAbilityInfo().name.c_str(),
+    HILOG_INFO("Data ability '%{public}s|%{public}s'.",
         ability_->GetApplicationInfo().bundleName.c_str(),
         ability_->GetAbilityInfo().name.c_str());
 
     return ERR_OK;
 }
 
-int DataAbilityRecord::RemoveClient(const std::shared_ptr<AbilityRecord> &client)
+int DataAbilityRecord::RemoveClient(const sptr<IRemoteObject> &client, bool isSystem)
 {
     HILOG_INFO("Removing data ability client...");
 
@@ -256,12 +275,17 @@ int DataAbilityRecord::RemoveClient(const std::shared_ptr<AbilityRecord> &client
     }
 
     for (auto it(clients_.begin()); it != clients_.end(); ++it) {
-        if (it->ability == client) {
-            appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), client->GetToken(), 0, 0, 0);
+        if (it->client == client) {
+            if (!isSystem) {
+                auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
+                CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
+                appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
+                HILOG_INFO("Ability ability '%{public}s|%{public}s'.",
+                    clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
+                    clientAbilityRecord->GetAbilityInfo().name.c_str());
+            }
             clients_.erase(it);
-            HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
-                client->GetApplicationInfo().bundleName.c_str(),
-                client->GetAbilityInfo().name.c_str(),
+            HILOG_INFO("Data ability '%{public}s|%{public}s'.",
                 ability_->GetApplicationInfo().bundleName.c_str(),
                 ability_->GetAbilityInfo().name.c_str());
             break;
@@ -305,8 +329,37 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
         HILOG_DEBUG("Removing data ability clients with filter...");
         auto it = clients_.begin();
         while (it != clients_.end()) {
-            if (it->ability == client) {
-                appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), client->GetToken(), 0, 0, 0);
+            if (!it->isSystem) {
+                auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
+                CHECK_POINTER_CONTINUE(clientAbilityRecord);
+                if (clientAbilityRecord == client) {
+                    appScheduler->AbilityBehaviorAnalysis(
+                        ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
+                    it = clients_.erase(it);
+                    HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
+                        client->GetApplicationInfo().bundleName.c_str(),
+                        client->GetAbilityInfo().name.c_str(),
+                        ability_->GetApplicationInfo().bundleName.c_str(),
+                        ability_->GetAbilityInfo().name.c_str());
+                } else {
+                    ++it;
+                }
+            } else {
+                ++it;
+            }
+        }
+    } else {
+        HILOG_DEBUG("Removing data ability clients...");
+        auto it = clients_.begin();
+        while (it != clients_.end()) {
+            if (!it->isSystem) {
+                auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
+                if (!clientAbilityRecord) {
+                    HILOG_DEBUG("clientAbilityRecord is null,clear record");
+                    it = clients_.erase(it);
+                    continue;
+                }
+                appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
                 it = clients_.erase(it);
                 HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
                     client->GetApplicationInfo().bundleName.c_str(),
@@ -316,18 +369,6 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
             } else {
                 ++it;
             }
-        }
-    } else {
-        HILOG_DEBUG("Removing data ability clients...");
-        while (!clients_.empty()) {
-            auto tmpClient = clients_.front().ability;
-            appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), tmpClient->GetToken(), 0, 0, 0);
-            clients_.pop_front();
-            HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
-                tmpClient->GetApplicationInfo().bundleName.c_str(),
-                tmpClient->GetAbilityInfo().name.c_str(),
-                ability_->GetApplicationInfo().bundleName.c_str(),
-                ability_->GetAbilityInfo().name.c_str());
         }
     }
 
@@ -339,7 +380,7 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
     return ERR_OK;
 }
 
-size_t DataAbilityRecord::GetClientCount(const std::shared_ptr<AbilityRecord> &client) const
+size_t DataAbilityRecord::GetClientCount(const sptr<IRemoteObject> &client) const
 {
     CHECK_POINTER_AND_RETURN(ability_, 0);
     CHECK_POINTER_AND_RETURN(scheduler_, 0);
@@ -351,7 +392,7 @@ size_t DataAbilityRecord::GetClientCount(const std::shared_ptr<AbilityRecord> &c
 
     if (client) {
         return std::count_if(
-            clients_.begin(), clients_.end(), [client](const ClientInfo &ci) { return ci.ability == client; });
+            clients_.begin(), clients_.end(), [client](const ClientInfo &ci) { return ci.client == client; });
     }
 
     return clients_.size();
@@ -374,13 +415,15 @@ int DataAbilityRecord::KillBoundClientProcesses()
     }
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        if (it->tryBind) {
+        if (it->tryBind && false == it->isSystem) {
+            auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
+            CHECK_POINTER_CONTINUE(clientAbilityRecord);
             HILOG_INFO("Killing bound client '%{public}s|%{public}s' of data ability '%{public}s|%{public}s'...",
-                it->ability->GetApplicationInfo().bundleName.c_str(),
-                it->ability->GetAbilityInfo().name.c_str(),
+                clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
+                clientAbilityRecord->GetAbilityInfo().name.c_str(),
                 ability_->GetApplicationInfo().bundleName.c_str(),
                 ability_->GetAbilityInfo().name.c_str());
-            appScheduler->KillProcessByAbilityToken(it->ability->GetToken());
+            appScheduler->KillProcessByAbilityToken(clientAbilityRecord->GetToken());
         }
     }
 
@@ -419,12 +462,20 @@ void DataAbilityRecord::Dump() const
     int i = 0;
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        auto record = it->ability;
-        HILOG_INFO("  %{public}2d '%{public}s|%{public}s' - tryBind: %{public}s",
-            i++,
-            record->GetApplicationInfo().bundleName.c_str(),
-            record->GetAbilityInfo().name.c_str(),
-            it->tryBind ? "true" : "false");
+        if (false == it->isSystem) {
+            auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
+            CHECK_POINTER_CONTINUE(clientAbilityRecord);
+            HILOG_INFO("  %{public}2d '%{public}s|%{public}s' - tryBind: %{public}s",
+                i++,
+                clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
+                clientAbilityRecord->GetAbilityInfo().name.c_str(),
+                it->tryBind ? "true" : "false");
+        } else {
+            HILOG_INFO("  %{public}2d '%{public}s' - tryBind: %{public}s",
+                i++,
+                "caller is system",
+                it->tryBind ? "true" : "false");
+        }
     }
 }
 
@@ -437,11 +488,72 @@ void DataAbilityRecord::Dump(std::vector<std::string> &info) const
     info.emplace_back("    main name [" + ability_->GetAbilityInfo().name + "]");
     info.emplace_back("    bundle name [" + ability_->GetAbilityInfo().bundleName + "]");
     info.emplace_back("    ability type [DATA]");
+    info.emplace_back("    app state #" + AbilityRecord::ConvertAppState(ability_->GetAppState()));
     info.emplace_back("    Clients: " + std::to_string(clients_.size()));
 
     for (auto &&client : clients_) {
-        info.emplace_back("     > " + client.ability->GetAbilityInfo().bundleName + "/" +
-                          client.ability->GetAbilityInfo().name + "  tryBind #" + (client.tryBind ? "true" : "false"));
+        if (false == client.isSystem) {
+            auto clientAbilityRecord = Token::GetAbilityRecordByToken(client.client);
+            CHECK_POINTER_CONTINUE(clientAbilityRecord);
+            info.emplace_back("     > " + clientAbilityRecord->GetAbilityInfo().bundleName + "/" +
+                              clientAbilityRecord->GetAbilityInfo().name + "  tryBind #" +
+                              (client.tryBind ? "true" : "false") + "  isSystem  # " +
+                              (client.isSystem ? "true" : "false"));
+        } else {
+            info.emplace_back(std::string("     > Caller is System /  tryBind # ") +
+                              (client.tryBind ? "true" : "false") + "  isSystem  # " +
+                              (client.isSystem ? "true" : "false"));
+        }
+    }
+}
+
+void DataAbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
+{
+    HILOG_INFO("'%{public}s':", __func__);
+    auto object = remote.promote();
+
+    if (clients_.empty()) {
+        HILOG_DEBUG("BUG: Data ability record has no clients.");
+        return;
+    }
+
+    auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
+    if (!appScheduler) {
+        HILOG_ERROR("Data ability remove clients: invalid app scheduler.");
+        return;
+    }
+
+    if (object) {
+        auto it = clients_.begin();
+        while (it != clients_.end()) {
+            if (it->client == object) {
+                HILOG_DEBUG("remove system caller record with filter...");
+                it = clients_.erase(it);
+                HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+                    ability_->GetApplicationInfo().bundleName.c_str(),
+                    ability_->GetAbilityInfo().name.c_str());
+            } else {
+                ++it;
+            }
+        }
+    } else {
+        auto it = clients_.begin();
+        while (it != clients_.end()) {
+            if (it->isSystem) {
+                HILOG_DEBUG("remove system caller record...");
+                it = clients_.erase(it);
+                HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+                    ability_->GetApplicationInfo().bundleName.c_str(),
+                    ability_->GetAbilityInfo().name.c_str());
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    if (clients_.empty()) {
+        HILOG_INFO("Moving data ability to background...");
+        appScheduler->MoveToBackground(ability_->GetToken());
     }
 }
 }  // namespace AAFwk

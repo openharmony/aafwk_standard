@@ -40,10 +40,14 @@ static napi_value Init(napi_env env, napi_value exports)
     CreateWeightReasonCodeObject(env, nWeightReasonCode);
 
     napi_property_descriptor desc[] = {DECLARE_NAPI_FUNCTION("getAllRunningProcesses", NAPI_GetAllRunningProcesses),
+        DECLARE_NAPI_FUNCTION("getActiveProcessInfos", NAPI_GetAllRunningProcesses),
         DECLARE_NAPI_FUNCTION("queryRunningAbilityMissionInfos", NAPI_QueryRunningAbilityMissionInfos),
+        DECLARE_NAPI_FUNCTION("getActiveAbilityMissionInfos", NAPI_QueryRunningAbilityMissionInfos),
         DECLARE_NAPI_FUNCTION("queryRecentAbilityMissionInfos", NAPI_QueryRecentAbilityMissionInfos),
+        DECLARE_NAPI_FUNCTION("getPreviousAbilityMissionInfos", NAPI_GetPreviousAbilityMissionInfos),
         DECLARE_NAPI_FUNCTION("removeMission", NAPI_RemoveMission),
         DECLARE_NAPI_FUNCTION("removeMissions", NAPI_RemoveMissions),
+        DECLARE_NAPI_FUNCTION("deleteMissions", NAPI_RemoveMissions),
         DECLARE_NAPI_FUNCTION("clearMissions", NAPI_ClearMissions),
         DECLARE_NAPI_FUNCTION("moveMissionToTop", NAPI_MoveMissionToTop),
         DECLARE_NAPI_FUNCTION("killProcessesByBundleName", NAPI_KillProcessesByBundleName),

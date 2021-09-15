@@ -64,8 +64,7 @@ int KernalSystemAppManager::StartAbilityLocked(const AbilityRequest &abilityRequ
     CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
     targetAbility->SetKernalSystemAbility();
 
-    HILOG_INFO("%{public}s Load kernal system ability, bundleName:%{public}s , abilityName:%{public}s",
-        __func__,
+    HILOG_INFO("Load kernal system ability, bundleName:%{public}s , abilityName:%{public}s",
         abilityRequest.abilityInfo.bundleName.c_str(),
         abilityRequest.abilityInfo.name.c_str());
 
@@ -81,14 +80,14 @@ int KernalSystemAppManager::StartAbilityLocked(const AbilityRequest &abilityRequ
 int KernalSystemAppManager::AttachAbilityThread(
     const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("%{public}s.", __func__);
+    HILOG_INFO("Attach ability thread.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     auto abilityRecord = GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     std::string flag = KernalSystemAppManager::GetFlagOfAbility(
         abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name);
-    HILOG_INFO("%{public}s, ability: %{public}s", __func__, flag.c_str());
+    HILOG_INFO("ability: %{public}s", flag.c_str());
 
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER_AND_RETURN(handler, ERR_INVALID_VALUE);
@@ -103,7 +102,7 @@ int KernalSystemAppManager::AttachAbilityThread(
 
 void KernalSystemAppManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("On ability request done.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     AppAbilityState abilitState = DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(state);
     if (abilitState == AppAbilityState::ABILITY_STATE_FOREGROUND) {
@@ -113,9 +112,21 @@ void KernalSystemAppManager::OnAbilityRequestDone(const sptr<IRemoteObject> &tok
     }
 }
 
+void KernalSystemAppManager::OnAppStateChanged(const AppInfo &info)
+{
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    for (auto ability : abilities_) {
+        if (ability && ability->GetApplicationInfo().name == info.appName &&
+            (info.processName == ability->GetAbilityInfo().process ||
+                info.processName == ability->GetApplicationInfo().bundleName)) {
+            ability->SetAppState(info.state);
+        }
+    }
+}
+
 int KernalSystemAppManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Ability transition done.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     auto abilityRecord = GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
@@ -124,7 +135,7 @@ int KernalSystemAppManager::AbilityTransitionDone(const sptr<IRemoteObject> &tok
         abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name);
     int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
     std::string abilityState = AbilityRecord::ConvertAbilityState(static_cast<AbilityState>(targetState));
-    HILOG_INFO("%{public}s, ability: %{public}s, state: %{public}s", __func__, flag.c_str(), abilityState.c_str());
+    HILOG_INFO("ability: %{public}s, state: %{public}s", flag.c_str(), abilityState.c_str());
 
     switch (targetState) {
         case AbilityState::ACTIVE: {
@@ -156,7 +167,7 @@ int KernalSystemAppManager::DispatchActive(const std::shared_ptr<AbilityRecord> 
 
 void KernalSystemAppManager::CompleteActive(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("Complete active.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     abilityRecord->SetAbilityState(AbilityState::ACTIVE);
 
@@ -273,8 +284,7 @@ void KernalSystemAppManager::DequeueWaittingAbility()
     if (!waittingAbilityQueue_.empty()) {
         AbilityRequest abilityRequest = waittingAbilityQueue_.front();
         waittingAbilityQueue_.pop();
-        HILOG_INFO("%{public}s ,bundleName:%{public}s , abilityName:%{public}s",
-            __func__,
+        HILOG_INFO("bundleName: %{public}s, abilityName: %{public}s",
             abilityRequest.abilityInfo.bundleName.c_str(),
             abilityRequest.abilityInfo.name.c_str());
 
@@ -356,6 +366,28 @@ void KernalSystemAppManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         default:
             break;
     }
+}
+
+int KernalSystemAppManager::UpdateConfiguration(const DummyConfiguration &config)
+{
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    std::shared_ptr<DummyConfiguration> configPtr = std::make_shared<DummyConfiguration>(config);
+    for (auto &ability : abilities_) {
+        if (ability) {
+            if (ability->IsAbilityState(AbilityState::ACTIVE)) {
+                HILOG_DEBUG("system ui update configuration.");
+                ability->ForceProcessConfigurationChange(configPtr);
+            }
+        }
+    }
+    return ERR_OK;
+}
+
+void KernalSystemAppManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)
+{
+    CHECK_POINTER(abilityRecord);
+    HILOG_DEBUG("Restart ability system ui. %{public}s", abilityRecord->GetAbilityInfo().name.c_str());
+    return;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

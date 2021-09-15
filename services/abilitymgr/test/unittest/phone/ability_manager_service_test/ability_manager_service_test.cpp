@@ -22,6 +22,7 @@
 #undef private
 #undef protected
 
+#include "app_process_data.h"
 #include "system_ability_definition.h"
 #include "ability_manager_errors.h"
 #include "ability_scheduler.h"
@@ -219,7 +220,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_003, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_004, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
     want.SetElement(element);
@@ -322,7 +322,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_006, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_007, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
     want.SetElement(element);
@@ -350,7 +349,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_007, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_008, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.hiData", "DataAbility");
     want.SetElement(element);
@@ -484,7 +482,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_010, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level1)
 {
-
     Want wantLuncher;
     ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
     wantLuncher.SetElement(elementLun);
@@ -515,7 +512,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
 {
-
     Want wantLuncher;
     ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
     wantLuncher.SetElement(elementLun);
@@ -544,7 +540,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level1)
 {
-
     abilityMs_->SetStackManager(0);
     EXPECT_NE(nullptr, abilityMs_->GetStackManager());
 }
@@ -559,7 +554,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level1)
 {
-
     std::string dump;
     abilityMs_->DumpWaittingAbilityQueue(dump);
     EXPECT_EQ(false, (dump.find("User ID #0") != string::npos));
@@ -575,7 +569,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level1)
 {
-
     Want wantLuncher;
     ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
     wantLuncher.SetElement(elementLun);
@@ -607,7 +600,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level1)
 {
-
     Want wantLuncher;
     ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
     wantLuncher.SetElement(elementLun);
@@ -666,7 +658,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
 {
-
     Want wantLuncher;
     ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
     wantLuncher.SetElement(elementLun);
@@ -712,7 +703,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level1)
 {
-
     Want want;
     want.AddEntity(Want::ENTITY_HOME);
     ElementName element("device", "com.ix.music", "MusicAbility");
@@ -768,7 +758,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level1)
 {
-
     EXPECT_EQ(abilityMs_->RemoveStack(-1), OHOS::ERR_INVALID_VALUE);
     EXPECT_EQ(abilityMs_->RemoveStack(INT_MAX), REMOVE_STACK_ID_NOT_EXIST);
     EXPECT_EQ(abilityMs_->RemoveStack(0), REMOVE_STACK_LAUNCHER_DENIED);
@@ -784,7 +773,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.music", "MusicAbility");
     want.SetElement(element);
@@ -824,7 +812,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_021, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
     want.SetElement(element);
@@ -855,7 +842,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_021, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_022, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
     want.SetElement(element);
@@ -888,7 +874,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_022, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_023, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
     want.SetElement(element);
@@ -942,7 +927,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_023, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_024, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
     want.SetElement(element);
@@ -997,7 +981,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_024, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_025, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.musicService", "MusicService");
     want.SetElement(element);
@@ -1024,7 +1007,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_025, TestSize.Level1)
     Want want1;
     want1.AddEntity(Want::ENTITY_HOME);
     ElementName element1("device", "com.ix.radio", "RadioAbility");
-    want1.SetElement(element1);
+    want1.SetElement(element1); 
     auto result3 = StartAbility(want1);
     WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result3);
@@ -1207,7 +1190,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_001
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
 
     // assert ability record
-    ASSERT_TRUE(abilityRecord_);
+    EXPECT_TRUE(abilityRecord_);
 
     EXPECT_EQ(abilityMs_->AcquireDataAbility(dataAbilityUri, true, abilityRecord_->GetToken()), nullptr);
 }
@@ -1224,7 +1207,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_002
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
     // assert ability record
-    ASSERT_TRUE(abilityRecord_);
+    EXPECT_TRUE(abilityRecord_);
     EXPECT_EQ(abilityMs_->AcquireDataAbility(dataAbilityUri, true, abilityRecord_->GetToken()), nullptr);
 }
 
@@ -1240,7 +1223,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_003
 {
     OHOS::Uri dataAbilityUri("mydataability:///data.bundle.DataAbility");
     // assert ability record
-    ASSERT_TRUE(abilityRecord_);
+    EXPECT_TRUE(abilityRecord_);
     EXPECT_EQ(abilityMs_->AcquireDataAbility(dataAbilityUri, true, abilityRecord_->GetToken()), nullptr);
 }
 
@@ -1306,7 +1289,7 @@ HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_AcquireDataAbility_006
 HWTEST_F(AbilityManagerServiceTest, AbilityManagerService_ReleaseDataAbility_001, TestSize.Level1)
 {
     // assert ability record
-    ASSERT_TRUE(abilityRecord_);
+    EXPECT_TRUE(abilityRecord_);
     EXPECT_EQ(abilityMs_->ReleaseDataAbility(nullptr, nullptr), OHOS::ERR_INVALID_STATE);
 }
 

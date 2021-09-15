@@ -41,7 +41,7 @@ public:
      * @param requestCode, Ability request code.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, int requestCode = -1) override;
+    virtual int StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * StartAbility with want, send want to ability manager service.
@@ -51,7 +51,19 @@ public:
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1) override;
+    virtual int StartAbility(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+
+    /**
+     * Starts a new ability with specific start settings.
+     *
+     * @param want Indicates the ability to start.
+     * @param requestCode the resultCode of the ability to start.
+     * @param abilityStartSetting Indicates the setting ability used to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -278,6 +290,64 @@ public:
     virtual int UninstallApp(const std::string &bundleName) override;
 
     /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToFloatingStack(const MissionOption &missionOption) override;
+
+    /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MoveMissionToSplitScreenStack(const MissionOption &missionOption) override;
+
+    /**
+     * Change the focus of ability in the mission stack.
+     * @param lostToken, the token of lost focus ability
+     * @param getToken, the token of get focus ability
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ChangeFocusAbility(
+        const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken) override;
+
+    /**
+     * minimize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MinimizeMultiWindow(int missionId) override;
+
+    /**
+     * maximize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MaximizeMultiWindow(int missionId) override;
+
+    /**
+     * get missions info of floating mission stack.
+     * @param list, mission info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFloatingMissions(std::vector<AbilityMissionInfo> &list) override;
+
+    /**
+     * close multiwindow by mission id.
+     * @param missionId, the id of target mission.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int CloseMultiWindow(int missionId) override;
+
+    /**
+     * set special mission stack default settings.
+     * @param stackSetting, mission stack default settings.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetMissionStackSetting(const StackSetting &stackSetting) override;
+
+    /**
      * @brief Checks whether this ability is the first ability in a mission.
      *
      * @return Returns true is first in Mission.
@@ -338,6 +408,14 @@ public:
      * @return Returns 0: LOCK_MISSION_STATE_NONE, 1: LOCK_MISSION_STATE_LOCKED
      */
     virtual int GetMissionLockModeState() override;
+
+    /**
+     * Updates the configuration by modifying the configuration.
+     *
+     * @param config Indicates the new configuration
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UpdateConfiguration(const DummyConfiguration &config) override;
 
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override;

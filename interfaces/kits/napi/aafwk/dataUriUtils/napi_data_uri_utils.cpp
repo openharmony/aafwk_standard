@@ -18,6 +18,7 @@
 #include "uri.h"
 #include <cstring>
 #include <vector>
+#include <inttypes.h>
 #include "securec.h"
 #include "hilog_wrapper.h"
 
@@ -55,13 +56,14 @@ napi_value DataUriUtilsInit(napi_env env, napi_value exports)
  */
 napi_value NAPI_GetIdSync(napi_env env, napi_callback_info info)
 {
+    HILOG_INFO("%{public}s,called", __func__);
     size_t requireArgc = 1;
     size_t argc = 1;
     napi_value args[1] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     napi_valuetype valuetype;
@@ -71,7 +73,9 @@ napi_value NAPI_GetIdSync(napi_env env, napi_callback_info info)
     Uri uri(NapiValueToStringUtf8(env, args[0]));
 
     napi_value id = nullptr;
-    NAPI_CALL(env, napi_create_int64(env, DataUriUtils::GetId(uri), &id));
+    int64_t result = DataUriUtils::GetId(uri);
+    NAPI_CALL(env, napi_create_int64(env, result, &id));
+    HILOG_INFO("%{public}s, uri=%{public}s, id=%{public}" PRId64, __func__, uri.ToString().c_str(), result);
 
     return id;
 }
@@ -86,13 +90,14 @@ napi_value NAPI_GetIdSync(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_AttachIdSync(napi_env env, napi_callback_info info)
 {
+    HILOG_INFO("%{public}s,called", __func__);
     size_t requireArgc = 2;
     size_t argc = 2;
     napi_value args[2] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     napi_valuetype valuetype;
@@ -103,11 +108,15 @@ napi_value NAPI_AttachIdSync(napi_env env, napi_callback_info info)
 
     int64_t id;
     NAPI_CALL(env, napi_get_value_int64(env, args[1], &id));
+    std::string result = DataUriUtils::AttachId(uri, id).ToString();
 
     napi_value uriAttached = nullptr;
-    NAPI_CALL(env,
-        napi_create_string_utf8(
-            env, DataUriUtils::AttachId(uri, id).ToString().c_str(), NAPI_AUTO_LENGTH, &uriAttached));
+    NAPI_CALL(env, napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &uriAttached));
+    HILOG_INFO("%{public}s, uri=%{public}s, result=%{public}s, id=%{public}" PRId64,
+        __func__,
+        uri.ToString().c_str(),
+        result.c_str(),
+        id);
 
     return uriAttached;
 }
@@ -122,13 +131,14 @@ napi_value NAPI_AttachIdSync(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_DeleteIdSync(napi_env env, napi_callback_info info)
 {
+    HILOG_INFO("%{public}s,called", __func__);
     size_t requireArgc = 1;
     size_t argc = 1;
     napi_value args[1] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     napi_valuetype valuetype;
@@ -137,9 +147,11 @@ napi_value NAPI_DeleteIdSync(napi_env env, napi_callback_info info)
 
     Uri uri(NapiValueToStringUtf8(env, args[0]));
 
+    std::string result = DataUriUtils::DeleteId(uri).ToString();
     napi_value uriDeleted = nullptr;
-    NAPI_CALL(env,
-        napi_create_string_utf8(env, DataUriUtils::DeleteId(uri).ToString().c_str(), NAPI_AUTO_LENGTH, &uriDeleted));
+    NAPI_CALL(env, napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &uriDeleted));
+
+    HILOG_INFO("%{public}s, uri=%{public}s, result=%{public}s.", __func__, uri.ToString().c_str(), result.c_str());
 
     return uriDeleted;
 }
@@ -154,13 +166,14 @@ napi_value NAPI_DeleteIdSync(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_UpdateIdSync(napi_env env, napi_callback_info info)
 {
+    HILOG_INFO("%{public}s,called", __func__);
     size_t requireArgc = 2;
     size_t argc = 2;
     napi_value args[2] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     napi_valuetype valuetype;
@@ -172,10 +185,16 @@ napi_value NAPI_UpdateIdSync(napi_env env, napi_callback_info info)
     int64_t id;
     NAPI_CALL(env, napi_get_value_int64(env, args[1], &id));
 
+    std::string result = DataUriUtils::UpdateId(uri, id).ToString();
+
     napi_value uriUpdated = nullptr;
-    NAPI_CALL(env,
-        napi_create_string_utf8(
-            env, DataUriUtils::UpdateId(uri, id).ToString().c_str(), NAPI_AUTO_LENGTH, &uriUpdated));
+    NAPI_CALL(env, napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &uriUpdated));
+
+    HILOG_INFO("%{public}s, uri=%{public}s, result=%{public}s, id=%{public}" PRId64,
+        __func__,
+        uri.ToString().c_str(),
+        result.c_str(),
+        id);
 
     return uriUpdated;
 }

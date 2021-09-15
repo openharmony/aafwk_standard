@@ -41,6 +41,11 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_GETTYPE] = &AbilitySchedulerStub::GetTypeInner;
     requestFuncMap_[SCHEDULE_RELOAD] = &AbilitySchedulerStub::ReloadInner;
     requestFuncMap_[SCHEDULE_BATCHINSERT] = &AbilitySchedulerStub::BatchInsertInner;
+    requestFuncMap_[MULTI_WIN_CHANGED] = &AbilitySchedulerStub::MutiWinModeChangedInner;
+    requestFuncMap_[SCHEDULE_NORMALIZEURI] = &AbilitySchedulerStub::NormalizeUriInner;
+    requestFuncMap_[SCHEDULE_DENORMALIZEURI] = &AbilitySchedulerStub::DenormalizeUriInner;
+    requestFuncMap_[SCHEDULE_UPDATE_CONFIGURATION] = &AbilitySchedulerStub::UpdateConfigurationInner;
+    requestFuncMap_[TOP_ACTIVE_ABILITY_CHANGED] = &AbilitySchedulerStub::TopActiveAbilityChangedInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -141,12 +146,24 @@ int AbilitySchedulerStub::CommandAbilityInner(MessageParcel &data, MessageParcel
 
 int AbilitySchedulerStub::SaveAbilityStateInner(MessageParcel &data, MessageParcel &reply)
 {
+    PacMap pacMap;
+    ScheduleSaveAbilityState(pacMap);
+    if (!reply.WriteParcelable(&pacMap)) {
+        HILOG_ERROR("AbilityManagerStub: SaveAbilityState error");
+        return ERR_INVALID_VALUE;
+    }
     return NO_ERROR;
 }
 
 int AbilitySchedulerStub::RestoreAbilityStateInner(MessageParcel &data, MessageParcel &reply)
 {
-    HILOG_INFO("RestoreAbilityStateInner");
+    PacMap *pacMap = data.ReadParcelable<PacMap>();
+    if (pacMap == nullptr) {
+        HILOG_ERROR("AbilitySchedulerStub RestoreAbilityState is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    ScheduleRestoreAbilityState(*pacMap);
+    delete pacMap;
     return NO_ERROR;
 }
 
@@ -382,6 +399,68 @@ int AbilitySchedulerStub::BatchInsertInner(MessageParcel &data, MessageParcel &r
         return ERR_INVALID_VALUE;
     }
     delete uri;
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::NormalizeUriInner(MessageParcel &data, MessageParcel &reply)
+{
+    Uri *uri = data.ReadParcelable<Uri>();
+    if (uri == nullptr) {
+        HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    Uri ret("");
+    ret = NormalizeUri(*uri);
+    if (!reply.WriteParcelable(&ret)) {
+        HILOG_ERROR("fail to WriteParcelable type");
+        return ERR_INVALID_VALUE;
+    }
+    delete uri;
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::DenormalizeUriInner(MessageParcel &data, MessageParcel &reply)
+{
+    Uri *uri = data.ReadParcelable<Uri>();
+    if (uri == nullptr) {
+        HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    Uri ret("");
+    ret = DenormalizeUri(*uri);
+    if (!reply.WriteParcelable(&ret)) {
+        HILOG_ERROR("fail to WriteParcelable type");
+        return ERR_INVALID_VALUE;
+    }
+    delete uri;
+    return NO_ERROR;
+}
+int AbilitySchedulerStub::UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply)
+{
+    DummyConfiguration *globalConfiguration = data.ReadParcelable<DummyConfiguration>();
+    if (globalConfiguration == nullptr) {
+        HILOG_ERROR("AbilitySchedulerStub globalConfiguration is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    ScheduleUpdateConfiguration(*globalConfiguration);
+    delete globalConfiguration;
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t winModeKey = data.ReadInt32();
+    bool flag = data.ReadBool();
+    NotifyMultiWinModeChanged(winModeKey, flag);
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    bool flag = data.ReadBool();
+    NotifyTopActiveAbilityChanged(flag);
     return NO_ERROR;
 }
 

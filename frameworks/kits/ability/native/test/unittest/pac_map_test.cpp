@@ -15,9 +15,9 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <regex>
 #include "pac_map.h"
-#include "ohos/aafwk/base/pac_map_node_user_object.h"
-
+#include "ohos/aafwk/base/user_object_base.h"
 namespace OHOS {
 namespace AppExecFwk {
 using namespace testing::ext;
@@ -28,26 +28,63 @@ using namespace OHOS::AppExecFwk;
 #define PAC_MAP_TEST_LONG -1000
 #define PAC_MAP_TEST_FLOAT 1.0f
 #define PAC_MAP_TEST_DOUBLE 3.1415926
-
-class TUserObjectTest : public TUserMapObject {
+namespace {
+const std::regex INTEGER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
+};
+class TUserObjectTest : public UserObjectBase {
 public:
-    TUserObjectTest() : TUserMapObject("TUserObjectTest"), str_data_("用户自定义对象"), int_data_(0)
+    TUserObjectTest() : UserObjectBase("TUserObjectTest"), str_data_("用户自定义对象"), int_data_(0)
     {}
     virtual ~TUserObjectTest()
     {}
 
-    virtual bool Equals(const TUserMapObject *other) override
+    virtual std::string ToString() const override
     {
-        TUserObjectTest *pobject = (TUserObjectTest *)other;
+        std::string tostring = str_data_;
+        tostring += "#" + std::to_string(int_data_);
+        return tostring;
+    }
+
+    virtual void Parse(const std::string &str) override
+    {
+        std::vector<std::string> elems;
+
+        std::size_t splitPos = str.find("#");
+        if (splitPos == std::string::npos) {
+            return;
+        }
+        std::string str_data = str.substr(0, splitPos);
+        std::string intdata = str.substr(str_data.length() + 1, str.length() - 1);
+        if (str_data.length() + 1 + intdata.length() != str.length()) {
+            return;
+        }
+        bool isNumber = std::regex_match(intdata, INTEGER_REGEX);
+        if (isNumber) {
+            str_data_ = str_data;
+            int_data_ = std::stoi(intdata);
+        }
+    }
+
+    virtual bool Equals(std::shared_ptr<UserObjectBase> &other) override
+    {
+        if (other->GetClassName() != GetClassName()) {
+            return false;
+        }
+
+        TUserObjectTest *pobject = static_cast<TUserObjectTest *>(other.get());
         if (pobject == nullptr) {
             return false;
         }
         return ((str_data_ == pobject->str_data_) && (int_data_ == pobject->int_data_));
     }
 
-    virtual void DeepCopy(const TUserMapObject *other) override
+    virtual void DeepCopy(std::shared_ptr<UserObjectBase> &other) override
     {
-        TUserObjectTest *pobject = (TUserObjectTest *)other;
+        if (other->GetClassName() != GetClassName()) {
+            return;
+        }
+
+        TUserObjectTest *pobject = static_cast<TUserObjectTest *>(other.get());
         if (pobject != nullptr) {
             str_data_ = pobject->str_data_;
             int_data_ = pobject->int_data_;
@@ -68,7 +105,7 @@ private:
     std::string str_data_ = "";
     int int_data_ = 0;
 };
-REGISTER_USER_MAP_OBJECT(TUserObjectTest);
+REGISTER_USER_OBJECT_BASE(TUserObjectTest);
 
 /*
  * Description：Test for data type of base: like int, short, long std::string etc.
@@ -81,8 +118,9 @@ public:
     {}
 
     std::shared_ptr<PacMap> pacmap_ = nullptr;
-
+    std::shared_ptr<PacMap> pacmap2_ = nullptr;
     static void FillData(PacMap &pacmap);
+    static void FillData2(PacMap &pacmap, const PacMap &param_map);
 
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -99,6 +137,7 @@ void PacMapTest::TearDownTestCase(void)
 void PacMapTest::SetUp()
 {
     pacmap_ = std::make_shared<PacMap>();
+    pacmap2_ = std::make_shared<PacMap>();
 }
 
 void PacMapTest::TearDown()
@@ -146,6 +185,46 @@ void PacMapTest::FillData(PacMap &pacmap)
     pacmap.PutStringValueArray("key_string_array", arrayString);
 }
 
+void PacMapTest::FillData2(PacMap &pacmap, const PacMap &param_map)
+{
+    std::vector<short> arrayShort;
+    std::vector<int> arrayInt;
+    std::vector<long> arrayLong;
+    std::vector<AAFwk::byte> arrayByte;
+    std::vector<bool> arrayBool;
+    std::vector<float> arrayFloat;
+    std::vector<double> arrayDouble;
+    std::vector<std::string> arrayString;
+
+    arrayShort.push_back(PAC_MPA_TEST_INT);
+    arrayInt.push_back(PAC_MPA_TEST_INT);
+    arrayLong.push_back(PAC_MAP_TEST_LONG);
+    arrayByte.push_back('a');
+    arrayBool.push_back(true);
+    arrayFloat.push_back(PAC_MAP_TEST_FLOAT);
+    arrayDouble.push_back(PAC_MAP_TEST_DOUBLE);
+    arrayString.push_back("<~!@#$%^&*()_+>特殊字符");
+
+    pacmap.PutShortValue("key_short", PAC_MPA_TEST_INT);
+    pacmap.PutIntValue("key_int", PAC_MPA_TEST_INT);
+    pacmap.PutLongValue("key_long", PAC_MAP_TEST_LONG);
+    pacmap.PutByteValue("key_byte", 'A');
+    pacmap.PutBooleanValue("key_boolean", true);
+    pacmap.PutFloatValue("key_float", PAC_MAP_TEST_FLOAT);
+    pacmap.PutDoubleValue("key_double", PAC_MAP_TEST_DOUBLE);
+    pacmap.PutStringValue("key_string", "test clone");
+
+    pacmap.PutPacMap("key_map", param_map);
+
+    pacmap.PutShortValueArray("key_short_array", arrayShort);
+    pacmap.PutIntValueArray("key_int_array", arrayInt);
+    pacmap.PutLongValueArray("key_long_array", arrayLong);
+    pacmap.PutByteValueArray("key_byte_array", arrayByte);
+    pacmap.PutFloatValueArray("key_float_array", arrayFloat);
+    pacmap.PutBooleanValueArray("key_boolean_array", arrayBool);
+    pacmap.PutDoubleValueArray("key_double_array", arrayDouble);
+    pacmap.PutStringValueArray("key_string_array", arrayString);
+}
 /**
  * @tc.number: AppExecFwk_PacMap_PutShortValue_0100
  * @tc.name: PutShortValue
@@ -259,7 +338,8 @@ HWTEST_F(PacMapTest, AppExecFwk_PacMap_PutStringValue_0100, Function | MediumTes
     GTEST_LOG_(INFO) << "AppExecFwk_PacMap_PutStringValue_0100 start";
     std::string value("AppExecFwk_PacMap_PutStringValue_0100  PACMAP测试");
     pacmap_->PutStringValue("key_string", value);
-    EXPECT_STREQ(value.c_str(), pacmap_->GetStringValue("key_string").c_str());
+    std::string getStr = pacmap_->GetStringValue("key_string");
+    EXPECT_STREQ(value.c_str(), getStr.c_str());
     GTEST_LOG_(INFO) << "AppExecFwk_PacMap_PutStringValue_0100 end";
 }
 
@@ -442,10 +522,10 @@ HWTEST_F(PacMapTest, AppExecFwk_PacMap_PutObject_0100, Function | MediumTest | L
     std::shared_ptr<TUserObjectTest> putObject = std::make_shared<TUserObjectTest>();
     pacmap_->PutObject("key_object", putObject);
 
-    std::shared_ptr<TUserMapObject> getObject = pacmap_->GetObject("key_object");
+    std::shared_ptr<UserObjectBase> getObject = pacmap_->GetObject("key_object");
     bool isEqual = false;
     if (getObject.get() != nullptr) {
-        isEqual = getObject->Equals(getObject.get());
+        isEqual = getObject->Equals(getObject);
     }
     EXPECT_EQ(true, isEqual);
 
@@ -529,9 +609,9 @@ HWTEST_F(PacMapTest, AppExecFwk_PacMap_GetAll_0100, Function | MediumTest | Leve
     GTEST_LOG_(INFO) << "AppExecFwk_PacMap_GetAll_0100 start";
 
     FillData(*pacmap_.get());
-    std::map<std::string, PacMapObject::Object> data = pacmap_->GetAll();
+    std::map<std::string, PacMapObject::INTERFACE> data = pacmap_->GetAll();
 
-    EXPECT_EQ((int)data.size(), pacmap_->GetSize());
+    EXPECT_EQ(data.size(), (std::size_t)pacmap_->GetSize());
 
     GTEST_LOG_(INFO) << "AppExecFwk_PacMap_GetAll_0100 end";
 }
@@ -622,6 +702,46 @@ HWTEST_F(PacMapTest, AppExecFwk_PacMap_Marshalling_0100, Function | MediumTest |
         unmarshingMap = nullptr;
     }
     GTEST_LOG_(INFO) << "AppExecFwk_PacMap_Marshalling_0100 end";
+}
+/**
+ * @tc.number: AppExecFwk_PacMap_Marshalling_0200
+ * @tc.name: Marshalling and Unmarshalling
+ * @tc.desc: Verify Marshalling() and Unmarshalling().
+ */
+HWTEST_F(PacMapTest, AppExecFwk_PacMap_Marshalling_0200, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AppExecFwk_PacMap_Marshalling_0200 start";
+
+    Parcel parcel;
+    FillData(*pacmap_.get());
+    FillData2(*pacmap2_.get(), *pacmap_.get());
+
+    EXPECT_EQ(true, pacmap2_->Marshalling(parcel));
+    PacMap *unmarshingMap = PacMap::Unmarshalling(parcel);
+
+    EXPECT_EQ(true, unmarshingMap != nullptr);
+    if (unmarshingMap != nullptr) {
+        EXPECT_EQ(true, pacmap2_->Equals(unmarshingMap));
+        delete unmarshingMap;
+        unmarshingMap = nullptr;
+    }
+    GTEST_LOG_(INFO) << "AppExecFwk_PacMap_Marshalling_0200 end";
+}
+/**
+ * @tc.number: AppExecFwk_PacMap_Marshalling_0300
+ * @tc.name: Marshalling and Unmarshalling
+ * @tc.desc: Verify Marshalling() and Unmarshalling().
+ */
+HWTEST_F(PacMapTest, AppExecFwk_PacMap_Marshalling_0300, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AppExecFwk_PacMap_Marshalling_0300 start";
+
+    Parcel parcel;
+    EXPECT_EQ(true, pacmap2_->Marshalling(parcel));
+    PacMap *unmarshingMap = PacMap::Unmarshalling(parcel);
+
+    EXPECT_EQ(true, unmarshingMap != nullptr);
+    GTEST_LOG_(INFO) << "AppExecFwk_PacMap_Marshalling_0300 end";
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

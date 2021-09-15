@@ -41,6 +41,8 @@ public:
     {}
     virtual void ScheduleRestoreAbilityState(const PacMap &inState) override
     {}
+    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config) override
+    {}
 
     virtual std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter) override
     {
@@ -93,6 +95,24 @@ public:
     {
         return -1;
     }
+
+    virtual Uri NormalizeUri(const Uri &uri) override
+    {
+        Uri urivalue("");
+        return urivalue;
+    }
+
+    virtual Uri DenormalizeUri(const Uri &uri) override
+    {
+        Uri urivalue("");
+        return urivalue;
+    }
+
+    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override
+    {}
+
+    void NotifyTopActiveAbilityChanged(bool flag) override
+    {}
 };
 
 }  // namespace AAFwk

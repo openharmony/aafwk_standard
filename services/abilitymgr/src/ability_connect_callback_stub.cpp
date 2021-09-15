@@ -27,7 +27,7 @@ namespace AAFwk {
 bool AbilityConnectionProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AbilityConnectionProxy::GetDescriptor())) {
-        HILOG_ERROR("write interface token failed");
+        HILOG_ERROR("Write interface token failed.");
         return false;
     }
     return true;
@@ -36,8 +36,6 @@ bool AbilityConnectionProxy::WriteInterfaceToken(MessageParcel &data)
 void AbilityConnectionProxy::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    HILOG_DEBUG("%s, abilityName:%s,resultCode:%d", __func__, element.GetAbilityName().c_str(), resultCode);
-
     int error;
     MessageParcel data;
     MessageParcel reply;
@@ -48,30 +46,29 @@ void AbilityConnectionProxy::OnAbilityConnectDone(
     }
 
     if (!data.WriteParcelable(&element)) {
-        HILOG_ERROR("connect done element error");
+        HILOG_ERROR("Connect done element error.");
         return;
     }
 
     if (!data.WriteParcelable(remoteObject)) {
-        HILOG_ERROR("connect done remote object error");
+        HILOG_ERROR("Connect done remote object error.");
         return;
     }
 
     if (!data.WriteInt32(resultCode)) {
-        HILOG_ERROR("connect done result code error");
+        HILOG_ERROR("Connect done result code error.");
         return;
     }
 
     error = Remote()->SendRequest(IAbilityConnection::ON_ABILITY_CONNECT_DONE, data, reply, option);
     if (error != NO_ERROR) {
-        HILOG_ERROR("connect done fail, error: %d", error);
+        HILOG_ERROR("Connect done fail, error: %{public}d", error);
         return;
     }
 }
 
 void AbilityConnectionProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    HILOG_DEBUG("%s, element:%s, resultCode:%d", __func__, element.GetURI().c_str(), resultCode);
     int error;
     MessageParcel data;
     MessageParcel reply;
@@ -81,13 +78,13 @@ void AbilityConnectionProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementNa
         return;
     }
     if (!data.WriteParcelable(&element) || !data.WriteInt32(resultCode)) {
-        HILOG_ERROR("disconnect done data write error");
+        HILOG_ERROR("Disconnect done data write error.");
         return;
     }
 
     error = Remote()->SendRequest(IAbilityConnection::ON_ABILITY_DISCONNECT_DONE, data, reply, option);
     if (error != NO_ERROR) {
-        HILOG_ERROR("disconnect done fail, error: %d", error);
+        HILOG_ERROR("Disconnect done fail, error: %d", error);
         return;
     }
 }
@@ -104,7 +101,7 @@ int AbilityConnectionStub::OnRemoteRequest(
     std::u16string descriptor = AbilityConnectionStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        HILOG_INFO("local descriptor is not equal to remote");
+        HILOG_INFO("Local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 
@@ -142,7 +139,7 @@ int AbilityConnectionStub::OnRemoteRequest(
 
 void AbilityConnectCallbackRecipient::OnRemoteDied(const wptr<IRemoteObject> &__attribute__((unused)) remote)
 {
-    HILOG_ERROR("recv AbilityConnectCallbackRecipient death notice");
+    HILOG_ERROR("On remote died.");
     if (handler_) {
         handler_(remote);
     }

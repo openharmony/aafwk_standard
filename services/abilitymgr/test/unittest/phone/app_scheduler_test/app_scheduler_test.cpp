@@ -24,6 +24,7 @@
 #include "app_state_call_back_mock.h"
 #include "ability_record.h"
 #include "element_name.h"
+#include "app_process_data.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
@@ -243,31 +244,6 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_008, TestSize.Level0)
 
 /*
  * Feature: AppScheduler
- * Function: MoveToForground
- * SubFunction: NA
- * FunctionPoints: AppScheduler MoveToForground
- * EnvConditions:NA
- * CaseDescription: Verify the normal process of movetoforground
- */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_009, TestSize.Level0)
-{
-    DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-    DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_);
-    EXPECT_CALL(*appStateMock_, OnAbilityRequestDone(::testing::_, ::testing::_)).Times(1);
-
-    std::string deviceName = "device";
-    std::string abilityName = "FirstAbility";
-    std::string appName = "FirstApp";
-    std::string bundleName = "com.ix.First";
-    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName);
-    auto record = AbilityRecord::CreateAbilityRecord(abilityReq);
-    auto token = record->GetToken();
-
-    DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token);
-}
-
-/*
- * Feature: AppScheduler
  * Function: MoveToBackground
  * SubFunction: NA
  * FunctionPoints: AppScheduler MoveToBackground
@@ -287,34 +263,6 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_010, TestSize.Level0)
     auto token = record->GetToken();
 
     DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(token);
-}
-
-/*
- * Feature: AppScheduler
- * Function: MoveToBackground GetAbilityState
- * SubFunction: NA
- * FunctionPoints: AppScheduler MoveToBackground and GetAbilityState
- * EnvConditions:NA
- * CaseDescription: Verify appmgrclient_ Is not nullptr causes onabilityrequestdone invoke
- */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_011, TestSize.Level0)
-{
-    DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-    DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_);
-    EXPECT_CALL(*appStateMock_, OnAbilityRequestDone(::testing::_, ::testing::_)).Times(1);
-
-    std::string deviceName = "device";
-    std::string abilityName = "FirstAbility";
-    std::string appName = "FirstApp";
-    std::string bundleName = "com.ix.First";
-    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName);
-    auto record = AbilityRecord::CreateAbilityRecord(abilityReq);
-    auto token = record->GetToken();
-
-    DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(token);
-
-    EXPECT_EQ(
-        AppAbilityState::ABILITY_STATE_BACKGROUND, DelayedSingleton<AppScheduler>::GetInstance()->GetAbilityState());
 }
 
 /*

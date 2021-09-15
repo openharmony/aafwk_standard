@@ -23,8 +23,8 @@ namespace AppExecFwk {
 
 namespace {
 const string EMPTY = "";
-const std::regex INTEGER_REGEX("^[0-9]+$");
-const int BUFFER_LEN = 32;
+const std::regex INTEGER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
+const int BUFFER_LEN = 64;
 const char *SEPARATOR = "/";
 };  // namespace
 
@@ -48,7 +48,7 @@ DataUriUtils::~DataUriUtils()
  * @param id
  * @return Uri( scheme://authority/path1/path2/path3/updateIDNumber....)
  */
-Uri DataUriUtils::AttachId(const Uri &dataUri, long id)
+Uri DataUriUtils::AttachId(const Uri &dataUri, long long id)
 {
     // 1. get Path
     string path = const_cast<Uri &>(dataUri).GetPath();
@@ -67,7 +67,7 @@ Uri DataUriUtils::AttachId(const Uri &dataUri, long id)
 
     char longBuffer[BUFFER_LEN] = {0};
 
-    int ret = sprintf_s(longBuffer, sizeof(longBuffer), "%ld", id);
+    int ret = sprintf_s(longBuffer, sizeof(longBuffer), "%lld", id);
     if (ret == -1) {
         return dataUri;
     }
@@ -89,7 +89,7 @@ Uri DataUriUtils::AttachId(const Uri &dataUri, long id)
  * @param dataUri based on RFC 2396( Uniform Resource Identifier ).
  * @return long ID
  */
-long DataUriUtils::GetId(const Uri &dataUri)
+long long DataUriUtils::GetId(const Uri &dataUri)
 {
     // 1. get Path
     string path = const_cast<Uri &>(dataUri).GetPath();
@@ -105,8 +105,7 @@ long DataUriUtils::GetId(const Uri &dataUri)
     if (!IsNumber(lastPath)) {
         return -1;
     }
-
-    return atoi(lastPath.c_str());
+    return std::atoll(lastPath.c_str());
 }
 
 /**
@@ -125,10 +124,10 @@ Uri DataUriUtils::DeleteId(const Uri &dataUri)
  * @param id indiates Update attached to the end of the path component of the given URI
  * @return Uri return is the URI after path is updated
  */
-Uri DataUriUtils::UpdateId(const Uri &dataUri, long id)
+Uri DataUriUtils::UpdateId(const Uri &dataUri, long long id)
 {
     char longBuffer[BUFFER_LEN] = {0};
-    int ret = sprintf_s(longBuffer, sizeof(longBuffer), "%ld", id);
+    int ret = sprintf_s(longBuffer, sizeof(longBuffer), "%lld", id);
     if (ret == -1) {
         return dataUri;
     }

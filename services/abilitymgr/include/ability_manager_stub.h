@@ -63,6 +63,15 @@ private:
     int DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StopServiceAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DumpStateInner(MessageParcel &data, MessageParcel &reply);
+    int StartAbilityForSettingsInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToFloatingStackInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToSplitScreenStackInner(MessageParcel &data, MessageParcel &reply);
+    int ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int MinimizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
+    int MaximizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
+    int GetFloatingMissionsInner(MessageParcel &data, MessageParcel &reply);
+    int CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply);
+    int SetMissionStackSettingInner(MessageParcel &data, MessageParcel &reply);
     int IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply);
     int CompelVerifyPermissionInner(MessageParcel &data, MessageParcel &reply);
     int PowerOffInner(MessageParcel &data, MessageParcel &reply);
@@ -71,6 +80,7 @@ private:
     int UnlockMissionInner(MessageParcel &data, MessageParcel &reply);
     int SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply);
     int GetMissionLockModeStateInner(MessageParcel &data, MessageParcel &reply);
+    int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
 
     int GetWantSenderInner(MessageParcel &data, MessageParcel &reply);
     int SendWantSenderInner(MessageParcel &data, MessageParcel &reply);
@@ -86,6 +96,7 @@ private:
     int UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
 
     int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToEndTestInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

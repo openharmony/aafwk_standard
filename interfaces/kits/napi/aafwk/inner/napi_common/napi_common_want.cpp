@@ -17,10 +17,19 @@
 #include "napi_common_util.h"
 #include "hilog_wrapper.h"
 #include "ohos/aafwk/content/want_params_wrapper.h"
+#include "ohos/aafwk/base/array_wrapper.h"
+#include "ohos/aafwk/base/bool_wrapper.h"
+#include "ohos/aafwk/base/byte_wrapper.h"
+#include "ohos/aafwk/base/double_wrapper.h"
+#include "ohos/aafwk/base/float_wrapper.h"
+#include "ohos/aafwk/base/int_wrapper.h"
+#include "ohos/aafwk/base/long_wrapper.h"
+#include "ohos/aafwk/base/short_wrapper.h"
+#include "ohos/aafwk/base/string_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-
+EXTERN_C_START
 /**
  * @brief Init param of wantOptions.
  *
@@ -749,8 +758,8 @@ napi_value WrapWant(napi_env env, const Want &want)
     SetPropertyValueByPropertyName(env, jsObject, "type", jsValue);
 
     jsValue = nullptr;
-    jsValue = InnerWrapWantOptions(env, want);
-    SetPropertyValueByPropertyName(env, jsObject, "options", jsValue);
+    jsValue = WrapInt32ToJS(env, want.GetFlags());
+    SetPropertyValueByPropertyName(env, jsObject, "flags", jsValue);
 
     jsValue = nullptr;
     jsValue = WrapStringToJS(env, want.GetAction());
@@ -801,7 +810,10 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
         want.SetUri(natValueString);
     }
 
-    InnerUnwrapWantOptions(env, param, "options", want);
+    int32_t flags = 0;
+    if (UnwrapInt32ByPropertyName(env, param, "flags", flags)) {
+        want.SetFlags(flags);
+    }
 
     ElementName natElementName;
     UnwrapElementName(env, param, natElementName);
@@ -814,5 +826,6 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
 
     return true;
 }
+EXTERN_C_END
 }  // namespace AppExecFwk
 }  // namespace OHOS

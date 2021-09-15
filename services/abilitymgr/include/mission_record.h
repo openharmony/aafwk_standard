@@ -21,6 +21,7 @@
 #include "ability_record.h"
 #include "mission_stack.h"
 #include "mission_description_info.h"
+#include "mission_option.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -29,9 +30,10 @@ class MissionStack;
  * @class MissionRecord
  * MissionRecord records mission info and ability records.
  */
-class MissionRecord {
+class MissionRecord : public ConfigurationHolder {
 public:
     MissionRecord(const std::string &bundleName = "");
+    MissionRecord(const std::shared_ptr<MissionRecord> &mission);
     virtual ~MissionRecord();
 
     /**
@@ -68,6 +70,13 @@ public:
      * @return AbilityRecord.
      */
     std::shared_ptr<AbilityRecord> GetTopAbilityRecord() const;
+
+    /**
+     * get the last top ability of this mission
+     *
+     * @return AbilityRecord.
+     */
+    std::shared_ptr<AbilityRecord> GetLastTopAbility() const;
 
     /**
      * get the ability by token
@@ -185,10 +194,10 @@ public:
     /**
      * set parent mission stack.
      *
-     * @param parentStack: the parent mission stack
+     * @param missionStack: the parent mission stack
      */
-    void SetParentStack(const std::shared_ptr<MissionStack> &parent, int stackId);
-    std::shared_ptr<MissionStack> GetParentStack() const;
+    void SetMissionStack(const std::shared_ptr<MissionStack> &missionStack, int stackId);
+    std::shared_ptr<MissionStack> GetMissionStack() const;
 
     std::string GetName() const
     {
@@ -199,10 +208,24 @@ public:
     {
         missionDescriptionInfo_ = missionDescriptionInfo;
     };
+
     std::shared_ptr<MissionDescriptionInfo> GetMissionDescriptionInfo() const
     {
         return missionDescriptionInfo_;
     };
+
+    bool SupportMultWindow() const;
+
+    void SetMissionOption(const MissionOption &option);
+    const MissionOption &GetMissionOption() const;
+
+    bool IsEmpty();
+    void Resume(const std::shared_ptr<MissionRecord> &backup);
+
+protected:
+    virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
+    virtual unsigned int GetChildSize() override;
+    virtual std::shared_ptr<ConfigurationHolder> FindChild(unsigned int index) override;
 
 private:
     static int nextMissionId_;
@@ -214,7 +237,8 @@ private:
     std::weak_ptr<MissionStack> parentMissionStack_;
 
     std::shared_ptr<MissionDescriptionInfo> missionDescriptionInfo_ = nullptr;
-};  // namespace AAFwk
+    MissionOption option_;
+};
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_MISSION_RECORD_H

@@ -43,6 +43,7 @@ int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
  */
 void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     APP_LOGI("AbilityContext::StartAbility called, requestCode = %{public}d", requestCode);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
@@ -52,7 +53,9 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
     }
 
     if (CheckIfOperateRemote(want)) {
+        APP_LOGI("%{public}s. Start calling GetDistributedSchedServiceProxy.", __func__);
         std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> dms = GetDistributedSchedServiceProxy();
+        APP_LOGI("%{public}s. End calling GetDistributedSchedServiceProxy.", __func__);
         if (dms != nullptr) {
             AppExecFwk::AbilityInfo abilityInfo;
             APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
@@ -66,11 +69,14 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
             return;
         }
     } else {
+        APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
         ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
+        APP_LOGI("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
         if (err != ERR_OK) {
             APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
         }
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -84,11 +90,13 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
  */
 void AbilityContext::StartAbility(const Want &want, int requestCode, const AbilityStartSetting &abilityStartSetting)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         APP_LOGE("AbilityContext::StartAbility AbilityType = %{public}d", type);
         return;
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -100,10 +108,12 @@ void AbilityContext::StartAbility(const Want &want, int requestCode, const Abili
  */
 void AbilityContext::TerminateAbility(int requestCode)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, requestCode);
     if (err != ERR_OK) {
         APP_LOGE("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -112,6 +122,7 @@ void AbilityContext::TerminateAbility(int requestCode)
  */
 void AbilityContext::TerminateAbility()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
     if (info == nullptr) {
         APP_LOGE("AbilityContext::TerminateAbility info == nullptr");
@@ -122,10 +133,14 @@ void AbilityContext::TerminateAbility()
 
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
+            APP_LOGI("%{public}s begin ams->TerminateAbility for PAGE.", __func__);
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode_, &resultWant_);
+            APP_LOGI("%{public}s end ams->TerminateAbility for PAGE, ret=%{public}d", __func__, err);
             break;
         case AppExecFwk::AbilityType::SERVICE:
+            APP_LOGI("%{public}s begin ams->TerminateAbility for SERVICE.", __func__);
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, -1, nullptr);
+            APP_LOGI("%{public}s end ams->TerminateAbility for SERVICE, ret=%{public}d", __func__, err);
             break;
         default:
             APP_LOGE("AbilityContext::TerminateAbility info type error is %{public}d", info->type);
@@ -135,7 +150,8 @@ void AbilityContext::TerminateAbility()
     if (err != ERR_OK) {
         APP_LOGE("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
-}  // namespace AppExecFwk
+    APP_LOGI("%{public}s end.", __func__);
+}
 
 /**
  * @brief Obtains the bundle name of the ability that called the current ability.
@@ -157,6 +173,7 @@ std::string AbilityContext::GetCallingBundle()
  */
 std::shared_ptr<ElementName> AbilityContext::GetElementName()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
     if (info == nullptr) {
         APP_LOGE("AbilityContext::GetElementName info == nullptr");
@@ -171,6 +188,7 @@ std::shared_ptr<ElementName> AbilityContext::GetElementName()
     elementName->SetAbilityName(info->name);
     elementName->SetBundleName(info->bundleName);
     elementName->SetDeviceID(info->deviceId);
+    APP_LOGI("%{public}s end.", __func__);
     return elementName;
 }
 
@@ -181,6 +199,7 @@ std::shared_ptr<ElementName> AbilityContext::GetElementName()
  */
 std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     std::shared_ptr<ElementName> elementName = std::make_shared<ElementName>();
 
     if (elementName == nullptr) {
@@ -190,6 +209,7 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
     elementName->SetAbilityName(callingAbilityName_);
     elementName->SetBundleName(callingBundleName_);
     elementName->SetDeviceID(callingDeviceId_);
+    APP_LOGI("%{public}s end.", __func__);
     return elementName;
 }
 
@@ -204,7 +224,7 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
  */
 bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    APP_LOGD("AbilityContext::ConnectAbility called");
+    APP_LOGI("%{public}s begin.", __func__);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
@@ -212,11 +232,14 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
         return false;
     }
 
+    APP_LOGI("%{public}s begin ams->ConnectAbility", __func__);
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
+    APP_LOGI("%{public}s end ams->ConnectAbility, ret=%{public}d", __func__, ret);
     bool value = ((ret == ERR_OK) ? true : false);
     if (!value) {
         APP_LOGE("AbilityContext::ConnectAbility ErrorCode = %{public}d", ret);
     }
+    APP_LOGI("%{public}s end.", __func__);
     return value;
 }
 
@@ -227,7 +250,7 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
  */
 void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    APP_LOGD("AbilityContext::DisconnectAbility called");
+    APP_LOGD("AbilityContext::DisconnectAbility begin");
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
@@ -235,10 +258,13 @@ void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &co
         return;
     }
 
+    APP_LOGI("%{public}s begin ams->DisconnectAbility", __func__);
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
+    APP_LOGI("%{public}s end ams->ConnectAbility, ret=%{public}d", __func__, ret);
     if (ret != ERR_OK) {
         APP_LOGE("AbilityContext::DisconnectAbility error");
     }
+    APP_LOGD("AbilityContext::DisconnectAbility end");
 }
 
 /**
@@ -253,18 +279,22 @@ void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &co
  */
 bool AbilityContext::StopAbility(const AAFwk::Want &want)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         APP_LOGE("AbilityContext::StopAbility AbilityType = %{public}d", type);
         return false;
     }
 
+    APP_LOGI("%{public}s begin ams->StopServiceAbility", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want);
+    APP_LOGI("%{public}s end ams->StopServiceAbility, ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         APP_LOGE("AbilityContext::StopAbility is failed %{public}d", err);
         return false;
     }
 
+    APP_LOGI("%{public}s end.", __func__);
     return true;
 }
 
@@ -502,18 +532,21 @@ std::shared_ptr<Context> AbilityContext::CreateBundleContext(std::string bundleN
  */
 std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceManager() const
 {
+    APP_LOGI("%{public}s begin.", __func__);
     std::shared_ptr<Context> appcontext = GetApplicationContext();
     if (appcontext == nullptr) {
         APP_LOGE("AbilityContext::GetResourceManager appcontext is nullptr");
         return nullptr;
     }
 
+    APP_LOGI("%{public}s begin appcontext->GetResourceManager.", __func__);
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager = appcontext->GetResourceManager();
+    APP_LOGI("%{public}s end appcontext->GetResourceManager.", __func__);
     if (resourceManager == nullptr) {
         APP_LOGE("AbilityContext::GetResourceManager resourceManager is nullptr");
         return nullptr;
     }
-
+    APP_LOGI("%{public}s end.", __func__);
     return resourceManager;
 }
 
@@ -529,6 +562,7 @@ std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceMa
  */
 int AbilityContext::VerifySelfPermission(const std::string &permission)
 {
+    APP_LOGI("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
     if (permission.empty()) {
         APP_LOGE("VerifySelfPermission permission invalid");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
@@ -545,7 +579,12 @@ int AbilityContext::VerifySelfPermission(const std::string &permission)
         APP_LOGE("VerifySelfPermission failed to get bundle manager service");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
-    return ptr->CheckPermission(bundle_name, permission);
+
+    APP_LOGI("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
+    int ret = ptr->CheckPermission(bundle_name, permission);
+    APP_LOGI("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
+    APP_LOGI("%{public}s end.", __func__);
+    return ret;
 }
 
 /**
@@ -559,6 +598,7 @@ int AbilityContext::VerifySelfPermission(const std::string &permission)
  */
 int AbilityContext::VerifyCallingPermission(const std::string &permission)
 {
+    APP_LOGI("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
     if (permission.empty()) {
         APP_LOGE("VerifyCallingPermission permission invalid");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
@@ -575,7 +615,12 @@ int AbilityContext::VerifyCallingPermission(const std::string &permission)
         APP_LOGE("VerifyCallingPermission failed to get bundle manager service");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
-    return ptr->CheckPermission(bundle_name, permission);
+
+    APP_LOGI("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
+    int ret = ptr->CheckPermission(bundle_name, permission);
+    APP_LOGI("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
+    APP_LOGI("%{public}s end.", __func__);
+    return ret;
 }
 
 /**
@@ -592,6 +637,7 @@ int AbilityContext::VerifyCallingPermission(const std::string &permission)
  */
 bool AbilityContext::CanRequestPermission(const std::string &permission)
 {
+    APP_LOGI("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
     if (permission.empty()) {
         APP_LOGE("CanRequestPermission permission invalid");
         return true;
@@ -609,7 +655,11 @@ bool AbilityContext::CanRequestPermission(const std::string &permission)
         return true;
     }
 
-    return ptr->CanRequestPermission(bundle_name, permission, 0);
+    APP_LOGI("%{public}s start bms->CanRequestPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
+    bool ret = ptr->CanRequestPermission(bundle_name, permission, 0);
+    APP_LOGI("%{public}s end bms->CanRequestPermission, ret=%{public}s", __func__, ret ? "true" : "false");
+    APP_LOGI("%{public}s end.", __func__);
+    return ret;
 }
 
 /**
@@ -622,11 +672,7 @@ bool AbilityContext::CanRequestPermission(const std::string &permission)
  */
 int AbilityContext::VerifyCallingOrSelfPermission(const std::string &permission)
 {
-    if (VerifyCallingPermission(permission) != AppExecFwk::Constants::PERMISSION_GRANTED) {
-        return VerifySelfPermission(permission);
-    } else {
-        return AppExecFwk::Constants::PERMISSION_GRANTED;
-    }
+    return VerifySelfPermission(permission);
 }
 
 /**
@@ -640,6 +686,11 @@ int AbilityContext::VerifyCallingOrSelfPermission(const std::string &permission)
  */
 int AbilityContext::VerifyPermission(const std::string &permission, int pid, int uid)
 {
+    APP_LOGI("%{public}s begin. permission=%{public}s, pid=%{public}d, uid=%{public}d",
+        __func__,
+        permission.c_str(),
+        pid,
+        uid);
     if (permission.empty()) {
         APP_LOGE("VerifyPermission permission invalid");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
@@ -657,7 +708,11 @@ int AbilityContext::VerifyPermission(const std::string &permission, int pid, int
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 
-    return ptr->CheckPermission(bundle_name, permission);
+    APP_LOGI("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
+    int ret = ptr->CheckPermission(bundle_name, permission);
+    APP_LOGI("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
+    APP_LOGI("%{public}s end.", __func__);
+    return ret;
 }
 
 void AbilityContext::GetPermissionDes(const std::string &permissionName, std::string &des)
@@ -669,9 +724,11 @@ void AbilityContext::GetPermissionDes(const std::string &permissionName, std::st
     }
 
     PermissionDef permissionDef;
+    APP_LOGI("%{public}s start bms->GetPermissionDef. permissionName=%{public}s", __func__, permissionName.c_str());
     if (ptr->GetPermissionDef(permissionName, permissionDef)) {
         des = permissionDef.description;
     }
+    APP_LOGI("%{public}s end bms->GetPermissionDef.", __func__);
 }
 
 /**
@@ -685,6 +742,7 @@ void AbilityContext::GetPermissionDes(const std::string &permissionName, std::st
  */
 void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     if (permissions.size() == 0) {
         APP_LOGE("AbilityContext::RequestPermissionsFromUser permissions is empty");
         return;
@@ -712,6 +770,7 @@ void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permis
     want.SetParam(OHOS_REQUEST_CALLER_BUNDLERNAME, GetBundleName());
 
     StartAbility(want, requestCode);
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /* @brief Deletes the specified private file associated with the application.
@@ -982,17 +1041,21 @@ int AbilityContext::GetThemeId()
  */
 bool AbilityContext::TerminateAbilityResult(int startId)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
         APP_LOGE("AbilityContext::TerminateAbilityResult abilityClient is nullptr");
         return false;
     }
 
+    APP_LOGI("%{public}s begin ams->TerminateAbilityResult, startId=%{public}d.", __func__, startId);
     ErrCode errval = abilityClient->TerminateAbilityResult(token_, startId);
+    APP_LOGI("%{public}s end ams->TerminateAbilityResult, ret=%{public}d.", __func__, errval);
     if (errval != ERR_OK) {
         APP_LOGE("AbilityContext::TerminateAbilityResult TerminateAbilityResult retval is %d", errval);
     }
 
+    APP_LOGI("%{public}s end.", __func__);
     return (errval == ERR_OK) ? true : false;
 }
 
@@ -1063,9 +1126,11 @@ void AbilityContext::TerminateAndRemoveMission()
  */
 void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
 {
+    APP_LOGI("%{public}s begin.", __func__);
     for (auto want : wants) {
         StartAbility(want, ABILITY_CONTEXT_DEFAULT_REQUEST_CODE);
     }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -1075,15 +1140,19 @@ void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
  */
 bool AbilityContext::IsFirstInMission()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
         APP_LOGE("AbilityContext::IsFirstInMission abilityClient is nullptr");
         return false;
     }
+    APP_LOGI("%{public}s begin ams->IsFirstInMission.", __func__);
     ErrCode errval = abilityClient->IsFirstInMission(token_);
+    APP_LOGI("%{public}s end ams->IsFirstInMission, ret=%{public}d", __func__, errval);
     if (errval != ERR_OK) {
         APP_LOGE("AbilityContext::IsFirstInMission IsFirstInMission retval is %d", errval);
     }
+    APP_LOGI("%{public}s end.", __func__);
 
     return (errval == ERR_OK) ? true : false;
 }
@@ -1110,6 +1179,7 @@ bool AbilityContext::CheckIfOperateRemote(const Want &want)
  */
 std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> AbilityContext::GetDistributedSchedServiceProxy()
 {
+    APP_LOGI("%{public}s begin.", __func__);
     auto remoteObject = OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
     if (remoteObject == nullptr) {
         APP_LOGE("failed to get dms service");
@@ -1119,6 +1189,7 @@ std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> AbilityContext
     APP_LOGI("get dms proxy success.");
     std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> proxy = nullptr;
     proxy = std::make_shared<OHOS::DistributedSchedule::DistributedSchedProxy>(remoteObject);
+    APP_LOGI("%{public}s end.", __func__);
     return proxy;
 }
 

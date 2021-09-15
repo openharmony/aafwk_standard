@@ -14,11 +14,12 @@
  */
 #ifndef OHOS_AAFWK_BASE_IINTERFACE_H
 #define OHOS_AAFWK_BASE_IINTERFACE_H
-
+#include <memory>
 #include <string>
 
 #include "base_def.h"
 #include "refbase.h"
+#include "user_object_base.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -180,6 +181,33 @@ INTERFACE(IArray, 875b9da6 - 9913 - 4370 - 8847 - e1961be6e560)
     virtual ErrCode Set(long index, /* [in] */
         IInterface *value) = 0;     /* [in] */
 };
+
+INTERFACE(IPacMap, f92066fd - fd0c - 401b - a3f6 - 626da3bac9d5)
+{
+    inline static IPacMap *Query(IInterface * object)
+    {
+        if (object == nullptr) {
+            return nullptr;
+        }
+        return static_cast<IPacMap *>(object->Query(g_IID_IPacMap));
+    }
+
+    virtual bool FromString(const std::string &str) = 0;
+};
+
+INTERFACE(IUserObject, 4edb325d - 8532 - 4af7 - b42e - 82f4f29dfdea)
+{
+    inline static IUserObject *Query(IInterface * object)
+    {
+        if (object == nullptr) {
+            return nullptr;
+        }
+        return static_cast<IUserObject *>(object->Query(g_IID_IUserObject));
+    }
+
+    virtual ErrCode GetValue(std::shared_ptr<UserObjectBase> & value) = 0; /* [out] */
+};
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_BASE_IINTERFACE_H

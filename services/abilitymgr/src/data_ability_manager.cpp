@@ -42,7 +42,7 @@ DataAbilityManager::~DataAbilityManager()
 }
 
 sptr<IAbilityScheduler> DataAbilityManager::Acquire(
-    const AbilityRequest &abilityRequest, bool tryBind, const sptr<IRemoteObject> &client)
+    const AbilityRequest &abilityRequest, bool tryBind, const sptr<IRemoteObject> &client, bool isSystem)
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
@@ -59,7 +59,7 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
     std::shared_ptr<AbilityRecord> clientAbilityRecord;
     const std::string dataAbilityName(abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
 
-    if (client) {
+    if (client && !isSystem) {
         clientAbilityRecord = Token::GetAbilityRecordByToken(client);
         if (!clientAbilityRecord) {
             HILOG_ERROR("Data ability manager acquire: invalid client token.");
@@ -110,8 +110,8 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
         return nullptr;
     }
 
-    if (clientAbilityRecord) {
-        dataAbilityRecord->AddClient(clientAbilityRecord, tryBind);
+    if (client) {
+        dataAbilityRecord->AddClient(client, tryBind, isSystem);
     }
 
     if (DEBUG_ENABLED) {
@@ -121,15 +121,13 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
     return scheduler;
 }
 
-int DataAbilityManager::Release(const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &client)
+int DataAbilityManager::Release(
+    const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &client, bool isSystem)
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
 
     CHECK_POINTER_AND_RETURN(scheduler, ERR_NULL_OBJECT);
     CHECK_POINTER_AND_RETURN(client, ERR_NULL_OBJECT);
-
-    auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
-    CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
 
     std::lock_guard<std::mutex> locker(mutex_);
 
@@ -152,13 +150,21 @@ int DataAbilityManager::Release(const sptr<IAbilityScheduler> &scheduler, const 
         return ERR_UNKNOWN_OBJECT;
     }
 
-    if (dataAbilityRecord->GetClientCount(clientAbilityRecord) == 0) {
+    auto abilityRecord = dataAbilityRecord->GetAbilityRecord();
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_UNKNOWN_OBJECT);
+    int result = AbilityUtil::JudgeAbilityVisibleControl(abilityRecord->GetAbilityInfo());
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
+        return result;
+    }
+
+    if (dataAbilityRecord->GetClientCount(client) == 0) {
         HILOG_ERROR("Release data ability with wrong client.");
         return ERR_UNKNOWN_OBJECT;
     }
 
     HILOG_INFO("Releasing data ability '%{public}s'...", it->first.c_str());
-    dataAbilityRecord->RemoveClient(clientAbilityRecord);
+    dataAbilityRecord->RemoveClient(client, isSystem);
 
     if (DEBUG_ENABLED) {
         DumpLocked(__func__, __LINE__);
@@ -297,6 +303,29 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
 
     if (DEBUG_ENABLED) {
         DumpLocked(__func__, __LINE__);
+    }
+}
+
+void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
+{
+    std::lock_guard<std::mutex> locker(mutex_);
+
+    for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        auto abilityRecord = it->second->GetAbilityRecord();
+        if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
+            (info.processName == abilityRecord->GetAbilityInfo().process ||
+                info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            abilityRecord->SetAppState(info.state);
+        }
+    }
+
+    for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
+        auto abilityRecord = it->second->GetAbilityRecord();
+        if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
+            (info.processName == abilityRecord->GetAbilityInfo().process ||
+                info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            abilityRecord->SetAppState(info.state);
+        }
     }
 }
 
