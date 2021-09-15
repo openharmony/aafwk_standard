@@ -19,15 +19,12 @@
 #include "napi_common_util.h"
 #include "securec.h"
 #include "hilog_wrapper.h"
-
+#include "napi_remote_object.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 
 napi_value g_classContext;
-static void *g_handle = nullptr;
-constexpr char SHARED_LIBRARY_RPC[] = "/system/lib/module/librpc.z.so";
-constexpr char FUNC_RPC_CREATE_JS_REMOTE_OBJECT[] = "NAPI_ohos_rpc_CreateJsRemoteObject";
 
 using NAPICreateJsRemoteObject = napi_value (*)(napi_env env, const sptr<IRemoteObject> target);
 
@@ -4503,31 +4500,8 @@ void NAPIAbilityConnection::OnAbilityConnectDone(
             ConnectAbilityCB *event = (ConnectAbilityCB *)work->data;
             napi_value result[ARGS_TWO] = {0};
             result[PARAM0] = WrapElementName(event->cbBase.cbInfo.env, event->abilityConnectionCB.elementName);
-                        // start open rpc lib
-            if (g_handle == nullptr) {
-                g_handle = dlopen(SHARED_LIBRARY_RPC, RTLD_LAZY);
-                if (g_handle == nullptr) {
-                    HILOG_ERROR(
-                        "%{public}s, dlopen failed %{public}s. %{public}s", __func__, SHARED_LIBRARY_RPC, dlerror());
-                    return;
-                }
-            }
-
-            // get function
-            auto func = reinterpret_cast<NAPICreateJsRemoteObject>(dlsym(g_handle, FUNC_RPC_CREATE_JS_REMOTE_OBJECT));
-            if (func == nullptr) {
-                HILOG_ERROR("%{public}s, dlsym failed %{public}s. %{public}s",
-                    __func__,
-                    FUNC_RPC_CREATE_JS_REMOTE_OBJECT,
-                    dlerror());
-                dlclose(g_handle);
-                g_handle = nullptr;
-                return;
-            }
-
-            // transform native remoteObject to js remoteObject
-            napi_value jsRemoteObject = func(event->cbBase.cbInfo.env, event->abilityConnectionCB.connection);
-
+            napi_value jsRemoteObject =
+                NAPI_ohos_rpc_CreateJsRemoteObject(event->cbBase.cbInfo.env, event->abilityConnectionCB.connection);
             result[PARAM1] = jsRemoteObject;
 
             napi_value callback = 0;
