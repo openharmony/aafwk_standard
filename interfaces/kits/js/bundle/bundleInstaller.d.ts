@@ -17,70 +17,91 @@ import { AsyncCallback } from './../basic';
 import bundle from './../@ohos.bundle';
 
 /**
- * @name InstallParam
- * @since 3
- * @SysCap BMS
- * @import NA
+ * @name Provides parameters required for installing or uninstalling an application.
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
  * @permission NA
- * @devices phone, tablet
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface InstallParam {
+  /**
+    * @default Indicates the user id
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   userId: number;
+
+  /**
+    * @default Indicates the install flag
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   installFlag: number;
+
+  /**
+    * @default Indicates whether the param has data
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   isKeepData: boolean;
 }
 
 /**
- * @name InstallStatus
- * @since 3
- * @SysCap BMS
- * @import NA
+ * @name Indicates the install or uninstall status
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
  * @permission NA
- * @devices phone, tablet
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface InstallStatus {
-  status: bundle.InstallErrorCode;
+
   /**
-   * The install result string message.
-   *
-   * @default -
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   */
+    * @default Indicates the install or uninstall error code
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
+  status: bundle.InstallErrorCode;
+
+  /**
+    * @default Indicates the install or uninstall result string message
+    * @since 7
+    * @SysCap SystemCapability.Appexecfwk
+    */
   statusMessage: string;
 }
 
 /**
- * @name BundleInstaller
- * @since 3
- * @SysCap BMS
- * @import NA
+ * @name Offers install, upgrade, and remove bundles on the devices.
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
  * @permission NA
- * @devices phone, tablet
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface BundleInstaller {
   /**
    * Install an application in a HAP.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleFilePaths Indicates the paths of the HAP.
-   * @param InstallParam Indicates the userId and whether keep data.
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @devices phone, tablet, tv, wearable, car
+   * @param bundleFilePaths Indicates the path where the bundle of the application is stored. The path should be the
+   *                        relative path to the data directory of the current application.
+   * @param installParam Indicates other parameters required for the installation.
    * @return InstallStatus
+   * @permission ohos.permission.INSTALL_BUNDLE
    */
   install(bundleFilePaths: Array<string>, param: InstallParam, callback: AsyncCallback<InstallStatus>): void;
 
   /**
    * Uninstall an application.
    *
-   * @devices phone, tablet
-   * @since 3
-   * @SysCap BMS
-   * @param bundleName Indicates the bundle name.
-   * @param InstallParam Indicates the userId and whether keep data.
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @devices phone, tablet, tv, wearable, car
+   * @param bundleName Indicates the bundle name of the application to be uninstalled.
+   * @param installParam Indicates other parameters required for the uninstallation.
    * @return InstallStatus
+   * @permission ohos.permission.INSTALL_BUNDLE
    */
   uninstall(bundleName: string, param: InstallParam, callback: AsyncCallback<InstallStatus>): void;
 }

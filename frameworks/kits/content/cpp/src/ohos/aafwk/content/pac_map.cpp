@@ -99,7 +99,7 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         std::size_t size = value.size();                                                     \
         sptr<IArray> ao = new Array(size, g_IID_##I##id);                                    \
         for (std::size_t i = 0; i < size; i++) {                                             \
-            ao->Set(i, id::Box(value[i]));                                                   \
+            ao->Set(i, id::Box((value)[i]));                                                 \
         }                                                                                    \
         (mapList).emplace(key, sptr<IInterface>(static_cast<IInterface *>(ao.GetRefPtr()))); \
     } while (0);
@@ -112,7 +112,7 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
                 if (Array::Is##id##Array(IArray::Query(it->second.GetRefPtr()))) { \
                     auto func = [&](IInterface *object) {                          \
                         if (I##id::Query(object) != nullptr) {                     \
-                            value.push_back(id::Unbox(I##id::Query(object)));      \
+                            (value).push_back(id::Unbox(I##id::Query(object)));    \
                         }                                                          \
                     };                                                             \
                     Array::ForEach(IArray::Query(it->second.GetRefPtr()), func);   \
@@ -121,6 +121,15 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         }                                                                          \
     } while (0);
 
+template <typename IClassName, typename baseValue>
+static void GetBaseDataValue(OHOS::AAFwk::IInterface *baseObj, Json::Value &json, int type)
+{
+    IClassName *data = IClassName::Query(baseObj);
+    baseValue val = 0;
+    data->GetValue(val);
+    json["data"] = val;
+    json["type"] = type;
+}
 #define GET_BASE_DATA_VALUE(id, it, value, json, type)        \
     do {                                                      \
         I##id *data = I##id::Query((it)->second.GetRefPtr()); \
@@ -130,6 +139,19 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         (json)["type"] = type;                                \
     } while (0);
 
+template <typename RawType>
+static std::string RawTypeToString(const RawType value, unsigned int precisionAfterPoint);
+
+template <typename IClassName, typename ClassName, typename baseValue>
+static void GetBaseFloatDoubleDataValue(OHOS::AAFwk::IInterface *baseObj, Json::Value &json, int type, int precision)
+{
+    IClassName *data = IClassName::Query(baseObj);
+    if (data != nullptr) {
+        baseValue val = ClassName::Unbox(data);
+        json["data"] = RawTypeToString<baseValue>(val, precision);
+        json["type"] = type;
+    }
+}
 #define GET_BASE_FLOAT_DOUBLE_DATA_VALUE(iid, id, it, value, precision, json, type) \
     do {                                                                            \
         iid *data = iid::Query((it)->second);                                       \
@@ -158,6 +180,24 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         (json)["type"] = type;                                \
     } while (0);
 
+template <typename IClassName, typename ClassName, typename valueType>
+static void PacmapGetArrayVal(OHOS::AAFwk::IInterface *ao, std::vector<valueType> &array)
+{
+    if (ao == nullptr) {
+        return;
+    }
+    if (IArray::Query(ao) != nullptr) {
+        auto func = [&](AAFwk::IInterface *object) {
+            if (object != nullptr) {
+                IClassName *value = IClassName::Query(object);
+                if (value != nullptr) {
+                    array.emplace_back(ClassName::Unbox(value));
+                }
+            }
+        };
+        Array::ForEach(IArray::Query(ao), func);
+    }
+}
 #define PAC_MAP_GET_ARRAY_VAL(idInterface, id, ao, array)                  \
     do {                                                                   \
         if ((ao) == nullptr) {                                             \
@@ -1204,26 +1244,28 @@ static std::string RawTypeToString(const RawType value, unsigned int precisionAf
 
 bool PacMap::GetBaseJsonValue(PacMapList::const_iterator &it, Json::Value &json) const
 {
-    // base data  : long =>string
+    // base data  : short
     if (IShort::Query(it->second.GetRefPtr()) != nullptr) {
-        GET_BASE_DATA_VALUE(Short, it, short, json, PACMAP_DATA_SHORT)
+        GetBaseDataValue<IShort, short>(it->second.GetRefPtr(), json, PACMAP_DATA_SHORT);
     } else if (IInteger::Query(it->second.GetRefPtr()) != nullptr) {
-        GET_BASE_DATA_VALUE(Integer, it, int, json, PACMAP_DATA_INTEGER)
+        GetBaseDataValue<IInteger, int>(it->second.GetRefPtr(), json, PACMAP_DATA_INTEGER);
     } else if (ILong::Query(it->second.GetRefPtr()) != nullptr) {
         // long:string
         GET_BASE_LONG_DATA_VALUE(Long, it, long, json, PACMAP_DATA_LONG)
     } else if (IChar::Query(it->second.GetRefPtr()) != nullptr) {
-        GET_BASE_DATA_VALUE(Char, it, zchar, json, PACMAP_DATA_CHAR)
+        GetBaseDataValue<IChar, zchar>(it->second.GetRefPtr(), json, PACMAP_DATA_CHAR);
     } else if (IByte::Query(it->second.GetRefPtr()) != nullptr) {
-        GET_BASE_DATA_VALUE(Byte, it, byte, json, PACMAP_DATA_BYTE)
+        GetBaseDataValue<IByte, byte>(it->second.GetRefPtr(), json, PACMAP_DATA_BYTE);
     } else if (IBoolean::Query(it->second.GetRefPtr()) != nullptr) {
-        GET_BASE_DATA_VALUE(Boolean, it, bool, json, PACMAP_DATA_BOOLEAN)
+        GetBaseDataValue<IBoolean, bool>(it->second.GetRefPtr(), json, PACMAP_DATA_BOOLEAN);
     } else if (IFloat::Query(it->second.GetRefPtr()) != nullptr) {
         // base long:string
-        GET_BASE_FLOAT_DOUBLE_DATA_VALUE(IFloat, Float, it, float, FLOAT_PRECISION, json, PACMAP_DATA_FLOAT)
+        GetBaseFloatDoubleDataValue<IFloat, Float, float>(
+            it->second.GetRefPtr(), json, PACMAP_DATA_FLOAT, FLOAT_PRECISION);
     } else if (IDouble::Query(it->second.GetRefPtr()) != nullptr) {
         // base :double to string
-        GET_BASE_FLOAT_DOUBLE_DATA_VALUE(IDouble, Double, it, double, DOUBLE_PRECISION, json, PACMAP_DATA_DOUBLE)
+        GetBaseFloatDoubleDataValue<IDouble, Double, double>(
+            it->second.GetRefPtr(), json, PACMAP_DATA_DOUBLE, DOUBLE_PRECISION);
     } else if (IString::Query(it->second.GetRefPtr()) != nullptr) {
         GET_BASE_STRING_DATA_VALUE(String, it, std::string, json, PACMAP_DATA_STRING)
     } else if (IArray::Query(it->second.GetRefPtr()) != nullptr) {
@@ -1347,39 +1389,39 @@ bool PacMap::GetArrayJsonValue(PacMapList::const_iterator &it, Json::Value &json
         return false;
     }
     if (Array::IsShortArray(array)) {
-        std::vector<short> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IShort, AAFwk::Short, it->second.GetRefPtr(), array)
-        return ToJsonArrayShort(array, json, PACMAP_DATA_ARRAY_SHORT);
+        std::vector<short> arrayData;
+        PacmapGetArrayVal<AAFwk::IShort, AAFwk::Short, short>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayShort(arrayData, json, PACMAP_DATA_ARRAY_SHORT);
     } else if (Array::IsIntegerArray(array)) {
-        std::vector<int> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IInteger, AAFwk::Integer, it->second.GetRefPtr(), array)
-        return ToJsonArrayInt(array, json, PACMAP_DATA_ARRAY_INTEGER);
+        std::vector<int> arrayData;
+        PacmapGetArrayVal<AAFwk::IInteger, AAFwk::Integer, int>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayInt(arrayData, json, PACMAP_DATA_ARRAY_INTEGER);
     } else if (Array::IsLongArray(array)) {
-        std::vector<long> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::ILong, AAFwk::Long, it->second.GetRefPtr(), array);
-        return ToJsonArrayLong(array, json, PACMAP_DATA_ARRAY_LONG);
+        std::vector<long> arrayData;
+        PacmapGetArrayVal<AAFwk::ILong, AAFwk::Long, long>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayLong(arrayData, json, PACMAP_DATA_ARRAY_LONG);
     } else if (Array::IsCharArray(array)) {
         return false;
     } else if (Array::IsByteArray(array)) {
-        std::vector<byte> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IByte, AAFwk::Byte, it->second.GetRefPtr(), array);
-        return ToJsonArrayByte(array, json, PACMAP_DATA_ARRAY_BYTE);
+        std::vector<byte> arrayData;
+        PacmapGetArrayVal<AAFwk::IByte, AAFwk::Byte, byte>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayByte(arrayData, json, PACMAP_DATA_ARRAY_BYTE);
     } else if (Array::IsBooleanArray(array)) {
-        std::vector<bool> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IBoolean, AAFwk::Boolean, it->second.GetRefPtr(), array);
-        return ToJsonArrayBoolean(array, json, PACMAP_DATA_ARRAY_BOOLEAN);
+        std::vector<bool> arrayData;
+        PacmapGetArrayVal<AAFwk::IBoolean, AAFwk::Boolean, bool>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayBoolean(arrayData, json, PACMAP_DATA_ARRAY_BOOLEAN);
     } else if (Array::IsFloatArray(array)) {
-        std::vector<float> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IFloat, AAFwk::Float, it->second.GetRefPtr(), array);
-        return ToJsonArrayFloat(array, json, PACMAP_DATA_ARRAY_FLOAT);
+        std::vector<float> arrayData;
+        PacmapGetArrayVal<AAFwk::IFloat, AAFwk::Float, float>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayFloat(arrayData, json, PACMAP_DATA_ARRAY_FLOAT);
     } else if (Array::IsDoubleArray(array)) {
-        std::vector<double> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IDouble, AAFwk::Double, it->second.GetRefPtr(), array);
-        return ToJsonArrayDouble(array, json, PACMAP_DATA_ARRAY_DOUBLE);
+        std::vector<double> arrayData;
+        PacmapGetArrayVal<AAFwk::IDouble, AAFwk::Double, double>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayDouble(arrayData, json, PACMAP_DATA_ARRAY_DOUBLE);
     } else if (Array::IsStringArray(array)) {
-        std::vector<std::string> array;
-        PAC_MAP_GET_ARRAY_VAL(AAFwk::IString, AAFwk::String, it->second.GetRefPtr(), array);
-        return ToJsonArrayString(array, json, PACMAP_DATA_ARRAY_STRING);
+        std::vector<std::string> arrayData;
+        PacmapGetArrayVal<AAFwk::IString, AAFwk::String, std::string>(it->second.GetRefPtr(), arrayData);
+        return ToJsonArrayString(arrayData, json, PACMAP_DATA_ARRAY_STRING);
     } else {
         return false;
     }
