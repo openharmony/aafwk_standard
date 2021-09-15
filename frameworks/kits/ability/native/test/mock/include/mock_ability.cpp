@@ -135,7 +135,6 @@ void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int
     return;
 }
 
-#ifdef WMS_COMPILE
 /**
  * @brief Inflates UI controls by using WindowConfig.
  *
@@ -163,7 +162,6 @@ std::unique_ptr<Window> &Ability::GetWindow(int windowID)
 
     return abilityWindow_->GetWindow(windowID);
 }
-#endif  // WMS_COMPILE
 
 int Ability::GetVolumeTypeAdjustedByKey()
 {
@@ -375,11 +373,6 @@ std::string Ability::GetOriginalDeviceId()
 std::shared_ptr<ContinuationState> Ability::GetContinuationState()
 {
     return nullptr;
-}
-
-bool Ability::ReverseContinueAbility()
-{
-    return false;
 }
 
 std::shared_ptr<AbilityPackage> Ability::GetAbilityPackage()

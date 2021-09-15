@@ -61,6 +61,7 @@ public:
     MOCK_METHOD1(UnlockMission, int(int));
     MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
     MOCK_METHOD0(GetMissionLockModeState, int());
+    MOCK_METHOD1(UpdateConfiguration, int(const DummyConfiguration &));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -73,6 +74,18 @@ public:
     MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
+
+    MOCK_METHOD4(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
+                                   const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
+    MOCK_METHOD1(MoveMissionToSplitScreenStack, int(const MissionOption &missionOption));
+    MOCK_METHOD2(
+        ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
+    MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
+    MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
+    MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
+    MOCK_METHOD1(CloseMultiWindow, int(int missionId));
+    MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
 
     void Wait()
     {

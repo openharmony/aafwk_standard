@@ -35,6 +35,7 @@ bool BundleMgrProxy::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abil
     if (eleName.GetBundleName().empty()) {
         return false;
     }
+    abilityInfo.visible = true;
     abilityInfo.name = eleName.GetAbilityName();
     abilityInfo.bundleName = eleName.GetBundleName();
     abilityInfo.applicationName = eleName.GetAbilityName() + "App";
@@ -71,7 +72,7 @@ int BundleMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessagePa
 }
 
 bool BundleMgrService::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
-{   
+{
     bundleInfo.uid = 0;
     return true;
 }
@@ -86,6 +87,7 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
     std::string abilityNameTemp = elementTemp.GetAbilityName();
     std::string bundleNameTemp = elementTemp.GetBundleName();
     abilityInfo.deviceId = elementTemp.GetDeviceID();
+    abilityInfo.visible = true;
 
     if (bundleNameTemp.empty() || abilityNameTemp.empty()) {
         return false;
@@ -151,6 +153,12 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
     }
 
     return false;
+}
+
+bool BundleMgrService::NotifyActivityLifeStatus(
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+{
+    return true;
 }
 
 }  // namespace AppExecFwk

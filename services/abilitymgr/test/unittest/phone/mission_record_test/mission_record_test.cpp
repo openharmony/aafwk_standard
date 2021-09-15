@@ -14,7 +14,11 @@
  */
 
 #include <gtest/gtest.h>
+#define private public
+#define protected public
 #include "mission_record.h"
+#undef private
+#undef protected
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
@@ -53,6 +57,7 @@ AbilityRequest MissionRecordTest::GenerateAbilityRequest(const std::string &devi
     want.SetElement(element);
 
     AbilityInfo abilityInfo;
+    abilityInfo.visible = true;
     abilityInfo.applicationName = appName;
     ApplicationInfo appinfo;
     appinfo.name = appName;
@@ -303,5 +308,80 @@ HWTEST_F(MissionRecordTest, stack_operating_014, TestSize.Level1)
     missionRecord->SetIsLauncherCreate();
     EXPECT_EQ(true, missionRecord->IsLauncherCreate());
 }
+
+/*
+ * Feature: MissionRecord
+ * Function: NA
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionRecordTest, stack_operating_015, TestSize.Level1)
+{
+    auto missionRecord = std::make_shared<MissionRecord>();
+    EXPECT_EQ(nullptr, missionRecord->FindChild(-1));
+}
+
+/*
+ * Feature: MissionRecord
+ * Function: NA
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionRecordTest, stack_operating_016, TestSize.Level1)
+{
+    auto missionRecord = std::make_shared<MissionRecord>();
+    missionRecord->RemoveAll();
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    missionRecord->AddAbilityRecordToTop(ability);
+
+    EXPECT_EQ(nullptr, missionRecord->FindChild(2));
+}
+
+/*
+ * Feature: MissionRecord
+ * Function: NA
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionRecordTest, stack_operating_017, TestSize.Level1)
+{
+    auto missionRecord = std::make_shared<MissionRecord>();
+    missionRecord->RemoveAll();
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    missionRecord->AddAbilityRecordToTop(ability);
+
+    auto iter = missionRecord->abilities_.begin();
+    EXPECT_EQ((*iter), missionRecord->FindChild(0));
+}
+
+/*
+ * Feature: MissionRecord
+ * Function: NA
+ * SubFunction: NA
+ * FunctionPoints: SetIsLauncherCreate IsLauncherCreate
+ * EnvConditions:NA
+ * CaseDescription: SetIsLauncherCreate IsLauncherCreate UT.
+ */
+HWTEST_F(MissionRecordTest, stack_Resume_001, TestSize.Level1)
+{
+    auto missionRecord = std::make_shared<MissionRecord>();
+
+    std::shared_ptr<MissionRecord> backup;
+    backup = std::make_shared<MissionRecord>(missionRecord);
+    missionRecord->abilities_.clear();
+    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    backup->abilities_.push_front(ability);
+
+    missionRecord->Resume(backup);
+    EXPECT_TRUE(1 == missionRecord->abilities_.size());
+    EXPECT_EQ(true, ability->IsRestarting());
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -98,6 +98,11 @@ std::shared_ptr<MissionRecord> MissionStack::GetTopMissionRecord()
     return missions_.front();
 }
 
+bool MissionStack::IsTopMissionRecord(std::shared_ptr<MissionRecord> &missionRecord) const
+{
+    return missions_.front() == missionRecord;
+}
+
 std::shared_ptr<MissionRecord> MissionStack::GetBottomMissionRecord()
 {
     if (missions_.empty()) {
@@ -262,6 +267,36 @@ bool MissionStack::IsExistMissionRecord(int missionId)
         }
     }
     return false;
+}
+
+bool MissionStack::IsEqualStackId(int stackId)
+{
+    return (stackId == missionStackId_);
+}
+
+bool MissionStack::IsEmpty()
+{
+    return missions_.empty();
+}
+
+std::shared_ptr<ConfigurationHolder> MissionStack::GetParent()
+{
+    return nullptr;
+}
+
+unsigned int MissionStack::GetChildSize()
+{
+    return missions_.size();
+}
+
+std::shared_ptr<ConfigurationHolder> MissionStack::FindChild(unsigned int index)
+{
+    if (index < missions_.size() && index >= 0) {
+        auto iter = missions_.begin();
+        std::advance(iter, index);
+        return (*iter);
+    }
+    return nullptr;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -16,6 +16,7 @@
 #include <cstring>
 #include "napi_common_util.h"
 #include "napi_common_data.h"
+#include "napi_common_error.h"
 #include "hilog_wrapper.h"
 #include "securec.h"
 
@@ -52,6 +53,13 @@ napi_value WrapVoidToJS(napi_env env)
 {
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_null(env, &result));
+    return result;
+}
+
+napi_value WrapUndefinedToJS(napi_env env)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
@@ -217,7 +225,7 @@ std::string UnwrapStringFromJS(napi_env env, napi_value param, const std::string
     if (buf == nullptr) {
         return value;
     }
-    memset_s(buf, sizeof(buf), 0, sizeof(buf));
+    memset_s(buf, size + 1, 0, size + 1);
 
     bool rev = napi_get_value_string_utf8(env, param, buf, size + 1, &size) == napi_ok;
     if (rev) {
@@ -247,7 +255,7 @@ bool UnwrapStringFromJS2(napi_env env, napi_value param, std::string &value)
     if (buf == nullptr) {
         return false;
     }
-    memset_s(buf, sizeof(buf), 0, sizeof(buf));
+    memset_s(buf, (size + 1), 0, (size + 1));
 
     bool rev = napi_get_value_string_utf8(env, param, buf, size + 1, &size) == napi_ok;
     if (rev) {
@@ -784,12 +792,32 @@ AsyncJSCallbackInfo *CreateAsyncJSCallbackInfo(napi_env env)
         .asyncWork = nullptr,
         .deferred = nullptr,
         .ability = ability,
+        .abilityType = AbilityType::UNKNOWN,
         .aceCallback = nullptr,
     };
     if (asyncCallbackInfo != nullptr) {
         ClearThreadReturnData(&asyncCallbackInfo->native_data);
     }
     return asyncCallbackInfo;
+}
+
+void FreeAsyncJSCallbackInfo(AsyncJSCallbackInfo **asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        return;
+    }
+    if (*asyncCallbackInfo == nullptr) {
+        return;
+    }
+
+    if ((*asyncCallbackInfo)->cbInfo.callback != nullptr && (*asyncCallbackInfo)->cbInfo.env != nullptr) {
+        napi_delete_reference((*asyncCallbackInfo)->cbInfo.env, (*asyncCallbackInfo)->cbInfo.callback);
+        (*asyncCallbackInfo)->cbInfo.callback = nullptr;
+        (*asyncCallbackInfo)->cbInfo.env = nullptr;
+    }
+
+    delete (*asyncCallbackInfo);
+    *asyncCallbackInfo = nullptr;
 }
 
 /**
@@ -808,6 +836,9 @@ bool WrapThreadReturnData(napi_env env, const ThreadReturnData *data, napi_value
     }
 
     switch (data->data_type) {
+        case NVT_UNDEFINED:
+            NAPI_CALL_BASE(env, napi_get_undefined(env, value), false);
+            break;
         case NVT_INT32:
             NAPI_CALL_BASE(env, napi_create_int32(env, data->int32_value, value), false);
             break;
@@ -854,7 +885,7 @@ bool CreateAsyncCallback(napi_env env, napi_value param, AsyncJSCallbackInfo *ca
 napi_ref CreateCallbackRefFromJS(napi_env env, napi_value param)
 {
     if (env == nullptr || param == nullptr) {
-        HILOG_INFO("%{public}s called, env or param is null", __func__);
+        HILOG_INFO("%{public}s called, env or param is null  ", __func__);
         return nullptr;
     }
 
@@ -996,8 +1027,13 @@ void CompletePromiseCallbackWork(napi_env env, napi_status status, void *data)
     }
 
     napi_value result = 0;
-    WrapThreadReturnData(env, &asyncCallbackInfo->native_data, &result);
-    napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
+    if (asyncCallbackInfo->error_code == NAPI_ERR_NO_ERROR) {
+        WrapThreadReturnData(env, &asyncCallbackInfo->native_data, &result);
+        napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
+    } else {
+        result = GetCallbackErrorValue(env, asyncCallbackInfo->error_code);
+        napi_reject_deferred(env, asyncCallbackInfo->deferred, result);
+    }
     napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
     delete asyncCallbackInfo;
     asyncCallbackInfo = nullptr;

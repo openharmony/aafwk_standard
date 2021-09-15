@@ -50,6 +50,8 @@ public:
 
     void ScheduleRestoreAbilityState(const PacMap &inState) override;
 
+    void ScheduleUpdateConfiguration(const DummyConfiguration &config) override;
+
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter) override;
 
     int OpenFile(const Uri &uri, const std::string &mode) override;
@@ -70,6 +72,12 @@ public:
     bool Reload(const Uri &uri, const PacMap &extras) override;
 
     int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override;
+
+    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
+    Uri NormalizeUri(const Uri &uri) override;
+    Uri DenormalizeUri(const Uri &uri) override;
+
+    void NotifyTopActiveAbilityChanged(bool flag) override;
 
 private:
     AbilityResult result_;

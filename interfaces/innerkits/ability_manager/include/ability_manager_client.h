@@ -96,7 +96,7 @@ public:
      * @param requestCode Ability request code.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, int requestCode = -1);
+    ErrCode StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
      * StartAbility with want, send want to ability manager service.
@@ -106,7 +106,19 @@ public:
      * @param requestCode Ability request code.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1);
+    ErrCode StartAbility(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
+
+    /**
+     * Starts a new ability with specific start settings.
+     *
+     * @param want Indicates the ability to start.
+     * @param requestCode the resultCode of the ability to start.
+     * @param abilityStartSetting Indicates the setting ability used to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
      * TerminateAbility with want, return want from ability manager service.
@@ -324,6 +336,8 @@ public:
      */
     int GetMissionLockModeState();
 
+    int UpdateConfiguration(const DummyConfiguration &config);
+
     sptr<IWantSender> GetWantSender(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken);
 
     ErrCode SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo);
@@ -345,6 +359,63 @@ public:
     void UnregisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &recevier);
 
     ErrCode GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want);
+
+    /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MoveMissionToFloatingStack(const MissionOption &missionOption);
+
+    /**
+     * Moving mission to the specified stack by mission option(Enter floating window mode).
+     * @param missionOption, target mission option
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MoveMissionToSplitScreenStack(const MissionOption &missionOption);
+
+    /**
+     * minimize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MinimizeMultiWindow(int missionId);
+
+    /**
+     * maximize multiwindow by mission id.
+     * @param missionId, the id of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MaximizeMultiWindow(int missionId);
+
+    /**
+     * Change the focus of ability in the mission stack.
+     * @param lostToken, the token of lost focus ability
+     * @param getToken, the token of get focus ability
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken);
+
+    /**
+     * get missions info of floating mission stack.
+     * @param list, mission info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetFloatingMissions(std::vector<AbilityMissionInfo> &list);
+
+    /**
+     * close multiwindow by mission id.
+     * @param missionId, the id of target mission.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode CloseMultiWindow(int missionId);
+
+    /**
+     * set special mission stack default settings.
+     * @param stackSetting, mission stack default settings.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode SetMissionStackSetting(const StackSetting &stackSetting);
 
 private:
     static std::mutex mutex_;

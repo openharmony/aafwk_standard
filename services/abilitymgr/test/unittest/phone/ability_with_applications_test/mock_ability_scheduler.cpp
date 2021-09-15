@@ -52,6 +52,9 @@ void AbilityScheduler::ScheduleSaveAbilityState(PacMap &outState)
 void AbilityScheduler::ScheduleRestoreAbilityState(const PacMap &inState)
 {}
 
+void AbilityScheduler::ScheduleUpdateConfiguration(const DummyConfiguration &config)
+{}
+
 std::vector<std::string> AbilityScheduler::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
     std::vector<std::string> types;
@@ -103,6 +106,24 @@ int AbilityScheduler::BatchInsert(const Uri &uri, const std::vector<ValuesBucket
 {
     return -1;
 }
+
+Uri AbilityScheduler::NormalizeUri(const Uri &uri)
+{
+    Uri urivalue("");
+    return urivalue;
+}
+
+Uri AbilityScheduler::DenormalizeUri(const Uri &uri)
+{
+    Uri urivalue("");
+    return urivalue;
+}
+
+void AbilityScheduler::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
+{}
+
+void AbilityScheduler::NotifyTopActiveAbilityChanged(bool flag)
+{}
 
 }  // namespace AAFwk
 }  // namespace OHOS

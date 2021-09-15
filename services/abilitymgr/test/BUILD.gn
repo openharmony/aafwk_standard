@@ -20,12 +20,23 @@ EVENT_DIR = "//base/notification/ces_standard/"
 ohos_source_set("abilityms_test_source") {
   sources = abilityms_files
   include_dirs = [
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/",
     "${EVENT_DIR}/frameworks/core/include",
     "${EVENT_DIR}/interfaces/innerkits/native/include",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
   ]
+
+  external_dependent_files = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_state_callback_host.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_mgr_client.cpp",
+    "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_state_callback_proxy.cpp",
+  ]
+
+  sources += external_dependent_files
 
   public_configs = [
     "${services_path}/abilitymgr:abilityms_config",
@@ -73,6 +84,7 @@ group("unittest") {
     "unittest/phone/ability_with_applications_test:unittest",
     "unittest/phone/abilityms_appms_test:unittest",
     "unittest/phone/app_scheduler_test:unittest",
+    "unittest/phone/configuration_holder_test:unittest",
     "unittest/phone/connection_record_test:unittest",
     "unittest/phone/data_ability_manager_test:unittest",
     "unittest/phone/data_ability_record_test:unittest",
@@ -85,6 +97,7 @@ group("unittest") {
     "unittest/phone/pending_want_key_test:unittest",
     "unittest/phone/pending_want_manager_test:unittest",
     "unittest/phone/pending_want_record_test:unittest",
+    "unittest/phone/resume_mission_container_test:unittest",
     "unittest/phone/sender_info_test:unittest",
     "unittest/phone/terminate_ability_test:unittest",
     "unittest/phone/want_receiver_proxy_test:unittest",

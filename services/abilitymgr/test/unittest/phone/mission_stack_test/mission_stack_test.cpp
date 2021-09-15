@@ -14,8 +14,12 @@
  */
 
 #include <gtest/gtest.h>
+#define private public
+#define protected public
 #include "mission_record.h"
 #include "mission_stack.h"
+#undef private
+#undef protected
 #include "hilog_wrapper.h"
 
 using namespace testing::ext;
@@ -56,6 +60,7 @@ AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::
     want.SetElement(element);
 
     AbilityInfo abilityInfo;
+    abilityInfo.visible = true;
     abilityInfo.applicationName = appName;
     ApplicationInfo appinfo;
     appinfo.name = appName;
@@ -448,5 +453,55 @@ HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level0)
 
     EXPECT_EQ(true, missionStack_->RemoveMissionRecord(15));
 }
+
+/*
+ * Feature: MissionStack
+ * Function: FindChild
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionStackTest, MS_oprator_016, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, missionStack_->FindChild(-1));
+}
+
+/*
+ * Feature: MissionStack
+ * Function: FindChild
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionStackTest, MS_oprator_017, TestSize.Level1)
+{
+    missionStack_->missions_.clear();
+    auto missionRecord = std::make_shared<MissionRecord>();
+
+    missionStack_->missions_.push_back(missionRecord);
+
+    EXPECT_EQ(nullptr, missionStack_->FindChild(2));
+}
+
+/*
+ * Feature: MissionStack
+ * Function: FindChild
+ * SubFunction: NA
+ * FunctionPoints: Find Child
+ * EnvConditions:NA
+ * CaseDescription: Find Child UT.
+ */
+HWTEST_F(MissionStackTest, MS_oprator_018, TestSize.Level1)
+{
+    missionStack_->missions_.clear();
+    auto missionRecord = std::make_shared<MissionRecord>();
+
+    missionStack_->missions_.push_back(missionRecord);
+    auto iter = missionStack_->missions_.begin();
+    EXPECT_EQ((*iter), missionStack_->FindChild(0));
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

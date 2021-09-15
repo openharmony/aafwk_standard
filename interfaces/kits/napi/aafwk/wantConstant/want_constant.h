@@ -31,6 +31,7 @@ namespace AppExecFwk {
 napi_value WantConstantInit(napi_env env, napi_value exports);
 napi_value ActionConstructor(napi_env env, napi_callback_info info);
 void SetNamedProperty(napi_env env, napi_value dstObj, const char *objName, const char *propName);
+void SetNamedProperty(napi_env env, napi_value dstObj, const int32_t objValue, const char *propName);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_WANT_CONSTANT_H */

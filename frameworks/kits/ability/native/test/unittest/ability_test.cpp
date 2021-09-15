@@ -409,7 +409,6 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_0100, Function | Medium
     GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAbility_0100 end";
 }
 
-#ifdef WMS_COMPILE
 HWTEST_F(AbilityBaseTest, AaFwk_Ability_GetWindow_001, Function | MediumTest | Level1)
 {
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
@@ -420,7 +419,6 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_GetWindow_001, Function | MediumTest | L
     sptr<IRemoteObject> token = nullptr;
     ability_->Init(abilityInfo, application, handler, token);
 }
-#endif  // WMS_COMPILE
 
 /**
  * @tc.number: AaFwk_Ability_OnStart_0100

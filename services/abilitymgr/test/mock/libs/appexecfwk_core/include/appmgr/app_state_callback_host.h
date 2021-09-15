@@ -16,25 +16,48 @@
 #ifndef OHOS_AppExecFwk_APP_STATE_CALLBACK_HOST_H
 #define OHOS_AppExecFwk_APP_STATE_CALLBACK_HOST_H
 
+#include <map>
+#include "iremote_stub.h"
+#include "nocopyable.h"
+#include "string_ex.h"
 #include "app_mgr_constants.h"
-#include "iapp_state_callback.h"
+#include "appmgr/iapp_state_callback.h"
 #include "iremote_object.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 
-class AppStateCallbackHost : public IAppStateCallback {
+class AppStateCallbackHost : public IRemoteStub<IAppStateCallback> {
 public:
-    AppStateCallbackHost() = default;
-    virtual ~AppStateCallbackHost() = default;
+    AppStateCallbackHost();
+    virtual ~AppStateCallbackHost();
 
-    void OnAppStateChanged(const std::string &__attribute__((unused)) appName,
-        const ApplicationState __attribute__((unused)) state) override
-    {}
+    virtual int OnRemoteRequest(
+        uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
-    void OnAbilityRequestDone(const sptr<IRemoteObject> &__attribute__((unused)) token,
-        const AbilityState __attribute__((unused)) state) override
-    {}
+    /**
+     * AbilityMgr's request is done.
+     *
+     * @param token Ability token.
+     * @param state Application state.
+     */
+    virtual void OnAbilityRequestDone(const sptr<IRemoteObject> &, const AbilityState) override;
+
+    /**
+     * Application state changed callback.
+     *
+     * @param appProcessData Process data
+     */
+    virtual void OnAppStateChanged(const AppProcessData &) override;
+
+private:
+    int32_t HandleOnAppStateChanged(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleOnAbilityRequestDone(MessageParcel &data, MessageParcel &reply);
+
+    using AppStateCallbackFunc = int32_t (AppStateCallbackHost::*)(MessageParcel &data, MessageParcel &reply);
+    std::map<uint32_t, AppStateCallbackFunc> memberFuncMap_;
+
+    DISALLOW_COPY_AND_MOVE(AppStateCallbackHost);
 };
 
 }  // namespace AppExecFwk

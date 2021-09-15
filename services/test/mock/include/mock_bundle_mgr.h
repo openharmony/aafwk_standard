@@ -47,6 +47,10 @@ auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     abilityInfo.applicationInfo.name = "Helloworld";
     abilityInfo.type = AbilityType::PAGE;
     abilityInfo.applicationInfo.isLauncherApp = true;
+
+    if (elementTemp.GetAbilityName() == "luncher") {
+        abilityInfo.configChanges.push_back("fontSize");
+    }
     return true;
 };
 
@@ -71,6 +75,17 @@ auto HiMusicInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementN
         abilityInfo.process = "p2";
         abilityInfo.launchMode = LaunchMode::SINGLETON;
     }
+    if (elementTemp.GetAbilityName() == "Music") {
+        abilityInfo.process = "p1";
+        abilityInfo.launchMode = LaunchMode::STANDARD;
+        abilityInfo.configChanges.push_back("layout");
+    }
+
+    if (elementTemp.GetAbilityName() == "MusicTon") {
+        abilityInfo.process = "p1";
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+        abilityInfo.configChanges.push_back("layout");
+    }
     return true;
 };
 
@@ -87,6 +102,10 @@ auto HiRadioInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementN
     }
     if (elementTemp.GetAbilityName() == "RadioTopAbility") {
         abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    if (elementTemp.GetAbilityName() == "Radio") {
+        abilityInfo.launchMode = LaunchMode::STANDARD;
+        abilityInfo.configChanges.push_back("orientation");
     }
     return true;
 };
@@ -235,6 +254,7 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -301,12 +321,18 @@ public:
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
     MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
+    MOCK_METHOD2(GetModuleUsageRecords, bool(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords));
+
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+    bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
+    {
+        return true;
+    };
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
-
-
+    bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
     BundleMgrService()
     {
         abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);

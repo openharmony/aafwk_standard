@@ -28,7 +28,8 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
  */
 void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGI("PageAbilityImpl::sourceState:%{public}d; targetState: %{public}d; isNewWant: %{public}d",
+    APP_LOGI("PageAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
+             "isNewWant: %{public}d",
         lifecycleState_,
         targetState.state,
         targetState.isNewWant);
@@ -41,6 +42,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
 
     if (lifecycleState_ == AAFwk::ABILITY_STATE_INITIAL) {
         Start(want);
+        CheckAndRestore();
     }
 
     if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
@@ -50,8 +52,11 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
+        APP_LOGI("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state);
+        APP_LOGI("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
+    APP_LOGI("PageAbilityImpl::HandleAbilityTransaction end");
 }
 
 /**
@@ -65,7 +70,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
  */
 bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGE("PageAbilityImpl::AbilityTransaction called.");
+    APP_LOGI("PageAbilityImpl::AbilityTransaction begin");
     bool ret = true;
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
@@ -105,6 +110,7 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
             break;
         }
     }
+    APP_LOGI("PageAbilityImpl::AbilityTransaction end: retVal = %{public}d", (int)ret);
     return ret;
 }
 
@@ -119,11 +125,17 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
  */
 bool PageAbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
 {
+    APP_LOGI("PageAbilityImpl::DoKeyDown begin");
     if (ability_ == nullptr) {
         APP_LOGE("PageAbilityImpl::DoKeyDown ability_ == nullptr");
         return false;
     }
+    auto abilitInfo = ability_->GetAbilityInfo();
+    APP_LOGI("PageAbilityImpl::DoKeyDown called %{public}s And Focus is %{public}s",
+        abilitInfo->name.c_str(),
+        ability_->HasWindowFocus() ? "true" : "false");
 
+    APP_LOGI("PageAbilityImpl::DoKeyDown end");
     return ability_->OnKeyDown(keyCode, keyEvent);
 }
 
@@ -138,11 +150,17 @@ bool PageAbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
  */
 bool PageAbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
 {
+    APP_LOGI("PageAbilityImpl::DoKeyUp begin");
     if (ability_ == nullptr) {
         APP_LOGE("PageAbilityImpl::DoKeyUp ability_ == nullptr");
         return false;
     }
+    auto abilitInfo = ability_->GetAbilityInfo();
+    APP_LOGI("PageAbilityImpl::DoKeyUp called %{public}s And Focus is %{public}s",
+        abilitInfo->name.c_str(),
+        ability_->HasWindowFocus() ? "true" : "false");
 
+    APP_LOGI("PageAbilityImpl::DoKeyUp end");
     return ability_->OnKeyUp(keyCode, keyEvent);
 }
 
@@ -156,11 +174,17 @@ bool PageAbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
  */
 bool PageAbilityImpl::DoTouchEvent(const TouchEvent &touchEvent)
 {
+    APP_LOGI("PageAbilityImpl::DoTouchEvent begin");
     if (ability_ == nullptr) {
         APP_LOGE("PageAbilityImpl::DoTouchEvent ability_ == nullptr");
         return false;
     }
+    auto abilitInfo = ability_->GetAbilityInfo();
+    APP_LOGI("PageAbilityImpl::OnTouchEvent called %{public}s And Focus is %{public}s",
+        abilitInfo->name.c_str(),
+        ability_->HasWindowFocus() ? "true" : "false");
 
+    APP_LOGI("PageAbilityImpl::DoTouchEvent end");
     return ability_->OnTouchEvent(touchEvent);
 }
 }  // namespace AppExecFwk

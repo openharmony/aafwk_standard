@@ -37,7 +37,7 @@ sptr<IRemoteObject> SaMgrClient::GetSystemAbility(const int32_t systemAbilityId)
         if (saMgr_ == nullptr) {
             saMgr_ = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
             if (saMgr_ == nullptr) {
-                HILOG_ERROR("%s:fail to get Registry", __func__);
+                HILOG_ERROR("Fail to get registry.");
                 return nullptr;
             }
         }

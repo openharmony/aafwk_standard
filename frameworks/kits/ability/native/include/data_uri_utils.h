@@ -44,14 +44,14 @@ public:
      * @param id
      * @return Uri( scheme://authority/path1/path2/path3/updateIDNumber....)
      */
-    static Uri AttachId(const Uri &dataUri, long id);
+    static Uri AttachId(const Uri &dataUri, long long id);
 
     /**
      * @brief Obtains the ID attached to the end of the path component of the given URI.
      * @param dataUri based on RFC 2396( Uniform Resource Identifier ).
      * @return long ID
      */
-    static long GetId(const Uri &dataUri);
+    static long long GetId(const Uri &dataUri);
 
     /**
      * @brief Deletes the ID from the end of the path component of the given URI.
@@ -66,7 +66,7 @@ public:
      * @param id indiates Update attached to the end of the path component of the given URI
      * @return Uri return is the URI after path is updated
      */
-    static Uri UpdateId(const Uri &dataUri, long id);
+    static Uri UpdateId(const Uri &dataUri, long long id);
 
     /**
      * @brief Does the end path of the path component of the given URI have an ID attached to it?

@@ -22,14 +22,13 @@ ohos_moduletest("dump_module_test") {
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/",
+    "//foundation/aafwk/standard/services/test/mock/include",
   ]
 
   sources = [
     "${services_path}/abilitymgr/test/unittest/phone/ability_with_applications_test/mock_ability_scheduler.cpp",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
     "dump_module_test.cpp",
-
-    #"${services_path}/abilitymgr/test/unittest/phone/ability_dump_test/mock_app_manager.cpp",
   ]
 
   configs = [

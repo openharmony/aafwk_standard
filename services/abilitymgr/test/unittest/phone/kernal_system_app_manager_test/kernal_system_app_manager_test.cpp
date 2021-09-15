@@ -64,6 +64,9 @@ public:
 public:
     std::shared_ptr<KernalSystemAppManager> kernalSystemMgr_;
     int usrId_ = 10;
+    Want want_;
+    AppExecFwk::AbilityInfo abilityInfo_;
+    AppExecFwk::ApplicationInfo appInfo_;
 };
 
 void KernalSystemAppManagerTest::SetUpTestCase()
@@ -606,6 +609,28 @@ HWTEST_F(KernalSystemAppManagerTest, DispatchActive_002, TestSize.Level1)
     isRemove = kernalSystemMgr_->RemoveAbilityRecord(nullptr);
     EXPECT_FALSE(isRemove);
 }
+
+/*
+ * Feature: KernalSystemAppManager
+ * Function: UpdateConfiguration
+ * SubFunction: Processing preconditions
+ * FunctionPoints:
+ * EnvConditions:Is Kernal System Ability
+ * CaseDescription: Notification status
+ */
+HWTEST_F(KernalSystemAppManagerTest, UpdateConfiguration_001, TestSize.Level1)
+{
+    EXPECT_TRUE(kernalSystemMgr_);
+
+    auto targetAbility = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
+    EXPECT_TRUE(targetAbility);
+    kernalSystemMgr_->abilities_.clear();
+    kernalSystemMgr_->abilities_.push_front(targetAbility);
+    targetAbility->SetAbilityState(AbilityState::ACTIVE);
+    const DummyConfiguration config;
+    kernalSystemMgr_->UpdateConfiguration(config);
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS
 

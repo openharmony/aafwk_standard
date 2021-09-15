@@ -69,6 +69,9 @@ public:
      * @param state,the state of ability lift cycle.
      */
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state);
+
+    void OnAppStateChanged(const AppInfo &info);
+
     /**
      * get manager's user id.
      */
@@ -86,6 +89,9 @@ public:
      * @return abilityRecord, target ability.
      */
     std::shared_ptr<AbilityRecord> GetAbilityRecordByToken(const sptr<IRemoteObject> &token);
+
+    int UpdateConfiguration(const DummyConfiguration &config);
+    void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
 private:
     /**

@@ -27,7 +27,7 @@
 #undef protected
 #include "ability_manager_errors.h"
 #include "gtest/gtest.h"
-#include "mock_bundle_manager.h"
+#include "mock_bundle_mgr.h"
 #include "want.h"
 #include "sa_mgr_client.h"
 #include "appmgr_test_service.h"
@@ -496,11 +496,11 @@ HWTEST_F(DumpModuleTest, dump_module_test_008, TestSize.Level2)
     std::vector<std::string> dumpInfo;
     std::vector<std::string> abilityNames;
 
-    ASSERT_TRUE(g_abilityMs);
+    EXPECT_TRUE(g_abilityMs);
     auto stackMgr = g_abilityMs->GetStackManager();
-    ASSERT_TRUE(stackMgr);
+    EXPECT_TRUE(stackMgr);
     auto missionRecord = stackMgr->GetTopMissionRecord();
-    ASSERT_TRUE(missionRecord);
+    EXPECT_TRUE(missionRecord);
     int id = missionRecord->GetMissionRecordId();
     args += " ";
     args += std::to_string(id);
@@ -639,7 +639,7 @@ HWTEST_F(DumpModuleTest, dump_module_test_011, TestSize.Level2)
 
     g_abilityMs->DumpState(args, result);
     auto stackMgr = g_abilityMs->GetStackManager();
-    ASSERT_TRUE(stackMgr);
+    EXPECT_TRUE(stackMgr);
     g_abilityMs->DumpWaittingAbilityQueue(waitingQueueResult);
     ASSERT_EQ(waitingQueueResult, expectResult);
 
@@ -655,7 +655,7 @@ HWTEST_F(DumpModuleTest, dump_module_test_011, TestSize.Level2)
     EXPECT_EQ(refwant2, START_ABILITY_WAITING);
 
     g_abilityMs->DumpState(args, result);
-    ASSERT_TRUE(stackMgr);
+    EXPECT_TRUE(stackMgr);
     stackMgr->DumpWaittingAbilityQueue(waitingQueueResult);
     EXPECT_NE(std::string::npos, waitingQueueResult.find("com.ix.hiRadio"));
 }
