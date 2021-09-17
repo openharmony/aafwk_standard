@@ -26,7 +26,10 @@ ohos_unittest("configuration_holder_test") {
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/include",
   ]
 
-  sources = [ "configuration_holder_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "configuration_holder_test.cpp",  # add mock file
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

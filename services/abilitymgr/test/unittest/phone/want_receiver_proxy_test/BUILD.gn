@@ -24,7 +24,10 @@ ohos_unittest("want_receiver_proxy_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
   ]
 
-  sources = [ "want_receiver_proxy_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "want_receiver_proxy_test.cpp",
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

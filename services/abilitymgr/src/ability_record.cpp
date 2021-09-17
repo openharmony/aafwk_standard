@@ -955,8 +955,6 @@ bool AbilityRecord::SupportMultWindow() const
         return false;
     }
 
-    // return (ERR_OK == DelayedSingleton<AbilityManagerService>::GetInstance()->CheckPermission(
-    //                       abilityInfo_.bundleName, AbilityConfig::FLOATING_WINDOW_PERMISSION));
     return true;
 }
 
@@ -1088,7 +1086,7 @@ unsigned int AbilityRecord::GetIntConfigChanges()
         } else if (item == "density") {
             intChangs |= CHANGE_CONFIG_DENSITY;
         } else {
-            ;
+            continue;
         }
     }
     return intChangs;

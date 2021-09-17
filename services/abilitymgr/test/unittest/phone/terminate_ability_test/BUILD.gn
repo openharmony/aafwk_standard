@@ -26,7 +26,10 @@ ohos_unittest("terminate_ability_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
   ]
 
-  sources = [ "terminate_ability_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    "terminate_ability_test.cpp",  # add mock file
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

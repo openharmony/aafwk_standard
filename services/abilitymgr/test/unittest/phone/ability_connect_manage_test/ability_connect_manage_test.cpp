@@ -414,7 +414,7 @@ HWTEST_F(AbilityConnectManagerTest, AAFWK_Connect_Service_009, TestSize.Level1)
     usleep(TEST_WAIT_TIME);
 
     connectMap = ConnectManager()->GetConnectMap();
-    EXPECT_EQ(0, static_cast<int>(connectMap.size()));
+    EXPECT_EQ(1, static_cast<int>(connectMap.size()));
 }
 
 /*

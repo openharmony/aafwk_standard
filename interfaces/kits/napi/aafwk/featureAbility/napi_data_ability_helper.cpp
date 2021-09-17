@@ -142,16 +142,15 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
 napi_value NAPI_Insert(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperInsertCB *insertCB = new (std::nothrow) DAHelperInsertCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperInsertCB *insertCB = new (std::nothrow) DAHelperInsertCB;
     if (insertCB == nullptr) {
         HILOG_ERROR("%{public}s, insertCB == nullptr.", __func__);
         return WrapVoidToJS(env);
     }
+    insertCB->cbBase.cbInfo.env = env;
+    insertCB->cbBase.asyncWork = nullptr;
+    insertCB->cbBase.deferred = nullptr;
+    insertCB->cbBase.ability = nullptr;
 
     napi_value ret = InsertWrap(env, info, insertCB);
     if (ret == nullptr) {
@@ -212,7 +211,7 @@ napi_value InsertWrap(napi_env env, napi_callback_info info, DAHelperInsertCB *i
     insertCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = InsertAsync(env, args, argcAsync, argcPromise, insertCB);
+        ret = InsertAsync(env, args, ARGS_TWO, insertCB);
     } else {
         ret = InsertPromise(env, insertCB);
     }
@@ -220,8 +219,7 @@ napi_value InsertWrap(napi_env env, napi_callback_info info, DAHelperInsertCB *i
     return ret;
 }
 
-napi_value InsertAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperInsertCB *insertCB)
+napi_value InsertAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperInsertCB *insertCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || insertCB == nullptr) {
@@ -232,9 +230,9 @@ napi_value InsertAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &insertCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &insertCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -366,12 +364,15 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
 napi_value NAPI_GetType(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperGetTypeCB *gettypeCB = new (std::nothrow) DAHelperGetTypeCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperGetTypeCB *gettypeCB = new (std::nothrow) DAHelperGetTypeCB;
+    if (gettypeCB == nullptr) {
+        HILOG_ERROR("%{public}s, gettypeCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    gettypeCB->cbBase.cbInfo.env = env;
+    gettypeCB->cbBase.asyncWork = nullptr;
+    gettypeCB->cbBase.deferred = nullptr;
+    gettypeCB->cbBase.ability = nullptr;
 
     napi_value ret = GetTypeWrap(env, info, gettypeCB);
     if (ret == nullptr) {
@@ -418,7 +419,7 @@ napi_value GetTypeWrap(napi_env env, napi_callback_info info, DAHelperGetTypeCB 
     gettypeCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = GetTypeAsync(env, args, argcAsync, argcPromise, gettypeCB);
+        ret = GetTypeAsync(env, args, ARGS_ONE, gettypeCB);
     } else {
         ret = GetTypePromise(env, gettypeCB);
     }
@@ -426,8 +427,7 @@ napi_value GetTypeWrap(napi_env env, napi_callback_info info, DAHelperGetTypeCB 
     return ret;
 }
 
-napi_value GetTypeAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperGetTypeCB *gettypeCB)
+napi_value GetTypeAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperGetTypeCB *gettypeCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || gettypeCB == nullptr) {
@@ -438,9 +438,9 @@ napi_value GetTypeAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &gettypeCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &gettypeCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -539,12 +539,15 @@ void GetTypePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_GetFileTypes(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperGetFileTypesCB *getfiletypesCB = new (std::nothrow) DAHelperGetFileTypesCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperGetFileTypesCB *getfiletypesCB = new (std::nothrow) DAHelperGetFileTypesCB;
+    if (getfiletypesCB == nullptr) {
+        HILOG_ERROR("%{public}s, getfiletypesCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    getfiletypesCB->cbBase.cbInfo.env = env;
+    getfiletypesCB->cbBase.asyncWork = nullptr;
+    getfiletypesCB->cbBase.deferred = nullptr;
+    getfiletypesCB->cbBase.ability = nullptr;
 
     napi_value ret = GetFileTypesWrap(env, info, getfiletypesCB);
     if (ret == nullptr) {
@@ -594,7 +597,7 @@ napi_value GetFileTypesWrap(napi_env env, napi_callback_info info, DAHelperGetFi
     getfiletypesCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = GetFileTypesAsync(env, args, argcAsync, argcPromise, getfiletypesCB);
+        ret = GetFileTypesAsync(env, args, ARGS_TWO, getfiletypesCB);
     } else {
         ret = GetFileTypesPromise(env, getfiletypesCB);
     }
@@ -602,7 +605,7 @@ napi_value GetFileTypesWrap(napi_env env, napi_callback_info info, DAHelperGetFi
     return ret;
 }
 napi_value GetFileTypesAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperGetFileTypesCB *getfiletypesCB)
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperGetFileTypesCB *getfiletypesCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || getfiletypesCB == nullptr) {
@@ -613,9 +616,9 @@ napi_value GetFileTypesAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &getfiletypesCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &getfiletypesCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -738,12 +741,15 @@ void GetFileTypesPromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_NormalizeUri(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperNormalizeUriCB *normalizeuriCB = new (std::nothrow) DAHelperNormalizeUriCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperNormalizeUriCB *normalizeuriCB = new (std::nothrow) DAHelperNormalizeUriCB;
+    if (normalizeuriCB == nullptr) {
+        HILOG_ERROR("%{public}s, normalizeuriCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    normalizeuriCB->cbBase.cbInfo.env = env;
+    normalizeuriCB->cbBase.asyncWork = nullptr;
+    normalizeuriCB->cbBase.deferred = nullptr;
+    normalizeuriCB->cbBase.ability = nullptr;
 
     napi_value ret = NormalizeUriWrap(env, info, normalizeuriCB);
     if (ret == nullptr) {
@@ -787,7 +793,7 @@ napi_value NormalizeUriWrap(napi_env env, napi_callback_info info, DAHelperNorma
     normalizeuriCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = NormalizeUriAsync(env, args, argcAsync, argcPromise, normalizeuriCB);
+        ret = NormalizeUriAsync(env, args, ARGS_ONE, normalizeuriCB);
     } else {
         ret = NormalizeUriPromise(env, normalizeuriCB);
     }
@@ -795,7 +801,7 @@ napi_value NormalizeUriWrap(napi_env env, napi_callback_info info, DAHelperNorma
     return ret;
 }
 napi_value NormalizeUriAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperNormalizeUriCB *normalizeuriCB)
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperNormalizeUriCB *normalizeuriCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || normalizeuriCB == nullptr) {
@@ -806,9 +812,9 @@ napi_value NormalizeUriAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &normalizeuriCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &normalizeuriCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -910,12 +916,15 @@ void NormalizeUriPromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_DenormalizeUri(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperDenormalizeUriCB *denormalizeuriCB = new (std::nothrow) DAHelperDenormalizeUriCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperDenormalizeUriCB *denormalizeuriCB = new (std::nothrow) DAHelperDenormalizeUriCB;
+    if (denormalizeuriCB == nullptr) {
+        HILOG_ERROR("%{public}s, denormalizeuriCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    denormalizeuriCB->cbBase.cbInfo.env = env;
+    denormalizeuriCB->cbBase.asyncWork = nullptr;
+    denormalizeuriCB->cbBase.deferred = nullptr;
+    denormalizeuriCB->cbBase.ability = nullptr;
 
     napi_value ret = DenormalizeUriWrap(env, info, denormalizeuriCB);
     if (ret == nullptr) {
@@ -959,15 +968,15 @@ napi_value DenormalizeUriWrap(napi_env env, napi_callback_info info, DAHelperDen
     denormalizeuriCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = DenormalizeUriAsync(env, args, argcAsync, argcPromise, denormalizeuriCB);
+        ret = DenormalizeUriAsync(env, args, ARGS_ONE, denormalizeuriCB);
     } else {
         ret = DenormalizeUriPromise(env, denormalizeuriCB);
     }
     HILOG_INFO("%{public}s,end", __func__);
     return ret;
 }
-napi_value DenormalizeUriAsync(napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise,
-    DAHelperDenormalizeUriCB *denormalizeuriCB)
+napi_value DenormalizeUriAsync(
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperDenormalizeUriCB *denormalizeuriCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || denormalizeuriCB == nullptr) {
@@ -978,9 +987,9 @@ napi_value DenormalizeUriAsync(napi_env env, napi_value *args, size_t argcAsync,
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &denormalizeuriCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &denormalizeuriCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -1116,12 +1125,15 @@ napi_value UnwrapDataAbilityPredicates(std::string &value, napi_env env, napi_va
 napi_value NAPI_Delete(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperDeleteCB *deleteCB = new (std::nothrow) DAHelperDeleteCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperDeleteCB *deleteCB = new (std::nothrow) DAHelperDeleteCB;
+    if (deleteCB == nullptr) {
+        HILOG_ERROR("%{public}s, deleteCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    deleteCB->cbBase.cbInfo.env = env;
+    deleteCB->cbBase.asyncWork = nullptr;
+    deleteCB->cbBase.deferred = nullptr;
+    deleteCB->cbBase.ability = nullptr;
 
     napi_value ret = DeleteWrap(env, info, deleteCB);
     if (ret == nullptr) {
@@ -1179,7 +1191,7 @@ napi_value DeleteWrap(napi_env env, napi_callback_info info, DAHelperDeleteCB *d
     deleteCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = DeleteAsync(env, args, argcAsync, argcPromise, deleteCB);
+        ret = DeleteAsync(env, args, ARGS_TWO, deleteCB);
     } else {
         ret = DeletePromise(env, deleteCB);
     }
@@ -1187,8 +1199,7 @@ napi_value DeleteWrap(napi_env env, napi_callback_info info, DAHelperDeleteCB *d
     return ret;
 }
 
-napi_value DeleteAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperDeleteCB *deleteCB)
+napi_value DeleteAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperDeleteCB *deleteCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || deleteCB == nullptr) {
@@ -1199,9 +1210,9 @@ napi_value DeleteAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &deleteCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &deleteCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -1307,12 +1318,15 @@ void DeletePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_Update(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperUpdateCB *updateCB = new (std::nothrow) DAHelperUpdateCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperUpdateCB *updateCB = new (std::nothrow) DAHelperUpdateCB;
+    if (updateCB == nullptr) {
+        HILOG_ERROR("%{public}s, updateCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    updateCB->cbBase.cbInfo.env = env;
+    updateCB->cbBase.asyncWork = nullptr;
+    updateCB->cbBase.deferred = nullptr;
+    updateCB->cbBase.ability = nullptr;
 
     napi_value ret = UpdateWrap(env, info, updateCB);
     if (ret == nullptr) {
@@ -1376,7 +1390,7 @@ napi_value UpdateWrap(napi_env env, napi_callback_info info, DAHelperUpdateCB *u
     updateCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = UpdateAsync(env, args, argcAsync, argcPromise, updateCB);
+        ret = UpdateAsync(env, args, ARGS_THREE, updateCB);
     } else {
         ret = UpdatePromise(env, updateCB);
     }
@@ -1384,8 +1398,7 @@ napi_value UpdateWrap(napi_env env, napi_callback_info info, DAHelperUpdateCB *u
     return ret;
 }
 
-napi_value UpdateAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperUpdateCB *updateCB)
+napi_value UpdateAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperUpdateCB *updateCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || updateCB == nullptr) {
@@ -1396,9 +1409,9 @@ napi_value UpdateAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &updateCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &updateCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -1504,12 +1517,15 @@ void UpdatePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_OpenFile(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperOpenFileCB *openFileCB = new (std::nothrow) DAHelperOpenFileCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperOpenFileCB *openFileCB = new (std::nothrow) DAHelperOpenFileCB;
+    if (openFileCB == nullptr) {
+        HILOG_ERROR("%{public}s, openFileCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    openFileCB->cbBase.cbInfo.env = env;
+    openFileCB->cbBase.asyncWork = nullptr;
+    openFileCB->cbBase.deferred = nullptr;
+    openFileCB->cbBase.ability = nullptr;
 
     napi_value ret = OpenFileWrap(env, info, openFileCB);
     if (ret == nullptr) {
@@ -1567,7 +1583,7 @@ napi_value OpenFileWrap(napi_env env, napi_callback_info info, DAHelperOpenFileC
     openFileCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = OpenFileAsync(env, args, argcAsync, argcPromise, openFileCB);
+        ret = OpenFileAsync(env, args, ARGS_TWO, openFileCB);
     } else {
         ret = OpenFilePromise(env, openFileCB);
     }
@@ -1575,8 +1591,7 @@ napi_value OpenFileWrap(napi_env env, napi_callback_info info, DAHelperOpenFileC
     return ret;
 }
 
-napi_value OpenFileAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperOpenFileCB *openFileCB)
+napi_value OpenFileAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperOpenFileCB *openFileCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || openFileCB == nullptr) {
@@ -1587,9 +1602,9 @@ napi_value OpenFileAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &openFileCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &openFileCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -1695,12 +1710,15 @@ void OpenFilePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_BatchInsert(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperBatchInsertCB *BatchInsertCB = new (std::nothrow) DAHelperBatchInsertCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperBatchInsertCB *BatchInsertCB = new (std::nothrow) DAHelperBatchInsertCB;
+    if (BatchInsertCB == nullptr) {
+        HILOG_ERROR("%{public}s, BatchInsertCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    BatchInsertCB->cbBase.cbInfo.env = env;
+    BatchInsertCB->cbBase.asyncWork = nullptr;
+    BatchInsertCB->cbBase.deferred = nullptr;
+    BatchInsertCB->cbBase.ability = nullptr;
 
     napi_value ret = BatchInsertWrap(env, info, BatchInsertCB);
     if (ret == nullptr) {
@@ -1792,7 +1810,7 @@ napi_value BatchInsertWrap(napi_env env, napi_callback_info info, DAHelperBatchI
     batchInsertCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = BatchInsertAsync(env, args, argcAsync, argcPromise, batchInsertCB);
+        ret = BatchInsertAsync(env, args, ARGS_TWO, batchInsertCB);
     } else {
         ret = BatchInsertPromise(env, batchInsertCB);
     }
@@ -1801,7 +1819,7 @@ napi_value BatchInsertWrap(napi_env env, napi_callback_info info, DAHelperBatchI
 }
 
 napi_value BatchInsertAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperBatchInsertCB *batchInsertCB)
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperBatchInsertCB *batchInsertCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || batchInsertCB == nullptr) {
@@ -1812,9 +1830,9 @@ napi_value BatchInsertAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &batchInsertCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &batchInsertCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -1920,12 +1938,15 @@ void BatchInsertPromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_Query(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperQueryCB *QueryCB = new (std::nothrow) DAHelperQueryCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperQueryCB *QueryCB = new (std::nothrow) DAHelperQueryCB;
+    if (QueryCB == nullptr) {
+        HILOG_ERROR("%{public}s, QueryCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    QueryCB->cbBase.cbInfo.env = env;
+    QueryCB->cbBase.asyncWork = nullptr;
+    QueryCB->cbBase.deferred = nullptr;
+    QueryCB->cbBase.ability = nullptr;
 
     napi_value ret = QueryWrap(env, info, QueryCB);
     if (ret == nullptr) {
@@ -1995,7 +2016,7 @@ napi_value QueryWrap(napi_env env, napi_callback_info info, DAHelperQueryCB *que
     queryCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = QueryAsync(env, args, argcAsync, argcPromise, queryCB);
+        ret = QueryAsync(env, args, ARGS_THREE, queryCB);
     } else {
         ret = QueryPromise(env, queryCB);
     }
@@ -2003,8 +2024,7 @@ napi_value QueryWrap(napi_env env, napi_callback_info info, DAHelperQueryCB *que
     return ret;
 }
 
-napi_value QueryAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperQueryCB *queryCB)
+napi_value QueryAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperQueryCB *queryCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || queryCB == nullptr) {
@@ -2015,9 +2035,9 @@ napi_value QueryAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &queryCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &queryCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -2134,11 +2154,14 @@ napi_value WrapResultSet(napi_env env, const ResultSet &resultSet)
 napi_value NAPI_Release(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperReleaseCB *releaseCB = new (std::nothrow) DAHelperReleaseCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-    };
+    DAHelperReleaseCB *releaseCB = new (std::nothrow) DAHelperReleaseCB;
+    if (releaseCB == nullptr) {
+        HILOG_ERROR("%{public}s, releaseCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    releaseCB->cbBase.cbInfo.env = env;
+    releaseCB->cbBase.asyncWork = nullptr;
+    releaseCB->cbBase.deferred = nullptr;
 
     napi_value ret = ReleaseWrap(env, info, releaseCB);
     if (ret == nullptr) {
@@ -2175,7 +2198,7 @@ napi_value ReleaseWrap(napi_env env, napi_callback_info info, DAHelperReleaseCB 
     releaseCB->dataAbilityHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
-        ret = ReleaseAsync(env, args, argcAsync, argcPromise, releaseCB);
+        ret = ReleaseAsync(env, args, ARGS_ONE, releaseCB);
     } else {
         ret = ReleasePromise(env, releaseCB);
     }
@@ -2183,8 +2206,7 @@ napi_value ReleaseWrap(napi_env env, napi_callback_info info, DAHelperReleaseCB 
     return ret;
 }
 
-napi_value ReleaseAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperReleaseCB *releaseCB)
+napi_value ReleaseAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperReleaseCB *releaseCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || releaseCB == nullptr) {
@@ -2195,9 +2217,9 @@ napi_value ReleaseAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &releaseCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &releaseCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,

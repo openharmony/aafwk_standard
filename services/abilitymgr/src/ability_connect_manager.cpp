@@ -366,7 +366,7 @@ void AbilityConnectManager::OnAppStateChanged(const AppInfo &info)
     std::for_each(serviceMap_.begin(), serviceMap_.end(), [&info](ServiceMapType::reference service) {
         if (service.second && service.second->GetApplicationInfo().name == info.appName &&
             (info.processName == service.second->GetAbilityInfo().process ||
-                info.processName == service.second->GetApplicationInfo().bundleName)) {
+            info.processName == service.second->GetApplicationInfo().bundleName)) {
             service.second->SetAppState(info.state);
         }
     });

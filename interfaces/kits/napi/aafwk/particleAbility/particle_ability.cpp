@@ -26,24 +26,6 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AppExecFwk {
 
-napi_value NAPI_PAGetApplicationInfo(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetApplicationInfoCommon(env, info, AbilityType::UNKNOWN);
-}
-
-napi_value NAPI_PAGetBundleName(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetBundleNameCommon(env, info, AbilityType::UNKNOWN);
-}
-
-napi_value NAPI_PAGetProcessInfo(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetProcessInfoCommon(env, info, AbilityType::UNKNOWN);
-}
-
 /**
  * @brief Obtains the type of this application.
  *
@@ -56,20 +38,6 @@ napi_value NAPI_PAGetAppType(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetAppTypeCommon(env, info, AbilityType::UNKNOWN);
-}
-
-/**
- * @brief Obtains the elementName object of the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_PAGetElementName(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetElementNameCommon(env, info, AbilityType::UNKNOWN);
 }
 
 /**
@@ -98,34 +66,6 @@ napi_value NAPI_PAGetHapModuleInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetHapModuleInfoCommon(env, info, AbilityType::UNKNOWN);
-}
-
-/**
- * @brief Obtains the name of the current process.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_PAProcessName(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetProcessNameCommon(env, info, AbilityType::UNKNOWN);
-}
-
-/**
- * @brief Obtains the bundle name of the ability that called the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_PAGetCallingBundle(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    return NAPI_GetCallingBundleCommon(env, info, AbilityType::UNKNOWN);
 }
 
 /**
@@ -227,6 +167,20 @@ napi_value NAPI_PADisConnectAbility(napi_env env, napi_callback_info info)
 }
 
 /**
+ * @brief FeatureAbility NAPI method : acquireDataAbilityHelper.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_PAAcquireDataAbilityHelper(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    return NAPI_AcquireDataAbilityHelperCommon(env, info, AbilityType::UNKNOWN);
+}
+
+/**
  * @brief ParticleAbility NAPI module registration.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -238,15 +192,9 @@ napi_value ParticleAbilityInit(napi_env env, napi_value exports)
 {
     HILOG_INFO("%{public}s called.", __func__);
     napi_property_descriptor properties[] = {
-        DECLARE_NAPI_FUNCTION("getApplicationInfo", NAPI_PAGetApplicationInfo),
-        DECLARE_NAPI_FUNCTION("getBundleName", NAPI_PAGetBundleName),
-        DECLARE_NAPI_FUNCTION("getProcessInfo", NAPI_PAGetProcessInfo),
         DECLARE_NAPI_FUNCTION("getAppType", NAPI_PAGetAppType),
-        DECLARE_NAPI_FUNCTION("getElementName", NAPI_PAGetElementName),
         DECLARE_NAPI_FUNCTION("getAbilityInfo", NAPI_PAGetAbilityInfo),
         DECLARE_NAPI_FUNCTION("getHapModuleInfo", NAPI_PAGetHapModuleInfo),
-        DECLARE_NAPI_FUNCTION("getProcessName", NAPI_PAProcessName),
-        DECLARE_NAPI_FUNCTION("getCallingBundle", NAPI_PAGetCallingBundle),
         DECLARE_NAPI_FUNCTION("getContext", NAPI_PAGetContext),
         DECLARE_NAPI_FUNCTION("getWant", NAPI_PAGetWant),
         DECLARE_NAPI_FUNCTION("getAbilityName", NAPI_PAGetAbilityName),
@@ -254,6 +202,7 @@ napi_value ParticleAbilityInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("stopAbility", NAPI_PAStopAbility),
         DECLARE_NAPI_FUNCTION("connectAbility", NAPI_PAConnectAbility),
         DECLARE_NAPI_FUNCTION("disconnectAbility", NAPI_PADisConnectAbility),
+        DECLARE_NAPI_FUNCTION("acquireDataAbilityHelper", NAPI_PAAcquireDataAbilityHelper),
     };
     napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties);
 

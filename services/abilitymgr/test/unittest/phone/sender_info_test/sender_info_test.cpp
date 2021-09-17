@@ -91,6 +91,7 @@ HWTEST_F(SenderInfoTest, SenderInfoTest_0100, TestSize.Level1)
     Parcel parcel;
     info.Marshalling(parcel);
     auto unInfo = SenderInfo::Unmarshalling(parcel);
+    EXPECT_NE(unInfo, nullptr);
     EXPECT_EQ(unInfo->code, 10);
     EXPECT_EQ(unInfo->want.GetElement().GetBundleName(), "com.ix.hiMusic");
     EXPECT_EQ(unInfo->want.GetElement().GetAbilityName(), "MusicSAbility");

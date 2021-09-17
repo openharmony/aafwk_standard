@@ -26,7 +26,11 @@ ohos_unittest("ability_manager_service_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
   ]
 
-  sources = [ "ability_manager_service_test.cpp" ]
+  sources = [
+    # add mock file
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "ability_manager_service_test.cpp",
+  ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []

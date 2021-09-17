@@ -25,6 +25,7 @@ ohos_shared_library("featureability") {
 
   sources = [
     "feature_ability.cpp",
+    "feature_ability_constant.cpp",
     "napi_context.cpp",
     "napi_data_ability_helper.cpp",
     "native_module.cpp",

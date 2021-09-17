@@ -60,8 +60,7 @@ napi_value InsertWrap(napi_env env, napi_callback_info info, DAHelperInsertCB *i
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value InsertAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperInsertCB *insertCB);
+napi_value InsertAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperInsertCB *insertCB);
 
 /**
  * @brief Insert Promise.
@@ -113,8 +112,7 @@ napi_value NAPI_Release(napi_env env, napi_callback_info info);
 
 napi_value ReleaseWrap(napi_env env, napi_callback_info info, DAHelperReleaseCB *releaseCB);
 
-napi_value ReleaseAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperReleaseCB *releaseCB);
+napi_value ReleaseAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperReleaseCB *releaseCB);
 
 napi_value ReleasePromise(napi_env env, DAHelperReleaseCB *releaseCB);
 
@@ -127,8 +125,7 @@ void ReleasePromiseCompleteCB(napi_env env, napi_status status, void *data);
 napi_value NAPI_GetType(napi_env env, napi_callback_info info);
 napi_value NAPI_GetType(napi_env env, napi_callback_info info);
 napi_value GetTypeWrap(napi_env env, napi_callback_info info, DAHelperGetTypeCB *gettypeCB);
-napi_value GetTypeAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperGetTypeCB *gettypeCB);
+napi_value GetTypeAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperGetTypeCB *gettypeCB);
 napi_value GetTypePromise(napi_env env, DAHelperGetTypeCB *gettypeCB);
 void GetTypeExecuteCB(napi_env env, void *data);
 void GetTypeAsyncCompleteCB(napi_env env, napi_status status, void *data);
@@ -138,7 +135,7 @@ napi_value NAPI_GetFileTypes(napi_env env, napi_callback_info info);
 napi_value NAPI_GetFileTypes(napi_env env, napi_callback_info info);
 napi_value GetFileTypesWrap(napi_env env, napi_callback_info info, DAHelperGetFileTypesCB *getfiletypesCB);
 napi_value GetFileTypesAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperGetFileTypesCB *getfiletypesCB);
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperGetFileTypesCB *getfiletypesCB);
 napi_value GetFileTypesPromise(napi_env env, DAHelperGetFileTypesCB *getfiletypesCB);
 void GetFileTypesExecuteCB(napi_env env, void *data);
 void GetFileTypesAsyncCompleteCB(napi_env env, napi_status status, void *data);
@@ -149,7 +146,7 @@ napi_value NAPI_NormalizeUri(napi_env env, napi_callback_info info);
 napi_value NAPI_NormalizeUri(napi_env env, napi_callback_info info);
 napi_value NormalizeUriWrap(napi_env env, napi_callback_info info, DAHelperNormalizeUriCB *normalizeuriCB);
 napi_value NormalizeUriAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperNormalizeUriCB *normalizeuriCB);
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperNormalizeUriCB *normalizeuriCB);
 napi_value NormalizeUriPromise(napi_env env, DAHelperNormalizeUriCB *normalizeuriCB);
 void NormalizeUriExecuteCB(napi_env env, void *data);
 void NormalizeUriAsyncCompleteCB(napi_env env, napi_status status, void *data);
@@ -158,8 +155,8 @@ void NormalizeUriPromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_DenormalizeUri(napi_env env, napi_callback_info info);
 napi_value NAPI_DenormalizeUri(napi_env env, napi_callback_info info);
 napi_value DenormalizeUriWrap(napi_env env, napi_callback_info info, DAHelperDenormalizeUriCB *denormalizeuriCB);
-napi_value DenormalizeUriAsync(napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise,
-    DAHelperDenormalizeUriCB *denormalizeuriCB);
+napi_value DenormalizeUriAsync(
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperDenormalizeUriCB *denormalizeuriCB);
 napi_value DenormalizeUriPromise(napi_env env, DAHelperDenormalizeUriCB *denormalizeuriCB);
 void DenormalizeUriExecuteCB(napi_env env, void *data);
 void DenormalizeUriAsyncCompleteCB(napi_env env, napi_status status, void *data);
@@ -168,8 +165,7 @@ void DenormalizeUriPromiseCompleteCB(napi_env env, napi_status status, void *dat
 napi_value NAPI_Delete(napi_env env, napi_callback_info info);
 
 napi_value DeleteWrap(napi_env env, napi_callback_info info, DAHelperDeleteCB *deleteCB);
-napi_value DeleteAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperDeleteCB *deleteCB);
+napi_value DeleteAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperDeleteCB *deleteCB);
 
 napi_value DeletePromise(napi_env env, DAHelperDeleteCB *deleteCB);
 
@@ -182,8 +178,7 @@ void DeletePromiseCompleteCB(napi_env env, napi_status status, void *data);
 napi_value NAPI_Update(napi_env env, napi_callback_info info);
 
 napi_value UpdateWrap(napi_env env, napi_callback_info info, DAHelperUpdateCB *updateCB);
-napi_value UpdateAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperUpdateCB *updateCB);
+napi_value UpdateAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperUpdateCB *updateCB);
 
 napi_value UpdatePromise(napi_env env, DAHelperUpdateCB *updateCB);
 
@@ -196,8 +191,7 @@ void UpdatePromiseCompleteCB(napi_env env, napi_status status, void *data);
 napi_value NAPI_OpenFile(napi_env env, napi_callback_info info);
 
 napi_value OpenFileWrap(napi_env env, napi_callback_info info, DAHelperOpenFileCB *openFileCB);
-napi_value OpenFileAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperOpenFileCB *openFileCB);
+napi_value OpenFileAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperOpenFileCB *openFileCB);
 
 napi_value OpenFilePromise(napi_env env, DAHelperOpenFileCB *openFileCB);
 
@@ -211,7 +205,7 @@ napi_value NAPI_BatchInsert(napi_env env, napi_callback_info info);
 
 napi_value BatchInsertWrap(napi_env env, napi_callback_info info, DAHelperBatchInsertCB *batchInsertCB);
 napi_value BatchInsertAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperBatchInsertCB *batchInsertCB);
+    napi_env env, napi_value *args, const size_t argCallback, DAHelperBatchInsertCB *batchInsertCB);
 
 napi_value BatchInsertPromise(napi_env env, DAHelperBatchInsertCB *batchInsertCB);
 
@@ -229,8 +223,7 @@ napi_value NAPI_Query(napi_env env, napi_callback_info info);
 
 napi_value QueryWrap(napi_env env, napi_callback_info info, DAHelperQueryCB *queryCB);
 
-napi_value QueryAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, DAHelperQueryCB *queryCB);
+napi_value QueryAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperQueryCB *queryCB);
 
 napi_value QueryPromise(napi_env env, DAHelperQueryCB *queryCB);
 

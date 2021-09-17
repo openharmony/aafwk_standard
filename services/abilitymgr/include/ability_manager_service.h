@@ -35,6 +35,7 @@
 #include "uri.h"
 #include "ability_config.h"
 #include "pending_want_manager.h"
+#include "ams_configuration_parameter.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -569,10 +570,22 @@ private:
      */
     bool Init();
     /**
-     * wait for starting lanucher ability.
+     * starting lanucher ability.
      *
      */
-    void WaitForStartingLauncherAbility();
+    void StartingLauncherAbility();
+
+    /**
+     *starting system ui abilites.
+     *
+     */
+    void StartingSystemUiAbility(const SatrtUiMode &mode);
+
+    /**
+     * connet bms.
+     *
+     */
+    void ConnectBmsService();
     /**
      * get the user id.
      *
@@ -586,6 +599,11 @@ private:
      */
     int GenerateAbilityRequest(
         const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken);
+    /**
+     * Select to start the application according to the configuration file of AMS
+     *
+     */
+    void StartSystemApplication();
 
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
     int PreLoadAppDataAbilities(const std::string &bundleName);
@@ -607,7 +625,8 @@ private:
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
 
-    const static int REPOLL_TIME_MICRO_SECONDS = 1000000;
+    constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
+    constexpr static int WAITING_BOOT_ANIMATION_TIMER = 5;
 
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AbilityEventHandler> handler_;
@@ -620,8 +639,10 @@ private:
     std::shared_ptr<DataAbilityManager> dataAbilityManager_;
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
+    std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_SERVICE_H

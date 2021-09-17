@@ -21,6 +21,7 @@
 #undef private
 #undef protected
 
+#include "ability_manager_service.h"
 #include "ability_scheduler.h"
 #include "connection_record.h"
 #include "mission_record.h"
@@ -46,9 +47,14 @@ public:
 };
 
 void AbilityRecordTest::SetUpTestCase(void)
-{}
+{
+    OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
+}
 void AbilityRecordTest::TearDownTestCase(void)
-{}
+{
+    OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 void AbilityRecordTest::SetUp(void)
 {
@@ -700,21 +706,20 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_001, TestSize
 {
     const DummyConfiguration config;
     abilityRecord_->abilityInfo_.configChanges.push_back("locale");
-    EXPECT_EQ(false, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
+    EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
 }
-
 /*
  * Feature: AbilityRecord
  * Function: OnConfigurationChanged
  * SubFunction: Configuration Changed
  * FunctionPoints: NA
  * EnvConditions:NA
- * CaseDescription: Verify Configuration Changed UT
+ * CaseDescription: Verify Configuration Changed UT 
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_002, TestSize.Level1)
 {
-    const DummyConfiguration config;
-    abilityRecord_->abilityInfo_.configChanges.push_back("local");
+    const DummyConfiguration config("layout");
+    abilityRecord_->abilityInfo_.configChanges.push_back("layout");
     EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
 }
 

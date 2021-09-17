@@ -11,40 +11,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# import("//build/config/ohos/rules.gni")
+#import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
-ohos_shared_library("context") {
+ohos_shared_library("formmanager") {
   include_dirs = [
     "//foundation/ace/napi/interfaces/kits",
-    "//third_party/node/src",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/context",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
   sources = [
-    "napi_context.cpp",
+    "napi_form_manager.cpp",
     "native_module.cpp",
   ]
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/napi:ace_napi",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/kits:appkit_native",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "aafwk_standard:ability_manager",
     "aafwk_standard:want",
-    "appexecfwk_standard:appexecfwk_base",
-    "appexecfwk_standard:appexecfwk_core",
-    "appexecfwk_standard:libeventhandler",
-    "communication_L2:ipc_core",
     "hiviewdfx_hilog_native:libhilog",
   ]
 
-  relative_install_dir = "module"
+  relative_install_dir = "module/ability"
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

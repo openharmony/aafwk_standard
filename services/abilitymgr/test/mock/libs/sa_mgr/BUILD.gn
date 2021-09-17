@@ -15,7 +15,10 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 config("sa_mgr_mock_config") {
-  include_dirs = [ "${services_path}/abilitymgr/include" ]
+  include_dirs = [
+    "${services_path}/abilitymgr/include",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+  ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]

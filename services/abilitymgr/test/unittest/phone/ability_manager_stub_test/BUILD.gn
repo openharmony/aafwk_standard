@@ -25,7 +25,11 @@ ohos_unittest("ability_manager_stub_test") {
     "//foundation/distributedschedule/samgr/utils/native/include/",
   ]
 
-  sources = [ "ability_manager_stub_test.cpp" ]
+  sources = [
+    # add mock file
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "ability_manager_stub_test.cpp",
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

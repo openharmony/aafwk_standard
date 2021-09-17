@@ -21,7 +21,7 @@
 #include "../inner/napi_common/napi_common.h"
 
 using Ability = OHOS::AppExecFwk::Ability;
-
+#define MODE 0771
 namespace OHOS {
 namespace AppExecFwk {
 
@@ -62,6 +62,55 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 EXTERN_C_END
 napi_value ContextConstructor(napi_env env, napi_callback_info info);
 
+/**
+ * @brief Obtains information about the current application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetApplicationInfo(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the elementName object of the current ability.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetElementName(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the process Info this application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetProcessInfo(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the name of the current process.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetProcessName(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the bundle name of the ability that called the current ability.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCallingBundle(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_CONTEXT_H */

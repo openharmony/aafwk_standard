@@ -63,4 +63,5 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/aafwk_dummy_configuration.cpp",
   "${services_path}/abilitymgr/src/configuration_holder.cpp",
   "${services_path}/abilitymgr/src/resume_mission_container.cpp",
+  "${services_path}/abilitymgr/src/ams_configuration_parameter.cpp",
 ]
