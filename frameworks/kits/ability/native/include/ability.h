@@ -74,6 +74,8 @@ class Ability : public IAbilityEvent,
                 public IAbilityContinuation,
                 public std::enable_shared_from_this<Ability> {
 public:
+    friend class PageAbilityImpl;
+
     Ability() = default;
     virtual ~Ability() = default;
 
@@ -343,7 +345,7 @@ public:
      *
      * @return Returns a Window object pointer.
      */
-    virtual const sptr<Window> &GetWindow();
+    virtual const sptr<Window> GetWindow();
 
     /**
      * @brief Checks whether the main window of this ability has window focus.
@@ -542,9 +544,9 @@ public:
     void SetWant(const AAFwk::Want &want);
 
     /**
-     @brief Obtains the Want object that starts this ability.
+     * @brief Obtains the Want object that starts this ability.
      *
-     @return Returns the Want object that starts this ability.
+     * @return Returns the Want object that starts this ability.
      */
     std::shared_ptr<AAFwk::Want> GetWant();
 
@@ -723,7 +725,6 @@ public:
      * @return Returns the migration state.
      */
     virtual ContinuationState GetContinuationState() final;
-
 
     /**
      * @brief Obtains the singleton AbilityPackage object to which this ability belongs.
@@ -1206,6 +1207,13 @@ public:
     bool CheckPermission();
 
     /**
+     * @brief Permission check.
+     * @param bundleName bundleName.
+     * @return Returns true on success, false on failure.
+     */
+    bool CheckFormPermission(const std::string &bundleName) const;
+
+    /**
      * @brief Add the bundle manager instance for debug.
      * @param bundleManager the bundle manager ipc object.
      */
@@ -1279,7 +1287,14 @@ private:
     friend class AbilityImpl;
     bool VerifySupportForContinuation();
     void HandleCreateAsContinuation(const Want &want);
-    bool IsFlagExists(int flag, int flagSet);
+    bool IsFlagExists(unsigned int flag, unsigned int flagSet);
+    /**
+     * @brief Set the start ability setting.
+     * @param setting the start ability setting.
+     */
+    void SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> setting);
+
+private:
     std::shared_ptr<ContinuationHandler> continuationHandler_ = nullptr;
     std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
     std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
@@ -1293,6 +1308,7 @@ private:
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
+    std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
     bool bWindowFocus_ = false;
 
     static const std::string SYSTEM_UI;
@@ -1349,7 +1365,10 @@ private:
      * @param callback Indicates the callback to be invoked whenever the {@link FormJsInfo} instance is obtained.
      */
     void HandleAcquireResult(
-        const Want &want, const FormJsInfo &formJsInfo, const std::shared_ptr<FormCallback> callback);
+        const Want &want, 
+        const FormJsInfo &formJsInfo, 
+        const std::shared_ptr<FormCallback> callback
+        );
 
     /**
      * @brief Handle acquire message of the obtained form instance.

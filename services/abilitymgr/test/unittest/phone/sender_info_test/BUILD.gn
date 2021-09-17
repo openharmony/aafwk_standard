@@ -25,7 +25,10 @@ ohos_unittest("sender_info_test") {
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
   ]
 
-  sources = [ "sender_info_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "sender_info_test.cpp",  # add mock file
+  ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []

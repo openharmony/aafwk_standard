@@ -40,18 +40,20 @@ public:
 };
 
 void AbilityServiceStartTest::SetUpTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
+}
 void AbilityServiceStartTest::TearDownTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+}
+
 void AbilityServiceStartTest::TearDown()
 {}
 
 void AbilityServiceStartTest::SetUp()
 {
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
-
     aams_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
 }
 

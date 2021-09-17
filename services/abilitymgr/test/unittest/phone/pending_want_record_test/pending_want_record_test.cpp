@@ -94,16 +94,19 @@ void PendingWantRecordTest::CancelReceiver::PerformReceive(const AAFwk::Want &wa
 }
 
 void PendingWantRecordTest::SetUpTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
+}
 
 void PendingWantRecordTest::TearDownTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 void PendingWantRecordTest::SetUp()
 {
-    auto bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     abilityMs_->OnStart();
 }

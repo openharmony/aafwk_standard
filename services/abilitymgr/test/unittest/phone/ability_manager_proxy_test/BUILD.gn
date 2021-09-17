@@ -26,7 +26,10 @@ ohos_unittest("ability_manager_proxy_test") {
     "//foundation/appexecfwk/standard/common/log/include",
   ]
 
-  sources = [ "ability_manager_proxy_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "ability_manager_proxy_test.cpp",
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

@@ -154,7 +154,7 @@ public:
      * @param resultData Indicates the data returned after the ability is destroyed. You can define the data
      * returned. This parameter can be null.
      */
-    void SendResult(int requestCode, int resultCode, /*const AAFwk::Want& resultData*/ const Want &resultData);
+    void SendResult(int requestCode, int resultCode, const Want &resultData);
 
     /**
      * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch

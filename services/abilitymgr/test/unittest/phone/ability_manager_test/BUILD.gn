@@ -21,6 +21,7 @@ ohos_unittest("ability_manager_test") {
 
   sources = [
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "ability_manager_test.cpp",
     "iservice_registry.cpp",
     "system_ability_manager.cpp",

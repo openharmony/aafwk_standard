@@ -25,6 +25,7 @@
 #include "hap_module_info.h"
 #include "ohos/aafwk/content/want.h"
 #include "permission_def.h"
+
 #include "module_usage_record.h"
 
 using OHOS::AAFwk::Want;

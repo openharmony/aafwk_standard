@@ -81,7 +81,8 @@
 		"//foundation/aafwk/standard/services:unittest",
 		"//foundation/aafwk/standard/tools/test:systemtest",
 		"//foundation/aafwk/standard/tools/test:moduletest",
-		"//foundation/aafwk/standard/tools/test:unittest"
+		"//foundation/aafwk/standard/tools/test:unittest",
+		"//foundation/aafwk/standard/tools/zip/test:unittest"
       ]
     }
   },

@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 ResumeMissionContainer::ResumeMissionContainer(const std::shared_ptr<AbilityEventHandler> &handler) : handler_(handler)
 {}
 
@@ -65,6 +64,5 @@ bool ResumeMissionContainer::IsResume(int missionId)
 {
     return (missionMaps_.find(missionId) != missionMaps_.end());
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

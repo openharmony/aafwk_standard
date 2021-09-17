@@ -69,14 +69,12 @@ void FormProviderClientTest::SetUp(void)
     permDef.descriptionId = 1;
     permList.emplace_back(permDef);
     Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(
-        FORM_MANAGER_SERVICE_BUNDLE_NAME, 
-        {PERMISSION_NAME_REQUIRE_FORM}, 
-        0);
-    Permission::PermissionKit::GrantUserGrantedPermission(
-        FORM_MANAGER_SERVICE_BUNDLE_NAME,
-        PERMISSION_NAME_REQUIRE_FORM, 
-        0);
+    std::vector<std::string> permnameList;
+    permnameList.emplace_back(PERMISSION_NAME_REQUIRE_FORM);
+    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+        permnameList, 0);
+    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+        PERMISSION_NAME_REQUIRE_FORM, 0);
 }
 
 void FormProviderClientTest::TearDown(void)
@@ -207,8 +205,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_AcquireProviderFormInf
 
     const sptr<IRemoteObject> callerToken = nullptr;
     int64_t formId = 1005L;
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED, instance_->AcquireProviderFormInfo(formId, want, callerToken));
-
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED, instance_->AcquireProviderFormInfo(formId, want, callerToken));
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_AcquireProviderFormInfo_0500 end";
 }
 
@@ -243,7 +240,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_EventNotify_0100, Func
 
     int32_t formVisibleType = Constants::FORM_INVISIBLE;
 
-    EXPECT_EQ(ERR_OK, instance_->EventNotify(formEvents, formVisibleType, want, callerToken ));
+    EXPECT_EQ(ERR_OK, instance_->EventNotify(formEvents, formVisibleType, want, callerToken));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_EventNotify_0100 end";
 }
@@ -279,7 +276,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_EventNotify_0200, Func
     int32_t formVisibleType = Constants::FORM_INVISIBLE;
 
     EXPECT_EQ(ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY,
-     instance_->EventNotify(formEvents, formVisibleType, want, callerToken ));
+    instance_->EventNotify(formEvents, formVisibleType, want, callerToken ));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_EventNotify_0200 end";
 }
@@ -362,7 +359,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_NotifyFormCastTempForm
     int64_t formId = 723L;
     const sptr<IRemoteObject> callerToken = nullptr;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED, instance_->NotifyFormCastTempForm(formId, want, callerToken));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED, instance_->NotifyFormCastTempForm(formId, want, callerToken));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_NotifyFormCastTempForm_0300 end";
 }
@@ -435,7 +432,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_FireFormEvent_0300, Fu
     std::string message = "event message";
     const sptr<IRemoteObject> callerToken = nullptr;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED, instance_->FireFormEvent(formId, message, want, callerToken));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED, instance_->FireFormEvent(formId, message, want, callerToken));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_FireFormEvent_0300 end";
 }
@@ -504,7 +501,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_NotifyFormsDelete_0300
     std::vector<int64_t> formIds = {730L, 731L, 732L};
     const sptr<IRemoteObject> callerToken = nullptr;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED, instance_->NotifyFormsDelete(formIds, want, callerToken));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED, instance_->NotifyFormsDelete(formIds, want, callerToken));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_NotifyFormsDelete_0300 end";
 }

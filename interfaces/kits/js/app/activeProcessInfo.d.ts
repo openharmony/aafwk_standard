@@ -13,14 +13,13 @@
  * limitations under the License.
  */
 
-
 /**
  * @name This class saves process information about an application
  * @since 7
  * @SysCap SystemCapability.Appexecfwk
  * @import import app from 'app/activeProcessInfo'
  * @permission N/A
- * @devices phone, tablet, tv, wearable
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface ActiveProcessInfo {
     /**

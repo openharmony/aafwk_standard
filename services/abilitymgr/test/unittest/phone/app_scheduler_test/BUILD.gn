@@ -13,6 +13,7 @@
 
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
 module_output_path = "aafwk_standard/abilitymgr"
 
@@ -24,8 +25,11 @@ ohos_unittest("app_scheduler_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
   ]
 
-  sources = [ "app_scheduler_test.cpp" ]
-
+  #sources = abilityms_files
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    "app_scheduler_test.cpp",
+  ]
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",

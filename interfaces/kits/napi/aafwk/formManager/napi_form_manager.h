@@ -26,60 +26,6 @@
 #include "nlohmann/json.hpp"
 #include "want.h"
 
-struct FormReqInfo {
-    int64_t formId;
-    std::string formName;
-    std::string deviceId;
-    std::string bundleName;
-    std::string abilityName;
-    std::string moduleName;
-    bool tempFormFlag = false;
-    int32_t formWidth;
-    int32_t formHeight;
-    int32_t formDimension;
-};
-
-struct JsCallbackInfo {
-    napi_env env;
-    napi_ref onAcquired = 0;
-    napi_ref onError = 0;
-};
-
-struct AddFormCallbackInfo {
-    JsCallbackInfo jsCallbackInfo;
-    int32_t result;
-    OHOS::AppExecFwk::FormJsInfo formInfo;
-    napi_async_work asyncWork;
-};
-
-/**
- * @brief 
- * The form result callback class.This callback env is same with acquireForm, 
- * it is used for return forminfo object to JavaScript by onAcquired or onUpdate
- */
-class NapiFormAbility : public OHOS::AppExecFwk::Ability::FormCallback {
-public:
-    NapiFormAbility(){};
-    virtual ~NapiFormAbility(){};
-    virtual void OnAcquired(const int32_t result, const OHOS::AppExecFwk::FormJsInfo &formJsInfo) const override;
-    virtual void OnUpdate(const int32_t result, const OHOS::AppExecFwk::FormJsInfo &formJsInfo) const override;
-    virtual void OnFormUninstall(const int64_t formId) const override;
-
-public:
-    JsCallbackInfo jsCallbackInfomation;
-};
-
-struct AsyncAddFormCallbackInfo {
-    napi_env env;
-    OHOS::AppExecFwk::Ability *ability;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback;
-    FormReqInfo param;
-    NapiFormAbility *napiFormAbility;
-    int32_t result;
-};
-
 struct AsyncDelFormCallbackInfo {
     napi_env env;
     OHOS::AppExecFwk::Ability *ability;
@@ -225,7 +171,6 @@ struct AsyncGetFormsInfoByModuleCallbackInfo {
     int result;
 };
 
-napi_value NAPI_AcquireForm(napi_env env, napi_callback_info info);
 napi_value NAPI_DeleteForm(napi_env env, napi_callback_info info);
 napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info);
 napi_value NAPI_RequestForm(napi_env env, napi_callback_info info);

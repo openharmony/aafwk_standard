@@ -699,17 +699,15 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Type_0300, Function | MediumTest | Level1)
 using SkillsMatchType = std::tuple<std::string, std::string, bool>;
 class SkillsMatchTest : public testing::TestWithParam<SkillsMatchType> {
 public:
-    SkillsMatchTest() : skills_(nullptr)
+    SkillsMatchTest()
     {}
     ~SkillsMatchTest()
-    {
-        skills_ = nullptr;
-    }
+    {}
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    Skills *skills_;
+    std::shared_ptr<Skills> skills_ = nullptr;
 };
 
 void SkillsMatchTest::SetUpTestCase(void)
@@ -720,14 +718,11 @@ void SkillsMatchTest::TearDownTestCase(void)
 
 void SkillsMatchTest::SetUp(void)
 {
-    skills_ = new Skills();
+    skills_ = std::make_shared<Skills>();
 }
 
 void SkillsMatchTest::TearDown(void)
-{
-    delete skills_;
-    skills_ = nullptr;
-}
+{}
 
 /**
  * @tc.number: AaFwk_Skills_match_0100

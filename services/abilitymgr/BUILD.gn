@@ -17,7 +17,10 @@ import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 EVENT_DIR = "//base/notification/ces_standard/"
 
 group("abilityms_target") {
-  deps = [ ":abilityms" ]
+  deps = [
+    ":abilityms",
+    ":ams_service_config",
+  ]
 }
 
 group("unittest") {
@@ -80,4 +83,14 @@ ohos_shared_library("abilityms") {
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"
+}
+
+ohos_prebuilt_etc("ams_service_config.json") {
+  source = "//foundation/aafwk/standard/services/abilitymgr/resource/ams_service_config.json"
+  subsystem_name = "aafwk"
+  part_name = "aafwk_standard"
+}
+
+group("ams_service_config") {
+  deps = [ ":ams_service_config.json" ]
 }

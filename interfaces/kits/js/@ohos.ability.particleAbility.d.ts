@@ -14,13 +14,11 @@
  */
 import { AsyncCallback } from './basic';
 import { StartAbilityParameter } from './ability/startAbilityParameter';
-import { Want } from './ability/want';
-import { ConnectOptions } from './ability/connectOptions';
 
 /**
  * A Particle Ability represents an ability with service.
  * @name particleAbility
- * @since 6
+ * @since 7
  * @sysCap AAFwk
  * @devices phone, tablet
  * @permission N/A
@@ -30,22 +28,12 @@ declare namespace particleAbility {
   /**
    * Service ability uses this method to start a specific ability.
    * @devices phone, tablet
-   * @since 6
+   * @since 7
    * @sysCap AAFwk
    * @param parameter Indicates the ability to start.
    * @return -
    */
-  function startAbility(parameter: StartAbilityParameter, callback: AsyncCallback<number>): void;
-  function startAbility(parameter: StartAbilityParameter): Promise<number>;
-
-   /**
-   * Destroys another Service ability.
-   *
-   * @param want Indicates information about the Service ability.
-   * @return Returns true if the Service ability is destroyed; returns false otherwise.
-   * @since 6
-   */
-  function stopAbility(request: Want, callback:AsyncCallback<boolean>): void;
-  function stopAbility(request: Want): Promise<boolean>;
+  function startAbility(parameter: StartAbilityParameter, callback: AsyncCallback<void>): void;
+  function startAbility(parameter: StartAbilityParameter): Promise<void>;
 }
 export default particleAbility;

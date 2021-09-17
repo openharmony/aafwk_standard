@@ -425,7 +425,18 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
         ret = UnzipFileAsync(env, args, argcAsync, asyncZipCallbackInfo);
     } else {
         HILOG_INFO("%{public}s called, wrong number of parameters", __func__);
+        if (asyncZipCallbackInfo != nullptr) {
+            delete asyncZipCallbackInfo;
+            asyncZipCallbackInfo = nullptr;
+        }
         return nullptr;
+    }
+
+    if (ret == nullptr) {
+        if (asyncZipCallbackInfo != nullptr) {
+            delete asyncZipCallbackInfo;
+            asyncZipCallbackInfo = nullptr;
+        }
     }
 
     return ret;
@@ -508,6 +519,10 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     }
     ZlibCallbackInfo *asyncCallbackInfo = new (std::nothrow) ZlibCallbackInfo();
     if (asyncCallbackInfo == nullptr) {
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
         return;
     }
     asyncCallbackInfo->callbackResult = result;
@@ -516,7 +531,7 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     zipAceCallbackInfo = nullptr;
     work->data = (void *)asyncCallbackInfo;
 
-    uv_queue_work(
+    int rev = uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
@@ -525,6 +540,10 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             // JS Thread
             ZlibCallbackInfo *asyncCallbackInfo = (ZlibCallbackInfo *)work->data;
             if (asyncCallbackInfo == nullptr) {
+                if (work != nullptr) {
+                    delete work;
+                    work = nullptr;
+                }
                 return;
             }
 
@@ -548,12 +567,25 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             if (asyncCallbackInfo->callback != nullptr) {
                 napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
             }
+            if (asyncCallbackInfo != nullptr) {
+                delete asyncCallbackInfo;
+                asyncCallbackInfo = nullptr;
+            }
+            if (work != nullptr) {
+                delete work;
+                work = nullptr;
+            }
+        });
+    if (rev != 0) {
+        if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        if (work != nullptr) {
             delete work;
             work = nullptr;
-            asyncCallbackInfo = nullptr;
-        });
-
+        }
+    }
     return;
 }
 

@@ -31,7 +31,10 @@ ohos_unittest("data_ability_manager_test") {
     "//foundation/aafwk/standard/services/common/include",
   ]
 
-  sources = [ "data_ability_manager_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    "data_ability_manager_test.cpp",  # add mock file
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

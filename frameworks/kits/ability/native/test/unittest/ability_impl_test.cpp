@@ -61,13 +61,7 @@ void AbilityImplTest::SetUp(void)
 }
 
 void AbilityImplTest::TearDown(void)
-{
-    // delete AbilityImpl_;
-    // delete MocKPageAbility_;
-
-    // AbilityImpl_ = nullptr;
-    // MocKPageAbility_ = nullptr;
-}
+{}
 
 /*
  * Feature: AbilityImpl

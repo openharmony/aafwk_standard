@@ -13,9 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef NAPI_CONTEXT_ERROR_H
-#define NAPI_CONTEXT_ERROR_H
+import { ElementName } from '../bundle/elementName';
+import { image } from '../@ohos.multimedia.image';
 
-#define NAPI_ERR_NO_PERMISSION -100
+/**
+ * @name This class represents a mission snapshot.
+ * @since 7
+ * @SysCap appexecfwk
+ * @import import MissionSnapshot from 'app/missionSnapshot'
+ * @devices phone, tablet
+ * @systemapi hide this for inner system use
+ */
+export interface MissionSnapshot {
+    /**
+     * @default The top ability in this mission snapshot
+     */
+    topAbility: ElementName;
 
-#endif
+    /**
+     * @default The entity of snapshot
+     */
+    snapshot: image.PixelMap;
+}

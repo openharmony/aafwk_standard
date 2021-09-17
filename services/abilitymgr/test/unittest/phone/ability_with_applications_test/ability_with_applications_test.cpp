@@ -76,23 +76,20 @@ public:
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
     std::shared_ptr<AbilityManagerService> abilityMs_;
-    std::shared_ptr<AppManagerTestService> appTestService_;
 };
 
 void AbilityWithApplicationsTest::SetUpTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
+}
 void AbilityWithApplicationsTest::TearDownTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+}
 
 void AbilityWithApplicationsTest::SetUp()
 {
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
-
-    appTestService_ = OHOS::DelayedSingleton<AppManagerTestService>::GetInstance();
-    appTestService_->Start();
-
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     abilityMs_->OnStart();
     WaitUntilTaskFinished(); /* wait for Service Start Complete */

@@ -159,6 +159,11 @@ struct CallingBundleCB {
     std::string callingBundleName;
 };
 
+struct GetOrCreateLocalDirCB {
+    CBBase cbBase;
+    std::string rootDir;
+};
+
 struct ElementNameCB {
     CBBase cbBase;
     std::string deviceId;

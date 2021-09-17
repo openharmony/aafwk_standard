@@ -1,0 +1,8 @@
+{
+    "service_startup_config":{  
+        "startup_launcher":true,
+        "startup_system_ui_status_bar" : true,
+        "startup_system_ui_navigation_bar" : true
+    } 
+      
+}

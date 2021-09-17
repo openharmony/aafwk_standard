@@ -24,7 +24,10 @@ ohos_unittest("mission_stack_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
   ]
 
-  sources = [ "mission_stack_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "mission_stack_test.cpp",  # add mock file
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

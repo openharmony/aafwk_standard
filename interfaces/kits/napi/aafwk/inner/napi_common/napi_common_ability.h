@@ -27,35 +27,16 @@ const std::int32_t STR_MAX_SIZE = 128;
 napi_value *GetGlobalClassContext(void);
 void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg);
 napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo);
-/**
- * @brief Obtains information about the current application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetApplicationInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
- * @brief Get bundle name.
+ * @brief Get Files Dir.
  *
  * @param env The environment that the Node-API call is invoked under.
  * @param info The callback info passed into the callback function.
  *
  * @return The return value from NAPI C++ to JS for the module.
  */
-napi_value NAPI_GetBundleNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
-
-/**
- * @brief Obtains the process Info this application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+napi_value NAPI_GetFilesDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
  * @brief Obtains the type of this application.
@@ -66,16 +47,6 @@ napi_value NAPI_GetProcessInfoCommon(napi_env env, napi_callback_info info, Abil
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetAppTypeCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
-
-/**
- * @brief Obtains the elementName object of the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetElementNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
  * @brief Obtains information about the current ability.
@@ -96,26 +67,6 @@ napi_value NAPI_GetAbilityInfoCommon(napi_env env, napi_callback_info info, Abil
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetHapModuleInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
-
-/**
- * @brief Obtains the name of the current process.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
-
-/**
- * @brief Obtains the bundle name of the ability that called the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetCallingBundleCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
  * @brief Create asynchronous data.
@@ -184,7 +135,8 @@ napi_value NAPI_StopAbilityCommon(napi_env env, napi_callback_info info, Ability
  *
  * @return The return value from NAPI C++ to JS for the module.
  */
-napi_value GetContinueAbilityOptionsInfoCommon(const napi_env &env, const napi_value &value, ContinueAbilityOptionsInfo &info);
+napi_value GetContinueAbilityOptionsInfoCommon(
+    const napi_env &env, const napi_value &value, ContinueAbilityOptionsInfo &info);
 
 /**
  * @brief Obtains the continue ability can reversible or not
@@ -209,6 +161,8 @@ napi_value GetContinueAbilityOptionsReversible(
  */
 napi_value GetContinueAbilityOptionsDeviceID(
     const napi_env &env, const napi_value &value, ContinueAbilityOptionsInfo &info);
+
+bool UnwrapAbilityStartSetting(napi_env env, napi_value param, AAFwk::AbilityStartSetting &setting);
 
 class NAPIAbilityConnection : public AAFwk::AbilityConnectionStub {
 public:
@@ -244,6 +198,27 @@ napi_value NAPI_ConnectAbilityCommon(napi_env env, napi_callback_info info, Abil
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_DisConnectAbilityCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+/**
+ * @brief acquireDataAbilityHelper processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param dataAbilityHelperCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value AcquireDataAbilityHelperWrap(
+    napi_env env, napi_callback_info info, DataAbilityHelperCB *dataAbilityHelperCB);
+
+/**
+ * @brief AcquireDataAbilityHelper.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 struct ConnecttionKey {
     Want want;
