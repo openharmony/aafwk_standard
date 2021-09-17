@@ -21,37 +21,37 @@ import { ElementName } from '../bundle/elementName';
  * @SysCap SystemCapability.Appexecfwk
  * @import import AbilityMissionInfo from 'app/abilityMissionInfo'
  * @permission N/A
- * @devices phone, tablet, tv, wearable
+ * @devices phone, tablet, tv, wearable, car
  */
 export interface AbilityMissionInfo {
-  /**
-   * @default Unique identification of task stack information corresponding to ability
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   */
-  missionId: number;
+    /**
+     * @default Unique identification of task stack information corresponding to ability
+     * @since 7
+     * @SysCap SystemCapability.Appexecfwk
+     */
+    missionId: number;
 
-  /**
-   * @default The component launched as the first ability in the task stack
-   * This can be considered the "application" of this task stack
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   */
-  bottomAbility: ElementName;
+    /**
+     * @default The component launched as the first ability in the task stack
+     * This can be considered the "application" of this task stack
+     * @since 7
+     * @SysCap SystemCapability.Appexecfwk
+     */
+    bottomAbility: ElementName;
 
-  /**
-   * @default The ability component at the top of the history stack of the task
-   * This is what the user is currently doing
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   */
-  topAbility: ElementName;
+    /**
+     * @default The ability component at the top of the history stack of the task
+     * This is what the user is currently doing
+     * @since 7
+     * @SysCap SystemCapability.Appexecfwk
+     */
+    topAbility: ElementName;
 
-  /**
-   * @default The corresponding ability description information in the task stack
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   */
-  windowMode: number;
+    /**
+     * @default The corresponding ability description information in the task stack
+     * @since 7
+     * @SysCap SystemCapability.Appexecfwk
+     */
+    windowMode: number;
 }
 

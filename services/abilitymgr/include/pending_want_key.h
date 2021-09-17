@@ -30,7 +30,7 @@ namespace AAFwk {
 
 class PendingWantKey {
 public:
-    PendingWantKey();
+    PendingWantKey() = default;
     virtual ~PendingWantKey() = default;
     void SetType(const int32_t type);
     void SetBundleName(const std::string &bundleName);
@@ -55,16 +55,16 @@ public:
     int32_t GetUserId();
 
 private:
-    int32_t type_;
-    std::string bundleName_;
-    std::string requestWho_;
-    int32_t requestCode_;
-    Want requestWant_;
-    std::string requestResolvedType_;
-    std::vector<WantsInfo> allWantsInfos_;
-    int32_t flags_;
-    int32_t code_;
-    int32_t userId_;
+    int32_t type_ {};
+    std::string bundleName_ {};
+    std::string requestWho_ {};
+    int32_t requestCode_ {};
+    Want requestWant_ {};
+    std::string requestResolvedType_ {};
+    std::vector<WantsInfo> allWantsInfos_ {};
+    int32_t flags_ {};
+    int32_t code_ {};
+    int32_t userId_ {};
 };
 
 }  // namespace AAFwk

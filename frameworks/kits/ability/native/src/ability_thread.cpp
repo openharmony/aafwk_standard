@@ -852,12 +852,26 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &
 void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {
     APP_LOGI("NotifyMultiWinModeChanged.key:%{public}d,flag:%{public}d", winModeKey, flag);
+    sptr<Window> window = currentAbility_->GetWindow();
+    if (window == nullptr) {
+        APP_LOGE("NotifyMultiWinModeChanged window == nullptr");
+        return;
+    }
+
     return;
 }
 
 void AbilityThread::NotifyTopActiveAbilityChanged(bool flag)
 {
     APP_LOGI("NotifyTopActiveAbilityChanged,flag:%{public}d", flag);
+    sptr<Window> window = currentAbility_->GetWindow();
+    if (window == nullptr) {
+        APP_LOGE("NotifyMultiWinModeChanged window == nullptr");
+        return;
+    }
+    if (flag) {
+        window->SwitchTop();
+    }
     return;
 }
 

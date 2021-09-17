@@ -58,37 +58,37 @@ class LightRefCountBaseTestClass : public LightRefCountBase {
 public:
     LightRefCountBaseTestClass()
     {
-        g_destructorCalled = false;
+        gDestructorCalled_ = false;
     }
 
     virtual ~LightRefCountBaseTestClass()
     {
-        g_destructorCalled = true;
+        gDestructorCalled_ = true;
     }
 
 public:
-    static bool g_destructorCalled;
+    static bool gDestructorCalled_;
 };
 
-bool LightRefCountBaseTestClass::g_destructorCalled = false;
+bool LightRefCountBaseTestClass::gDestructorCalled_ = false;
 
 class RefBaseTestClass : public RefBase {
 public:
     RefBaseTestClass()
     {
-        g_destructorCalled = false;
+        gDestructorCalled_ = false;
     }
 
     virtual ~RefBaseTestClass()
     {
-        g_destructorCalled = true;
+        gDestructorCalled_ = true;
     }
 
 public:
-    static bool g_destructorCalled;
+    static bool gDestructorCalled_;
 };
 
-bool RefBaseTestClass::g_destructorCalled = false;
+bool RefBaseTestClass::gDestructorCalled_ = false;
 
 CLASS(ObjectTestClass, 5afc4756 - 8f3c - 4d80 - a88b - 54521890beca)
 {
@@ -97,12 +97,12 @@ public:
         /* [in] */ int type)
         : type_(type)
     {
-        g_destructorCalled = false;
+        gDestructorCalled_ = false;
     }
 
     ~ObjectTestClass()
     {
-        g_destructorCalled = true;
+        gDestructorCalled_ = true;
     }
 
     OBJECT_DECL();
@@ -134,16 +134,19 @@ public:
     }
 
 public:
-    static bool g_destructorCalled;
+    static bool gDestructorCalled_;
 
 private:
     int type_;
 };
 
 const ClassID CID_ObjectTestClass = {
-    0x5afc4756, 0x8f3c, 0x4d80, 0xa88b, {0x5, 0x4, 0x5, 0x2, 0x1, 0x8, 0x9, 0x0, 0xb, 0xe, 0xc, 0xa}};
+    0x5afc4756, 0x8f3c, 0x4d80, 0xa88b, {
+        0x5, 0x4, 0x5, 0x2, 0x1, 0x8, 0x9, 0x0, 0xb, 0xe, 0xc, 0xa
+        }
+    };
 
-bool ObjectTestClass::g_destructorCalled = false;
+bool ObjectTestClass::gDestructorCalled_ = false;
 
 OBJECT_IMPL(ObjectTestClass);
 
@@ -158,10 +161,10 @@ OBJECT_IMPL(ObjectTestClass);
 HWTEST_F(AAFwkBaseTest, LightRefCountBase_test_001, TestSize.Level1)
 {
     sptr<LightRefCountBaseTestClass> testObject = new LightRefCountBaseTestClass();
-    EXPECT_FALSE(LightRefCountBaseTestClass::g_destructorCalled);
+    EXPECT_FALSE(LightRefCountBaseTestClass::gDestructorCalled_);
     EXPECT_EQ(testObject->GetRefCount(), 1);
     testObject = nullptr;
-    EXPECT_TRUE(LightRefCountBaseTestClass::g_destructorCalled);
+    EXPECT_TRUE(LightRefCountBaseTestClass::gDestructorCalled_);
 }
 
 /*
@@ -175,9 +178,9 @@ HWTEST_F(AAFwkBaseTest, LightRefCountBase_test_001, TestSize.Level1)
 HWTEST_F(AAFwkBaseTest, RefBase_test_001, TestSize.Level1)
 {
     sptr<RefBaseTestClass> testObject = new RefBaseTestClass();
-    EXPECT_FALSE(RefBaseTestClass::g_destructorCalled);
+    EXPECT_FALSE(RefBaseTestClass::gDestructorCalled_);
     testObject = nullptr;
-    EXPECT_TRUE(RefBaseTestClass::g_destructorCalled);
+    EXPECT_TRUE(RefBaseTestClass::gDestructorCalled_);
 }
 
 /*
@@ -208,7 +211,7 @@ HWTEST_F(AAFwkBaseTest, object_test_002, TestSize.Level1)
     sptr<ObjectTestClass> testObject = new ObjectTestClass(999);
     EXPECT_EQ(CID_ObjectTestClass, testObject->GetClassID());
     testObject = nullptr;
-    EXPECT_TRUE(ObjectTestClass::g_destructorCalled);
+    EXPECT_TRUE(ObjectTestClass::gDestructorCalled_);
 }
 
 /*
@@ -224,7 +227,7 @@ HWTEST_F(AAFwkBaseTest, object_test_003, TestSize.Level1)
     sptr<ObjectTestClass> testObject = new ObjectTestClass(999);
     EXPECT_EQ(19, testObject->GetHashCode());
     testObject = nullptr;
-    EXPECT_TRUE(ObjectTestClass::g_destructorCalled);
+    EXPECT_TRUE(ObjectTestClass::gDestructorCalled_);
 }
 
 /*
@@ -270,7 +273,7 @@ HWTEST_F(AAFwkBaseTest, object_test_005, TestSize.Level1)
 HWTEST_F(AAFwkBaseTest, object_test_006, TestSize.Level1)
 {
     sptr<ObjectTestClass> testObject1 = new ObjectTestClass(999);
-    EXPECT_FALSE(ObjectTestClass::g_destructorCalled);
+    EXPECT_FALSE(ObjectTestClass::gDestructorCalled_);
     sptr<IWeakReference> weakRef;
     testObject1->GetWeakReference(weakRef);
     EXPECT_TRUE(weakRef != nullptr);
@@ -280,7 +283,7 @@ HWTEST_F(AAFwkBaseTest, object_test_006, TestSize.Level1)
     EXPECT_EQ(static_cast<ObjectTestClass *>(object.GetRefPtr())->GetHashCode(), 19);
     testObject1 = nullptr;
     object = nullptr;
-    EXPECT_TRUE(ObjectTestClass::g_destructorCalled);
+    EXPECT_TRUE(ObjectTestClass::gDestructorCalled_);
     weakRef->Resolve(g_IID_IObject, reinterpret_cast<IInterface **>(&object));
     EXPECT_TRUE(object == nullptr);
 }
@@ -296,10 +299,10 @@ HWTEST_F(AAFwkBaseTest, object_test_006, TestSize.Level1)
 HWTEST_F(AAFwkBaseTest, object_test_007, TestSize.Level1)
 {
     sptr<ObjectTestClass> testObject1 = new ObjectTestClass(999);
-    EXPECT_FALSE(ObjectTestClass::g_destructorCalled);
+    EXPECT_FALSE(ObjectTestClass::gDestructorCalled_);
     wptr<ObjectTestClass> weakObject(testObject1);
     testObject1 = nullptr;
-    EXPECT_TRUE(ObjectTestClass::g_destructorCalled);
+    EXPECT_TRUE(ObjectTestClass::gDestructorCalled_);
     EXPECT_TRUE(weakObject.promote() == nullptr);
 }
 
@@ -1103,5 +1106,5 @@ HWTEST_F(AAFwkBaseTest, array_test_005, TestSize.Level1)
     EXPECT_FALSE(Object::Equals(arrayObj1, arrayObj2));
     EXPECT_TRUE(Object::Equals(arrayObj1, arrayObj3));
 }
-}
-}
+}  // namespace AAFwk
+}  // namespace OHOS

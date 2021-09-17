@@ -43,8 +43,12 @@ int FormProviderClient::AcquireProviderFormInfo(
 {
     APP_LOGI("%{public}s called.", __func__);
 
-    // avoid the user modify the number in onCreate
-    Want newWant = BuildNewWant(want);
+    Want newWant(want);
+    newWant.SetParam(Constants::ACQUIRE_TYPE, want.GetIntParam(Constants::ACQUIRE_TYPE, 0));
+    newWant.SetParam(Constants::FORM_CONNECT_ID, want.GetLongParam(Constants::FORM_CONNECT_ID, 0));
+    newWant.SetParam(Constants::FORM_SUPPLY_INFO, want.GetStringParam(Constants::FORM_SUPPLY_INFO));
+    newWant.SetParam(Constants::PROVIDER_FLAG, true);
+    newWant.SetParam(Constants::PARAM_FORM_IDENTITY_KEY, std::to_string(formId));
     std::shared_ptr<Ability> ownerAbility = GetOwner();
     if (ownerAbility == nullptr) {
         APP_LOGE("%{public}s error, ownerAbility is nullptr.", __func__);
@@ -62,16 +66,14 @@ int FormProviderClient::AcquireProviderFormInfo(
         return HandleAcquire(formProviderInfo, newWant, callerToken);
     }
 
-    Want cloneWant = Want(want);
-    cloneWant.RemoveParam(Constants::FORM_CONNECT_ID);
-    cloneWant.RemoveParam(Constants::ACQUIRE_TYPE);
-    cloneWant.RemoveParam(Constants::FORM_SUPPLY_INFO);
-    cloneWant.SetParam(Constants::PARAM_FORM_IDENTITY_KEY, std::to_string(formId));
-    FormProviderInfo formProviderInfo = ownerAbility->OnCreate(cloneWant);
-    formProviderInfo.SetFormId(formId);
-    newWant.SetParam(Constants::PROVIDER_FLAG, ERR_OK);
+    Want createWant(want);
+    createWant.SetParam(Constants::PARAM_FORM_IDENTITY_KEY, std::to_string(formId));
+    createWant.RemoveParam(Constants::FORM_CONNECT_ID);
+    createWant.RemoveParam(Constants::ACQUIRE_TYPE);
+    createWant.RemoveParam(Constants::FORM_SUPPLY_INFO);
+    FormProviderInfo formProviderInfo = ownerAbility->OnCreate(createWant);
     APP_LOGD("%{public}s, formId: %{public}" PRId64 ", data: %{public}s",
-     __func__, formProviderInfo.GetFormId(), formProviderInfo.GetFormDataString().c_str());
+     __func__, formId, formProviderInfo.GetFormDataString().c_str());
     return HandleAcquire(formProviderInfo, newWant, callerToken);
 }
 
@@ -404,18 +406,6 @@ void FormProviderClient::ClearOwner(const std::shared_ptr<Ability> ability)
     }
 }
 
-Want FormProviderClient::BuildNewWant(const Want &want) 
-{
-    Want newWant;
-    newWant
-        .SetParam(Constants::ACQUIRE_TYPE, want.GetIntParam(Constants::ACQUIRE_TYPE, 0))
-        .SetParam(Constants::FORM_CONNECT_ID, want.GetLongParam(Constants::FORM_CONNECT_ID, 0))
-        .SetParam(Constants::PARAM_FORM_IDENTITY_KEY, want.GetLongParam(Constants::PARAM_FORM_IDENTITY_KEY, 0))
-        .SetParam(Constants::FORM_SUPPLY_INFO, want.GetStringParam(Constants::FORM_SUPPLY_INFO))
-        .SetParam(Constants::PROVIDER_FLAG, true);
-    return newWant;
-}
-
 std::shared_ptr<Ability> FormProviderClient::GetOwner()
 {
     std::shared_ptr<Ability> ownerAbility = nullptr;
@@ -452,7 +442,7 @@ int FormProviderClient::HandleAcquire(
     sptr<IFormSupply> formSupplyClient = iface_cast<IFormSupply>(callerToken);
     if (formSupplyClient == nullptr) {
         APP_LOGW("%{public}s warn, IFormSupply is nullptr", __func__);
-        return ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED;
+        return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
     formSupplyClient->OnAcquire(formProviderInfo, newWant);
     APP_LOGI("%{public}s end", __func__);
@@ -464,7 +454,7 @@ int  FormProviderClient::HandleDisconnect(const Want &want, const sptr<IRemoteOb
     sptr<IFormSupply> formSupplyClient = iface_cast<IFormSupply>(callerToken);
     if (formSupplyClient == nullptr) {
         APP_LOGW("%{public}s warn, IFormSupply is nullptr", __func__);
-        return ERR_APPEXECFWK_FORM_BIND_FORMSUPPLY_FAILED;
+        return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
 
     APP_LOGD("%{public}s come, connectId: %{public}ld.", __func__,
@@ -473,6 +463,5 @@ int  FormProviderClient::HandleDisconnect(const Want &want, const sptr<IRemoteOb
     formSupplyClient->OnEventHandle(want);
     return ERR_OK;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

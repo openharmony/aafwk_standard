@@ -16,37 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "napi_form_ability.h"
+#include "napi_form_manager.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-
-/**
- * @brief Constructor of JS form
- *
- * @param[in] env The environment that the Node-API call is invoked under
- * @param[in] info An opaque datatype that is passed to a callback function
- *
- * @return This is an opaque pointer that is used to represent a JavaScript value
- */
-static napi_value JSFormConstructor(napi_env env, napi_callback_info info)
-{
-    napi_value thisVar = nullptr;
-    void* data = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
-
-    auto formObject = new NapiFormAbility();
-    napi_wrap(
-        env, thisVar, formObject,
-        [](napi_env env, void* data, void* hint) {
-            auto formObject = (NapiFormAbility*)data;
-            if (formObject != nullptr) {
-                delete formObject;
-            }
-        },
-        nullptr, nullptr);
-
-    return thisVar;
-}
 
 EXTERN_C_START
 
@@ -60,8 +32,8 @@ EXTERN_C_START
  */
 static napi_value Init(napi_env env, napi_value exports)
 {
+    HILOG_INFO("napi_moudule Init start...");
     napi_property_descriptor properties[] = {
-        DECLARE_NAPI_FUNCTION("acquireForm", NAPI_AcquireForm),
         DECLARE_NAPI_FUNCTION("deleteForm", NAPI_DeleteForm),
         DECLARE_NAPI_FUNCTION("releaseForm", NAPI_ReleaseForm),
         DECLARE_NAPI_FUNCTION("requestForm", NAPI_RequestForm),
@@ -77,19 +49,8 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getFormsInfoByApp", NAPI_GetFormsInfoByApp),
         DECLARE_NAPI_FUNCTION("getFormsInfoByModule", NAPI_GetFormsInfoByModule),
     };
-
-    const char* formClassName = "FormObject";
-    napi_value result = nullptr;
-    napi_define_class(env, 
-                      formClassName, 
-                      NAPI_AUTO_LENGTH, 
-                      JSFormConstructor, 
-                      nullptr, 
-                      sizeof(properties) / sizeof(properties[0]), 
-                      properties, 
-                      &result);
-
-    napi_set_named_property(env, exports, formClassName, result);
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+    HILOG_INFO("napi_moudule Init end...");
 
     return exports;
 }
@@ -102,7 +63,7 @@ static napi_module _module = {
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = Init,
-    .nm_modname = "form",
+    .nm_modname = "ability.formmanager",
     .nm_priv = ((void *)0),
     .reserved = {0}
 };

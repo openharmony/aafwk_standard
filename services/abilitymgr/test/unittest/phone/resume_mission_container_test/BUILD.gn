@@ -25,7 +25,10 @@ ohos_unittest("resume_mission_container_test") {
     "//foundation/aafwk/standard/services/test/mock/include",
   ]
 
-  sources = [ "resume_mission_container_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "resume_mission_container_test.cpp",  # add mock file
+  ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []

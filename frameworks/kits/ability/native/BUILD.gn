@@ -158,7 +158,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/fmskit:fmskit_native",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher:appkit_dispatcher_td",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
@@ -167,6 +166,7 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   external_deps = [
+    "appexecfwk_standard:fmskit_native",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
 

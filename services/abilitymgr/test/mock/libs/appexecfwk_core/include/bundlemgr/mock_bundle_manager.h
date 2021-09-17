@@ -24,8 +24,8 @@
 #include "ohos/aafwk/content/want.h"
 #include "iremote_proxy.h"
 #include "iremote_stub.h"
-#include "shortcut_info.h"
 #include "form_info.h"
+#include "shortcut_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -124,42 +124,29 @@ auto HiDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
 };
 
 }  // namespace
-
-class BundleMgrStub : public IRemoteStub<IBundleMgr> {
+class BundleMgrProxy : public IRemoteProxy<IBundleMgr> {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"IBundleMgr");
-    virtual int OnRemoteRequest(
-        uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
-};
-
-class BundleMgrService : public BundleMgrStub {
-public:
-    BundleMgrService()
-    {
-        abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);
-        abilityInfoMap_.emplace(COM_IX_HIMUSIC, HiMusicInfo);
-        abilityInfoMap_.emplace(COM_IX_HIRADIO, HiRadioInfo);
-        abilityInfoMap_.emplace(COM_IX_HISERVICE, HiServiceInfo);
-        abilityInfoMap_.emplace(COM_IX_MUSICSERVICE, MusicServiceInfo);
-        abilityInfoMap_.emplace(COM_IX_HIDATA, HiDataInfo);
-    }
-
-    virtual ~BundleMgrService()
+    explicit BundleMgrProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IBundleMgr>(impl)
     {}
+    virtual ~BundleMgrProxy()
+    {}
+    int QueryWantAbility(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos);
+
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+
     bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
+
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
 
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-    int GetUidByBundleName(const std::string &bundleName, const int userId) override;
-    bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
 
-    MOCK_METHOD2(QueryWantAbility, int(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos));
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
-    // MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
+    MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
@@ -192,29 +179,104 @@ public:
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
     MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
-    MOCK_METHOD3(NotifyActivityLifeStatus,
-        bool(const std::string &bundleName, const std::string &abilityName, const int64_t launchTime));
-
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &bundleNames));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
+    MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
     MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &abilityInfo, bool isEnabled));
     MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
-    MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
-
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(RegisterPermissionsChanged,
         bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+};
+
+class BundleMgrStub : public IRemoteStub<IBundleMgr> {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"IBundleMgr");
+    virtual int OnRemoteRequest(
+        uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+};
+
+class BundleMgrService : public BundleMgrStub {
+public:
+    BundleMgrService();
+    ~BundleMgrService();
+
+    bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+    bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
+    bool GetApplicationInfo(
+        const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
+    bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
+    int GetUidByBundleName(const std::string &bundleName, const int userId) override;
+
+    bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
+
+    virtual bool NotifyActivityLifeStatus(
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
+    MOCK_METHOD2(QueryWantAbility, int(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos));
+    MOCK_METHOD3(GetApplicationInfos,
+        bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
+    MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
+    MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
+    MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
+    MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
+    MOCK_METHOD1(CheckIsSystemAppByUid, bool(const int uid));
+    MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
+    MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
+    MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
+    MOCK_METHOD3(
+        GetBundleArchiveInfo, bool(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo));
+    MOCK_METHOD2(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo));
+    MOCK_METHOD2(GetLaunchWantForBundle, bool(const std::string &bundleName, Want &want));
+    MOCK_METHOD2(CheckPublicKeys, int(const std::string &firstBundleName, const std::string &secondBundleName));
+    MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
+    MOCK_METHOD2(GetPermissionDef, bool(const std::string &permissionName, PermissionDef &permissionDef));
+    MOCK_METHOD1(GetAllPermissionGroupDefs, bool(std::vector<PermissionDef> &permissionDefs));
+    MOCK_METHOD2(GetAppsGrantedPermissions,
+        bool(const std::vector<std::string> &permissions, std::vector<std::string> &appNames));
+    MOCK_METHOD1(HasSystemCapability, bool(const std::string &capName));
+    MOCK_METHOD1(GetSystemAvailableCapabilities, bool(std::vector<std::string> &systemCaps));
+    MOCK_METHOD0(IsSafeMode, bool());
+    MOCK_METHOD2(CleanBundleCacheFiles,
+        bool(const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback));
+    MOCK_METHOD1(CleanBundleDataFiles, bool(const std::string &bundleName));
+    MOCK_METHOD3(RequestPermissionFromUser,
+        bool(const std::string &bundleName, const std::string &permission, const int userId));
+    MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
+    MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &));
+    MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
+    MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
+    MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
+    MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &bundleNames));
+    MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
+    MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
+    MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &abilityInfo, bool isEnabled));
+    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
+    MOCK_METHOD3(
+        CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
+    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD2(RegisterPermissionsChanged,
+        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
+    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(GetModuleUsageRecords, bool(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords));
+    MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD3(GetFormsInfoByModule,
+        bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
+    MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
+    MOCK_METHOD3(DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, std::string &result));
+    MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
 
 public:
     using QueryAbilityInfoFunType =

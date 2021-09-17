@@ -115,6 +115,12 @@ bool AbilityManagerService::Init()
     auto dataAbilityManager = std::make_shared<DataAbilityManager>();
     CHECK_POINTER_RETURN_BOOL(dataAbilityManager);
 
+    amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+    if (amsConfigResolver_) {
+        amsConfigResolver_->Parse();
+        HILOG_INFO("ams config parse");
+    }
+
     auto pendingWantManager = std::make_shared<PendingWantManager>();
     if (!pendingWantManager) {
         HILOG_ERROR("Failed to init pending want ability manager.");
@@ -126,11 +132,7 @@ bool AbilityManagerService::Init()
     systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
     CHECK_POINTER_RETURN_BOOL(systemAppManager_);
 
-    auto startLauncherAbilityTask = [aams = shared_from_this()]() {
-        aams->WaitForStartingLauncherAbility();
-        aams->StartSystemUi(AbilityConfig::SYSTEM_UI_STATUS_BAR);
-        aams->StartSystemUi(AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
-    };
+    auto startLauncherAbilityTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
     handler_->PostTask(startLauncherAbilityTask, "startLauncherAbility");
     dataAbilityManager_ = dataAbilityManager;
     pendingWantManager_ = pendingWantManager;
@@ -167,7 +169,6 @@ int AbilityManagerService::StartAbility(
     const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid)
 {
     HILOG_INFO("%{public}s", __func__);
-
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
@@ -1041,28 +1042,12 @@ int AbilityManagerService::GetUserId()
     return DEFAULT_USER_ID;
 }
 
-void AbilityManagerService::WaitForStartingLauncherAbility()
+void AbilityManagerService::StartingLauncherAbility()
 {
-    HILOG_INFO("Waiting AppMgr Service run completed.");
-    while (!appScheduler_->Init(shared_from_this())) {
-        HILOG_ERROR("Failed to init appScheduler_");
-        usleep(REPOLL_TIME_MICRO_SECONDS);
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
     }
-
-    HILOG_INFO("Waiting BundleMgr Service run completed.");
-    /* wait until connected to bundle manager service */
-    while (iBundleManager_ == nullptr) {
-        sptr<IRemoteObject> bundle_obj =
-            OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-        if (bundle_obj == nullptr) {
-            HILOG_ERROR("Failed to get bundle manager service");
-            usleep(REPOLL_TIME_MICRO_SECONDS);
-            continue;
-        }
-        iBundleManager_ = iface_cast<AppExecFwk::IBundleMgr>(bundle_obj);
-    }
-
-    HILOG_INFO("Waiting Home Launcher Ability install completed.");
 
     /* query if launcher ability has installed */
     AppExecFwk::AbilityInfo abilityInfo;
@@ -1074,23 +1059,8 @@ void AbilityManagerService::WaitForStartingLauncherAbility()
         usleep(REPOLL_TIME_MICRO_SECONDS);
     }
 
-    AppExecFwk::AbilityInfo statusBarInfo;
-    AppExecFwk::AbilityInfo navigationBarInfo;
-    Want statusBarWant;
-    Want navigationBarWant;
-    statusBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
-    navigationBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
-    uint32_t waitCnt = 0;
-    // Wait 10 minutes for the installation to complete.
-    while ((!(iBundleManager_->QueryAbilityInfo(statusBarWant, statusBarInfo)) ||
-               !(iBundleManager_->QueryAbilityInfo(navigationBarWant, navigationBarInfo))) &&
-           waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
-        HILOG_INFO("Waiting query system ui info completed.");
-        usleep(REPOLL_TIME_MICRO_SECONDS);
-        waitCnt++;
-    }
-    HILOG_INFO("Waiting boot animation for 5 seconds.");
-    usleep(REPOLL_TIME_MICRO_SECONDS * 5);
+    HILOG_INFO("waiting boot animation for 5 seconds.");
+    usleep(REPOLL_TIME_MICRO_SECONDS * WAITING_BOOT_ANIMATION_TIMER);
     HILOG_INFO("Start Home Launcher Ability.");
     /* start launch ability */
     (void)StartAbility(want, DEFAULT_INVAL_VALUE);
@@ -1120,14 +1090,14 @@ int AbilityManagerService::GenerateAbilityRequest(
 
     bms->QueryAbilityInfo(want, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
-        HILOG_ERROR("Failed to get ability info.");
+        HILOG_ERROR("Get ability info failed.");
         return RESOLVE_ABILITY_ERR;
     }
     HILOG_DEBUG("Query ability name: %{public}s,", request.abilityInfo.name.c_str());
 
     request.appInfo = request.abilityInfo.applicationInfo;
     if (request.appInfo.name.empty() || request.appInfo.bundleName.empty()) {
-        HILOG_ERROR("Failed to get app info");
+        HILOG_ERROR("Get app info failed.");
         return RESOLVE_APP_ERR;
     }
     HILOG_DEBUG("Query app name: %{public}s,", request.appInfo.name.c_str());
@@ -1519,11 +1489,99 @@ void AbilityManagerService::NotifyBmsAbilityLifeStatus(
     bundleManager->NotifyActivityLifeStatus(bundleName, abilityName, launchTime);
 }
 
-int AbilityManagerService::CheckPermission(const std::string &bundleName, const std::string &permission)
+void AbilityManagerService::StartSystemApplication()
 {
-    auto bundleManager = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bundleManager, INNER_ERR);
-    return bundleManager->CheckPermission(bundleName, permission);
+    HILOG_DEBUG("%{public}s", __func__);
+
+    ConnectBmsService();
+
+    if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
+        HILOG_INFO("start all");
+        StartingLauncherAbility();
+        StartingSystemUiAbility(SatrtUiMode::STARTUIBOTH);
+        return;
+    }
+
+    if (amsConfigResolver_->GetStartLuncherState()) {
+        HILOG_INFO("start luncher");
+        StartingLauncherAbility();
+    }
+
+    if (amsConfigResolver_->GetStatusBarState()) {
+        HILOG_INFO("start status bar");
+        StartingSystemUiAbility(SatrtUiMode::STATUSBAR);
+    }
+
+    if (amsConfigResolver_->GetNavigationBarState()) {
+        HILOG_INFO("start navigation bar");
+        StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
+    }
+}
+
+void AbilityManagerService::ConnectBmsService()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    HILOG_INFO("Waiting AppMgr Service run completed.");
+    while (!appScheduler_->Init(shared_from_this())) {
+        HILOG_ERROR("failed to init appScheduler_");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+    }
+
+    HILOG_INFO("Waiting BundleMgr Service run completed.");
+    /* wait until connected to bundle manager service */
+    while (iBundleManager_ == nullptr) {
+        sptr<IRemoteObject> bundle_obj =
+            OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+        if (bundle_obj == nullptr) {
+            HILOG_ERROR("failed to get bundle manager service");
+            usleep(REPOLL_TIME_MICRO_SECONDS);
+            continue;
+        }
+        iBundleManager_ = iface_cast<AppExecFwk::IBundleMgr>(bundle_obj);
+    }
+
+    HILOG_INFO("Connect bms success!");
+}
+
+void AbilityManagerService::StartingSystemUiAbility(const SatrtUiMode &mode)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+    }
+
+    AppExecFwk::AbilityInfo statusBarInfo;
+    AppExecFwk::AbilityInfo navigationBarInfo;
+    Want statusBarWant;
+    Want navigationBarWant;
+    statusBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
+    navigationBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+    uint32_t waitCnt = 0;
+    // Wait 10 minutes for the installation to complete.
+    while ((!(iBundleManager_->QueryAbilityInfo(statusBarWant, statusBarInfo)) ||
+               !(iBundleManager_->QueryAbilityInfo(navigationBarWant, navigationBarInfo))) &&
+           waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
+        HILOG_INFO("Waiting query system ui info completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+        waitCnt++;
+    }
+
+    HILOG_INFO("start ui mode : %{public}d", mode);
+    switch (mode) {
+        case SatrtUiMode::STATUSBAR:
+            StartSystemUi(AbilityConfig::SYSTEM_UI_STATUS_BAR);
+            break;
+        case SatrtUiMode::NAVIGATIONBAR:
+            StartSystemUi(AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+            break;
+        case SatrtUiMode::STARTUIBOTH:
+            StartSystemUi(AbilityConfig::SYSTEM_UI_STATUS_BAR);
+            StartSystemUi(AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
+            break;
+        default:
+            HILOG_INFO("Input mode error ...");
+            break;
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS

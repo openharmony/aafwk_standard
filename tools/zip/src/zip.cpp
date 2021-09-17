@@ -148,12 +148,14 @@ bool Zip(const ZipParams &params, const OPTIONS &options, CALLBACK callback)
     if (params.DestFd() != kInvalidPlatformFile) {
         zipWriter = ZipWriter::CreateWithFd(params.DestFd(), rootPath);
         if (!zipWriter) {
+            CALLING_CALL_BACK(callback, ERROR_CODE_STREAM_ERROR)
             return false;
         }
     }
     if (!zipWriter) {
         zipWriter = ZipWriter::Create(params.DestFile(), rootPath);
         if (!zipWriter) {
+            CALLING_CALL_BACK(callback, ERROR_CODE_STREAM_ERROR)
             return false;
         }
     }
@@ -254,9 +256,11 @@ bool ZipWithFilterCallback(const FilePath &srcDir, const FilePath &destFile, con
     FilePath srcPath = srcDir;
     if (!EndsWith(srcPath.Value(), SEPARATOR)) {
         if (!FilePath::DirectoryExists(srcPath.DirName())) {
+            CALLING_CALL_BACK(callback, ERROR_CODE_DATA_ERROR)
             return false;
         }
     } else if (!FilePath::DirectoryExists(srcDir)) {
+        CALLING_CALL_BACK(callback, ERROR_CODE_DATA_ERROR)
         return false;
     }
     ZipParams params(srcDir, destFile);
