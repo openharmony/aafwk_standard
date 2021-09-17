@@ -26,13 +26,13 @@ static const int SET_COUNT = 1;
 static const Uri uri("scheme://authority/path1/path2/path3?id = 1&name = mingming&old#fragment");
 class DataAbilityResultTest : public testing::Test {
 public:
-    DataAbilityResultTest() 
+    DataAbilityResultTest()
     {}
     ~DataAbilityResultTest()
     {}
 
     std::shared_ptr<DataAbilityResult> Base_ = nullptr;
-    
+
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
@@ -47,21 +47,20 @@ void DataAbilityResultTest::TearDownTestCase(void)
 
 void DataAbilityResultTest::SetUp(void)
 {
-    Base_ = std::make_shared<DataAbilityResult>(COUNT_NULL);   
+    Base_ = std::make_shared<DataAbilityResult>(COUNT_NULL);
 }
 
 void DataAbilityResultTest::TearDown(void)
 {}
 
-
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult0100, Function | MediumTest | Level1)
 {
-    DataAbilityResult  test1(SET_COUNT);
+    DataAbilityResult test1(SET_COUNT);
     EXPECT_EQ(SET_COUNT, test1.GetCount());
     EXPECT_EQ(std::string(""), test1.GetUri().ToString());
 
@@ -69,14 +68,14 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult01
     EXPECT_EQ(COUNT_NULL, test2.GetCount());
     EXPECT_EQ(uri.ToString(), test2.GetUri().ToString());
 
-    DataAbilityResult test3(uri,SET_COUNT);
+    DataAbilityResult test3(uri, SET_COUNT);
     EXPECT_EQ(SET_COUNT, test3.GetCount());
     EXPECT_EQ(uri.ToString(), test3.GetUri().ToString());
-   
+
     *Base_ = test3;
-    if(Base_){
-        Parcel in;  
-        Base_->Marshalling(in);        
+    if (Base_) {
+        Parcel in;
+        Base_->Marshalling(in);
         DataAbilityResult test4(in);
         EXPECT_EQ(SET_COUNT, test4.GetCount());
         EXPECT_EQ(uri.ToString(), test4.GetUri().ToString());
@@ -84,13 +83,13 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult01
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult0200, Function | MediumTest | Level1)
 {
-    DataAbilityResult  test1(COUNT_NULL);
+    DataAbilityResult test1(COUNT_NULL);
     EXPECT_EQ(COUNT_NULL, test1.GetCount());
     EXPECT_EQ(std::string(""), test1.GetUri().ToString());
 
@@ -99,7 +98,7 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult02
     EXPECT_EQ(COUNT_NULL, test2.GetCount());
     EXPECT_EQ(zero.ToString(), test2.GetUri().ToString());
 
-    DataAbilityResult test3(uri,SET_COUNT);
+    DataAbilityResult test3(uri, SET_COUNT);
     EXPECT_EQ(SET_COUNT, test3.GetCount());
     EXPECT_EQ(uri.ToString(), test3.GetUri().ToString());
 
@@ -111,21 +110,21 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult02
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0100, Function | MediumTest | Level1)
 {
     // Uri uri("abc");
-    DataAbilityResult test(uri,SET_COUNT);
+    DataAbilityResult test(uri, SET_COUNT);
     EXPECT_EQ(SET_COUNT, test.GetCount());
     EXPECT_EQ(uri.ToString(), test.GetUri().ToString());
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0200, Function | MediumTest | Level1)
@@ -135,8 +134,8 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0200, Function |
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_CreateFromParcel0100, Function | MediumTest | Level1)
@@ -144,7 +143,7 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_CreateFromParcel010
     Parcel in;
     Base_->Marshalling(in);
     DataAbilityResult *ptr = Base_->CreateFromParcel(in);
-    
+
     if (ptr != nullptr) {
         EXPECT_EQ(true, ptr->GetUri().ToString().empty());
         EXPECT_EQ(COUNT_NULL, ptr->GetCount());
@@ -152,25 +151,25 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_CreateFromParcel010
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0100, Function | MediumTest | Level1)
 {
     std::string search = "DataAbilityResult(";
-    std::size_t pos = 0;  
+    std::size_t pos = 0;
     std::size_t result = 0;
 
-    DataAbilityResult dataAbilityResult(uri,SET_COUNT);
+    DataAbilityResult dataAbilityResult(uri, SET_COUNT);
     std::string str = dataAbilityResult.ToString();
-    
+
     result = str.find(search, pos);
     EXPECT_EQ(result, pos);
     if (result != std::string::npos) {
-        pos += search.length() - 1;  
+        pos += search.length() - 1;
     }
-    
+
     search = std::string("uri=") + uri.ToString() + std::string(" ");
     result = str.find(search, pos);
 
@@ -192,26 +191,26 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0100, Funct
 }
 
 /**
- * @tc.number: 
- * @tc.name: 
+ * @tc.number:
+ * @tc.name:
  * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0200, Function | MediumTest | Level1)
 {
-    
+
     std::string search = "DataAbilityResult(";
-    std::size_t pos = 0;  
+    std::size_t pos = 0;
     std::size_t result = 0;
 
     DataAbilityResult dataAbilityResult(COUNT_NULL);
     std::string str = dataAbilityResult.ToString();
-    
+
     result = str.find(search, pos);
     EXPECT_EQ(result, pos);
     if (result != std::string::npos) {
-        pos += search.length() - 1;  
+        pos += search.length() - 1;
     }
-    
+
     search = std::string("uri=") + dataAbilityResult.GetUri().ToString() + std::string(" ");
     result = str.find(search, pos);
 
@@ -233,9 +232,9 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0200, Funct
 }
 
 /**
- * @tc.number: 
+ * @tc.number:
  * @tc.name: Marshalling/Unmarshalling
- * @tc.desc: marshalling 
+ * @tc.desc: marshalling
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0100, Function | MediumTest | Level1)
 {
@@ -243,7 +242,6 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0100, Fu
     if (ResultIn_ == nullptr) {
         return;
     }
-    
 
     Parcel in;
     ResultIn_->Marshalling(in);
@@ -256,9 +254,9 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0100, Fu
 }
 
 /**
- * @tc.number: 
+ * @tc.number:
  * @tc.name: Marshalling/Unmarshalling
- * @tc.desc: 
+ * @tc.desc:
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0200, Function | MediumTest | Level1)
 {
@@ -266,7 +264,7 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0200, Fu
     if (ResultIn_ == nullptr) {
         return;
     }
-   
+
     Parcel in;
     ResultIn_->Marshalling(in);
     std::shared_ptr<DataAbilityResult> ResultOut_(DataAbilityResult::Unmarshalling(in));
@@ -274,8 +272,8 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0200, Fu
     if (ResultOut_ != nullptr) {
         EXPECT_EQ(ResultIn_->GetUri().ToString(), ResultOut_->GetUri().ToString());
         EXPECT_EQ(ResultIn_->GetCount(), ResultOut_->GetCount());
-    }  
+    }
 }
 
-}  // namespace AppExecFwk  
+}  // namespace AppExecFwk
 }  // namespace OHOS

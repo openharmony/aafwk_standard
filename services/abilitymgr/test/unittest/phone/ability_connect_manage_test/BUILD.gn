@@ -20,9 +20,11 @@ ohos_unittest("ability_connect_manage_test") {
   module_out_path = module_output_path
 
   sources = [
+    # add mock file
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_data_ability_predicates.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_result_set.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_values_bucket.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "ability_connect_manage_test.cpp",
   ]
 

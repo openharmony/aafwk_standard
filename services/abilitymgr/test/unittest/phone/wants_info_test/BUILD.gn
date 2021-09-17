@@ -26,7 +26,10 @@ ohos_unittest("wants_info_test") {
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
-  sources = [ "wants_info_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "wants_info_test.cpp",
+  ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []

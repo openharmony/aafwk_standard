@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace AAFwk {
-PendingWantRecord::PendingWantRecord() : pendingWantManager_{}, uid_{}, callerToken_{}, key_{}
+PendingWantRecord::PendingWantRecord()
 {}
 
 PendingWantRecord::PendingWantRecord(const std::shared_ptr<PendingWantManager> &pendingWantManager, int32_t uid,

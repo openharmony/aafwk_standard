@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { AsyncCallback, Callback } from './basic';
 import { ApplicationInfo } from './bundle/applicationInfo';
 import { BundleInfo } from './bundle/bundleInfo';
@@ -21,14 +22,6 @@ import { BundleInstaller } from './bundle/bundleInstaller';
 import { ElementName } from './bundle/elementName';
 import { ShortcutInfo } from './bundle/shortcutInfo';
 import { ModuleUsageRecord } from './bundle/moduleUsageRecord';
-import permission from './@ohos.security.permission';
-
-/**
-  * @default Indicates the permission event
-  * @since 7
-  * @SysCap SystemCapability.Appexecfwk
-  */
-type PermissionEvent = 'permissionChange' | 'anyPermissionChange';
 
 /**
  * bundle.
@@ -40,28 +33,28 @@ type PermissionEvent = 'permissionChange' | 'anyPermissionChange';
  */
 declare namespace bundle {
 
- /**
-  * @name BundleFlag
-  * @since 7
-  * @SysCap SystemCapability.Appexecfwk
-  * @import NA
-  * @permission NA
-  * @devices phone, tablet, tv, wearable
-  */
+/**
+ * @name BundleFlag
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
+ * @import NA
+ * @permission NA
+ * @devices phone, tablet, tv, wearable
+ */
   enum BundleFlag {
     GET_BUNDLE_DEFAULT = 0x00000000,
     GET_BUNDLE_WITH_ABILITIES = 0x00000001,
     GET_APPLICATION_INFO_WITH_PERMISSION = 0x00000008,
   }
 
-  /**
-  * @name GrantStatus
-  * @since 7
-  * @SysCap SystemCapability.Appexecfwk
-  * @import NA
-  * @permission NA
-  * @devices phone, tablet, tv, wearable
-  */
+/**
+ * @name GrantStatus
+ * @since 7
+ * @SysCap SystemCapability.Appexecfwk
+ * @import NA
+ * @permission NA
+ * @devices phone, tablet, tv, wearable
+ */
   export enum GrantStatus {
     PERMISSION_DENIED = -1,
     PERMISSION_GRANTED = 0,
@@ -220,6 +213,7 @@ declare namespace bundle {
    * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED,ohos.permission.GET_BUNDLE_INFO
    */
    function getBundleInfo(bundleName: string, bundleFlags: number, callback: AsyncCallback<BundleInfo>): void;
+   function getBundleInfo(bundleName: string, bundleFlags: number): Promise<BundleInfo>;
 
   /**
    * Obtains the interface used to install bundles.
@@ -247,7 +241,7 @@ declare namespace bundle {
    * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED, ohos.permission.GET_BUNDLE_INFO
    */
   function getApplicationInfo(bundleName: string, bundleFlags: number, userId: number, callback: AsyncCallback<ApplicationInfo>) : void;
-  function getApplicationInfo(bundleName: string, bundleFlags: number, userId?: number) : Promise<ApplicationInfo>;
+  function getApplicationInfo(bundleName: string, bundleFlags: number, userId: number) : Promise<ApplicationInfo>;
 
   /**
    * Checks whether a specified bundle has been granted a specific permission.
@@ -261,6 +255,23 @@ declare namespace bundle {
    */
   function checkPermission(bundleName: string, permission: string, callback: AsyncCallback<GrantStatus>): void;
   function checkPermission(bundleName: string, permission: string): Promise<GrantStatus>;
+
+  /**
+   * Query the AbilityInfo by the given Want.
+   *
+   * @devices phone, tablet, tv, wearable
+   * @since 7
+   * @SysCap SystemCapability.Appexecfwk
+   * @param intent Indicates the Intent containing the application bundle name to
+   *               be queried.
+   * @param flags Indicates the flag used to specify information contained in the AbilityInfo objects that
+   *              will be returned.
+   * @param userId Indicates the user ID.
+   * @return Returns a list of AbilityInfo objects.
+   * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED, ohos.permission.GET_BUNDLE_INFO
+   */
+  function queryAbilityByWant(want: Want, bundleFlags: number, userId: number, callback: AsyncCallback<Array<AbilityInfo>>): void;
+  function queryAbilityByWant(want: Want, bundleFlags: number, userId:number): Promise<Array<AbilityInfo>>;
 
   /**
    * Obtains BundleInfo of all bundles available in the system.
@@ -277,32 +288,6 @@ declare namespace bundle {
   function getAllBundleInfo(bundlelFlag: BundleFlag) : Promise<Array<BundleInfo>>;
 
   /**
-   * Registers a callback for listening for permission changes of all UIDs.
-   *
-   * @devices phone, tablet, tv, wearable
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   * @param
-   * @return
-   * @permission ohos.permission.LISTEN_PERMISSION_CHANGE
-   */
-  function on(type: PermissionEvent, callback: Callback<number>): void;
-  function on(type: PermissionEvent, uids: Array<number>, callback: Callback<number>): void;
-
-  /**
-   * Unregister a specified callback for listening for permission changes.
-   *
-   * @devices phone, tablet, tv, wearable
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   * @param
-   * @return
-   * @permission ohos.permission.LISTEN_PERMISSION_CHANGE
-   */
-  function off(type: PermissionEvent, callback?: Callback<number>):void;
-  function off(type: PermissionEvent, uids: Array<number>, callback?: Callback<number>): void;
-
-  /**
    * Obtains information about all installed applications of a specified user.
    *
    * @devices phone, tablet, tv, wearable
@@ -315,7 +300,7 @@ declare namespace bundle {
    * @permission ohos.permission.GET_BUNDLE_INFO_PRIVILEGED
    */
   function getAllApplicationInfo(bundleFlags: number, userId: number, callback: AsyncCallback<Array<ApplicationInfo>>) : void;
-  function getAllApplicationInfo(bundleFlags: number, userId?: number) : Promise<Array<ApplicationInfo>>;
+  function getAllApplicationInfo(bundleFlags: number, userId: number) : Promise<Array<ApplicationInfo>>;
 
   /**
    * Obtains information about an application bundle contained in an ohos Ability Package (HAP).
@@ -357,18 +342,6 @@ declare namespace bundle {
    */
   function getModuleUsageRecords(maxNum: number, callback: AsyncCallback<Array<ModuleUsageRecord>>): void;
   function getModuleUsageRecords(maxNum: number): Promise<Array<ModuleUsageRecord>>;
-
-  /**
-   * Obtains detailed information about a specified permission.
-   *
-   * @devices phone, tablet, tv, wearable
-   * @since 7
-   * @SysCap SystemCapability.Appexecfwk
-   * @param permissionName Indicates the name of the permission.
-   * @return Returns PermissionDef.
-   */
-  function getPermissionDef(permissionName: string, callback: AsyncCallback<permission.PermissionDef>) : void;
-  function getPermissionDef(permissionName: string) : Promise<permission.PermissionDef>;
 }
 
 export default bundle;

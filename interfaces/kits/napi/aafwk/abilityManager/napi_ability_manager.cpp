@@ -32,7 +32,6 @@ using namespace OHOS::AAFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 OHOS::sptr<OHOS::AAFwk::IAbilityManager> GetAbilityManagerInstance()
 {
     OHOS::sptr<OHOS::ISystemAbilityManager> systemAbilityManager =
@@ -52,7 +51,7 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance()
 
 napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value args)
 {
-    napi_valuetype valuetype;
+    napi_valuetype valuetype = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, args, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
     char buf[BUFFER_LENGTH_MAX] = {0};
@@ -72,29 +71,29 @@ void GetRecentMissionsForResult(
     int32_t index = 0;
     std::vector<AbilityMissionInfo> entities = recentMissionInfos;
     for (const auto &item : entities) {
-        napi_value objRecentMissionInfo;
+        napi_value objRecentMissionInfo = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &objRecentMissionInfo));
 
-        napi_value id;
+        napi_value id = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.id, &id));
         HILOG_INFO("id = [%{public}d]", item.id);
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objRecentMissionInfo, "id", id));
 
-        napi_value baseAbility;
+        napi_value baseAbility = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &baseAbility));
 
-        napi_value deviceId1;
+        napi_value deviceId1 = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.baseAbility.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &deviceId1));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, baseAbility, "deviceId", deviceId1));
 
-        napi_value bundleName1;
+        napi_value bundleName1 = nullptr;
         NAPI_CALL_RETURN_VOID(env,
             napi_create_string_utf8(env, item.baseAbility.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &bundleName1));
         HILOG_INFO("bundleName1 = [%{public}s]", item.baseAbility.GetBundleName().c_str());
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, baseAbility, "bundleName", bundleName1));
 
-        napi_value abilityName1;
+        napi_value abilityName1 = nullptr;
         NAPI_CALL_RETURN_VOID(env,
             napi_create_string_utf8(env, item.baseAbility.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &abilityName1));
         HILOG_INFO("abilityName1 = [%{public}s]", item.baseAbility.GetAbilityName().c_str());
@@ -102,36 +101,36 @@ void GetRecentMissionsForResult(
 
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objRecentMissionInfo, "baseAbility", baseAbility));
 
-        napi_value topAbility;
+        napi_value topAbility = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &topAbility));
 
-        napi_value deviceId2;
+        napi_value deviceId2 = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.topAbility.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &deviceId2));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "deviceId", deviceId2));
 
-        napi_value bundleName2;
+        napi_value bundleName2 = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.topAbility.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &bundleName2));
         HILOG_INFO("bundleName2 = [%{public}s]", item.topAbility.GetBundleName().c_str());
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "bundleName", bundleName2));
 
-        napi_value abilityName2;
+        napi_value abilityName2 = nullptr;
         NAPI_CALL_RETURN_VOID(env,
             napi_create_string_utf8(env, item.topAbility.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &abilityName2));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "abilityName", abilityName2));
         HILOG_INFO("abilityName2 = [%{public}s]", item.topAbility.GetAbilityName().c_str());
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objRecentMissionInfo, "topAbility", topAbility));
 
-        napi_value missionDescription;
+        napi_value missionDescription = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &missionDescription));
 
-        napi_value label;
+        napi_value label = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.missionDescription.label.c_str(), NAPI_AUTO_LENGTH, &label));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, missionDescription, "label", label));
 
-        napi_value iconPath;
+        napi_value iconPath = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.missionDescription.iconPath.c_str(), NAPI_AUTO_LENGTH, &iconPath));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, missionDescription, "iconPath", iconPath));
@@ -149,36 +148,36 @@ void GetAllRunningProcessesForResult(napi_env env, const std::vector<RunningProc
     int32_t index = 0;
 
     for (const auto &item : info) {
-        napi_value objAppProcessInfo;
+        napi_value objAppProcessInfo = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &objAppProcessInfo));
 
-        napi_value nPid;
+        napi_value nPid = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.pid_, &nPid));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "pid", nPid));
 
-        napi_value nProcessName;
+        napi_value nProcessName = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_string_utf8(env, item.processName_.c_str(), NAPI_AUTO_LENGTH, &nProcessName));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "processName", nProcessName));
 
-        napi_value nPkgList;
+        napi_value nPkgList = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &nPkgList));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "pkgList", nPkgList));
 
-        napi_value nUid;
+        napi_value nUid = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.uid_, &nUid));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "uid", nUid));
 
-        napi_value nLastMemoryLevel;
+        napi_value nLastMemoryLevel = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_LAST_MEMORY_LEVEL, &nLastMemoryLevel));
         NAPI_CALL_RETURN_VOID(
             env, napi_set_named_property(env, objAppProcessInfo, "lastMemoryLevel", nLastMemoryLevel));
 
-        napi_value nWeight;
+        napi_value nWeight = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_WEIGHT, &nWeight));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "weight", nWeight));
 
-        napi_value nWeightReasonCode;
+        napi_value nWeightReasonCode = nullptr;
         NAPI_CALL_RETURN_VOID(
             env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::REASON_UNKNOWN), &nWeightReasonCode));
         NAPI_CALL_RETURN_VOID(
@@ -206,7 +205,7 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
 {
     HILOG_INFO("NAPI_QueryRecentAbilityMissionInfos called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_QueryRecentAbilityMissionInfosCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -226,9 +225,9 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
                 HILOG_INFO("queryRecentAbilityMissionInfos compeleted(CallBack Mode)...");
                 AsyncMissionInfosCallbackInfo *async_callback_info = (AsyncMissionInfosCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_array(env, &result[1]);
@@ -252,11 +251,11 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
         NAPI_CALL(env, napi_create_int32(env, 1, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_QueryRecentAbilityMissionInfosPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -294,26 +293,26 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
 napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_THREE;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_THREE] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    napi_valuetype valuetype0;
+    napi_valuetype valuetype0 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
     NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
 
-    napi_valuetype valuetype1;
+    napi_valuetype valuetype1 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype1));
     NAPI_ASSERT(env, valuetype1 == napi_number, "Wrong argument type. Numbers expected.");
 
-    int32_t value0;
+    int32_t value0 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &value0));
-    int32_t value1;
+    int32_t value1 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[1], &value1));
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_THREE) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[NUMBER_OF_PARAMETERS_TWO], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -345,7 +344,7 @@ napi_value NAPI_GetpreviousAbilityMissionInfosWrap(napi_env env, napi_callback_i
 {
     HILOG_INFO("NAPI_GetpreviousAbilityMissionInfosWrap called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_GetpreviousAbilityMissionInfosWrap", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -365,9 +364,9 @@ napi_value NAPI_GetpreviousAbilityMissionInfosWrap(napi_env env, napi_callback_i
                 AsyncPreviousMissionInfosCallbackInfo *async_callback_info =
                     (AsyncPreviousMissionInfosCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_array(env, &result[1]);
@@ -391,12 +390,12 @@ napi_value NAPI_GetpreviousAbilityMissionInfosWrap(napi_env env, napi_callback_i
         NAPI_CALL(env, napi_create_int32(env, 1, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(
             env, "NAPI_GetpreviousAbilityMissionInfosWrapPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -434,20 +433,20 @@ napi_value NAPI_GetpreviousAbilityMissionInfosWrap(napi_env env, napi_callback_i
 napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    napi_valuetype valuetype0;
+    napi_valuetype valuetype0 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
     NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
 
-    int32_t value0;
+    int32_t value0 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &value0));
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -478,7 +477,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
 {
     HILOG_INFO("NAPI_QueryRunningAbilityMissionInfosWrap called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_QueryRunningAbilityMissionInfosCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -499,9 +498,9 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
                 HILOG_INFO("NAPI_QueryRunningAbilityMissionInfosWrap compeleted(CallBack Mode)...");
                 AsyncMissionInfosCallbackInfo *async_callback_info = (AsyncMissionInfosCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_array(env, &result[1]);
@@ -525,11 +524,11 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_QueryRunningAbilityMissionInfosPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -567,20 +566,20 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
 napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    napi_valuetype valuetype0;
+    napi_valuetype valuetype0 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
     NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
 
-    int32_t value0;
+    int32_t value0 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &value0));
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -613,7 +612,7 @@ napi_value NAPI_GetAllRunningProcessesWrap(
 {
     HILOG_INFO("NAPI_GetAllRunningProcessesWrap called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_GetAllRunningProcessesCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -628,9 +627,9 @@ napi_value NAPI_GetAllRunningProcessesWrap(
                 HILOG_INFO("getAllRunningProcesses compeleted(CallBack Mode)...");
                 AsyncCallbackInfo *async_callback_info = (AsyncCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_array(env, &result[1]);
@@ -654,11 +653,11 @@ napi_value NAPI_GetAllRunningProcessesWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_GetAllRunningProcessesPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -690,13 +689,13 @@ napi_value NAPI_GetAllRunningProcessesWrap(
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info)
 {
     size_t argc = 1;
-    napi_value argv[argc];
+    napi_value argv[1] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
     bool callBackMode = false;
     if (argc >= 1) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -726,7 +725,7 @@ napi_value NAPI_RemoveMissionWrap(
 {
     HILOG_INFO("NAPI_RemoveMission called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_RemoveMissionCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -741,9 +740,9 @@ napi_value NAPI_RemoveMissionWrap(
                 HILOG_INFO("removeMission compeleted(CallBack Mode)...");
                 AsyncRemoveMissionCallbackInfo *async_callback_info = (AsyncRemoveMissionCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
@@ -768,11 +767,11 @@ napi_value NAPI_RemoveMissionWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_RemoveMissionPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -803,20 +802,20 @@ napi_value NAPI_RemoveMissionWrap(
 napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    napi_valuetype valuetype0;
+    napi_valuetype valuetype0 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
     NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
 
-    int32_t value0;
+    int32_t value0 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &value0));
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -847,7 +846,7 @@ napi_value NAPI_RemoveMissionsWrap(
 {
     HILOG_INFO("NAPI_RemoveMissions called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_RemoveMissionsCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -862,9 +861,9 @@ napi_value NAPI_RemoveMissionsWrap(
                 HILOG_INFO("removeMissions compeleted(CallBack Mode)...");
                 AsyncRemoveMissionsCallbackInfo *async_callback_info = (AsyncRemoveMissionsCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
@@ -889,11 +888,11 @@ napi_value NAPI_RemoveMissionsWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_RemoveMissionsPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -924,7 +923,7 @@ napi_value NAPI_RemoveMissionsWrap(
 napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
@@ -933,12 +932,12 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
     HILOG_INFO("property is array, length=%{public}d", arrayLength);
     NAPI_ASSERT(env, arrayLength > 0, "The array is empty.");
 
-    std::vector<int32_t> missionIds;
+    std::vector<int32_t> missionIds = {};
     for (size_t i = 0; i < arrayLength; i++) {
-        napi_value napiMissionIds;
+        napi_value napiMissionIds = nullptr;
         napi_get_element(env, argv[0], i, &napiMissionIds);
 
-        napi_valuetype valuetype0;
+        napi_valuetype valuetype0 = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, napiMissionIds, &valuetype0));
         NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
         int32_t value0 = 0;
@@ -948,7 +947,7 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -979,7 +978,7 @@ napi_value NAPI_ClearMissionsWrap(
 {
     HILOG_INFO("NAPI_ClearMissions called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_ClearMissionsCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -994,9 +993,9 @@ napi_value NAPI_ClearMissionsWrap(
                 HILOG_INFO("clearMissions compeleted(CallBack Mode)...");
                 AsyncClearMissionsCallbackInfo *async_callback_info = (AsyncClearMissionsCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
@@ -1021,7 +1020,7 @@ napi_value NAPI_ClearMissionsWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_ClearMissionsPromise", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_deferred deferred;
@@ -1056,13 +1055,13 @@ napi_value NAPI_ClearMissionsWrap(
 napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info)
 {
     size_t argc = 1;
-    napi_value argv[argc];
+    napi_value argv[1] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
     bool callBackMode = false;
     if (argc >= 1) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -1092,7 +1091,7 @@ napi_value NAPI_MoveMissionToTopWrap(
 {
     HILOG_INFO("NAPI_MoveMissionToTop called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_MoveMissionToTopCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -1107,9 +1106,9 @@ napi_value NAPI_MoveMissionToTopWrap(
                 HILOG_INFO("moveMissionToTop compeleted(CallBack Mode)...");
                 AsyncMoveMissionToTopCallbackInfo *async_callback_info = (AsyncMoveMissionToTopCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
 
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
@@ -1134,11 +1133,11 @@ napi_value NAPI_MoveMissionToTopWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_MoveMissionToTopPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -1169,19 +1168,19 @@ napi_value NAPI_MoveMissionToTopWrap(
 napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    napi_valuetype valuetype0;
+    napi_valuetype valuetype0 = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
     NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
-    int32_t value0;
+    int32_t value0 = 0;
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &value0));
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -1212,7 +1211,7 @@ napi_value NAPI_KillProcessesByBundleNameWrap(
 {
     HILOG_INFO("NAPI_KillProcessesByBundleName called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_KillProcessesByBundleNameCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -1254,11 +1253,11 @@ napi_value NAPI_KillProcessesByBundleNameWrap(
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_KillProcessesByBundleNamePromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -1289,16 +1288,16 @@ napi_value NAPI_KillProcessesByBundleNameWrap(
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    std::string bundleName;
+    std::string bundleName = nullptr;
     ParseBundleName(env, bundleName, argv[0]);
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -1329,7 +1328,7 @@ napi_value NAPI_ClearUpApplicationDataWrap(napi_env env, napi_callback_info info
 {
     HILOG_INFO("NAPI_ClearUpApplicationData called...");
     if (callBackMode) {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_ClearUpApplicationDataCallBack", NAPI_AUTO_LENGTH, &resourceName);
 
         napi_create_async_work(env,
@@ -1347,9 +1346,9 @@ napi_value NAPI_ClearUpApplicationDataWrap(napi_env env, napi_callback_info info
                 AsyncClearUpApplicationDataCallbackInfo *async_callback_info =
                     (AsyncClearUpApplicationDataCallbackInfo *)data;
                 napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
-                napi_value callback;
-                napi_value undefined;
-                napi_value callResult = 0;
+                napi_value callback = nullptr;
+                napi_value undefined = nullptr;
+                napi_value callResult = nullptr;
                 result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
                 napi_get_undefined(env, &undefined);
@@ -1372,11 +1371,11 @@ napi_value NAPI_ClearUpApplicationDataWrap(napi_env env, napi_callback_info info
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
     } else {
-        napi_value resourceName;
+        napi_value resourceName = nullptr;
         napi_create_string_latin1(env, "NAPI_ClearUpApplicationDataPromise", NAPI_AUTO_LENGTH, &resourceName);
 
-        napi_deferred deferred;
-        napi_value promise;
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
         NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
         async_callback_info->deferred = deferred;
 
@@ -1410,16 +1409,16 @@ napi_value NAPI_ClearUpApplicationDataWrap(napi_env env, napi_callback_info info
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
 {
     size_t argc = NUMBER_OF_PARAMETERS_TWO;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 
-    std::string bundleName;
+    std::string bundleName = nullptr;
     ParseBundleName(env, bundleName, argv[0]);
 
     bool callBackMode = false;
     if (argc >= NUMBER_OF_PARAMETERS_TWO) {
-        napi_valuetype valuetype;
+        napi_valuetype valuetype = napi_valuetype::napi_null;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         callBackMode = true;
@@ -1447,43 +1446,43 @@ napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
 
 void CreateWeightReasonCodeObject(napi_env env, napi_value value)
 {
-    napi_value nUnknow;
+    napi_value nUnknow = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::REASON_UNKNOWN), &nUnknow));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "REASON_UNKNOWN", nUnknow));
-    napi_value nForeground;
+    napi_value nForeground = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_FOREGROUND), &nForeground));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_FOREGROUND", nForeground));
-    napi_value nForegroundService;
+    napi_value nForegroundService = nullptr;
     NAPI_CALL_RETURN_VOID(env,
         napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_FOREGROUND_SERVICE), &nForegroundService));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_FOREGROUND_SERVICE", nForegroundService));
-    napi_value nVisible;
+    napi_value nVisible = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_VISIBLE), &nVisible));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_VISIBLE", nVisible));
-    napi_value nPerceptible;
+    napi_value nPerceptible = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_PERCEPTIBLE), &nPerceptible));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_PERCEPTIBLE", nPerceptible));
-    napi_value nService;
+    napi_value nService = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_SERVICE), &nService));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_SERVICE", nService));
-    napi_value nTopSleeping;
+    napi_value nTopSleeping = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_TOP_SLEEPING), &nTopSleeping));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_TOP_SLEEPING", nTopSleeping));
-    napi_value nCantSaveState;
+    napi_value nCantSaveState = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_CANT_SAVE_STATE), &nCantSaveState));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_CANT_SAVE_STATE", nCantSaveState));
-    napi_value nWeightCached;
+    napi_value nWeightCached = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_CACHED), &nWeightCached));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_CACHED", nWeightCached));
-    napi_value nWeightGone;
+    napi_value nWeightGone = nullptr;
     NAPI_CALL_RETURN_VOID(
         env, napi_create_int32(env, static_cast<int32_t>(WeightReasonCode::WEIGHT_GONE), &nWeightGone));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "WEIGHT_GONE", nWeightGone));
@@ -1498,6 +1497,5 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
     NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
     return result;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

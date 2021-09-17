@@ -25,7 +25,10 @@ ohos_unittest("ability_with_applications_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
   ]
 
-  sources = [ "ability_with_applications_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "ability_with_applications_test.cpp",  # add mock file
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

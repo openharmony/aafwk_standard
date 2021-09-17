@@ -25,7 +25,10 @@ ohos_unittest("want_receiver_stub_test") {
     "//foundation/distributedschedule/samgr/utils/native/include/",
   ]
 
-  sources = [ "want_receiver_stub_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "want_receiver_stub_test.cpp",
+  ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",

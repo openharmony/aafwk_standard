@@ -19,14 +19,79 @@
 #include "hilog_wrapper.h"
 #include "ability_config.h"
 
-using namespace OHOS::AAFwk;
-
 namespace OHOS {
 namespace AppExecFwk {
+using namespace OHOS::AAFwk;
+
+int BundleMgrProxy::QueryWantAbility(
+    const AAFwk::Want &__attribute__((unused)) want, std::vector<AbilityInfo> &__attribute__((unused)) abilityInfos)
+{
+    return 0;
+}
+
+bool BundleMgrProxy::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo)
+{
+    ElementName eleName = want.GetElement();
+    if (eleName.GetBundleName().empty()) {
+        return false;
+    }
+    abilityInfo.name = eleName.GetAbilityName();
+    abilityInfo.bundleName = eleName.GetBundleName();
+    abilityInfo.applicationName = eleName.GetAbilityName() + "App";
+    abilityInfo.visible = true;
+    if (abilityInfo.bundleName != "com.ix.hiworld") {
+        abilityInfo.applicationInfo.isLauncherApp = false;
+    }
+    return true;
+}
+
+bool BundleMgrProxy::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
+{
+    return true;
+}
+
+bool BundleMgrProxy::QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo)
+{
+    return false;
+}
+
+bool BundleMgrProxy::GetApplicationInfo(
+    const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
+{
+    if (appName.empty()) {
+        return false;
+    }
+    appInfo.name = "Helloworld";
+    appInfo.bundleName = "com.ix.hiworld";
+    return true;
+}
+
+bool BundleMgrProxy::NotifyActivityLifeStatus(
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+{
+    GTEST_LOG_(INFO) << "BundleMgrProxy::NotifyActivityLifeStatus()";
+    return true;
+}
 
 int BundleMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     return 0;
+}
+
+BundleMgrService::BundleMgrService()
+{
+    abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);
+    abilityInfoMap_.emplace(COM_IX_HIMUSIC, HiMusicInfo);
+    abilityInfoMap_.emplace(COM_IX_HIRADIO, HiRadioInfo);
+    abilityInfoMap_.emplace(COM_IX_HISERVICE, HiServiceInfo);
+    abilityInfoMap_.emplace(COM_IX_MUSICSERVICE, MusicServiceInfo);
+    abilityInfoMap_.emplace(COM_IX_HIDATA, HiDataInfo);
+    GTEST_LOG_(INFO) << "BundleMgrService()";
+}
+
+BundleMgrService::~BundleMgrService()
+{
+    GTEST_LOG_(INFO) << "~BundleMgrService()";
 }
 
 bool BundleMgrService::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
@@ -123,6 +188,13 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
 int BundleMgrService::GetUidByBundleName(const std::string &bundleName, const int userId)
 {
     return 1000;
+}
+
+bool BundleMgrService::NotifyActivityLifeStatus(
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+{
+    GTEST_LOG_(INFO) << "BundleMgrService::NotifyActivityLifeStatus()";
+    return true;
 }
 
 }  // namespace AppExecFwk

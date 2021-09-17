@@ -27,6 +27,7 @@ ohos_moduletest("dump_module_test") {
 
   sources = [
     "${services_path}/abilitymgr/test/unittest/phone/ability_with_applications_test/mock_ability_scheduler.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
     "dump_module_test.cpp",
   ]

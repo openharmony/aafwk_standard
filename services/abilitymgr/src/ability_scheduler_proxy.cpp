@@ -727,11 +727,12 @@ Uri AbilitySchedulerProxy::NormalizeUri(const Uri &uri)
         HILOG_ERROR("NormalizeUri fail to SendRequest. err: %d", err);
     }
 
-    Uri *value = reply.ReadParcelable<Uri>();
-    if (value == nullptr) {
-        HILOG_ERROR("ReadParcelable value is nullptr");
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
+    if (!info) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return Uri("");
     }
-    return *value;
+    return *info;
 }
 
 /**
@@ -766,11 +767,12 @@ Uri AbilitySchedulerProxy::DenormalizeUri(const Uri &uri)
         HILOG_ERROR("DenormalizeUri fail to SendRequest. err: %d", err);
     }
 
-    auto value = reply.ReadParcelable<Uri>();
-    if (value == nullptr) {
-        HILOG_ERROR("ReadParcelable value is nullptr");
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
+    if (!info) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return Uri("");
     }
-    return *value;
+    return *info;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

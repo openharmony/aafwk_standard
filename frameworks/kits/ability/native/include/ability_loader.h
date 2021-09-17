@@ -88,7 +88,7 @@ private:
     __attribute__((constructor)) void RegisterAA##className()                        \
     {                                                                                \
         AbilityLoader::GetInstance().RegisterAbility(                                \
-            #className, []() -> Ability * { return new (std::nothrow) className; }); \
+            #className, []()->Ability * { return new (std::nothrow) className; });   \
     }
 
 /**
@@ -104,7 +104,7 @@ private:
     __attribute((constructor)) void RegisterAS##className() \
     {                                                       \
         AbilityLoader::GetInstance().RegisterAbilitySlice(  \
-            #className, []() -> AbilitySlice * { return new (std::nothrow) className; });
+            #className, []()->AbilitySlice * { return new (std::nothrow) className; });
 }
 #endif
 }  // namespace OHOS

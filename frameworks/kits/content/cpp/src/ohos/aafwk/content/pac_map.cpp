@@ -1226,7 +1226,7 @@ bool PacMap::ToJson(const PacMapList &mapList, Json::Value &dataObject) const
 template <typename RawType>
 static std::string RawTypeToString(const RawType value, unsigned int precisionAfterPoint)
 {
-    std::ostringstream out;
+    std::ostringstream out(' ');
     out.precision(std::numeric_limits<double>::digits10);
     out << value;
 
