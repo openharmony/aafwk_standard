@@ -30,6 +30,7 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 constexpr static char ACE_ABILITY_NAME[] = "AceAbility";
 constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
 constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
+constexpr static char ACE_FORM_ABILITY_NAME[] = "AceFormAbility";
 
 /**
  * @brief Default constructor used to create a AbilityThread instance.
@@ -68,14 +69,17 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
 
     APP_LOGI("AbilityThread::ability attach the ability type is %{public}d", abilityInfo->type);
     APP_LOGI("AbilityThread::ability attach the ability is Native %{public}d", abilityInfo->isNativeAbility);
+    APP_LOGI("AbilityThread::ability attach the ability language is  %{public}s", abilityInfo->srcLanguage);
 
-    if (abilityInfo->isNativeAbility == false) {
+    if (abilityInfo->srcLanguage == "js" || abilityInfo->srcLanguage == "ets") {
         if (abilityInfo->type == AbilityType::PAGE) {
             abilityName = ACE_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::SERVICE) {
             abilityName = ACE_SERVICE_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::DATA) {
             abilityName = ACE_DATA_ABILITY_NAME;
+        } else if (abilityInfo-type == AbilityType::FORM) {
+            abilityName = ACE_FORM_ABILITY_NAME;
         } else {
             abilityName = abilityInfo->name;
         }
