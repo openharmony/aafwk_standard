@@ -78,7 +78,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
             abilityName = ACE_SERVICE_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::DATA) {
             abilityName = ACE_DATA_ABILITY_NAME;
-        } else if (abilityInfo-type == AbilityType::FORM) {
+        } else if (abilityInfo->type == AbilityType::FORM) {
             abilityName = ACE_FORM_ABILITY_NAME;
         } else {
             abilityName = abilityInfo->name;
