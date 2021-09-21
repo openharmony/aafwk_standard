@@ -74,7 +74,7 @@ std::vector<FileAccessor::DirectoryContentEntry> ListDirectoryContent(const File
     std::vector<FileAccessor::DirectoryContentEntry> fileDirectoryVector;
     std::vector<std::string> filelist;
     GetDirFiles(curPath.Value(), filelist);
-    HILOG_INFO("filelist ========filelist.size=%{public}d", filelist.size());
+    // HILOG_INFO("filelist ========filelist.size=%{public}d", filelist.size());
     for (size_t i = 0; i < filelist.size(); i++) {
         std::string str(filelist[i]);
         HILOG_INFO("filelist %{public}s ===8888==", str.c_str());
