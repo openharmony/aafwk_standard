@@ -47,7 +47,7 @@ ErrCode DistributedClient::Connect()
     APP_LOGI("%{public}s called begin", __func__);
     std::lock_guard<std::mutex> lock(mutex_);
 
-    if (remoteObject_ == nullptr ) {
+    if (remoteObject_ == nullptr) {
         sptr<ISystemAbilityManager> systemManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (systemManager == nullptr) {
             APP_LOGE("%{public}s:fail to get System Ability Manager", __func__);
@@ -60,7 +60,7 @@ ErrCode DistributedClient::Connect()
         }
     }
 
-    if (dmsProxy_ == nullptr ) {
+    if (dmsProxy_ == nullptr) {
         dmsProxy_ = std::make_shared<OHOS::DistributedSchedule::DistributedSchedProxy>(remoteObject_);
     }
 

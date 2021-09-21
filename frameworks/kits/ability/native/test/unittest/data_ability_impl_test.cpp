@@ -83,7 +83,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Insert_0100, Function | 
 
     Uri uri("\nullptr");
     int number = 1;
-    ValuesBucket value;
+    NativeRdb::ValuesBucket value;
 
     EXPECT_EQ(number, dataabilityimpl->Insert(uri, value));
     sleep(1);
@@ -101,7 +101,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Insert_0200, Function | 
     std::shared_ptr<DataAbilityImpl> dataabilityimpl = std::make_shared<DataAbilityImpl>();
     Uri uri("\nullptr");
     int number = -1;
-    ValuesBucket value;
+    NativeRdb::ValuesBucket value;
 
     EXPECT_EQ(number, dataabilityimpl->Insert(uri, value));
     sleep(1);
@@ -135,8 +135,8 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Update_0100, Function | 
 
     Uri uri("\nullptr");
     int number = 1;
-    ValuesBucket value;
-    DataAbilityPredicates predicates;
+    NativeRdb::ValuesBucket value;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_EQ(number, dataabilityimpl->Update(uri, value, predicates));
     sleep(1);
@@ -154,8 +154,8 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Update_0200, Function | 
     std::shared_ptr<DataAbilityImpl> dataabilityimpl = std::make_shared<DataAbilityImpl>();
     Uri uri("\nullptr");
     int number = -1;
-    ValuesBucket value;
-    DataAbilityPredicates predicates;
+    NativeRdb::ValuesBucket value;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_EQ(number, dataabilityimpl->Update(uri, value, predicates));
     sleep(1);
@@ -189,7 +189,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Delete_0100, Function | 
     Uri uri("\nullptr");
     int number = 1;
 
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_EQ(number, dataabilityimpl->Delete(uri, predicates));
     sleep(1);
@@ -207,7 +207,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Delete_0200, Function | 
     std::shared_ptr<DataAbilityImpl> dataabilityimpl = std::make_shared<DataAbilityImpl>();
     Uri uri("\nullptr");
     int number = -1;
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_EQ(number, dataabilityimpl->Delete(uri, predicates));
     sleep(1);
@@ -242,12 +242,13 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Query_0100, Function | M
     std::vector<std::string> columns;
     columns.push_back("string1");
 
-    DataAbilityPredicates predicates;
-    std::shared_ptr<ResultSet> set = dataabilityimpl->Query(uri, columns, predicates);
+    NativeRdb::DataAbilityPredicates predicates;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> set = dataabilityimpl->Query(uri, columns, predicates);
 
-    if (set != nullptr) {
-        EXPECT_STREQ("QueryTest", set->testInf_.c_str());
-    }
+    // if (set != nullptr) {
+    //     EXPECT_STREQ("QueryTest", set->testInf_.c_str());
+    // }
+    EXPECT_TRUE(set != nullptr);
     dataabilityimpl.reset();
     sleep(1);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityImplTest_Query_0100 end";
@@ -265,9 +266,9 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_Query_0200, Function | M
     Uri uri("\nullptr");
     std::vector<std::string> columns;
     columns.push_back("string1");
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
 
-    std::shared_ptr<ResultSet> set = dataabilityimpl->Query(uri, columns, predicates);
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> set = dataabilityimpl->Query(uri, columns, predicates);
     EXPECT_EQ(nullptr, set);
     sleep(1);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityImplTest_Query_0200 end";

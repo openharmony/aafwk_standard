@@ -47,6 +47,10 @@ config("abilityms_config") {
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -68,6 +72,8 @@ ohos_shared_library("abilityms") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

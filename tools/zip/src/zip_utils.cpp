@@ -15,6 +15,7 @@
 #include "zip_utils.h"
 #include <pthread.h>
 #include <memory>
+#include <regex>
 #include "utf.h"
 #include "runnable.h"
 #include "task_dispatcher_context.h"
@@ -25,11 +26,11 @@ namespace AAFwk {
 namespace LIBZIP {
 namespace {
 const std::string SEPARATOR = "/";
-}
+const std::regex FILE_PATH_REGEX("[a-zA-Z0-9]|/|");
+}  // namespace
 using namespace OHOS::AppExecFwk;
 
 std::shared_ptr<ParallelTaskDispatcher> g_TaskDispatcher = nullptr;
-// void PostTask(TaskCallback callback)
 void PostTask(const std::shared_ptr<Runnable> &runnable)
 {
     static TaskDispatcherContext taskContext;
@@ -47,6 +48,9 @@ struct tm *GetCurrentSystemTime(void)
 {
     auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     struct tm *time = localtime(&tt);
+    if (time == nullptr) {
+        return nullptr;
+    }
     time->tm_mday = time->tm_mday + 1900;
     time->tm_mday = time->tm_mon + 1;
     return time;
@@ -77,7 +81,7 @@ bool IsPathAbsolute(const std::string &path)
     return path.length() > 0 && StartsWith(path, SEPARATOR);
 }
 
-bool IsASCIIChar(char *pszStr)
+bool IsASCIIChar(const char *pszStr)
 {
     if (pszStr == NULL) {
         return false;
@@ -86,6 +90,11 @@ bool IsASCIIChar(char *pszStr)
     // Judge whether the first character in the string is ASCII character (0 – 127), and ASCII character occupies one
     // byte
     return ((unsigned char)pszStr[0] & 0x80) == 0x80 ? false : true;
+}
+bool FilePathCheckValid(const std::string &str)
+{
+    return true;
+    // return std::regex_match(str, FILE_PATH_REGEX);
 }
 
 }  // namespace LIBZIP

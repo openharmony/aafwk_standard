@@ -78,6 +78,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
 
   external_dependent_files = [
@@ -110,6 +111,9 @@ ohos_source_set("abilityms_test_source") {
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 

@@ -76,9 +76,9 @@ void AbilityStackModuleTest::SetUpTestCase(void)
 
     if (!bundleObject_) {
         bundleObject_ = new (std::nothrow) BundleMgrService();
+        OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+            OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject_);
     }
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject_);
 }
 
 void AbilityStackModuleTest::TearDownTestCase(void)

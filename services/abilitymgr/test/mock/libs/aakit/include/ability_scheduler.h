@@ -56,14 +56,14 @@ public:
 
     int OpenFile(const Uri &uri, const std::string &mode) override;
 
-    int Insert(const Uri &uri, const ValuesBucket &value) override;
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) override;
 
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates) override;
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) override;
 
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates) override;
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) override;
 
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates) override;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates) override;
 
     std::string GetType(const Uri &uri) override;
 
@@ -71,13 +71,18 @@ public:
 
     bool Reload(const Uri &uri, const PacMap &extras) override;
 
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override;
+    int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;
 
-    void NotifyTopActiveAbilityChanged(bool flag) override;
+    void NotifyTopActiveAbilityChanged(bool flag) override {};
+    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override {return true;};
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override {return true;};
+    virtual bool ScheduleNotifyChange(const Uri &uri) override {return true;};
+    virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override {return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();};
 
 private:
     AbilityResult result_;

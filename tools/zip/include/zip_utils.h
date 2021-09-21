@@ -132,7 +132,7 @@ struct tm *GetCurrentSystemTime(void);
 bool StartsWith(const std::string &str, const std::string &searchFor);
 bool EndsWith(const std::string &str, const std::string &searchFor);
 void PostTask(const std::shared_ptr<Runnable> &runnable);
-
+bool FilePathCheckValid(const std::string &str);
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

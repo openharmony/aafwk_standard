@@ -42,18 +42,22 @@ public:
     MOCK_METHOD2(GetFileTypes, std::vector<std::string>(const Uri &, const std::string &));
     MOCK_METHOD2(OpenFile, int(const Uri &, const std::string &));
     MOCK_METHOD2(OpenRawFile, int(const Uri &, const std::string &));
-    MOCK_METHOD2(Insert, int(const Uri &, const ValuesBucket &));
-    MOCK_METHOD3(Update, int(const Uri &, const ValuesBucket &, const DataAbilityPredicates &));
-    MOCK_METHOD2(Delete, int(const Uri &, const DataAbilityPredicates &));
+    MOCK_METHOD2(Insert, int(const Uri &, const NativeRdb::ValuesBucket &));
+    MOCK_METHOD3(Update, int(const Uri &, const NativeRdb::ValuesBucket &, const NativeRdb::DataAbilityPredicates &));
+    MOCK_METHOD2(Delete, int(const Uri &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD3(
-        Query, std::shared_ptr<ResultSet>(const Uri &, std::vector<std::string> &, const DataAbilityPredicates &));
+        Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD1(GetType, std::string(const Uri &));
     MOCK_METHOD2(Reload, bool(const Uri &, const PacMap &));
-    MOCK_METHOD2(BatchInsert, int(const Uri &, const std::vector<ValuesBucket> &));
+    MOCK_METHOD2(BatchInsert, int(const Uri &, const std::vector<NativeRdb::ValuesBucket> &));
     MOCK_METHOD1(DenormalizeUri, Uri(const Uri &));
     MOCK_METHOD1(NormalizeUri, Uri(const Uri &));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
+    MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
+    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operation));
 };
 
 }  // namespace AppExecFwk
