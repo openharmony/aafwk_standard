@@ -66,23 +66,23 @@ public:
         return -1;
     }
 
-    int Insert(const Uri &uri, const ValuesBucket &value)
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
         return -1;
     }
 
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return -1;
     }
 
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return -1;
     }
 
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return nullptr;
     }
@@ -102,7 +102,7 @@ public:
         return false;
     }
 
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+    int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
     {
         return -1;
     }
@@ -117,6 +117,27 @@ public:
     {
         Uri urivalue("");
         return urivalue;
+    }
+
+    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver)
+    {
+        return true;
+    }
+
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver)
+    {
+        return true;
+    }
+
+    virtual bool ScheduleNotifyChange(const Uri &uri)
+    {
+        return true;
+    }
+
+    virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations)
+    {
+        return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     }
 
     int code_ = 0;

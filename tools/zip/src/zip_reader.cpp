@@ -24,6 +24,7 @@
 #include "zip_internal.h"
 #include "contrib/minizip/unzip.h"
 #include "zip_utils.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -54,7 +55,9 @@ ZipReader::EntryInfo::EntryInfo(const std::string &fileNameInZip, const unz_file
 
     // Construct the last modified time. The timezone info is not present in
     // zip files, so we construct the time as local time.
-    lastModified_ = *GetCurrentSystemTime();
+    if (GetCurrentSystemTime() != nullptr) {
+        lastModified_ = *GetCurrentSystemTime();
+    }
 }
 
 ZipReader::ZipReader()
@@ -173,7 +176,7 @@ bool ZipReader::OpenCurrentEntryInZip()
     if (raw_file_name_in_zip[0] == '\0') {
         return false;
     }
-    currentEntryInfo_.reset(new EntryInfo(raw_file_name_in_zip, raw_file_info));
+    currentEntryInfo_.reset(new EntryInfo(std::string(raw_file_name_in_zip), raw_file_info));
     return true;
 }
 
@@ -260,6 +263,10 @@ FilePathWriterDelegate::~FilePathWriterDelegate()
 
 bool FilePathWriterDelegate::PrepareOutput()
 {
+    if (!FilePathCheckValid(outputFilePath_.Value())) {
+        HILOG_ERROR("%{public}s called, outputFilePath_ invalid !!!.", __func__);
+        return false;
+    }
     // We can't rely on parent directory entries being specified in the
     // zip, so we make sure they are created.
     if (!FilePath::CreateDirectory(outputFilePath_.DirName())) {

@@ -12,6 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "gtest/gtest.h"
 #include "mock_ability_test.h"
 #include "mock_ability_manager_client.h"
@@ -72,7 +76,8 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_Test_0100, Functi
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
 
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
-    ValuesBucket val("22");
+    NativeRdb::ValuesBucket val;
+    val.PutInt("22", 22);
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
 
     int value = dataAbilityHelper->Insert(urivalue, val);
@@ -97,7 +102,8 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Insert_Test_0200, Functi
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
 
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
-    ValuesBucket val("20");
+    NativeRdb::ValuesBucket val;
+    val.PutInt("22", 20);
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
 
     int value = dataAbilityHelper->Insert(urivalue, val);
@@ -122,9 +128,10 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_Test_0100, Functi
 
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
 
-    ValuesBucket val("22");
+    NativeRdb::ValuesBucket val;
+    val.PutInt("22", 22);
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    DataAbilityPredicates predicates("33");
+    NativeRdb::DataAbilityPredicates predicates;
     int value = dataAbilityHelper->Update(urivalue, val, predicates);
     EXPECT_EQ(value, 33);
 
@@ -144,9 +151,10 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Update_Test_0200, Functi
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
 
-    ValuesBucket val("22");
+    NativeRdb::ValuesBucket val;
+    val.PutInt("22", 22);
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    DataAbilityPredicates predicates("33");
+    NativeRdb::DataAbilityPredicates predicates;
     int value = dataAbilityHelper->Update(urivalue, val, predicates);
     EXPECT_EQ(value, 33);
 
@@ -176,7 +184,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_GetFileTypes_Test_0100, 
     list.push_back("Type2");
     list.push_back("Type3");
 
-    for (int i = 0; i < result.size(); i++) {
+    for (size_t i = 0; i < result.size(); i++) {
         EXPECT_STREQ(result.at(i).c_str(), list.at(i).c_str());
     }
 
@@ -232,14 +240,19 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0100, Func
     int fd = dataAbilityHelper->OpenFile(urivalue, mode);
     std::string result = "123456";
     FILE *file = fdopen(fd, "r");
-    char str[7];
+    EXPECT_NE(file, nullptr);
+
+    int strSize = 7;
+    std::string str("");
+    str.resize(strSize);
     if (!feof(file)) {
-        fgets(str, 7, file);
+        fgets(&str[0], strSize, file);
     }
     string stringstr(str);
     EXPECT_STREQ(stringstr.c_str(), result.c_str());
 
     fclose(file);
+    system("rm /dataability_openfile_test.txt");
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0100 end";
 }
@@ -264,14 +277,20 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0200, Func
 
     std::string result = "123456";
     FILE *file = fdopen(fd, "r");
-    char str[7];
+    EXPECT_NE(file, nullptr);
+
+    int strSize = 7;
+    std::string str("");
+    str.resize(strSize);
     if (!feof(file)) {
-        fgets(str, 7, file);
+        fgets(&str[0], strSize, file);
     }
     string stringstr(str);
     EXPECT_STREQ(stringstr.c_str(), result.c_str());
 
     fclose(file);
+    system("rm /dataability_openfile_test.txt");
+    
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0200 end";
 }
 
@@ -336,7 +355,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_BatchInsert_Test_0100, F
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
 
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    std::vector<ValuesBucket> values;
+    std::vector<NativeRdb::ValuesBucket> values;
     int fd = dataAbilityHelper->BatchInsert(urivalue, values);
 
     EXPECT_EQ(fd, 115);
@@ -359,7 +378,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_BatchInsert_Test_0200, F
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
 
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    std::vector<ValuesBucket> values;
+    std::vector<NativeRdb::ValuesBucket> values;
     int fd = dataAbilityHelper->BatchInsert(urivalue, values);
 
     EXPECT_EQ(fd, 115);
@@ -428,7 +447,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_Test_0100, Functi
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
 
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    DataAbilityPredicates predicates("predicatestest");
+    NativeRdb::DataAbilityPredicates predicates;
     int index = dataAbilityHelper->Delete(urivalue, predicates);
 
     EXPECT_EQ(index, 234);
@@ -451,7 +470,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_Test_0200, Functi
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
 
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10");
-    DataAbilityPredicates predicates("predicatestest");
+    NativeRdb::DataAbilityPredicates predicates;
     int index = dataAbilityHelper->Delete(urivalue, predicates);
 
     EXPECT_EQ(index, 234);
@@ -478,7 +497,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_Test_0100, Functio
     columns.push_back("string1");
     columns.push_back("string2");
     columns.push_back("string3");
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_NE(nullptr, dataAbilityHelper->Query(urivalue, columns, predicates));
 
@@ -505,7 +524,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_Test_0200, Functio
     columns.push_back("string1");
     columns.push_back("string2");
     columns.push_back("string3");
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
 
     EXPECT_NE(nullptr, dataAbilityHelper->Query(urivalue, columns, predicates));
 

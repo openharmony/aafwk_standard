@@ -46,6 +46,7 @@ ohos_unittest("ability_dump_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",

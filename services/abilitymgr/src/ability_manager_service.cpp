@@ -1516,6 +1516,7 @@ void AbilityManagerService::StartSystemApplication()
         HILOG_INFO("start navigation bar");
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
     }
+
 }
 
 void AbilityManagerService::ConnectBmsService()

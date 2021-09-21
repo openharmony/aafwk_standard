@@ -385,7 +385,7 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Insert_001, TestSize.Level1)
         ValuesBucket testValues;
         int testRet = 123;
 
-        auto mockHandler = [&](const Uri &uri, const ValuesBucket &vb) {
+        auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb) {
             testResult = true;
             sem.Post();
             return testRet;
@@ -424,7 +424,7 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Update_001, TestSize.Level1)
         DataAbilityPredicates testPred;
         int testRet = 123;
 
-        auto mockHandler = [&](const Uri &uri, const ValuesBucket &vb, const DataAbilityPredicates &pred) {
+        auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb, const NativeRdb::DataAbilityPredicates &pred) {
             testResult = true;
             sem.Post();
             return testRet;
@@ -462,7 +462,7 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Delete_001, TestSize.Level1)
         DataAbilityPredicates testPred;
         int testRet = 123;
 
-        auto mockHandler = [&](const Uri &uri, const DataAbilityPredicates &pred) {
+        auto mockHandler = [&](const Uri &uri, const NativeRdb::DataAbilityPredicates &pred) {
             testResult = true;
             sem.Post();
             return testRet;
@@ -502,10 +502,10 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Query_001, TestSize.Level1)
         testColumns.emplace_back("col2");
         DataAbilityPredicates testPred;
 
-        auto mockHandler = [&](const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &pred) {
+        auto mockHandler = [&](const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &pred) {
             testResult = (columns == testColumns);
             sem.Post();
-            return std::make_shared<ResultSet>();
+            return std::make_shared<NativeRdb::AbsSharedResultSet>();
         };
 
         EXPECT_CALL(*stub, Query(_, _, _)).Times(1).WillOnce(Invoke(mockHandler));

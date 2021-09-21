@@ -15,6 +15,9 @@
 
 #include "data_ability_impl.h"
 #include "app_log_wrapper.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -133,7 +136,7 @@ int DataAbilityImpl::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the index of the inserted data record.
  */
-int DataAbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
+int DataAbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     int index = -1;
     if (ability_ == nullptr) {
@@ -154,7 +157,8 @@ int DataAbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
  *
  * @return Returns the number of data records updated.
  */
-int DataAbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int DataAbilityImpl::Update(
+    const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     int index = -1;
     if (ability_ == nullptr) {
@@ -174,7 +178,7 @@ int DataAbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const Dat
  *
  * @return Returns the number of data records deleted.
  */
-int DataAbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int DataAbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     int index = -1;
     if (ability_ == nullptr) {
@@ -195,17 +199,17 @@ int DataAbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predica
  *
  * @return Returns the query result.
  */
-std::shared_ptr<ResultSet> DataAbilityImpl::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    std::shared_ptr<ResultSet> resultSet = nullptr;
+    // std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (ability_ == nullptr) {
         APP_LOGE("DataAbilityImpl::Query ability_ is nullptr");
-        return resultSet;
+        return nullptr;
     }
 
-    resultSet = ability_->Query(uri, columns, predicates);
-    return resultSet;
+    // resultSet = ability_->Query(uri, columns, predicates);
+    return ability_->Query(uri, columns, predicates);
 }
 
 /**
@@ -256,7 +260,7 @@ bool DataAbilityImpl::Reload(const Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int DataAbilityImpl::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int DataAbilityImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     int ret = -1;
     if (ability_ == nullptr) {
@@ -311,5 +315,22 @@ Uri DataAbilityImpl::DenormalizeUri(const Uri &uri)
     urivalue = ability_->DenormalizeUri(uri); 
     return urivalue;   
 }
+
+std::vector<std::shared_ptr<DataAbilityResult>> DataAbilityImpl::ExecuteBatch(
+    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+    APP_LOGI("DataAbilityImpl::ExecuteBatch start");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    if (ability_ == nullptr) {
+        APP_LOGE("DataAbilityImpl::ExecuteBatch ability_ is nullptr");
+        results.clear();
+        return results;
+    }
+
+    results = ability_->ExecuteBatch(operations);
+    APP_LOGI("DataAbilityImpl::ExecuteBatch end, results size:%{public}zu", results.size());
+    return results;
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

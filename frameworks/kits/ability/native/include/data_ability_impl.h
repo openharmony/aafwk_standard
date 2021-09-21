@@ -19,6 +19,10 @@
 #include "ability_impl.h"
 
 namespace OHOS {
+namespace NativeRdb {
+class DataAbilityPredicates;
+class ValuesBucket;
+}  // namespace NativeRdb
 namespace AppExecFwk {
 class DataAbilityImpl final : public AbilityImpl {
 public:
@@ -88,7 +92,7 @@ public:
      *
      * @return Returns the index of the inserted data record.
      */
-    int Insert(const Uri &uri, const ValuesBucket &value);
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
 
     /**
      * @brief Updates data records in the database.
@@ -99,7 +103,8 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates);
+    int Update(
+        const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -109,7 +114,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates);
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -120,8 +125,8 @@ public:
      *
      * @return Returns the query result.
      */
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates);
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -153,7 +158,7 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values);
+    int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
@@ -180,6 +185,15 @@ public:
      * current environment.
      */
     Uri DenormalizeUri(const Uri &uri);
+
+    /**
+     * @brief Performs batch operations on the database.
+     *
+     * @param operations Indicates a list of database operations on the database.
+     * @return Returns the result of each operation, in array.
+     */
+    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

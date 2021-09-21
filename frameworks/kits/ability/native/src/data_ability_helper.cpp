@@ -17,10 +17,17 @@
 #include "ability_thread.h"
 #include "ability_scheduler_interface.h"
 #include "app_log_wrapper.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+#include "data_ability_result.h"
+#include "data_ability_operation.h"
+#include "data_ability_observer_interface.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 std::string SchemeOhos = "dataability";
+std::mutex DataAbilityHelper::oplock_;
 using IAbilityScheduler = OHOS::AAFwk::IAbilityScheduler;
 using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 DataAbilityHelper::DataAbilityHelper(const std::shared_ptr<Context> &context, const std::shared_ptr<Uri> &uri,
@@ -447,7 +454,7 @@ int DataAbilityHelper::OpenRawFile(Uri &uri, const std::string &mode)
  *
  * @return Returns the index of the inserted data record.
  */
-int DataAbilityHelper::Insert(Uri &uri, const ValuesBucket &value)
+int DataAbilityHelper::Insert(Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     APP_LOGI("DataAbilityHelper::Insert start.");
     std::lock_guard<std::mutex> guard(lock_);
@@ -494,7 +501,8 @@ int DataAbilityHelper::Insert(Uri &uri, const ValuesBucket &value)
  *
  * @return Returns the number of data records updated.
  */
-int DataAbilityHelper::Update(Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int DataAbilityHelper::Update(
+    Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataAbilityHelper::Update start.");
     std::lock_guard<std::mutex> guard(lock_);
@@ -540,7 +548,7 @@ int DataAbilityHelper::Update(Uri &uri, const ValuesBucket &value, const DataAbi
  *
  * @return Returns the number of data records deleted.
  */
-int DataAbilityHelper::Delete(Uri &uri, const DataAbilityPredicates &predicates)
+int DataAbilityHelper::Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataAbilityHelper::Delete start.");
     std::lock_guard<std::mutex> guard(lock_);
@@ -587,12 +595,13 @@ int DataAbilityHelper::Delete(Uri &uri, const DataAbilityPredicates &predicates)
  *
  * @return Returns the query result.
  */
-std::shared_ptr<ResultSet> DataAbilityHelper::Query(
-    Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityHelper::Query(
+    Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataAbilityHelper::Query start.");
     std::lock_guard<std::mutex> guard(lock_);
-    std::shared_ptr<ResultSet> resultset = nullptr;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset = nullptr;
+	
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return resultset;
@@ -728,7 +737,7 @@ bool DataAbilityHelper::Reload(Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int DataAbilityHelper::BatchInsert(Uri &uri, const std::vector<ValuesBucket> &values)
+int DataAbilityHelper::BatchInsert(Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     APP_LOGI("DataAbilityHelper::BatchInsert start.");
     std::lock_guard<std::mutex> guard(lock_);
@@ -818,6 +827,138 @@ bool DataAbilityHelper::CheckOhosUri(const Uri &uri)
     }
     APP_LOGI("DataAbilityHelper::CheckOhosUri end.");
     return true;
+}
+
+/**
+ * @brief Registers an observer to DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+void DataAbilityHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    if (!CheckUriParam(uri)) {
+        APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
+        return;
+    }
+
+    if (dataObserver == nullptr) {
+        APP_LOGE("%{public}s called. dataObserver is nullptr", __func__);
+        return;
+    }
+
+    Uri tmpUri(uri.ToString());
+
+    std::lock_guard<std::mutex> lock_l(oplock_);
+    sptr<AAFwk::IAbilityScheduler> dataAbilityProxy = nullptr;
+    if (uri_ == nullptr) {
+        auto dataability = registerMap_.find(dataObserver);
+        if (dataability == registerMap_.end()) {
+            dataAbilityProxy = AbilityManagerClient::GetInstance()->AcquireDataAbility(uri, tryBind_, token_);
+            registerMap_.emplace(dataObserver, dataAbilityProxy);
+            uriMap_.emplace(dataObserver, tmpUri.GetPath());
+        } else {
+            auto path = uriMap_.find(dataObserver);
+            if (path->second != tmpUri.GetPath()) {
+                APP_LOGE("DataAbilityHelper::RegisterObserver failed input uri's path is not equal the one the "
+                         "observer used");
+                return;
+            }
+            dataAbilityProxy = dataability->second;
+        }
+    } else {
+        dataAbilityProxy = dataAbilityProxy_;
+    }
+
+    if (dataAbilityProxy == nullptr) {
+        APP_LOGE("DataAbilityHelper::RegisterObserver failed dataAbility == nullptr");
+        registerMap_.erase(dataObserver);
+        uriMap_.erase(dataObserver);
+        return;
+    }
+    dataAbilityProxy->ScheduleRegisterObserver(uri, dataObserver);
+}
+
+/**
+ * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    if (!CheckUriParam(uri)) {
+        APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
+        return;
+    }
+
+    if (dataObserver == nullptr) {
+        APP_LOGE("%{public}s called. dataObserver is nullptr", __func__);
+        return;
+    }
+
+    Uri tmpUri(uri.ToString());
+    std::lock_guard<std::mutex> lock_l(oplock_);
+    sptr<AAFwk::IAbilityScheduler> dataAbilityProxy = nullptr;
+    if (uri_ == nullptr) {
+        auto dataability = registerMap_.find(dataObserver);
+        if (dataability == registerMap_.end()) {
+            return;
+        }
+        auto path = uriMap_.find(dataObserver);
+        if (path->second != tmpUri.GetPath()) {
+            APP_LOGE("DataAbilityHelper::UnregisterObserver failed input uri's path is not equal the one the "
+                     "observer used");
+            return;
+        }
+        dataAbilityProxy = dataability->second;
+    } else {
+        dataAbilityProxy = dataAbilityProxy_;
+    }
+
+    if (dataAbilityProxy == nullptr) {
+        APP_LOGE("DataAbilityHelper::RegisterObserver failed dataAbility == nullptr");
+        return;
+    }
+
+    dataAbilityProxy->ScheduleUnregisterObserver(uri, dataObserver);
+    int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy, token_);
+    if (err != ERR_OK) {
+        APP_LOGE("DataAbilityHelper::RegisterObserver failed to ReleaseDataAbility err = %{public}d", err);
+    }
+    registerMap_.erase(dataObserver);
+    uriMap_.erase(dataObserver);
+}
+
+/**
+ * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ */
+void DataAbilityHelper::NotifyChange(const Uri &uri)
+{
+    if (!CheckUriParam(uri)) {
+        APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
+        return;
+    }
+
+    if (dataAbilityProxy_ == nullptr) {
+        dataAbilityProxy_ = AbilityManagerClient::GetInstance()->AcquireDataAbility(uri, tryBind_, token_);
+        if (dataAbilityProxy_ == nullptr) {
+            APP_LOGE("DataAbilityHelper::NotifyChange failed dataAbility == nullptr");
+            return;
+        }
+    }
+
+    dataAbilityProxy_->ScheduleNotifyChange(uri);
+
+    if (uri_ == nullptr) {
+        int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy_, token_);
+        if (err != ERR_OK) {
+            APP_LOGE("DataAbilityHelper::NotifyChange failed to ReleaseDataAbility err = %{public}d", err);
+        }
+        dataAbilityProxy_ = nullptr;
+    }
 }
 
 /**
@@ -932,5 +1073,39 @@ DataAbilityDeathRecipient::DataAbilityDeathRecipient(RemoteDiedHandler handler) 
 
 DataAbilityDeathRecipient::~DataAbilityDeathRecipient()
 {}
+std::vector<std::shared_ptr<DataAbilityResult>> DataAbilityHelper::ExecuteBatch(
+    const Uri &uri, const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+    APP_LOGI("DataAbilityHelper::ExecuteBatch start");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    if (!CheckUriParam(uri)) {
+        APP_LOGE("DataAbilityHelper::ExecuteBatch. CheckUriParam uri failed");
+        return results;
+    }
+    if (uri_ == nullptr) {
+        APP_LOGI("DataAbilityHelper::ExecuteBatch before AcquireDataAbility.");
+        dataAbilityProxy_ = AbilityManagerClient::GetInstance()->AcquireDataAbility(uri, tryBind_, token_);
+        APP_LOGI("DataAbilityHelper::ExecuteBatch after AcquireDataAbility.");
+        if (dataAbilityProxy_ == nullptr) {
+            APP_LOGE("DataAbilityHelper::ExecuteBatch failed dataAbility == nullptr");
+            return results;
+        }
+    }
+
+    APP_LOGI("DataAbilityHelper::ExecuteBatch before dataAbilityProxy_->ExecuteBatch.");
+    results = dataAbilityProxy_->ExecuteBatch(operations);
+    APP_LOGI("DataAbilityHelper::ExecuteBatch after dataAbilityProxy_->ExecuteBatch.");
+    if (uri_ == nullptr) {
+        APP_LOGI("DataAbilityHelper::ExecuteBatch before ReleaseDataAbility.");
+        int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy_, token_);
+        APP_LOGI("DataAbilityHelper::ExecuteBatch after ReleaseDataAbility.");
+        if (err != ERR_OK) {
+            APP_LOGE("DataAbilityHelper::ExecuteBatch failed to ReleaseDataAbility err = %{public}d", err);
+        }
+        dataAbilityProxy_ = nullptr;
+    }
+    APP_LOGI("DataAbilityHelper::ExecuteBatch end");
+    return results;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
