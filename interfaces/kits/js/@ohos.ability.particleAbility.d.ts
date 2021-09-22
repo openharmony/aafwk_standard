@@ -14,6 +14,8 @@
  */
 import { AsyncCallback } from './basic';
 import { StartAbilityParameter } from './ability/startAbilityParameter';
+import { Want } from './ability/want';
+import { ConnectOptions } from './ability/connectOptions';
 
 /**
  * A Particle Ability represents an ability with service.
@@ -35,5 +37,28 @@ declare namespace particleAbility {
    */
   function startAbility(parameter: StartAbilityParameter, callback: AsyncCallback<void>): void;
   function startAbility(parameter: StartAbilityParameter): Promise<void>;
+
+  /**
+   * Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+   * @default -
+   * @devices phone, tablet
+   * @since 7
+   * @SysCap aafwk
+   * @param request The element name of the service ability
+   * @param options The remote object instance
+   * @return Returns the number of the ability connected
+   */
+   function connectAbility(request: Want, options:ConnectOptions ): number;
+
+   /**
+    * The callback interface was connect successfully.
+    * @default -
+    * @devices phone, tablet
+    * @since 7
+    * @SysCap aafwk
+    * @param connection The number of the ability connected
+    */
+   function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
+   function disconnectAbility(connection: number): Promise<void>;
 }
 export default particleAbility;

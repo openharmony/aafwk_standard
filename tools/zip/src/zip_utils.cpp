@@ -26,7 +26,7 @@ namespace AAFwk {
 namespace LIBZIP {
 namespace {
 const std::string SEPARATOR = "/";
-const std::regex FILE_PATH_REGEX("[a-zA-Z0-9]|/|");
+const std::regex FILE_PATH_REGEX("([0-9A-Za-z/+_=\\-,.])+");
 }  // namespace
 using namespace OHOS::AppExecFwk;
 
@@ -93,8 +93,7 @@ bool IsASCIIChar(const char *pszStr)
 }
 bool FilePathCheckValid(const std::string &str)
 {
-    return true;
-    // return std::regex_match(str, FILE_PATH_REGEX);
+    return std::regex_match(str, FILE_PATH_REGEX);
 }
 
 }  // namespace LIBZIP

@@ -16,13 +16,13 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk_standard/tools"
 
-ohos_systemtest("ability_command_start_system_test") {
+ohos_systemtest("aa_command_start_system_test") {
   module_out_path = module_output_path
 
   include_dirs = [ "//third_party/jsoncpp/include" ]
 
   sources = [
-    "ability_command_start_system_test.cpp",
+    "aa_command_start_system_test.cpp",
     "tool_system_test.cpp",
   ]
 
@@ -46,11 +46,11 @@ ohos_systemtest("ability_command_start_system_test") {
   ]
 }
 
-ohos_systemtest("ability_command_stop_service_system_test") {
+ohos_systemtest("aa_command_stop_service_system_test") {
   module_out_path = module_output_path
 
   sources = [
-    "ability_command_stop_service_system_test.cpp",
+    "aa_command_stop_service_system_test.cpp",
     "tool_system_test.cpp",
   ]
 
@@ -74,13 +74,13 @@ ohos_systemtest("ability_command_stop_service_system_test") {
   ]
 }
 
-ohos_systemtest("ability_command_dump_system_test") {
+ohos_systemtest("aa_command_dump_system_test") {
   module_out_path = module_output_path
 
   include_dirs = [ "//third_party/jsoncpp/include" ]
 
   sources = [
-    "ability_command_dump_system_test.cpp",
+    "aa_command_dump_system_test.cpp",
     "tool_system_test.cpp",
   ]
 
@@ -108,8 +108,8 @@ group("systemtest") {
   testonly = true
 
   deps = [
-    ":ability_command_dump_system_test",
-    ":ability_command_start_system_test",
-    ":ability_command_stop_service_system_test",
+    ":aa_command_dump_system_test",
+    ":aa_command_start_system_test",
+    ":aa_command_stop_service_system_test",
   ]
 }
