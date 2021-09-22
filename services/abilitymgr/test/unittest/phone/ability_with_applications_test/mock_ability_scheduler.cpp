@@ -66,23 +66,23 @@ int AbilityScheduler::OpenFile(const Uri &uri, const std::string &mode)
     return -1;
 }
 
-int AbilityScheduler::Insert(const Uri &uri, const ValuesBucket &value)
+int AbilityScheduler::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     return -1;
 }
 
-int AbilityScheduler::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int AbilityScheduler::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return -1;
 }
 
-int AbilityScheduler::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int AbilityScheduler::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return -1;
 }
 
-std::shared_ptr<ResultSet> AbilityScheduler::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityScheduler::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return nullptr;
 }
@@ -102,7 +102,7 @@ bool AbilityScheduler::Reload(const Uri &uri, const PacMap &extras)
     return false;
 }
 
-int AbilityScheduler::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int AbilityScheduler::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     return -1;
 }
@@ -122,8 +122,8 @@ Uri AbilityScheduler::DenormalizeUri(const Uri &uri)
 void AbilityScheduler::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {}
 
-void AbilityScheduler::NotifyTopActiveAbilityChanged(bool flag)
-{}
+// void AbilityScheduler::NotifyTopActiveAbilityChanged(bool flag)
+// {}
 
 }  // namespace AAFwk
 }  // namespace OHOS

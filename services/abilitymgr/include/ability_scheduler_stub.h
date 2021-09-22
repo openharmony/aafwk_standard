@@ -54,9 +54,13 @@ private:
     int GetTypeInner(MessageParcel &data, MessageParcel &reply);
     int ReloadInner(MessageParcel &data, MessageParcel &reply);
     int BatchInsertInner(MessageParcel &data, MessageParcel &reply);
+    int RegisterObserverInner(MessageParcel &data, MessageParcel &reply);
+    int UnregisterObserverInner(MessageParcel &data, MessageParcel &reply);
+    int NotifyChangeInner(MessageParcel &data, MessageParcel &reply);
     int NormalizeUriInner(MessageParcel &data, MessageParcel &reply);
     int DenormalizeUriInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
+    int ExecuteBatchInner(MessageParcel &data, MessageParcel &reply);
     int MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply);
     int TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply);
     using RequestFuncType = int (AbilitySchedulerStub::*)(MessageParcel &data, MessageParcel &reply);

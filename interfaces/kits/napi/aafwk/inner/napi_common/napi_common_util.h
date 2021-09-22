@@ -23,6 +23,9 @@
 namespace OHOS {
 namespace AppExecFwk {
 
+static constexpr int32_t DEFAULT_BUF_SIZE = 1024;
+static constexpr int32_t ASYNC_RST_SIZE = 2;
+
 bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectType);
 bool IsArrayForNapiValue(napi_env env, napi_value param, uint32_t &arraySize);
 
@@ -228,6 +231,17 @@ void CompleteAsyncCallbackWork(napi_env env, napi_status status, void *data);
  * @param data Point to asynchronous processing of data.
  */
 void CompletePromiseCallbackWork(napi_env env, napi_status status, void *data);
+
+std::vector<std::string> ConvertStrVector(napi_env env, napi_value value, size_t strMax);
+std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue);
+
+napi_value ConvertJSValue(napi_env env, std::vector<std::string> &value);
+napi_value ConvertJSValue(napi_env env, std::string &value);
+napi_value ConvertJSValue(napi_env env, std::vector<uint8_t> &value);
+napi_value ConvertJSValue(napi_env env, int32_t value);
+napi_value ConvertJSValue(napi_env env, int64_t value);
+napi_value ConvertJSValue(napi_env env, double value);
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // OHOS_APPEXECFWK_NAPI_COMMON_UTIL_H

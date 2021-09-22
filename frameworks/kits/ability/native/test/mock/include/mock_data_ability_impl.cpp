@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "data_ability_impl.h"
 #include <gtest/gtest.h>
 #include "app_log_wrapper.h"
@@ -45,29 +48,29 @@ int DataAbilityImpl::OpenFile(const Uri &uri, const std::string &mode)
     return returnValueOpenfile;
 }
 
-int DataAbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
+int DataAbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Insert called";
     return returnValueInsert;
 }
 
-int DataAbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int DataAbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Update called";
     return returnValueUpdate;
 }
 
-int DataAbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int DataAbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Delete called";
     return returnValueDelete;
 }
 
-std::shared_ptr<ResultSet> DataAbilityImpl::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Query called";
-    std::shared_ptr<ResultSet> resultSet = std::make_shared<ResultSet>("TestResultSet");
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = std::make_shared<NativeRdb::AbsSharedResultSet>(std::string("Test"));
     return resultSet;
 }
 

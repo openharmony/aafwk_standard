@@ -51,7 +51,8 @@ public:
 
     // Does not take ownership of |destFd|.
     ZipParams(const FilePath &srcDir, int destFd);
-
+    virtual ~ZipParams()
+    {}
     int DestFd() const
     {
         return destFd_;

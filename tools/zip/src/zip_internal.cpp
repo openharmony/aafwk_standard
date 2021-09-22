@@ -17,6 +17,7 @@
 #include <stddef.h>
 #include <algorithm>
 #include "zip_utils.h"
+#include "securec.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -26,7 +27,12 @@ namespace LIBZIP {
 struct tm GetTmDataFromTickts(int64_t sec)
 {
     time_t second = (time_t)sec;
-    struct tm now = *localtime(&second);
+    struct tm now;
+    struct tm *tmNow = localtime(&second);
+    if (tmNow == nullptr) {
+        return now;
+    }
+    now = *tmNow;
     now.tm_year += 1900;
     now.tm_mon += 1;
     return now;
@@ -39,12 +45,12 @@ void *FdOpenFileFunc(void *opaque, const char *filename, int mode)
 {
     FILE *file = NULL;
     const char *mode_fopen = NULL;
-
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
+    uint32_t modeInner = static_cast<uint32_t>(mode);
+    if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
         mode_fopen = "rb";
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    else if (modeInner & ZLIB_FILEFUNC_MODE_EXISTING)
         mode_fopen = "r+b";
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    else if (modeInner & ZLIB_FILEFUNC_MODE_CREATE)
         mode_fopen = "wb";
 
     if ((filename != NULL) && (mode_fopen != NULL)) {
@@ -71,6 +77,9 @@ void FillFdOpenFileFunc(zlib_filefunc_def *pzlibFilefuncDef, PlatformFile fd)
     pzlibFilefuncDef->zopen_file = FdOpenFileFunc;
     pzlibFilefuncDef->zclose_file = FdCloseFileFunc;
     int *ptrFd = static_cast<int *>(malloc(sizeof(fd)));
+    if (ptrFd == nullptr) {
+        return;
+    }
     *ptrFd = fd;
     pzlibFilefuncDef->opaque = ptrFd;
 }
@@ -92,7 +101,8 @@ struct ZipBuffer {
 // writing compressed data and it returns NULL for this case.)
 void *OpenZipBuffer(void *opaque, const char * /*filename*/, int mode)
 {
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER) != ZLIB_FILEFUNC_MODE_READ) {
+    uint32_t modeInner = static_cast<uint32_t>(mode);
+    if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) != ZLIB_FILEFUNC_MODE_READ) {
         HILOG_INFO("%{public}s called, mode is not ZLIB_FILEFUNC_MODE_READ.", __func__);
         return NULL;
     }
@@ -108,6 +118,10 @@ void *OpenZipBuffer(void *opaque, const char * /*filename*/, int mode)
 uLong ReadZipBuffer(void *opaque, void * /*stream*/, void *buf, uLong size)
 {
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
+    if (buffer == nullptr) {
+        HILOG_INFO("%{public}s called, buffer = nullptr.", __func__);
+        return 0;
+    }
     if (buffer->offset > buffer->length) {
         HILOG_INFO("%{public}s called, buffer->offset > buffer->length.", __func__);
         return 0;
@@ -117,7 +131,9 @@ uLong ReadZipBuffer(void *opaque, void * /*stream*/, void *buf, uLong size)
     if (!buffer || !buffer->data || !remaining_bytes)
         return 0;
     size = std::min(size, static_cast<uLong>(remaining_bytes));
-    memcpy(buf, &buffer->data[buffer->offset], size);
+    if (memcpy_s(buf, size, &buffer->data[buffer->offset], size) != EOK) {
+        return 0;
+    }
     buffer->offset += size;
     return size;
 }

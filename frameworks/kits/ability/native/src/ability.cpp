@@ -35,7 +35,13 @@
 #include "string_wrapper.h"
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "ability_post_event_timeout.h"
+#include "data_ability_result.h"
+#include "data_ability_operation.h"
+#include "data_uri_utils.h"
 
 #ifdef MMI_COMPILE
 #include "key_events.h"
@@ -73,7 +79,6 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token)
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     abilityInfo_ = abilityInfo;
     handler_ = handler;
     AbilityContext::token_ = token;
@@ -199,7 +204,6 @@ void Ability::OnStart(const Want &want)
 void Ability::OnStop()
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (continuationManager_ != nullptr) {
         continuationManager_->UnregisterAbilityTokenIfNeed();
     } else {
@@ -236,7 +240,6 @@ void Ability::OnStop()
 void Ability::OnActive()
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (abilityWindow_ != nullptr) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityActive.", __func__);
         abilityWindow_->OnPostAbilityActive();
@@ -266,7 +269,6 @@ void Ability::OnActive()
 void Ability::OnInactive()
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityInactive.", __func__);
         abilityWindow_->OnPostAbilityInactive();
@@ -297,7 +299,6 @@ void Ability::OnInactive()
 void Ability::OnForeground(const Want &want)
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (abilityWindow_ != nullptr) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
         abilityWindow_->OnPostAbilityForeground();
@@ -328,7 +329,6 @@ void Ability::OnForeground(const Want &want)
 void Ability::OnBackground()
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityBackground.", __func__);
         abilityWindow_->OnPostAbilityBackground();
@@ -680,7 +680,7 @@ std::string Ability::GetType(const Uri &uri)
  *
  * @return Returns the index of the newly inserted data record.
  */
-int Ability::Insert(const Uri &uri, const ValuesBucket &value)
+int Ability::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     return 0;
 }
@@ -728,7 +728,8 @@ int Ability::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the number of data records updated.
  */
-int Ability::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int Ability::Update(
+    const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return 0;
 }
@@ -741,7 +742,6 @@ int Ability::Update(const Uri &uri, const ValuesBucket &value, const DataAbility
 std::shared_ptr<OHOSApplication> Ability::GetApplication()
 {
     APP_LOGI("%{public}s begin.", __func__);
-
     if (application_ == nullptr) {
         APP_LOGE("Ability::GetApplication error. application_ == nullptr.");
         return nullptr;
@@ -1048,7 +1048,7 @@ Uri Ability::NormalizeUri(const Uri &uri)
  *
  * @return Returns the number of data records deleted.
  */
-int Ability::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int Ability::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return 0;
 }
@@ -1095,8 +1095,8 @@ int Ability::OpenFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the queried data.
  */
-std::shared_ptr<ResultSet> Ability::Query(
-    const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> Ability::Query(
+    const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return nullptr;
 }
@@ -1124,7 +1124,7 @@ bool Ability::Reload(const Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int Ability::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int Ability::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     APP_LOGI("%{public}s begin.", __func__);
     int amount = 0;
@@ -1583,7 +1583,6 @@ void Ability::TerminateAndRemoveMission()
  */
 std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::string taskstr)
 {
-    // std::shared_ptr<EventHandler> eventhandler = handler_;
     return std::make_shared<AbilityPostEventTimeout>(taskstr, handler_);
 }
 
@@ -1610,7 +1609,6 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
 bool Ability::ReleaseForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // release form by formId and do not release cache
     return ReleaseForm(formId, false);
 }
@@ -1639,7 +1637,6 @@ bool Ability::ReleaseForm(const int64_t formId)
 bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // release form with formId and specifies whether to release the cache
     return DeleteForm(formId, isReleaseCache ? RELEASE_CACHED_FORM : RELEASE_FORM);
 }
@@ -1666,7 +1663,6 @@ bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
 bool Ability::DeleteForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // delete form with formId
     return DeleteForm(formId, DELETE_FORM);
 }
@@ -1686,8 +1682,7 @@ bool Ability::CastTempForm(const int64_t formId)
         return false;
     }
 
-    APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64 "", __func__, formId);
-
+    APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
     bool result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
 
     if (!result) {
@@ -1716,7 +1711,6 @@ bool Ability::CastTempForm(const int64_t formId)
 bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::shared_ptr<FormCallback> callback)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     long currentTime = ts.tv_sec * SEC_TO_MILLISEC + ts.tv_nsec / MILLISEC_TO_NANOSEC;
@@ -1777,10 +1771,8 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
     // add ability of form to hostForms
     std::shared_ptr<Ability> thisAbility = this->shared_from_this();
     formHostClient->AddForm(thisAbility, formJsInfo.formId);
-
     // post the async task of handleAcquireResult
     PostTask([this, want, formJsInfo, callback]() { HandleAcquireResult(want, formJsInfo, callback); }, 0L);
-
     // the acquire form is successfully
     return true;
 }
@@ -1797,7 +1789,6 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
 bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProviderData)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // check fms recover status
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
@@ -1838,7 +1829,6 @@ bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProvi
 bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_VISIBLE);
 }
 
@@ -1854,7 +1844,6 @@ bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
 bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_INVISIBLE);
 }
 
@@ -1870,7 +1859,6 @@ bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
 bool Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (nextTime < MIN_NEXT_TIME) {
         APP_LOGE("next time litte than 300 seconds.");
         return false;
@@ -1915,7 +1903,6 @@ bool Ability::RequestForm(const int64_t formId)
 void Ability::ProcessFormUpdate(const FormJsInfo &formJsInfo)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // post the async task of handleFormMessage
     int32_t msgCode = OHOS_FORM_UPDATE_FORM;
     PostTask([this, msgCode, formJsInfo]() { HandleFormMessage(msgCode, formJsInfo); }, 0L);
@@ -2075,9 +2062,7 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
         result = FormMgr::GetInstance().DeleteForm(formId, formHostClient);
     } else {
         result = FormMgr::GetInstance().ReleaseForm(
-            formId, 
-            formHostClient, 
-            (deleteType == RELEASE_CACHED_FORM) ? true : false);
+            formId, formHostClient, (deleteType == RELEASE_CACHED_FORM) ? true : false);
     }
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
@@ -2145,9 +2130,7 @@ void Ability::CleanFormResource(const int64_t formId)
  * @param callback Indicates the callback to be invoked whenever the {@link FormJsInfo} instance is obtained.
  */
 void Ability::HandleAcquireResult(
-    const Want &want, 
-    const FormJsInfo &formJsInfo, 
-    const std::shared_ptr<FormCallback> callback)
+    const Want &want, const FormJsInfo &formJsInfo, const std::shared_ptr<FormCallback> callback)
 {
     APP_LOGI("%{public}s called.", __func__);
     {
@@ -2222,7 +2205,6 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
 bool Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (formIds.empty() || formIds.size() > Constants::MAX_VISIBLE_NOTIFY_LIST) {
         APP_LOGE("%{public}s, formIds is empty or exceed 32.", __func__);
         return false;
@@ -2253,7 +2235,6 @@ bool Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int
 bool Ability::CheckWantValid(const int64_t formId, const Want &want)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     // get want parameters
     int32_t formDimension = want.GetIntParam(Constants::PARAM_FORM_DIMENSION_KEY, 1);
     std::string moduleName = want.GetStringParam(Constants::PARAM_MODULE_NAME_KEY);
@@ -2352,7 +2333,6 @@ bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
 bool Ability::RequestForm(const int64_t formId, const Want &want)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (formId <= 0) {
         APP_LOGE("%{public}s error, The passed formid is invalid. Its value must be larger than 0.", __func__);
         return false;
@@ -2383,7 +2363,6 @@ bool Ability::RequestForm(const int64_t formId, const Want &want)
 void Ability::OnDeathReceived()
 {
     APP_LOGI("%{public}s called.", __func__);
-
     int64_t formId;
     std::map<int64_t, Want> &userReqParams = userReqParams_;
     std::vector<int64_t> &lostedTempForms = lostedByReconnectTempForms_;
@@ -2492,7 +2471,6 @@ bool Ability::CheckFMSReady()
 bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     sptr<IBundleMgr> iBundleMgr = GetBundleMgr();
     if (iBundleMgr == nullptr) {
         APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
@@ -2551,7 +2529,6 @@ bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &
 bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     bool IsGetFormsInfoByModule = false;
     if (bundleName.empty() || moduleName.empty()) {
         APP_LOGW("save info fail, empty bundle name");
@@ -2582,7 +2559,6 @@ bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleN
 sptr<IBundleMgr> Ability::GetBundleMgr()
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (iBundleMgr_ == nullptr) {
         sptr<ISystemAbilityManager> systemAbilityManager =
             SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -2609,7 +2585,6 @@ sptr<IBundleMgr> Ability::GetBundleMgr()
 bool Ability::CheckPermission()
 {
     APP_LOGI("%{public}s called.", __func__);
-
     int32_t uid = IPCSkeleton::GetCallingUid();
     if (!iBundleMgr_->CheckIsSystemAppByUid(uid)) {
         APP_LOGE("%{public}s fail, form is not system app. uid:%{public}d", __func__, uid);
@@ -2676,6 +2651,335 @@ void Ability::SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> settin
 {
     APP_LOGI("%{public}s called.", __func__);
     setting_ = setting;
+}
+
+std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
+    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+    APP_LOGI("Ability::ExecuteBatch start");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    if (abilityInfo_ == nullptr) {
+        APP_LOGE("Ability::ExecuteBatch abilityInfo is nullptr");
+        return results;
+    }
+    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
+        APP_LOGE("Ability::ExecuteBatch data ability type failed, current type: %{public}d", abilityInfo_->type);
+        return results;
+    }
+    size_t len = operations.size();
+    APP_LOGI("Ability::ExecuteBatch operation is nullptr, len %{public}zu", len);
+    for (size_t i = 0; i < len; i++) {
+        std::shared_ptr<DataAbilityOperation> operation = operations[i];
+        if (operation == nullptr) {
+            APP_LOGI("Ability::ExecuteBatch operation is nullptr, create DataAbilityResult");
+            results.push_back(std::make_shared<DataAbilityResult>(0));
+            continue;
+        }
+        ExecuteOperation(operation, results, i);
+    }
+    APP_LOGI("Ability::ExecuteBatch end");
+    return results;
+}
+void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, int index)
+{
+    APP_LOGI("Ability::ExecuteOperation start, index=%{public}d", index);
+    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
+        APP_LOGE("Ability::ExecuteOperation data ability type failed, current type: %{public}d", abilityInfo_->type);
+        return;
+    }
+    if (index < 0) {
+        APP_LOGE(
+            "Ability::ExecuteOperation operation result index should not below zero, current index: %{public}d", index);
+        return;
+    }
+    if (operation == nullptr) {
+        APP_LOGI("Ability::ExecuteOperation operation is nullptr, create DataAbilityResult");
+        results.push_back(std::make_shared<DataAbilityResult>(0));
+        return;
+    }
+
+    int numRows = 0;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket = ParseValuesBucketReference(results, operation, index);
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates =
+        ParsePredictionArgsReference(results, operation, index);
+    if (operation->IsInsertOperation()) {
+        APP_LOGI("Ability::ExecuteOperation IsInsertOperation");
+        numRows = Insert(*(operation->GetUri().get()), *valuesBucket);
+    } else if (operation->IsDeleteOperation()) {
+        APP_LOGI("Ability::ExecuteOperation IsDeleteOperation");
+        numRows = Delete(*(operation->GetUri().get()), *predicates);
+    } else if (operation->IsUpdateOperation()) {
+        APP_LOGI("Ability::ExecuteOperation IsUpdateOperation");
+        numRows = Update(*(operation->GetUri().get()), *valuesBucket, *predicates);
+    } else if (operation->IsAssertOperation()) {
+        APP_LOGI("Ability::ExecuteOperation IsAssertOperation");
+        std::vector<std::string> columns;
+        std::shared_ptr<NativeRdb::AbsSharedResultSet> queryResult =
+            Query(*(operation->GetUri().get()), columns, *predicates);
+        if (queryResult == nullptr) {
+            APP_LOGE("Ability::ExecuteOperation Query retval is nullptr");
+            results.push_back(std::make_shared<DataAbilityResult>(0));
+            return;
+        }
+        if (queryResult->GetRowCount(numRows) != 0) {
+            APP_LOGE("Ability::ExecuteOperation queryResult->GetRowCount(numRows) != E_OK");
+        }
+        if (!CheckAssertQueryResult(queryResult, operation->GetValuesBucket())) {
+            if (queryResult != nullptr) {
+                queryResult->Close();
+            }
+            APP_LOGE("Query Result is not equal to expected value.");
+        }
+
+        if (queryResult != nullptr) {
+            queryResult->Close();
+        }
+    } else {
+        APP_LOGE("Ability::ExecuteOperation Expected bad type %{public}d", operation->GetType());
+    }
+    if (operation->GetExpectedCount() != numRows) {
+        APP_LOGE("Ability::ExecuteOperation Expected %{public}d rows but actual %{public}d",
+            operation->GetExpectedCount(),
+            numRows);
+    } else {
+        results.push_back(std::make_shared<DataAbilityResult>(numRows));
+    }
+}
+
+std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsReference(
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+    int numRefs)
+{
+    if (operation == nullptr) {
+        APP_LOGE("Ability::ParsePredictionArgsReference intpur is nullptr");
+        return nullptr;
+    }
+
+    std::map<int, int> predicatesBackReferencesMap = operation->GetDataAbilityPredicatesBackReferences();
+    if (predicatesBackReferencesMap.empty()) {
+        return operation->GetDataAbilityPredicates();
+    }
+
+    std::vector<std::string> strPredicatesList;
+    strPredicatesList.clear();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = operation->GetDataAbilityPredicates();
+    if (predicates == nullptr) {
+        APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
+    } else {
+        APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
+        std::vector<std::string> strPredicatesList = predicates->GetWhereArgs();
+    }
+
+    if (strPredicatesList.empty()) {
+        APP_LOGE("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates()->GetWhereArgs()"
+                 "error strList is empty()");
+    }
+
+    for (auto iterMap : predicatesBackReferencesMap) {
+        APP_LOGI("Ability::ParsePredictionArgsReference predicatesBackReferencesMap first:%{public}d second:%{public}d", iterMap.first, iterMap.second);
+        int tempCount = ChangeRef2Value(results, numRefs, iterMap.second);
+        if (tempCount < 0) {
+            APP_LOGE("Ability::ParsePredictionArgsReference tempCount:%{public}d", tempCount);
+            continue;
+        }
+        std::string strPredicates = std::to_string(tempCount);
+        APP_LOGI("Ability::ParsePredictionArgsReference strPredicates:%{public}s", strPredicates.c_str());
+        strPredicatesList.push_back(strPredicates);
+        APP_LOGI("Ability::ParsePredictionArgsReference push_back done");
+    }
+
+    predicates->SetWhereArgs(strPredicatesList);
+
+    return predicates;
+}
+
+std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+    int numRefs)
+{
+    NativeRdb::ValuesBucket retValueBucket;
+    if (operation == nullptr) {
+        APP_LOGE("Ability::ParseValuesBucketReference intpur is nullptr");
+        return nullptr;
+    }
+
+    if (operation->GetValuesBucketReferences() == nullptr) {
+        return operation->GetValuesBucket();
+    }
+
+    retValueBucket.Clear();
+    if (operation->GetValuesBucket() == nullptr) {
+        APP_LOGI("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
+    } else {
+        APP_LOGI("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
+        retValueBucket = *operation->GetValuesBucket();
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMapReferences;
+    operation->GetValuesBucketReferences()->GetAll(valuesMapReferences);
+
+    for (auto itermap : valuesMapReferences) {
+        std::string key = itermap.first;
+        NativeRdb::ValueObject obj;
+        if (!operation->GetValuesBucketReferences()->GetObject(key, obj)) {
+            APP_LOGE("Ability::ParseValuesBucketReference operation->GetValuesBucketReferences()->GetObject error");
+            continue;
+        }
+        switch (obj.GetType()) {
+            case NativeRdb::ValueObjectType::TYPE_INT:
+                {
+                    int val = 0;
+                    if (obj.GetInt(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)", key.c_str(), val);
+                    retValueBucket.PutInt(key, val);
+                }
+                break;
+            case NativeRdb::ValueObjectType::TYPE_DOUBLE:
+                {
+                    double val = 0.0;
+                    if (obj.GetDouble(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutDouble(%{public}s, %{public}f)", key.c_str(), val);
+                    retValueBucket.PutDouble(key, val);
+                }
+                break;
+            case NativeRdb::ValueObjectType::TYPE_STRING:
+                {
+                    std::string val = "";
+                    if (obj.GetString(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetString() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutString(%{public}s, %{public}s)", key.c_str(), val.c_str());
+                    retValueBucket.PutString(key, val);
+                }
+                break;
+            case NativeRdb::ValueObjectType::TYPE_BLOB:
+                {
+                    std::vector<uint8_t> val;
+                    if (obj.GetBlob(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBlob(%{public}s, %{public}zu)", key.c_str(), val.size());
+                    retValueBucket.PutBlob(key, val);
+                }
+                break;
+            case NativeRdb::ValueObjectType::TYPE_BOOL:
+                {
+                    bool val = false;
+                    if (obj.GetBool(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBool(%{public}s, %{public}s)", key.c_str(), val ? "true" : "false");
+                    retValueBucket.PutBool(key, val);
+                }
+                break;
+            default:
+                {
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
+                    retValueBucket.PutNull(key);
+                }
+                break;
+        }
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMap;
+    retValueBucket.GetAll(valuesMap);
+
+    return std::make_shared<NativeRdb::ValuesBucket>(valuesMap);
+}
+
+int Ability::ChangeRef2Value(std::vector<std::shared_ptr<DataAbilityResult>> &results, int numRefs, int index)
+{
+    int retval = -1;
+    if (index >= numRefs) {
+        APP_LOGE("Ability::ChangeRef2Value index >= numRefs");
+        return retval;
+    }
+
+    if (index >= static_cast<int>(results.size())) {
+        APP_LOGE("Ability::ChangeRef2Value index:%{public}d >= results.size():%{public}zu", index, results.size());
+        return retval;
+    }
+
+    std::shared_ptr<DataAbilityResult> refResult = results[index];
+    if (refResult == nullptr) {
+        APP_LOGE("Ability::ChangeRef2Value No.%{public}d refResult is null", index);
+        return retval;
+    }
+
+    if (refResult->GetUri().ToString().empty()) {
+        retval = refResult->GetCount();
+    } else {
+        retval = DataUriUtils::GetId(refResult->GetUri());
+    }
+
+    return retval;
+}
+
+bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultSet> &queryResult,
+    std::shared_ptr<NativeRdb::ValuesBucket> &&valuesBucket)
+{
+    if (queryResult == nullptr) {
+        APP_LOGE("Ability::CheckAssertQueryResult intput queryResult is null");
+        return true;
+    }
+
+    if (valuesBucket == nullptr) {
+        APP_LOGE("Ability::CheckAssertQueryResult intput valuesBucket is null");
+        return true;
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMap;
+    valuesBucket->GetAll(valuesMap);
+    if (valuesMap.empty()) {
+        APP_LOGE("Ability::CheckAssertQueryResult valuesMap is empty");
+        return true;
+    }
+    int count = 0;
+    if (queryResult->GetRowCount(count) != 0) {
+        APP_LOGE("Ability::CheckAssertQueryResult GetRowCount is 0");
+        return true;
+    }
+
+    for (auto iterMap : valuesMap) {
+        std::string strObject;
+        if (iterMap.second.GetString(strObject) != 0) {
+            APP_LOGE("Ability::CheckAssertQueryResult GetString strObject is error");
+            continue;
+        }
+        if (strObject.empty()) {
+            APP_LOGE("Ability::CheckAssertQueryResult strObject is empty");
+            continue;
+        }
+        for (int i = 0; i < count; ++i) {
+            std::string strName;
+            if (queryResult->GetString(i, strName) != 0) {
+                APP_LOGE("Ability::CheckAssertQueryResult GetString strName is error");
+                continue;
+            }
+            if (strName.empty()) {
+                APP_LOGE("Ability::CheckAssertQueryResult strName is empty");
+                continue;
+            }
+            if (strName.c_str() == strObject.c_str()) {
+                APP_LOGE("Ability::CheckAssertQueryResult strName same to strObject");
+                continue;
+            }
+
+            return false;
+        }
+    }
+
+    return true;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

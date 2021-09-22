@@ -109,8 +109,8 @@ export interface DataAbilityHelper {
      * @param predicates Indicates filter criteria. You should define the processing logic when this parameter is null.
      * @return Returns the query result.
      */
-    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates, callback: AsyncCallback<ResultSet>): void;
-    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates): Promise<ResultSet>;
+    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates, callback: AsyncCallback<NativeRdb::AbsSharedResultSet>): void;
+    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates): Promise<NativeRdb::AbsSharedResultSet>;
  
     /**
      * Updates data records in the database.
@@ -134,8 +134,8 @@ export interface DataAbilityHelper {
      * @param values Indicates the data records to insert.
      * @return Returns the number of data records inserted.
      */
-    batchInsert(URI: string, values: Array<ValuesBucket>, callback: AsyncCallback<number>): void;
-    batchInsert(URI: string, values: Array<ValuesBucket>): Promise<number>;
+    batchInsert(URI: string, values: Array<NativeRdb::ValuesBucket>, callback: AsyncCallback<number>): void;
+    batchInsert(URI: string, values: Array<NativeRdb::ValuesBucket>): Promise<number>;
  
     /**
      * Performs batch operations on the database.

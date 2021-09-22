@@ -116,29 +116,29 @@ public:
         return 1;
     }
 
-    int Insert(const Uri &uri, const ValuesBucket &value)
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::Insert called";
         state_ = ON_ACTIVE;
         return -1;
     }
 
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::Update called";
         state_ = ON_ACTIVE;
         return -1;
     }
 
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::Delete called";
         state_ = ON_ACTIVE;
         return -1;
     }
 
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::Query called";
         state_ = ON_ACTIVE;

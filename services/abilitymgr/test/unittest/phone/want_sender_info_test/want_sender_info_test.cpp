@@ -96,6 +96,9 @@ HWTEST_F(WantSenderInfoTest, WantSenderInfoTest_0100, TestSize.Level1)
     Parcel parcel;
     info.Marshalling(parcel);
     auto unInfo = WantSenderInfo::Unmarshalling(parcel);
+    if (!unInfo) {
+        return;
+    }
     EXPECT_EQ(unInfo->type, 10);
     EXPECT_EQ(unInfo->bundleName, "bundleName");
     EXPECT_EQ(unInfo->resultWho, "abilityA");

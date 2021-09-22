@@ -43,6 +43,7 @@ const std::string MISSION_NAME_MARK_HEAD = "#";
 const std::string MISSION_NAME_SEPARATOR = ":";
 
 const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WINDOW";
+
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

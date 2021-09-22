@@ -55,23 +55,23 @@ public:
         return -1;
     }
 
-    virtual int Insert(const Uri &uri, const ValuesBucket &value) override
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) override
     {
         return -1;
     }
 
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates) override
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) override
     {
         return -1;
     }
 
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates) override
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) override
     {
         return -1;
     }
 
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates) override
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates) override
     {
         return nullptr;
     }
@@ -91,7 +91,7 @@ public:
         return false;
     }
 
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override
     {
         return -1;
     }
@@ -113,6 +113,23 @@ public:
 
     void NotifyTopActiveAbilityChanged(bool flag) override
     {}
+    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
+    {
+        return true;
+    }
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
+    {
+        return true;
+    }
+    virtual bool ScheduleNotifyChange(const Uri &uri) override
+    {
+        return true;
+    }
+    virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override
+    {
+        return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
+    }
 };
 
 }  // namespace AAFwk
