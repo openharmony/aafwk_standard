@@ -128,7 +128,7 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     napi_value defaultFlag;
     napi_create_int32(env, (int32_t)formInfo.defaultFlag, &defaultFlag);
     HILOG_DEBUG("%{public}s, defaultFlag=%{public}d.", __func__, formInfo.defaultFlag);
-    napi_set_named_property(env, result, "defaultFlag", defaultFlag);
+    napi_set_named_property(env, result, "isDefault", defaultFlag);
 
     // formVisibleNotify
     napi_value formVisibleNotify;
@@ -159,8 +159,9 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     napi_create_array(env, &supportDimensions);
     int iDimensionsCount = 0;
     for (auto  dimension : formInfo.supportDimensions) {
-        napi_value dimensionInfo = nullptr;
-        napi_create_int32(env, dimension, &dimensionInfo);
+        HILOG_DEBUG("%{public}s, dimension=%{public}d.", __func__, dimension);
+        napi_value dimensionInfo;
+        napi_create_int32(env, (int32_t)dimension, &dimensionInfo);
         napi_set_element(env, supportDimensions, iDimensionsCount, dimensionInfo);
         ++iDimensionsCount;
     }
@@ -173,26 +174,27 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     int iCustomizeDatasCount = 0;
     for (auto  customizeData : formInfo.customizeDatas) {
 
-        napi_value customizeDataInfo = nullptr;
-        napi_create_array(env, &customizeDataInfo);
+        napi_value customizeDataOnject = nullptr;
+        napi_create_object(env, &customizeDataOnject);
 
         // customizeData : name
         napi_value customizeDataName;
         napi_create_string_utf8(env, customizeData.name.c_str(), NAPI_AUTO_LENGTH, &customizeDataName);
         HILOG_DEBUG("%{public}s, customizeData.name=%{public}s.", __func__, customizeData.name.c_str());
-        napi_set_named_property(env, customizeDataInfo, "name", customizeDataName);
+        napi_set_named_property(env, customizeDataOnject, "name", customizeDataName);
 
         // customizeData : value
         napi_value customizeDataValue;
         napi_create_string_utf8(env, customizeData.value.c_str(), NAPI_AUTO_LENGTH, &customizeDataValue);
         HILOG_DEBUG("%{public}s, customizeData.value=%{public}s.", __func__, customizeData.value.c_str());
-        napi_set_named_property(env, customizeDataInfo, "value", customizeDataValue);
+        napi_set_named_property(env, customizeDataOnject, "value", customizeDataValue);
 
-        napi_set_element(env, customizeDatas, iCustomizeDatasCount, customizeDataInfo);
+        napi_set_element(env, customizeDatas, iCustomizeDatasCount, customizeDataOnject);
         ++iDimensionsCount;
     }
     HILOG_DEBUG("%{public}s, customizeDatas size=%{public}zu.", __func__, formInfo.customizeDatas.size());
-    napi_set_named_property(env, result, "supportDimensions", customizeDatas);
+    napi_set_named_property(env, result, "customizeData", customizeDatas);
+    
 
     // relatedBundleName
     napi_value relatedBundleName;
