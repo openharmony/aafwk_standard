@@ -1184,6 +1184,9 @@ Want *Want::ParseUri(const std::string &uri)
             content = uri.substr(begin, pos - begin);
             if (content.compare("PICK") == 0) {
                 want = new (std::nothrow) Want();
+                if (want == nullptr) {
+                    return nullptr;
+                }
                 inPicker = true;
                 continue;
             }

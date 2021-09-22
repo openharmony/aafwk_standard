@@ -214,6 +214,90 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             POWER_ON_FAILED,
             "error: power on failed.",
         },
+        {
+            NO_FIRST_IN_MISSION,
+            "error: no first in mission.",
+        },
+        {
+            LOCK_MISSION_DENY_FAILED,
+            "error: lock mission deny failed.",
+        },
+        {
+            UNLOCK_MISSION_DENY_FAILED,
+            "error: unlock mission deny failed.",
+        },
+        {
+            SET_MISSION_INFO_FAILED,
+            "error: set mission info failed.",
+        },
+        {
+            LOCK_MISSION_STATE_DENY_REQUEST,
+            "error: lock mission state deny request.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_OUT_OF_SIZE,
+            "error: move mission to stack out of size.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_NOT_SAME_WIN_MODE,
+            "error: move mission to stack not same win mode.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION,
+            "error: move mission to stack not exist mission.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN,
+            "error: move mission to stack not support multi win.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_TARGET_STACK_OVERFLOW,
+            "error: move mission to stack target stack overflow.",
+        },
+        {
+            MOVE_MISSION_TO_STACK_MOVING_DENIED,
+            "error: move mission to stack moving denied.",
+        },
+        {
+            MINIMIZE_MULTI_WINDOW_FAILED,
+            "error: minimize multi window failed.",
+        },
+        {
+            MAXIMIZE_MULTIWINDOW_NOT_EXIST,
+            "error: maximize multiwindow not exist.",
+        },
+        {
+            MAXIMIZE_MULTIWINDOW_FAILED,
+            "error: maximize multiwindow failed.",
+        },
+        {
+            CHANGE_FOCUS_ABILITY_FAILED,
+            "error: change focus ability failed.",
+        },
+        {
+            GET_FLOATING_STACK_FAILED,
+            "error: get floating stack failed.",
+        },
+        {
+            CLOSE_MULTI_WINDOW_FAILED,
+            "error: close multi window failed.",
+        },
+        {
+            START_ABILITY_SETTING_FAILED,
+            "error: start ability setting failed.",
+        },
+        {
+            START_ABILITY_SETTING_NOT_SUPPORT_MULTI_WIN,
+            "error: start ability setting not support multi win.",
+        },
+        {
+            NO_FOUND_ABILITY_BY_CALLER,
+            "error: no found ability by caller.",
+        },
+        {
+            ABILITY_VISIBLE_FALSE_DENY_REQUEST,
+            "error: ability visible false deny request.",
+        },
     };
 
     return OHOS::ERR_OK;

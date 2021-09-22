@@ -1226,7 +1226,7 @@ bool PacMap::ToJson(const PacMapList &mapList, Json::Value &dataObject) const
 template <typename RawType>
 static std::string RawTypeToString(const RawType value, unsigned int precisionAfterPoint)
 {
-    std::ostringstream out(' ');
+    std::ostringstream out("RawTypeToString");
     out.precision(std::numeric_limits<double>::digits10);
     out << value;
 
@@ -1465,12 +1465,10 @@ bool PacMap::StringToMapList(const std::string &str, PacMapList &mapList)
 
     const int rawJsonLength = static_cast<int>(str.length());
     Json::CharReaderBuilder builder;
-    Json::CharReader *reader(builder.newCharReader());
-    if (!reader->parse(str.c_str(), str.c_str() + rawJsonLength, &root, &err)) {
+    std::unique_ptr<Json::CharReader> const jsonReader(builder.newCharReader());
+    if (!jsonReader->parse(str.c_str(), str.c_str() + rawJsonLength, &root, &err)) {
         return false;
     }
-    delete reader;
-    reader = nullptr;
 
     if (!root.isMember("pacmap")) {
         return false;

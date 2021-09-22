@@ -1151,7 +1151,9 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
         results.clear();
         return results;
     }
+    APP_LOGI("AbilityThread::ExecuteBatch before abilityImpl_->ExecuteBatch");
     results = abilityImpl_->ExecuteBatch(operations);
+    APP_LOGI("AbilityThread::ExecuteBatch after abilityImpl_->ExecuteBatch");
     APP_LOGI("AbilityThread::ExecuteBatch end");
     return results;
 }

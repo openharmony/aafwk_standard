@@ -238,6 +238,8 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0100, Func
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10?test/te.txt");
     std::string mode("r");
     int fd = dataAbilityHelper->OpenFile(urivalue, mode);
+    EXPECT_NE(fd, -1);
+
     std::string result = "123456";
     FILE *file = fdopen(fd, "r");
     EXPECT_NE(file, nullptr);
@@ -274,6 +276,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0200, Func
     Uri urivalue("dataability://device_id/com.domainname.dataability.persondata/person/10?test/te.txt");
     std::string mode("r");
     int fd = dataAbilityHelper->OpenFile(urivalue, mode);
+    EXPECT_NE(fd, -1);
 
     std::string result = "123456";
     FILE *file = fdopen(fd, "r");
