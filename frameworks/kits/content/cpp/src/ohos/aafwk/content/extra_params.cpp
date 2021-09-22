@@ -216,17 +216,18 @@ bool ExtraParams::Marshalling(Parcel &parcel) const
 {
     bool ret = true;
     // devType
-    ret = parcel.WriteStringVector(devType_);
+    bool ret1 = parcel.WriteStringVector(devType_);
 
     // targetBundleName
-    ret &= parcel.WriteString16(Str8ToStr16(targetBundleName_));
+    bool ret2 = parcel.WriteString16(Str8ToStr16(targetBundleName_));
 
     // description
-    ret &= parcel.WriteString16(Str8ToStr16(description_));
+    bool ret3 = parcel.WriteString16(Str8ToStr16(description_));
 
     // jsonParams
-    ret &= parcel.WriteString16(Str8ToStr16(jsonParams_));
+    bool ret4 = parcel.WriteString16(Str8ToStr16(jsonParams_));
 
+    ret = (ret1 && ret2 && ret3 && ret4) ? true : false;
     return ret;
 }
 
@@ -254,6 +255,9 @@ ExtraParams *ExtraParams::Unmarshalling(Parcel &parcel)
 
     ExtraParams *extraParams = new (std::nothrow) ExtraParams(devtype, targetBundleName, description, jsonParams);
 
+    if (extraParams == nullptr) {
+        return nullptr;
+    }
     return extraParams;
 }
 }  // namespace AppExecFwk

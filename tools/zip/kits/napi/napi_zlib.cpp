@@ -26,7 +26,9 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
+namespace {
+const int E_OK = 0;
+}
 #define NO_ERROR 0
 
 #define COMPRESS_LEVE_CHECK(level, ret)                                              \
@@ -51,8 +53,8 @@ std::shared_ptr<ZlibCallbackInfo> g_zipAceCallbackInfo = nullptr;
 std::shared_ptr<ZlibCallbackInfo> g_unzipAceCallbackInfo = nullptr;
 void ZipFileAsyncCallBack(int result);
 void UnzipFileAsyncCallBack(int result);
-napi_value UnwrapZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args);
-napi_value UnwrapUnZipParam(CallZipUnzipParam &param, napi_env env, napi_value args[ARGS_MAX_COUNT]);
+napi_value UnwrapZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args, size_t argc);
+napi_value UnwrapUnZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args, size_t argc);
 napi_value ZipFileWrap(napi_env env, napi_callback_info info, AsyncZipCallbackInfo *asyncZipCallbackInfo);
 napi_value UnwrapStringParam(std::string &str, napi_env env, napi_value args);
 bool UnwrapOptionsParams(OPTIONS &options, napi_env env, napi_value arg);
@@ -91,6 +93,10 @@ AsyncZipCallbackInfo *CreateZipAsyncCallbackInfo(napi_env env)
     ret = napi_get_global(env, &global);
     if (ret != napi_ok) {
         napi_get_last_error_info(env, &errorInfo);
+        if (errorInfo == nullptr) {
+            HILOG_ERROR("%{public}s errorInfo is null", __func__);
+            return nullptr;
+        }
         HILOG_ERROR("%{public}s get_global=%{public}d err:%{public}s", __func__, ret, errorInfo->error_message);
     }
 
@@ -100,7 +106,8 @@ AsyncZipCallbackInfo *CreateZipAsyncCallbackInfo(napi_env env)
         .aceCallback = nullptr,
     };
     if (asyncCallbackInfo == nullptr) {
-        HILOG_ERROR("%{public}s asyncCallbackInfo == nullptr", __func__);
+        HILOG_ERROR("%{public}s asyncCallbackInfo is null", __func__);
+        return nullptr;
     }
     HILOG_INFO("%{public}s end.", __func__);
     return asyncCallbackInfo;
@@ -124,12 +131,6 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
     if (argcAsync < argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-    // parse param
-    CallZipUnzipParam param;
-    if (UnwrapZipParam(param, env, args) == nullptr) {
-        HILOG_ERROR("%{public}s, call unwrap param failed.", __func__);
         return nullptr;
     }
 
@@ -163,7 +164,7 @@ napi_value ZipFileWrap(napi_env env, napi_callback_info info, AsyncZipCallbackIn
     }
 
     CallZipUnzipParam param;
-    if (UnwrapZipParam(param, env, args) == nullptr) {
+    if (UnwrapZipParam(param, env, args, argcAsync) == nullptr) {
         HILOG_ERROR("%{public}s, call unwrapWant failed.", __func__);
         return nullptr;
     }
@@ -179,6 +180,14 @@ napi_value ZipFileWrap(napi_env env, napi_callback_info info, AsyncZipCallbackIn
     if (argcAsync > PARAM3) {
         ret = ZipFileAsync(env, args, argcAsync, asyncZipCallbackInfo);
     } else {
+        if (asyncZipCallbackInfo != nullptr) {
+            delete asyncZipCallbackInfo;
+            asyncZipCallbackInfo = nullptr;
+        }
+        if (g_zipAceCallbackInfo != nullptr) {
+            g_zipAceCallbackInfo.reset();
+            g_zipAceCallbackInfo = nullptr;
+        }
         HILOG_INFO("%{public}s called, wrong number of parameters", __func__);
         return nullptr;
     }
@@ -276,9 +285,14 @@ bool UnwrapOptionsParams(OPTIONS &options, napi_env env, napi_value arg)
     return true;
 }
 
-napi_value UnwrapZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args)
+napi_value UnwrapZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args, size_t argc)
 {
     HILOG_INFO("%{public}s,called", __func__);
+
+    if (argc < 4) {
+        HILOG_INFO("%{public}s called, param count is wrong", __func__);
+        return nullptr;
+    }
 
     // unwrap the param[0]
     if (UnwrapStringParam(param.src, env, args[0]) == nullptr) {
@@ -303,10 +317,13 @@ napi_value UnwrapZipParam(CallZipUnzipParam &param, napi_env env, napi_value *ar
     return ret;
 }
 
-napi_value UnwrapUnZipParam(CallZipUnzipParam &param, napi_env env, napi_value args[ARGS_MAX_COUNT])
+napi_value UnwrapUnZipParam(CallZipUnzipParam &param, napi_env env, napi_value *args, size_t argc)
 {
     HILOG_INFO("%{public}s,called", __func__);
 
+    if (argc < 4) {
+        return nullptr;
+    }
     // unwrap the param[0]
     if (UnwrapStringParam(param.src, env, args[0]) == nullptr) {
         return nullptr;
@@ -406,7 +423,7 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
     }
     // parse param
     CallZipUnzipParam param;
-    if (UnwrapUnZipParam(param, env, args) == nullptr) {
+    if (UnwrapUnZipParam(param, env, args, argcAsync) == nullptr) {
         HILOG_ERROR("%{public}s, call unwrap param failed.", __func__);
         return nullptr;
     }
@@ -425,6 +442,14 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
         ret = UnzipFileAsync(env, args, argcAsync, asyncZipCallbackInfo);
     } else {
         HILOG_INFO("%{public}s called, wrong number of parameters", __func__);
+        if (asyncZipCallbackInfo != nullptr) {
+            delete asyncZipCallbackInfo;
+            asyncZipCallbackInfo = nullptr;
+        }
+        if (g_unzipAceCallbackInfo != nullptr) {
+            g_unzipAceCallbackInfo.reset();
+            g_unzipAceCallbackInfo = nullptr;
+        }
         return nullptr;
     }
 
@@ -497,10 +522,12 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     }
     HILOG_INFO("%{public}s,called env=%{public}p", __func__, zipAceCallbackInfo->env);
     uv_loop_s *loop = nullptr;
-
-#if NAPI_VERSION >= 2
     napi_get_uv_event_loop(zipAceCallbackInfo->env, &loop);
-#endif  // NAPI_VERSION >= 2
+    if (loop == nullptr) {
+        HILOG_ERROR("%{public}s, work == nullptr.", __func__);
+        return;
+    }
+
     uv_work_t *work = new (std::nothrow) uv_work_t;
     if (work == nullptr) {
         HILOG_ERROR("%{public}s, work == nullptr.", __func__);
@@ -516,7 +543,7 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     zipAceCallbackInfo = nullptr;
     work->data = (void *)asyncCallbackInfo;
 
-    uv_queue_work(
+    int rev = uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
@@ -531,9 +558,6 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value result[ARGS_TWO] = {0};
-            // get napi last error
-            const napi_extended_error_info *errorInfo = nullptr;
-            napi_get_last_error_info(asyncCallbackInfo->env, &errorInfo);
             // callback(err, data)  errorInfo->error_code;
             result[PARAM0] = GetCallbackErrorValue(asyncCallbackInfo->env, NO_ERROR);
             // callback result
@@ -548,12 +572,29 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             if (asyncCallbackInfo->callback != nullptr) {
                 napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
             }
+            if (asyncCallbackInfo != nullptr) {
+                delete asyncCallbackInfo;
+                asyncCallbackInfo = nullptr;
+            }
+            if (work != nullptr) {
+                delete work;
+                work = nullptr;
+            }
+        });
+    if (rev != E_OK) {
+        // free data
+        if (asyncCallbackInfo->callback != nullptr) {
+            napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
+        }
+        if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        if (work != nullptr) {
             delete work;
             work = nullptr;
-            asyncCallbackInfo = nullptr;
-        });
-
+        }
+    }
     return;
 }
 
