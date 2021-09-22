@@ -368,6 +368,9 @@ ohos_unittest("data_ability_helper_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -398,6 +401,9 @@ ohos_unittest("data_ability_operation_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -469,6 +475,9 @@ ohos_unittest("ability_impl_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -514,6 +523,9 @@ ohos_unittest("ability_thread_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -595,6 +607,9 @@ ohos_unittest("data_ability_impl_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -637,6 +652,9 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -679,6 +697,9 @@ ohos_unittest("data_ability_impl_file_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -724,6 +745,9 @@ ohos_unittest("ability_thread_dataability_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 

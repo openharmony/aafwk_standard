@@ -12,11 +12,17 @@
 # limitations under the License.
 
 group("services_target") {
-  deps = [ "abilitymgr:abilityms_target" ]
+  deps = [
+    "abilitymgr:abilityms_target",
+    "dataobsmgr:dataobsms",
+  ]
 }
 
 group("unittest") {
   testonly = true
 
-  deps = [ "abilitymgr:unittest" ]
+  deps = [
+    "abilitymgr:unittest",
+    "dataobsmgr:unittest",
+  ]
 }

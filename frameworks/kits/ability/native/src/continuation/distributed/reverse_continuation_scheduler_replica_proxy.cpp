@@ -49,7 +49,7 @@ void ReverseContinuationSchedulerReplicaProxy::PassPrimary(const sptr<IRemoteObj
         return;
     }
     if (!remoteObject->SendRequest(
-            static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::PASS_MASTER), data, reply, option)) {
+        static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::PASS_MASTER), data, reply, option)) {
         APP_LOGE("ReverseContinuationSchedulerReplicaProxy::PassPrimary SendRequest return false");
     }
     APP_LOGI("%{public}s called end", __func__);
@@ -70,10 +70,8 @@ bool ReverseContinuationSchedulerReplicaProxy::ReverseContinuation()
         return false;
     }
     if (!remoteObject->SendRequest(
-            static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::REVERSE_CONTINUATION),
-            data,
-            reply,
-            option)) {
+        static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::REVERSE_CONTINUATION),
+        data, reply, option)) {
         APP_LOGE("ReverseContinuationSchedulerReplicaProxy::ReverseContinuation SendRequest return false");
         return false;
     }
@@ -100,10 +98,8 @@ void ReverseContinuationSchedulerReplicaProxy::NotifyReverseResult(int reverseRe
         return;
     }
     if (!remoteObject->SendRequest(
-            static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::NOTIFY_REVERSE_RESULT),
-            data,
-            reply,
-            option)) {
+        static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::NOTIFY_REVERSE_RESULT),
+        data, reply, option)) {
         APP_LOGE("ReverseContinuationSchedulerReplicaProxy::NotifyReverseResult SendRequest return false");
     }
     APP_LOGI("%{public}s called end", __func__);

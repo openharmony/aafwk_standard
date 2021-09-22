@@ -18,14 +18,16 @@
 
 #include <map>
 #include <memory>
-#include "dummy_data_ability_predicates.h"
-#include "dummy_values_bucket.h"
 #include "data_ability_operation.h"
 #include "uri.h"
 #include "parcel.h"
 
 using Uri = OHOS::Uri;
 namespace OHOS {
+namespace NativeRdb {
+class DataAbilityPredicates;
+class ValuesBucket;
+}
 namespace AppExecFwk {
 class DataAbilityOperation;
 class DataAbilityOperationBuilder final : public std::enable_shared_from_this<DataAbilityOperationBuilder> {
@@ -44,14 +46,14 @@ public:
      * @param values Indicates the data values to be set.
      * @return Returns a DataAbilityOperationBuilder object containing the given values parameter.
      */
-    std::shared_ptr<DataAbilityOperationBuilder> WithValuesBucket(std::shared_ptr<ValuesBucket> &values);
+    std::shared_ptr<DataAbilityOperationBuilder> WithValuesBucket(std::shared_ptr<NativeRdb::ValuesBucket> &values);
     /**
      * @brief Sets filter criteria used for deleting updating or assert query data.
      * @param predicates Indicates the filter criteria to set. If this parameter is null, all data records will be
      * operated by default.
      * @return Returns an object containing the given filter criteria.
      */
-    std::shared_ptr<DataAbilityOperationBuilder> WithPredicates(std::shared_ptr<DataAbilityPredicates> &predicates);
+    std::shared_ptr<DataAbilityOperationBuilder> WithPredicates(std::shared_ptr<NativeRdb::DataAbilityPredicates> &predicates);
     /**
      * @brief Sets the expected number of rows to update ,delete or assert query.
      * @param count Indicates the expected number of rows to update or delete.
@@ -74,7 +76,7 @@ public:
      * replace the specified value. This parameter cannot be null.
      * @return Returns a DataAbilityOperationBuilder object containing the given backReferences parameter.
      */
-    std::shared_ptr<DataAbilityOperationBuilder> WithValueBackReferences(std::shared_ptr<ValuesBucket> &backReferences);
+    std::shared_ptr<DataAbilityOperationBuilder> WithValueBackReferences(std::shared_ptr<NativeRdb::ValuesBucket> &backReferences);
     /**
      * @brief Sets an interrupt flag bit for a batch operation, which can be insert, update, delete, or assert.
      * @param interrupted Specifies whether a batch operation can be interrupted. The value true indicates that the
@@ -88,9 +90,9 @@ private:
     int expectedCount_;
     bool interrupted_;
     std::shared_ptr<Uri> uri_;
-    std::shared_ptr<ValuesBucket> valuesBucket_;
-    std::shared_ptr<DataAbilityPredicates> dataAbilityPredicates_;
-    std::shared_ptr<ValuesBucket> valuesBucketReferences_;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket_;
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> dataAbilityPredicates_;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucketReferences_;
     std::map<int, int> dataAbilityPredicatesBackReferences_;
 };
 }  // namespace AppExecFwk

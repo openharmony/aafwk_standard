@@ -15,6 +15,7 @@ group("innerkits_target") {
   deps = [
     "ability_manager:ability_manager",
     "base:base",
+    "dataobs_manager:dataobs_manager",
     "intent:intent",
     "want:want",
   ]

@@ -70,7 +70,7 @@ void VerifySelfPermissionExecuteCallbackWork(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
 
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
         return;
@@ -198,7 +198,7 @@ bool UnwrapRequestPermissionsFromUser(
 void RequestPermissionsFromUserExecuteCallbackWork(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
         return;
@@ -228,7 +228,7 @@ void RequestPermissionsFromUserExecuteCallbackWork(napi_env env, void *data)
 void RequestPermissionsFromUserExecutePromiseWork(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
         return;
@@ -257,10 +257,30 @@ void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_stat
 {
     HILOG_INFO("%{public}s called.", __func__);
 
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_INFO("%{public}s called, asyncCallbackInfo is null", __func__);
         return;
+    }
+
+    if (asyncCallbackInfo->error_code != NAPI_ERR_NO_ERROR && asyncCallbackInfo->aceCallback != nullptr) {
+        napi_value callback = 0;
+        napi_value undefined = 0;
+        napi_get_undefined(env, &undefined);
+        napi_value callResult = 0;
+        napi_value revParam[ARGS_TWO] = {nullptr};
+
+        revParam[PARAM0] = GetCallbackErrorValue(env, asyncCallbackInfo->error_code);
+        revParam[PARAM1] = WrapVoidToJS(env);
+
+        if (asyncCallbackInfo->aceCallback->callback != nullptr) {
+            napi_get_reference_value(env, asyncCallbackInfo->aceCallback->callback, &callback);
+            napi_call_function(env, undefined, callback, ARGS_TWO, revParam, &callResult);
+            napi_delete_reference(env, asyncCallbackInfo->aceCallback->callback);
+
+            asyncCallbackInfo->aceCallback->callback = nullptr;
+            asyncCallbackInfo->aceCallback->env = nullptr;
+        }
     }
 
     napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -776,7 +796,7 @@ void VerifyCallingOrSelfPermissionExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
 
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
         return;
@@ -856,7 +876,7 @@ napi_value NAPI_VerifyCallingOrSelfPermission(napi_env env, napi_callback_info i
 void GetAppInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
+    AppInfoCB *appInfoCB = static_cast<AppInfoCB *>(data);
     appInfoCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
 
     if (appInfoCB->cbBase.ability == nullptr) {
@@ -884,7 +904,7 @@ void GetAppInfoExecuteCB(napi_env env, void *data)
 void GetAppInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
+    AppInfoCB *appInfoCB = static_cast<AppInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -957,7 +977,7 @@ napi_value GetApplicationInfoAsync(napi_env env, napi_value *args, const size_t 
 void GetAppInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
+    AppInfoCB *appInfoCB = static_cast<AppInfoCB *>(data);
     if (appInfoCB == nullptr) {
         HILOG_ERROR("NAPI_GetApplicationInfo, appInfoCB == nullptr");
         return;
@@ -1094,7 +1114,7 @@ AppInfoCB *CreateAppInfoCBInfo(napi_env env)
 void GetBundleNameExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s. asyncCallbackInfo is null", __func__);
         return;
@@ -1189,7 +1209,7 @@ napi_value WrapProcessInfo(napi_env env, ProcessInfoCB *processInfoCB)
 void GetProcessInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, worker pool thread execute.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
+    ProcessInfoCB *processInfoCB = static_cast<ProcessInfoCB *>(data);
     if (processInfoCB == nullptr) {
         return;
     }
@@ -1221,7 +1241,7 @@ void GetProcessInfoExecuteCB(napi_env env, void *data)
 void GetProcessInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
+    ProcessInfoCB *processInfoCB = static_cast<ProcessInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1295,7 +1315,7 @@ napi_value GetProcessInfoAsync(napi_env env, napi_value *args, const size_t argC
 void GetProcessInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
+    ProcessInfoCB *processInfoCB = static_cast<ProcessInfoCB *>(data);
     napi_value result = nullptr;
     if (processInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapProcessInfo(env, processInfoCB);
@@ -1490,7 +1510,7 @@ void GetElementNameExecuteCB(napi_env env, void *data)
         HILOG_ERROR("%{public}s, data == nullptr.", __func__);
         return;
     }
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
+    ElementNameCB *elementNameCB = static_cast<ElementNameCB *>(data);
     if (elementNameCB == nullptr) {
         HILOG_ERROR("NAPI_GetElementName, elementNameCB == nullptr");
         return;
@@ -1525,7 +1545,7 @@ void GetElementNameExecuteCB(napi_env env, void *data)
 void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetElementName, main event thread complete.");
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
+    ElementNameCB *elementNameCB = static_cast<ElementNameCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1558,7 +1578,7 @@ void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetElementNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetElementName, main event thread complete.");
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
+    ElementNameCB *elementNameCB = static_cast<ElementNameCB *>(data);
     napi_value result = nullptr;
     if (elementNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapElementName(env, elementNameCB);
@@ -1728,7 +1748,7 @@ ProcessNameCB *CreateProcessNameCBInfo(napi_env env)
 void GetProcessNameExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, worker pool thread execute.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
+    ProcessNameCB *processNameCB = static_cast<ProcessNameCB *>(data);
     if (processNameCB == nullptr) {
         HILOG_ERROR("NAPI_GetProcessName, processNameCB == nullptr");
         return;
@@ -1767,7 +1787,7 @@ napi_value WrapProcessName(napi_env env, ProcessNameCB *processNameCB)
 void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
+    ProcessNameCB *processNameCB = static_cast<ProcessNameCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1800,7 +1820,7 @@ void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetProcessNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
+    ProcessNameCB *processNameCB = static_cast<ProcessNameCB *>(data);
     napi_value result = nullptr;
     if (processNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapProcessName(env, processNameCB);
@@ -1970,7 +1990,7 @@ CallingBundleCB *CreateCallingBundleCBInfo(napi_env env)
 void GetCallingBundleExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, worker pool thread execute.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
+    CallingBundleCB *callingBundleCB = static_cast<CallingBundleCB *>(data);
     if (callingBundleCB == nullptr) {
         HILOG_ERROR("NAPI_GetCallingBundle, callingBundleCB == nullptr");
         return;
@@ -2009,7 +2029,7 @@ napi_value WrapCallingBundle(napi_env env, CallingBundleCB *callingBundleCB)
 void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
+    CallingBundleCB *callingBundleCB = static_cast<CallingBundleCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -2042,7 +2062,7 @@ void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *dat
 void GetCallingBundlePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
+    CallingBundleCB *callingBundleCB = static_cast<CallingBundleCB *>(data);
     napi_value result = nullptr;
     if (callingBundleCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapCallingBundle(env, callingBundleCB);
@@ -2213,7 +2233,7 @@ GetOrCreateLocalDirCB *CreateGetOrCreateLocalDirCBInfo(napi_env env)
 void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, worker pool thread execute.");
-    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = (GetOrCreateLocalDirCB *)data;
+    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = static_cast<GetOrCreateLocalDirCB *>(data);
     if (getOrCreateLocalDirCB == nullptr) {
         HILOG_ERROR("NAPI_GetOrCreateLocalDir, callingBundleCB == nullptr");
         return;
@@ -2267,7 +2287,7 @@ napi_value WrapGetOrCreateLocalDir(napi_env env, GetOrCreateLocalDirCB *getOrCre
 void GetOrCreateLocalDirAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete.");
-    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = (GetOrCreateLocalDirCB *)data;
+    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = static_cast<GetOrCreateLocalDirCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -2300,7 +2320,7 @@ void GetOrCreateLocalDirAsyncCompleteCB(napi_env env, napi_status status, void *
 void GetOrCreateLocalDirPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete.");
-    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = (GetOrCreateLocalDirCB *)data;
+    GetOrCreateLocalDirCB *getOrCreateLocalDirCB = static_cast<GetOrCreateLocalDirCB *>(data);
     napi_value result = nullptr;
     if (getOrCreateLocalDirCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapGetOrCreateLocalDir(env, getOrCreateLocalDirCB);

@@ -15,6 +15,8 @@
 
 #include "data_ability_operation_builder.h"
 #include "app_log_wrapper.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -46,38 +48,28 @@ std::shared_ptr<DataAbilityOperation> DataAbilityOperationBuilder::Build()
     return nullptr;
 }
 std::shared_ptr<DataAbilityOperationBuilder> DataAbilityOperationBuilder::WithValuesBucket(
-    std::shared_ptr<ValuesBucket> &values)
+    std::shared_ptr<NativeRdb::ValuesBucket> &values)
 {
     APP_LOGD("DataAbilityOperationBuilder::WithValuesBucket start");
-    // APP_LOGI("DataAbilityOperationBuilder::WithValuesBucket valuesBucket:%{public}s", values->ToString());
     if (type_ != DataAbilityOperation::TYPE_INSERT && type_ != DataAbilityOperation::TYPE_UPDATE &&
         type_ != DataAbilityOperation::TYPE_ASSERT) {
         APP_LOGE("DataAbilityOperationBuilder::WithValuesBucket only inserts, updates can have values, type=%{public}d",
             type_);
         return nullptr;
     }
-    if (valuesBucket_ == nullptr) {
-        valuesBucket_ = std::make_shared<ValuesBucket>();
-    }
 
-    valuesBucket_->PutValues(values);
+    std::map<std::string, NativeRdb::ValueObject> valuesMap;
+    values->GetAll(valuesMap);
+
+    valuesBucket_.reset(new (std::nothrow) NativeRdb::ValuesBucket(valuesMap));
     APP_LOGD("DataAbilityOperationBuilder::WithValuesBucket end");
     return shared_from_this();
 }
 
 std::shared_ptr<DataAbilityOperationBuilder> DataAbilityOperationBuilder::WithPredicates(
-    std::shared_ptr<DataAbilityPredicates> &predicates)
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> &predicates)
 {
     APP_LOGD("DataAbilityOperationBuilder::WithPredicates start");
-    // APP_LOGI("DataAbilityOperationBuilder::WithPredicates order:%{public}s, group:%{public}s, index:%{public}s, "
-    //          "whereClause:%{public}s, limit:%{public}d, offset:%{public}d, distinct:%{public}d",
-    //     predicates->GetOrder(),
-    //     predicates->GetGroup(),
-    //     predicates->GetIndex(),
-    //     predicates->GetWhereClause(),
-    //     predicates->GetLimit(),
-    //     predicates->GetOffset(),
-    //     predicates->isDistinct());
     if (type_ != DataAbilityOperation::TYPE_DELETE && type_ != DataAbilityOperation::TYPE_UPDATE &&
         type_ != DataAbilityOperation::TYPE_ASSERT) {
         APP_LOGE(
@@ -124,11 +116,9 @@ std::shared_ptr<DataAbilityOperationBuilder> DataAbilityOperationBuilder::WithPr
     return shared_from_this();
 }
 std::shared_ptr<DataAbilityOperationBuilder> DataAbilityOperationBuilder::WithValueBackReferences(
-    std::shared_ptr<ValuesBucket> &backReferences)
+    std::shared_ptr<NativeRdb::ValuesBucket> &backReferences)
 {
     APP_LOGD("DataAbilityOperationBuilder::WithValueBackReferences start");
-    // APP_LOGI("DataAbilityOperationBuilder::WithValueBackReferences backReferences:%{public}s",
-    // backReferences->ToString());
     if (type_ != DataAbilityOperation::TYPE_INSERT && type_ != DataAbilityOperation::TYPE_UPDATE &&
         type_ != DataAbilityOperation::TYPE_ASSERT) {
         APP_LOGE("DataAbilityOperationBuilder::withValueBackReferences only inserts, updates, and asserts can have "

@@ -170,6 +170,9 @@ FilePath FilePath::BaseName()
 
 void FilePath::StripTrailingSeparatorsInternal()
 {
+    if (path_.size() == 0) {
+        return;
+    }
     std::string::size_type start = FindDriveLetter(path_) + 2;
     std::string::size_type lastStripped = std::string::npos;
     for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - 1]); --pos) {
@@ -232,7 +235,7 @@ bool FilePath::CreateDirectory(const FilePath &fullPath)
         if (DirectoryExists(*i)) {
             continue;
         }
-        if (mkdir(i->Value().c_str(), 0700) == 0) {
+        if (mkdir(i->Value().c_str(), 0777) == 0) {
             continue;
         }
 

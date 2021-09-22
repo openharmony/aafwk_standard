@@ -169,26 +169,26 @@ int AbilityImpl::OpenFile(const Uri &uri, const std::string &mode)
     return 1;
 }
 
-int AbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
+int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Insert called";
     return 1;
 }
 
-int AbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int AbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Update called";
     return 1;
 }
 
-int AbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int AbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Delete called";
     return 1;
 }
 
-std::shared_ptr<ResultSet> AbilityImpl::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityImpl::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Query called";
     return nullptr;

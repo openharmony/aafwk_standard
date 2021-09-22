@@ -15,6 +15,9 @@
 
 #include <climits>
 #include <gtest/gtest.h>
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "data_ability_operation.h"
 #include "data_ability_operation_builder.h"
 
@@ -52,7 +55,7 @@ void DataAbilityOperationModuleTest::TearDown(void)
 HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_InsertBuilder_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_InsertBuilder_0100";
-    std::shared_ptr<ValuesBucket> values = std::make_shared<ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> values = std::make_shared<NativeRdb::ValuesBucket>();
     std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
     std::shared_ptr<DataAbilityOperation> operation =
             DataAbilityOperation::NewInsertBuilder(uri)->WithValuesBucket(values)->Build();
@@ -78,8 +81,8 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_InsertBuilde
 HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_UpdateBuilder_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_UpdateBuilder_0100";
-    std::shared_ptr<ValuesBucket> values = std::make_shared<ValuesBucket>();
-    std::shared_ptr<DataAbilityPredicates> predicates = std::make_shared<DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::ValuesBucket> values = std::make_shared<NativeRdb::ValuesBucket>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = std::make_shared<NativeRdb::DataAbilityPredicates>();
     std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
     std::shared_ptr<DataAbilityOperation> operation = DataAbilityOperation::NewUpdateBuilder(uri)
                                                               ->WithValuesBucket(values)
@@ -95,7 +98,7 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_UpdateBuilde
     bool isInterruptionAllowed = operation->IsInterruptionAllowed();
     EXPECT_TRUE(isInterruptionAllowed);
 
-    std::shared_ptr<ValuesBucket> valuesBucket = operation->GetValuesBucket();
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket = operation->GetValuesBucket();
     EXPECT_NE(valuesBucket, nullptr);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_UpdateBuilder_0100";
 }
@@ -132,7 +135,7 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_AssertBuilde
 HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_DeleteBuilder_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_DeleteBuilder_0100";
-    std::shared_ptr<DataAbilityPredicates> predicates = std::make_shared<DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = std::make_shared<NativeRdb::DataAbilityPredicates>();
     EXPECT_NE(predicates, nullptr);
     std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability://com.example.myapplication5.DataAbilityTest");
     std::shared_ptr<DataAbilityOperationBuilder> builder = DataAbilityOperation::NewDeleteBuilder(uri);

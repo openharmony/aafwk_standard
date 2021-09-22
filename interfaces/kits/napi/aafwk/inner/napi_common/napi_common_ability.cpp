@@ -279,7 +279,7 @@ napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo)
 void GetFilesDirExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s. asyncCallbackInfo is null", __func__);
         return;
@@ -413,7 +413,7 @@ AppTypeCB *CreateAppTypeCBInfo(napi_env env)
 void GetAppTypeExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     if (appTypeCB == nullptr) {
         HILOG_ERROR("NAPI_GetApplicationInfo,appTypeCB == nullptr");
         return;
@@ -445,7 +445,7 @@ void GetAppTypeExecuteCB(napi_env env, void *data)
 void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -481,7 +481,7 @@ void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAppTypePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("GetAppTypePromiseCompleteCB, main event thread complete.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     napi_value result = nullptr;
     if (appTypeCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         napi_create_string_utf8(env, appTypeCB->cbBase.ability->GetAppType().c_str(), NAPI_AUTO_LENGTH, &result);
@@ -850,7 +850,7 @@ napi_value WrapAbilityInfo(napi_env env, const AbilityInfo_ &abilityInfo)
 void GetAbilityInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     if (abilityInfoCB == nullptr) {
         HILOG_ERROR("NAPI_GetApplicationInfo, abilityInfoCB == nullptr");
         return;
@@ -887,7 +887,7 @@ void GetAbilityInfoExecuteCB(napi_env env, void *data)
 void GetAbilityInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -920,7 +920,7 @@ void GetAbilityInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAbilityInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     napi_value result = nullptr;
     if (abilityInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapAbilityInfo(env, abilityInfoCB->abilityInfo);
@@ -1231,7 +1231,7 @@ napi_value WrapHapModuleInfo(napi_env env, const HapModuleInfoCB &hapModuleInfoC
 void GetHapModuleInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, worker pool thread execute.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     if (hapModuleInfoCB == nullptr) {
         HILOG_ERROR("NAPI_GetHapModuleInfo, hapModuleInfoCB == nullptr");
         return;
@@ -1262,7 +1262,7 @@ void GetHapModuleInfoExecuteCB(napi_env env, void *data)
 void GetHapModuleInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, main event thread complete.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1289,7 +1289,7 @@ void GetHapModuleInfoAsyncCompleteCB(napi_env env, napi_status status, void *dat
 void GetHapModuleInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, main event thread complete.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     napi_value result = nullptr;
     if (hapModuleInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapHapModuleInfo(env, *hapModuleInfoCB);
@@ -1499,7 +1499,7 @@ AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
 void GetContextAsyncExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("GetContextAsync, worker pool thread execute.");
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("GetContextAsync, asyncCallbackInfo == nullptr");
         return;
@@ -1542,7 +1542,7 @@ napi_value GetContextAsync(
         GetContextAsyncExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetContextAsync, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value result[ARGS_TWO] = {0};
@@ -1595,7 +1595,7 @@ napi_value GetContextPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         GetContextAsyncExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetContextPromise, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value result = nullptr;
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
                 napi_new_instance(env, g_classContext, 0, nullptr, &result);
@@ -1683,7 +1683,7 @@ napi_value NAPI_GetContextCommon(napi_env env, napi_callback_info info, AbilityT
 void GetWantExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr", __func__);
         return;
@@ -1732,7 +1732,7 @@ napi_value GetWantAsync(napi_env env, napi_value *args, const size_t argCallback
         GetWantExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetWantAsync, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value result[ARGS_TWO] = {0};
@@ -1785,7 +1785,7 @@ napi_value GetWantPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         GetWantExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetWantPromise, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value result = nullptr;
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
                 result = WrapWant(env, asyncCallbackInfo->param.want);
@@ -1931,7 +1931,7 @@ napi_value WrapAbilityName(napi_env env, AbilityNameCB *abilityNameCB)
 void GetAbilityNameExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     if (abilityNameCB == nullptr) {
         HILOG_ERROR("%{public}s, abilityNameCB == nullptr", __func__);
         return;
@@ -1962,7 +1962,7 @@ void GetAbilityNameExecuteCB(napi_env env, void *data)
 void GetAbilityNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1994,7 +1994,7 @@ void GetAbilityNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAbilityNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetAbilityName, main event thread complete.");
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     napi_value result = nullptr;
     if (abilityNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapAbilityName(env, abilityNameCB);
@@ -2306,7 +2306,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
 void StartAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result[ARGS_TWO] = {0};
@@ -2334,7 +2334,7 @@ void StartAbilityCallbackCompletedCB(napi_env env, napi_status status, void *dat
 void StartAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     napi_value result = 0;
     if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
         napi_create_int32(env, 0, &result);
@@ -2501,7 +2501,7 @@ bool UnwrapParamStopAbilityWrap(napi_env env, size_t argc, napi_value *argv, Asy
 void StopAbilityExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s asyncCallbackInfo is null", __func__);
         return;
@@ -2626,7 +2626,7 @@ ConnectAbilityCB *CreateConnectAbilityCBInfo(napi_env env)
 void ConnectAbilityExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr.", __func__);
         return;
@@ -2659,7 +2659,7 @@ void ConnectAbilityExecuteCB(napi_env env, void *data)
 void ConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result = 0;
@@ -2888,7 +2888,7 @@ ConnectAbilityCB *CreateDisConnectAbilityCBInfo(napi_env env)
 void DisConnectAbilityExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr.", __func__);
         return;
@@ -2917,7 +2917,7 @@ void DisConnectAbilityExecuteCB(napi_env env, void *data)
 void DisConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result[ARGS_TWO] = {0};
@@ -2945,7 +2945,7 @@ void DisConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void
 void DisConnectAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value result = 0;
     if (connectAbilityCB->errCode == NAPI_ERR_NO_ERROR) {
         result = WrapVoidToJS(env);
@@ -3124,6 +3124,10 @@ void NAPIAbilityConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
     HILOG_INFO("%{public}s, called.", __func__);
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("%{public}s, remoteObject == nullptr.", __func__);
+        return;
+    }
     uv_loop_s *loop = nullptr;
 
     napi_get_uv_event_loop(env_, &loop);
@@ -3161,7 +3165,7 @@ void NAPIAbilityConnection::OnAbilityConnectDone(
         [](uv_work_t *work, int status) {
             HILOG_INFO("OnAbilityConnectDone, uv_queue_work");
             // JS Thread
-            ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)work->data;
+            ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
             napi_value result[ARGS_TWO] = {0};
             result[PARAM0] =
                 WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);
@@ -3248,7 +3252,7 @@ void NAPIAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementNam
         [](uv_work_t *work, int status) {
             HILOG_INFO("OnAbilityDisconnectDone, uv_queue_work");
             // JS Thread
-            ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)work->data;
+            ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
             napi_value result = nullptr;
             result =
                 WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);

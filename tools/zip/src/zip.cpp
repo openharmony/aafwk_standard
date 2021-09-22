@@ -43,6 +43,11 @@ const char HIDDEN_SEPARATOR = '.';
         callback(result);                   \
     }
 
+struct UnzipParam {
+    CALLBACK callback = nullptr;
+    FilterCallback filterCB = nullptr;
+    bool logSkippedFiles = false;
+};
 bool IsHiddenFile(const FilePath &filePath)
 {
     FilePath localFilePath = filePath;
@@ -53,7 +58,6 @@ bool IsHiddenFile(const FilePath &filePath)
         return false;
     }
 }
-
 bool ExcludeNoFilesFilter(const FilePath &filePath)
 {
     return true;
@@ -67,13 +71,17 @@ bool ExcludeHiddenFilesFilter(const FilePath &filePath)
 std::vector<FileAccessor::DirectoryContentEntry> ListDirectoryContent(const FilePath &filePath)
 {
     FilePath curPath = filePath;
-
     std::vector<FileAccessor::DirectoryContentEntry> fileDirectoryVector;
     std::vector<std::string> filelist;
     GetDirFiles(curPath.Value(), filelist);
-    for (auto it = filelist.begin(); !(*it).empty() && it != filelist.end(); it++) {
-        fileDirectoryVector.push_back(
-            FileAccessor::DirectoryContentEntry(FilePath(*it), FilePath::DirectoryExists(FilePath(*it))));
+    // HILOG_INFO("filelist ========filelist.size=%{public}d", filelist.size());
+    for (size_t i = 0; i < filelist.size(); i++) {
+        std::string str(filelist[i]);
+        HILOG_INFO("filelist %{public}s ===8888==", str.c_str());
+        if (!str.empty()) {
+            fileDirectoryVector.push_back(
+                FileAccessor::DirectoryContentEntry(FilePath(str), FilePath::DirectoryExists(FilePath(str))));
+        }
     }
     return fileDirectoryVector;
 }
@@ -163,78 +171,91 @@ bool Zip(const ZipParams &params, const OPTIONS &options, CALLBACK callback)
 }
 
 bool UnzipWithFilterAndWriters(const PlatformFile &srcFile, FilePath &destDir, WriterFactory writerFactory,
-    DirectoryCreator directoryCreator, CALLBACK callback, FilterCallback filterCB, bool logSkippedFiles)
+    DirectoryCreator directoryCreator, UnzipParam &unzipParam)
 {
+    HILOG_INFO("%{public}s called, destDir=%{public}s", __func__, destDir.Value().c_str());
     ZipReader reader;
     if (!reader.OpenFromPlatformFile(srcFile)) {
-        CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+        CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
         HILOG_INFO("%{public}s called, Failed to open srcFile.", __func__);
         return false;
     }
     while (reader.HasMore()) {
         if (!reader.OpenCurrentEntryInZip()) {
-            CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+            CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
             HILOG_INFO("%{public}s called, Failed to open the current file in zip.", __func__);
             return false;
         }
         const FilePath &constEntryPath = reader.CurrentEntryInfo()->GetFilePath();
+        FilePath entryPath = constEntryPath;
         if (reader.CurrentEntryInfo()->IsUnsafe()) {
-            CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+            CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
             HILOG_INFO("%{public}s called, Found an unsafe file in zip.", __func__);
             return false;
         }
-        FilePath entryPath = constEntryPath;
         // callback
-        if (filterCB(entryPath)) {
+        if (unzipParam.filterCB(entryPath)) {
             if (reader.CurrentEntryInfo()->IsDirectory()) {
                 if (!directoryCreator(destDir, entryPath)) {
-                    CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+                    HILOG_INFO("!!!directory_creator(%{public}s) Failed!!!.", entryPath.Value().c_str());
+                    CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
                     return false;
                 }
 
             } else {
                 std::unique_ptr<WriterDelegate> writer = writerFactory(destDir, entryPath);
                 if (!reader.ExtractCurrentEntry(writer.get(), std::numeric_limits<uint64_t>::max())) {
-                    CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+                    CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
                     HILOG_INFO("%{public}s called, Failed to extract.", __func__);
                     return false;
                 }
             }
-        } else if (logSkippedFiles) {
+        } else if (unzipParam.logSkippedFiles) {
             HILOG_INFO("%{public}s called, Skipped file.", __func__);
         }
 
         if (!reader.AdvanceToNextEntry()) {
-            CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
+            CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
             HILOG_INFO("%{public}s called, Failed to advance to the next file.", __func__);
             return false;
         }
     }
-    CALLING_CALL_BACK(callback, ERROR_CODE_OK)
+    CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_OK)
     return true;
 }
-
-bool UnzipWithFilterCallback(const FilePath &srcFile, const FilePath &destDir, const OPTIONS &options,
-    CALLBACK callback, FilterCallback filterCB, bool logSkippedFiles)
+bool UnzipWithFilterCallback(
+    const FilePath &srcFile, const FilePath &destDir, const OPTIONS &options, UnzipParam &unzipParam)
 {
     FilePath src = srcFile;
+    if (!FilePathCheckValid(src.Value())) {
+        CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_DATA_ERROR)
+        return false;
+    }
+
     FilePath dest = destDir;
 
+    HILOG_INFO("%{public}s called,  srcFile=%{public}s, destFile=%{public}s",
+        __func__,
+        src.Value().c_str(),
+        dest.Value().c_str());
+
     if (!FilePath::PathIsValid(srcFile)) {
-        CALLING_CALL_BACK(callback, ERROR_CODE_DATA_ERROR)
+        CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_DATA_ERROR)
         HILOG_INFO("%{public}s called, Failed to open.", __func__);
         return false;
     }
 
     PlatformFile zipFd = open(src.Value().c_str(), S_IREAD);
-
+    if (zipFd == kInvalidPlatformFile) {
+        CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_STREAM_ERROR)
+        HILOG_INFO("%{public}s called, Failed to open.", __func__);
+        return false;
+    }
     bool ret = UnzipWithFilterAndWriters(zipFd,
         dest,
         std::bind(&CreateFilePathWriterDelegate, std::placeholders::_1, std::placeholders::_2),
         std::bind(&CreateDirectory, std::placeholders::_1, std::placeholders::_2),
-        callback,
-        filterCB,
-        logSkippedFiles);
+        unzipParam);
 
     close(zipFd);
 
@@ -242,8 +263,16 @@ bool UnzipWithFilterCallback(const FilePath &srcFile, const FilePath &destDir, c
 }
 bool Unzip(const FilePath &srcFile, const FilePath &destDir, const OPTIONS &options, CALLBACK callback)
 {
+    FilePath srcFileDir = srcFile;
+    FilePath destDirTemp = destDir;
+    HILOG_INFO("%{public}s called,  srcFile=%{public}s, destFile=%{public}s",
+        __func__,
+        srcFileDir.Value().c_str(),
+        destDirTemp.Value().c_str());
+
     std::shared_ptr<Runnable> innerTask = std::make_shared<Runnable>([srcFile, destDir, options, callback]() {
-        UnzipWithFilterCallback(srcFile, destDir, options, callback, ExcludeNoFilesFilter, true);
+        UnzipParam unzipParam{.callback = callback, .filterCB = ExcludeNoFilesFilter, .logSkippedFiles = true};
+        UnzipWithFilterCallback(srcFile, destDir, options, unzipParam);
     });
 
     PostTask(innerTask);

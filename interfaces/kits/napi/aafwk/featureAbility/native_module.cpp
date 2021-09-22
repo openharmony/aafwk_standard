@@ -22,6 +22,7 @@
 #include "feature_ability_constant.h"
 #include "napi_context.h"
 #include "napi_data_ability_helper.h"
+#include "napi_data_ability_operation.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 namespace OHOS {
@@ -34,6 +35,7 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     FeatureAbilityInit(env, exports);
     ContextPermissionInit(env, exports);
+    DataAbilityOperationInit(env, exports);
     DataAbilityHelperInit(env, exports);
     FAConstantInit(env, exports);
     return exports;

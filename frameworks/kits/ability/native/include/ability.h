@@ -27,9 +27,6 @@
 #include "dummy_component_container.h"
 #include "pac_map.h"
 #include "dummy_notification_request.h"
-#include "dummy_data_ability_predicates.h"
-#include "dummy_values_bucket.h"
-#include "dummy_result_set.h"
 #include "continuation_state.h"
 #include "dummy_ability_package.h"
 #include "dummy_configuration.h"
@@ -54,11 +51,18 @@
 using Uri = OHOS::Uri;
 
 namespace OHOS {
+namespace NativeRdb {
+class AbsSharedResultSet;
+class DataAbilityPredicates;
+class ValuesBucket;
+}  // namespace NativeRdb
 #ifdef MMI_COMPILE
 class KeyEvent;
 class TouchEvent;
 #endif
 namespace AppExecFwk {
+class DataAbilityResult;
+class DataAbilityOperation;
 class AbilityPostEventTimeout;
 class OHOSApplication;
 class AbilityHandler;
@@ -406,7 +410,7 @@ public:
      *
      * @return Returns the index of the newly inserted data record.
      */
-    virtual int Insert(const Uri &uri, const ValuesBucket &value);
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
 
     /**
      * @brief Called when the system configuration is updated.
@@ -447,7 +451,8 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates);
+    virtual int Update(
+        const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief get application witch the ability belong
@@ -635,7 +640,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates);
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Obtains the MIME type of files. This method should be implemented by a Data ability.
@@ -675,8 +680,8 @@ public:
      *
      * @return Returns the queried data.
      */
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates);
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Sets the main route for this ability.
@@ -765,7 +770,7 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values);
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
     /**
      * @brief Obtains the type of audio whose volume is adjusted by the volume button.
@@ -1246,6 +1251,25 @@ public:
     virtual bool OnStartContinuation() override;
 
     /**
+     * @brief Performs batch operations on the database.
+     *
+     * @param operations Indicates a list of database operations on the database.
+     * @return Returns the result of each operation, in array.
+     */
+    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+
+    /**
+     * @brief Executes an operation among the batch operations to be executed.
+     *
+     * @param operation Indicates the operation to execute.
+     * @param results Indicates a set of results of the batch operations.
+     * @param index Indicates the index of the current operation result in the batch operation results.
+     */
+    void ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
+        std::vector<std::shared_ptr<DataAbilityResult>> &results, int index);
+		
+    /**
      * @brief Save user data of local Ability generated at runtime.
      *
      * @param saveData Indicates the user data to be saved.
@@ -1284,6 +1308,19 @@ protected:
     sptr<IRemoteObject> GetFormRemoteObject();
 
 private:
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
+        std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+        int numRefs);
+
+    std::shared_ptr<NativeRdb::ValuesBucket> ParseValuesBucketReference(
+        std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+        int numRefs);
+
+    int ChangeRef2Value(std::vector<std::shared_ptr<DataAbilityResult>> &results, int numRefs, int index);
+
+    bool CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultSet> &queryResult,
+        std::shared_ptr<NativeRdb::ValuesBucket> &&valuesBucket);
+
     friend class AbilityImpl;
     bool VerifySupportForContinuation();
     void HandleCreateAsContinuation(const Want &want);
