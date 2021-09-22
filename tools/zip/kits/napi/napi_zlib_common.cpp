@@ -50,7 +50,7 @@ std::string UnwrapStringFromJS(napi_env env, napi_value param, const std::string
     if (buf == nullptr) {
         return value;
     }
-    if (memset_s(buf, sizeof(buf), 0, sizeof(buf)) != E_OK) {
+    if (memset_s(buf, size + 1, 0, size + 1) != E_OK) {
         delete[] buf;
         buf = nullptr;
         return nullptr;

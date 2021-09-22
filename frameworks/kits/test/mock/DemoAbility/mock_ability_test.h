@@ -53,12 +53,20 @@ public:
         int fd;
         GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile called";
         FILE *fd1 = fopen("/dataability_openfile_test.txt", "w+");
+        if(fd1 == nullptr) {
+            GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd1 == nullptr";
+            return -1;
+        }
         fputs("123456",fd1);
         fclose(fd1);
 
         FILE *fd2 = fopen("/dataability_openfile_test.txt", "r");
+        if(fd2 == nullptr) {
+            GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd2 == nullptr";
+            return -1;
+        }
         fd = fileno(fd2);
-
+       
         return fd;
     }
 

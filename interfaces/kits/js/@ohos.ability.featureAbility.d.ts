@@ -18,6 +18,7 @@ import { StartAbilityParameter } from './ability/startAbilityParameter';
 import { AbilityResult } from './ability/abilityResult';
 import { Context } from './app/context';
 import { DataAbilityHelper } from './ability/dataAbilityHelper';
+import { ConnectOptions } from './ability/connectOptions';
 
 /**
  * A Feature Ability represents an ability with a UI and is designed to interact with users.
@@ -108,6 +109,29 @@ declare namespace featureAbility {
    */
    function hasWindowFocus(callback: AsyncCallback<boolean>): void;
    function hasWindowFocus(): Promise<boolean>;
+
+  /**
+   * Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+   * @default -
+   * @devices phone, tablet
+   * @since 7
+   * @SysCap aafwk
+   * @param request The element name of the service ability
+   * @param options The remote object instance
+   * @return Returns the number of the ability connected
+   */
+  function connectAbility(request: Want, options:ConnectOptions ): number;
+
+  /**
+   * The callback interface was connect successfully.
+   * @default -
+   * @devices phone, tablet
+   * @since 7
+   * @SysCap aafwk
+   * @param connection The number of the ability connected
+   */
+  function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
+  function disconnectAbility(connection: number): Promise<void>;
 
   export enum AbilityWindowConfiguration {
     WINDOW_MODE_UNDEFINED = 0,

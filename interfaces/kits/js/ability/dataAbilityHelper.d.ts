@@ -62,20 +62,6 @@ export interface DataAbilityHelper {
     off(type: 'dataChange', uri: string, callback?: AsyncCallback<void>): void;
 
     /**
-     * Calls the method defined by the Data ability.
-     * @devices phone, tablet
-     * @since 7
-     * @SysCap AAFwk
-     * @param uri Indicates the Data ability to process.
-     * @param method Indicates the method name.
-     * @param arg Indicates the parameter of the String type.
-     * @param extras Indicates the parameter of the object type.
-     * @return callback Indicates the value returned by the called method.
-     */
-    call(uri: string, method: string, arg: string, extras: object, callback: AsyncCallback<object>): void;
-    call(uri: string, method: string, arg: string, extras: object): Promise<object>;
-
-    /**
      * Inserts a single data record into the database.
      * @devices phone, tablet
      * @since 7
@@ -109,8 +95,8 @@ export interface DataAbilityHelper {
      * @param predicates Indicates filter criteria. You should define the processing logic when this parameter is null.
      * @return Returns the query result.
      */
-    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates, callback: AsyncCallback<NativeRdb::AbsSharedResultSet>): void;
-    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates): Promise<NativeRdb::AbsSharedResultSet>;
+    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates, callback: AsyncCallback<ResultSet>): void;
+    query(URI: string, columns: Array<String>, predicates: DataAbilityPredicates): Promise<ResultSet>;
  
     /**
      * Updates data records in the database.
@@ -134,8 +120,8 @@ export interface DataAbilityHelper {
      * @param values Indicates the data records to insert.
      * @return Returns the number of data records inserted.
      */
-    batchInsert(URI: string, values: Array<NativeRdb::ValuesBucket>, callback: AsyncCallback<number>): void;
-    batchInsert(URI: string, values: Array<NativeRdb::ValuesBucket>): Promise<number>;
+    batchInsert(URI: string, values: Array<ValuesBucket>, callback: AsyncCallback<number>): void;
+    batchInsert(URI: string, values: Array<ValuesBucket>): Promise<number>;
  
     /**
      * Performs batch operations on the database.
@@ -220,6 +206,16 @@ export interface DataAbilityHelper {
      */
     release(callback: AsyncCallback<boolean>): void;
     release(): Promise<boolean>;
+
+    /**
+     * Notifies the registered observers of a change to the data resource specified by Uri.
+     * @devices phone, tablet
+     * @since 7
+     * @SysCap AAFwk
+     * @param uri Indicates the {@link ohos.utils.net.Uri} object to notifyChange.
+     */
+    notifyChange(URI: string, callback: AsyncCallback<void>): void;
+    notifyChange(URI: string): Promise<void>;
 }
 
 export interface DataAbilityResult {
