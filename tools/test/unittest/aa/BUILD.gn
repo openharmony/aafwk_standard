@@ -26,10 +26,10 @@ config("tools_aa_config_mock") {
 tools_aa_mock_sources =
     [ "${aafwk_path}/tools/test/mock/mock_ability_manager_stub.cpp" ]
 
-ohos_unittest("ability_command_test") {
+ohos_unittest("aa_command_test") {
   module_out_path = module_output_path
 
-  sources = [ "ability_command_test.cpp" ]
+  sources = [ "aa_command_test.cpp" ]
   sources += tools_aa_mock_sources
 
   configs = [ ":tools_aa_config_mock" ]
@@ -52,10 +52,10 @@ ohos_unittest("ability_command_test") {
   ]
 }
 
-ohos_unittest("ability_command_start_test") {
+ohos_unittest("aa_command_start_test") {
   module_out_path = module_output_path
 
-  sources = [ "ability_command_start_test.cpp" ]
+  sources = [ "aa_command_start_test.cpp" ]
   sources += tools_aa_mock_sources
 
   configs = [ ":tools_aa_config_mock" ]
@@ -78,10 +78,10 @@ ohos_unittest("ability_command_start_test") {
   ]
 }
 
-ohos_unittest("ability_command_stop_service_test") {
+ohos_unittest("aa_command_stop_service_test") {
   module_out_path = module_output_path
 
-  sources = [ "ability_command_stop_service_test.cpp" ]
+  sources = [ "aa_command_stop_service_test.cpp" ]
   sources += tools_aa_mock_sources
 
   configs = [ ":tools_aa_config_mock" ]
@@ -104,10 +104,10 @@ ohos_unittest("ability_command_stop_service_test") {
   ]
 }
 
-ohos_unittest("ability_command_dump_test") {
+ohos_unittest("aa_command_dump_test") {
   module_out_path = module_output_path
 
-  sources = [ "ability_command_dump_test.cpp" ]
+  sources = [ "aa_command_dump_test.cpp" ]
   sources += tools_aa_mock_sources
 
   configs = [ ":tools_aa_config_mock" ]
@@ -130,10 +130,10 @@ ohos_unittest("ability_command_dump_test") {
   ]
 }
 
-ohos_unittest("ability_command_screen_test") {
+ohos_unittest("aa_command_screen_test") {
   module_out_path = module_output_path
 
-  sources = [ "ability_command_screen_test.cpp" ]
+  sources = [ "aa_command_screen_test.cpp" ]
   sources += tools_aa_mock_sources
 
   configs = [ ":tools_aa_config_mock" ]
@@ -154,18 +154,16 @@ ohos_unittest("ability_command_screen_test") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
-
-  install_enable = true
 }
 
 group("unittest") {
   testonly = true
 
   deps = [
-    ":ability_command_dump_test",
-    ":ability_command_screen_test",
-    ":ability_command_start_test",
-    ":ability_command_stop_service_test",
-    ":ability_command_test",
+    ":aa_command_dump_test",
+    ":aa_command_screen_test",
+    ":aa_command_start_test",
+    ":aa_command_stop_service_test",
+    ":aa_command_test",
   ]
 }

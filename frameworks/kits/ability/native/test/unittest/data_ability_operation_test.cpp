@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "data_ability_operation.h"
 #include "data_ability_operation_builder.h"
 #include <gtest/gtest.h>
@@ -279,7 +282,7 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_GetValuesBucket_02
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_GetValuesBucket_0200 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
-    std::shared_ptr<ValuesBucket> values = std::make_shared<ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> values = std::make_shared<NativeRdb::ValuesBucket>();
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation =
         DataAbilityOperation::NewAssertBuilder(uri)->WithValuesBucket(values)->Build();
     EXPECT_NE(dataAbilityOperation->GetValuesBucket(), nullptr);
@@ -310,10 +313,6 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_GetExpectedCount_0
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation =
         DataAbilityOperation::NewAssertBuilder(uri)->WithExpectedCount(10)->Build();
-    // CreateBuilder(DataAbilityOperation::TYPE_UPDATE, uri);
-    // // builder = builder->WithExpectedCount(10);
-    // // EXPECT_NE(builder, nullptr);
-    // std::shared_ptr<DataAbilityOperation> dataAbilityOperation = builder->WithExpectedCount(10)->Build();
     EXPECT_EQ(dataAbilityOperation->GetExpectedCount(), 10);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_GetExpectedCount_0200 end";
 }
@@ -342,7 +341,7 @@ HWTEST_F(
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_GetDataAbilityPredicates_0200 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
-    std::shared_ptr<DataAbilityPredicates> predicates = std::make_shared<DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = std::make_shared<NativeRdb::DataAbilityPredicates>();
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation =
         DataAbilityOperation::NewAssertBuilder(uri)->WithPredicates(predicates)->Build();
     EXPECT_NE(dataAbilityOperation->GetDataAbilityPredicates(), nullptr);
@@ -374,7 +373,7 @@ HWTEST_F(
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_GetValuesBucketReferences_0200 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
-    std::shared_ptr<ValuesBucket> backReferences = std::make_shared<ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> backReferences = std::make_shared<NativeRdb::ValuesBucket>();
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation =
         DataAbilityOperation::NewAssertBuilder(uri)->WithValueBackReferences(backReferences)->Build();
     EXPECT_NE(dataAbilityOperation->GetValuesBucketReferences(), nullptr);
@@ -624,7 +623,7 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_Unmarshalling_0100
                                                                      ->WithInterruptionAllowed(true)
                                                                      ->WithPredicatesBackReference(0, 0)
                                                                      ->Build();
-    Parcel in;                                                                 
+    Parcel in;
     dataAbilityOperation->Marshalling(in);
     DataAbilityOperation *pDataAbilityOperation = DataAbilityOperation::Unmarshalling(in);
     std::map<int, int> references = dataAbilityOperation->GetDataAbilityPredicatesBackReferences();
@@ -643,7 +642,7 @@ HWTEST_F(
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithValuesBucket_0100 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     CreateBuilder(DataAbilityOperation::TYPE_DELETE, uri);
-    std::shared_ptr<ValuesBucket> values = std::make_shared<ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> values = std::make_shared<NativeRdb::ValuesBucket>();
     builder = builder->WithValuesBucket(values);
     EXPECT_EQ(builder, nullptr);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithValuesBucket_0100 end";
@@ -659,7 +658,7 @@ HWTEST_F(
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithPredicates_0100 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     CreateBuilder(DataAbilityOperation::TYPE_INSERT, uri);
-    std::shared_ptr<DataAbilityPredicates> predicates = std::make_shared<DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = std::make_shared<NativeRdb::DataAbilityPredicates>();
     builder = builder->WithPredicates(predicates);
     EXPECT_EQ(builder, nullptr);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithPredicates_0100 end";
@@ -705,7 +704,7 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperationBuilder_WithValueBa
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithValueBackReferences_0100 start";
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     CreateBuilder(DataAbilityOperation::TYPE_DELETE, uri);
-    std::shared_ptr<ValuesBucket> backReferences = std::make_shared<ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> backReferences = std::make_shared<NativeRdb::ValuesBucket>();
     builder = builder->WithValueBackReferences(backReferences);
     EXPECT_EQ(builder, nullptr);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperationBuilder_WithValueBackReferences_0100 end";

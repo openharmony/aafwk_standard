@@ -43,26 +43,21 @@ struct IsPtr<T *> {
 // bad_checked_cast is thrown if cast is bad
 // see boost::lexical_cast
 class bad_checked_cast : std::bad_cast {
-private:
-    std::type_info const *from;
-    std::type_info const *to;
-
 public:
     bad_checked_cast() : from(0), to(0)
     {}
 
     bad_checked_cast(std::type_info const &from, std::type_info const &to) : from(&from), to(&to)
     {}
-
+    virtual ~bad_checked_cast()
+    {}
     std::type_info const &source_type() const
     {
-        assert(from);
         return *from;
     }
 
     std::type_info const &target_type() const
     {
-        assert(to);
         return *to;
     }
 
@@ -70,11 +65,15 @@ public:
     {
         return "bad checked cast: source is not a target type";
     }
+
+private:
+    std::type_info const *from;
+    std::type_info const *to;
 };
 #ifdef CHECKED_CAST_DO_ASSERT
 #define BAD_CHECKED_CAST(from, to) assert(false)
 #else
-#define BAD_CHECKED_CAST(from, to) throw ::bad_checked_cast(typeid(from), typeid(to))
+#define BAD_CHECKED_CAST(from, to)
 #endif
 
 // implementation

@@ -18,8 +18,6 @@
 
 #include <map>
 #include <memory>
-#include "dummy_data_ability_predicates.h"
-#include "dummy_values_bucket.h"
 #include "data_ability_operation_builder.h"
 #include "uri.h"
 #include "parcel.h"
@@ -27,9 +25,13 @@
 using Uri = OHOS::Uri;
 
 namespace OHOS {
+namespace NativeRdb {
+class DataAbilityPredicates;
+class ValuesBucket;
+}
 namespace AppExecFwk {
 class DataAbilityOperationBuilder;
-class DataAbilityOperation final : public std::enable_shared_from_this<DataAbilityOperation> {
+class DataAbilityOperation final : public Parcelable, public std::enable_shared_from_this<DataAbilityOperation> {
 public:
     ~DataAbilityOperation();
 
@@ -76,7 +78,7 @@ public:
      * @brief Obtains the value of the valuesBucket attribute included in this DataAbilityOperation.
      * @return Returns the valuesBucket included in this DataAbilityOperation.
      */
-    std::shared_ptr<ValuesBucket> GetValuesBucket() const;
+    std::shared_ptr<NativeRdb::ValuesBucket> GetValuesBucket() const;
     /**
      * @brief Obtains the value of the expectedCount attribute included in this DataAbilityOperation.
      * @return Returns the expectedCount included in this DataAbilityOperation.
@@ -86,12 +88,12 @@ public:
      * @brief Obtains the value of the dataAbilityPredicates attribute included in this DataAbilityOperation.
      * @return Returns the dataAbilityPredicates included in this DataAbilityOperation.
      */
-    std::shared_ptr<DataAbilityPredicates> GetDataAbilityPredicates() const;
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> GetDataAbilityPredicates() const;
     /**
      * @brief Obtains the value of the valuesBucketReferences attribute included in this DataAbilityOperation.
      * @return Returns the valuesBucketReferences included in this DataAbilityOperation.
      */
-    std::shared_ptr<ValuesBucket> GetValuesBucketReferences() const;
+    std::shared_ptr<NativeRdb::ValuesBucket> GetValuesBucketReferences() const;
     /**
      * @brief Obtains the value of the dataAbilityPredicatesBackReferences attribute included in this
      * DataAbilityOperation.
@@ -156,9 +158,9 @@ private:
     int expectedCount_ = 0;
     bool interrupted_ = false;
     std::shared_ptr<Uri> uri_ = nullptr;
-    std::shared_ptr<ValuesBucket> valuesBucket_ = nullptr;
-    std::shared_ptr<DataAbilityPredicates> dataAbilityPredicates_ = nullptr;
-    std::shared_ptr<ValuesBucket> valuesBucketReferences_ = nullptr;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket_ = nullptr;
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> dataAbilityPredicates_ = nullptr;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucketReferences_ = nullptr;
     std::map<int, int> dataAbilityPredicatesBackReferences_;
 };
 }  // namespace AppExecFwk

@@ -16,6 +16,8 @@
 #include "data_ability_operation.h"
 #include "app_log_wrapper.h"
 #include "hilog_wrapper.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -34,25 +36,16 @@ DataAbilityOperation::DataAbilityOperation(
     } else {
         type_ = 0;
         expectedCount_ = 0;
-        valuesBucket_ = std::make_shared<ValuesBucket>();
-        dataAbilityPredicates_ = std::make_shared<DataAbilityPredicates>();
-        valuesBucketReferences_ = std::make_shared<ValuesBucket>();
+        valuesBucket_ = std::make_shared<NativeRdb::ValuesBucket>();
+        dataAbilityPredicates_ = std::make_shared<NativeRdb::DataAbilityPredicates>();
+        valuesBucketReferences_ = std::make_shared<NativeRdb::ValuesBucket>();
         dataAbilityPredicatesBackReferences_.clear();
         interrupted_ = false;
     }
 }
 DataAbilityOperation::DataAbilityOperation(Parcel &in)
 {
-    type_ = in.ReadInt32();
-    uri_ = (in.ReadInt32() != VALUE_NULL) ? std::shared_ptr<Uri>(Uri::Unmarshalling(in)) : nullptr;
-    valuesBucket_ = (in.ReadInt32() != VALUE_NULL) ? std::make_shared<ValuesBucket>(in) : nullptr;
-    int empty = in.ReadInt32();
-    expectedCount_ = (empty != VALUE_NULL) ? empty : 0;
-    dataAbilityPredicates_ = (in.ReadInt32() != VALUE_NULL) ? std::make_shared<DataAbilityPredicates>(in) : nullptr;
-    valuesBucketReferences_ = (in.ReadInt32() != VALUE_NULL) ? std::make_shared<ValuesBucket>(in) : nullptr;
-    dataAbilityPredicatesBackReferences_.clear();
-    PutMap(in);
-    interrupted_ = in.ReadBool();
+    ReadFromParcel(in);
 }
 DataAbilityOperation::DataAbilityOperation(const std::shared_ptr<DataAbilityOperationBuilder> &builder)
 {
@@ -73,9 +66,9 @@ DataAbilityOperation::DataAbilityOperation()
     type_ = 0;
     uri_ = nullptr;
     expectedCount_ = 0;
-    valuesBucket_ = std::make_shared<ValuesBucket>();
-    dataAbilityPredicates_ = std::make_shared<DataAbilityPredicates>();
-    valuesBucketReferences_ = std::make_shared<ValuesBucket>();
+    valuesBucket_ = std::make_shared<NativeRdb::ValuesBucket>();
+    dataAbilityPredicates_ = std::make_shared<NativeRdb::DataAbilityPredicates>();
+    valuesBucketReferences_ = std::make_shared<NativeRdb::ValuesBucket>();
     dataAbilityPredicatesBackReferences_.clear();
     interrupted_ = false;
 }
@@ -209,7 +202,7 @@ std::shared_ptr<Uri> DataAbilityOperation::GetUri() const
     return uri_;
 }
 
-std::shared_ptr<ValuesBucket> DataAbilityOperation::GetValuesBucket() const
+std::shared_ptr<NativeRdb::ValuesBucket> DataAbilityOperation::GetValuesBucket() const
 {
     APP_LOGD("DataAbilityOperation::GetValuesBucket");
     return valuesBucket_;
@@ -221,13 +214,13 @@ int DataAbilityOperation::GetExpectedCount() const
     return expectedCount_;
 }
 
-std::shared_ptr<DataAbilityPredicates> DataAbilityOperation::GetDataAbilityPredicates() const
+std::shared_ptr<NativeRdb::DataAbilityPredicates> DataAbilityOperation::GetDataAbilityPredicates() const
 {
     APP_LOGD("DataAbilityOperation::GetDataAbilityPredicates");
     return dataAbilityPredicates_;
 }
 
-std::shared_ptr<ValuesBucket> DataAbilityOperation::GetValuesBucketReferences() const
+std::shared_ptr<NativeRdb::ValuesBucket> DataAbilityOperation::GetValuesBucketReferences() const
 {
     APP_LOGD("DataAbilityOperation::GetValuesBucketReferences");
     return valuesBucketReferences_;
@@ -266,14 +259,29 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
 {
     APP_LOGD("DataAbilityOperation::Marshalling start");
     if (!out.WriteInt32(type_)) {
+        APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(type_) error");
         return false;
     }
+    if (!out.WriteInt32(expectedCount_)) {
+        APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+        return false;
+    }
+    
+    if (!out.WriteBool(interrupted_)) {
+        APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+        return false;
+    }
+
     if (uri_ != nullptr) {
         if (!out.WriteInt32(VALUE_OBJECT)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
 
-        out.WriteParcelable(uri_.get());
+        if (!out.WriteParcelable(uri_.get())) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+            return false;
+        }
     } else {
         if (!out.WriteInt32(VALUE_NULL)) {
             return false;
@@ -281,21 +289,29 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
     }
 
     if (valuesBucket_ != nullptr) {
-        if (!out.WriteInt32(VALUE_OBJECT) || !valuesBucket_->Marshalling(out)) {
+        if (!out.WriteInt32(VALUE_OBJECT)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+            return false;
+        }
+
+        if (!out.WriteParcelable(valuesBucket_.get())) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
     } else {
         if (!out.WriteInt32(VALUE_NULL)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
     }
 
-    if (!out.WriteInt32(VALUE_OBJECT) || !out.WriteInt32(expectedCount_)) {
-        return false;
-    }
-
     if (dataAbilityPredicates_ != nullptr) {
-        if (!out.WriteInt32(VALUE_OBJECT) || !dataAbilityPredicates_->Marshalling(out)) {
+        if (!out.WriteInt32(VALUE_OBJECT)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+            return false;
+        }
+        if (!out.WriteParcelable(dataAbilityPredicates_.get())) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
     } else {
@@ -305,7 +321,12 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
     }
 
     if (valuesBucketReferences_ != nullptr) {
-        if (!out.WriteInt32(VALUE_OBJECT) || !valuesBucketReferences_->Marshalling(out)) {
+        if (!out.WriteInt32(VALUE_OBJECT)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+            return false;
+        }
+        if (!out.WriteParcelable(valuesBucketReferences_.get())) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
     } else {
@@ -314,32 +335,37 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
         }
     }
 
+    int referenceSize = 0;
     if (!dataAbilityPredicatesBackReferences_.empty()) {
-        int referenceSize = dataAbilityPredicatesBackReferences_.size();
-        if (!out.WriteInt32(VALUE_OBJECT) || !out.WriteInt32(referenceSize)) {
+        referenceSize = dataAbilityPredicatesBackReferences_.size();
+        if (!out.WriteInt32(referenceSize)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
         if (referenceSize >= REFERENCE_THRESHOLD) {
-            if (!out.WriteBool(interrupted_)) {
-                return false;
-            }
+            APP_LOGI("DataAbilityOperation::Marshalling referenceSize >= REFERENCE_THRESHOLD");
             return true;
         }
         for (auto it = dataAbilityPredicatesBackReferences_.begin(); it != dataAbilityPredicatesBackReferences_.end();
              it++) {
-            if (!out.WriteInt32(it->first) || !out.WriteInt32(it->second)) {
+
+            if (!out.WriteInt32(it->first)) {
+                APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
+                return false;
+            }
+            if (!out.WriteInt32(it->second)) {
+                APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
                 return false;
             }
         }
     } else {
         APP_LOGD("DataAbilityOperation::Marshalling dataAbilityPredicatesBackReferences_ is empty");
-        if (!out.WriteInt32(VALUE_NULL)) {
+        if (!out.WriteInt32(referenceSize)) {
+            APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;
         }
     }
-    if (!out.WriteBool(interrupted_)) {
-        return false;
-    }
+
     APP_LOGD("DataAbilityOperation::Marshalling end");
     return true;
 }
@@ -348,6 +374,7 @@ DataAbilityOperation *DataAbilityOperation::Unmarshalling(Parcel &in)
     APP_LOGD("DataAbilityOperation::Unmarshalling start");
     DataAbilityOperation *dataAbilityOperation = new (std::nothrow) DataAbilityOperation();
     if (dataAbilityOperation != nullptr && !dataAbilityOperation->ReadFromParcel(in)) {
+        APP_LOGE("DataAbilityOperation::Unmarshalling dataAbilityOperation(%p) error", dataAbilityOperation);
         delete dataAbilityOperation;
         dataAbilityOperation = nullptr;
     }
@@ -358,52 +385,87 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
 {
     APP_LOGD("DataAbilityOperation::ReadFromParcel start");
     if (!in.ReadInt32(type_)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(type_) error");
         return false;
     }
+    if (!in.ReadInt32(expectedCount_)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
+        return false;
+    }
+    interrupted_ = in.ReadBool();
+
     int empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
-        return false;
-    }
-    uri_ = (empty == VALUE_OBJECT) ? std::shared_ptr<Uri>(Uri::Unmarshalling(in)) : nullptr;
-
-    empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
-        return false;
-    }
-    valuesBucket_ = (empty == VALUE_OBJECT) ? std::make_shared<ValuesBucket>(in) : nullptr;
-
-    empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
-        return false;
-    }
-    expectedCount_ = (empty == VALUE_OBJECT) ? empty : 0;
-
-    empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
-        return false;
-    }
-    dataAbilityPredicates_ = (empty == VALUE_OBJECT) ? std::make_shared<DataAbilityPredicates>(in) : nullptr;
-
-    empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
-        return false;
-    }
-    valuesBucketReferences_ = (empty == VALUE_OBJECT) ? std::make_shared<ValuesBucket>(in) : nullptr;
-
-    empty = VALUE_NULL;
-    if (in.ReadInt32(empty)) {
+    if (!in.ReadInt32(empty)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
         return false;
     }
     if (empty == VALUE_OBJECT) {
-        if (empty > 0 && empty < REFERENCE_THRESHOLD) {
-            for (int i = 0; i < empty; ++i) {
-                dataAbilityPredicatesBackReferences_.insert(std::make_pair(in.ReadInt32(), in.ReadInt32()));
-            }
-        }
+        uri_.reset(in.ReadParcelable<Uri>());
     } else {
-        dataAbilityPredicatesBackReferences_.clear();
+        uri_.reset();
     }
-    interrupted_ = in.ReadBool();
+
+    empty = VALUE_NULL;
+    if (!in.ReadInt32(empty)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
+        return false;
+    }
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    if (empty == VALUE_OBJECT) {
+        valuesBucket_.reset(in.ReadParcelable<NativeRdb::ValuesBucket>());
+    } else {
+        valuesBucket_.reset();
+    }
+
+    empty = VALUE_NULL;
+    if (!in.ReadInt32(empty)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
+        return false;
+    }
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    if (empty == VALUE_OBJECT) {
+        dataAbilityPredicates_.reset(in.ReadParcelable<NativeRdb::DataAbilityPredicates>());
+    } else {
+        dataAbilityPredicates_.reset();
+    }
+
+    empty = VALUE_NULL;
+    if (!in.ReadInt32(empty)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
+        return false;
+    }
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    if (empty == VALUE_OBJECT) {
+        valuesBucketReferences_.reset(in.ReadParcelable<NativeRdb::ValuesBucket>());
+    } else {
+        valuesBucketReferences_.reset();
+    }
+
+    int referenceSize = 0;
+    if (!in.ReadInt32(referenceSize)) {
+        APP_LOGE("DataAbilityOperation::ReadFromParcel end");
+        return false;
+    }
+    if (referenceSize >= REFERENCE_THRESHOLD) {
+        APP_LOGI("DataAbilityOperation::ReadFromParcel referenceSize:%{public}d >= REFERENCE_THRESHOLD:%{public}d",referenceSize ,REFERENCE_THRESHOLD);
+        return true;
+    }
+
+    for (int i = 0; i < REFERENCE_THRESHOLD && i < referenceSize; ++i) {
+        int first = 0;
+        int second = 0;
+        if (!in.ReadInt32(first)) {
+            APP_LOGE("DataAbilityOperation::ReadFromParcel end");
+            return false;
+        }
+        if (!in.ReadInt32(second)) {
+            APP_LOGE("DataAbilityOperation::ReadFromParcel end");
+            return false;
+        }
+        dataAbilityPredicatesBackReferences_.insert(std::make_pair(first, second));
+    }
+
+    // interrupted_ = in.ReadBool();
     APP_LOGD("DataAbilityOperation::ReadFromParcel end");
     return true;
 }

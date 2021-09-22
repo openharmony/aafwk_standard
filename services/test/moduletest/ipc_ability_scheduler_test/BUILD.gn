@@ -19,7 +19,10 @@ module_output_path = "aafwk_standard/mstabilitymgrservice"
 ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   module_out_path = module_output_path
 
-  include_dirs = [ "//third_party/jsoncpp/include" ]
+  include_dirs = [
+    "//third_party/jsoncpp/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+  ]
 
   sources = [
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
@@ -56,6 +59,9 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 

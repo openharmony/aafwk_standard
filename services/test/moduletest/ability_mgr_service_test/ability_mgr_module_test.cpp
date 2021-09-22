@@ -15,6 +15,8 @@
 
 #include <thread>
 #include <functional>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -1631,6 +1633,51 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_025, TestSize.Level1)
     EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(runTimes);
     auto resultFunction = abilityMgrServ_->CompelVerifyPermission(permission, pid, uid, message);
     EXPECT_EQ(resultFunction, 0);
+}
+/*
+ * Feature: AbilityManagerService
+ * Function: AmsConfigurationParameter
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService CompelVerifyPermission
+ * EnvConditions: NA
+ * CaseDescription: Judge the acquired properties
+ */
+HWTEST_F(AbilityMgrModuleTest, AmsConfigurationParameter_026, TestSize.Level1)
+{
+    EXPECT_TRUE(abilityMgrServ_->amsConfigResolver_);
+    EXPECT_FALSE(abilityMgrServ_->amsConfigResolver_->NonConfigFile());
+
+    // Open a path that does not exist
+    auto ref = abilityMgrServ_->amsConfigResolver_->LoadAmsConfiguration("/system/etc/ams.txt");
+    // faild return 1
+    EXPECT_EQ(ref, 1);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: AmsConfigurationParameter
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService CompelVerifyPermission
+ * EnvConditions: NA
+ * CaseDescription: Judge the acquired properties
+ */
+HWTEST_F(AbilityMgrModuleTest, AmsConfigurationParameter_027, TestSize.Level1)
+{
+    bool startLuncher = false;
+    bool startstatusbar = false;
+    bool startnavigationbar = false;
+    nlohmann::json info;
+    std::ifstream file(AmsConfig::AMS_CONFIG_FILE_PATH, std::ios::in);
+    if (file.is_open()) {
+        file >> info;
+        info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LUNCHER).get_to(startLuncher);
+        info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get_to(startstatusbar);
+        info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get_to(startnavigationbar);
+    }
+
+    EXPECT_EQ(startLuncher, abilityMgrServ_->amsConfigResolver_->GetStartLuncherState());
+    EXPECT_EQ(startstatusbar, abilityMgrServ_->amsConfigResolver_->GetStatusBarState());
+    EXPECT_EQ(startnavigationbar, abilityMgrServ_->amsConfigResolver_->GetNavigationBarState());
 }
 
 }  // namespace AAFwk

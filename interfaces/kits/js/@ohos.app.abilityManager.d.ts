@@ -22,7 +22,7 @@ import { ActiveProcessInfo } from './app/activeProcessInfo';
  *
  * @since 7
  * @SysCap SystemCapability.Appexecfwk
- * @devices phone, tablet, tv, wearable
+ * @devices phone, tablet, tv, wearable, car
  * @import import abilityManager from '@ohos.app.abilityManager'
  * @permission N/A
  */
@@ -39,7 +39,7 @@ declare namespace abilityManager {
      * Get information about running processes
      * @since 7
      * @SysCap SystemCapability.Appexecfwk
-     * @devices phone, tablet, tv, wearable
+     * @devices phone, tablet, tv, wearable, car
      * @return a list of ActiveProcessInfo records describing each process.
      * @permission ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS_EXTENSION
      * @systemapi hide this for inner system use
@@ -51,7 +51,7 @@ declare namespace abilityManager {
      * Get information about the running ability missions
      * @since 7
      * @SysCap SystemCapability.Appexecfwk
-     * @devices phone, tablet, tv, wearable
+     * @devices phone, tablet, tv, wearable, car
      * @param upperLimit The maximum number of mission infos to return in the array.
      * @return an array of AbilityMissionInfo records describing each active mission.
      * @permission ohos.permission.ACCESS_MISSIONS
@@ -64,7 +64,7 @@ declare namespace abilityManager {
      * Get information about recently run missions
      * @since 7
      * @SysCap SystemCapability.Appexecfwk
-     * @devices phone, tablet, tv, wearable
+     * @devices phone, tablet, tv, wearable, car
      * @param upperLimit The maximum number of previous mission infos to return in the array.
      * @return an array of AbilityMissionInfo records describing each of the previous mission.
      * @permission ohos.permission.ACCESS_MISSIONS_EXTRA
@@ -77,7 +77,7 @@ declare namespace abilityManager {
      * Delete the specified missions
      * @since 7
      * @SysCap SystemCapability.Appexecfwk
-     * @devices phone, tablet, tv, wearable
+     * @devices phone, tablet, tv, wearable, car
      * @param missionIds An array of missions, representing the missions that need to be deleted.
      * @permission ohos.permission.DELETE_MISSIONS
      * @systemapi hide this for inner system use

@@ -71,28 +71,31 @@ public:
 };
 
 void AbilityStackManagerTest::SetUpTestCase(void)
-{}
-void AbilityStackManagerTest::TearDownTestCase(void)
-{}
-void AbilityStackManagerTest::TearDown()
 {
-    stackManager_.reset();
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
 }
+void AbilityStackManagerTest::TearDownTestCase(void)
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+}
+
 
 void AbilityStackManagerTest::SetUp()
 {
     init();
-    auto bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
 
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
     ams->Init();
     stackManager_ = std::make_shared<AbilityStackManager>(0);
     auto bms = ams->GetBundleManager();
     EXPECT_NE(bms, nullptr);
+}
+
+void AbilityStackManagerTest::TearDown()
+{
+    stackManager_.reset();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 void AbilityStackManagerTest::init()
@@ -999,13 +1002,18 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_026, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_027, TestSize.Level1)
 {
+    stackManager_->Init();
     Want want;
     want.AddEntity(Want::ENTITY_HOME);
     AbilityRequest request;
+    request.want = want;
+    request.abilityInfo.applicationInfo.isLauncherApp = true;
     EXPECT_EQ(stackManager_->launcherMissionStack_, stackManager_->GetTargetMissionStack(request));
     Want want1;
     AbilityRequest request1;
     want1.AddEntity(Want::ENTITY_VIDEO);
+    request.want = want1;
+    request.abilityInfo.applicationInfo.isLauncherApp = false;
     EXPECT_EQ(stackManager_->defaultMissionStack_, stackManager_->GetTargetMissionStack(request1));
 }
 
@@ -1502,7 +1510,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_043, TestSize.
     EXPECT_EQ(REMOVE_MISSION_LAUNCHER_DENIED, result);
 
     result = stackManager_->RemoveMissionById(missionId);
-    EXPECT_EQ(REMOVE_MISSION_ACTIVE_DENIED, result);
+    EXPECT_EQ(ERR_OK, result);
 
     stackManager_->defaultMissionStack_ = nullptr;
     result = stackManager_->RemoveMissionById(missionId);
@@ -1568,7 +1576,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.
     EXPECT_EQ(ERR_INVALID_VALUE, result);
 
     result = stackManager_->RemoveStack(10);
-    EXPECT_EQ(REMOVE_STACK_ID_NOT_EXIST, result);
+    EXPECT_EQ(ERR_INVALID_VALUE, result);
 
     result = stackManager_->RemoveStack(0);
     EXPECT_EQ(REMOVE_STACK_LAUNCHER_DENIED, result);
@@ -2523,7 +2531,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_069, TestSize.
     auto topAbilityRecord2 = stackManager_->GetCurrentTopAbility();
     EXPECT_TRUE(topMissionRecord2);
     EXPECT_TRUE(topAbilityRecord2);
-    topAbilityRecord->SetAbilityState(OHOS::AAFwk::INACTIVE);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
     topAbilityRecord2->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
     auto stact = topMissionRecord2->GetMissionStack();
@@ -3032,8 +3040,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_081, TestSize.
 
     EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
     EXPECT_EQ(stack1->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
-
-    // stackManager_->isMultiWinMoving_ = false;
 
     auto ref = stackManager_->CloseMultiWindow(topMissionRecord2->GetMissionRecordId());
     EXPECT_EQ(0, ref);

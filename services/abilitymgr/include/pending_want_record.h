@@ -55,8 +55,8 @@ public:
 
 private:
     std::weak_ptr<PendingWantManager> pendingWantManager_;
-    int32_t uid_;
-    int32_t callerUid_;
+    int32_t uid_ = 0;
+    int32_t callerUid_ = 0;
     sptr<IRemoteObject> callerToken_;
     bool canceled_ = false;
     std::shared_ptr<PendingWantKey> key_;

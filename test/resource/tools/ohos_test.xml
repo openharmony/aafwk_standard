@@ -14,19 +14,19 @@
  * limitations under the License.
  -->
 <configuration ver="2.0">
-  <target name="ability_command_dump_system_test">
+  <target name="aa_command_dump_system_test">
     <depend resource="aa/." pushpath="/data/test/resource/aa/" findpath="res" presetcmd="" />
 	  <preparer>
    	  <option name="push" value="aa/. -> /data/test/resource/aa/" src="res" />
     </preparer>
   </target>
-  <target name="ability_command_start_system_test">
+  <target name="aa_command_start_system_test">
     <depend resource="aa/." pushpath="/data/test/resource/aa/" findpath="res" presetcmd="" />
 	  <preparer>
    	  <option name="push" value="aa/. -> /data/test/resource/aa/" src="res" />
     </preparer>
   </target>
-  <target name="ability_command_stop_service_system_test">
+  <target name="aa_command_stop_service_system_test">
     <depend resource="aa/." pushpath="/data/test/resource/aa/" findpath="res" presetcmd="" />
 	  <preparer>
    	  <option name="push" value="aa/. -> /data/test/resource/aa/" src="res" />

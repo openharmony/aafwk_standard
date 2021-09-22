@@ -20,9 +20,10 @@
 #include "ability.h"
 #include "want.h"
 #include "napi_common.h"
-#include "dummy_values_bucket.h"
-#include "dummy_result_set.h"
-#include "dummy_data_ability_predicates.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+#include "napi_common_util.h"
 
 using Want = OHOS::AAFwk::Want;
 using Ability = OHOS::AppExecFwk::Ability;
@@ -159,6 +160,11 @@ struct CallingBundleCB {
     std::string callingBundleName;
 };
 
+struct GetOrCreateLocalDirCB {
+    CBBase cbBase;
+    std::string rootDir;
+};
+
 struct ElementNameCB {
     CBBase cbBase;
     std::string deviceId;
@@ -201,7 +207,7 @@ struct DAHelperInsertCB {
     CBBase cbBase;
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
-    ValuesBucket valueBucket;
+    NativeRdb::ValuesBucket valueBucket;
     int result = 0;
 };
 
@@ -229,11 +235,11 @@ struct DAHelperNotifyChangeCB {
     std::string uri;
 };
 
-// class DataAbilityObserver;
+class NAPIDataAbilityObserver;
 struct DAHelperOnOffCB {
     CBBase cbBase;
     DataAbilityHelper *dataAbilityHelper = nullptr;
-    // sptr<DataAbilityObserver> observer;
+    sptr<NAPIDataAbilityObserver> observer;
     std::string uri;
     int result = 0;
 };
@@ -281,7 +287,7 @@ struct DAHelperDeleteCB {
     CBBase cbBase;
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
-    DataAbilityPredicates predicates;
+    NativeRdb::DataAbilityPredicates predicates;
     int result = 0;
 };
 
@@ -290,23 +296,23 @@ struct DAHelperQueryCB {
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
     std::vector<std::string> columns;
-    DataAbilityPredicates predicates;
-    ResultSet result;
+    NativeRdb::DataAbilityPredicates predicates;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> result;
 };
 
 struct DAHelperUpdateCB {
     CBBase cbBase;
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
-    ValuesBucket valueBucket;
-    DataAbilityPredicates predicates;
+    NativeRdb::ValuesBucket valueBucket;
+    NativeRdb::DataAbilityPredicates predicates;
     int result = 0;
 };
 struct DAHelperBatchInsertCB {
     CBBase cbBase;
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
-    std::vector<ValuesBucket> values;
+    std::vector<NativeRdb::ValuesBucket> values;
     int result = 0;
 };
 struct DAHelperOpenFileCB {
@@ -323,6 +329,14 @@ struct DAHelperReleaseCB {
     bool result = false;
 };
 
+
+struct DAHelperExecuteBatchCB {
+    CBBase cbBase;
+    std::string uri;
+    std::vector<std::shared_ptr<DataAbilityOperation>> operations;
+    DataAbilityHelper *dataAbilityHelper = nullptr;
+    std::vector<std::shared_ptr<DataAbilityResult>> result;
+};
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_FEATURE_ABILITY_COMMON_H */
