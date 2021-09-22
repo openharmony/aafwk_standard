@@ -21,7 +21,7 @@
  * @devices phone, tablet
  * @permission N/A
  */
- declare namespace wantConstant {
+declare namespace wantConstant {
   /**
    * the constant for action of the want
    * @name Action

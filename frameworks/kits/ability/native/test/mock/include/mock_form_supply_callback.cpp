@@ -55,6 +55,5 @@ int MockFormSupplyCallback::OnEventHandle(const Want& want)
     APP_LOGI("MockFormSupplyCallback::OnEventHandle called.");
     return 1;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

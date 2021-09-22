@@ -83,7 +83,8 @@ public:
     class EntryInfo {
     public:
         EntryInfo(const std::string &fileNameInZip, const unz_file_info &rawFileInfo);
-
+        virtual ~EntryInfo()
+        {}
         // Returns the file path. The path is usually relative like
         // "foo/bar.txt", but if it's absolute, is_unsafe() returns true.
         const FilePath &GetFilePath() const
@@ -244,8 +245,8 @@ public:
     void SetTimeModified(const struct tm *time) override;
 
 private:
-    FilePath outputFilePath_;
-    FILE *file_;
+    FilePath outputFilePath_ = FilePath(std::string());
+    FILE *file_ = nullptr;
 
     DISALLOW_COPY_AND_ASSIGN(FilePathWriterDelegate);
 };

@@ -26,7 +26,7 @@ const std::string PARAM_PROVIDER_PACKAGE_NAME = "com.form.provider.app.test.abil
 const std::string PARAM_PROVIDER_MODULE_NAME = "com.form.provider.app.test.abiliy";
 const std::string FORM_PROVIDER_ABILITY_NAME = "com.form.provider.app.test.abiliy";
 const std::string FORM_PROVIDER_MODULE_SOURCE_DIR = "";
-const std::string FORM_JS_COMPOMENT_NAME= "jsComponentName";
+const std::string FORM_JS_COMPOMENT_NAME = "jsComponentName";
 const std::string PARAM_FORM_NAME = "com.form.name.test";
 const std::string DEVICE_ID = "ohos-phone1";
 
@@ -167,6 +167,5 @@ bool BundleMgrService::GetFormsInfoByModule(
     formInfo.emplace_back(form);
     return true;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

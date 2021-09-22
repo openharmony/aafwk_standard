@@ -28,6 +28,10 @@ config("ability_manager_public_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -60,6 +64,9 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/stack_setting.cpp",
     "${services_path}/abilitymgr/src/want_sender_info.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation_builder.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_result.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/task_handler.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/task_handler_client.cpp",
   ]
@@ -75,6 +82,8 @@ ohos_shared_library("ability_manager") {
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/jsoncpp:jsoncpp",
@@ -84,6 +93,9 @@ ohos_shared_library("ability_manager") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 
   subsystem_name = "aafwk"

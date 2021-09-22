@@ -13,7 +13,7 @@
 * limitations under the License.
 */
 
-import { AsyncCallback } from './../.basic';
+import { AsyncCallback } from './../basic';
 import { DataAbilityOperation } from './dataAbilityOperation';
 import { ValuesBucket, ResultSet, DataAbilityPredicates } from './../@ohos.data.rdb';
 
@@ -60,20 +60,6 @@ export interface DataAbilityHelper {
      * @param callback Indicates the registered callback.
      */
     off(type: 'dataChange', uri: string, callback?: AsyncCallback<void>): void;
-
-    /**
-     * Calls the method defined by the Data ability.
-     * @devices phone, tablet
-     * @since 7
-     * @SysCap AAFwk
-     * @param uri Indicates the Data ability to process.
-     * @param method Indicates the method name.
-     * @param arg Indicates the parameter of the String type.
-     * @param extras Indicates the parameter of the object type.
-     * @return callback Indicates the value returned by the called method.
-     */
-    call(uri: string, method: string, arg: string, extras: object, callback: AsyncCallback<object>): void;
-    call(uri: string, method: string, arg: string, extras: object): Promise<object>;
 
     /**
      * Inserts a single data record into the database.
@@ -220,6 +206,16 @@ export interface DataAbilityHelper {
      */
     release(callback: AsyncCallback<boolean>): void;
     release(): Promise<boolean>;
+
+    /**
+     * Notifies the registered observers of a change to the data resource specified by Uri.
+     * @devices phone, tablet
+     * @since 7
+     * @SysCap AAFwk
+     * @param uri Indicates the {@link ohos.utils.net.Uri} object to notifyChange.
+     */
+    notifyChange(URI: string, callback: AsyncCallback<void>): void;
+    notifyChange(URI: string): Promise<void>;
 }
 
 export interface DataAbilityResult {

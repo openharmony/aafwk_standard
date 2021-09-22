@@ -15,6 +15,8 @@
 
 #include "ability_impl.h"
 #include "app_log_wrapper.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "ability_keyevent.h"
 #include "ability_touchevent.h"
 
@@ -486,7 +488,7 @@ int AbilityImpl::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the index of the inserted data record.
  */
-int AbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
+int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     return -1;
 }
@@ -500,7 +502,8 @@ int AbilityImpl::Insert(const Uri &uri, const ValuesBucket &value)
  *
  * @return Returns the number of data records updated.
  */
-int AbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int AbilityImpl::Update(
+    const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return -1;
 }
@@ -513,7 +516,7 @@ int AbilityImpl::Update(const Uri &uri, const ValuesBucket &value, const DataAbi
  *
  * @return Returns the number of data records deleted.
  */
-int AbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int AbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return -1;
 }
@@ -527,8 +530,8 @@ int AbilityImpl::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
  *
  * @return Returns the query result.
  */
-std::shared_ptr<ResultSet> AbilityImpl::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityImpl::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     return nullptr;
 }
@@ -569,7 +572,7 @@ bool AbilityImpl::Reload(const Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int AbilityImpl::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int AbilityImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     return -1;
 }
@@ -675,6 +678,7 @@ Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 {
     return uri;
 }
+
 /*
  * @brief ScheduleUpdateConfiguration, scheduling update configuration.
  */
@@ -760,5 +764,14 @@ std::shared_ptr<AbilityPostEventTimeout> AbilityImpl::CreatePostEventTimeouter(s
 
     return ability_->CreatePostEventTimeouter(taskstr);
 }
+
+std::vector<std::shared_ptr<DataAbilityResult>> AbilityImpl::ExecuteBatch(
+    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+    APP_LOGI("AbilityImpl::ExecuteBatch");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    return results;
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

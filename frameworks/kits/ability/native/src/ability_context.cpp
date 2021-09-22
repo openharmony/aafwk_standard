@@ -96,6 +96,15 @@ void AbilityContext::StartAbility(const Want &want, int requestCode, const Abili
         APP_LOGE("AbilityContext::StartAbility AbilityType = %{public}d", type);
         return;
     }
+
+    APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
+    ErrCode err =
+        AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, abilityStartSetting, token_, requestCode);
+    APP_LOGI("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
+    }
+
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -820,9 +829,11 @@ Uri AbilityContext::GetCaller()
  */
 void AbilityContext::AttachBaseContext(const std::shared_ptr<Context> &base)
 {
+    APP_LOGI("AbilityContext::AttachBaseContext. Start.");
     ContextContainer::AttachBaseContext(base);
+    APP_LOGI("AbilityContext::AttachBaseContext. End.");
 }
-
+    
 /**
  * @brief Obtains the absolute path to the application-specific cache directory
  * on the primary external or shared storage device.

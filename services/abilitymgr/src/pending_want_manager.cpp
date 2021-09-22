@@ -63,8 +63,9 @@ sptr<IWantSender> PendingWantManager::GetWantSenderLocked(const int32_t callingU
     bool needCancel = ((uint32_t)wantSenderInfo.flags & (uint32_t)Flags::CANCEL_PRESENT_FLAG) != 0;
     bool needUpdate = ((uint32_t)wantSenderInfo.flags & (uint32_t)Flags::UPDATE_PRESENT_FLAG) != 0;
 
-    wantSenderInfo.flags &=
-        ~((uint32_t)Flags::NO_BUILD_FLAG | (uint32_t)Flags::CANCEL_PRESENT_FLAG | (uint32_t)Flags::UPDATE_PRESENT_FLAG);
+    wantSenderInfo.flags =
+        ((uint32_t)wantSenderInfo.flags & (~((uint32_t)Flags::NO_BUILD_FLAG | (uint32_t)Flags::CANCEL_PRESENT_FLAG |
+                                              (uint32_t)Flags::UPDATE_PRESENT_FLAG)));
 
     std::lock_guard<std::recursive_mutex> locker(mutex_);
     std::shared_ptr<PendingWantKey> pendingKey = std::make_shared<PendingWantKey>();

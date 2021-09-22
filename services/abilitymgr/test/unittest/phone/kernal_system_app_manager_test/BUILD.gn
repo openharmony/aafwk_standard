@@ -30,7 +30,10 @@ ohos_unittest("kernal_system_app_mgr_test") {
     "//foundation/aafwk/standard/services/abilitymgr/include",
   ]
 
-  sources = [ "kernal_system_app_manager_test.cpp" ]
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "kernal_system_app_manager_test.cpp",  # add mock file
+  ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []
@@ -43,6 +46,7 @@ ohos_unittest("kernal_system_app_mgr_test") {
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",

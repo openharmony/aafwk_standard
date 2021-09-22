@@ -62,7 +62,9 @@ bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
 
     APP_LOGI("config width = %{public}d, height = %{public}d.", config->GetWidth(), config->GetHeight());
     APP_LOGI("config pos_x = %{public}d, pos_y = %{public}d, type = %{public}d.",
-        config->GetX(), config->GetY(), config->GetWindowType());
+        config->GetX(),
+        config->GetY(),
+        config->GetWindowType());
 
     auto wmi = WindowManager::GetInstance();
     if (wmi == nullptr) {
@@ -296,7 +298,7 @@ void AbilityWindow::OnPostAbilityStop()
  *
  * @return Returns a Window object pointer.
  */
-const sptr<Window> &AbilityWindow::GetWindow()
+const sptr<Window> AbilityWindow::GetWindow()
 {
     if (!isWindowAttached) {
         APP_LOGE("AbilityWindow::GetWindow window not attached.");

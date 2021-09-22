@@ -28,12 +28,12 @@ namespace AppExecFwk {
 class MockAbilityTest : public Ability {
 public:
 
-    int Insert(const Uri &uri, const ValuesBucket &value)
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Insert called";
         return 20;
     }
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Update called";
         return 33;
@@ -52,9 +52,21 @@ public:
     {
         int fd;
         GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile called";
-        FILE *fd1 = fopen("/test/te.txt", "r");
-        fd = fileno(fd1);
+        FILE *fd1 = fopen("/dataability_openfile_test.txt", "w+");
+        if(fd1 == nullptr) {
+            GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd1 == nullptr";
+            return -1;
+        }
+        fputs("123456",fd1);
+        fclose(fd1);
 
+        FILE *fd2 = fopen("/dataability_openfile_test.txt", "r");
+        if(fd2 == nullptr) {
+            GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd2 == nullptr";
+            return -1;
+        }
+        fd = fileno(fd2);
+       
         return fd;
     }
 
@@ -65,7 +77,7 @@ public:
         return 122;
     }
 
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+    int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::BatchInsert called";
         return 115;
@@ -77,7 +89,7 @@ public:
         return true;
     }
 
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Delete called";
         return 234;
@@ -88,6 +100,14 @@ public:
         GTEST_LOG_(INFO) << "MockAbilityTest::GetType called";
         std::string type("Type1");
         return type;
+    }
+
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
+    {
+        GTEST_LOG_(INFO) << "MockDataAbility::Query called";
+        std::shared_ptr<NativeRdb::AbsSharedResultSet> set = std::make_shared<NativeRdb::AbsSharedResultSet>("QueryTest");
+        return set;
     }
 
     Uri NormalizeUri(const Uri &uri)

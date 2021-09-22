@@ -25,7 +25,7 @@ namespace OHOS {
 namespace AppExecFwk {
 
 napi_value g_classContext;
-
+napi_value g_dataAbilityHelper;
 using NAPICreateJsRemoteObject = napi_value (*)(napi_env env, const sptr<IRemoteObject> target);
 
 napi_value *GetGlobalClassContext(void)
@@ -133,40 +133,6 @@ void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
     }
     appInfo.entryDir = appInfoOrg.entryDir;
     HILOG_INFO("%{public}s end.", __func__);
-}
-
-/**
- * @brief GetApplicationInfo asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetAppInfoExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
-    appInfoCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-
-    if (appInfoCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetApplicationInfo, ability == nullptr");
-        appInfoCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    if (!CheckAbilityType(&appInfoCB->cbBase)) {
-        HILOG_ERROR("NAPI_GetApplicationInfo, wrong ability type");
-        appInfoCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        return;
-    }
-
-    std::shared_ptr<ApplicationInfo> appInfoPtr = appInfoCB->cbBase.ability->GetApplicationInfo();
-    if (appInfoPtr != nullptr) {
-        SaveAppInfo(appInfoCB->appInfo, *appInfoPtr);
-    } else {
-        HILOG_ERROR("NAPI_GetApplicationInfo, appInfoPtr == nullptr");
-        appInfoCB->cbBase.errCode = NAPI_ERR_ABILITY_CALL_INVALID;
-    }
-    HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute end.");
 }
 
 napi_value GetContinueAbilityOptionsInfoCommon(
@@ -305,255 +271,15 @@ napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo)
 }
 
 /**
- * @brief The callback at the end of the asynchronous callback.
+ * @brief GetFilesDir asynchronous processing function.
  *
  * @param env The environment that the Node-API call is invoked under.
  * @param data Point to asynchronous processing of data.
  */
-void GetAppInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
-    napi_value callback = nullptr;
-    napi_value undefined = nullptr;
-    napi_value result[ARGS_TWO] = {nullptr};
-    napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    result[PARAM0] = GetCallbackErrorValue(env, appInfoCB->cbBase.errCode);
-    if (appInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result[PARAM1] = WrapAppInfo(env, appInfoCB->appInfo);
-    } else {
-        result[PARAM1] = WrapUndefinedToJS(env);
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, appInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
-    if (appInfoCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, appInfoCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, appInfoCB->cbBase.asyncWork));
-    delete appInfoCB;
-    appInfoCB = nullptr;
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
-}
-
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetAppInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppInfoCB *appInfoCB = (AppInfoCB *)data;
-    if (appInfoCB == nullptr) {
-        HILOG_ERROR("NAPI_GetApplicationInfo, appInfoCB == nullptr");
-        return;
-    }
-
-    napi_value result = nullptr;
-    if (appInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result = WrapAppInfo(env, appInfoCB->appInfo);
-        napi_resolve_deferred(env, appInfoCB->cbBase.deferred, result);
-    } else {
-        result = GetCallbackErrorValue(env, appInfoCB->cbBase.errCode);
-        napi_reject_deferred(env, appInfoCB->cbBase.deferred, result);
-    }
-
-    napi_delete_async_work(env, appInfoCB->cbBase.asyncWork);
-    delete appInfoCB;
-    appInfoCB = nullptr;
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
-}
-
-/**
- * @brief GetApplicationInfo Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetApplicationInfoAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AppInfoCB *appInfoCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (args == nullptr || appInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
-    if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &appInfoCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetAppInfoExecuteCB,
-            GetAppInfoAsyncCompleteCB,
-            (void *)appInfoCB,
-            &appInfoCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, appInfoCB->cbBase.asyncWork));
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_null(env, &result));
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return result;
-}
-
-/**
- * @brief GetApplicationInfo Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetApplicationInfoPromise(napi_env env, AppInfoCB *appInfoCB)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    if (appInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise = nullptr;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    appInfoCB->cbBase.deferred = deferred;
-
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetAppInfoExecuteCB,
-            GetAppInfoPromiseCompleteCB,
-            (void *)appInfoCB,
-            &appInfoCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, appInfoCB->cbBase.asyncWork));
-    HILOG_INFO("%{public}s, promise end.", __func__);
-    return promise;
-}
-
-/**
- * @brief GetApplicationInfo processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetApplicationInfoWrap(napi_env env, napi_callback_info info, AppInfoCB *appInfoCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (appInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, appInfoCB == nullptr.", __func__);
-        return nullptr;
-    }
-
-    size_t argcAsync = 1;
-    const size_t argcPromise = 0;
-    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
-    napi_value args[ARGS_MAX_COUNT] = {nullptr};
-    napi_value ret = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-
-    if (argcAsync > argcPromise) {
-        ret = GetApplicationInfoAsync(env, args, argcAsync, argcPromise, appInfoCB);
-    } else {
-        ret = GetApplicationInfoPromise(env, appInfoCB);
-    }
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to AppInfoCB on success, nullptr on failure.
- */
-AppInfoCB *CreateAppInfoCBInfo(napi_env env)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    AppInfoCB *appInfoCB = new (std::nothrow) AppInfoCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-        .cbBase.abilityType = AbilityType::UNKNOWN,
-        .cbBase.errCode = NAPI_ERR_NO_ERROR,
-    };
-    if (appInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, appInfoCB == nullptr.", __func__);
-    }
-    HILOG_INFO("%{public}s, end.", __func__);
-    return appInfoCB;
-}
-
-/**
- * @brief Obtains information about the current application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetApplicationInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
-{
-    HILOG_INFO("%{public}s,called", __func__);
-    AppInfoCB *appInfoCB = CreateAppInfoCBInfo(env);
-    if (appInfoCB == nullptr) {
-        return WrapVoidToJS(env);
-    }
-
-    appInfoCB->cbBase.abilityType = abilityType;
-    napi_value ret = GetApplicationInfoWrap(env, info, appInfoCB);
-    if (ret == nullptr) {
-        HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (appInfoCB != nullptr) {
-            delete appInfoCB;
-            appInfoCB = nullptr;
-        }
-        ret = WrapVoidToJS(env);
-    }
-    HILOG_INFO("%{public}s,end", __func__);
-    return ret;
-}
-
-/**
- * @brief GetBundleName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetBundleNameExecuteCallback(napi_env env, void *data)
+void GetFilesDirExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s. asyncCallbackInfo is null", __func__);
         return;
@@ -575,19 +301,18 @@ void GetBundleNameExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetBundleName();
-    HILOG_INFO("%{public}s end. bundleName=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
+    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetFilesDir();
+    HILOG_INFO("%{public}s end. filesDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
-
 /**
- * @brief GetBundleName processing function.
+ * @brief GetFilesDir processing function.
  *
  * @param env The environment that the Node-API call is invoked under.
  * @param asyncCallbackInfo Process data asynchronously.
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value NAPI_GetBundleNameWrap(napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
+napi_value NAPI_GetFilesDirWrap(napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s called", __func__);
     size_t argc = ARGS_MAX_COUNT;
@@ -612,30 +337,21 @@ napi_value NAPI_GetBundleNameWrap(napi_env env, napi_callback_info info, AsyncJS
     AsyncParamEx asyncParamEx;
     if (asyncCallbackInfo->cbInfo.callback != nullptr) {
         HILOG_INFO("%{public}s called. asyncCallback.", __func__);
-        asyncParamEx.resource = "NAPI_GetBundleNameCallback";
-        asyncParamEx.execute = GetBundleNameExecuteCallback;
+        asyncParamEx.resource = "NAPI_GetFilesDirCallback";
+        asyncParamEx.execute = GetFilesDirExecuteCallback;
         asyncParamEx.complete = CompleteAsyncCallbackWork;
 
         return ExecuteAsyncCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
     } else {
         HILOG_INFO("%{public}s called. promise.", __func__);
-        asyncParamEx.resource = "NAPI_GetBundleNamePromise";
-        asyncParamEx.execute = GetBundleNameExecuteCallback;
+        asyncParamEx.resource = "NAPI_GetFilesDirPromise";
+        asyncParamEx.execute = GetFilesDirExecuteCallback;
         asyncParamEx.complete = CompletePromiseCallbackWork;
 
         return ExecutePromiseCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
     }
 }
-
-/**
- * @brief Get bundle name.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetBundleNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
+napi_value NAPI_GetFilesDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
 {
     HILOG_INFO("%{public}s called", __func__);
     AsyncJSCallbackInfo *asyncCallbackInfo = CreateAsyncJSCallbackInfo(env);
@@ -645,305 +361,13 @@ napi_value NAPI_GetBundleNameCommon(napi_env env, napi_callback_info info, Abili
     }
 
     asyncCallbackInfo->abilityType = abilityType;
-    napi_value ret = NAPI_GetBundleNameWrap(env, info, asyncCallbackInfo);
+    napi_value ret = NAPI_GetFilesDirWrap(env, info, asyncCallbackInfo);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s ret == nullptr", __func__);
         FreeAsyncJSCallbackInfo(&asyncCallbackInfo);
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s end", __func__);
-    return ret;
-}
-
-napi_value WrapProcessInfo(napi_env env, ProcessInfoCB *processInfoCB)
-{
-    HILOG_INFO("%{public}s called", __func__);
-    if (processInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s Invalid param(processInfoCB == nullptr)", __func__);
-        return nullptr;
-    }
-    napi_value result = nullptr;
-    napi_value proValue = nullptr;
-    NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_create_int32(env, processInfoCB->pid, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "pid", proValue));
-
-    NAPI_CALL(env, napi_create_string_utf8(env, processInfoCB->processName.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "processName", proValue));
-    HILOG_INFO("%{public}s end", __func__);
-    return result;
-}
-
-/**
- * @brief GetProcessInfo asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessInfoExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessInfo, worker pool thread execute.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
-    if (processInfoCB == nullptr) {
-        return;
-    }
-
-    processInfoCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (processInfoCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetProcessInfo, ability == nullptr");
-        processInfoCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    if (!CheckAbilityType(&processInfoCB->cbBase)) {
-        HILOG_ERROR("NAPI_GetProcessInfo, wrong ability type");
-        processInfoCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        return;
-    }
-
-    std::shared_ptr<ProcessInfo> processInfoPtr = processInfoCB->cbBase.ability->GetProcessInfo();
-    if (processInfoPtr != nullptr) {
-        processInfoCB->processName = processInfoPtr->GetProcessName();
-        processInfoCB->pid = processInfoPtr->GetPid();
-    } else {
-        HILOG_ERROR("NAPI_GetProcessInfo, processInfoPtr == nullptr");
-        processInfoCB->cbBase.errCode = NAPI_ERR_ABILITY_CALL_INVALID;
-    }
-    HILOG_INFO("NAPI_GetProcessInfo, worker pool thread execute end.");
-}
-
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
-    napi_value callback = nullptr;
-    napi_value undefined = nullptr;
-    napi_value result[ARGS_TWO] = {nullptr};
-    napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    result[PARAM0] = GetCallbackErrorValue(env, processInfoCB->cbBase.errCode);
-    if (processInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result[PARAM1] = WrapProcessInfo(env, processInfoCB);
-    } else {
-        result[PARAM1] = WrapUndefinedToJS(env);
-    }
-
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, processInfoCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
-    if (processInfoCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, processInfoCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, processInfoCB->cbBase.asyncWork));
-    delete processInfoCB;
-    processInfoCB = nullptr;
-    HILOG_INFO("NAPI_GetProcessInfo, main event thread complete end.");
-}
-
-/**
- * @brief GetProcessInfo Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessInfoAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, ProcessInfoCB *processInfoCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (args == nullptr || processInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
-    if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &processInfoCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetProcessInfoExecuteCB,
-            GetProcessInfoAsyncCompleteCB,
-            (void *)processInfoCB,
-            &processInfoCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, processInfoCB->cbBase.asyncWork));
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_null(env, &result));
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return result;
-}
-
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
-    ProcessInfoCB *processInfoCB = (ProcessInfoCB *)data;
-    napi_value result = nullptr;
-    if (processInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result = WrapProcessInfo(env, processInfoCB);
-        napi_resolve_deferred(env, processInfoCB->cbBase.deferred, result);
-    } else {
-        result = GetCallbackErrorValue(env, processInfoCB->cbBase.errCode);
-        napi_reject_deferred(env, processInfoCB->cbBase.deferred, result);
-    }
-
-    napi_delete_async_work(env, processInfoCB->cbBase.asyncWork);
-    delete processInfoCB;
-    processInfoCB = nullptr;
-    HILOG_INFO("NAPI_GetProcessInfo, main event thread complete end.");
-}
-
-/**
- * @brief GetProcessInfo Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessInfoPromise(napi_env env, ProcessInfoCB *processInfoCB)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    if (processInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise = nullptr;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    processInfoCB->cbBase.deferred = deferred;
-
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetProcessInfoExecuteCB,
-            GetProcessInfoPromiseCompleteCB,
-            (void *)processInfoCB,
-            &processInfoCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, processInfoCB->cbBase.asyncWork));
-    HILOG_INFO("%{public}s, promise end.", __func__);
-    return promise;
-}
-
-/**
- * @brief GetProcessInfo processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessInfoWrap(napi_env env, napi_callback_info info, ProcessInfoCB *processInfoCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (processInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, processInfoCB == nullptr.", __func__);
-        return nullptr;
-    }
-
-    size_t argcAsync = 1;
-    const size_t argcPromise = 0;
-    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
-    napi_value args[ARGS_MAX_COUNT] = {nullptr};
-    napi_value ret = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-
-    if (argcAsync > argcPromise) {
-        ret = GetProcessInfoAsync(env, args, argcAsync, argcPromise, processInfoCB);
-    } else {
-        ret = GetProcessInfoPromise(env, processInfoCB);
-    }
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to ProcessInfoCB on success, nullptr on failure.
- */
-ProcessInfoCB *CreateProcessInfoCBInfo(napi_env env)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    ProcessInfoCB *processInfoCB = new (std::nothrow) ProcessInfoCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
-    if (processInfoCB == nullptr) {
-        HILOG_ERROR("%{public}s, processInfoCB == nullptr.", __func__);
-    }
-    HILOG_INFO("%{public}s, end.", __func__);
-    return processInfoCB;
-}
-
-/**
- * @brief Obtains the process Info this application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    ProcessInfoCB *processInfoCB = CreateProcessInfoCBInfo(env);
-    if (processInfoCB == nullptr) {
-        return WrapVoidToJS(env);
-    }
-
-    processInfoCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    processInfoCB->cbBase.abilityType = abilityType;
-    napi_value ret = GetProcessInfoWrap(env, info, processInfoCB);
-    if (ret == nullptr) {
-        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (processInfoCB != nullptr) {
-            delete processInfoCB;
-            processInfoCB = nullptr;
-        }
-        ret = WrapVoidToJS(env);
-    }
-    HILOG_INFO("%{public}s, end.", __func__);
     return ret;
 }
 
@@ -966,15 +390,16 @@ AppTypeCB *CreateAppTypeCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    AppTypeCB *appTypeCB = new (std::nothrow) AppTypeCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    AppTypeCB *appTypeCB = new (std::nothrow) AppTypeCB;
     if (appTypeCB == nullptr) {
         HILOG_ERROR("%{public}s, appTypeCB == nullptr.", __func__);
+        return nullptr;
     }
+    appTypeCB->cbBase.cbInfo.env = env;
+    appTypeCB->cbBase.asyncWork = nullptr;
+    appTypeCB->cbBase.deferred = nullptr;
+    appTypeCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s, end.", __func__);
     return appTypeCB;
 }
@@ -988,7 +413,7 @@ AppTypeCB *CreateAppTypeCBInfo(napi_env env)
 void GetAppTypeExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     if (appTypeCB == nullptr) {
         HILOG_ERROR("NAPI_GetApplicationInfo,appTypeCB == nullptr");
         return;
@@ -1020,7 +445,7 @@ void GetAppTypeExecuteCB(napi_env env, void *data)
 void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1056,7 +481,7 @@ void GetAppTypeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAppTypePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("GetAppTypePromiseCompleteCB, main event thread complete.");
-    AppTypeCB *appTypeCB = (AppTypeCB *)data;
+    AppTypeCB *appTypeCB = static_cast<AppTypeCB *>(data);
     napi_value result = nullptr;
     if (appTypeCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         napi_create_string_utf8(env, appTypeCB->cbBase.ability->GetAppType().c_str(), NAPI_AUTO_LENGTH, &result);
@@ -1082,8 +507,7 @@ void GetAppTypePromiseCompleteCB(napi_env env, napi_status status, void *data)
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value GetAppTypeAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AppTypeCB *appTypeCB)
+napi_value GetAppTypeAsync(napi_env env, napi_value *args, const size_t argCallback, AppTypeCB *appTypeCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || appTypeCB == nullptr) {
@@ -1094,9 +518,9 @@ napi_value GetAppTypeAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &appTypeCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &appTypeCB->cbBase.cbInfo.callback));
     }
     NAPI_CALL(env,
         napi_create_async_work(env,
@@ -1177,7 +601,7 @@ napi_value GetAppTypeWrap(napi_env env, napi_callback_info info, AppTypeCB *appT
     }
 
     if (argcAsync > argcPromise) {
-        ret = GetAppTypeAsync(env, args, argcAsync, argcPromise, appTypeCB);
+        ret = GetAppTypeAsync(env, args, 0, appTypeCB);
     } else {
         ret = GetAppTypePromise(env, appTypeCB);
     }
@@ -1221,313 +645,6 @@ napi_value NAPI_GetAppTypeCommon(napi_env env, napi_callback_info info, AbilityT
  *
  * @param env The environment that the Node-API call is invoked under.
  *
- * @return Return a pointer to ElementNameCB on success, nullptr on failure.
- */
-ElementNameCB *CreateElementNameCBInfo(napi_env env)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    ElementNameCB *elementNameCB = new (std::nothrow) ElementNameCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
-    if (elementNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, elementNameCB == nullptr.", __func__);
-    }
-    HILOG_INFO("%{public}s, end.", __func__);
-    return elementNameCB;
-}
-
-napi_value WrapElementName(napi_env env, ElementNameCB *elementNameCB)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    if (elementNameCB == nullptr) {
-        HILOG_ERROR("%{public}s,Invalid param(appInfoCB = nullptr)", __func__);
-        return nullptr;
-    }
-    napi_value result = nullptr;
-    napi_value proValue = nullptr;
-    NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_create_string_utf8(env, elementNameCB->abilityName.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "abilityName", proValue));
-
-    NAPI_CALL(env, napi_create_string_utf8(env, elementNameCB->bundleName.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "bundleName", proValue));
-
-    NAPI_CALL(env, napi_create_string_utf8(env, elementNameCB->deviceId.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "deviceId", proValue));
-
-    NAPI_CALL(env, napi_create_string_utf8(env, elementNameCB->shortName.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "shortName", proValue));
-
-    NAPI_CALL(env, napi_create_string_utf8(env, elementNameCB->uri.c_str(), NAPI_AUTO_LENGTH, &proValue));
-    NAPI_CALL(env, napi_set_named_property(env, result, "uri", proValue));
-    HILOG_INFO("%{public}s, end.", __func__);
-    return result;
-}
-
-/**
- * @brief GetElementName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetElementNameExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    if (data == nullptr) {
-        HILOG_ERROR("%{public}s, data == nullptr.", __func__);
-        return;
-    }
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
-    if (elementNameCB == nullptr) {
-        HILOG_ERROR("NAPI_GetApplicationInfo, elementNameCB == nullptr");
-        return;
-    }
-
-    elementNameCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (elementNameCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetApplicationInfo, ability == nullptr");
-        elementNameCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    if (!CheckAbilityType(&elementNameCB->cbBase)) {
-        HILOG_ERROR("NAPI_GetApplicationInfo,wrong ability type");
-        elementNameCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        return;
-    }
-
-    std::shared_ptr<ElementName> elementName = elementNameCB->cbBase.ability->GetElementName();
-    if (elementNameCB != nullptr) {
-        elementNameCB->deviceId = elementName->GetDeviceID();
-        elementNameCB->bundleName = elementName->GetBundleName();
-        elementNameCB->abilityName = elementName->GetAbilityName();
-        elementNameCB->uri = elementNameCB->cbBase.ability->GetWant()->GetUriString();
-        elementNameCB->shortName = "";
-    } else {
-        elementNameCB->cbBase.errCode = NAPI_ERR_ABILITY_CALL_INVALID;
-    }
-    HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute end.");
-}
-
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
-    napi_value callback = nullptr;
-    napi_value undefined = nullptr;
-    napi_value result[ARGS_TWO] = {nullptr};
-    napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    result[PARAM0] = GetCallbackErrorValue(env, elementNameCB->cbBase.errCode);
-    if (elementNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result[PARAM1] = WrapElementName(env, elementNameCB);
-    } else {
-        result[PARAM1] = WrapUndefinedToJS(env);
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, elementNameCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
-    if (elementNameCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, elementNameCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, elementNameCB->cbBase.asyncWork));
-    delete elementNameCB;
-    elementNameCB = nullptr;
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
-}
-
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetElementNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    ElementNameCB *elementNameCB = (ElementNameCB *)data;
-    napi_value result = nullptr;
-    if (elementNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result = WrapElementName(env, elementNameCB);
-        napi_resolve_deferred(env, elementNameCB->cbBase.deferred, result);
-    } else {
-        result = GetCallbackErrorValue(env, elementNameCB->cbBase.errCode);
-        napi_reject_deferred(env, elementNameCB->cbBase.deferred, result);
-    }
-
-    napi_delete_async_work(env, elementNameCB->cbBase.asyncWork);
-    delete elementNameCB;
-    elementNameCB = nullptr;
-    HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
-}
-
-/**
- * @brief GetElementName Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetElementNamePromise(napi_env env, ElementNameCB *elementNameCB)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    if (elementNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise = nullptr;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    elementNameCB->cbBase.deferred = deferred;
-
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetElementNameExecuteCB,
-            GetElementNamePromiseCompleteCB,
-            (void *)elementNameCB,
-            &elementNameCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, elementNameCB->cbBase.asyncWork));
-    HILOG_INFO("%{public}s, promise end.", __func__);
-    return promise;
-}
-
-/**
- * @brief GetElementName Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetElementNameAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, ElementNameCB *elementNameCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (args == nullptr || elementNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
-    if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &elementNameCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetElementNameExecuteCB,
-            GetElementNameAsyncCompleteCB,
-            (void *)elementNameCB,
-            &elementNameCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, elementNameCB->cbBase.asyncWork));
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_null(env, &result));
-    return result;
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-}
-
-/**
- * @brief GetElementName processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetElementNameWrap(napi_env env, napi_callback_info info, ElementNameCB *elementNameCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (elementNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, appInfoCB == nullptr.", __func__);
-        return nullptr;
-    }
-
-    size_t argcAsync = 1;
-    const size_t argcPromise = 0;
-    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
-    napi_value args[ARGS_MAX_COUNT] = {nullptr};
-    napi_value ret = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-
-    if (argcAsync > argcPromise) {
-        ret = GetElementNameAsync(env, args, argcAsync, argcPromise, elementNameCB);
-    } else {
-        ret = GetElementNamePromise(env, elementNameCB);
-    }
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Obtains the elementName object of the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetElementNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    ElementNameCB *elementNameCB = CreateElementNameCBInfo(env);
-    if (elementNameCB == nullptr) {
-        return WrapVoidToJS(env);
-    }
-
-    elementNameCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    elementNameCB->cbBase.abilityType = abilityType;
-    napi_value ret = GetElementNameWrap(env, info, elementNameCB);
-    if (ret == nullptr) {
-        HILOG_ERROR("%{public}s ret == nullptr.", __func__);
-        if (elementNameCB != nullptr) {
-            delete elementNameCB;
-            elementNameCB = nullptr;
-        }
-        ret = WrapVoidToJS(env);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
  * @return Return a pointer to AbilityInfoCB on success, nullptr on failure.
  */
 AbilityInfoCB *CreateAbilityInfoCBInfo(napi_env env)
@@ -1542,15 +659,16 @@ AbilityInfoCB *CreateAbilityInfoCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    AbilityInfoCB *abilityInfoCB = new (std::nothrow) AbilityInfoCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    AbilityInfoCB *abilityInfoCB = new (std::nothrow) AbilityInfoCB;
     if (abilityInfoCB == nullptr) {
         HILOG_ERROR("%{public}s, abilityInfoCB == nullptr.", __func__);
+        return nullptr;
     }
+    abilityInfoCB->cbBase.cbInfo.env = env;
+    abilityInfoCB->cbBase.asyncWork = nullptr;
+    abilityInfoCB->cbBase.deferred = nullptr;
+    abilityInfoCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s end.", __func__);
     return abilityInfoCB;
 }
@@ -1732,7 +850,7 @@ napi_value WrapAbilityInfo(napi_env env, const AbilityInfo_ &abilityInfo)
 void GetAbilityInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     if (abilityInfoCB == nullptr) {
         HILOG_ERROR("NAPI_GetApplicationInfo, abilityInfoCB == nullptr");
         return;
@@ -1769,7 +887,7 @@ void GetAbilityInfoExecuteCB(napi_env env, void *data)
 void GetAbilityInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -1802,7 +920,7 @@ void GetAbilityInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAbilityInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
-    AbilityInfoCB *abilityInfoCB = (AbilityInfoCB *)data;
+    AbilityInfoCB *abilityInfoCB = static_cast<AbilityInfoCB *>(data);
     napi_value result = nullptr;
     if (abilityInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapAbilityInfo(env, abilityInfoCB->abilityInfo);
@@ -1828,8 +946,7 @@ void GetAbilityInfoPromiseCompleteCB(napi_env env, napi_status status, void *dat
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value GetAbilityInfoAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AbilityInfoCB *abilityInfoCB)
+napi_value GetAbilityInfoAsync(napi_env env, napi_value *args, const size_t argCallback, AbilityInfoCB *abilityInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || abilityInfoCB == nullptr) {
@@ -1840,9 +957,9 @@ napi_value GetAbilityInfoAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &abilityInfoCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &abilityInfoCB->cbBase.cbInfo.callback));
     }
     NAPI_CALL(env,
         napi_create_async_work(env,
@@ -1923,7 +1040,7 @@ napi_value GetAbilityInfoWrap(napi_env env, napi_callback_info info, AbilityInfo
     }
 
     if (argcAsync > argcPromise) {
-        ret = GetAbilityInfoAsync(env, args, argcAsync, argcPromise, abilityInfoCB);
+        ret = GetAbilityInfoAsync(env, args, 0, abilityInfoCB);
     } else {
         ret = GetAbilityInfoPromise(env, abilityInfoCB);
     }
@@ -1981,15 +1098,16 @@ HapModuleInfoCB *CreateHapModuleInfoCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    HapModuleInfoCB *hapModuleInfoCB = new (std::nothrow) HapModuleInfoCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    HapModuleInfoCB *hapModuleInfoCB = new (std::nothrow) HapModuleInfoCB;
     if (hapModuleInfoCB == nullptr) {
         HILOG_ERROR("%{public}s, hapModuleInfoCB == nullptr.", __func__);
+        return nullptr;
     }
+    hapModuleInfoCB->cbBase.cbInfo.env = env;
+    hapModuleInfoCB->cbBase.asyncWork = nullptr;
+    hapModuleInfoCB->cbBase.deferred = nullptr;
+    hapModuleInfoCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s end.", __func__);
     return hapModuleInfoCB;
 }
@@ -2113,7 +1231,7 @@ napi_value WrapHapModuleInfo(napi_env env, const HapModuleInfoCB &hapModuleInfoC
 void GetHapModuleInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, worker pool thread execute.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     if (hapModuleInfoCB == nullptr) {
         HILOG_ERROR("NAPI_GetHapModuleInfo, hapModuleInfoCB == nullptr");
         return;
@@ -2144,7 +1262,7 @@ void GetHapModuleInfoExecuteCB(napi_env env, void *data)
 void GetHapModuleInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, main event thread complete.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -2171,7 +1289,7 @@ void GetHapModuleInfoAsyncCompleteCB(napi_env env, napi_status status, void *dat
 void GetHapModuleInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetHapModuleInfo, main event thread complete.");
-    HapModuleInfoCB *hapModuleInfoCB = (HapModuleInfoCB *)data;
+    HapModuleInfoCB *hapModuleInfoCB = static_cast<HapModuleInfoCB *>(data);
     napi_value result = nullptr;
     if (hapModuleInfoCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapHapModuleInfo(env, *hapModuleInfoCB);
@@ -2198,7 +1316,7 @@ void GetHapModuleInfoPromiseCompleteCB(napi_env env, napi_status status, void *d
  * @return Return JS data successfully, otherwise return nullptr.
  */
 napi_value GetHapModuleInfoAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, HapModuleInfoCB *hapModuleInfoCB)
+    napi_env env, napi_value *args, const size_t argCallback, HapModuleInfoCB *hapModuleInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || hapModuleInfoCB == nullptr) {
@@ -2209,9 +1327,9 @@ napi_value GetHapModuleInfoAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &hapModuleInfoCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &hapModuleInfoCB->cbBase.cbInfo.callback));
     }
     NAPI_CALL(env,
         napi_create_async_work(env,
@@ -2284,7 +1402,7 @@ napi_value GetHapModuleInfoWrap(napi_env env, napi_callback_info info, HapModule
     }
 
     if (argcAsync > argcPromise) {
-        ret = GetHapModuleInfoAsync(env, args, argcAsync, argcPromise, hapModuleInfoCB);
+        ret = GetHapModuleInfoAsync(env, args, 0, hapModuleInfoCB);
     } else {
         ret = GetHapModuleInfoPromise(env, hapModuleInfoCB);
     }
@@ -2328,568 +1446,16 @@ napi_value NAPI_GetHapModuleInfoCommon(napi_env env, napi_callback_info info, Ab
  *
  * @param env The environment that the Node-API call is invoked under.
  *
- * @return Return a pointer to ProcessNameCB on success, nullptr on failure.
- */
-ProcessNameCB *CreateProcessNameCBInfo(napi_env env)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    ProcessNameCB *processNameCB = new (std::nothrow) ProcessNameCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
-    if (processNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, processNameCB == nullptr.", __func__);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-    return processNameCB;
-}
-
-/**
- * @brief GetProcessName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessNameExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessName, worker pool thread execute.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
-    if (processNameCB == nullptr) {
-        HILOG_ERROR("NAPI_GetProcessName, processNameCB == nullptr");
-        return;
-    }
-
-    processNameCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (processNameCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetProcessName, ability == nullptr");
-        processNameCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    if (!CheckAbilityType(&processNameCB->cbBase)) {
-        HILOG_ERROR("NAPI_GetProcessName,wrong ability type");
-        processNameCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        return;
-    }
-
-    processNameCB->processName = processNameCB->cbBase.ability->GetProcessName();
-    HILOG_INFO("NAPI_GetProcessName, worker pool thread execute end.");
-}
-
-napi_value WrapProcessName(napi_env env, ProcessNameCB *processNameCB)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    if (processNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, Invalid param(processNameCB == nullptr)", __func__);
-        return nullptr;
-    }
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, processNameCB->processName.c_str(), NAPI_AUTO_LENGTH, &result));
-    HILOG_INFO("%{public}s, end.", __func__);
-    return result;
-}
-
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
-    napi_value callback = nullptr;
-    napi_value undefined = nullptr;
-    napi_value result[ARGS_TWO] = {nullptr};
-    napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    result[PARAM0] = GetCallbackErrorValue(env, processNameCB->cbBase.errCode);
-    if (processNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result[PARAM1] = WrapProcessName(env, processNameCB);
-    } else {
-        result[PARAM1] = WrapUndefinedToJS(env);
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, processNameCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
-    if (processNameCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, processNameCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, processNameCB->cbBase.asyncWork));
-    delete processNameCB;
-    processNameCB = nullptr;
-    HILOG_INFO("NAPI_GetProcessName, main event thread complete end.");
-}
-
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetProcessNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
-    ProcessNameCB *processNameCB = (ProcessNameCB *)data;
-    napi_value result = nullptr;
-    if (processNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result = WrapProcessName(env, processNameCB);
-        napi_resolve_deferred(env, processNameCB->cbBase.deferred, result);
-    } else {
-        result = GetCallbackErrorValue(env, processNameCB->cbBase.errCode);
-        napi_reject_deferred(env, processNameCB->cbBase.deferred, result);
-    }
-
-    napi_delete_async_work(env, processNameCB->cbBase.asyncWork);
-    delete processNameCB;
-    processNameCB = nullptr;
-    HILOG_INFO("NAPI_GetProcessName, main event thread complete end.");
-}
-
-/**
- * @brief GetProcessName Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessNameAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, ProcessNameCB *processNameCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (args == nullptr || processNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
-    if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &processNameCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetProcessNameExecuteCB,
-            GetProcessNameAsyncCompleteCB,
-            (void *)processNameCB,
-            &processNameCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, processNameCB->cbBase.asyncWork));
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_null(env, &result));
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return result;
-}
-
-/**
- * @brief GetProcessName Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessNamePromise(napi_env env, ProcessNameCB *processNameCB)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    if (processNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise = nullptr;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    processNameCB->cbBase.deferred = deferred;
-
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetProcessNameExecuteCB,
-            GetProcessNamePromiseCompleteCB,
-            (void *)processNameCB,
-            &processNameCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, processNameCB->cbBase.asyncWork));
-    HILOG_INFO("%{public}s, promise end.", __func__);
-    return promise;
-}
-
-/**
- * @brief GetProcessName processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetProcessNameWrap(napi_env env, napi_callback_info info, ProcessNameCB *processNameCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (processNameCB == nullptr) {
-        HILOG_ERROR("%{public}s, processNameCB == nullptr.", __func__);
-        return nullptr;
-    }
-
-    size_t argcAsync = 1;
-    const size_t argcPromise = 0;
-    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
-    napi_value args[ARGS_MAX_COUNT] = {nullptr};
-    napi_value ret = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-
-    if (argcAsync > argcPromise) {
-        ret = GetProcessNameAsync(env, args, argcAsync, argcPromise, processNameCB);
-    } else {
-        ret = GetProcessNamePromise(env, processNameCB);
-    }
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Obtains the name of the current process.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessNameCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    ProcessNameCB *processNameCB = CreateProcessNameCBInfo(env);
-    if (processNameCB == nullptr) {
-        return WrapVoidToJS(env);
-    }
-
-    processNameCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    processNameCB->cbBase.abilityType = abilityType;
-    napi_value ret = GetProcessNameWrap(env, info, processNameCB);
-    if (ret == nullptr) {
-        HILOG_ERROR("%{public}s ret == nullptr.", __func__);
-        if (processNameCB != nullptr) {
-            delete processNameCB;
-            processNameCB = nullptr;
-        }
-        ret = WrapVoidToJS(env);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
- */
-CallingBundleCB *CreateCallingBundleCBInfo(napi_env env)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    CallingBundleCB *callingBundleCB = new (std::nothrow) CallingBundleCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
-    if (callingBundleCB == nullptr) {
-        HILOG_ERROR("%{public}s, callingBundleCB == nullptr.", __func__);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-    return callingBundleCB;
-}
-
-/**
- * @brief GetCallingBundle asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetCallingBundleExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_GetCallingBundle, worker pool thread execute.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
-    if (callingBundleCB == nullptr) {
-        HILOG_ERROR("NAPI_GetCallingBundle, callingBundleCB == nullptr");
-        return;
-    }
-
-    callingBundleCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (callingBundleCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetCallingBundle, ability == nullptr");
-        callingBundleCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    if (!CheckAbilityType(&callingBundleCB->cbBase)) {
-        HILOG_ERROR("NAPI_GetCallingBundle,wrong ability type");
-        callingBundleCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        return;
-    }
-    callingBundleCB->callingBundleName = callingBundleCB->cbBase.ability->GetCallingBundle();
-    HILOG_INFO("NAPI_GetCallingBundle, worker pool thread execute end.");
-}
-
-napi_value WrapCallingBundle(napi_env env, CallingBundleCB *callingBundleCB)
-{
-    HILOG_INFO("%{public}s, called.", __func__);
-    if (callingBundleCB == nullptr) {
-        HILOG_ERROR("%{public}s,Invalid param(callingBundleCB == nullptr)", __func__);
-        return nullptr;
-    }
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, callingBundleCB->callingBundleName.c_str(), NAPI_AUTO_LENGTH, &result));
-    HILOG_INFO("%{public}s, end.", __func__);
-    return result;
-}
-
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
-    napi_value callback = nullptr;
-    napi_value undefined = nullptr;
-    napi_value result[ARGS_TWO] = {nullptr};
-    napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    result[PARAM0] = GetCallbackErrorValue(env, callingBundleCB->cbBase.errCode);
-    if (callingBundleCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result[PARAM1] = WrapCallingBundle(env, callingBundleCB);
-    } else {
-        result[PARAM1] = WrapUndefinedToJS(env);
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, callingBundleCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
-    if (callingBundleCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, callingBundleCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, callingBundleCB->cbBase.asyncWork));
-    delete callingBundleCB;
-    callingBundleCB = nullptr;
-    HILOG_INFO("NAPI_GetCallingBundle, main event thread complete end.");
-}
-
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
-void GetCallingBundlePromiseCompleteCB(napi_env env, napi_status status, void *data)
-{
-    HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
-    CallingBundleCB *callingBundleCB = (CallingBundleCB *)data;
-    napi_value result = nullptr;
-    if (callingBundleCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
-        result = WrapCallingBundle(env, callingBundleCB);
-        napi_resolve_deferred(env, callingBundleCB->cbBase.deferred, result);
-    } else {
-        result = GetCallbackErrorValue(env, callingBundleCB->cbBase.errCode);
-        napi_reject_deferred(env, callingBundleCB->cbBase.deferred, result);
-    }
-
-    napi_delete_async_work(env, callingBundleCB->cbBase.asyncWork);
-    delete callingBundleCB;
-    callingBundleCB = nullptr;
-    HILOG_INFO("NAPI_GetCallingBundle, main event thread complete end.");
-}
-
-/**
- * @brief GetCallingBundle Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetCallingBundleAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, CallingBundleCB *callingBundleCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (args == nullptr || callingBundleCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
-    if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &callingBundleCB->cbBase.cbInfo.callback));
-    }
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetCallingBundleExecuteCB,
-            GetCallingBundleAsyncCompleteCB,
-            (void *)callingBundleCB,
-            &callingBundleCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callingBundleCB->cbBase.asyncWork));
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_null(env, &result));
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return result;
-}
-
-/**
- * @brief GetCallingBundle Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetCallingBundlePromise(napi_env env, CallingBundleCB *callingBundleCB)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    if (callingBundleCB == nullptr) {
-        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
-        return nullptr;
-    }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise = nullptr;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    callingBundleCB->cbBase.deferred = deferred;
-
-    NAPI_CALL(env,
-        napi_create_async_work(env,
-            nullptr,
-            resourceName,
-            GetCallingBundleExecuteCB,
-            GetCallingBundlePromiseCompleteCB,
-            (void *)callingBundleCB,
-            &callingBundleCB->cbBase.asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callingBundleCB->cbBase.asyncWork));
-    HILOG_INFO("%{public}s, promise end.", __func__);
-    return promise;
-}
-
-/**
- * @brief GetCallingBundle processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value GetCallingBundleWrap(napi_env env, napi_callback_info info, CallingBundleCB *callingBundleCB)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    if (callingBundleCB == nullptr) {
-        HILOG_ERROR("%{public}s, callingBundleCB == nullptr.", __func__);
-        return nullptr;
-    }
-
-    size_t argcAsync = 1;
-    const size_t argcPromise = 0;
-    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
-    napi_value args[ARGS_MAX_COUNT] = {nullptr};
-    napi_value ret = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
-        return nullptr;
-    }
-
-    if (argcAsync > argcPromise) {
-        ret = GetCallingBundleAsync(env, args, argcAsync, argcPromise, callingBundleCB);
-    } else {
-        ret = GetCallingBundlePromise(env, callingBundleCB);
-    }
-    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Obtains the bundle name of the ability that called the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetCallingBundleCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    CallingBundleCB *calloingBundleCB = CreateCallingBundleCBInfo(env);
-    if (calloingBundleCB == nullptr) {
-        return WrapVoidToJS(env);
-    }
-
-    calloingBundleCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    calloingBundleCB->cbBase.abilityType = abilityType;
-    napi_value ret = GetCallingBundleWrap(env, info, calloingBundleCB);
-    if (ret == nullptr) {
-        HILOG_ERROR("%{public}s ret == nullptr", __func__);
-        if (calloingBundleCB != nullptr) {
-            delete calloingBundleCB;
-            calloingBundleCB = nullptr;
-        }
-        ret = WrapVoidToJS(env);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
  * @return Return a pointer to AsyncCallbackInfo on success, nullptr on failure
  */
 AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
+    if (env == nullptr) {
+        HILOG_INFO("%{public}s env == nullptr.", __func__);
+        return nullptr;
+    }
+
     napi_status ret;
     napi_value global = 0;
     const napi_extended_error_info *errorInfo = nullptr;
@@ -2913,18 +1479,19 @@ AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
         HILOG_ERROR("%{public}s get_value_external=%{public}d err:%{public}s", __func__, ret, errorInfo->error_message);
     }
 
-    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo{
-        .cbInfo.env = env,
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .ability = ability,
-        .native_result = false,
-        .errCode = NAPI_ERR_NO_ERROR,
-        .abilityType = AbilityType::UNKNOWN,
-    };
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo;
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s asyncCallbackInfo == nullptr", __func__);
+        return nullptr;
     }
+    asyncCallbackInfo->cbInfo.env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
+    asyncCallbackInfo->deferred = nullptr;
+    asyncCallbackInfo->ability = ability;
+    asyncCallbackInfo->native_result = false;
+    asyncCallbackInfo->errCode = NAPI_ERR_NO_ERROR;
+    asyncCallbackInfo->abilityType = AbilityType::UNKNOWN;
+
     HILOG_INFO("%{public}s end.", __func__);
     return asyncCallbackInfo;
 }
@@ -2932,7 +1499,7 @@ AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
 void GetContextAsyncExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("GetContextAsync, worker pool thread execute.");
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("GetContextAsync, asyncCallbackInfo == nullptr");
         return;
@@ -2953,7 +1520,7 @@ void GetContextAsyncExecuteCB(napi_env env, void *data)
 }
 
 napi_value GetContextAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo)
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || asyncCallbackInfo == nullptr) {
@@ -2964,9 +1531,9 @@ napi_value GetContextAsync(
     napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
 
     napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, args[argcPromise], &valuetype);
+    napi_typeof(env, args[argCallback], &valuetype);
     if (valuetype == napi_function) {
-        napi_create_reference(env, args[argcPromise], 1, &asyncCallbackInfo->cbInfo.callback);
+        napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback);
     }
     napi_create_async_work(
         env,
@@ -2975,7 +1542,7 @@ napi_value GetContextAsync(
         GetContextAsyncExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetContextAsync, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value result[ARGS_TWO] = {0};
@@ -3028,7 +1595,7 @@ napi_value GetContextPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         GetContextAsyncExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetContextPromise, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value result = nullptr;
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
                 napi_new_instance(env, g_classContext, 0, nullptr, &result);
@@ -3116,7 +1683,7 @@ napi_value NAPI_GetContextCommon(napi_env env, napi_callback_info info, AbilityT
 void GetWantExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr", __func__);
         return;
@@ -3143,8 +1710,7 @@ void GetWantExecuteCB(napi_env env, void *data)
     HILOG_INFO("%{public}s, end.", __func__);
 }
 
-napi_value GetWantAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo)
+napi_value GetWantAsync(napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || asyncCallbackInfo == nullptr) {
@@ -3155,9 +1721,9 @@ napi_value GetWantAsync(
     napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
 
     napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, args[argcPromise], &valuetype);
+    napi_typeof(env, args[argCallback], &valuetype);
     if (valuetype == napi_function) {
-        napi_create_reference(env, args[argcPromise], 1, &asyncCallbackInfo->cbInfo.callback);
+        napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback);
     }
     napi_create_async_work(
         env,
@@ -3166,7 +1732,7 @@ napi_value GetWantAsync(
         GetWantExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetWantAsync, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_value result[ARGS_TWO] = {0};
@@ -3219,7 +1785,7 @@ napi_value GetWantPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         GetWantExecuteCB,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("GetWantPromise, main event thread complete.");
-            AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+            AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value result = nullptr;
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
                 result = WrapWant(env, asyncCallbackInfo->param.want);
@@ -3270,7 +1836,7 @@ napi_value GetWantWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo 
     }
 
     if (argcAsync > argcPromise) {
-        ret = GetWantAsync(env, args, argcAsync, argcPromise, asyncCallbackInfo);
+        ret = GetWantAsync(env, args, 0, asyncCallbackInfo);
     } else {
         ret = GetWantPromise(env, asyncCallbackInfo);
     }
@@ -3329,15 +1895,16 @@ AbilityNameCB *CreateAbilityNameCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    AbilityNameCB *abilityNameCB = new (std::nothrow) AbilityNameCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    AbilityNameCB *abilityNameCB = new (std::nothrow) AbilityNameCB;
     if (abilityNameCB == nullptr) {
         HILOG_ERROR("%{public}s, abilityNameCB == nullptr.", __func__);
+        return nullptr;
     }
+    abilityNameCB->cbBase.cbInfo.env = env;
+    abilityNameCB->cbBase.asyncWork = nullptr;
+    abilityNameCB->cbBase.deferred = nullptr;
+    abilityNameCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s, end.", __func__);
     return abilityNameCB;
 }
@@ -3364,7 +1931,7 @@ napi_value WrapAbilityName(napi_env env, AbilityNameCB *abilityNameCB)
 void GetAbilityNameExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     if (abilityNameCB == nullptr) {
         HILOG_ERROR("%{public}s, abilityNameCB == nullptr", __func__);
         return;
@@ -3395,7 +1962,7 @@ void GetAbilityNameExecuteCB(napi_env env, void *data)
 void GetAbilityNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -3427,7 +1994,7 @@ void GetAbilityNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void GetAbilityNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetAbilityName, main event thread complete.");
-    AbilityNameCB *abilityNameCB = (AbilityNameCB *)data;
+    AbilityNameCB *abilityNameCB = static_cast<AbilityNameCB *>(data);
     napi_value result = nullptr;
     if (abilityNameCB->cbBase.errCode == NAPI_ERR_NO_ERROR) {
         result = WrapAbilityName(env, abilityNameCB);
@@ -3453,8 +2020,7 @@ void GetAbilityNamePromiseCompleteCB(napi_env env, napi_status status, void *dat
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value GetAbilityNameAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AbilityNameCB *abilityNameCB)
+napi_value GetAbilityNameAsync(napi_env env, napi_value *args, const size_t argCallback, AbilityNameCB *abilityNameCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (args == nullptr || abilityNameCB == nullptr) {
@@ -3465,9 +2031,9 @@ napi_value GetAbilityNameAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &abilityNameCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &abilityNameCB->cbBase.cbInfo.callback));
     }
     NAPI_CALL(env,
         napi_create_async_work(env,
@@ -3548,7 +2114,7 @@ napi_value GetAbilityNameWrap(napi_env env, napi_callback_info info, AbilityName
     }
 
     if (argcAsync > argcPromise) {
-        ret = GetAbilityNameAsync(env, args, argcAsync, argcPromise, abilityNameCB);
+        ret = GetAbilityNameAsync(env, args, 0, abilityNameCB);
     } else {
         ret = GetAbilityNamePromise(env, abilityNameCB);
     }
@@ -3588,6 +2154,82 @@ napi_value NAPI_GetAbilityNameCommon(napi_env env, napi_callback_info info, Abil
     return ret;
 }
 
+bool UnwrapAbilityStartSetting(napi_env env, napi_value param, AAFwk::AbilityStartSetting &setting)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (!IsTypeForNapiValue(env, param, napi_object)) {
+        return false;
+    }
+
+    napi_valuetype jsValueType = napi_undefined;
+    napi_value jsProNameList = nullptr;
+    uint32_t jsProCount = 0;
+
+    NAPI_CALL_BASE(env, napi_get_property_names(env, param, &jsProNameList), false);
+    NAPI_CALL_BASE(env, napi_get_array_length(env, jsProNameList, &jsProCount), false);
+    HILOG_INFO("%{public}s called. Property size=%{public}d.", __func__, jsProCount);
+
+    napi_value jsProName = nullptr;
+    napi_value jsProValue = nullptr;
+    for (uint32_t index = 0; index < jsProCount; index++) {
+        NAPI_CALL_BASE(env, napi_get_element(env, jsProNameList, index, &jsProName), false);
+
+        std::string strProName = UnwrapStringFromJS(env, jsProName);
+        HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
+        NAPI_CALL_BASE(env, napi_get_named_property(env, param, strProName.c_str(), &jsProValue), false);
+        NAPI_CALL_BASE(env, napi_typeof(env, jsProValue, &jsValueType), false);
+
+        switch (jsValueType) {
+            case napi_string: {
+                std::string natValue = UnwrapStringFromJS(env, jsProValue);
+                HILOG_INFO("%{public}s called. Property value=%{public}s.", __func__, natValue.c_str());
+                setting.AddProperty(strProName, natValue);
+                break;
+            }
+            case napi_boolean: {
+                bool natValue = false;
+                NAPI_CALL_BASE(env, napi_get_value_bool(env, jsProValue, &natValue), false);
+                HILOG_INFO("%{public}s called. Property value=%{public}s.", __func__, natValue ? "true" : "false");
+                setting.AddProperty(strProName, std::to_string(natValue));
+                break;
+            }
+            case napi_number: {
+                int32_t natValue32 = 0;
+                double natValueDouble = 0.0;
+                bool isReadValue32 = false;
+                bool isReadDouble = false;
+                if (napi_get_value_int32(env, jsProValue, &natValue32) == napi_ok) {
+                    HILOG_INFO("%{public}s called. Property value=%{public}d.", __func__, natValue32);
+                    isReadValue32 = true;
+                }
+
+                if (napi_get_value_double(env, jsProValue, &natValueDouble) == napi_ok) {
+                    HILOG_INFO("%{public}s called. Property value=%{public}lf.", __func__, natValueDouble);
+                    isReadDouble = true;
+                }
+
+                if (isReadValue32 && isReadDouble) {
+                    if (abs(natValueDouble - natValue32 * 1.0) > 0.0) {
+                        setting.AddProperty(strProName, std::to_string(natValueDouble));
+                    } else {
+                        setting.AddProperty(strProName, std::to_string(natValue32));
+                    }
+                } else if (isReadValue32) {
+                    setting.AddProperty(strProName, std::to_string(natValue32));
+                } else if (isReadDouble) {
+                    setting.AddProperty(strProName, std::to_string(natValueDouble));
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return true;
+}
+
 /**
  * @brief Parse the parameters.
  *
@@ -3620,6 +2262,9 @@ bool UnwrapParamForWant(napi_env env, napi_value args, AbilityType abilityType, 
     napi_value jsSettingObj = GetPropertyValueByPropertyName(env, args, "abilityStartSetting", napi_object);
     if (jsSettingObj != nullptr) {
         param.setting = AbilityStartSetting::GetEmptySetting();
+        if (!UnwrapAbilityStartSetting(env, jsSettingObj, *(param.setting))) {
+            HILOG_ERROR("%{public}s, unwrap abilityStartSetting falied.", __func__);
+        }
         HILOG_INFO("%{public}s abilityStartSetting = %{public}p.", __func__, param.setting.get());
     }
 
@@ -3649,10 +2294,11 @@ void StartAbilityExecuteCB(napi_env env, void *data)
     }
 
     if (asyncCallbackInfo->param.setting == nullptr) {
+        HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);
         asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want);
     } else {
-        asyncCallbackInfo->ability->StartAbility(
-            asyncCallbackInfo->param.want, *(asyncCallbackInfo->param.setting.get()));
+        HILOG_INFO("%{public}s param.setting != nullptr call StartAbility.", __func__);
+        asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want, *(asyncCallbackInfo->param.setting));
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
@@ -3660,7 +2306,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
 void StartAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result[ARGS_TWO] = {0};
@@ -3688,7 +2334,7 @@ void StartAbilityCallbackCompletedCB(napi_env env, napi_status status, void *dat
 void StartAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     napi_value result = 0;
     if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
         napi_create_int32(env, 0, &result);
@@ -3704,7 +2350,7 @@ void StartAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data
 }
 
 napi_value StartAbilityAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo)
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s asyncCallback.", __func__);
     if (args == nullptr || asyncCallbackInfo == nullptr) {
@@ -3715,9 +2361,9 @@ napi_value StartAbilityAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &asyncCallbackInfo->cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -3792,7 +2438,7 @@ napi_value StartAbilityWrap(napi_env env, napi_callback_info info, AsyncCallback
 
     asyncCallbackInfo->param = param;
     if (argcAsync > argcPromise) {
-        ret = StartAbilityAsync(env, args, argcAsync, argcPromise, asyncCallbackInfo);
+        ret = StartAbilityAsync(env, args, 1, asyncCallbackInfo);
     } else {
         ret = StartAbilityPromise(env, asyncCallbackInfo);
     }
@@ -3855,7 +2501,7 @@ bool UnwrapParamStopAbilityWrap(napi_env env, size_t argc, napi_value *argv, Asy
 void StopAbilityExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = (AsyncJSCallbackInfo *)data;
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s asyncCallbackInfo is null", __func__);
         return;
@@ -3963,15 +2609,16 @@ ConnectAbilityCB *CreateConnectAbilityCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB;
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr", __func__);
+        return nullptr;
     }
+    connectAbilityCB->cbBase.cbInfo.env = env;
+    connectAbilityCB->cbBase.asyncWork = nullptr;
+    connectAbilityCB->cbBase.deferred = nullptr;
+    connectAbilityCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s end.", __func__);
     return connectAbilityCB;
 }
@@ -3979,7 +2626,7 @@ ConnectAbilityCB *CreateConnectAbilityCBInfo(napi_env env)
 void ConnectAbilityExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr.", __func__);
         return;
@@ -4012,7 +2659,7 @@ void ConnectAbilityExecuteCB(napi_env env, void *data)
 void ConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result = 0;
@@ -4054,7 +2701,7 @@ void ConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void *d
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-napi_value ConnectAbilityAsync(napi_env env, napi_value *args, size_t argcAsync, ConnectAbilityCB *connectAbilityCB)
+napi_value ConnectAbilityAsync(napi_env env, napi_value *args, ConnectAbilityCB *connectAbilityCB)
 {
     HILOG_INFO("%{public}s asyncCallback.", __func__);
     if (args == nullptr || connectAbilityCB == nullptr) {
@@ -4163,7 +2810,7 @@ napi_value ConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectAbil
         }
     }
 
-    ret = ConnectAbilityAsync(env, args, argcAsync, connectAbilityCB);
+    ret = ConnectAbilityAsync(env, args, connectAbilityCB);
     if (ret != nullptr) {
         // return number to js
         NAPI_CALL(env, napi_create_int64(env, connectAbilityCB->id, &ret));
@@ -4224,15 +2871,16 @@ ConnectAbilityCB *CreateDisConnectAbilityCBInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = ability,
-    };
+    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB;
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr", __func__);
+        return nullptr;
     }
+    connectAbilityCB->cbBase.cbInfo.env = env;
+    connectAbilityCB->cbBase.asyncWork = nullptr;
+    connectAbilityCB->cbBase.deferred = nullptr;
+    connectAbilityCB->cbBase.ability = ability;
+
     HILOG_INFO("%{public}s end.", __func__);
     return connectAbilityCB;
 }
@@ -4240,7 +2888,7 @@ ConnectAbilityCB *CreateDisConnectAbilityCBInfo(napi_env env)
 void DisConnectAbilityExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     if (connectAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s connectAbilityCB == nullptr.", __func__);
         return;
@@ -4269,7 +2917,7 @@ void DisConnectAbilityExecuteCB(napi_env env, void *data)
 void DisConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result[ARGS_TWO] = {0};
@@ -4297,7 +2945,7 @@ void DisConnectAbilityCallbackCompletedCB(napi_env env, napi_status status, void
 void DisConnectAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    ConnectAbilityCB *connectAbilityCB = (ConnectAbilityCB *)data;
+    ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(data);
     napi_value result = 0;
     if (connectAbilityCB->errCode == NAPI_ERR_NO_ERROR) {
         result = WrapVoidToJS(env);
@@ -4313,7 +2961,7 @@ void DisConnectAbilityPromiseCompletedCB(napi_env env, napi_status status, void 
 }
 
 napi_value DisConnectAbilityAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, ConnectAbilityCB *connectAbilityCB)
+    napi_env env, napi_value *args, const size_t argCallback, ConnectAbilityCB *connectAbilityCB)
 {
     HILOG_INFO("%{public}s asyncCallback.", __func__);
     if (args == nullptr || connectAbilityCB == nullptr) {
@@ -4324,9 +2972,9 @@ napi_value DisConnectAbilityAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &connectAbilityCB->cbBase.cbInfo.callback));
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &connectAbilityCB->cbBase.cbInfo.callback));
     }
 
     NAPI_CALL(env,
@@ -4417,7 +3065,7 @@ napi_value DisConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectA
     }
 
     if (argcAsync > argcPromise) {
-        ret = DisConnectAbilityAsync(env, args, argcAsync, argcPromise, connectAbilityCB);
+        ret = DisConnectAbilityAsync(env, args, ARGS_ONE, connectAbilityCB);
     } else {
         ret = DisConnectAbilityPromise(env, connectAbilityCB);
     }
@@ -4476,48 +3124,88 @@ void NAPIAbilityConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
     HILOG_INFO("%{public}s, called.", __func__);
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("%{public}s, remoteObject == nullptr.", __func__);
+        return;
+    }
     uv_loop_s *loop = nullptr;
 
-#if NAPI_VERSION >= 2
     napi_get_uv_event_loop(env_, &loop);
-#endif  // NAPI_VERSION >= 2
+    if (loop == nullptr) {
+        HILOG_ERROR("%{public}s, loop == nullptr.", __func__);
+        return;
+    }
 
     uv_work_t *work = new uv_work_t;
-    ConnectAbilityCB *connectAbilityCB =
-        new (std::nothrow) ConnectAbilityCB{.cbBase.cbInfo.env = env_, .cbBase.cbInfo.callback = connectRef_};
+    if (work == nullptr) {
+        HILOG_ERROR("%{public}s, work==nullptr.", __func__);
+        return;
+    }
+
+    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB;
+    if (connectAbilityCB == nullptr) {
+        HILOG_ERROR("%{public}s, connectAbilityCB == nullptr.", __func__);
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+        return;
+    }
+    connectAbilityCB->cbBase.cbInfo.env = env_;
+    connectAbilityCB->cbBase.cbInfo.callback = connectRef_;
     connectAbilityCB->abilityConnectionCB.elementName = element;
     connectAbilityCB->abilityConnectionCB.resultCode = resultCode;
     connectAbilityCB->abilityConnectionCB.connection = remoteObject;
     work->data = (void *)connectAbilityCB;
 
-    uv_queue_work(
+    int rev = uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
         [](uv_work_t *work, int status) {
             HILOG_INFO("OnAbilityConnectDone, uv_queue_work");
             // JS Thread
-            ConnectAbilityCB *event = (ConnectAbilityCB *)work->data;
+            ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
             napi_value result[ARGS_TWO] = {0};
-            result[PARAM0] = WrapElementName(event->cbBase.cbInfo.env, event->abilityConnectionCB.elementName);
-            napi_value jsRemoteObject =
-                NAPI_ohos_rpc_CreateJsRemoteObject(event->cbBase.cbInfo.env, event->abilityConnectionCB.connection);
+            result[PARAM0] =
+                WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);
+            napi_value jsRemoteObject = NAPI_ohos_rpc_CreateJsRemoteObject(
+                connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.connection);
             result[PARAM1] = jsRemoteObject;
 
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_get_undefined(event->cbBase.cbInfo.env, &undefined);
+            napi_get_undefined(connectAbilityCB->cbBase.cbInfo.env, &undefined);
             napi_value callResult = 0;
-            napi_get_reference_value(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback, &callback);
+            napi_get_reference_value(
+                connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->cbBase.cbInfo.callback, &callback);
 
-            napi_call_function(event->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
-            if (event->cbBase.cbInfo.callback != nullptr) {
-                napi_delete_reference(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback);
+            napi_call_function(
+                connectAbilityCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+            if (connectAbilityCB->cbBase.cbInfo.callback != nullptr) {
+                napi_delete_reference(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->cbBase.cbInfo.callback);
             }
-            delete event;
-            delete work;
+            if (connectAbilityCB != nullptr) {
+                delete connectAbilityCB;
+                connectAbilityCB = nullptr;
+            }
+            if (work != nullptr) {
+                delete work;
+                work = nullptr;
+            }
             HILOG_INFO("OnAbilityConnectDone, uv_queue_work end");
         });
+
+    if (rev != 0) {
+        if (connectAbilityCB != nullptr) {
+            delete connectAbilityCB;
+            connectAbilityCB = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+    }
     HILOG_INFO("%{public}s, end.", __func__);
 }
 
@@ -4526,47 +3214,66 @@ void NAPIAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementNam
     HILOG_INFO("%{public}s, called.", __func__);
 
     uv_loop_s *loop = nullptr;
-
-#if NAPI_VERSION >= 2
     napi_get_uv_event_loop(env_, &loop);
-#endif  // NAPI_VERSION >= 2
+    if (loop == nullptr) {
+        HILOG_ERROR("%{public}s, loop == nullptr.", __func__);
+        return;
+    }
+
     HILOG_INFO("OnAbilityDisconnectDone bundleName:%{public}s abilityName:%{public}s resultCode:%{public}d",
         element.GetBundleName().c_str(),
         element.GetAbilityName().c_str(),
         resultCode);
     uv_work_t *work = new uv_work_t;
-    ConnectAbilityCB *connectAbilityCB =
-        new (std::nothrow) ConnectAbilityCB{.cbBase.cbInfo.env = env_, .cbBase.cbInfo.callback = disconnectRef_};
+    if (work == nullptr) {
+        HILOG_ERROR("%{public}s, work == nullptr.", __func__);
+        return;
+    }
+
+    ConnectAbilityCB *connectAbilityCB = new (std::nothrow) ConnectAbilityCB;
+    if (connectAbilityCB == nullptr) {
+        HILOG_ERROR("%{public}s, connectAbilityCB == nullptr.", __func__);
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+        return;
+    }
+    connectAbilityCB->cbBase.cbInfo.env = env_;
+    connectAbilityCB->cbBase.cbInfo.callback = disconnectRef_;
     connectAbilityCB->abilityConnectionCB.elementName = element;
     connectAbilityCB->abilityConnectionCB.resultCode = resultCode;
     work->data = (void *)connectAbilityCB;
 
-    uv_queue_work(
+    int rev = uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
         [](uv_work_t *work, int status) {
             HILOG_INFO("OnAbilityDisconnectDone, uv_queue_work");
             // JS Thread
-            ConnectAbilityCB *event = (ConnectAbilityCB *)work->data;
+            ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
             napi_value result = nullptr;
-            result = WrapElementName(event->cbBase.cbInfo.env, event->abilityConnectionCB.elementName);
+            result =
+                WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);
 
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_get_undefined(event->cbBase.cbInfo.env, &undefined);
+            napi_get_undefined(connectAbilityCB->cbBase.cbInfo.env, &undefined);
             napi_value callResult = 0;
-            napi_get_reference_value(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback, &callback);
+            napi_get_reference_value(
+                connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->cbBase.cbInfo.callback, &callback);
 
-            napi_call_function(event->cbBase.cbInfo.env, undefined, callback, ARGS_ONE, &result, &callResult);
-            if (event->cbBase.cbInfo.callback != nullptr) {
-                napi_delete_reference(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback);
+            napi_call_function(
+                connectAbilityCB->cbBase.cbInfo.env, undefined, callback, ARGS_ONE, &result, &callResult);
+            if (connectAbilityCB->cbBase.cbInfo.callback != nullptr) {
+                napi_delete_reference(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->cbBase.cbInfo.callback);
             }
 
             // release connect
             HILOG_INFO("OnAbilityDisconnectDone connects_.size:%{public}zu", connects_.size());
-            std::string bundleName = event->abilityConnectionCB.elementName.GetBundleName();
-            std::string abilityName = event->abilityConnectionCB.elementName.GetAbilityName();
+            std::string bundleName = connectAbilityCB->abilityConnectionCB.elementName.GetBundleName();
+            std::string abilityName = connectAbilityCB->abilityConnectionCB.elementName.GetAbilityName();
             auto item = std::find_if(connects_.begin(),
                 connects_.end(),
                 [bundleName, abilityName](
@@ -4580,12 +3287,107 @@ void NAPIAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementNam
                 HILOG_INFO("OnAbilityDisconnectDone erase connects_.size:%{public}zu", connects_.size());
             }
 
-            delete event;
-            delete work;
+            if (connectAbilityCB != nullptr) {
+                delete connectAbilityCB;
+                connectAbilityCB = nullptr;
+            }
+            if (work != nullptr) {
+                delete work;
+                work = nullptr;
+            }
             HILOG_INFO("OnAbilityDisconnectDone, uv_queue_work end");
         });
+
+    if (rev != 0) {
+        if (connectAbilityCB != nullptr) {
+            delete connectAbilityCB;
+            connectAbilityCB = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+    }
     HILOG_INFO("%{public}s, end.", __func__);
 }
 
+/**
+ * @brief AcquireDataAbilityHelper.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    DataAbilityHelperCB *dataAbilityHelperCB = new (std::nothrow) DataAbilityHelperCB;
+    dataAbilityHelperCB->cbBase.cbInfo.env = env;
+    if (dataAbilityHelperCB == nullptr) {
+        HILOG_ERROR("%{public}s, dataAbilityHelperCB == nullptr", __func__);
+        return WrapVoidToJS(env);
+    }
+
+    dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+    dataAbilityHelperCB->cbBase.abilityType = abilityType;
+    napi_value ret = AcquireDataAbilityHelperWrap(env, info, dataAbilityHelperCB);
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr", __func__);
+        if (dataAbilityHelperCB != nullptr) {
+            delete dataAbilityHelperCB;
+            dataAbilityHelperCB = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s,end", __func__);
+    return ret;
+}
+
+/**
+ * @brief acquireDataAbilityHelper processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param dataAbilityHelperCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value AcquireDataAbilityHelperWrap(napi_env env, napi_callback_info info, DataAbilityHelperCB *dataAbilityHelperCB)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    if (dataAbilityHelperCB == nullptr) {
+        HILOG_ERROR("%{public}s,dataAbilityHelperCB == nullptr", __func__);
+        return nullptr;
+    }
+
+    size_t requireArgc = ARGS_ONE;
+    size_t argc = ARGS_ONE;
+    napi_value args[ARGS_ONE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
+    if (argc > requireArgc) {
+        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
+        return nullptr;
+    }
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    if (valuetype != napi_string) {
+        HILOG_ERROR("%{public}s, Wrong argument type.", __func__);
+        return nullptr;
+    }
+
+    if (!CheckAbilityType(&dataAbilityHelperCB->cbBase)) {
+        dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
+        HILOG_ERROR("%{public}s ability type invalid.", __func__);
+        return nullptr;
+    }
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_new_instance(env, g_dataAbilityHelper, 1, &args[PARAM0], &result));
+    delete dataAbilityHelperCB;
+    dataAbilityHelperCB = nullptr;
+    HILOG_INFO("%{public}s,end", __func__);
+    return result;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

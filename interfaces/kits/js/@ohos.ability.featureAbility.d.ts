@@ -17,10 +17,8 @@ import { Want } from './ability/want';
 import { StartAbilityParameter } from './ability/startAbilityParameter';
 import { AbilityResult } from './ability/abilityResult';
 import { Context } from './app/context';
-import { ConnectOptions } from './ability/connectOptions';
 import { DataAbilityHelper } from './ability/dataAbilityHelper';
-import { ProcessInfo } from './app/processInfo';
-import { ElementName } from './bundle/elementName';
+import { ConnectOptions } from './ability/connectOptions';
 
 /**
  * A Feature Ability represents an ability with a UI and is designed to interact with users.
@@ -36,6 +34,7 @@ declare namespace featureAbility {
    * @devices phone, tablet
    * @since 6
    * @sysCap AAFwk
+   * @param parameter Indicates the ability to start.
    * @return -
    */
   function getWant(callback: AsyncCallback<Want>): void;
@@ -92,78 +91,60 @@ declare namespace featureAbility {
    */
   function terminateSelf(callback: AsyncCallback<void>): void;
 
+  /**
+   * Obtains the dataAbilityHelper.
+   * @devices phone, tablet
+   * @since 7
+   * @sysCap AAFwk
+   * @param uri Indicates the path of the file to open.
+   * @return Returns the dataAbilityHelper.
+   */
+   function acquireDataAbilityHelper(uri: string): DataAbilityHelper;
+
    /**
    * Checks whether the main window of this ability has window focus.
    * @devices phone, tablet
    * @since 7
    * @sysCap AAFwk
    */
-  function hasWindowFocus(callback: AsyncCallback<boolean>): void;
-  function hasWindowFocus(): Promise<boolean>;
+   function hasWindowFocus(callback: AsyncCallback<boolean>): void;
+   function hasWindowFocus(): Promise<boolean>;
 
   /**
-   * Obtains the type of this application.
+   * Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+   * @default -
    * @devices phone, tablet
    * @since 7
-   * @sysCap appexecfwk
-   * @return Returns {@code system} if this application is a system application;
-   *         returns {@code normal} if it is released in Ohos AppGallery;
-   *         returns {@code other} if it is released by a third-party vendor;
-   *         returns an empty string if the query fails.
+   * @SysCap aafwk
+   * @param request The element name of the service ability
+   * @param options The remote object instance
+   * @return Returns the number of the ability connected
    */
-   function getAppType(callback: AsyncCallback<string>): void;
-   function getAppType(): Promise<string>;
+  function connectAbility(request: Want, options:ConnectOptions ): number;
 
   /**
-   * Obtains the bundle name of the current ability.
+   * The callback interface was connect successfully.
+   * @default -
    * @devices phone, tablet
    * @since 7
-   * @sysCap appexecfwk
-   * @return Returns the bundle name of the current ability.
+   * @SysCap aafwk
+   * @param connection The number of the ability connected
    */
-   function getBundleName(callback: AsyncCallback<string>): void;
-   function getBundleName(): Promise<string>;
+  function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
+  function disconnectAbility(connection: number): Promise<void>;
 
-  /**
-   * Obtains the bundle name of the calling ability.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap appexecfwk
-   * @return Returns the bundle name of the current ability.
-   */
-   function getCallingBundle(callback: AsyncCallback<string>): void;
-   function getCallingBundle(): Promise<string>;
+  export enum AbilityWindowConfiguration {
+    WINDOW_MODE_UNDEFINED = 0,
+    WINDOW_MODE_FULLSCREEN = 1,
+    WINDOW_MODE_SPLIT_PRIMARY = 100,
+    WINDOW_MODE_SPLIT_SECONDARY = 101,
+    WINDOW_MODE_FLOATING = 102
+  }
 
-  /**
-   * Connects an ability to a Service ability.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap AAFwk
-   * @param want Indicates the Service ability to connect.
-   * @param connectionCallback Indicates the callback object when the Service ability is connected.
-   * @return Returns true if the connection is successful; returns false otherwise.
-   */
-   function getDataAbilityHelper(URI: string, callback:AsyncCallback<DataAbilityHelper>): void;
-   function getDataAbilityHelper(URI: string): Promise<DataAbilityHelper>;
-
-  /**
-   * Obtains the element name of the current ability.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap appexecfwk
-   * @return Returns the element name of the current ability.
-   */
-   function getElementName(callback: AsyncCallback<ElementName>): void;
-   function getElementName(): Promise<ElementName>;
-
-  /**
-   * Obtains information about the current process, including the process ID and name.
-   * @devices phone, tablet
-   * @since 7
-   * @sysCap appxecfwk
-   * @return Returns the process info of the current process.
-   */
-   function getProcessInfo(callback: AsyncCallback<ProcessInfo>): void;
-   function getProcessInfo(): Promise<ProcessInfo>;
+  export enum AbilityStartSetting {
+    BOUNDS_KEY = "abilityBounds",
+    WINDOW_MODE_KEY = "windowMode",
+    DISPLAY_ID_KEY = "displayId"
+  }
 }
 export default featureAbility;

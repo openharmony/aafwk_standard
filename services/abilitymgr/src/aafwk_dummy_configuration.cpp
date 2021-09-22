@@ -85,7 +85,7 @@ unsigned int DummyConfiguration::Differ(const std::shared_ptr<DummyConfiguration
         } else if (item == "density") {
             flag |= 0x00000010;
         } else {
-            ;
+            continue;
         }
     }
     return flag;

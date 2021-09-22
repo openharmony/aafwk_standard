@@ -21,7 +21,7 @@
   * @devices phone, tablet
   * @permission N/A
   */
- export declare interface Want {
+export declare interface Want {
   /**
    * device id
    * @default -

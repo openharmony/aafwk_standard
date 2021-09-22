@@ -39,6 +39,7 @@ config("module_private_config") {
     "//foundation/aafwk/standard/frameworks/kits/test/mock/DemoAbility",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//third_party/jsoncpp/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
 }
 
@@ -101,6 +102,9 @@ ohos_moduletest("ability_moduletest") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -156,6 +160,9 @@ ohos_moduletest("ability_conetxt_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -219,6 +226,9 @@ ohos_moduletest("data_ability_operation_moduletest") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 
@@ -259,6 +269,9 @@ ohos_moduletest("data_ability_helper_module_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 

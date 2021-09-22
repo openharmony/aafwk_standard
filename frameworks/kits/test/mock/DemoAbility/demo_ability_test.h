@@ -40,15 +40,15 @@ protected:
 
     virtual std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter);
     virtual int OpenFile(const Uri &uri, const std::string &mode);
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates);
-    virtual int Insert(const Uri &uri, const ValuesBucket &value);
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates);
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
     virtual int OpenRawFile(const Uri &uri, const std::string &mode);
     virtual bool Reload(const Uri &uri, const PacMap &extras);
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values);
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
     virtual std::string GetType(const Uri &uri);
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, const std::vector<std::string> &columns, const DataAbilityPredicates &predicates);
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -19,19 +19,6 @@
 namespace OHOS {
 namespace AAFwk {
 
-PendingWantKey::PendingWantKey()
-    : type_{},
-      bundleName_{},
-      requestWho_{},
-      requestCode_{},
-      requestWant_{},
-      requestResolvedType_{},
-      allWantsInfos_{},
-      flags_{},
-      code_{},
-      userId_{}
-{}
-
 void PendingWantKey::SetType(const int32_t type)
 {
     type_ = type;
