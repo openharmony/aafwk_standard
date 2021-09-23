@@ -23,10 +23,15 @@
 #include "application_impl.h"
 #include "app_log_wrapper.h"
 #include "context_deal.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+#include "dataobs_mgr_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
+using DataObsMgrClient = OHOS::AAFwk::DataObsMgrClient;
 constexpr static char ACE_ABILITY_NAME[] = "AceAbility";
 constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
 constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
@@ -689,7 +694,7 @@ int AbilityThread::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the index of the inserted data record.
  */
-int AbilityThread::Insert(const Uri &uri, const ValuesBucket &value)
+int AbilityThread::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     APP_LOGI("AbilityThread::Insert begin");
     int index = -1;
@@ -714,7 +719,8 @@ int AbilityThread::Insert(const Uri &uri, const ValuesBucket &value)
  *
  * @return Returns the number of data records updated.
  */
-int AbilityThread::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int AbilityThread::Update(
+    const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("AbilityThread::Update begin");
     int index = -1;
@@ -738,7 +744,7 @@ int AbilityThread::Update(const Uri &uri, const ValuesBucket &value, const DataA
  *
  * @return Returns the number of data records deleted.
  */
-int AbilityThread::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int AbilityThread::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("AbilityThread::Delete begin");
     int index = -1;
@@ -762,11 +768,11 @@ int AbilityThread::Delete(const Uri &uri, const DataAbilityPredicates &predicate
  *
  * @return Returns the query result.
  */
-std::shared_ptr<ResultSet> AbilityThread::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityThread::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("AbilityThread::Query begin");
-    std::shared_ptr<ResultSet> resultSet = nullptr;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::Query abilityImpl_ is nullptr");
         return resultSet;
@@ -836,7 +842,7 @@ bool AbilityThread::Reload(const Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int AbilityThread::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int AbilityThread::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     APP_LOGI("AbilityThread::BatchInsert begin");
     int ret = -1;
@@ -855,12 +861,26 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &
 void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {
     APP_LOGI("NotifyMultiWinModeChanged.key:%{public}d,flag:%{public}d", winModeKey, flag);
+    sptr<Window> window = currentAbility_->GetWindow();
+    if (window == nullptr) {
+        APP_LOGE("NotifyMultiWinModeChanged window == nullptr");
+        return;
+    }
+
     return;
 }
 
 void AbilityThread::NotifyTopActiveAbilityChanged(bool flag)
 {
     APP_LOGI("NotifyTopActiveAbilityChanged,flag:%{public}d", flag);
+    sptr<Window> window = currentAbility_->GetWindow();
+    if (window == nullptr) {
+        APP_LOGE("NotifyMultiWinModeChanged window == nullptr");
+        return;
+    }
+    if (flag) {
+        window->SwitchTop();
+    }
     return;
 }
 
@@ -953,5 +973,190 @@ Uri AbilityThread::DenormalizeUri(const Uri &uri)
     APP_LOGI("AbilityThread::DenormalizeUri end");
     return urivalue;
 }
+
+/**
+ * @brief Registers an observer to DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilityThread::HandleRegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        APP_LOGE("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->RegisterObserver(uri, dataObserver);
+    if (ret != ERR_OK) {
+        APP_LOGE("%{public}s obsMgrClient->RegisterObserver error return %{public}d", __func__, ret);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilityThread::HandleUnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        APP_LOGE("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->UnregisterObserver(uri, dataObserver);
+    if (ret != ERR_OK) {
+        APP_LOGE("%{public}s obsMgrClient->UnregisterObserver error return %{public}d", __func__, ret);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ */
+bool AbilityThread::HandleNotifyChange(const Uri &uri)
+{
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        APP_LOGE("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->NotifyChange(uri);
+    if (ret != ERR_OK) {
+        APP_LOGE("%{public}s obsMgrClient->NotifyChange error return %{public}d", __func__, ret);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief Access authority verification.
+ *
+ * @return Returns true on success, others on failure.
+ */
+bool AbilityThread::CheckObsPermission()
+{
+    APP_LOGI("%{public}s CheckObsPermission() run Permission Checkout", __func__);
+    return true;
+}
+
+/**
+ * @brief Registers an observer to DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilityThread::ScheduleRegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    APP_LOGI("%{public}s called", __func__);
+
+    if (!CheckObsPermission()) {
+        APP_LOGE("%{public}s CheckObsPermission() return false", __func__);
+        return false;
+    }
+
+    auto task = [abilityThread = this, uri, dataObserver]() {
+        abilityThread->HandleRegisterObserver(uri, dataObserver);
+    };
+
+    if (abilityHandler_ == nullptr) {
+        APP_LOGE("AbilityThread::ScheduleRegisterObserver abilityHandler_ == nullptr");
+        return false;
+    }
+
+    bool ret = abilityHandler_->PostTask(task);
+    if (!ret) {
+        APP_LOGE("AbilityThread::ScheduleRegisterObserver PostTask error");
+    }
+    return ret;
+}
+
+/**
+ * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilityThread::ScheduleUnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
+{
+    APP_LOGI("%{public}s called", __func__);
+
+    if (!CheckObsPermission()) {
+        APP_LOGE("%{public}s CheckObsPermission() return false", __func__);
+        return false;
+    }
+
+    auto task = [abilityThread = this, uri, dataObserver]() {
+        abilityThread->HandleUnregisterObserver(uri, dataObserver);
+    };
+
+    if (abilityHandler_ == nullptr) {
+        APP_LOGE("AbilityThread::ScheduleUnregisterObserver abilityHandler_ == nullptr");
+        return false;
+    }
+
+    bool ret = abilityHandler_->PostTask(task);
+    if (!ret) {
+        APP_LOGE("AbilityThread::ScheduleUnregisterObserver PostTask error");
+    }
+    return ret;
+}
+
+/**
+ * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ */
+bool AbilityThread::ScheduleNotifyChange(const Uri &uri)
+{
+    APP_LOGI("%{public}s called", __func__);
+
+    if (!CheckObsPermission()) {
+        APP_LOGE("%{public}s CheckObsPermission() return false", __func__);
+        return false;
+    }
+
+    auto task = [abilityThread = this, uri]() { abilityThread->HandleNotifyChange(uri); };
+
+    if (abilityHandler_ == nullptr) {
+        APP_LOGE("AbilityThread::ScheduleNotifyChange abilityHandler_ == nullptr");
+        return false;
+    }
+
+    bool ret = abilityHandler_->PostTask(task);
+    if (!ret) {
+        APP_LOGE("AbilityThread::ScheduleNotifyChange PostTask error");
+    }
+    return ret;
+}
+
+std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
+    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+
+    APP_LOGI("AbilityThread::ExecuteBatch start");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    if (abilityImpl_ == nullptr) {
+        APP_LOGE("AbilityThread::ExecuteBatch abilityImpl_ is nullptr");
+        results.clear();
+        return results;
+    }
+    APP_LOGI("AbilityThread::ExecuteBatch before abilityImpl_->ExecuteBatch");
+    results = abilityImpl_->ExecuteBatch(operations);
+    APP_LOGI("AbilityThread::ExecuteBatch after abilityImpl_->ExecuteBatch");
+    APP_LOGI("AbilityThread::ExecuteBatch end");
+    return results;
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

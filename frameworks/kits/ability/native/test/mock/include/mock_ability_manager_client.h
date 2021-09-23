@@ -18,6 +18,9 @@
 
 #include <gtest/gtest.h>
 #include <mutex>
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "ability_connect_callback_interface.h"
 #include "ability_manager_errors.h"
 #include "ability_context.h"
@@ -46,115 +49,83 @@ public:
 
 class MockAbilityThread : public IRemoteStub<AAFwk::IAbilityScheduler> {
 public:
-    void ScheduleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
-    {}
-
-    void SendResult(int requestCode, int resultCode, const Want &resultWant)
-    {}
-
-    void ScheduleConnectAbility(const Want &want)
-    {}
-
-    void ScheduleDisconnectAbility()
-    {}
-
-    void ScheduleSaveAbilityState(PacMap &outState)
-    {}
-
-    void ScheduleRestoreAbilityState(const PacMap &inState)
-    {}
-
-    void ScheduleUpdateConfiguration(const DummyConfiguration &config)
-    {}
-
-    void ScheduleDisconnectAbility(const Want &want)
-    {}
-
-    void ScheduleCommandAbility(const Want &want, bool restart, int startId)
-    {}
-
-    std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
+    virtual void ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &targetState){};
+    virtual void SendResult(int requestCode, int resultCode, const Want &resultWant){};
+    virtual void ScheduleConnectAbility(const Want &want){};
+    virtual void ScheduleDisconnectAbility(const Want &want){};
+    virtual void ScheduleCommandAbility(const Want &want, bool restart, int startId){};
+    virtual void ScheduleSaveAbilityState(PacMap &outState){};
+    virtual void ScheduleRestoreAbilityState(const PacMap &inState){};
+    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config){};
+    virtual std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::GetFileTypes called";
-        std::vector<std::string> types;
-        types.push_back("Types1");
-        types.push_back("Types2");
-        types.push_back("Types3");
-        return types;
-    }
-
-    int OpenFile(const Uri &uri, const std::string &mode)
+        return std::vector<std::string>();
+    };
+    virtual int OpenFile(const Uri &uri, const std::string &mode)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::OpenFile called";
         return OPENFILENUM;
-    }
-
-    int Insert(const Uri &uri, const ValuesBucket &value)
+    };
+    virtual int OpenRawFile(const Uri &uri, const std::string &mode)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::Insert called";
-        return INSERTNUM;
-    }
-
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
-    {
-        GTEST_LOG_(INFO) << "MockAbilityThread::Update called";
-        return UPDATENUM;
-    }
-
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates)
-    {
-        GTEST_LOG_(INFO) << "MockAbilityThread::Delete called";
-        return DELETENUM;
-    }
-
-    int OpenRawFile(const Uri &uri, const std::string &mode)
-    {
-        GTEST_LOG_(INFO) << "MockAbilityThread::OpenRawFile called";
         return OPENRAWFILENUM;
-    }
-
-    bool Reload(const Uri &uri, const PacMap &extras)
+    };
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::Reload called";
+        return INSERTNUM;
+    };
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+    {
+        return UPDATENUM;
+    };
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
+    {
+        return DELETENUM;
+    };
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
+    {
+        return std::make_shared<NativeRdb::AbsSharedResultSet>("resultset");
+    };
+    virtual std::string GetType(const Uri &uri)
+    {
+        return std::string("Type1");
+    };
+    virtual bool Reload(const Uri &uri, const PacMap &extras)
+    {
         return true;
-    }
-
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+    };
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::BatchInsert called";
         return BATCHINSERTNUM;
-    }
-
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+    };
+	virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
     {
-        GTEST_LOG_(INFO) << "MockAbilityThread::Query called";
-        std::shared_ptr<ResultSet> set = std::make_shared<ResultSet>("resultset");
-        return set;
-    }
-
-    std::string GetType(const Uri &uri)
+        return true;
+    };
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
     {
-        return "Type1";
-    }
-
-    Uri NormalizeUri(const Uri &uri)
+        return true;
+    };
+    virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag){};
+    virtual void NotifyTopActiveAbilityChanged(bool flag){};
+    virtual bool ScheduleNotifyChange(const Uri &uri)
     {
-        Uri urireturn("dataability:///test.aaa");
-        return urireturn;
-    }
-
-    Uri DenormalizeUri(const Uri &uri)
+        return true;
+    };
+    virtual Uri NormalizeUri(const Uri &uri)
     {
-        Uri urireturn("dataability:///test.aaa");
-        return urireturn;
-    }
+        return Uri("dataability:///test.aaa");
+    };
+    virtual Uri DenormalizeUri(const Uri &uri)
+    {
+        return Uri("dataability:///test.aaa");
+    };
+    virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations)
+    {
+        return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
+    };
 
-    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
-    {}
-
-    void NotifyTopActiveAbilityChanged(bool flag)
-    {}
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

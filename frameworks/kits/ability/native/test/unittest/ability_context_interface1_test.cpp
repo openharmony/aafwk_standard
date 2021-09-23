@@ -224,7 +224,6 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_SetTheme_0100, Functi
     contextDeal->initResourceManager(resourceManager);
     abilityContext->AttachBaseContext(contextDeal);
     abilityContext->SetTheme(testValue);
-    // EXPECT_EQ(testValue, contextDeal->GetHapModuleInfo()->themeId);
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_SetTheme_0100 end";
 }
 
@@ -241,13 +240,10 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_SetTheme_0200, Functi
     std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
     std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
     abilityContext->SetTheme(testValue);
-    // EXPECT_NE(testValue, contextDeal->GetHapModuleInfo()->themeId);
     abilityContext->AttachBaseContext(contextDeal);
     abilityContext->SetTheme(testValue);
-    // EXPECT_NE(testValue, contextDeal->GetHapModuleInfo()->themeId);
     contextDeal->initResourceManager(resourceManager);
     abilityContext->SetTheme(testValue);
-    // EXPECT_NE(testValue, contextDeal->GetHapModuleInfo()->themeId);
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_SetTheme_0200 end";
 }
 
@@ -333,7 +329,6 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_GetTheme_0100, Functi
     contextDeal->initResourceManager(resourceManager);
     abilityContext->AttachBaseContext(contextDeal);
     std::map<std::string, std::string> retVal = abilityContext->GetTheme();
-    // EXPECT_TRUE((retVal == testList));
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetTheme_0100 end";
 }
 
@@ -368,11 +363,7 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_GetString_ByIdAndForm
     std::shared_ptr<Global::Resource::ResourceManager2> resourceManager(Global::Resource::CreateResourceManager2());
     std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
     std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
-    // int testCount = 0;
     std::string testByName = "";
-    // std::string retVal = contextDeal->GetString(testCount, testByName);
-    // EXPECT_STREQ(retVal, testValue);
-    // EXPECT_TRUE(false);
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetString_ByIdAndFormat_0100 end";
 }
 
@@ -512,10 +503,7 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_GetThemeId_0100, Func
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetThemeId_0100 start";
     std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
     std::shared_ptr<AbilityContext> abilityContext = std::make_shared<AbilityContext>();
-    // const int testValue = 1;
-    // contextDeal->GetHapModuleInfo()->themeId = testValue;
     abilityContext->AttachBaseContext(contextDeal);
-    // EXPECT_EQ(testValue, abilityContext->GetThemeId());
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetThemeId_0100 end";
 }
 

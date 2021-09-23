@@ -24,6 +24,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${EVENT_DIR}/frameworks/core/include",
     "${EVENT_DIR}/interfaces/innerkits/native/include",
     "//third_party/jsoncpp/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
 
   sources = [
@@ -87,6 +88,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
   }
   deps = [
     "${innerkits_path}/want:want",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -106,6 +108,9 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 }
 

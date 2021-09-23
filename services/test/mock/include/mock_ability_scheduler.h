@@ -38,6 +38,11 @@ public:
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
+    
+    MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
+    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
 
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
@@ -50,23 +55,23 @@ public:
         return -1;
     }
 
-    int Insert(const Uri &uri, const ValuesBucket &value)
+    int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
         return -1;
     }
 
-    int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return -1;
     }
 
-    int Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+    int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return -1;
     }
 
-    std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return nullptr;
     }
@@ -86,7 +91,7 @@ public:
         return false;
     }
 
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override
     {
         return -1;
     }

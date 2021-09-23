@@ -115,16 +115,6 @@ napi_value NAPI_GetContext(napi_env env, napi_callback_info info);
 napi_value NAPI_GetWant(napi_env env, napi_callback_info info);
 
 /**
- * @brief Obtains information about the current application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetApplicationInfo(napi_env env, napi_callback_info info);
-
-/**
  * @brief Obtains the type of this application.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -135,16 +125,6 @@ napi_value NAPI_GetApplicationInfo(napi_env env, napi_callback_info info);
 napi_value NAPI_GetAppType(napi_env env, napi_callback_info info);
 
 /**
- * @brief Obtains the elementName object of the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetElementName(napi_env env, napi_callback_info info);
-
-/**
  * @brief Obtains the class name in this ability name, without the prefixed bundle name.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -153,36 +133,6 @@ napi_value NAPI_GetElementName(napi_env env, napi_callback_info info);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetAbilityName(napi_env env, napi_callback_info info);
-
-/**
- * @brief Obtains the process Info this application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessInfo(napi_env env, napi_callback_info info);
-
-/**
- * @brief Obtains the name of the current process.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetProcessName(napi_env env, napi_callback_info info);
-
-/**
- * @brief Obtains the bundle name of the ability that called the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetCallingBundle(napi_env env, napi_callback_info info);
 
 /**
  * @brief Obtains information about the current ability.
@@ -255,7 +205,7 @@ AppInfoCB *CreateAppInfoCBInfo(napi_env env);
  */
 napi_value HasWindowFocusWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value HasWindowFocusAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo);
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
 
 /**
@@ -268,7 +218,7 @@ napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackI
  */
 napi_value TerminateAbilityWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value TerminateAbilityAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo);
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value TerminateAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
 
 /**
@@ -281,7 +231,7 @@ napi_value TerminateAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbac
  */
 napi_value SetResultWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value SetResultAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo);
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value SetResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
 
 /**
@@ -293,8 +243,7 @@ napi_value SetResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
  * @return Return JS data successfully, otherwise return nullptr.
  */
 napi_value StartAbilityForResultWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo);
-napi_value StartAbilityForResultAsync(
-    napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise, AsyncCallbackInfo *asyncCallbackInfo);
+napi_value StartAbilityForResultAsync(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
 napi_value StartAbilityForResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo);
 
 /**
@@ -306,8 +255,7 @@ napi_value StartAbilityForResultPromise(napi_env env, AsyncCallbackInfo *asyncCa
  * @return Return JS data successfully, otherwise return nullptr.
  */
 napi_value ContinueAbilityWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo);
-napi_value ContinueAbilityAsync(
-    napi_env env, napi_value *args, AsyncCallbackInfo *asyncCallbackInfo, size_t argc);
+napi_value ContinueAbilityAsync(napi_env env, napi_value *args, AsyncCallbackInfo *asyncCallbackInfo, size_t argc);
 napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackInfo *asyncCallbackInfo, size_t argc);
 
 /**
@@ -340,8 +288,8 @@ napi_value GetDataAbilityHelperWrap(napi_env env, napi_callback_info info, DataA
  *
  * @return Return JS data successfully, otherwise return nullptr.
  */
-napi_value GetDataAbilityHelperAsync(napi_env env, napi_value *args, size_t argcAsync, const size_t argcPromise,
-    DataAbilityHelperCB *dataAbilityHelperCB);
+napi_value GetDataAbilityHelperAsync(
+    napi_env env, napi_value *args, const size_t argCallback, DataAbilityHelperCB *dataAbilityHelperCB);
 
 /**
  * @brief GetDataAbilityHelper Promise.
@@ -370,17 +318,6 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
 void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, void *data);
 
 /**
- * @brief acquireDataAbilityHelper processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param dataAbilityHelperCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
-napi_value AcquireDataAbilityHelperWrap(
-    napi_env env, napi_callback_info info, DataAbilityHelperCB *dataAbilityHelperCB);
-
-/**
  * @brief FeatureAbility NAPI method : connectAbility.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -399,7 +336,7 @@ napi_value NAPI_FAConnectAbility(napi_env env, napi_callback_info info);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_FADisConnectAbility(napi_env env, napi_callback_info info);
-static int64_t dummyRequestCode_ = 0;
+
 /**
  * @brief FeatureAbility NAPI method : continueAbility.
  *

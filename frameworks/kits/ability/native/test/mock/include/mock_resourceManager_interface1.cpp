@@ -31,7 +31,7 @@ public:
     ResourceManagerTestInstance(){};
     virtual ~ResourceManagerTestInstance(){};
 
-    virtual bool AddResource(const char *path)
+    virtual bool AddResource(const char *path) override
     {
         return false;
     };
@@ -52,7 +52,7 @@ public:
         outValue = iter->second;
         return SUCCESS;
     };
-    virtual void SetStringById(uint32_t id, std::string &inValue)
+    virtual void SetStringById(uint32_t id, std::string &inValue) override
     {
         if (!StringById_.empty()) {
             StringById_.clear();
@@ -69,7 +69,7 @@ public:
     {
         return ERROR;
     };
-    virtual void SetStringFormatById(std::string &inValue, uint32_t id, ...){};
+    virtual void SetStringFormatById(std::string &inValue, uint32_t id, ...) override{};
 
     virtual RState GetStringFormatByName(std::string &outValue, const char *name, ...)
     {
@@ -224,7 +224,7 @@ public:
         outValue = iter->second;
         return SUCCESS;
     };
-    virtual void SetColorById(uint32_t id, uint32_t &inValue)
+    virtual void SetColorById(uint32_t id, uint32_t &inValue) override
     {
         if (!ColorById_.empty()) {
             ColorById_.clear();

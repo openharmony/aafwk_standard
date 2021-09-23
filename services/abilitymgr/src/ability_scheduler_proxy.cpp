@@ -13,11 +13,17 @@
  * limitations under the License.
  */
 #include "ability_scheduler_proxy.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 
 #include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "pac_map.h"
 #include "want.h"
+#include "data_ability_observer_interface.h"
+#include "data_ability_result.h"
+#include "data_ability_operation.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -324,7 +330,7 @@ int AbilitySchedulerProxy::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @return Returns the index of the inserted data record.
  */
-int AbilitySchedulerProxy::Insert(const Uri &uri, const ValuesBucket &value)
+int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     int index = -1;
 
@@ -369,7 +375,7 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const ValuesBucket &value)
  *
  * @return Returns the number of data records updated.
  */
-int AbilitySchedulerProxy::Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates)
+int AbilitySchedulerProxy::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     int index = -1;
 
@@ -418,7 +424,7 @@ int AbilitySchedulerProxy::Update(const Uri &uri, const ValuesBucket &value, con
  *
  * @return Returns the number of data records deleted.
  */
-int AbilitySchedulerProxy::Delete(const Uri &uri, const DataAbilityPredicates &predicates)
+int AbilitySchedulerProxy::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     int index = -1;
 
@@ -462,8 +468,8 @@ int AbilitySchedulerProxy::Delete(const Uri &uri, const DataAbilityPredicates &p
  *
  * @return Returns the query result.
  */
-std::shared_ptr<ResultSet> AbilitySchedulerProxy::Query(
-    const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates)
+std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilitySchedulerProxy::Query(
+    const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -494,15 +500,13 @@ std::shared_ptr<ResultSet> AbilitySchedulerProxy::Query(
         return nullptr;
     }
 
-    ResultSet *value = reply.ReadParcelable<ResultSet>();
-    if (value == nullptr) {
-        HILOG_ERROR("ReadParcelable value is nullptr");
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> retval(NativeRdb::AbsSharedResultSet::Unmarshalling(reply));
+    if (retval == nullptr) {
+        HILOG_ERROR("AbilitySchedulerProxy::Query retval == nullptr error");
         return nullptr;
     }
-
-    std::shared_ptr<ResultSet> resultSet(value);
-
-    return resultSet;
+    HILOG_INFO("AbilitySchedulerProxy::Query end");
+    return retval;
 }
 
 /**
@@ -598,7 +602,7 @@ bool AbilitySchedulerProxy::Reload(const Uri &uri, const PacMap &extras)
  *
  * @return Returns the number of data records inserted.
  */
-int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values)
+int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     int ret = -1;
 
@@ -670,6 +674,111 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
 }
 
 /**
+ * @brief Registers an observer to DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilitySchedulerProxy::ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s WriteInterfaceToken(data) return false", __func__);
+        return false;
+    }
+
+    if (!data.WriteParcelable(&uri)) {
+        HILOG_ERROR("%{public}s failed to WriteParcelable uri ", __func__);
+        return false;
+    }
+
+    if (!data.WriteParcelable(dataObserver->AsObject())) {
+        HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
+        return false;
+    }
+
+    int32_t result = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_REGISTEROBSERVER, data, reply, option);
+    if (result == ERR_NONE) {
+        HILOG_INFO("%{public}s SendRequest ok, retval is %{public}d", __func__, reply.ReadInt32());
+        return true;
+    } else {
+        HILOG_ERROR("%{public}s SendRequest error, result=%{public}d", __func__, result);
+        return false;
+    }
+}
+
+/**
+ * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ * @param dataObserver, Indicates the IDataAbilityObserver object.
+ */
+bool AbilitySchedulerProxy::ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s WriteInterfaceToken(data) return false", __func__);
+        return false;
+    }
+
+    if (!data.WriteParcelable(&uri)) {
+        HILOG_ERROR("%{public}s failed to WriteParcelable uri ", __func__);
+        return false;
+    }
+
+    if (!data.WriteParcelable(dataObserver->AsObject())) {
+        HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
+        return false;
+    }
+
+    int32_t result = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_UNREGISTEROBSERVER, data, reply, option);
+    if (result == ERR_NONE) {
+        HILOG_INFO("%{public}s SendRequest ok, retval is %{public}d", __func__, reply.ReadInt32());
+        return true;
+    } else {
+        HILOG_ERROR("%{public}s SendRequest error, result=%{public}d", __func__, result);
+        return false;
+    }
+}
+
+/**
+ * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+ *
+ * @param uri, Indicates the path of the data to operate.
+ */
+bool AbilitySchedulerProxy::ScheduleNotifyChange(const Uri &uri)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s WriteInterfaceToken(data) return false", __func__);
+        return false;
+    }
+
+    if (!data.WriteParcelable(&uri)) {
+        HILOG_ERROR("%{public}s failed to WriteParcelable uri ", __func__);
+        return false;
+    }
+
+    int32_t result = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_NOTIFYCHANGE, data, reply, option);
+    if (result == ERR_NONE) {
+        HILOG_INFO("%{public}s SendRequest ok, retval is %{public}d", __func__, reply.ReadInt32());
+        return true;
+    } else {
+        HILOG_ERROR("%{public}s SendRequest error, result=%{public}d", __func__, result);
+        return false;
+    }
+}
+
+/**
  * @brief notify this ability is top active ability.
  *
  * @param flag true: Indicates this ability is top active ability
@@ -727,11 +836,12 @@ Uri AbilitySchedulerProxy::NormalizeUri(const Uri &uri)
         HILOG_ERROR("NormalizeUri fail to SendRequest. err: %d", err);
     }
 
-    Uri *value = reply.ReadParcelable<Uri>();
-    if (value == nullptr) {
-        HILOG_ERROR("ReadParcelable value is nullptr");
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
+    if (!info) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return Uri("");
     }
-    return *value;
+    return *info;
 }
 
 /**
@@ -766,11 +876,85 @@ Uri AbilitySchedulerProxy::DenormalizeUri(const Uri &uri)
         HILOG_ERROR("DenormalizeUri fail to SendRequest. err: %d", err);
     }
 
-    auto value = reply.ReadParcelable<Uri>();
-    if (value == nullptr) {
-        HILOG_ERROR("ReadParcelable value is nullptr");
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
+    if (!info) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return Uri("");
     }
-    return *value;
+    return *info;
+}
+
+std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProxy::ExecuteBatch(
+    const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations)
+{
+    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatch start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    MessageParcel datatemp;
+
+    std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> results;
+    results.clear();
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to Writer token");
+        return results;
+    }
+
+    int count = operations.size();
+    if (!data.WriteInt32(count)) {
+        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to WriteInt32 ret");
+        return results;
+    }
+    datatemp.WriteInt32(count);
+
+    for (int i = 0; i < count; i++) {
+        if (!data.WriteParcelable(operations[i].get())) {
+            HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to WriteParcelable ret, index = %{public}d", i);
+            return results;
+        }
+        datatemp.WriteParcelable(operations[i].get());
+    }
+
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_EXECUTEBATCH, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to SendRequest. err: %{public}d", err);
+    }
+
+    int tempCount = 0;
+    if (!datatemp.ReadInt32(tempCount)) {
+        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner fail to ReadInt32 count");
+        return results;
+    }
+    HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner datatemp.ReadInt32(tempCount) to %{public}d", tempCount);
+
+    for (int i = 0; i < tempCount; ++i) {
+        AppExecFwk::DataAbilityOperation *operation = datatemp.ReadParcelable<AppExecFwk::DataAbilityOperation>();
+        if (operation == nullptr) {
+            HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner operation is nullptr, index = %{public}d", i);
+            return results;
+        }
+    }
+    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatchInner operation->testShow done ");
+
+    int total = 0;
+    if (!reply.ReadInt32(total)) {
+        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to ReadInt32 count %{public}d", total);
+        return results;
+    }
+
+    for (int i = 0; i < total; i++) {
+        AppExecFwk::DataAbilityResult *result = reply.ReadParcelable<AppExecFwk::DataAbilityResult>();
+        if (result == nullptr) {
+            HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch result is nullptr, index = %{public}d", i);
+            return results;
+        }
+        std::shared_ptr<AppExecFwk::DataAbilityResult> dataAbilityResult(result);
+        results.push_back(dataAbilityResult);
+    }
+    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatch end");
+    return results;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

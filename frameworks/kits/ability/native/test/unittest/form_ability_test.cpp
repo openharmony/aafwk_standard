@@ -1255,6 +1255,5 @@ HWTEST_F(FormAbilityTest, AaFwk_Ability_GetFormsInfoByModule_0100, Function | Me
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_GetFormsInfoByModule_0100 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

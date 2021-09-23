@@ -118,7 +118,7 @@ void KernalSystemAppManager::OnAppStateChanged(const AppInfo &info)
     for (auto ability : abilities_) {
         if (ability && ability->GetApplicationInfo().name == info.appName &&
             (info.processName == ability->GetAbilityInfo().process ||
-                info.processName == ability->GetApplicationInfo().bundleName)) {
+            info.processName == ability->GetApplicationInfo().bundleName)) {
             ability->SetAppState(info.state);
         }
     }

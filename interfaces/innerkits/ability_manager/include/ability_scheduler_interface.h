@@ -18,20 +18,26 @@
 
 #include <iremote_broker.h>
 
-#include "dummy_values_bucket.h"
-#include "dummy_data_ability_predicates.h"
-#include "dummy_result_set.h"
+
 #include "aafwk_dummy_configuration.h"
 #include "lifecycle_state_info.h"
 #include "pac_map.h"
 #include "want.h"
 
 namespace OHOS {
+namespace NativeRdb {
+class AbsSharedResultSet;
+class DataAbilityPredicates;
+class ValuesBucket;
+}
+namespace AppExecFwk {
+class DataAbilityResult;
+class DataAbilityOperation;
+}
 namespace AAFwk {
-using OHOS::AppExecFwk::DataAbilityPredicates;
 using OHOS::AppExecFwk::PacMap;
-using OHOS::AppExecFwk::ResultSet;
-using OHOS::AppExecFwk::ValuesBucket;
+
+class IDataAbilityObserver;
 
 /**
  * @class IAbilityScheduler
@@ -135,7 +141,7 @@ public:
      *
      * @return Returns the index of the inserted data record.
      */
-    virtual int Insert(const Uri &uri, const ValuesBucket &value) = 0;
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) = 0;
 
     /**
      * @brief Updates data records in the database.
@@ -146,7 +152,7 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates) = 0;
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) = 0;
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -156,7 +162,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates) = 0;
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) = 0;
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -167,8 +173,8 @@ public:
      *
      * @return Returns the query result.
      */
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates) = 0;
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates) = 0;
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -200,15 +206,30 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) = 0;
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) = 0;
 
     /**
-     * @brief notify multi window mode changed.
+     * @brief Registers an observer to DataObsMgr specified by the given Uri.
      *
-     * @param winModeKey Indicates ability Window display mode.
-     * @param flag Indicates this ability has been enter this mode.
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     *
+     * @return Return true if success. otherwise return false.
      */
+	virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
+
+    /**
+     * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     *
+     * @return Return true if success. otherwise return false.
+     */
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
+
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
+	
 
     /**
      * @brief notify this ability is top active ability.
@@ -217,6 +238,14 @@ public:
      */
     virtual void NotifyTopActiveAbilityChanged(bool flag) = 0;
 
+    /**
+     * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     *
+     * @return Return true if success. otherwise return false.
+     */
+    virtual bool ScheduleNotifyChange(const Uri &uri) = 0;
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
      * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
@@ -243,7 +272,8 @@ public:
      * in the current environment.
      */
     virtual Uri DenormalizeUri(const Uri &uri) = 0;
-
+    virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) = 0;
     enum {
         // ipc id for scheduling ability to a state of life cycle
         SCHEDULE_ABILITY_TRANSACTION = 0,
@@ -296,6 +326,15 @@ public:
         // ipc id for scheduling BatchInsert​
         SCHEDULE_BATCHINSERT,
 
+        // ipc id for dataAbilityObServer Reguster
+        SCHEDULE_REGISTEROBSERVER,
+		
+        // ipc id for dataAbilityObServer UnReguster
+        SCHEDULE_UNREGISTEROBSERVER,
+		
+		// ipc id for dataAbilityObServer change
+        SCHEDULE_NOTIFYCHANGE,
+		
         // ipc id for scheduling multi window changed
         MULTI_WIN_CHANGED,
 
@@ -309,6 +348,9 @@ public:
 
         // ipc id for scheduling DenormalizeUri
         SCHEDULE_DENORMALIZEURI,
+		
+		// ipc id for scheduling ExecuteBatch
+        SCHEDULE_EXECUTEBATCH,
     };
 };
 }  // namespace AAFwk

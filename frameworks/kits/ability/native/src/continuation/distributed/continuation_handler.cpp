@@ -95,7 +95,7 @@ void ContinuationHandler::HandleReceiveRemoteScheduler(const sptr<IRemoteObject>
     }
 
     if (schedulerDeathRecipient_ == nullptr) {
-        schedulerDeathRecipient_ = new ReverseContinuationSchedulerRecipient(
+        schedulerDeathRecipient_ = new (std::nothrow) ReverseContinuationSchedulerRecipient(
             std::bind(&ContinuationHandler::OnReplicaDied, this, std::placeholders::_1));
     }
 

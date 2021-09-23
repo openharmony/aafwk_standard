@@ -314,7 +314,7 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
             (info.processName == abilityRecord->GetAbilityInfo().process ||
-                info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
             abilityRecord->SetAppState(info.state);
         }
     }
@@ -323,7 +323,7 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
             (info.processName == abilityRecord->GetAbilityInfo().process ||
-                info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
             abilityRecord->SetAppState(info.state);
         }
     }

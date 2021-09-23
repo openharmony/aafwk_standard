@@ -61,7 +61,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     auto type = abilityInfo.type;
     if (abilityInfo.applicationInfo.isLauncherApp && type == AppExecFwk::AbilityType::PAGE && currentTopAbilityRecord &&
         AbilityUtil::IsSystemDialogAbility(
-            currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
         HILOG_ERROR("Page ability is dialog type, cannot return to luncher.");
         return ERR_INVALID_VALUE;
     }
@@ -296,9 +296,6 @@ void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRec
             targetMissionRecord->SetIsLauncherCreate();
         }
     }
-
-    // add caller record
-    targetAbilityRecord->SetMissionRecord(targetMissionRecord);
     // check mission window mode.
     if (targetAbilityRecord->GetMissionRecord() == nullptr) {
         auto option = targetMissionRecord->GetMissionOption();
@@ -310,6 +307,9 @@ void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRec
             targetAbilityRecord->SetStartSetting(setting);
         }
     }
+
+    // add caller record
+    targetAbilityRecord->SetMissionRecord(targetMissionRecord);
     // add ability record to mission record.
     // if this ability record exist this mission record, do not add.
     targetMissionRecord->AddAbilityRecordToTop(targetAbilityRecord);
@@ -819,8 +819,8 @@ std::shared_ptr<MissionStack> AbilityStackManager::GetTargetMissionStackByDefaul
     if (currentTop) {
         // caller is launcher , request is not launcher, exist ability just restart.
         if (isExist && (currentTop->IsLauncherAbility() || (!currentTop->IsLauncherAbility() && isSingleton) ||
-                           (!currentTop->IsLauncherAbility() &&
-                               currentTop->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON))) {
+            (!currentTop->IsLauncherAbility() &&
+            currentTop->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON))) {
             return requestMission->GetMissionStack();
         }
         // caller and request is not launcher, start ability at current mission stack.
@@ -1008,13 +1008,13 @@ int AbilityStackManager::DispatchTerminate(const std::shared_ptr<AbilityRecord> 
 
 void AbilityStackManager::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
 {
-    HILOG_DEBUG("Add window id %{public}d.", windowToken);
+    HILOG_DEBUG("Add window id.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     // create WindowInfo and add to its AbilityRecord
     auto abilityRecord = GetAbilityRecordByToken(token);
     CHECK_POINTER(abilityRecord);
     if (abilityRecord->GetWindowInfo()) {
-        HILOG_DEBUG("WindowInfo is already added. Can't add again. %{public}d.", windowToken);
+        HILOG_DEBUG("WindowInfo is already added. Can't add again.");
         return;
     }
 
@@ -1030,9 +1030,7 @@ void AbilityStackManager::AddWindowInfo(const sptr<IRemoteObject> &token, int32_
     } else {
         abilityRecord->AddWindowInfo(windowToken);
         windowTokenToAbilityMap_[windowToken] = abilityRecord;
-        HILOG_INFO("Add windowInfo complete, windowToken:%{public}d, ability:%{public}s",
-            windowToken,
-            abilityRecord->GetAbilityInfo().name.c_str());
+        HILOG_INFO("Add windowInfo complete, ability:%{public}s", abilityRecord->GetAbilityInfo().name.c_str());
     }
 }
 
@@ -1074,7 +1072,7 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
 
                 if (ability->GetApplicationInfo().name == info.appName &&
                     (info.processName == ability->GetAbilityInfo().process ||
-                        info.processName == ability->GetApplicationInfo().bundleName)) {
+                    info.processName == ability->GetApplicationInfo().bundleName)) {
                     ability->SetAppState(info.state);
                 }
             }
@@ -1181,7 +1179,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
 
         if (isBackground && preAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
             !AbilityUtil::IsSystemDialogAbility(
-                abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
             std::string preElement = preAbilityRecord->GetWant().GetElement().GetURI();
             HILOG_INFO("Pre ability record: %{public}s", preElement.c_str());
             // preAbility was inactive ,resume new want flag to false
@@ -2254,7 +2252,7 @@ void AbilityStackManager::BackToLauncher()
     CHECK_POINTER(fullScreenStack);
     auto currentTopAbility = fullScreenStack->GetTopAbilityRecord();
     if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE) ||
-                                 currentTopAbility->IsAbilityState(AbilityState::ACTIVATING))) {
+        currentTopAbility->IsAbilityState(AbilityState::ACTIVATING))) {
         HILOG_WARN("Current top ability is active, no need to start launcher.");
         return;
     }
@@ -2641,7 +2639,7 @@ int AbilityStackManager::DispatchLifecycle(const std::shared_ptr<AbilityRecord> 
                               (!lastMissionStack->IsTopMissionRecord(lastMission) ||
                                   (lastMission->GetMissionRecordId() == (currentTopAbility->GetMissionRecordId())));
     if (lastTopAbility == currentTopAbility) {
-        ;
+        HILOG_DEBUG("Lasttopability is equal to currenttopability.");
     } else if (isNotTopInFullScreen || isNotTopInMultiWin || isTopFullScreen) {
         HILOG_DEBUG("Last top active ability , need to inactive.");
         lastTopAbility->ProcessInactivateInMoving();
@@ -2749,8 +2747,9 @@ int AbilityStackManager::CheckMultiWindowCondition(
         return START_ABILITY_SETTING_FAILED;
     }
 
-    if (currentTopAbility && AbilityUtil::IsSystemDialogAbility(currentTopAbility->GetAbilityInfo().bundleName,
-                                 currentTopAbility->GetAbilityInfo().name)) {
+    if (currentTopAbility && 
+        AbilityUtil::IsSystemDialogAbility(
+            currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name)) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher.");
         return START_ABILITY_SETTING_FAILED;
     }

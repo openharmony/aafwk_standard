@@ -320,7 +320,6 @@ HWTEST_F(OperationBaseTest, AaFwk_Operation_Marshalling_0100, Function | MediumT
  */
 HWTEST_F(OperationBaseTest, AaFwk_Operation_Operator_0100, Function | MediumTest | Level1)
 {
-    // std::shared_ptr<Operation> operation_ = std::make_shared<Operation>();
     Operation operation_;
     std::string value = "value";
     OHOS::Uri uri(value);

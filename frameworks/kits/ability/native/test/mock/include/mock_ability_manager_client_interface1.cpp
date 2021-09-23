@@ -236,7 +236,7 @@ ErrCode AbilityManagerClient::UnlockMission(int missionId)
 }
 
 ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
 {
     return ERR_OK;
 }

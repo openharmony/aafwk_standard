@@ -20,7 +20,7 @@ import { ConnectOptions } from './ability/connectOptions';
 /**
  * A Particle Ability represents an ability with service.
  * @name particleAbility
- * @since 6
+ * @since 7
  * @sysCap AAFwk
  * @devices phone, tablet
  * @permission N/A
@@ -30,22 +30,35 @@ declare namespace particleAbility {
   /**
    * Service ability uses this method to start a specific ability.
    * @devices phone, tablet
-   * @since 6
+   * @since 7
    * @sysCap AAFwk
    * @param parameter Indicates the ability to start.
    * @return -
    */
-  function startAbility(parameter: StartAbilityParameter, callback: AsyncCallback<number>): void;
-  function startAbility(parameter: StartAbilityParameter): Promise<number>;
+  function startAbility(parameter: StartAbilityParameter, callback: AsyncCallback<void>): void;
+  function startAbility(parameter: StartAbilityParameter): Promise<void>;
+
+  /**
+   * Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+   * @default -
+   * @devices phone, tablet
+   * @since 7
+   * @SysCap aafwk
+   * @param request The element name of the service ability
+   * @param options The remote object instance
+   * @return Returns the number of the ability connected
+   */
+   function connectAbility(request: Want, options:ConnectOptions ): number;
 
    /**
-   * Destroys another Service ability.
-   *
-   * @param want Indicates information about the Service ability.
-   * @return Returns true if the Service ability is destroyed; returns false otherwise.
-   * @since 6
-   */
-  function stopAbility(request: Want, callback:AsyncCallback<boolean>): void;
-  function stopAbility(request: Want): Promise<boolean>;
+    * The callback interface was connect successfully.
+    * @default -
+    * @devices phone, tablet
+    * @since 7
+    * @SysCap aafwk
+    * @param connection The number of the ability connected
+    */
+   function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
+   function disconnectAbility(connection: number): Promise<void>;
 }
 export default particleAbility;
