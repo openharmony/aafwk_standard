@@ -20,6 +20,7 @@
 
 #include "hilog_wrapper.h"
 #include "ipc_types.h"
+#include "ishared_result_set.h"
 #include "pac_map.h"
 #include "want.h"
 #include "data_ability_observer_interface.h"
@@ -314,12 +315,13 @@ int AbilitySchedulerStub::QueryInner(MessageParcel &data, MessageParcel &reply)
         HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
     }
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = Query(*uri, columns, *predicates);
+    auto resultSet = Query(*uri, columns, *predicates);
     if (resultSet == nullptr) {
         HILOG_ERROR("fail to WriteParcelable resultSet");
         return ERR_INVALID_VALUE;
     }
-    if (!resultSet->Marshalling(reply)){
+    auto result = NativeRdb::ISharedResultSet::WriteToParcel(std::move(resultSet), reply);
+    if (result == nullptr) {
         HILOG_ERROR("!resultSet->Marshalling(reply)");
         return ERR_INVALID_VALUE;
     }
