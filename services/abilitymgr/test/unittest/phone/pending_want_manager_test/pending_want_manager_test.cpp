@@ -47,6 +47,25 @@ using OHOS::AppExecFwk::ElementName;
 namespace OHOS {
 namespace AAFwk {
 
+static void WaitUntilTaskFinished()
+{
+    const uint32_t maxRetryCount = 1000;
+    const uint32_t sleepTime = 1000;
+    uint32_t count = 0;
+    auto handler = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    std::atomic<bool> taskCalled(false);
+    auto f = [&taskCalled]() { taskCalled.store(true); };
+    if (handler->PostTask(f)) {
+        while (!taskCalled.load()) {
+            ++count;
+            if (count >= maxRetryCount) {
+                break;
+            }
+            usleep(sleepTime);
+        }
+    }
+}
+
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
 
 namespace {}  // namespace
@@ -93,22 +112,29 @@ void PendingWantManagerTest::CancelReceiver::PerformReceive(const AAFwk::Want &w
 }
 
 void PendingWantManagerTest::SetUpTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
+}
 
 void PendingWantManagerTest::TearDownTestCase()
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+}
 
 void PendingWantManagerTest::SetUp()
 {
-    auto bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
+
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     abilityMs_->OnStart();
+    WaitUntilTaskFinished();
 }
 
 void PendingWantManagerTest::TearDown()
-{}
+{
+    abilityMs_->OnStop();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type)
 {
@@ -158,7 +184,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -173,7 +199,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0200, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -203,7 +229,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0400, TestSize.Level1)
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -257,7 +283,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0700, TestSize.Level1)
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want, static_cast<int32_t>(Flags::CANCEL_PRESENT_FLAG), 0);
-    EXPECT_TRUE(((int)wantSenderInfo1.flags & (int)Flags::CANCEL_PRESENT_FLAG) != 0);
+    EXPECT_TRUE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::CANCEL_PRESENT_FLAG) != 0);
     EXPECT_EQ(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr), nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 0);
 }
@@ -279,7 +305,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0800, TestSize.Level1)
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr), nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want, static_cast<int32_t>(Flags::UPDATE_PRESENT_FLAG), 0);
-    EXPECT_TRUE(((int)wantSenderInfo1.flags & (int)Flags::UPDATE_PRESENT_FLAG) != 0);
+    EXPECT_TRUE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::UPDATE_PRESENT_FLAG) != 0);
     EXPECT_NE(pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr), nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
 }

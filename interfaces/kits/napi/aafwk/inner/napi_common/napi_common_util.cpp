@@ -1038,5 +1038,123 @@ void CompletePromiseCallbackWork(napi_env env, napi_status status, void *data)
     delete asyncCallbackInfo;
     asyncCallbackInfo = nullptr;
 }
+
+std::vector<std::string> ConvertStrVector(napi_env env, napi_value value, size_t strMax)
+{
+    uint32_t arrLen = 0;
+    napi_get_array_length(env, value, &arrLen);
+    if (arrLen == 0) {
+        return {};
+    }
+    std::vector<std::string> result;
+    char *buf = new char[strMax + 1];
+    size_t len = 0;
+    for (size_t i = 0; i < arrLen; ++i) {
+        napi_value element;
+        napi_get_element(env, value, i, &element);
+        len = 0;
+        napi_get_value_string_utf8(env, element, buf, strMax, &len);
+        buf[len] = 0;
+        result.push_back(buf);
+    }
+    delete[] buf;
+    return result;
+}
+
+std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
+{
+    bool isTypedArray = false;
+    if (napi_is_typedarray(env, jsValue, &isTypedArray) != napi_ok || !isTypedArray) {
+        return {};
+    }
+
+    napi_typedarray_type type;
+    size_t length;
+    napi_value buffer;
+    size_t offset;
+    NAPI_CALL_BASE(env, napi_get_typedarray_info(env, jsValue, &type, &length, nullptr, &buffer, &offset), {});
+    if (type != napi_uint8_array) {
+        return {};
+    }
+    uint8_t *data;
+    size_t total;
+    NAPI_CALL_BASE(env, napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total), {});
+    length = std::min<size_t>(length, total - offset);
+    std::vector<uint8_t> result(sizeof(uint8_t) + length);
+    memcpy_s(result.data(), result.size(), &data[offset], length);
+    return result;
+}
+
+napi_value ConvertJSValue(napi_env env, std::vector<std::string> &value)
+{
+    napi_value jsValue;
+    napi_status status = napi_create_array_with_length(env, value.size(), &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+
+    for (size_t i = 0; i < value.size(); ++i) {
+        napi_set_element(env, jsValue, i, ConvertJSValue(env, value[i]));
+    }
+    return jsValue;
+}
+
+napi_value ConvertJSValue(napi_env env, std::string &value)
+{
+    napi_value jsValue;
+    napi_status status = napi_create_string_utf8(env, value.c_str(), value.size(), &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return jsValue;
+}
+
+napi_value ConvertJSValue(napi_env env, std::vector<uint8_t> &value)
+{
+    napi_value jsValue;
+    void *native = nullptr;
+    napi_value buffer = nullptr;
+    napi_status status = napi_create_arraybuffer(env, value.size(), &native, &buffer);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    (void)memcpy_s(native, value.size(), value.data(), value.size());
+    status = napi_create_typedarray(env, napi_uint8_array, value.size(), buffer, 0, &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return jsValue;
+}
+
+napi_value ConvertJSValue(napi_env env, int32_t value)
+{
+    napi_value jsValue;
+    napi_status status = napi_create_int32(env, value, &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return jsValue;
+}
+
+napi_value ConvertJSValue(napi_env env, int64_t value)
+{
+    napi_value jsValue;
+    napi_status status = napi_create_int64(env, value, &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return jsValue;
+}
+
+napi_value ConvertJSValue(napi_env env, double value)
+{
+    napi_value jsValue;
+    napi_status status = napi_create_double(env, value, &jsValue);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return jsValue;
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

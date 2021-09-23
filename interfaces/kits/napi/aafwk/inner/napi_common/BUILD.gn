@@ -45,6 +45,9 @@ ohos_shared_library("napi_common") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
     "samgr_L2:samgr_proxy",
   ]
 

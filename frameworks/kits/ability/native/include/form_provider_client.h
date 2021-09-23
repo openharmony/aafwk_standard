@@ -140,7 +140,6 @@ public:
     void ClearOwner(const std::shared_ptr<Ability> ability);
 
 private:
-    Want BuildNewWant(const Want &want);
     std::shared_ptr<Ability> GetOwner();
     bool CheckIsSystemApp() const;
     int HandleAcquire(

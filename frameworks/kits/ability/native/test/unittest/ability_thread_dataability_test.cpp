@@ -33,6 +33,10 @@
 #include "page_ability_impl.h"
 #include "uri.h"
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 using namespace testing::ext;
@@ -102,9 +106,10 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
             std::vector<std::string> columns;
             columns.push_back("string1");
 
-            DataAbilityPredicates predicates("test");
-            std::shared_ptr<ResultSet> resultSet = abilitythread->Query(uri, columns, predicates);
-            EXPECT_STREQ(resultSet->testInf_.c_str(), "TestResultSet");
+            NativeRdb::DataAbilityPredicates predicates("test");
+            std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = abilitythread->Query(uri, columns, predicates);
+            // EXPECT_STREQ(resultSet->testInf_.c_str(), "TestResultSet");
+            EXPECT_TRUE(resultSet != nullptr);
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_Query_0100 end";
@@ -128,7 +133,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0200, Function | MediumTes
     Uri uri("\nullptr");
     std::vector<std::string> columns;
     columns.push_back("string1");
-    DataAbilityPredicates predicates("test");
+    NativeRdb::DataAbilityPredicates predicates("test");
 
     abilitythread->Query(uri, columns, predicates);
     valuetest = abilityimpl->GetCurrentState();
@@ -291,7 +296,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Insert_0100, Function | MediumTe
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-            ValuesBucket value;
+            NativeRdb::ValuesBucket value;
 
             EXPECT_EQ(22, abilitythread->Insert(uri, value));
         }
@@ -313,7 +318,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Insert_0200, Function | MediumTe
     if (abilitythread != nullptr) {
         Uri uri("\nullptr");
         int number = -1;
-        ValuesBucket value;
+        NativeRdb::ValuesBucket value;
 
         EXPECT_EQ(number, abilitythread->Insert(uri, value));
     }
@@ -346,8 +351,8 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Update_0100, Function | MediumTe
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
-            ValuesBucket value;
-            DataAbilityPredicates predicates("test");
+            NativeRdb::ValuesBucket value;
+            NativeRdb::DataAbilityPredicates predicates("test");
 
             EXPECT_EQ(33, abilitythread->Update(uri, value, predicates));
         }
@@ -369,8 +374,8 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Update_0200, Function | MediumTe
     if (abilitythread != nullptr) {
         Uri uri("\nullptr");
         int number = -1;
-        ValuesBucket value;
-        DataAbilityPredicates predicates("test");
+        NativeRdb::ValuesBucket value;
+        NativeRdb::DataAbilityPredicates predicates("test");
 
         EXPECT_EQ(number, abilitythread->Update(uri, value, predicates));
     }
@@ -391,7 +396,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Delete_0100, Function | MediumTe
     if (abilitythread != nullptr) {
         Uri uri("\nullptr");
         int number = -1;
-        DataAbilityPredicates predicates("test");
+        NativeRdb::DataAbilityPredicates predicates("test");
 
         EXPECT_EQ(number, abilitythread->Delete(uri, predicates));
     }

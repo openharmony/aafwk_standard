@@ -79,7 +79,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_BatchInsert_001, Functio
 
     int ret;
     Uri uri("nullptr");
-    std::vector<ValuesBucket> values;
+    std::vector<NativeRdb::ValuesBucket> values;
     ret = dataabilityimpl->BatchInsert(uri, values);
 
     EXPECT_EQ(1, ret);
@@ -98,7 +98,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_BatchInsert_002, Functio
     std::shared_ptr<DataAbilityImpl> dataabilityimpl = std::make_shared<DataAbilityImpl>();
     int ret;
     Uri uri("nullptr");
-    std::vector<ValuesBucket> values;
+    std::vector<NativeRdb::ValuesBucket> values;
     ret = dataabilityimpl->BatchInsert(uri, values);
 
     EXPECT_EQ(-1, ret);

@@ -57,9 +57,11 @@ void AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, Call
 
     if (param.forResultOption == true) {
         if (param.setting == nullptr) {
+            APP_LOGI("%{public}s param.setting == nullptr call StartAbilityForResult.", __func__);
             ability->StartAbilityForResult(param.want, param.requestCode);
         } else {
-            ability->StartAbilityForResult(param.want, param.requestCode, *(param.setting.get()));
+            APP_LOGI("%{public}s param.setting != nullptr call StartAbilityForResult.", __func__);
+            ability->StartAbilityForResult(param.want, param.requestCode, *(param.setting));
         }
 
         std::lock_guard<std::mutex> lock_l(mutex_);
@@ -77,9 +79,11 @@ void AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, Call
         abilityResultMap_[ability] = map;
     } else {
         if (param.setting == nullptr) {
+            APP_LOGI("%{public}s param.setting == nullptr call StartAbility.", __func__);
             ability->StartAbility(param.want);
         } else {
-            ability->StartAbility(param.want, *(param.setting.get()));
+            APP_LOGI("%{public}s param.setting != nullptr call StartAbility.", __func__);
+            ability->StartAbility(param.want, *(param.setting));
         }
     }
     APP_LOGI("AbilityProcess::StartAbility end");

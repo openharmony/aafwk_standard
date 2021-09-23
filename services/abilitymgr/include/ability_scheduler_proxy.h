@@ -21,6 +21,11 @@
 #include <iremote_proxy.h>
 
 namespace OHOS {
+namespace NativeRdb {
+class AbsSharedResultSet;
+class DataAbilityPredicates;
+class ValuesBucket;
+}  // namespace NativeRdb
 namespace AAFwk {
 /**
  * @class AbilitySchedulerProxy
@@ -125,7 +130,7 @@ public:
      *
      * @return Returns the index of the inserted data record.
      */
-    virtual int Insert(const Uri &uri, const ValuesBucket &value) override;
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) override;
 
     /**
      * @brief Updates data records in the database.
@@ -136,7 +141,8 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates) override;
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+        const NativeRdb::DataAbilityPredicates &predicates) override;
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -146,7 +152,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates) override;
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) override;
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -157,8 +163,8 @@ public:
      *
      * @return Returns the query result.
      */
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates) override;
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates) override;
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -190,7 +196,7 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values) override;
+    int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
     /**
      * @brief notify multi window mode changed.
@@ -201,11 +207,40 @@ public:
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
 
     /**
+     * @brief Registers an observer to DataObsMgr specified by the given Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     *
+     * @return Return true if success. otherwise return false.
+     */
+    bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override;
+
+    /**
+     * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     *
+     * @return Return true if success. otherwise return false.
+     */
+    bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override;
+
+    /**
      * @brief notify this ability is top active ability.
      *
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag) override;
+
+    /**
+     * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     *
+     * @return Return true if success. otherwise return false.
+     */
+    bool ScheduleNotifyChange(const Uri &uri) override;
 
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
@@ -233,6 +268,15 @@ public:
      * in the current environment.
      */
     Uri DenormalizeUri(const Uri &uri) override;
+
+    /**
+     * @brief Performs batch operations on the database.
+     *
+     * @param operations Indicates a list of database operations on the database.
+     * @return Returns the result of each operation, in array.
+     */
+    std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override;
 
 private:
     bool WriteInterfaceToken(MessageParcel &data);

@@ -170,6 +170,9 @@ FilePath FilePath::BaseName()
 
 void FilePath::StripTrailingSeparatorsInternal()
 {
+    if (path_.size() == 0) {
+        return;
+    }
     std::string::size_type start = FindDriveLetter(path_) + 2;
     std::string::size_type lastStripped = std::string::npos;
     for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - 1]); --pos) {
@@ -232,7 +235,7 @@ bool FilePath::CreateDirectory(const FilePath &fullPath)
         if (DirectoryExists(*i)) {
             continue;
         }
-        if (mkdir(i->Value().c_str(), 0700) == 0) {
+        if (mkdir(i->Value().c_str(), 0777) == 0) {
             continue;
         }
 
@@ -324,32 +327,32 @@ bool FilePath::AppendRelativePath(const FilePath &child, FilePath *path)
     }
 
     std::vector<std::string> parentComponentsReverse;
-    std::vector<std::string> childComponents_reverse;
+    std::vector<std::string> childComponentsReverse;
 
     std::vector<std::string>::reverse_iterator riter;
     for (riter = parentComponents.rbegin(); riter != parentComponents.rend(); riter++) {
         parentComponentsReverse.push_back(*riter);
     }
     for (riter = childComponents.rbegin(); riter != childComponents.rend(); riter++) {
-        childComponents_reverse.push_back(*riter);
+        childComponentsReverse.push_back(*riter);
     }
-    std::vector<std::string>::const_iterator parent_it = parentComponentsReverse.begin();
-    std::vector<std::string>::const_iterator child_it = childComponents_reverse.begin();
-    while (parent_it != parentComponentsReverse.end()) {
-        if (*parent_it != *child_it)
+    std::vector<std::string>::const_iterator parentIt = parentComponentsReverse.begin();
+    std::vector<std::string>::const_iterator childIt = childComponentsReverse.begin();
+    while (parentIt != parentComponentsReverse.end()) {
+        if (*parentIt != *childIt)
             return false;
-        ++parent_it;
-        ++child_it;
+        ++parentIt;
+        ++childIt;
     }
 
     if (path != nullptr) {
         // Relative paths do not include separator
-        if ((child_it != childComponents_reverse.end()) && (*child_it == SEPARATOR)) {
-            ++child_it;
+        if ((childIt != childComponentsReverse.end()) && (*childIt == SEPARATOR)) {
+            ++childIt;
         }
 
-        for (; child_it != childComponents_reverse.end(); child_it++) {
-            *path = path->Append(*child_it);
+        for (; childIt != childComponentsReverse.end(); childIt++) {
+            *path = path->Append(*childIt);
         }
     }
     return true;

@@ -209,9 +209,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
     };
     std::vector<std::string> abilityNames;
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 
     dumpInfo.clear();
@@ -221,9 +221,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
         wantLauncher,
     };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 
     dumpInfo.clear();
@@ -237,9 +237,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
         want11,
     };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 
     dumpInfo.clear();
@@ -253,9 +253,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
         want11,
     };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 }
 
@@ -284,9 +284,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_002, TestSize.Level2)
     GTEST_LOG_(INFO) << "abilitiesStarted.size() = " << abilitiesStarted.size();
     GTEST_LOG_(INFO) << "abilityNames.size() = " << abilityNames.size();
 
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 
     dumpInfo.clear();
@@ -296,9 +296,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_002, TestSize.Level2)
         wantLauncher,
     };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 }
 
@@ -397,8 +397,8 @@ HWTEST_F(DumpModuleTest, dump_module_test_004, TestSize.Level2)
     g_abilityMs->DumpState(args, dumpInfo);
     std::vector<std::string> abilityNames;
     int abilityNum = MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(1, abilityNum);
-    ASSERT_EQ("MainAbility6", abilityNames[0]);
+    EXPECT_EQ(1, abilityNum);
+    EXPECT_EQ("MainAbility6", abilityNames[0]);
 }
 
 /*
@@ -415,8 +415,8 @@ HWTEST_F(DumpModuleTest, dump_module_test_005, TestSize.Level2)
     std::vector<std::string> abilityNames;
     g_abilityMs->GetStackManager()->DumpTopAbility(dumpInfo);
     int abilityNum = MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(1, abilityNum);
-    ASSERT_EQ("MainAbility6", abilityNames[0]);
+    EXPECT_EQ(1, abilityNum);
+    EXPECT_EQ("MainAbility6", abilityNames[0]);
 }
 
 /*
@@ -442,19 +442,19 @@ HWTEST_F(DumpModuleTest, dump_module_test_006, TestSize.Level2)
     };
     std::vector<std::string> abilityNames;
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
         GTEST_LOG_(INFO) << "abilitiesStarted = " << abilitiesStarted[i].GetElement().GetAbilityName();
         GTEST_LOG_(INFO) << "abilityNames = " << abilityNames[i];
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 
     dumpInfo.clear();
     g_abilityMs->GetStackManager()->Dump(dumpInfo);
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 }
 
@@ -473,11 +473,11 @@ HWTEST_F(DumpModuleTest, dump_module_test_007, TestSize.Level2)
     std::vector<std::string> abilityNames;
     g_abilityMs->GetStackManager()->Dump(dumpInfo);
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
         GTEST_LOG_(INFO) << "abilitiesStarted = " << abilitiesStarted[i].GetElement().GetAbilityName();
         GTEST_LOG_(INFO) << "abilityNames = " << abilityNames[i];
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 }
 
@@ -517,9 +517,9 @@ HWTEST_F(DumpModuleTest, dump_module_test_008, TestSize.Level2)
     };
 
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    ASSERT_EQ(abilitiesStarted.size(), abilityNames.size());
+    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
     for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        ASSERT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
+        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
     }
 }
 
@@ -616,7 +616,7 @@ HWTEST_F(DumpModuleTest, dump_module_test_010, TestSize.Level2)
         }
     }
 
-    ASSERT_EQ(6, findFlag);
+    EXPECT_EQ(6, findFlag);
 }
 
 /*
@@ -641,7 +641,7 @@ HWTEST_F(DumpModuleTest, dump_module_test_011, TestSize.Level2)
     auto stackMgr = g_abilityMs->GetStackManager();
     EXPECT_TRUE(stackMgr);
     g_abilityMs->DumpWaittingAbilityQueue(waitingQueueResult);
-    ASSERT_EQ(waitingQueueResult, expectResult);
+    EXPECT_EQ(waitingQueueResult, expectResult);
 
     result.clear();
     waitingQueueResult.clear();

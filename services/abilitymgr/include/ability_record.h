@@ -684,7 +684,7 @@ private:
     void SendEvent(uint32_t msg, uint32_t timeOut);
 
     static int64_t abilityRecordId;
-    int recordId_;                                    // record id
+    int recordId_ = 0;                                // record id
     Want want_;                                       // want to start this ability
     AppExecFwk::AbilityInfo abilityInfo_;             // the ability info get from BMS
     AppExecFwk::ApplicationInfo applicationInfo_;     // the ability info get from BMS

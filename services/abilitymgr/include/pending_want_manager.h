@@ -129,7 +129,7 @@ constexpr int32_t SYSTEM_UID = 1000;
 class PendingWantManager : public std::enable_shared_from_this<PendingWantManager>, public NoCopyable {
 public:
     PendingWantManager();
-    PendingWantManager(const std::shared_ptr<PendingWantManager> &manager){};
+    explicit PendingWantManager(const std::shared_ptr<PendingWantManager> &manager){};
     virtual ~PendingWantManager();
 
 public:

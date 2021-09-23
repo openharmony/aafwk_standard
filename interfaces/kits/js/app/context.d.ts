@@ -16,11 +16,54 @@
 import { AsyncCallback } from '../basic';
 
 /**
+ * The context of an ability or an application.  It allows access to
+ * application-specific resources, request and verification permissions.
+ * Can only be obtained through the ability.
+ *
+ * @since 6
+ * @SysCap SystemCapability.Appexecfwk
+ * @devices phone, tablet, tv, wearable, car
+ * @import import abilityManager from 'app/context'
+ * @permission N/A
+ */
+export interface Context {
+
+    /**
+    * Verify whether the specified permission is allowed for a particular
+    * pid and uid running in the system.
+    * @param permission The name of the specified permission
+    * @param pid process id
+    * @param uid user id
+    * @note Pid and uid are optional. If you do not pass in pid and uid,
+    * it will check your own permission.
+    * @since 7
+    * @sysCap SystemCapability.Appexecfwk
+    * @devices phone, tablet, tv, wearable, car
+    * @return asynchronous callback with {@code 0} if the PID
+    *         and UID have the permission; callback with {@code -1} otherwise.
+    */
+    verifyPermission(permission: string, options?: PermissionOptions): Promise<number>;
+    verifyPermission(permission: string, options: PermissionOptions, callback: AsyncCallback<number>): void;
+    verifyPermission(permission: string, callback: AsyncCallback<number>): void;
+
+    /**
+    * Requests certain permissions from the system.
+    * @param permissions Indicates the list of permissions to be requested. This parameter cannot be null.
+    * @param requestCode Indicates the request code to be passed to the PermissionRequestResult
+    * @since 7
+    * @sysCap SystemCapability.Appexecfwk
+    * @devices phone, tablet, tv, wearable, car
+    */
+    requestPermissionsFromUser(permissions: Array<string>, requestCode: number, resultCallback: AsyncCallback<PermissionRequestResult>): void;
+
+}
+
+/**
  * @name the result of requestPermissionsFromUser with asynchronous callback
  * @since 7
  * @SysCap SystemCapability.Appexecfwk
  * @permission N/A
- * @devices phone, tablet, tv, wearable
+ * @devices phone, tablet, tv, wearable, car
  */
 interface PermissionRequestResult {
     /**
@@ -47,52 +90,16 @@ interface PermissionRequestResult {
 
 interface PermissionOptions {
     /**
-    * @default The process id
-    * @since 7
-    * @SysCap SystemCapability.Appexecfwk
-    */
+     * @default The process id
+     * @since 7
+     * @SysCap SystemCapability.Appexecfwk
+     */
     pid?: number;
 
     /**
-    * @default The user id
-    * @since 7
-    * @SysCap SystemCapability.Appexecfwk
-    */
-   uid?: number;
-}
-
-/**
-* Requests certain permissions from the system.
-* @param permissions Indicates the list of permissions to be requested. This parameter cannot be null.
-* @param requestCode Indicates the request code to be passed to the PermissionRequestResult
-* @since 7
-* @sysCap SystemCapability.Appexecfwk
-* @devices phone, tablet, tv, wearable
-*/
-export interface Context {
-    /**
-    * Verify whether the specified permission is allowed for a particular
-    * pid and uid running in the system.
-    * @param permission The name of the specified permission
-    * @param options process id and user id
-    * @since 7
-    * @sysCap SystemCapability.Appexecfwk
-    * @devices phone, tablet, tv, wearable
-    * @return asynchronous callback with {@code 0} if the PID
-    *         and UID have the permission; callback with {@code -1} otherwise.
-    */
-    verifyPermission(permission: string, callback: AsyncCallback<number>): void;
-    verifyPermission(permission: string, options: PermissionOptions, callback: AsyncCallback<number>): void;	 
-    verifyPermission(permission: string, options?: PermissionOptions): Promise<number>;	 
-    
-    /**
-     * Requests certain permissions from the system.
-     * required for granting a certain permission.
-     * @devices phone
+     * @default The user id
      * @since 7
-     * @sysCap AAFwk
-     * @param -
-     * @return Return grant result
+     * @SysCap SystemCapability.Appexecfwk
      */
-	requestPermissionsFromUser(permissions: Array<string>, requestCode: number, resultCallback: AsyncCallback<PermissionRequestResult>): void;
+    uid?: number;
 }

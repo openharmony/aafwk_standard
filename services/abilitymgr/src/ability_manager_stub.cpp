@@ -29,6 +29,17 @@ namespace AAFwk {
 
 AbilityManagerStub::AbilityManagerStub()
 {
+    FirstStepInit();
+    SecondStepInit();
+}
+
+AbilityManagerStub::~AbilityManagerStub()
+{
+    requestFuncMap_.clear();
+}
+
+void AbilityManagerStub::FirstStepInit()
+{
     requestFuncMap_[TERMINATE_ABILITY] = &AbilityManagerStub::TerminateAbilityInner;
     requestFuncMap_[TERMINATE_ABILITY_BY_CALLER] = &AbilityManagerStub::TerminateAbilityByCallerInner;
     requestFuncMap_[ATTACH_ABILITY_THREAD] = &AbilityManagerStub::AttachAbilityThreadInner;
@@ -60,6 +71,10 @@ AbilityManagerStub::AbilityManagerStub()
     requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
     requestFuncMap_[MINIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MinimizeMultiWindowInner;
+}
+
+void AbilityManagerStub::SecondStepInit()
+{
     requestFuncMap_[MAXIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MaximizeMultiWindowInner;
     requestFuncMap_[GET_FLOATING_MISSIONS] = &AbilityManagerStub::GetFloatingMissionsInner;
     requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
@@ -84,11 +99,6 @@ AbilityManagerStub::AbilityManagerStub()
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
-}
-
-AbilityManagerStub::~AbilityManagerStub()
-{
-    requestFuncMap_.clear();
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

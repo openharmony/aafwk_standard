@@ -28,6 +28,10 @@
 #include "ohos_application.h"
 #include "page_ability_impl.h"
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 using namespace testing::ext;
@@ -61,13 +65,7 @@ void AbilityImplTest::SetUp(void)
 }
 
 void AbilityImplTest::TearDown(void)
-{
-    // delete AbilityImpl_;
-    // delete MocKPageAbility_;
-
-    // AbilityImpl_ = nullptr;
-    // MocKPageAbility_ = nullptr;
-}
+{}
 
 /*
  * Feature: AbilityImpl
@@ -1198,7 +1196,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Insert_001, TestSize.Level1)
 
                 Uri uri("\nullptr");
 
-                ValuesBucket numerical;
+                NativeRdb::ValuesBucket numerical;
                 int index = mockAbilityimpl->Insert(uri, numerical);
 
                 EXPECT_EQ(-1, index);
@@ -1242,8 +1240,8 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Update_001, TestSize.Level1)
 
                 Uri uri("\nullptr");
 
-                ValuesBucket numerical;
-                DataAbilityPredicates predicates;
+                NativeRdb::ValuesBucket numerical;
+                NativeRdb::DataAbilityPredicates predicates;
                 int index = mockAbilityimpl->Update(uri, numerical, predicates);
 
                 EXPECT_EQ(-1, index);
@@ -1287,7 +1285,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Delete_001, TestSize.Level1)
 
                 Uri uri("\nullptr");
 
-                DataAbilityPredicates predicates;
+                NativeRdb::DataAbilityPredicates predicates;
                 int index = mockAbilityimpl->Delete(uri, predicates);
 
                 EXPECT_EQ(-1, index);
@@ -1334,7 +1332,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Query_001, TestSize.Level1)
                 columns.push_back("string1");
                 columns.push_back("string2");
                 columns.push_back("string3");
-                DataAbilityPredicates predicates;
+                NativeRdb::DataAbilityPredicates predicates;
 
                 EXPECT_EQ(nullptr, mockAbilityimpl->Query(uri, columns, predicates));
             }

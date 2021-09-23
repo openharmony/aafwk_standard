@@ -79,6 +79,11 @@ config("ability_public_config") {
 }
 
 ohos_shared_library("abilitykit_native") {
+  include_dirs = [
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
+  ]
   cflags = [
     #"-DMMI_COMPILE"
   ]
@@ -106,9 +111,10 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/data_ability_operation_builder.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_result.cpp",
     "${SUBSYSTEM_DIR}/src/data_uri_utils.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_result_set.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
+
+    #"${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
+    #"${SUBSYSTEM_DIR}/src/dummy_result_set.cpp",
+    #"${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
     "${SUBSYSTEM_DIR}/src/form_js_event_handler.cpp",
     "${SUBSYSTEM_DIR}/src/form_provider_client.cpp",
     "${SUBSYSTEM_DIR}/src/mission_information.cpp",
@@ -146,6 +152,11 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/sys_mgr_client.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/js_utils.cpp",
+
+    #"//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_rdb_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
   ]
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
@@ -155,10 +166,11 @@ ohos_shared_library("abilitykit_native") {
     "${INNERKITS_PATH}/want:want",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
+    "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/fmskit:fmskit_native",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/appexecfwk/standard/interfaces/innerkits/task_dispatcher:appkit_dispatcher_td",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
@@ -167,8 +179,12 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   external_deps = [
+    "appexecfwk_standard:fmskit_native",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
 
     #"multimodalinput_base:libmmi-util",
     #"multimodalinput_base:libmmi-client",
@@ -187,10 +203,11 @@ ohos_shared_library("abilitykit_native") {
 
 ohos_shared_library("dummy_classes") {
   sources = [
-    "${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_result_set.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
+    "${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates_discard.cpp",
+    "${SUBSYSTEM_DIR}/src/dummy_result_set_discard.cpp",
+    "${SUBSYSTEM_DIR}/src/dummy_values_bucket_discard.cpp",
   ]
+
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
 

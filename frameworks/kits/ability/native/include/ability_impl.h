@@ -154,7 +154,7 @@ public:
      * @param resultData Indicates the data returned after the ability is destroyed. You can define the data
      * returned. This parameter can be null.
      */
-    void SendResult(int requestCode, int resultCode, /*const AAFwk::Want& resultData*/ const Want &resultData);
+    void SendResult(int requestCode, int resultCode, const Want &resultData);
 
     /**
      * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch
@@ -209,7 +209,7 @@ public:
      *
      * @return Returns the index of the inserted data record.
      */
-    virtual int Insert(const Uri &uri, const ValuesBucket &value);
+    virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
 
     /**
      * @brief Updates data records in the database.
@@ -221,7 +221,7 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates);
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -232,7 +232,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    virtual int Delete(const Uri &uri, const DataAbilityPredicates &predicates);
+    virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -244,8 +244,8 @@ public:
      *
      * @return Returns the query result.
      */
-    virtual std::shared_ptr<ResultSet> Query(
-        const Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates);
+    virtual std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should
@@ -278,7 +278,7 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    virtual int BatchInsert(const Uri &uri, const std::vector<ValuesBucket> &values);
+    virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
     /**
      * @brief Set deviceId/bundleName/abilityName of the calling ability
@@ -329,6 +329,8 @@ public:
      * @return Return a smart pointer to a timeout object
      */
     std::shared_ptr<AbilityPostEventTimeout> CreatePostEventTimeouter(std::string taskstr);
+
+    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 
 protected:
     /**

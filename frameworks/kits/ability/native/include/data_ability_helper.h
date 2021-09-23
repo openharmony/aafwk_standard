@@ -21,19 +21,22 @@
 #include <string>
 
 #include "context.h"
-#include "dummy_values_bucket.h"
-#include "dummy_data_ability_predicates.h"
-#include "dummy_result_set.h"
 #include "uri.h"
-#include <iremote_object.h>
-#include <iremote_stub.h>
 
 using Uri = OHOS::Uri;
 
 namespace OHOS {
+namespace NativeRdb {
+class AbsSharedResultSet;
+class DataAbilityPredicates;
+class ValuesBucket;
+}  // namespace NativeRdb
 namespace AppExecFwk {
 using string = std::string;
+class DataAbilityResult;
+class DataAbilityOperation;
 class PacMap;
+class IDataAbilityObserver;
 class DataAbilityHelper final : public std::enable_shared_from_this<DataAbilityHelper> {
 public:
     ~DataAbilityHelper() = default;
@@ -147,7 +150,7 @@ public:
      *
      * @return Returns the index of the inserted data record.
      */
-    int Insert(Uri &uri, const ValuesBucket &value);
+    int Insert(Uri &uri, const NativeRdb::ValuesBucket &value);
 
     /**
      * @brief Updates data records in the database.
@@ -158,7 +161,7 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    int Update(Uri &uri, const ValuesBucket &value, const DataAbilityPredicates &predicates);
+    int Update(Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -168,7 +171,7 @@ public:
      *
      * @return Returns the number of data records deleted.
      */
-    int Delete(Uri &uri, const DataAbilityPredicates &predicates);
+    int Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -179,8 +182,8 @@ public:
      *
      * @return Returns the query result.
      */
-    std::shared_ptr<ResultSet> Query(
-        Uri &uri, std::vector<std::string> &columns, const DataAbilityPredicates &predicates);
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
+        Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -212,7 +215,30 @@ public:
      *
      * @return Returns the number of data records inserted.
      */
-    int BatchInsert(Uri &uri, const std::vector<ValuesBucket> &values);
+    int BatchInsert(Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
+
+    /**
+     * @brief Registers an observer to DataObsMgr specified by the given Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     */
+    void RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver);
+
+    /**
+     * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     * @param dataObserver, Indicates the IDataAbilityObserver object.
+     */
+    void UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver);
+
+    /**
+     * @brief Notifies the registered observers of a change to the data resource specified by Uri.
+     *
+     * @param uri, Indicates the path of the data to operate.
+     */
+    void NotifyChange(const Uri &uri);
 
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
@@ -241,6 +267,16 @@ public:
      */
     Uri DenormalizeUri(Uri &uri);
 
+    /**
+     * @brief Performs batch operations on the database.
+     *
+     * @param uri Indicates the path of data to operate.
+     * @param operations Indicates a list of database operations on the database.
+     * @return Returns the result of each operation, in array.
+     */
+    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const Uri &uri, const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+
 private:
     DataAbilityHelper(const std::shared_ptr<Context> &context, const std::shared_ptr<Uri> &uri,
         const sptr<AAFwk::IAbilityScheduler> &dataAbilityProxy, bool tryBind = false);
@@ -262,7 +298,14 @@ private:
     bool isSystemCaller_ = false;
     sptr<AAFwk::IAbilityScheduler> dataAbilityProxy_ = nullptr;
     std::mutex lock_;
+	static std::mutex oplock_;
+
     sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_ = nullptr;  // caller binderDied Recipient
+    
+	std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<AAFwk::IAbilityScheduler>> registerMap_;
+    
+	std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
+
 };
 
 class DataAbilityDeathRecipient : public IRemoteObject::DeathRecipient {

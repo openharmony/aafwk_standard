@@ -106,7 +106,8 @@ public:
      *
      * @return Returns a Window object pointer.
      */
-    const sptr<Window> &GetWindow();
+    const sptr<Window> GetWindow();
+
 private:
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::weak_ptr<IAbilityEvent> ability_;

@@ -19,6 +19,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+
 #include "want.h"
 
 #define private public
