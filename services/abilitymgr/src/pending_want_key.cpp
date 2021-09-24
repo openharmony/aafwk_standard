@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 void PendingWantKey::SetType(const int32_t type)
 {
     type_ = type;
@@ -118,6 +117,5 @@ int32_t PendingWantKey::GetUserId()
 {
     return userId_;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

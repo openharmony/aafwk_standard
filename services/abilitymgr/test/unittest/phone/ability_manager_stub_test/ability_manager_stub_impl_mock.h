@@ -281,7 +281,6 @@ public:
         return 0;
     }
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

@@ -441,12 +441,12 @@ public:
     /**
      * Sets description information about the mission containing this ability.
      *
-     * @param missionDescriptionInfo Indicates the object containing information about the
-     *                           mission. This parameter cannot be null.
+     * @param description Indicates the object containing information about the
+     *                    mission. This parameter cannot be null.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override;
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description) override;
 
     /**
      * get current system mission lock mode state.
@@ -622,6 +622,7 @@ private:
     void SystemDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
+    bool CheckCallerIsSystemAppByIpc();
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
 

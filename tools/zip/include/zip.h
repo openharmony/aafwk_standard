@@ -140,10 +140,24 @@ private:
 // Convenience method for callers who don't need to set up the filter callback.
 // If |includeHiddenFiles| is true, files starting with "." are included.
 // Otherwise they are omitted.
+// example No1
+// srcDir = /ziptest/zipdata/
+// destFile = /ziptest/hapresult/hapfourfile.zip
+// example No2
+// srcDir = /ziptest/zipdata/zip1/zip1-1.cpp
+// destFile = /ziptest/hapresult/singlefile.zip
+// options is default value.
 bool Zip(const FilePath &srcDir, const FilePath &destFile, const OPTIONS &options, CALLBACK callback,
     bool includeHiddenFiles);
 
 // Unzip the contents of zipFile into destDir.
+// example No1
+// srcDir = /ziptest/hapresult/hapfourfile.zip
+// destFile = /ziptest/hapunzipdir/01
+// example No2
+// srcDir = /ziptest/hapresult/singlefile.zip
+// destFile = /ziptest/hapunzipdir/single
+// options is default value.
 bool Unzip(const FilePath &zipFile, const FilePath &destDir, const OPTIONS &options, CALLBACK callback);
 
 }  // namespace LIBZIP

@@ -400,7 +400,7 @@ public:
 
     int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
     int SetMissionDescriptionInfo(
-        const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &missionDescriptionInfo);
+        const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description);
     int GetMissionLockModeState();
 
     /**

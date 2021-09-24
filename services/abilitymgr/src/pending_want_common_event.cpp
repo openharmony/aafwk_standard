@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 PendingWantCommonEvent::PendingWantCommonEvent()
 {}
 
@@ -41,6 +40,5 @@ void PendingWantCommonEvent::OnReceiveEvent(const EventFwk::CommonEventData &dat
         HILOG_INFO("PendingWantCommonEvent::OnReceiveEvent end.");
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

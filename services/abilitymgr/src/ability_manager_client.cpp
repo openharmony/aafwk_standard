@@ -389,11 +389,11 @@ ErrCode AbilityManagerClient::UnlockMission(int missionId)
 }
 
 ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->SetMissionDescriptionInfo(token, missionDescriptionInfo);
+    return abms->SetMissionDescriptionInfo(token, description);
 }
 
 ErrCode AbilityManagerClient::GetMissionLockModeState()
@@ -538,6 +538,5 @@ ErrCode AbilityManagerClient::GetPendingRequestWant(const sptr<IWantSender> &tar
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetPendingRequestWant(target, want);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

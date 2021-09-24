@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 #define private public
 #include "want_sender_proxy.h"
 #undef private
@@ -34,8 +33,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<WantSenderProxy> proxy_;
-    sptr<WantSenderStubMock> mock_;
+    std::shared_ptr<WantSenderProxy> proxy_{nullptr};
+    sptr<WantSenderStubMock> mock_{nullptr};
 };
 
 void WantSenderProxyTest::SetUpTestCase(void)
@@ -68,6 +67,5 @@ HWTEST_F(WantSenderProxyTest, WantSenderProxyTest_001, TestSize.Level0)
 
     EXPECT_EQ(IWantSender::WANT_SENDER_SEND, mock_->code_);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

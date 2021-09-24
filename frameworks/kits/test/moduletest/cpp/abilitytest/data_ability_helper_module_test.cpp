@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
@@ -241,20 +241,23 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0100, Func
     EXPECT_NE(fd, -1);
 
     std::string result = "123456";
-    FILE *file = fdopen(fd, "r");
+    FILE *file = nullptr;
+    file = fdopen(fd, "r");
     EXPECT_NE(file, nullptr);
 
-    int strSize = 7;
-    std::string str("");
-    str.resize(strSize);
-    if (!feof(file)) {
-        fgets(&str[0], strSize, file);
-    }
-    string stringstr(str);
-    EXPECT_STREQ(stringstr.c_str(), result.c_str());
+    if (file != nullptr) {
+        int strSize = 7;
+        std::string str("");
+        str.resize(strSize);
+        if (!feof(file)) {
+            fgets(&str[0], strSize, file);
+        }
+        string stringstr(str);
+        EXPECT_STREQ(stringstr.c_str(), result.c_str());
 
-    fclose(file);
-    system("rm /dataability_openfile_test.txt");
+        fclose(file);
+        system("rm /dataability_openfile_test.txt");
+    }
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0100 end";
 }
@@ -279,21 +282,24 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0200, Func
     EXPECT_NE(fd, -1);
 
     std::string result = "123456";
-    FILE *file = fdopen(fd, "r");
+    FILE *file = nullptr;
+    file = fdopen(fd, "r");
     EXPECT_NE(file, nullptr);
 
-    int strSize = 7;
-    std::string str("");
-    str.resize(strSize);
-    if (!feof(file)) {
-        fgets(&str[0], strSize, file);
-    }
-    string stringstr(str);
-    EXPECT_STREQ(stringstr.c_str(), result.c_str());
+    if (file != nullptr) {
+        int strSize = 7;
+        std::string str("");
+        str.resize(strSize);
+        if (!feof(file)) {
+            fgets(&str[0], strSize, file);
+        }
+        string stringstr(str);
+        EXPECT_STREQ(stringstr.c_str(), result.c_str());
 
-    fclose(file);
-    system("rm /dataability_openfile_test.txt");
-    
+        fclose(file);
+        system("rm /dataability_openfile_test.txt");
+    }
+
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0200 end";
 }
 
@@ -482,7 +488,7 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Delete_Test_0200, Functi
 }
 /**
  * @tc.number: AaFwk_DataAbilityHelper_Query_Test_0100
- * @tc.name: DataAbilityHelper 
+ * @tc.name: DataAbilityHelper
  * @tc.desc: Query with DataAbilityHelper which created with uri.
  */
 HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_Query_Test_0100, Function | MediumTest | Level1)
@@ -669,7 +675,6 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_DenormalizeUri_Test_0200
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_Test_0200 end";
 }
-
 
 }  // namespace AppExecFwk
 }  // namespace OHOS

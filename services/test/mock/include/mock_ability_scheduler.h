@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class MockAbilityScheduler : public IAbilityScheduler {
 public:
     MOCK_METHOD2(ScheduleAbilityTransaction, void(const Want &want, const LifeCycleStateInfo &targetState));
@@ -38,12 +37,11 @@ public:
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
-    
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
-    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD2(
+        ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
     MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
-
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
         std::vector<std::string> types;
@@ -108,7 +106,6 @@ public:
         return urivalue;
     }
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

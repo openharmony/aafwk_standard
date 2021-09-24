@@ -79,11 +79,13 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         if (abilityInfo->type == AbilityType::PAGE) {
             abilityName = ACE_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::SERVICE) {
-            abilityName = ACE_SERVICE_ABILITY_NAME;
+            if (abilityInfo->formEnabled == true) {
+                abilityName = ACE_FORM_ABILITY_NAME;
+            } else {
+                abilityName = ACE_SERVICE_ABILITY_NAME;
+            }
         } else if (abilityInfo->type == AbilityType::DATA) {
             abilityName = ACE_DATA_ABILITY_NAME;
-        } else if (abilityInfo->type == AbilityType::FORM) {
-            abilityName = ACE_FORM_ABILITY_NAME;
         } else {
             abilityName = abilityInfo->name;
         }

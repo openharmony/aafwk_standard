@@ -140,19 +140,19 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
 {
     HILOG_DEBUG("%{public}s begin", __func__);
     if (!abilityInfo.visible) {
-        HILOG_ERROR("ability visible is false");
+        HILOG_DEBUG("ability visible is false");
         if (callerUid == -1) {
             callerUid = IPCSkeleton::GetCallingUid();
         }
         if (ROOT_UID == callerUid) {
-            HILOG_ERROR("uid is root");
+            HILOG_ERROR("uid is root,ability cannot be start when the visible is false");
             return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
         }
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
         auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
         if (callerUid != SYSTEM_UID && !isSystemApp) {
-            HILOG_ERROR("caller is not systemAp or system");
+            HILOG_DEBUG("caller is not systemApp or system");
             std::string bundleName;
             bool result = bms->GetBundleNameForUid(callerUid, bundleName);
             if (!result) {

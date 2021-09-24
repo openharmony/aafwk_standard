@@ -407,6 +407,10 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
             OnRequestPermissionsFromUserResultCallback *onRequestPermissionCB =
                 (OnRequestPermissionsFromUserResultCallback *)work->data;
             if (onRequestPermissionCB == nullptr) {
+                if (work != nullptr) {
+                    delete work;
+                    work = nullptr;
+                }                
                 return;
             }
 
