@@ -1465,8 +1465,9 @@ bool PacMap::StringToMapList(const std::string &str, PacMapList &mapList)
 
     const int rawJsonLength = static_cast<int>(str.length());
     Json::CharReaderBuilder builder;
-    std::unique_ptr<Json::CharReader> const jsonReader(builder.newCharReader());
+    std::unique_ptr<Json::CharReader> jsonReader(builder.newCharReader());
     if (!jsonReader->parse(str.c_str(), str.c_str() + rawJsonLength, &root, &err)) {
+        jsonReader.reset();
         return false;
     }
 

@@ -31,7 +31,6 @@ public:
     static int onAbilityConnectDoneCount;
     static int onAbilityDisconnectDoneCount;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

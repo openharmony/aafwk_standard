@@ -32,16 +32,16 @@ public:
     void SetUp();
     void TearDown();
 
-    StackInfo Stackinfo_;
-    MissionStackInfo missionStackInfo_;
-    MissionRecordInfo missionRecordInfo_;
-    AbilityRecordInfo abilityRecordInfo_;
-    LifeCycleStateInfo lifeCycleStateInfo_;
-    ImageInfo imageInfo_;
-    ImageHeader imageHeader_;
-    MissionSnapshotInfo missionSnapshotInfo_;
-    MissionDescriptionInfo missionDescriptionInfo_;
-    AbilityMissionInfo recentMissionInfo_;
+    StackInfo Stackinfo_{};
+    MissionStackInfo missionStackInfo_{};
+    MissionRecordInfo missionRecordInfo_{};
+    AbilityRecordInfo abilityRecordInfo_{};
+    LifeCycleStateInfo lifeCycleStateInfo_{};
+    ImageInfo imageInfo_{};
+    ImageHeader imageHeader_{};
+    MissionSnapshotInfo missionSnapshotInfo_{};
+    MissionDescriptionInfo missionDescriptionInfo_{};
+    AbilityMissionInfo recentMissionInfo_{};
 };
 
 void InfoTest::SetUpTestCase(void)
@@ -270,6 +270,7 @@ HWTEST_F(InfoTest, stack_info_oprator_008, TestSize.Level0)
     Parcel parcel;
     missionDescriptionInfo_.Marshalling(parcel);
     MissionDescriptionInfo *obj = missionDescriptionInfo_.Unmarshalling(parcel);
+    EXPECT_NE(obj, nullptr);
     if (!obj) {
         return;
     }

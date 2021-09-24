@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 EXTERN_C_START
 /*
  * function for module exports
@@ -39,10 +38,11 @@ static napi_value Init(napi_env env, napi_value exports)
     NAPI_CALL(env, napi_create_object(env, &nWeightReasonCode));
     CreateWeightReasonCodeObject(env, nWeightReasonCode);
 
-    napi_property_descriptor desc[] = {DECLARE_NAPI_FUNCTION("getAllRunningProcesses", NAPI_GetAllRunningProcesses),
-        DECLARE_NAPI_FUNCTION("getActiveProcessInfos", NAPI_GetAllRunningProcesses),
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_FUNCTION("getAllRunningProcesses", NAPI_GetAllRunningProcesses),
+        DECLARE_NAPI_FUNCTION("getActiveProcessInfos", NAPI_GetActiveProcessInfos),
         DECLARE_NAPI_FUNCTION("queryRunningAbilityMissionInfos", NAPI_QueryRunningAbilityMissionInfos),
-        DECLARE_NAPI_FUNCTION("getActiveAbilityMissionInfos", NAPI_QueryRunningAbilityMissionInfos),
+        DECLARE_NAPI_FUNCTION("getActiveAbilityMissionInfos", NAPI_GetActiveAbilityMissionInfos),
         DECLARE_NAPI_FUNCTION("queryRecentAbilityMissionInfos", NAPI_QueryRecentAbilityMissionInfos),
         DECLARE_NAPI_FUNCTION("getPreviousAbilityMissionInfos", NAPI_GetPreviousAbilityMissionInfos),
         DECLARE_NAPI_FUNCTION("removeMission", NAPI_RemoveMission),
@@ -52,7 +52,8 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("moveMissionToTop", NAPI_MoveMissionToTop),
         DECLARE_NAPI_FUNCTION("killProcessesByBundleName", NAPI_KillProcessesByBundleName),
         DECLARE_NAPI_FUNCTION("clearUpApplicationData", NAPI_ClearUpApplicationData),
-        DECLARE_NAPI_PROPERTY("WeightReasonCode", nWeightReasonCode)};
+        DECLARE_NAPI_PROPERTY("WeightReasonCode", nWeightReasonCode),
+    };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
     HILOG_INFO("napi_moudule Init end...");
@@ -63,13 +64,15 @@ EXTERN_C_END
 /*
  * Module define
  */
-static napi_module _module = {.nm_version = 1,
+static napi_module _module = {
+    .nm_version = 1,
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = Init,
     .nm_modname = "app.abilityManager",
     .nm_priv = ((void *)0),
-    .reserved = {0}};
+    .reserved = {0},
+};
 
 /*
  * Module register function
@@ -78,6 +81,5 @@ extern "C" __attribute__((constructor)) void RegisterModule(void)
 {
     napi_module_register(&_module);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

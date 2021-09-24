@@ -26,7 +26,7 @@ public:
     void SetUp();
     void TearDown();
 
-    OHOS::sptr<AbilityTokenProxy> abilityTokenProxy_;
+    OHOS::sptr<AbilityTokenProxy> abilityTokenProxy_ = nullptr;
     OHOS::sptr<OHOS::IRemoteObject> impl = nullptr;
 };
 

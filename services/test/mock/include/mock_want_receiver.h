@@ -17,22 +17,19 @@
 #include "cancel_listener.h"
 #include "gmock/gmock.h"
 
-// using namespace OHOS::Notification::WantAgent;
 namespace OHOS {
 namespace AAFwk {
-
 class MockWantReceiver : public IWantReceiver {
 public:
     MOCK_METHOD1(Send, void(const int32_t resultCode));
     MOCK_METHOD0(AsObject, sptr<IRemoteObject>());
     MOCK_METHOD7(PerformReceive, void(const Want &want, int resultCode, const std::string &data,
-                                     const WantParams &extras, bool serialized, bool sticky, int sendingUser));
+                                    const WantParams &extras, bool serialized, bool sticky, int sendingUser));
 };
 
-class MockCancelListener : public Notification::WantAgent::CancelListener{
+class MockCancelListener : public Notification::WantAgent::CancelListener {
 public:
     MOCK_METHOD1(OnCancelled, void(int resultCode));
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -54,6 +54,11 @@ bool CheckAbilityType(const CBBase *cbBase)
         return false;
     }
 
+    if (cbBase->ability == nullptr) {
+        HILOG_ERROR("%{public}s cbBase->ability == nullptr", __func__);
+        return false;
+    }
+
     const std::shared_ptr<AbilityInfo> info = cbBase->ability->GetAbilityInfo();
     if (info == nullptr) {
         HILOG_ERROR("%{public}s info == nullptr", __func__);
@@ -3329,6 +3334,18 @@ napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info 
         return WrapVoidToJS(env);
     }
 
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+    if (ability == nullptr) {
+        HILOG_ERROR("%{public}s, ability == nullptr", __func__);
+        return WrapVoidToJS(env);
+    }
+
+    dataAbilityHelperCB->cbBase.ability = ability;
     dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
     dataAbilityHelperCB->cbBase.abilityType = abilityType;
     napi_value ret = AcquireDataAbilityHelperWrap(env, info, dataAbilityHelperCB);
