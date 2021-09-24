@@ -29,11 +29,7 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
-
-namespace {}  // namespace
-
 class SenderInfoTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -48,7 +44,6 @@ public:
         void PerformReceive(const AAFwk::Want &want, int resultCode, const std::string &data,
             const AAFwk::WantParams &extras, bool serialized, bool sticky, int sendingUser) override;
     };
-
 public:
 };
 
@@ -91,6 +86,7 @@ HWTEST_F(SenderInfoTest, SenderInfoTest_0100, TestSize.Level1)
     Parcel parcel;
     info.Marshalling(parcel);
     auto unInfo = SenderInfo::Unmarshalling(parcel);
+    EXPECT_NE(unInfo, nullptr);
     if (!unInfo) {
         return;
     }
@@ -103,6 +99,5 @@ HWTEST_F(SenderInfoTest, SenderInfoTest_0100, TestSize.Level1)
     EXPECT_EQ(unInfo->requiredPermission, "xiaoming");
     delete unInfo;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

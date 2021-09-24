@@ -30,12 +30,9 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
-
 namespace {}  // namespace
-
-class WantInfoTest : public testing::Test {
+class WantsInfoTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -53,30 +50,30 @@ public:
 public:
 };
 
-void WantInfoTest::CancelReceiver::Send(const int32_t resultCode)
+void WantsInfoTest::CancelReceiver::Send(const int32_t resultCode)
 {}
-void WantInfoTest::CancelReceiver::PerformReceive(const AAFwk::Want &want, int resultCode, const std::string &data,
+void WantsInfoTest::CancelReceiver::PerformReceive(const AAFwk::Want &want, int resultCode, const std::string &data,
     const AAFwk::WantParams &extras, bool serialized, bool sticky, int sendingUser)
 {}
 
-void WantInfoTest::SetUpTestCase()
+void WantsInfoTest::SetUpTestCase()
 {}
 
-void WantInfoTest::TearDownTestCase()
+void WantsInfoTest::TearDownTestCase()
 {}
 
-void WantInfoTest::SetUp()
+void WantsInfoTest::SetUp()
 {}
 
-void WantInfoTest::TearDown()
+void WantsInfoTest::TearDown()
 {}
 
 /*
- * @tc.number    : WantInfoTest_0100
+ * @tc.number    : WantsInfoTest_0100
  * @tc.name      : Marshalling/UnMarshalling
  * @tc.desc      : 1.Marshalling/UnMarshalling
  */
-HWTEST_F(WantInfoTest, WantInfoTest_0100, TestSize.Level1)
+HWTEST_F(WantsInfoTest, WantsInfoTest_0100, TestSize.Level1)
 {
     WantsInfo info;
     Want want;
@@ -92,6 +89,5 @@ HWTEST_F(WantInfoTest, WantInfoTest_0100, TestSize.Level1)
     EXPECT_EQ(unInfo->resolvedTypes, "nihao");
     delete unInfo;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

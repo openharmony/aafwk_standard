@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 #define ODD_PRIME_NUMBER (37)
 
 class PendingWantKey {
@@ -55,18 +54,17 @@ public:
     int32_t GetUserId();
 
 private:
-    int32_t type_ {};
-    std::string bundleName_ {};
-    std::string requestWho_ {};
-    int32_t requestCode_ {};
-    Want requestWant_ {};
-    std::string requestResolvedType_ {};
-    std::vector<WantsInfo> allWantsInfos_ {};
-    int32_t flags_ {};
-    int32_t code_ {};
-    int32_t userId_ {};
+    int32_t type_ = {};
+    std::string bundleName_ = {};
+    std::string requestWho_ = {};
+    int32_t requestCode_ = {};
+    Want requestWant_ = {};
+    std::string requestResolvedType_ = {};
+    std::vector<WantsInfo> allWantsInfos_ = {};
+    int32_t flags_ = {};
+    int32_t code_ = {};
+    int32_t userId_ = {};
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_PENDING_WANT_KEY_H

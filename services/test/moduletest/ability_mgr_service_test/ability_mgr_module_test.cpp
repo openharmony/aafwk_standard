@@ -80,9 +80,9 @@ public:
     std::shared_ptr<AbilityRecord> GetTopAbility();
     void ClearStack();
 
-    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_;
-    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_;
-    sptr<MockAbilityScheduler> scheduler_;
+    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_{nullptr};
+    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_{nullptr};
+    sptr<MockAbilityScheduler> scheduler_{nullptr};
     inline static bool doOnce_ = false;  // In order for mock to execute once
 
     static constexpr int TEST_WAIT_TIME = 100000;
@@ -283,9 +283,9 @@ void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, spt
     };
 
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
-
+    int counts = 2;
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _))
-        .Times(2)
+        .Times(counts)
         .WillOnce(Invoke([&testFailed](const sptr<IRemoteObject> &token, const OHOS::AppExecFwk::AbilityState state) {
             testFailed = testFailed || (state != OHOS::AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
             return AppMgrResultCode::RESULT_OK;
@@ -349,7 +349,8 @@ void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &r
         record, abilityMgrServ_->GetConnectRecordListByCallback(callback1)));
     EXPECT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
         record, abilityMgrServ_->GetConnectRecordListByCallback(callback2)));
-    EXPECT_EQ((std::size_t)2, record->GetConnectRecordList().size());
+    int size = 2;
+    EXPECT_EQ((std::size_t)size, record->GetConnectRecordList().size());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 }
 
@@ -357,10 +358,12 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
     std::shared_ptr<AbilityRecord> &record2, const sptr<AbilityConnectionProxy> &callback1,
     const sptr<AbilityConnectionProxy> &callback2)
 {
+    int size = 2;
+    int counts = 2;
     EXPECT_EQ((std::size_t)1, record1->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)1, record2->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->GetConnectRecordListByCallback(callback1).size());
-    EXPECT_EQ((std::size_t)2, abilityMgrServ_->connectManager_->GetServiceMap().size());
+    EXPECT_EQ((std::size_t)size, abilityMgrServ_->connectManager_->GetServiceMap().size());
 
     abilityMgrServ_->DisconnectAbility(callback2);
 
@@ -370,13 +373,13 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
     EXPECT_EQ((std::size_t)0, record2->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->GetConnectRecordListByCallback(callback2).size());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(counts);
     abilityMgrServ_->AbilityTransitionDone(record1->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
     abilityMgrServ_->AbilityTransitionDone(record2->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record1->GetAbilityState());
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record2->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(counts);
     abilityMgrServ_->OnAbilityRequestDone(
         record1->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     abilityMgrServ_->OnAbilityRequestDone(

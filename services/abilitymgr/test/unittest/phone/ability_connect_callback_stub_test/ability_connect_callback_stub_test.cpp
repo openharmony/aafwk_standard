@@ -23,7 +23,7 @@ using namespace OHOS::AAFwk;
 using namespace OHOS;
 using namespace testing;
 
-class AbilityConnectionStubTest : public testing::Test {
+class AbilityConnectCallBackStubTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -33,16 +33,16 @@ public:
     void WriteInterfaceToken(MessageParcel &data);
 };
 
-void AbilityConnectionStubTest::SetUpTestCase(void)
+void AbilityConnectCallBackStubTest::SetUpTestCase(void)
 {}
-void AbilityConnectionStubTest::TearDownTestCase(void)
+void AbilityConnectCallBackStubTest::TearDownTestCase(void)
 {}
-void AbilityConnectionStubTest::SetUp()
+void AbilityConnectCallBackStubTest::SetUp()
 {}
-void AbilityConnectionStubTest::TearDown()
+void AbilityConnectCallBackStubTest::TearDown()
 {}
 
-void AbilityConnectionStubTest::WriteInterfaceToken(MessageParcel &data)
+void AbilityConnectCallBackStubTest::WriteInterfaceToken(MessageParcel &data)
 {
     data.WriteInterfaceToken(AbilityConnectionProxy::GetDescriptor());
 }
@@ -55,7 +55,7 @@ void AbilityConnectionStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: ElementName is nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_001, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_001, TestSize.Level0)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -83,7 +83,7 @@ HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_001, TestSize.
  * EnvConditions: ElementName is not nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_002, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_002, TestSize.Level0)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -113,7 +113,7 @@ HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_002, TestSize.
  * EnvConditions: ElementName is nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_003, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_003, TestSize.Level0)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -141,7 +141,7 @@ HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_003, TestSize.
  * EnvConditions: ElementName is not nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectionStubTest, AbilityConnectionCallBack_IPC_004, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_004, TestSize.Level0)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 

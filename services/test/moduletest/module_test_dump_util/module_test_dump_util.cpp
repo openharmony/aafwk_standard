@@ -89,8 +89,9 @@ str_iter MTDumpUtil::GetSpecific(const string &matchStr, const str_vec &dumpInfo
 bool MTDumpUtil::MatchRegex(const regex &rgx, const string &text, string &result)
 {
     std::smatch baseMatch;
+    std::size_t size = 2;
     if (std::regex_match(text, baseMatch, rgx)) {
-        if (baseMatch.size() == 2) {
+        if (baseMatch.size() == size) {
             result = baseMatch[1].str();
             return true;
         }

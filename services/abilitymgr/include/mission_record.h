@@ -204,9 +204,9 @@ public:
         return bundleName_;
     };
 
-    void SetMissionDescriptionInfo(std::shared_ptr<MissionDescriptionInfo> &missionDescriptionInfo)
+    void SetMissionDescriptionInfo(std::shared_ptr<MissionDescriptionInfo> &description)
     {
-        missionDescriptionInfo_ = missionDescriptionInfo;
+        missionDescriptionInfo_ = description;
     };
 
     std::shared_ptr<MissionDescriptionInfo> GetMissionDescriptionInfo() const

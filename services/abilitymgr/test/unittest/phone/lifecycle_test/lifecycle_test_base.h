@@ -71,7 +71,6 @@ public:
         if (c->callback_) {
             if (c->abnormalState_ != OHOS::AAFwk::AbilityState::INITIAL) {
                 c->state_ = c->abnormalState_;
-                ;
             } else {
                 c->state_ = c->expectState_;
             }

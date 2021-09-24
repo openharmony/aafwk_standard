@@ -29,8 +29,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<LifecycleDeal> lifecycleDeal_;
-    sptr<AbilitySchedulerMock> abilityScheduler_;
+    std::shared_ptr<LifecycleDeal> lifecycleDeal_{nullptr};
+    sptr<AbilitySchedulerMock> abilityScheduler_{nullptr};
 };
 
 void LifecycleDealTest::SetUpTestCase(void)

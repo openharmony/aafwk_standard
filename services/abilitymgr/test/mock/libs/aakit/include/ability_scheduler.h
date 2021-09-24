@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 /**
  * @class AbilityScheduler
  * AbilityScheduler is used to schedule ability kit lifecycle.
@@ -58,7 +57,8 @@ public:
 
     int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) override;
 
-    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) override;
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+        const NativeRdb::DataAbilityPredicates &predicates) override;
 
     int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) override;
 
@@ -77,17 +77,28 @@ public:
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;
 
-    void NotifyTopActiveAbilityChanged(bool flag) override {};
-    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override {return true;};
-    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override {return true;};
-    virtual bool ScheduleNotifyChange(const Uri &uri) override {return true;};
+    void NotifyTopActiveAbilityChanged(bool flag) override{};
+    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
+    {
+        return true;
+    };
+    virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
+    {
+        return true;
+    };
+    virtual bool ScheduleNotifyChange(const Uri &uri) override
+    {
+        return true;
+    };
     virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
-        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override {return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();};
+        const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override
+    {
+        return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
+    };
 
 private:
     AbilityResult result_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_SCHEDULER_H
