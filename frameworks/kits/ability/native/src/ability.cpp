@@ -2585,21 +2585,7 @@ sptr<IBundleMgr> Ability::GetBundleMgr()
 bool Ability::CheckPermission()
 {
     APP_LOGI("%{public}s called.", __func__);
-    // int32_t uid = IPCSkeleton::GetCallingUid();
-    // if (!iBundleMgr_->CheckIsSystemAppByUid(uid)) {
-    //     APP_LOGE("%{public}s fail, form is not system app. uid:%{public}d", __func__, uid);
-    //     return false;
-    // }
-
-    // std::string bundleName;
-    // bool result = iBundleMgr_->GetBundleNameForUid(uid, bundleName);
-    // if (!result || bundleName.empty()) {
-    //     APP_LOGE("%{public}s failed, cannot get bundle name by uid:%{public}d", __func__, uid);
-    //     return false;
-    // }
-
-   // return CheckFormPermission(bundleName);
-   return true;
+    return true;
 }
 
 bool Ability::CheckFormPermission(const std::string &bundleName) const
