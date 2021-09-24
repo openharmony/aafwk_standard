@@ -39,9 +39,9 @@ public:
     void TearDown();
 
 protected:
-    sptr<AbilitySchedulerMock> abilitySchedulerMock_;
+    sptr<AbilitySchedulerMock> abilitySchedulerMock_{nullptr};
     AbilityRequest abilityRequest_;
-    std::shared_ptr<AbilityRecord> abilityRecord_;
+    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
     OHOS::AAFwk::AbilityState abilityState_;
 };
 

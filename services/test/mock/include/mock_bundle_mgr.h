@@ -27,7 +27,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 namespace {
 const std::string COM_IX_HIWORLD = "com.ix.hiworld";
 const std::string COM_IX_HIMUSIC = "com.ix.hiMusic";
@@ -38,6 +37,8 @@ const std::string COM_IX_HIDATA = "com.ix.hiData";
 const std::string COM_IX_PHONE = "com.ix.hiPhone";
 const std::string COM_IX_TV = "com.ix.hiTV";
 const std::string COM_IX_Film = "com.ix.hiFilm";
+constexpr int32_t MAX_SYS_UID = 2899;
+constexpr int32_t ROOT_UID = 0;
 
 auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
     abilityInfo.name = elementTemp.GetAbilityName();
@@ -190,9 +191,7 @@ auto HiFilmInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     }
     return true;
 };
-
 }  // namespace
-
 class BundleMgrProxy : public IRemoteProxy<IBundleMgr> {
 public:
     explicit BundleMgrProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IBundleMgr>(impl)
@@ -205,6 +204,7 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
 
+    virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
@@ -212,7 +212,6 @@ public:
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
-    MOCK_METHOD1(CheckIsSystemAppByUid, bool(const int uid));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
@@ -274,7 +273,6 @@ public:
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
-    MOCK_METHOD1(CheckIsSystemAppByUid, bool(const int uid));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
@@ -322,7 +320,6 @@ public:
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
     MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetModuleUsageRecords, bool(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords));
-
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
@@ -333,6 +330,7 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
+    virtual bool CheckIsSystemAppByUid(const int uid) override;
     BundleMgrService()
     {
         abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);
@@ -356,7 +354,6 @@ public:
         std::function<bool(std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp)>;
     std::map<std::string, QueryAbilityInfoFunType> abilityInfoMap_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

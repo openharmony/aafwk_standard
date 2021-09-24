@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class AbilitySchedulerMock : public IRemoteStub<IAbilityScheduler> {
 public:
     AbilitySchedulerMock() : code_(0)
@@ -142,6 +141,5 @@ public:
 
     int code_ = 0;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS

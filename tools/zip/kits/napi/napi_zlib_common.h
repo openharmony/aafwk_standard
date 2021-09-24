@@ -68,13 +68,14 @@ struct CallZipUnzipParam {
 struct ZlibCallbackInfo {
     napi_env env;
     napi_ref callback = 0;
+    napi_deferred deferred;
     CallZipUnzipParam param;
+    bool isCallBack = false;
     int callbackResult = 0;
 };
 
 struct AsyncZipCallbackInfo {
     napi_async_work asyncWork;
-    napi_deferred deferred;
     std::shared_ptr<ZlibCallbackInfo> aceCallback;
 };
 bool UnwrapIntValue(napi_env env, napi_value jsValue, int &result);

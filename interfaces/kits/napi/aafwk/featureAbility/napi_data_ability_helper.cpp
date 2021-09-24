@@ -35,7 +35,7 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-napi_value g_dataAbilityHelper;
+extern napi_value g_dataAbilityHelper;
 std::list<std::shared_ptr<DataAbilityHelper>> g_dataAbilityHelperList;
 
 /**

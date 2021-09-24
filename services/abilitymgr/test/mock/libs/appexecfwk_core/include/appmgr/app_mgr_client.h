@@ -27,9 +27,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class AppServiceManager;
-
 class AppMgrClient {
 public:
     AppMgrClient();
@@ -174,7 +172,6 @@ private:
     sptr<IRemoteObject> remote_;
     sptr<IAppStateCallback> callback_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APP_MGR_CLIENT_H

@@ -34,8 +34,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<AbilityManagerProxy> proxy_;
-    sptr<AbilityManagerStubMock> mock_;
+    std::shared_ptr<AbilityManagerProxy> proxy_{nullptr};
+    sptr<AbilityManagerStubMock> mock_{nullptr};
 };
 
 void AbilityManagerProxyTest::SetUpTestCase(void)

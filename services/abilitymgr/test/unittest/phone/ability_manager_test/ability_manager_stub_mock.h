@@ -94,7 +94,6 @@ public:
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

@@ -30,6 +30,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
     "//foundation/aafwk/standard/frameworks/kits/content/cpp/src/ohos/aafwk/content/pac_map.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
   ]
 
@@ -46,6 +47,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   }
   deps = [
     "${innerkits_path}/want:want",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",

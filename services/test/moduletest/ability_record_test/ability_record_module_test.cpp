@@ -119,7 +119,8 @@ private:
 
 void AbilityRecordModuleTest::SetUpTestCase()
 {
-    testAbilityRequest_.requestCode = 123;
+    int testCode = 123;
+    testAbilityRequest_.requestCode = testCode;
 
     testAbilityRequest_.abilityInfo.package = "test";
     testAbilityRequest_.abilityInfo.name = "test";
