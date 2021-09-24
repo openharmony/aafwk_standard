@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 bool LockMissionContainer::IsLockedMissionState() const
 {
     return lockState_ != LockMissionState::LOCK_MISSION_STATE_NONE;

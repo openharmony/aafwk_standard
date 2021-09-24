@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class MockAppMgrClient : public AppMgrClient {
 public:
     MockAppMgrClient()
@@ -43,7 +42,6 @@ public:
     MOCK_METHOD1(KillProcessByAbilityToken, AppMgrResultCode(const sptr<IRemoteObject> &token));
     MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

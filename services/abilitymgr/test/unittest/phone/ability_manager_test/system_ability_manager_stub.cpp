@@ -152,10 +152,4 @@ bool SystemAbilityManagerStub::CanRequest()
 {
     return true;
 }
-
-// bool SystemAbilityManagerStub::IsTrustedHap(int32_t callingUid)
-// {
-//     return true;
-// }
-
 }  // namespace OHOS

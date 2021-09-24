@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 using namespace OHOS::AppExecFwk;
 class MockAppMgrClient : public AppMgrClient {
 public:

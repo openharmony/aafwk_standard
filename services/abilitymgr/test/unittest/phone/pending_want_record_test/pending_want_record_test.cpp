@@ -46,11 +46,9 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
 
 namespace {}  // namespace
-
 class PendingWantRecordTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -75,8 +73,8 @@ public:
     };
 
 public:
-    std::shared_ptr<PendingWantManager> pendingManager_;
-    std::shared_ptr<AbilityManagerService> abilityMs_;
+    std::shared_ptr<PendingWantManager> pendingManager_{nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
 };
 
 int PendingWantRecordTest::CancelReceiver::performReceiveCount = 0;
@@ -121,7 +119,8 @@ WantSenderInfo PendingWantRecordTest::MakeWantSenderInfo(Want &want, int32_t fla
     // wantSenderInfo.type is OperationType::START_ABILITY
     wantSenderInfo.bundleName = "com.ix.hiRadio";
     wantSenderInfo.resultWho = "RadioTopAbility";
-    wantSenderInfo.requestCode = 10;
+    int requestCode = 10;
+    wantSenderInfo.requestCode = requestCode;
     std::vector<WantsInfo> allWant;
     WantsInfo wantInfo;
     wantInfo.want = want;
@@ -630,6 +629,5 @@ HWTEST_F(PendingWantRecordTest, PendingWantRecordTest_2100, TestSize.Level1)
     pendingWantRecord->SenderInner(info);
     EXPECT_TRUE(info.resolvedType == key->GetRequestResolvedType());
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 bool AbilityManagerProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AbilityManagerProxy::GetDescriptor())) {
@@ -529,7 +528,7 @@ int AbilityManagerProxy::GetAllStackInfo(StackInfo &stackInfo)
     return result;
 }
 
-template <typename T>
+template<typename T>
 int AbilityManagerProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {
     int32_t infoSize = reply.ReadInt32();
@@ -1021,7 +1020,7 @@ int AbilityManagerProxy::UnlockMission(int missionId)
 }
 
 int AbilityManagerProxy::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description)
 {
     int error;
     MessageParcel data;
@@ -1035,7 +1034,7 @@ int AbilityManagerProxy::SetMissionDescriptionInfo(
         HILOG_ERROR("%{public}s for result fail", __func__);
         return false;
     }
-    if (!data.WriteParcelable(&missionDescriptionInfo)) {
+    if (!data.WriteParcelable(&description)) {
         HILOG_ERROR("%{public}s for result fail", __func__);
         return false;
     }

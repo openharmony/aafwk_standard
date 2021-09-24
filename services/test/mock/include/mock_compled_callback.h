@@ -20,14 +20,10 @@
 #include "completed_callback.h"
 
 namespace OHOS::Notification::WantAgent {
-class MockCompletedCallback : public CompletedCallback{
+class MockCompletedCallback : public CompletedCallback {
 public:
     MOCK_METHOD4(OnSendFinished, void(const AAFwk::Want &want, int resultCode, const std::string &resultData,
-        const AAFwk::WantParams &resultExtras));
+                                    const AAFwk::WantParams &resultExtras));
 };
-
-
-
-
 }  // namespace OHOS::Notification::WantAgent
 #endif

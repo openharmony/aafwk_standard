@@ -19,6 +19,7 @@
 #include <chrono>
 #include <thread>
 
+#include "ability_manager_service.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -49,8 +50,7 @@ sptr<IWantSender> PendingWantManager::GetWantSender(const int32_t callingUid, co
             return nullptr;
         }
     }
-    WantSenderInfo info;
-    info = wantSenderInfo;
+    WantSenderInfo info = wantSenderInfo;
     return GetWantSenderLocked(callingUid, uid, wantSenderInfo.userId, info, callerToken);
 }
 
@@ -421,6 +421,5 @@ int32_t PendingWantManager::GetPendingRequestWant(const sptr<IWantSender> &targe
     HILOG_ERROR("%{public}s:want is ok.", __func__);
     return NO_ERROR;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

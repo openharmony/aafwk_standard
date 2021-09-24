@@ -41,10 +41,10 @@ public:
     void TearDown();
 
 protected:
-    sptr<AbilitySchedulerMock> abilitySchedulerMock_;
-    AbilityRequest abilityRequest_;
-    std::shared_ptr<AbilityRecord> abilityRecordClient_;
-    OHOS::AAFwk::AbilityState abilityState_;
+    sptr<AbilitySchedulerMock> abilitySchedulerMock_{nullptr};
+    AbilityRequest abilityRequest_{};
+    std::shared_ptr<AbilityRecord> abilityRecordClient_{nullptr};
+    OHOS::AAFwk::AbilityState abilityState_{};
 };
 
 void DataAbilityManagerTest::SetUpTestCase(void)

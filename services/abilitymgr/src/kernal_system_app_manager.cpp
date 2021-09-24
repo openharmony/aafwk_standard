@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 KernalSystemAppManager::KernalSystemAppManager(int userId) : userId_(userId)
 {}
 
@@ -188,7 +187,8 @@ void KernalSystemAppManager::GetOrCreateAbilityRecord(
             return false;
         }
         return KernalSystemAppManager::GetFlagOfAbility(
-                   ability->GetAbilityInfo().bundleName, ability->GetAbilityInfo().name) == targetFlag;
+        ability->GetAbilityInfo().bundleName,
+        ability->GetAbilityInfo().name) == targetFlag;
     };
     auto iter = std::find_if(abilities_.begin(), abilities_.end(), isExist);
     if (iter != abilities_.end()) {

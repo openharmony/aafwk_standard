@@ -2089,8 +2089,8 @@ void Ability::CleanFormResource(const int64_t formId)
     // compatible with int form id
     int64_t cleanId{-1L};
     for (auto param : userReqParams_) {
-        uint64_t unsignedFormId = static_cast<int64_t>(formId);
-        uint64_t unsignedParamFirst = static_cast<int64_t>(param.first);
+        uint64_t unsignedFormId = static_cast<uint64_t>(formId);
+        uint64_t unsignedParamFirst = static_cast<uint64_t>(param.first);
         if ((unsignedParamFirst & 0x00000000ffffffffL) == (unsignedFormId & 0x00000000ffffffffL)) {
             cleanId = param.first;
             break;

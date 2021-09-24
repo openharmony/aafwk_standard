@@ -133,7 +133,7 @@ void ContinuationHandler::SetAbilityInfo(std::shared_ptr<AbilityInfo> &abilityIn
 {
     APP_LOGI("%{public}s called begin", __func__);
     abilityInfo_ = abilityInfo;
-    ClearDeviceInfo(abilityInfo);
+    // ClearDeviceInfo(abilityInfo);
     APP_LOGI("%{public}s called end", __func__);
 }
 

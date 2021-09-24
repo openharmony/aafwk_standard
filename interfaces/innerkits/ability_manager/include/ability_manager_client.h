@@ -322,12 +322,12 @@ public:
     /**
      * Sets description information about the mission containing this ability.
      *
-     * @param missionDescriptionInfo Indicates the object containing information about the
-     *                           mission. This parameter cannot be null.
+     * @param description Indicates the object containing information about the
+     *                    mission. This parameter cannot be null.
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo);
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description);
 
     /**
      * get current system mission lock mode state.

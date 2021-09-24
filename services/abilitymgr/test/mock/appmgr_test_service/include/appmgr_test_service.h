@@ -68,7 +68,6 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AppMgrEventHandler> handler_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_APPMGR_TEST_SERVICE_H

@@ -36,7 +36,7 @@ public:
     void TearDown();
 
 public:
-    std::shared_ptr<AbilityManagerService> aams_;
+    std::shared_ptr<AbilityManagerService> aams_{nullptr};
 };
 
 void AbilityServiceStartTest::SetUpTestCase()

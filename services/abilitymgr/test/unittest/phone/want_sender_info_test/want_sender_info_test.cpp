@@ -31,11 +31,8 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
-
 namespace {}  // namespace
-
 class WantSenderInfoTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -96,6 +93,7 @@ HWTEST_F(WantSenderInfoTest, WantSenderInfoTest_0100, TestSize.Level1)
     Parcel parcel;
     info.Marshalling(parcel);
     auto unInfo = WantSenderInfo::Unmarshalling(parcel);
+    EXPECT_NE(unInfo, nullptr);
     if (!unInfo) {
         return;
     }
@@ -111,6 +109,5 @@ HWTEST_F(WantSenderInfoTest, WantSenderInfoTest_0100, TestSize.Level1)
     EXPECT_EQ(unInfo->userId, 99);
     delete unInfo;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

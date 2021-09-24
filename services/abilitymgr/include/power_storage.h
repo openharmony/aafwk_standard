@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 struct PowerOffRecord {
     std::weak_ptr<AbilityRecord> ability;
     int32_t missionId;

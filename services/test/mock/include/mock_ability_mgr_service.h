@@ -74,7 +74,6 @@ public:
     MOCK_METHOD2(RegisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
-
     MOCK_METHOD4(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
                                    const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
@@ -102,11 +101,9 @@ public:
     {
         sem_.Post();
     }
-
 private:
     Semaphore sem_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_AAFWK_SERVICES_MOCK_ABILITY_MGR_SERVICE_H

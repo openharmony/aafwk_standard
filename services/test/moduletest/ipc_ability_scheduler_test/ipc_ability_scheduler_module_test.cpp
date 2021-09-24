@@ -16,6 +16,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "uri.h"
 #include "want.h"
 #include "semaphore_ex.h"
@@ -382,7 +385,7 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Insert_001, TestSize.Level1)
 
         bool testResult = false;
         std::string testUri("dataability://test/path");
-        ValuesBucket testValues;
+        NativeRdb::ValuesBucket testValues;
         int testRet = 123;
 
         auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb) {
@@ -420,8 +423,8 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Update_001, TestSize.Level1)
 
         bool testResult = false;
         std::string testUri("dataability://test/path");
-        ValuesBucket testValues;
-        DataAbilityPredicates testPred;
+        NativeRdb::ValuesBucket testValues;
+        NativeRdb::DataAbilityPredicates testPred;
         int testRet = 123;
 
         auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb, const NativeRdb::DataAbilityPredicates &pred) {
@@ -459,7 +462,7 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Delete_001, TestSize.Level1)
 
         bool testResult = false;
         std::string testUri("dataability://test/path");
-        DataAbilityPredicates testPred;
+        NativeRdb::DataAbilityPredicates testPred;
         int testRet = 123;
 
         auto mockHandler = [&](const Uri &uri, const NativeRdb::DataAbilityPredicates &pred) {
@@ -500,12 +503,12 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Query_001, TestSize.Level1)
         std::vector<std::string> testColumns;
         testColumns.emplace_back("col1");
         testColumns.emplace_back("col2");
-        DataAbilityPredicates testPred;
+        NativeRdb::DataAbilityPredicates testPred;
 
         auto mockHandler = [&](const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &pred) {
             testResult = (columns == testColumns);
             sem.Post();
-            return std::make_shared<NativeRdb::AbsSharedResultSet>();
+            return std::make_shared<NativeRdb::AbsSharedResultSet>("DataAbilityTest");
         };
 
         EXPECT_CALL(*stub, Query(_, _, _)).Times(1).WillOnce(Invoke(mockHandler));

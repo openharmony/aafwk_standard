@@ -52,7 +52,6 @@ public:
     virtual void PerformReceive(const Want &want, int resultCode, const std::string &data, const WantParams &extras,
         bool serialized, bool sticky, int sendingUser){};
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 
