@@ -31,10 +31,9 @@ constexpr int PENDING_WANT_USERID = 123456;
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
-
 namespace OHOS {
 namespace AAFwk {
-class PendinfWantKeyTest : public testing::Test {
+class PendingWantKeyTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -42,13 +41,13 @@ public:
     void TearDown();
 };
 
-void PendinfWantKeyTest::SetUpTestCase(void)
+void PendingWantKeyTest::SetUpTestCase(void)
 {}
-void PendinfWantKeyTest::TearDownTestCase(void)
+void PendingWantKeyTest::TearDownTestCase(void)
 {}
-void PendinfWantKeyTest::SetUp(void)
+void PendingWantKeyTest::SetUp(void)
 {}
-void PendinfWantKeyTest::TearDown(void)
+void PendingWantKeyTest::TearDown(void)
 {}
 
 /*
@@ -56,7 +55,7 @@ void PendinfWantKeyTest::TearDown(void)
  * @tc.name      : set type
  * @tc.desc      : Set type, use GetType to verify whether the type value is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetType_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetType_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -69,7 +68,7 @@ HWTEST_F(PendinfWantKeyTest, SetType_0100, TestSize.Level1)
  * @tc.name      : set BundleName
  * @tc.desc      : Set BundleName, use GetBundleName to verify whether the BundleName  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetBundleName_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetBundleName_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -82,7 +81,7 @@ HWTEST_F(PendinfWantKeyTest, SetBundleName_0100, TestSize.Level1)
  * @tc.name      : set RequestWho
  * @tc.desc      : Set RequestWho, use GetWho to verify whether the RequestWho is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetRequestWho_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetRequestWho_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -95,7 +94,7 @@ HWTEST_F(PendinfWantKeyTest, SetRequestWho_0100, TestSize.Level1)
  * @tc.name      : set RequestCode
  * @tc.desc      : Set RequestCode, use GetRequestCode to verify whether the RequestCode  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetRequestCode_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetRequestCode_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -108,7 +107,7 @@ HWTEST_F(PendinfWantKeyTest, SetRequestCode_0100, TestSize.Level1)
  * @tc.name      : set RequestWant
  * @tc.desc      : Set RequestWant, use GetRequestWant to verify whether the RequestWant  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetRequestWant_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetRequestWant_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -128,7 +127,7 @@ HWTEST_F(PendinfWantKeyTest, SetRequestWant_0100, TestSize.Level1)
  * @tc.desc      : Set RequestResolvedType, use GetRequestResolvedType to verify whether the RequestResolvedType  is
  * set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetRequestResolvedType_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetRequestResolvedType_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -141,7 +140,7 @@ HWTEST_F(PendinfWantKeyTest, SetRequestResolvedType_0100, TestSize.Level1)
  * @tc.name      : set All WantsInfos
  * @tc.desc      : Set AllWantsInfos, use GetAllWantsInfos to verify whether the AllWantsInfos  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetAllWantsInfos_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetAllWantsInfos_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -161,7 +160,7 @@ HWTEST_F(PendinfWantKeyTest, SetAllWantsInfos_0100, TestSize.Level1)
  * @tc.name      : set Flags
  * @tc.desc      : Set Flags, use GetFlags to verify whether the Flags  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetFlags_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetFlags_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -174,7 +173,7 @@ HWTEST_F(PendinfWantKeyTest, SetFlags_0100, TestSize.Level1)
  * @tc.name      : set Code
  * @tc.desc      : Set Code, use GetCode to verify whether the Code  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetCode_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetCode_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
@@ -187,13 +186,12 @@ HWTEST_F(PendinfWantKeyTest, SetCode_0100, TestSize.Level1)
  * @tc.name      : set UserId
  * @tc.desc      : Set UserId, use GetUserId to verify whether the UserId  is set successfully
  */
-HWTEST_F(PendinfWantKeyTest, SetUserId_0100, TestSize.Level1)
+HWTEST_F(PendingWantKeyTest, SetUserId_0100, TestSize.Level1)
 {
     std::unique_ptr<PendingWantKey> amsPendingWantKey = std::make_unique<PendingWantKey>();
 
     amsPendingWantKey->SetUserId(PENDING_WANT_USERID);
     EXPECT_EQ(PENDING_WANT_USERID, amsPendingWantKey->GetUserId());
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

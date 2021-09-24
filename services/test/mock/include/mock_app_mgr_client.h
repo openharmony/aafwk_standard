@@ -17,12 +17,10 @@
 #define FOUNDATION_AAFWK_SERVICES_TEST_MT_MOCK_APP_MGR_CLIENT_H
 
 #include <gmock/gmock.h>
-
 #include "app_mgr_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class MockAppMgrClient : public AppMgrClient {
 public:
     MockAppMgrClient();
@@ -41,8 +39,6 @@ public:
     AppMgrResultCode ConnectAppMgrService() override;
     AppMgrResultCode RegisterAppStateCallback(const sptr<IAppStateCallback> &callback) override;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
-
 #endif  // FOUNDATION_AAFWK_SERVICES_TEST_MT_MOCK_APP_MGR_CLIENT_H

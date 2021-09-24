@@ -94,12 +94,12 @@ public:
     void StartAllAbilities();
     bool SearchAbilityNameFromStackInfo(const std::string &abilityName, const std::vector<AbilityRecordInfo> &vec);
 
-    Want want11;
-    Want want22;
-    Want want33;
-    Want want44;
-    Want want55;
-    Want wantLauncher;
+    Want want11{};
+    Want want22{};
+    Want want33{};
+    Want want44{};
+    Want want55{};
+    Want wantLauncher{};
 };
 
 bool DumpModuleTest::SearchAbilityNameFromStackInfo(

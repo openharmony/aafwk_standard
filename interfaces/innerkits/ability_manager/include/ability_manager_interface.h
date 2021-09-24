@@ -408,12 +408,12 @@ public:
     /**
      * Sets description information about the mission containing this ability.
      *
-     * @param missionDescriptionInfo Indicates the object containing information about the
-     *                           mission. This parameter cannot be null.
+     * @param description Indicates the object containing information about the
+     *                    mission. This parameter cannot be null.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) = 0;
+        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description) = 0;
 
     /**
      * get current system mission lock mode state.

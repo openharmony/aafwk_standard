@@ -23,9 +23,7 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class MockAbilityManagerProxy : public IRemoteProxy<IAbilityManager> {
-
 public:
     explicit MockAbilityManagerProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IAbilityManager>(impl)
     {}
@@ -78,12 +76,9 @@ public:
     MOCK_METHOD0(PowerOff, int());
     MOCK_METHOD0(PowerOn, int());
     MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
-
 public:
     int id_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
-
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_PROXY_MOCK_H

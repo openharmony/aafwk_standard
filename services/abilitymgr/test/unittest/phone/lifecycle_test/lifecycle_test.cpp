@@ -79,14 +79,14 @@ public:
 public:
     int startLancherFlag_ = false;
 
-    std::shared_ptr<OHOS::AAFwk::AbilityManagerService> aams_;
-    std::shared_ptr<OHOS::AAFwk::AbilityRecord> launcherAbilityRecord_;  // launcher ability
-    OHOS::sptr<OHOS::IRemoteObject> launcherToken_;                      // token of launcher ability
-    std::shared_ptr<OHOS::AAFwk::AbilityRecord> nextAbilityRecord_;      // ability being launched
-    OHOS::sptr<OHOS::IRemoteObject> nextToken_;                          // token of ability being launched
-    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> launcherScheduler_;        // launcher ability thread interface
-    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> nextScheduler_;            // next ability thread interface
-    std::unique_ptr<LifeTestCommand> command_;                           // test command_ interact with ams_
+    std::shared_ptr<OHOS::AAFwk::AbilityManagerService> aams_{nullptr};
+    std::shared_ptr<OHOS::AAFwk::AbilityRecord> launcherAbilityRecord_{nullptr};  // launcher ability
+    OHOS::sptr<OHOS::IRemoteObject> launcherToken_{nullptr};                      // token of launcher ability
+    std::shared_ptr<OHOS::AAFwk::AbilityRecord> nextAbilityRecord_{nullptr};      // ability being launched
+    OHOS::sptr<OHOS::IRemoteObject> nextToken_{nullptr};                          // token of ability being launched
+    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> launcherScheduler_{nullptr};        // launcher ability thread interface
+    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> nextScheduler_{nullptr};            // next ability thread interface
+    std::unique_ptr<LifeTestCommand> command_{nullptr};                           // test command_ interact with ams_
 };
 
 void LifecycleTest::SetUpTestCase(void)

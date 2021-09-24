@@ -58,9 +58,9 @@ public:
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
 
 public:
-    std::shared_ptr<AbilityStackManager> stackManager_;
-    inline static BundleMgrService *bundleObject_;
-    inline static MockAppMgrClient *mockAppMgrClient;
+    std::shared_ptr<AbilityStackManager> stackManager_{nullptr};
+    inline static BundleMgrService *bundleObject_{nullptr};
+    inline static MockAppMgrClient *mockAppMgrClient{nullptr};
     OHOS::sptr<MockAbilityScheduler> mockScheduler_ = nullptr;
 };
 
@@ -72,7 +72,10 @@ void AbilityStackModuleTest::SetUpTestCase(void)
     }
 
     auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-    appScheduler->appMgrClient_.reset(mockAppMgrClient);
+
+    if (mockAppMgrClient && appScheduler) {
+        appScheduler->appMgrClient_.reset(mockAppMgrClient);
+    }
 
     if (!bundleObject_) {
         bundleObject_ = new (std::nothrow) BundleMgrService();
@@ -3601,6 +3604,5 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_059, TestSize.Level1)
     ref = stackManager_->StartAbility(radioAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

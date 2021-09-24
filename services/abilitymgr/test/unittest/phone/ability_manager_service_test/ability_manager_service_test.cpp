@@ -74,9 +74,9 @@ public:
     static constexpr int TEST_WAIT_TIME = 100000;
 
 public:
-    std::shared_ptr<AbilityManagerService> abilityMs_;
-    AbilityRequest abilityRequest_;
-    std::shared_ptr<AbilityRecord> abilityRecord_;
+    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    AbilityRequest abilityRequest_{};
+    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
 };
 
 int AbilityManagerServiceTest::StartAbility(const Want &want)

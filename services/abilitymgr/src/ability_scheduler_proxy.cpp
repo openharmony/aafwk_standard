@@ -27,7 +27,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 bool AbilitySchedulerProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AbilitySchedulerProxy::GetDescriptor())) {

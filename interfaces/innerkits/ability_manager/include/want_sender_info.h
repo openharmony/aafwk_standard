@@ -32,7 +32,7 @@ struct WantSenderInfo : public Parcelable {
     std::string resultWho;
     int32_t requestCode;
     std::vector<WantsInfo> allWants;
-    int32_t flags;
+    uint32_t flags;
     int32_t userId;
 
     bool ReadFromParcel(Parcel &parcel);

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 #define private public
 #include "want_receiver_proxy.h"
 #undef private
@@ -33,9 +32,8 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-
-    std::shared_ptr<WantReceiverProxy> proxy_;
-    sptr<WantReceiverStubMock> mock_;
+    std::shared_ptr<WantReceiverProxy> proxy_{nullptr};
+    sptr<WantReceiverStubMock> mock_{nullptr};
 };
 
 void WantReceiverProxyTest::SetUpTestCase(void)
@@ -89,6 +87,5 @@ HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_002, TestSize.Level0)
 
     EXPECT_EQ(IWantReceiver::WANT_RECEIVER_PERFORM_RECEIVE, mock_->code_);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -54,14 +54,14 @@ public:
     std::list<sptr<IWantReceiver>> GetCancelCallbacks();
 
 private:
-    std::weak_ptr<PendingWantManager> pendingWantManager_;
+    std::weak_ptr<PendingWantManager> pendingWantManager_ = {};
     int32_t uid_ = 0;
     int32_t callerUid_ = 0;
-    sptr<IRemoteObject> callerToken_;
+    sptr<IRemoteObject> callerToken_ = {};
     bool canceled_ = false;
-    std::shared_ptr<PendingWantKey> key_;
-    std::list<sptr<IWantReceiver>> mCancelCallbacks_;
-    std::recursive_mutex lock_;
+    std::shared_ptr<PendingWantKey> key_ = {};
+    std::list<sptr<IWantReceiver>> mCancelCallbacks_ = {};
+    std::recursive_mutex lock_ = {};
 };
 }  // namespace AAFwk
 }  // namespace OHOS
