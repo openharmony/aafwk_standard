@@ -846,6 +846,13 @@ napi_value WrapAbilityInfo(napi_env env, const AbilityInfo_ &abilityInfo)
     return result;
 }
 
+napi_value ConvertAbilityInfo(napi_env env, const AbilityInfo &abilityInfo)
+{
+    AbilityInfo_ temp;
+    SaveAbilityInfo(temp, abilityInfo);
+    return WrapAbilityInfo(env, temp);
+}
+
 /**
  * @brief GetAbilityInfo asynchronous processing function.
  *
