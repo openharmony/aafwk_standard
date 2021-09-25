@@ -29,7 +29,6 @@
 #include "module_usage_record.h"
 
 using OHOS::AAFwk::Want;
-
 namespace OHOS {
 namespace AppExecFwk {
 enum class DumpFlag {

@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class AbilitySchedulerStubMock : public AbilitySchedulerStub {
 public:
     virtual void ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &targetState) override
@@ -131,7 +130,6 @@ public:
         return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     }
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

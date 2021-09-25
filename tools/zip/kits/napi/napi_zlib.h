@@ -40,6 +40,33 @@ napi_value ZlibInit(napi_env env, napi_value exports);
  * @param info The callback info passed into the callback function.
  *
  * @return The return value from NAPI C++ to JS for the module.
+ *
+ * NAPI_Zipfile interface supports promise and callback calls.
+ *
+ * example No1
+ * var src ="/ziptest/zipdata/";
+ * var dest ="/ziptest/hapresult/hapfourfile.zip";
+ * var option = {
+ *           flush:0,
+ *           finishFlush:2,
+ *           chunkSize:68,
+ *           memLevel:8,
+ *           level:-1,
+ *           strategy:0
+ *         };
+ *
+ * example No2
+ * var src ="/ziptest/zipdata/zip1/zip1-1.cpp";
+ * var dest ="/ziptest/hapresult/single.zip";
+ * var option = {
+ *           flush:0,
+ *           finishFlush:2,
+ *           chunkSize:68,
+ *           memLevel:8,
+ *           level:-1,
+ *           strategy:0
+ *       };
+ *
  */
 napi_value NAPI_ZipFile(napi_env env, napi_callback_info info);
 
@@ -50,6 +77,32 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info);
  * @param info The callback info passed into the callback function.
  *
  * @return The return value from NAPI C++ to JS for the module.
+ *
+ * NAPI_UnzipFile interface supports promise and callback calls.
+ *
+ * example No1
+ * var src ="/ziptest/hapresult/hapfourfile.zip";
+ * var dest ="/ziptest/hapunzipdir/01";
+ * var option = {
+ *           flush:0,
+ *           finishFlush:2,
+ *           chunkSize:68,
+ *           memLevel:8,
+ *           level:-1,
+ *           strategy:0
+ *       };
+ *
+ * example No2
+ * var src ="/ziptest/hapresult/single.zip";
+ * var dest ="/ziptest/hapunzipdir/single";
+ * var option = {
+ *           flush:0,
+ *           finishFlush:2,
+ *           chunkSize:68,
+ *           memLevel:8,
+ *           level:-1,
+ *           strategy:0
+ *       };
  */
 napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info);
 

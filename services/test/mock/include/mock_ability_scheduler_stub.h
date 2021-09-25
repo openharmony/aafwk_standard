@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class MockAbilitySchedulerStub : public AbilitySchedulerStub {
 public:
     MOCK_METHOD2(ScheduleAbilityTransaction, void(const Want &, const LifeCycleStateInfo &));
@@ -36,8 +35,8 @@ public:
     MOCK_METHOD2(Insert, int(const Uri &, const NativeRdb::ValuesBucket &));
     MOCK_METHOD3(Update, int(const Uri &, const NativeRdb::ValuesBucket &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD2(Delete, int(const Uri &, const NativeRdb::DataAbilityPredicates &));
-    MOCK_METHOD3(
-        Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
+    MOCK_METHOD3(Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(
+                            const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD1(GetType, std::string(const Uri &uri));
     MOCK_METHOD2(OpenRawFile, int(const Uri &uri, const std::string &mode));
     MOCK_METHOD2(Reload, bool(const Uri &uri, const PacMap &extras));
@@ -47,12 +46,12 @@ public:
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
-    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD2(
+        ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
-    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
+    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(
+                                   const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
-
 #endif  // FOUNDATION_AAFWK_SERVICES_TEST_MT_MOCK_ABILITY_SCHEDULER_STUB_H

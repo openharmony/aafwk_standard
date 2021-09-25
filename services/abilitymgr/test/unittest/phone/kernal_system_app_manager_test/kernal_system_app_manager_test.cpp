@@ -62,17 +62,18 @@ public:
     void StartSystemUI();
 
 public:
-    std::shared_ptr<KernalSystemAppManager> kernalSystemMgr_;
+    std::shared_ptr<KernalSystemAppManager> kernalSystemMgr_{nullptr};
     int usrId_ = 10;
-    Want want_;
-    AppExecFwk::AbilityInfo abilityInfo_;
-    AppExecFwk::ApplicationInfo appInfo_;
+    Want want_{};
+    AppExecFwk::AbilityInfo abilityInfo_{};
+    AppExecFwk::ApplicationInfo appInfo_{};
 };
 
 void KernalSystemAppManagerTest::SetUpTestCase()
-{  
+{
+    int systemAbilityId = 401;
     OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        401, new (std::nothrow) AppExecFwk::BundleMgrService());
+        systemAbilityId, new (std::nothrow) AppExecFwk::BundleMgrService());
     DelayedSingleton<AbilityManagerService>::GetInstance();
     DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
 }

@@ -92,6 +92,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockDataAbility";
         abilityInfo->type = AbilityType::DATA;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -102,7 +103,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
             abilitythread->Attach(application, abilityRecord, mainRunner);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
-            Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
+            Uri uri("dataabilitytest:///com.example.myapplication5.DataAbilityTest");
             std::vector<std::string> columns;
             columns.push_back("string1");
 
@@ -158,6 +159,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_GetFileTypes_0100, Function | Me
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockDataAbility";
         abilityInfo->type = AbilityType::DATA;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -226,6 +228,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_OpenFile_0100, Function | Medium
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockDataAbility";
         abilityInfo->type = AbilityType::DATA;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -285,6 +288,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Insert_0100, Function | MediumTe
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockDataAbility";
         abilityInfo->type = AbilityType::DATA;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -340,6 +344,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Update_0100, Function | MediumTe
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockDataAbility";
         abilityInfo->type = AbilityType::DATA;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {

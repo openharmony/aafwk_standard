@@ -29,7 +29,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 namespace {
 const std::string COM_IX_HIWORLD = "com.ix.hiworld";
 const std::string COM_IX_HIMUSIC = "com.ix.hiMusic";
@@ -37,6 +36,8 @@ const std::string COM_IX_HIRADIO = "com.ix.hiRadio";
 const std::string COM_IX_HISERVICE = "com.ix.hiService";
 const std::string COM_IX_MUSICSERVICE = "com.ix.musicService";
 const std::string COM_IX_HIDATA = "com.ix.hiData";
+constexpr int32_t MAX_SYS_UID = 2899;
+constexpr int32_t ROOT_UID = 0;
 
 auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
     abilityInfo.name = elementTemp.GetAbilityName();
@@ -122,7 +123,6 @@ auto HiDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     abilityInfo.process = "p6";
     return true;
 };
-
 }  // namespace
 class BundleMgrProxy : public IRemoteProxy<IBundleMgr> {
 public:
@@ -143,6 +143,7 @@ public:
 
     virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
+    virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
@@ -150,7 +151,6 @@ public:
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
-    MOCK_METHOD1(CheckIsSystemAppByUid, bool(const int uid));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
@@ -217,6 +217,7 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     int GetUidByBundleName(const std::string &bundleName, const int userId) override;
+    virtual bool CheckIsSystemAppByUid(const int uid) override;
 
     bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
 
@@ -229,7 +230,6 @@ public:
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
-    MOCK_METHOD1(CheckIsSystemAppByUid, bool(const int uid));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
@@ -283,7 +283,6 @@ public:
         std::function<bool(std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp)>;
     std::map<std::string, QueryAbilityInfoFunType> abilityInfoMap_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

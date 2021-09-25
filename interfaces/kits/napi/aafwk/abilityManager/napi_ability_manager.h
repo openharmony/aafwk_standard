@@ -39,7 +39,6 @@ using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 const uint8_t NUMBER_OF_PARAMETERS_TWO = 2;
 const uint8_t NUMBER_OF_PARAMETERS_THREE = 3;
 
@@ -124,7 +123,9 @@ struct AsyncPreviousMissionInfosCallbackInfo {
 };
 
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
+napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info);
+napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info);
@@ -135,7 +136,6 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
 void CreateWeightReasonCodeObject(napi_env env, napi_value value);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  //  NAPI_ABILITY_MANAGER_H

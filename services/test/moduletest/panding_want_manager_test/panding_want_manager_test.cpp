@@ -47,28 +47,20 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
-
 namespace {
 static const int FLAG_ONE_SHOT = 1 << 30;
-// static const int FLAG_NO_CREATE = 1 << 29;
-// static const int FLAG_CANCEL_CURRENT = 1 << 28;
-// static const int FLAG_UPDATE_CURRENT = 1 << 27;
-// static const int FLAG_IMMUTABLE = 1 << 26;
-
 int abilityRequestCode = 1;
 int abilitiesRequestCode = 2;
 int serviceRequestCode = 3;
 int foregroundServicesRequestCode = 4;
 int commonEventRequestCode = 4;
-
 }  // namespace
-class PandingWantMgrTest : public testing::Test {
+class PandingWantManagerTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-
     WantSenderInfo GetAbility();
     WantSenderInfo GetAbilities();
     WantSenderInfo GetService();
@@ -85,7 +77,7 @@ public:
     MockAbilityMgrService *amsSerice = new MockAbilityMgrService();
 };
 
-void PandingWantMgrTest::SetUpTestCase(void)
+void PandingWantManagerTest::SetUpTestCase(void)
 {
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
     OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
@@ -102,7 +94,7 @@ void PandingWantMgrTest::SetUpTestCase(void)
     }
 }
 
-void PandingWantMgrTest::TearDownTestCase(void)
+void PandingWantManagerTest::TearDownTestCase(void)
 {
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
     if (appClient) {
@@ -111,7 +103,7 @@ void PandingWantMgrTest::TearDownTestCase(void)
     }
 }
 
-void PandingWantMgrTest::SetUp()
+void PandingWantManagerTest::SetUp()
 {
     if (amsSerice == nullptr) {
         amsSerice = new MockAbilityMgrService();
@@ -120,10 +112,10 @@ void PandingWantMgrTest::SetUp()
     AbilityManagerClient::GetInstance()->remoteObject_ = amsSerice;
 }
 
-void PandingWantMgrTest::TearDown()
+void PandingWantManagerTest::TearDown()
 {}
 
-std::shared_ptr<AAFwk::Want> PandingWantMgrTest::GetWant(std::string abilityName, std::string bundleName)
+std::shared_ptr<AAFwk::Want> PandingWantManagerTest::GetWant(std::string abilityName, std::string bundleName)
 {
     if (abilityName == "") {
         abilityName = "hiMusic";
@@ -141,7 +133,7 @@ std::shared_ptr<AAFwk::Want> PandingWantMgrTest::GetWant(std::string abilityName
     return std::make_shared<Want>(want);
 }
 
-WantSenderInfo PandingWantMgrTest::GetAbility()
+WantSenderInfo PandingWantManagerTest::GetAbility()
 {
     int32_t flags = FLAG_ONE_SHOT;
     WantsInfo wantsInfo;
@@ -160,7 +152,7 @@ WantSenderInfo PandingWantMgrTest::GetAbility()
     return wantSenderInfo;
 }
 
-WantSenderInfo PandingWantMgrTest::GetAbilities()
+WantSenderInfo PandingWantManagerTest::GetAbilities()
 {
     int32_t flags = (int32_t)FLAG_ONE_SHOT;
 
@@ -185,7 +177,7 @@ WantSenderInfo PandingWantMgrTest::GetAbilities()
     return wantSenderInfo;
 }
 
-WantSenderInfo PandingWantMgrTest::GetService()
+WantSenderInfo PandingWantManagerTest::GetService()
 {
     int32_t flags = FLAG_ONE_SHOT;
 
@@ -205,7 +197,7 @@ WantSenderInfo PandingWantMgrTest::GetService()
     return wantSenderInfo;
 }
 
-WantSenderInfo PandingWantMgrTest::GetForegroundService()
+WantSenderInfo PandingWantManagerTest::GetForegroundService()
 {
     int32_t flags = FLAG_ONE_SHOT;
 
@@ -224,7 +216,7 @@ WantSenderInfo PandingWantMgrTest::GetForegroundService()
     return wantSenderInfo;
 }
 
-WantSenderInfo PandingWantMgrTest::GetCommonEvent()
+WantSenderInfo PandingWantManagerTest::GetCommonEvent()
 {
     int32_t flags = FLAG_ONE_SHOT;
 
@@ -243,7 +235,7 @@ WantSenderInfo PandingWantMgrTest::GetCommonEvent()
     return wantSenderInfo;
 }
 
-WantAgentInfo PandingWantMgrTest::MakeWantAgentInfo(WantAgentConstant::OperationType &type, int requestCode,
+WantAgentInfo PandingWantManagerTest::MakeWantAgentInfo(WantAgentConstant::OperationType &type, int requestCode,
     std::vector<WantAgentConstant::Flags> &flags, std::vector<std::shared_ptr<AAFwk::Want>> wants)
 {
     WantAgentInfo info;
@@ -263,7 +255,7 @@ WantAgentInfo PandingWantMgrTest::MakeWantAgentInfo(WantAgentConstant::Operation
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_001, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_001, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_ABILITY;
     int requsetCode = 10;
@@ -288,7 +280,6 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_001, TestSize.Level1)
 
     auto amsProxySendWantSenderReturn = [&](const sptr<IWantSender> &target, const SenderInfo &senderInfo) {
         return ams->SendWantSender(target, senderInfo);
-        ;
     };
     EXPECT_CALL(*amsSerice, SendWantSender(_, _)).Times(1).WillOnce(Invoke(amsProxySendWantSenderReturn));
     EXPECT_CALL(*amsSerice, GetPendingWantType(_)).Times(1).WillOnce(Return(0));
@@ -332,7 +323,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_002, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_002, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_ABILITIES;
     int requsetCode = 10;
@@ -361,7 +352,6 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_002, TestSize.Level1)
 
     auto amsProxySendWantSenderReturn = [&](const sptr<IWantSender> &target, const SenderInfo &senderInfo) {
         return ams->SendWantSender(target, senderInfo);
-        ;
     };
     EXPECT_CALL(*amsSerice, SendWantSender(_, _)).Times(1).WillOnce(Invoke(amsProxySendWantSenderReturn));
     EXPECT_CALL(*amsSerice, GetPendingWantType(_)).Times(1).WillOnce(Return(0));
@@ -398,7 +388,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_002, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_003, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_003, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_SERVICE;
     int requsetCode = 10;
@@ -423,7 +413,6 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_003, TestSize.Level1)
 
     auto amsProxySendWantSenderReturn = [&](const sptr<IWantSender> &target, const SenderInfo &senderInfo) {
         return ams->SendWantSender(target, senderInfo);
-        ;
     };
     EXPECT_CALL(*amsSerice, SendWantSender(_, _)).Times(1).WillOnce(Invoke(amsProxySendWantSenderReturn));
     EXPECT_CALL(*amsSerice, GetPendingWantType(_)).Times(1).WillOnce(Return(0));
@@ -465,7 +454,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_003, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_004, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_004, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
     int requsetCode = 112;
@@ -490,7 +479,6 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_004, TestSize.Level1)
 
     auto amsProxySendWantSenderReturn = [&](const sptr<IWantSender> &target, const SenderInfo &senderInfo) {
         return ams->SendWantSender(target, senderInfo);
-        ;
     };
     EXPECT_CALL(*amsSerice, SendWantSender(_, _)).Times(1).WillOnce(Invoke(amsProxySendWantSenderReturn));
     EXPECT_CALL(*amsSerice, GetPendingWantType(_)).Times(1).WillOnce(Return(0));
@@ -531,7 +519,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_004, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_005, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_005, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::SEND_COMMON_EVENT;
     int requsetCode = 112;
@@ -556,7 +544,6 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_005, TestSize.Level1)
 
     auto amsProxySendWantSenderReturn = [&](const sptr<IWantSender> &target, const SenderInfo &senderInfo) {
         return ams->SendWantSender(target, senderInfo);
-        ;
     };
     EXPECT_CALL(*amsSerice, SendWantSender(_, _)).Times(1).WillOnce(Invoke(amsProxySendWantSenderReturn));
     EXPECT_CALL(*amsSerice, GetPendingWantType(_)).Times(1).WillOnce(Return(0));
@@ -586,7 +573,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_005, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender / send want sender
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_006, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_006, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_ABILITY;
     int requsetCode = 18;
@@ -653,7 +640,7 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_006, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: get want sender different flag effects
  */
-HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_007, TestSize.Level1)
+HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_007, TestSize.Level1)
 {
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_ABILITY;
     int requsetCode = 21;
@@ -743,6 +730,5 @@ HWTEST_F(PandingWantMgrTest, pending_want_mgr_test_007, TestSize.Level1)
     std::shared_ptr<WantAgent> wantAgent3 = WantAgentHelper::GetWantAgent(context, info);
     EXPECT_EQ(wantAgent3->GetPendingWant()->GetTarget(), nullptr);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

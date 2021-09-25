@@ -50,7 +50,6 @@ public:
 
     virtual void Send(SenderInfo &senderInfo){};
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

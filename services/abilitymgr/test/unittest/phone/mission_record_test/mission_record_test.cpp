@@ -35,9 +35,9 @@ public:
     static AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
         const std::string &appName, const std::string &bundleName);
 
-    Want want_;
-    AbilityInfo abilityInfo_;
-    ApplicationInfo appInfo_;
+    Want want_{};
+    AbilityInfo abilityInfo_{};
+    ApplicationInfo appInfo_{};
 };
 
 void MissionRecordTest::SetUpTestCase(void)

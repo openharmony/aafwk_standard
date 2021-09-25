@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class MockAppScheduler : public AppScheduler {
 public:
     MockAppScheduler(){};
