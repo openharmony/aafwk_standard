@@ -2784,18 +2784,12 @@ void QueryAsyncCompleteCB(napi_env env, napi_status status, void *data)
 napi_value WrapResultSet(napi_env env, const std::shared_ptr<NativeRdb::AbsSharedResultSet> &resultSet)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    MessageParcel tempparcel;
     if (resultSet == nullptr) {
         HILOG_ERROR("%{public}s, input parameter resultSet is nullptr", __func__);
         return nullptr;
     }
 
-    if (!resultSet->Marshalling(tempparcel)) {
-        HILOG_ERROR("%{public}s, tempparcel.WriteParcelable(resultSet) retval false", __func__);
-        return nullptr;
-    }
-
-    return RdbJsKit::ResultSetProxy::NewInstance(env, std::make_unique<NativeRdb::AbsSharedResultSet>(tempparcel));
+    return RdbJsKit::ResultSetProxy::NewInstance(env, resultSet);
 }
 
 napi_value NAPI_Release(napi_env env, napi_callback_info info)
