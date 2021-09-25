@@ -150,6 +150,8 @@ napi_value GetContinueAbilityOptionsInfoCommon(
 napi_value GetContinueAbilityOptionsReversible(
     const napi_env &env, const napi_value &value, ContinueAbilityOptionsInfo &info);
 
+napi_value ConvertAbilityInfo(napi_env env, const AbilityInfo &abilityInfo);
+
 /**
  * @brief Obtains the continue ability Info this application.
  *
