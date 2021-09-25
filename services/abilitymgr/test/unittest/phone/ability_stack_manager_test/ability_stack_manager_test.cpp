@@ -36,7 +36,6 @@ using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
-
 namespace {
 const std::string LANGUAGE = "locale";
 const std::string LAYOUT = "layout";
@@ -58,16 +57,16 @@ public:
 
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
 
-    std::shared_ptr<AbilityStackManager> stackManager_;
-    AbilityRequest launcherAbilityRequest_;
-    AbilityRequest musicAbilityRequest_;
-    AbilityRequest musicTopAbilityRequest_;
-    AbilityRequest musicSAbilityRequest_;
-    AbilityRequest radioAbilityRequest_;
-    AbilityRequest radioTopAbilityRequest_;
-    Want want_;
-    AbilityInfo abilityInfo_;
-    ApplicationInfo appInfo_;
+    std::shared_ptr<AbilityStackManager> stackManager_{nullptr};
+    AbilityRequest launcherAbilityRequest_{};
+    AbilityRequest musicAbilityRequest_{};
+    AbilityRequest musicTopAbilityRequest_{};
+    AbilityRequest musicSAbilityRequest_{};
+    AbilityRequest radioAbilityRequest_{};
+    AbilityRequest radioTopAbilityRequest_{};
+    Want want_{};
+    AbilityInfo abilityInfo_{};
+    ApplicationInfo appInfo_{};
 };
 
 void AbilityStackManagerTest::SetUpTestCase(void)
@@ -79,7 +78,6 @@ void AbilityStackManagerTest::TearDownTestCase(void)
 {
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
 }
-
 
 void AbilityStackManagerTest::SetUp()
 {
@@ -1428,15 +1426,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_041, TestSize.
     auto thirdTopAbility = stackManager_->GetCurrentTopAbility();
     thirdTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
     auto mission = thirdTopAbility->GetMissionRecord();
-
-    // stackManager_->KillProcess("com.ix.hiMusic");
-    // // process died
-    // stackManager_->OnAbilityDied(secondTopAbility);
-    // stackManager_->OnAbilityDied(thirdTopAbility);
-    // auto topAbility = stackManager_->GetCurrentTopAbility();
-    // EXPECT_EQ("MusicAbility", topAbility->GetAbilityInfo().name);
-    // auto size = stackManager_->defaultMissionStack_->GetMissionRecordCount();
-    // EXPECT_EQ(size, 1);
 }
 
 /*
@@ -1776,10 +1765,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.
     }
     result = stackManager_->PowerOn();
     EXPECT_EQ(ERR_OK, result);
-
-    // mocke app clent
-    // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, firstTopAbility->GetAbilityState());
-    // EXPECT_EQ(OHOS::AAFwk::ACTIVATING, thirdTopAbility->GetAbilityState());
     EXPECT_EQ(OHOS::AAFwk::INACTIVATING, fourthTopAbility->GetAbilityState());
 }
 
@@ -2782,7 +2767,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_076, TestSize.
     auto ref = stackManager_->MinimizeMultiWindow(topMissionRecord2->GetMissionRecordId());
     EXPECT_EQ(0, ref);
 
-    //
     stact = stackManager_->GetCurrentMissionStack();
     EXPECT_TRUE(stact);
     EXPECT_EQ(stact->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
@@ -3170,6 +3154,5 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_086, TestSize.
     EXPECT_TRUE(abilityRecord);
     abilityRecord->SetAbilityState(AbilityState::ACTIVE);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

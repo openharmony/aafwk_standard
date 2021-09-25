@@ -47,7 +47,6 @@ public:
 private:
     Semaphore sem_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

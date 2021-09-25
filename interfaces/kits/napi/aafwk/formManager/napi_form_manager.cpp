@@ -194,7 +194,6 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     }
     HILOG_DEBUG("%{public}s, customizeDatas size=%{public}zu.", __func__, formInfo.customizeDatas.size());
     napi_set_named_property(env, result, "customizeData", customizeDatas);
-    
 
     // relatedBundleName
     napi_value relatedBundleName;

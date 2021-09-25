@@ -85,8 +85,8 @@ public:
     void startAbility();
 
 public:
-    std::shared_ptr<AbilityRecord> abilityRecord_;
-    std::shared_ptr<AppStateCallbackS> callback_;
+    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
+    std::shared_ptr<AppStateCallbackS> callback_{nullptr};
 };
 
 void AbilityMsAppmsTest::SetUpTestCase(void)

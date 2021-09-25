@@ -40,9 +40,9 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<AbilityRecord> abilityRecord_;
-    std::shared_ptr<AbilityResult> abilityResult_;
-    std::shared_ptr<AbilityRequest> abilityRequest_;
+    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
+    std::shared_ptr<AbilityResult> abilityResult_{nullptr};
+    std::shared_ptr<AbilityRequest> abilityRequest_{nullptr};
     static constexpr unsigned int CHANGE_CONFIG_LOCALE = 0x00000001;
 };
 

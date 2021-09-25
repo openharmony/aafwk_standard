@@ -34,7 +34,7 @@ bool UserObject::Equals(IObject &other)
     }
 
     UserObject *otherObj = static_cast<UserObject *>(IUserObject::Query(&other));
-    if (otherObj == nullptr || otherObj->value_ == nullptr) {
+    if (otherObj == nullptr) {
         return false;    
     }
     if (value_->GetClassName() == otherObj->value_->GetClassName()) {

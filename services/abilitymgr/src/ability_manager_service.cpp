@@ -287,7 +287,7 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
 
     if ((resultWant != nullptr) &&
         AbilityUtil::IsSystemDialogAbility(
-            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_KEY) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_CALLER_BUNDLENAME) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_REQUEST_PERMISSIONS)) {
@@ -356,6 +356,10 @@ int AbilityManagerService::GetRecentMissions(
         HILOG_ERROR("numMax or flags is invalid.");
         return ERR_INVALID_VALUE;
     }
+    if (!CheckCallerIsSystemAppByIpc()) {
+        HILOG_ERROR("caller is not systemApp");
+        return CALLER_ISNOT_SYSTEMAPP;
+    }
 
     return currentStackManager_->GetRecentMissions(numMax, flags, recentList);
 }
@@ -366,7 +370,7 @@ int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionSn
 }
 
 int AbilityManagerService::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
+    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description)
 {
     HILOG_INFO("%{public}s called", __func__);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
@@ -375,7 +379,7 @@ int AbilityManagerService::SetMissionDescriptionInfo(
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    return currentStackManager_->SetMissionDescriptionInfo(abilityRecord, missionDescriptionInfo);
+    return currentStackManager_->SetMissionDescriptionInfo(abilityRecord, description);
 }
 
 int AbilityManagerService::GetMissionLockModeState()
@@ -423,6 +427,10 @@ int AbilityManagerService::RemoveMission(int id)
     if (id < 0) {
         HILOG_ERROR("Mission id is invalid.");
         return ERR_INVALID_VALUE;
+    }
+    if (!CheckCallerIsSystemAppByIpc()) {
+        HILOG_ERROR("caller is not systemApp");
+        return CALLER_ISNOT_SYSTEMAPP;
     }
     return currentStackManager_->RemoveMissionById(id);
 }
@@ -1053,7 +1061,7 @@ void AbilityManagerService::StartingLauncherAbility()
     AppExecFwk::AbilityInfo abilityInfo;
     /* First stage, hardcoding for the first launcher App */
     Want want;
-    want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
+    want.SetElementName(AbilityConfig::LAUNCHER_BUNDLE_NAME, AbilityConfig::LAUNCHER_ABILITY_NAME);
     while (!(iBundleManager_->QueryAbilityInfo(want, abilityInfo))) {
         HILOG_INFO("Waiting query launcher ability info completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
@@ -1516,7 +1524,6 @@ void AbilityManagerService::StartSystemApplication()
         HILOG_INFO("start navigation bar");
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
     }
-
 }
 
 void AbilityManagerService::ConnectBmsService()
@@ -1560,8 +1567,8 @@ void AbilityManagerService::StartingSystemUiAbility(const SatrtUiMode &mode)
     uint32_t waitCnt = 0;
     // Wait 10 minutes for the installation to complete.
     while ((!(iBundleManager_->QueryAbilityInfo(statusBarWant, statusBarInfo)) ||
-               !(iBundleManager_->QueryAbilityInfo(navigationBarWant, navigationBarInfo))) &&
-           waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
+            !(iBundleManager_->QueryAbilityInfo(navigationBarWant, navigationBarInfo))) &&
+            waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
         HILOG_INFO("Waiting query system ui info completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
         waitCnt++;
@@ -1583,6 +1590,16 @@ void AbilityManagerService::StartingSystemUiAbility(const SatrtUiMode &mode)
             HILOG_INFO("Input mode error ...");
             break;
     }
+}
+
+bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    auto bms = GetBundleManager();
+    CHECK_POINTER_RETURN_BOOL(bms);
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    HILOG_ERROR("callerUid %{public}d", callerUid);
+    return bms->CheckIsSystemAppByUid(callerUid);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

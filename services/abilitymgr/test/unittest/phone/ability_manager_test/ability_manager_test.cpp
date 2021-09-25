@@ -56,8 +56,8 @@ public:
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
     std::shared_ptr<AbilityManagerClient> abilityClient_ = nullptr;
-    sptr<AbilityManagerStubMock> mock_;
-    Want want_;
+    sptr<AbilityManagerStubMock> mock_{nullptr};
+    Want want_{};
 };
 
 void AbilityManagerTest::SetUpTestCase(void)

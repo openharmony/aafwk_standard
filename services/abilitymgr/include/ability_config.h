@@ -44,6 +44,8 @@ const std::string MISSION_NAME_SEPARATOR = ":";
 
 const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WINDOW";
 
+const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
+const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

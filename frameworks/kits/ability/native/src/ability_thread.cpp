@@ -79,11 +79,13 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         if (abilityInfo->type == AbilityType::PAGE) {
             abilityName = ACE_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::SERVICE) {
-            abilityName = ACE_SERVICE_ABILITY_NAME;
+            if (abilityInfo->formEnabled == true) {
+                abilityName = ACE_FORM_ABILITY_NAME;
+            } else {
+                abilityName = ACE_SERVICE_ABILITY_NAME;
+            }
         } else if (abilityInfo->type == AbilityType::DATA) {
             abilityName = ACE_DATA_ABILITY_NAME;
-        } else if (abilityInfo->type == AbilityType::FORM) {
-            abilityName = ACE_FORM_ABILITY_NAME;
         } else {
             abilityName = abilityInfo->name;
         }
@@ -865,6 +867,22 @@ void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
     if (window == nullptr) {
         APP_LOGE("NotifyMultiWinModeChanged window == nullptr");
         return;
+    }
+
+    if (flag) {
+        // true: normal windowMode -> free windowMode
+        if (winModeKey == MULTI_WINDOW_DISPLAY_FLOATING) {
+            APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_FREE begin.");
+            window->SetWindowType(WINDOW_TYPE_FLOAT);
+            APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_FREE end.");
+        } else {
+            APP_LOGI("NotifyMultiWinModeChanged.key:%{public}d", winModeKey);
+        }
+    } else {
+        // false: free windowMode -> normal windowMode
+        APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_TOP begin.");
+        window->SetWindowType(WINDOW_TYPE_NORMAL);
+        APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_TOP end.");
     }
 
     return;

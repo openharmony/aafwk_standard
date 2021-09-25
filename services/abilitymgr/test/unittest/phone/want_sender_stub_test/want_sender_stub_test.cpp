@@ -29,7 +29,7 @@ public:
     void SetUp();
     void TearDown();
     void WriteInterfaceToken(MessageParcel &data);
-    sptr<WantSenderStubImplMock> stub_;
+    sptr<WantSenderStubImplMock> stub_{nullptr};
 };
 
 void WantSenderStubTest::SetUpTestCase(void)
@@ -150,6 +150,5 @@ HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_002, TestSize.Level0)
 
     EXPECT_EQ(res, NO_ERROR);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

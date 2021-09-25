@@ -1612,8 +1612,8 @@ void AbilityStackManager::GetRecordByStandard(const AbilityRequest &abilityReque
             if (currentTopAbility && (!isStackChanged) &&
                 (currentTopAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) &&
                 ((!missionRecord->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name)) ||
-                    (missionRecord->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name) &&
-                        abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::STANDARD))) {
+                (missionRecord->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name) &&
+                abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::STANDARD))) {
                 targetAbilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
             } else {
                 targetAbilityRecord = missionRecord->GetTopAbilityRecord();
@@ -1752,14 +1752,14 @@ void AbilityStackManager::CreateRecentMissionInfo(
 }
 
 int AbilityStackManager::SetMissionDescriptionInfo(
-    const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &missionDescriptionInfo)
+    const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description)
 {
     HILOG_DEBUG("%{public}s called", __FUNCTION__);
     CHECK_POINTER_AND_RETURN(abilityRecord, SET_MISSION_INFO_FAILED);
 
     auto mission = abilityRecord->GetMissionRecord();
     CHECK_POINTER_AND_RETURN(mission, SET_MISSION_INFO_FAILED);
-    auto ptr = std::make_shared<MissionDescriptionInfo>(missionDescriptionInfo);
+    auto ptr = std::make_shared<MissionDescriptionInfo>(description);
     mission->SetMissionDescriptionInfo(ptr);
 
     return ERR_OK;
@@ -2695,7 +2695,7 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::list<MissionOption
     auto currentTopAbilityRecord = GetCurrentTopAbility();
     if (currentTopAbilityRecord &&
         AbilityUtil::IsSystemDialogAbility(
-            currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher");
         return MOVE_MISSION_TO_STACK_MOVING_DENIED;
     }
@@ -3450,6 +3450,5 @@ void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<Missi
         resumeMissionContainer_->Resume(mission);
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

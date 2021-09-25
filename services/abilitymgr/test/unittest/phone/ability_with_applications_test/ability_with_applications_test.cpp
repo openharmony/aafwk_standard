@@ -75,7 +75,7 @@ public:
 
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
-    std::shared_ptr<AbilityManagerService> abilityMs_;
+    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
 };
 
 void AbilityWithApplicationsTest::SetUpTestCase()

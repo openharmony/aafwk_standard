@@ -41,7 +41,6 @@ private:
     WantParams wantParams_;
     sptr<IWantReceiver> finishedReceiver_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // PENDING_WANT_COMMON_EVENT_H

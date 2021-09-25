@@ -46,7 +46,6 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 static void WaitUntilTaskFinished()
 {
     const uint32_t maxRetryCount = 1000;
@@ -69,7 +68,6 @@ static void WaitUntilTaskFinished()
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
 
 namespace {}  // namespace
-
 class PendingWantManagerTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -94,8 +92,8 @@ public:
     };
 
 public:
-    std::shared_ptr<PendingWantManager> pendingManager_;
-    std::shared_ptr<AbilityManagerService> abilityMs_;
+    std::shared_ptr<PendingWantManager> pendingManager_{nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
 };
 
 int PendingWantManagerTest::CancelReceiver::performReceiveCount = 0;
@@ -143,7 +141,8 @@ WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(Want &want, int32_t fl
     // wantSenderInfo.type is OperationType::START_ABILITY
     wantSenderInfo.bundleName = "com.ix.hiRadio";
     wantSenderInfo.resultWho = "RadioTopAbility";
-    wantSenderInfo.requestCode = 10;
+    int requestCode = 10;
+    wantSenderInfo.requestCode = requestCode;
     std::vector<WantsInfo> allWant;
     WantsInfo wantInfo;
     wantInfo.want = want;
@@ -872,6 +871,5 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3400, TestSize.Level1)
     std::shared_ptr<Want> getWantInfo;
     EXPECT_EQ(pendingManager_->GetPendingRequestWant(pendingRecord, getWantInfo), ERR_INVALID_VALUE);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

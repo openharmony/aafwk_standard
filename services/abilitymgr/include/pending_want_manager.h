@@ -22,7 +22,6 @@
 #include <vector>
 #include <string>
 
-#include "ability_manager_service.h"
 #include "ability_manager_errors.h"
 #include "ability_record.h"
 #include "common_event.h"
