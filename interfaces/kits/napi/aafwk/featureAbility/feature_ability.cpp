@@ -29,8 +29,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-extern napi_value g_classContext;
-extern napi_value g_dataAbilityHelper;
 static int64_t dummyRequestCode_ = 0;
 CallbackInfo g_aceCallbackInfo;
 
@@ -936,7 +934,7 @@ napi_value UnwrapForResultParam(CallAbilityParam &param, napi_env env, napi_valu
     // dummy requestCode for NativeC++ interface and onabilityresult callback
     param.requestCode = dummyRequestCode_;
     param.forResultOption = true;
-    dummyRequestCode_ < INT64_MAX ? dummyRequestCode_ = dummyRequestCode_ + 1 : dummyRequestCode_ = 0;
+    dummyRequestCode_ = (dummyRequestCode_ < INT64_MAX) ? (dummyRequestCode_ + 1) : 0;
     HILOG_INFO("%{public}s, reqCode=%{public}d forResultOption=%{public}d.",
         __func__,
         param.requestCode,
@@ -1207,7 +1205,7 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, g_dataAbilityHelper, 1, &uri, &dataAbilityHelperCB->result));
+    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
 
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = dataAbilityHelperCB->result;
@@ -1229,7 +1227,7 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
     napi_value uri = nullptr;
     napi_value result = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
-    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, g_dataAbilityHelper, 1, &uri, &dataAbilityHelperCB->result));
+    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
     result = dataAbilityHelperCB->result;
 
     NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));

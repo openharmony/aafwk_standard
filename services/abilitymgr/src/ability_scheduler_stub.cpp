@@ -265,7 +265,8 @@ int AbilitySchedulerStub::UpdatetInner(MessageParcel &data, MessageParcel &reply
         HILOG_ERROR("ReadParcelable value is nullptr");
         return ERR_INVALID_VALUE;
     }
-    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
         HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
@@ -285,7 +286,8 @@ int AbilitySchedulerStub::DeleteInner(MessageParcel &data, MessageParcel &reply)
         HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
         HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
@@ -310,7 +312,8 @@ int AbilitySchedulerStub::QueryInner(MessageParcel &data, MessageParcel &reply)
         HILOG_ERROR("fail to ReadStringVector columns");
         return ERR_INVALID_VALUE;
     }
-    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
         HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
@@ -535,7 +538,6 @@ int AbilitySchedulerStub::ExecuteBatchInner(MessageParcel &data, MessageParcel &
         operations.push_back(dataAbilityOperation);
     }
 
-    //HILOG_ERROR("AbilitySchedulerStub::ExecuteBatchInner operations.size:%{public}d", operations.size());
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> results = ExecuteBatch(operations);
     int total = results.size();
     if (!reply.WriteInt32(total)) {

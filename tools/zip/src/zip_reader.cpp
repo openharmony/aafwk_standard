@@ -78,7 +78,6 @@ bool ZipReader::Open(FilePath &zipFilePath)
 
     // Use of "Unsafe" function does not look good, but there is no way to do
     // this safely on Linux. See file_util.h for details.
-    // zipFile_ = internal::OpenForUnzipping(zipFilePath.AsUTF8Unsafe());
     std::string zipfile = zipFilePath.Value();
     zipFile_ = OpenForUnzipping(zipfile);
     if (zipFile_ == nullptr) {

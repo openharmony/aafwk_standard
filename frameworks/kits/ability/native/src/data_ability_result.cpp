@@ -36,7 +36,7 @@ DataAbilityResult::DataAbilityResult(int count) : uri_("")
  */
 DataAbilityResult::DataAbilityResult(Parcel &parcel) : uri_(""), count_(0)
 {
-   ReadFromParcel(parcel);
+    ReadFromParcel(parcel);
 }
 
 /**
@@ -85,7 +85,7 @@ int DataAbilityResult::GetCount()
 DataAbilityResult *DataAbilityResult::CreateFromParcel(Parcel &parcel)
 {
     DataAbilityResult *dataAbilityResult = new (std::nothrow) DataAbilityResult(parcel);
-    if(dataAbilityResult == nullptr){
+    if (dataAbilityResult == nullptr) {
         APP_LOGE("DataAbilityResult::CreateFromParcel dataAbilityResult is nullptr");
     }
     return dataAbilityResult;
@@ -100,7 +100,7 @@ std::string DataAbilityResult::ToString()
     std::string stringBuilder = "DataAbilityResult(";
     stringBuilder.append("uri=").append(uri_.ToString()).append(" ");   
     stringBuilder.append("count=").append(std::to_string(count_)).append(" ");
-    stringBuilder.erase(stringBuilder.length() - 1 , 1);
+    stringBuilder.erase(stringBuilder.length() - 1, 1);
     stringBuilder.append(")");
     return stringBuilder;
 }
@@ -112,7 +112,7 @@ std::string DataAbilityResult::ToString()
  */
 bool DataAbilityResult::Marshalling(Parcel &parcel) const
 {
-    //uri_
+    // uri_
     if (uri_.ToString().empty()) {
         WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(Int32, parcel, VALUE_NULL);    
     } else {
@@ -124,7 +124,7 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
         }
     }
 
-    //count_
+    // count_
     if (!parcel.WriteInt32(count_)) {  
         return false;
     }
@@ -140,8 +140,8 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
 DataAbilityResult *DataAbilityResult::Unmarshalling(Parcel &parcel)
 {
     DataAbilityResult *dataAbilityResult = new (std::nothrow) DataAbilityResult(0);
-    if (dataAbilityResult != nullptr ) {  
-        if(!dataAbilityResult->ReadFromParcel(parcel)){
+    if (dataAbilityResult != nullptr) {  
+        if (!dataAbilityResult->ReadFromParcel(parcel)) {
             delete dataAbilityResult;
             dataAbilityResult = nullptr;   
         }
@@ -152,7 +152,7 @@ DataAbilityResult *DataAbilityResult::Unmarshalling(Parcel &parcel)
 
 bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
 {
-    //uri_
+    // uri_
     int32_t empty = VALUE_NULL;   
     if (!parcel.ReadInt32(empty)) {
         return false;
@@ -169,7 +169,7 @@ bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
         }
     }
     
-    //count_
+    // count_
     if (!parcel.ReadInt32(count_)) {    
         return false;
     }

@@ -79,7 +79,6 @@ AbilityRecord::AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &ab
     : want_(want), abilityInfo_(abilityInfo), applicationInfo_(applicationInfo), requestCode_(requestCode)
 {
     recordId_ = abilityRecordId++;
-    currentState_ = AbilityState::INITIAL;
 }
 
 AbilityRecord::~AbilityRecord()

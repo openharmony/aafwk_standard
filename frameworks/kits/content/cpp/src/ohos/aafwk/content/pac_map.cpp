@@ -21,6 +21,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <iomanip>
 #include "parcel_macro.h"
 #include "string_ex.h"
 #include "ohos/aafwk/base/array_wrapper.h"
@@ -110,7 +111,7 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         if (it != (mapList).end()) {                                               \
             if (IArray::Query(it->second.GetRefPtr()) != nullptr) {                \
                 if (Array::Is##id##Array(IArray::Query(it->second.GetRefPtr()))) { \
-                    auto func = [&](IInterface *object) {                          \
+                    auto func = [ & ](IInterface * object) {                       \
                         if (I##id::Query(object) != nullptr) {                     \
                             (value).push_back(id::Unbox(I##id::Query(object)));    \
                         }                                                          \
@@ -121,7 +122,7 @@ const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
         }                                                                          \
     } while (0);
 
-template <typename IClassName, typename baseValue>
+template<typename IClassName, typename baseValue>
 static void GetBaseDataValue(OHOS::AAFwk::IInterface *baseObj, Json::Value &json, int type)
 {
     IClassName *data = IClassName::Query(baseObj);
@@ -139,10 +140,10 @@ static void GetBaseDataValue(OHOS::AAFwk::IInterface *baseObj, Json::Value &json
         (json)["type"] = type;                                \
     } while (0);
 
-template <typename RawType>
+template<typename RawType>
 static std::string RawTypeToString(const RawType value, unsigned int precisionAfterPoint);
 
-template <typename IClassName, typename ClassName, typename baseValue>
+template<typename IClassName, typename ClassName, typename baseValue>
 static void GetBaseFloatDoubleDataValue(OHOS::AAFwk::IInterface *baseObj, Json::Value &json, int type, int precision)
 {
     IClassName *data = IClassName::Query(baseObj);
@@ -180,7 +181,7 @@ static void GetBaseFloatDoubleDataValue(OHOS::AAFwk::IInterface *baseObj, Json::
         (json)["type"] = type;                                \
     } while (0);
 
-template <typename IClassName, typename ClassName, typename valueType>
+template<typename IClassName, typename ClassName, typename valueType>
 static void PacmapGetArrayVal(OHOS::AAFwk::IInterface *ao, std::vector<valueType> &array)
 {
     if (ao == nullptr) {
@@ -204,7 +205,7 @@ static void PacmapGetArrayVal(OHOS::AAFwk::IInterface *ao, std::vector<valueType
             return false;                                                  \
         }                                                                  \
         if (IArray::Query((it)->second.GetRefPtr()) != nullptr) {          \
-            auto func = [&](AAFwk::IInterface *object) {                   \
+            auto func = [ & ](AAFwk::IInterface * object) {                \
                 if (object != nullptr) {                                   \
                     idInterface *value = idInterface::Query(object);       \
                     if (value != nullptr) {                                \
@@ -938,7 +939,7 @@ bool PacMap::EqualPacMapData(const PacMapList &leftPacMapList, const PacMapList 
     return true;
 }
 
-template <typename iid, typename id, typename value>
+template<typename iid, typename id, typename value>
 static void GetArrayData(
     AAFwk::IInterface *interface, std::vector<value> &array, std::function<bool(IArray *)> IsArrayfunc)
 {
@@ -951,7 +952,7 @@ static void GetArrayData(
     }
 }
 
-template <typename iid, typename id, typename value>
+template<typename iid, typename id, typename value>
 static bool CompareTwoArrayData(
     AAFwk::IInterface *one_interface, AAFwk::IInterface *two_interface, std::function<bool(IArray *)> IsArrayfunc)
 {
@@ -989,44 +990,44 @@ bool PacMap::CompareArrayData(AAFwk::IInterface *one_interface, AAFwk::IInterfac
         }
         if (AAFwk::Array::IsBooleanArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IBoolean, AAFwk::Boolean, bool>(
-                    one_interface, two_interface, AAFwk::Array::IsBooleanArray)) {
+                one_interface, two_interface, AAFwk::Array::IsBooleanArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsCharArray(AAFwk::IArray::Query(one_interface))) {
             return false;
         } else if (AAFwk::Array::IsByteArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IByte, AAFwk::Byte, byte>(
-                    one_interface, two_interface, AAFwk::Array::IsByteArray)) {
+                one_interface, two_interface, AAFwk::Array::IsByteArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsShortArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IShort, AAFwk::Short, short>(
-                    one_interface, two_interface, AAFwk::Array::IsShortArray)) {
+                one_interface, two_interface, AAFwk::Array::IsShortArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsIntegerArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IInteger, AAFwk::Integer, int>(
-                    one_interface, two_interface, AAFwk::Array::IsIntegerArray)) {
+                one_interface, two_interface, AAFwk::Array::IsIntegerArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsLongArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::ILong, AAFwk::Long, long>(
-                    one_interface, two_interface, AAFwk::Array::IsLongArray)) {
+                one_interface, two_interface, AAFwk::Array::IsLongArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsFloatArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IFloat, AAFwk::Float, float>(
-                    one_interface, two_interface, AAFwk::Array::IsFloatArray)) {
+                one_interface, two_interface, AAFwk::Array::IsFloatArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsDoubleArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IDouble, AAFwk::Double, double>(
-                    one_interface, two_interface, AAFwk::Array::IsDoubleArray)) {
+                one_interface, two_interface, AAFwk::Array::IsDoubleArray)) {
                 return false;
             }
         } else if (AAFwk::Array::IsStringArray(IArray::Query(one_interface))) {
             if (!CompareTwoArrayData<AAFwk::IString, AAFwk::String, std::string>(
-                    one_interface, two_interface, AAFwk::Array::IsStringArray)) {
+                one_interface, two_interface, AAFwk::Array::IsStringArray)) {
                 return false;
             }
         } else {
@@ -1223,12 +1224,12 @@ bool PacMap::ToJson(const PacMapList &mapList, Json::Value &dataObject) const
     }
     return true;
 }
-template <typename RawType>
+
+template<typename RawType>
 static std::string RawTypeToString(const RawType value, unsigned int precisionAfterPoint)
 {
     std::ostringstream out("RawTypeToString");
-    out.precision(std::numeric_limits<double>::digits10);
-    out << value;
+    out << std::setw(0) << std::setprecision(precisionAfterPoint) << value;
 
     std::string res = out.str();
     auto pos = res.find('.');

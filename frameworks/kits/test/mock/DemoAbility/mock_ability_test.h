@@ -25,18 +25,24 @@
 namespace OHOS {
 namespace AppExecFwk {
 
+#define INSERT 20
+#define UPDATE 33
+#define OPENRAWFILE 122
+#define BATCHINSERT 115
+#define DELETE 234
+
 class MockAbilityTest : public Ability {
 public:
 
     int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Insert called";
-        return 20;
+        return INSERT;
     }
     int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Update called";
-        return 33;
+        return UPDATE;
     }
 
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
@@ -53,15 +59,15 @@ public:
         int fd;
         GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile called";
         FILE *fd1 = fopen("/dataability_openfile_test.txt", "w+");
-        if(fd1 == nullptr) {
+        if (fd1 == nullptr) {
             GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd1 == nullptr";
             return -1;
         }
-        fputs("123456",fd1);
+        fputs("123456", fd1);
         fclose(fd1);
 
         FILE *fd2 = fopen("/dataability_openfile_test.txt", "r");
-        if(fd2 == nullptr) {
+        if (fd2 == nullptr) {
             GTEST_LOG_(INFO) << "MockAbilityTest::OpenFile fd2 == nullptr";
             return -1;
         }
@@ -74,13 +80,13 @@ public:
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::OpenRawFile called";
 
-        return 122;
+        return OPENRAWFILE;
     }
 
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::BatchInsert called";
-        return 115;
+        return BATCHINSERT;
     }
 
     bool Reload(const Uri &uri, const PacMap &extras)
@@ -92,7 +98,7 @@ public:
     int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockAbilityTest::Delete called";
-        return 234;
+        return DELETE;
     }
 
     std::string GetType(const Uri &uri)

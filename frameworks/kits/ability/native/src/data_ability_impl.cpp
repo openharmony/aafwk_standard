@@ -208,7 +208,6 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
         return nullptr;
     }
 
-    // resultSet = ability_->Query(uri, columns, predicates);
     return ability_->Query(uri, columns, predicates);
 }
 

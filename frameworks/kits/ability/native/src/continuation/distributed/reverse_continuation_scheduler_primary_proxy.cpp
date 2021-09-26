@@ -26,7 +26,7 @@ ReverseContinuationSchedulerPrimaryProxy::ReverseContinuationSchedulerPrimaryPro
 {}
 
 /**
- * @brief Slave call this method when it terminated.
+ * @brief Replica call this method when it terminated.
  */
 void ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated()
 {
@@ -44,7 +44,7 @@ void ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated()
         return;
     }
     if (!remoteObject->SendRequest(
-            IReverseContinuationSchedulerPrimary::NOTIFY_SLAVE_TERMINATED, data, reply, option)) {
+        IReverseContinuationSchedulerPrimary::NOTIFY_REPLICA_TERMINATED, data, reply, option)) {
         APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated SendRequest return false");
         return;
     }
@@ -52,7 +52,7 @@ void ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated()
 }
 
 /**
- * @brief Slave call this method to notify primary go on.
+ * @brief Replica call this method to notify primary go on.
  *
  * @param want Contains data to be restore.
  * @return True if success, otherwise false.
