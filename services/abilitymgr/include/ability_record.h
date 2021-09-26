@@ -685,47 +685,47 @@ private:
 
     static int64_t abilityRecordId;
     int recordId_ = 0;                                // record id
-    Want want_;                                       // want to start this ability
-    AppExecFwk::AbilityInfo abilityInfo_;             // the ability info get from BMS
-    AppExecFwk::ApplicationInfo applicationInfo_;     // the ability info get from BMS
-    sptr<Token> token_;                               // used to interact with kit and wms
-    std::weak_ptr<MissionRecord> missionRecord_;      // mission of this ability
-    std::weak_ptr<AbilityRecord> preAbilityRecord_;   // who starts this ability record
-    std::weak_ptr<AbilityRecord> nextAbilityRecord_;  // ability that started by this ability
-    std::weak_ptr<AbilityRecord> backAbilityRecord_;  // who back to this ability record
-    std::unique_ptr<LifecycleDeal> lifecycleDeal_;    // life manager used to schedule life
+    Want want_ = {};                                       // want to start this ability
+    AppExecFwk::AbilityInfo abilityInfo_ = {};             // the ability info get from BMS
+    AppExecFwk::ApplicationInfo applicationInfo_ = {};     // the ability info get from BMS
+    sptr<Token> token_ = {};                               // used to interact with kit and wms
+    std::weak_ptr<MissionRecord> missionRecord_ = {};      // mission of this ability
+    std::weak_ptr<AbilityRecord> preAbilityRecord_ = {};   // who starts this ability record
+    std::weak_ptr<AbilityRecord> nextAbilityRecord_ = {};  // ability that started by this ability
+    std::weak_ptr<AbilityRecord> backAbilityRecord_ = {};  // who back to this ability record
+    std::unique_ptr<LifecycleDeal> lifecycleDeal_ = {};    // life manager used to schedule life
     int64_t startTime_ = 0;                           // records first time of ability start
     bool isReady_ = false;                            // is ability thread attached?
     bool isWindowAttached_ = false;                   // Is window of this ability attached?
     bool isLauncherAbility_ = false;                  // is launcher?
     int64_t eventId_ = 0;                             // post event id
     static int64_t g_abilityRecordEventId_;
-    sptr<IAbilityScheduler> scheduler_;       // kit scheduler
+    sptr<IAbilityScheduler> scheduler_ = {};       // kit scheduler
     bool isTerminating_ = false;              // is terminating ?
     LifeCycleStateInfo lifeCycleStateInfo_;   // target life state info
-    AbilityState currentState_;               // current life state
+    AbilityState currentState_ = AbilityState::INITIAL;  // current life state
     std::shared_ptr<WindowInfo> windowInfo_;  // add window info
     bool isCreateByConnect_ = false;          // is created by connect ability mode?
     bool isToEnd_ = false;                    // is to end ?
 
     int requestCode_ = -1;  // requestCode_: >= 0 for-result start mode; <0 for normal start mode in default.
-    sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_;  // scheduler binderDied Recipient
+    sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_ = {};  // scheduler binderDied Recipient
 
     /**
      * result_: ability starts with for-result mode will send result before being terminated.
      * Its caller will receive results before active.
      * Now we assume only one result generate when terminate.
      */
-    std::shared_ptr<AbilityResult> result_;
+    std::shared_ptr<AbilityResult> result_ = {};
 
     // service(ability) can be connected by multi-pages(abilites), so need to store this service's connections
-    std::list<std::shared_ptr<ConnectionRecord>> connRecordList_;
+    std::list<std::shared_ptr<ConnectionRecord>> connRecordList_ = {};
     // service(ability) onConnect() return proxy of service ability
-    sptr<IRemoteObject> connRemoteObject_;
+    sptr<IRemoteObject> connRemoteObject_ = {};
     int startId_ = 0;  // service(ability) start id
 
     // page(ability) can be started by multi-pages(abilites), so need to store this ability's caller
-    std::list<std::shared_ptr<CallerRecord>> callerList_;
+    std::list<std::shared_ptr<CallerRecord>> callerList_ = {};
 
     bool isUninstall_ = false;
     bool isForceTerminate_ = false;
@@ -740,7 +740,7 @@ private:
     PacMap stateDatas_;             // ability saved ability state data
     bool isRestarting_ = false;     // is restarting ?
     bool isInMovingState_ = false;  // whether complete multi window moving state.
-    AppState appState_;
+    AppState appState_ = AppState::BEGIN;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

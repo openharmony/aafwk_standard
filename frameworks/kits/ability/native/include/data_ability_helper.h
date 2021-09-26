@@ -298,11 +298,11 @@ private:
     bool isSystemCaller_ = false;
     sptr<AAFwk::IAbilityScheduler> dataAbilityProxy_ = nullptr;
     std::mutex lock_;
-	static std::mutex oplock_;
+    static std::mutex oplock_;
 
     sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_ = nullptr;  // caller binderDied Recipient
     
-	std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<AAFwk::IAbilityScheduler>> registerMap_;
+    std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<AAFwk::IAbilityScheduler>> registerMap_;
     
 	std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
 

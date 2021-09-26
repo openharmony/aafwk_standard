@@ -32,7 +32,7 @@ public:
     virtual void NotifyReverseResult(int reverseResult) = 0;
 
     enum class Message {
-        PASS_MASTER = 1,
+        PASS_PRIMARY = 1,
         REVERSE_CONTINUATION,
         NOTIFY_REVERSE_RESULT,
     };

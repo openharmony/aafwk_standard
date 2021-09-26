@@ -254,7 +254,7 @@ public:
     };
     virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {
-         return true;
+        return true;
     };
     virtual bool CheckIsSystemAppByUid(const int uid) override
     {

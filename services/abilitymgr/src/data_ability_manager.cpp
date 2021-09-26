@@ -417,7 +417,7 @@ DataAbilityManager::DataAbilityRecordPtr DataAbilityManager::LoadLocked(
             return nullptr;
         }
 
-        auto insertResult = dataAbilityRecordsLoading_.insert({ name, dataAbilityRecord });
+        auto insertResult = dataAbilityRecordsLoading_.insert( {name, dataAbilityRecord} );
         if (!insertResult.second) {
             HILOG_ERROR("Failed to insert data ability to loading map.");
             return nullptr;
