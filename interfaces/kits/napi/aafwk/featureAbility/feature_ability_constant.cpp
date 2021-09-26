@@ -30,6 +30,9 @@ namespace AppExecFwk {
  */
 napi_value FAConstantInit(napi_env env, napi_value exports)
 {
+    const int Window_Configuration_Zero = 100;
+    const int Window_Configuration_One = 101;
+    const int Window_Configuration_Two = 102;
     HILOG_INFO("%{public}s,called", __func__);
     napi_value abilityStartSetting = nullptr;
     napi_value abilityWindowConfiguration = nullptr;
@@ -42,9 +45,9 @@ napi_value FAConstantInit(napi_env env, napi_value exports)
 
     SetNamedProperty(env, abilityWindowConfiguration, 0, "WINDOW_MODE_UNDEFINED");
     SetNamedProperty(env, abilityWindowConfiguration, 1, "WINDOW_MODE_FULLSCREEN");
-    SetNamedProperty(env, abilityWindowConfiguration, 100, "WINDOW_MODE_SPLIT_PRIMARY");
-    SetNamedProperty(env, abilityWindowConfiguration, 101, "WINDOW_MODE_SPLIT_SECONDARY");
-    SetNamedProperty(env, abilityWindowConfiguration, 102, "WINDOW_MODE_FLOATING");
+    SetNamedProperty(env, abilityWindowConfiguration, Window_Configuration_Zero, "WINDOW_MODE_SPLIT_PRIMARY");
+    SetNamedProperty(env, abilityWindowConfiguration, Window_Configuration_One, "WINDOW_MODE_SPLIT_SECONDARY");
+    SetNamedProperty(env, abilityWindowConfiguration, Window_Configuration_Two, "WINDOW_MODE_FLOATING");
 
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("AbilityStartSetting", abilityStartSetting),

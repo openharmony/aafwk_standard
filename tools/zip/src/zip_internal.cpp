@@ -32,8 +32,9 @@ struct tm GetTmDataFromTickts(int64_t sec)
     if (tmNow == nullptr) {
         return now;
     }
+    int baseYeaar = 1900;
     now = *tmNow;
-    now.tm_year += 1900;
+    now.tm_year += baseYeaar;
     now.tm_mon += 1;
     return now;
 }
@@ -88,7 +89,7 @@ void FillFdOpenFileFunc(zlib_filefunc_def *pzlibFilefuncDef, PlatformFile fd)
 // a zip archive stored in memory directly. The following I/O API functions
 // expect their opaque parameters refer to this struct.
 struct ZipBuffer {
-    const char *data;  // weak
+    const char *data;
     size_t length;
     size_t offset;
 };
@@ -99,7 +100,7 @@ struct ZipBuffer {
 // given opaque parameter and returns it because this parameter stores all
 // information needed for uncompressing data. (This function does not support
 // writing compressed data and it returns NULL for this case.)
-void *OpenZipBuffer(void *opaque, const char * /*filename*/, int mode)
+void *OpenZipBuffer(void *opaque, const char *, int mode)
 {
     uint32_t modeInner = static_cast<uint32_t>(mode);
     if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) != ZLIB_FILEFUNC_MODE_READ) {
@@ -107,15 +108,16 @@ void *OpenZipBuffer(void *opaque, const char * /*filename*/, int mode)
         return NULL;
     }
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
-    if (!buffer || !buffer->data || !buffer->length)
+    if (!buffer || !buffer->data || !buffer->length) {
         return NULL;
+    }
     buffer->offset = 0;
     return opaque;
 }
 
 // Reads compressed data from the specified stream. This function copies data
 // refered by the opaque parameter and returns the size actually copied.
-uLong ReadZipBuffer(void *opaque, void * /*stream*/, void *buf, uLong size)
+uLong ReadZipBuffer(void *opaque, void *, void *buf, uLong size)
 {
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
     if (buffer == nullptr) {
@@ -128,8 +130,9 @@ uLong ReadZipBuffer(void *opaque, void * /*stream*/, void *buf, uLong size)
     }
 
     size_t remaining_bytes = buffer->length - buffer->offset;
-    if (!buffer || !buffer->data || !remaining_bytes)
+    if (!buffer || !buffer->data || !remaining_bytes) {
         return 0;
+    }
     size = std::min(size, static_cast<uLong>(remaining_bytes));
     if (memcpy_s(buf, size, &buffer->data[buffer->offset], size) != EOK) {
         return 0;
@@ -140,27 +143,29 @@ uLong ReadZipBuffer(void *opaque, void * /*stream*/, void *buf, uLong size)
 
 // Writes compressed data to the stream. This function always returns zero
 // because this implementation is only for reading compressed data.
-uLong WriteZipBuffer(void * /*opaque*/, void * /*stream*/, const void * /*buf*/, uLong /*size*/)
+uLong WriteZipBuffer(void *, void *, const void *, uLong)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return 0;
 }
 
 // Returns the offset from the beginning of the data.
-long GetOffsetOfZipBuffer(void *opaque, void * /*stream*/)
+long GetOffsetOfZipBuffer(void *opaque, void *)
 {
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
-    if (!buffer)
+    if (!buffer) {
         return -1;
+    }
     return static_cast<long>(buffer->offset);
 }
 
 // Moves the current offset to the specified position.
-long SeekZipBuffer(void *opaque, void * /*stream*/, uLong offset, int origin)
+long SeekZipBuffer(void *opaque, void *, uLong offset, int origin)
 {
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
-    if (!buffer)
+    if (!buffer) {
         return -1;
+    }
     if (origin == ZLIB_FILEFUNC_SEEK_CUR) {
         buffer->offset = std::min(buffer->offset + static_cast<size_t>(offset), buffer->length);
         return 0;
@@ -181,16 +186,17 @@ long SeekZipBuffer(void *opaque, void * /*stream*/, uLong offset, int origin)
 // uncompressing data. This function deletes the ZipBuffer object referred by
 // the opaque parameter since zlib deletes the unzFile object and it does not
 // use this object any longer.
-int CloseZipBuffer(void *opaque, void * /*stream*/)
+int CloseZipBuffer(void *opaque, void *)
 {
-    if (opaque)
+    if (opaque) {
         free(opaque);
+    }
     return 0;
 }
 
 // Returns the last error happened when reading or writing data. This function
 // always returns zero, which means there are not any errors.
-int GetErrorOfZipBuffer(void * /*opaque*/, void * /*stream*/)
+int GetErrorOfZipBuffer(void *, void *)
 {
     return 0;
 }
@@ -226,9 +232,9 @@ unzFile OpenFdForUnzipping(int zipFD)
 // static
 unzFile PrepareMemoryForUnzipping(const std::string &data)
 {
-    if (data.empty())
+    if (data.empty()) {
         return NULL;
-
+    }
     ZipBuffer *buffer = static_cast<ZipBuffer *>(malloc(sizeof(ZipBuffer)));
     if (!buffer)
         return NULL;
@@ -253,7 +259,7 @@ zipFile OpenForZipping(const std::string &fileNameUtf8, int appendFlag)
     zlib_filefunc_def *zipFuncPtrs = NULL;
     return zipOpen2(fileNameUtf8.c_str(),
         appendFlag,
-        NULL,  // global comment
+        NULL,
         zipFuncPtrs);
 }
 
@@ -272,24 +278,24 @@ bool ZipOpenNewFileInZip(
 
     zip_fileinfo fileInfo = {};
     TimeToZipFileInfo(lastModifiedTime, fileInfo);
-    if (ZIP_OK != zipOpenNewFileInZip4(zipFile,   // file
-                      strPath.c_str(),            // filename
-                      &fileInfo,                  // zip_fileinfo
-                      NULL,                       // extrafield_local,
-                      0u,                         // size_extrafield_local
-                      NULL,                       // extrafield_global
-                      0u,                         // size_extrafield_global
-                      NULL,                       // comment
-                      Z_DEFLATED,                 // method
-                      (int)options.level,         // level:default Z_DEFAULT_COMPRESSION
-                      0,                          // raw
-                      -MAX_WBITS,                 // windowBits
-                      (int)options.memLevel,      // memLevel: default DEF_MEM_LEVEL
-                      (int)options.strategy,      // strategy:default Z_DEFAULT_STRATEGY
-                      NULL,                       // password
-                      0,                          // crcForCrypting
-                      0,                          // versionMadeBy
-                      LANGUAGE_ENCODING_FLAG)) {  // flagBase
+    if (ZIP_OK != zipOpenNewFileInZip4(zipFile,    // file
+        strPath.c_str(),    // filename
+        &fileInfo,    // zip_fileinfo
+        NULL,    // extrafield_local,
+        0u,   // size_extrafield_local
+        NULL,    // extrafield_global
+        0u,    // size_extrafield_global
+        NULL,    // comment
+        Z_DEFLATED,    // method
+        (int)options.level,    // level:default Z_DEFAULT_COMPRESSION
+        0,    // raw
+        -MAX_WBITS,    // windowBits
+        (int)options.memLevel,    // memLevel: default DEF_MEM_LEVEL
+        (int)options.strategy,    // strategy:default Z_DEFAULT_STRATEGY
+        NULL,    // password
+        0,    // crcForCrypting
+        0,    // versionMadeBy
+        LANGUAGE_ENCODING_FLAG)) {    // flagBase
         return false;
     }
     return true;

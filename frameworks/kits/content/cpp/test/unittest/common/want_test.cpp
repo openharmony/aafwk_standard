@@ -522,49 +522,48 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
         GTEST_LOG_(INFO) << "WantOut_->GetStringParam(keyStr): " << param_content.c_str();
 
         // want SetParam  arraydata test
-        std::vector<bool> retboolArray;  // boolArrayValue = {true, false, true};
+        std::vector<bool> retboolArray;
         retboolArray = WantOut_->GetBoolArrayParam(std::string("bool_arraykey"));
 
         bool arraycompare = CompareArrayData<bool>(retboolArray, boolArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<byte> retbyteArrayValue;  // byteArrayValue = {'?', 'a', '\\'};
+        std::vector<byte> retbyteArrayValue;
         retbyteArrayValue = WantOut_->GetByteArrayParam(std::string("byte_arraykey"));
         arraycompare = CompareArrayData<byte>(retbyteArrayValue, byteArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<zchar> retcharArrayValue;  // charArrayValue = {U'e', U'l', U'l', U'o'};
+        std::vector<zchar> retcharArrayValue;
         retcharArrayValue = WantOut_->GetCharArrayParam(std::string("char_arraykey"));
         arraycompare = CompareArrayData<zchar>(retcharArrayValue, charArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<short> retshortArrayValue;  // shortArrayValue = {-1, 0, 1};
+        std::vector<short> retshortArrayValue;
         retshortArrayValue = WantOut_->GetShortArrayParam(std::string("short_arraykey"));
         arraycompare = CompareArrayData<short>(retshortArrayValue, shortArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<int> retintArrayValue;  // intArrayValue = {-10, 0, 10};
+        std::vector<int> retintArrayValue;
         retintArrayValue = WantOut_->GetIntArrayParam(std::string("int_arraykey"));
         arraycompare = CompareArrayData<int>(retintArrayValue, intArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<long> retlonArrayValue;  // longArrayValue = {-100, 0, 100};
+        std::vector<long> retlonArrayValue;
         retlonArrayValue = WantOut_->GetLongArrayParam(std::string("long_arraykey"));
         arraycompare = CompareArrayData<long>(retlonArrayValue, longArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<float> retfloatArrayValue;  // floatArrayValue = {-100.1, 0.1, 100.1};
+        std::vector<float> retfloatArrayValue;
         retfloatArrayValue = WantOut_->GetFloatArrayParam(std::string("float_arraykey"));
         arraycompare = CompareArrayData<float>(retfloatArrayValue, floatArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<double> retdoubleArrayValue;  // doubleArrayValue = {-1000.1, 0.1, 1000.1};
+        std::vector<double> retdoubleArrayValue;
         retdoubleArrayValue = WantOut_->GetDoubleArrayParam(std::string("double_arraykey"));
         arraycompare = CompareArrayData<double>(retdoubleArrayValue, doubleArrayValue);
         EXPECT_EQ(arraycompare, true);
 
-        std::vector<std::string> retstringArrayValue;  // stringArrayValue = {"stringtest1", "string@test2",
-                                                       // "string@!#test2"};
+        std::vector<std::string> retstringArrayValue;
         retstringArrayValue = WantOut_->GetStringArrayParam(std::string("string_arraykey"));
         arraycompare = CompareArrayData<std::string>(retstringArrayValue, stringArrayValue);
         EXPECT_EQ(arraycompare, true);

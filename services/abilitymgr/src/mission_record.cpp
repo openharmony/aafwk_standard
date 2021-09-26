@@ -334,7 +334,6 @@ void MissionRecord::Resume(const std::shared_ptr<MissionRecord> &backup)
         }
 
         ability->SetAbilityState(AbilityState::INITIAL);
-        // ability->ClearFlag();
         diffAbilitys.emplace_back(ability);
     }
 

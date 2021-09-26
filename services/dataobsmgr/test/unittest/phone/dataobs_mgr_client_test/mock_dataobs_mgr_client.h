@@ -41,7 +41,7 @@ std::shared_ptr<DataObsMgrClient> MockDataObsMgrClient::GetInstance()
 {
     if (instance_ == nullptr) {
         if (instance_ == nullptr) {
-            std::shared_ptr<DataObsMgrClient> client{new (std::nothrow) MockDataObsMgrClient()};
+            std::shared_ptr<DataObsMgrClient> client {new (std::nothrow) MockDataObsMgrClient()};
             if (client != nullptr) {
                 ((MockDataObsMgrClient *)client.get())->Connect();
             }

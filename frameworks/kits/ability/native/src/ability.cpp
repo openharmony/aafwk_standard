@@ -2097,7 +2097,7 @@ void Ability::CleanFormResource(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // compatible with int form id
-    int64_t cleanId{-1L};
+    int64_t cleanId {-1L};
     for (auto param : userReqParams_) {
         uint64_t unsignedFormId = static_cast<uint64_t>(formId);
         uint64_t unsignedParamFirst = static_cast<uint64_t>(param.first);
@@ -2382,8 +2382,9 @@ void Ability::OnDeathReceived()
         {
             std::lock_guard<std::mutex> lock(formLock);
             want = userReqRaram.second;
-            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false) &&
-                std::find(lostedTempForms.begin(), lostedTempForms.end(), formId) == lostedTempForms.end()) {
+            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false)
+                && std::find(lostedTempForms.begin(), lostedTempForms.end(),
+                formId) == lostedTempForms.end()) {
                 lostedTempForms.emplace_back(formId);
                 continue;
             }

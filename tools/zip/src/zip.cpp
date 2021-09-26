@@ -124,12 +124,12 @@ bool Zip(const ZipParams &params, const OPTIONS &options, CALLBACK callback)
         filesToAdd = &allRelativeFiles;
         std::list<FileAccessor::DirectoryContentEntry> entries;
         if (endIsSeparator) {
-            entries.push_back(FileAccessor::DirectoryContentEntry(params.SrcDir(), true /* is directory*/));
+            entries.push_back(FileAccessor::DirectoryContentEntry(params.SrcDir(), true));
             FilterCallback filterCallback = params.GetFilterCallback();
             for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
                 const FilePath &constEntryPath = iter->path;
                 if (iter != entries.begin() && ((!params.GetIncludeHiddenFiles() && IsHiddenFile(constEntryPath)) ||
-                                                   (filterCallback && !filterCallback(constEntryPath)))) {
+                    (filterCallback && !filterCallback(constEntryPath)))) {
                     continue;
                 }
                 if (iter != entries.begin()) {
@@ -270,7 +270,11 @@ bool Unzip(const FilePath &srcFile, const FilePath &destDir, const OPTIONS &opti
         destDirTemp.Value().c_str());
 
     std::shared_ptr<Runnable> innerTask = std::make_shared<Runnable>([srcFile, destDir, options, callback]() {
-        UnzipParam unzipParam{.callback = callback, .filterCB = ExcludeNoFilesFilter, .logSkippedFiles = true};
+        UnzipParam unzipParam{
+            .callback = callback, 
+            .filterCB = ExcludeNoFilesFilter, 
+            .logSkippedFiles = true
+        };
         UnzipWithFilterCallback(srcFile, destDir, options, unzipParam);
     });
 

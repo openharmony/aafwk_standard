@@ -64,7 +64,7 @@ namespace AAFwk {
                                                           \
     void DecStrongRef(const void *id = nullptr) override; \
                                                           \
-    IInterface *Query(const InterfaceID &iid) override;   \
+    IInterface *Query(const InterfaceID & iid) override;  \
                                                           \
     InterfaceID GetInterfaceID(IInterface *object) override;
 
@@ -82,7 +82,7 @@ namespace AAFwk {
         Object::DecStrongRef(id);                                   \
     }                                                               \
                                                                     \
-    IInterface *ClassName::Query(const InterfaceID &iid)            \
+    IInterface *ClassName::Query(const InterfaceID & iid)           \
     {                                                               \
         if (iid == g_IID_##InterfaceName) {                         \
             return static_cast<InterfaceName *>(this);              \
@@ -113,7 +113,7 @@ namespace AAFwk {
     {                                                                                \
         Object::DecStrongRef(id);                                                    \
     }                                                                                \
-    IInterface *ClassName::Query(const InterfaceID &iid)                             \
+    IInterface *ClassName::Query(const InterfaceID & iid)                            \
     {                                                                                \
         if (iid == g_IID_##InterfaceName1) {                                         \
             return static_cast<InterfaceName1 *>(this);                              \

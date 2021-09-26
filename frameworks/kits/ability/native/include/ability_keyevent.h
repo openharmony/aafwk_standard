@@ -26,11 +26,13 @@
 namespace OHOS {
 namespace AppExecFwk {
 class AbilityImpl;
-class AbilityKeyEventHandle
+
 #ifdef MMI_COMPILE
-    : public MMI::KeyEventHandler
+class AbilityKeyEventHandle : public MMI::KeyEventHandler {
+#else
+class AbilityKeyEventHandle {
 #endif
-{
+
 public:
     AbilityKeyEventHandle(const std::shared_ptr<AbilityImpl> &ability);
     ~AbilityKeyEventHandle();

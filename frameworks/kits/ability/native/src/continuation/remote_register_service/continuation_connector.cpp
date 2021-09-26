@@ -24,9 +24,9 @@ namespace AppExecFwk {
 sptr<ContinuationConnector> ContinuationConnector::instance_ = nullptr;
 std::mutex ContinuationConnector::mutex_;
 const std::string ContinuationConnector::CONNECTOR_DEVICE_ID("");
-const std::string ContinuationConnector::CONNECTOR_BUNDLE_NAME("com.huawei.controlcenter");
+const std::string ContinuationConnector::CONNECTOR_BUNDLE_NAME("com.ohos.controlcenter");
 const std::string ContinuationConnector::CONNECTOR_ABILITY_NAME(
-    "com.huawei.controlcenter.fatransfer.service.FeatureAbilityRegisterService");
+    "com.ohos.controlcenter.fatransfer.service.FeatureAbilityRegisterService");
 
 ContinuationConnector::ContinuationConnector(const std::weak_ptr<Context> &context) : context_(context)
 {}

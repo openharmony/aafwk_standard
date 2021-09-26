@@ -22,11 +22,11 @@
 namespace OHOS {
 namespace AAFwk {
 namespace AmsConfig {
-const std::string AMS_CONFIG_FILE_PATH{"/system/etc/ams_service_config.json"};
-const std::string SERVICE_ITEM_AMS{"service_startup_config"};
-const std::string STARTUP_LUNCHER{"startup_launcher"};
-const std::string STARTUP_STATUS_BAR{"startup_system_ui_status_bar"};
-const std::string STARTUP_NAVIGATION_BAR{"startup_system_ui_navigation_bar"};
+const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
+const std::string SERVICE_ITEM_AMS {"service_startup_config"};
+const std::string STARTUP_LUNCHER {"startup_launcher"};
+const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
+const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -70,10 +70,10 @@ private:
     int LoadAmsConfiguration(const std::string &filePath);
 
 private:
-    bool nonConfigFile{false};
-    bool canStartLuncher{false};
-    bool canStartUiStatusBar{false};
-    bool canStartUiNavigationBar{false};
+    bool nonConfigFile {false};
+    bool canStartLuncher {false};
+    bool canStartUiStatusBar {false};
+    bool canStartUiNavigationBar {false};
 };
 }  // namespace AAFwk
 }  // namespace OHOS

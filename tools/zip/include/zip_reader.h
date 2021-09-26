@@ -49,23 +49,7 @@ public:
     virtual void SetTimeModified(const struct tm *modifiedTime) = 0;
 };
 
-// This class is used for reading zip files. A typical use case of this
-// class is to scan entries in a zip file and extract them. The code will
-// look like:
-//
-//   ZipReader reader;
-//   reader.Open(zipFilePath);
-//   while (reader.HasMore()) {
-//     reader.OpenCurrentEntryInZip();
-//     const base::FilePath& entry_path =
-//        reader.CurrentEntryInfo()->file_path();
-//     auto writer = CreateFilePathWriterDelegate(extract_dir, entry_path);
-//     reader.ExtractCurrentEntry(writer, std::numeric_limits<uint64_t>::max());
-//     reader.AdvanceToNextEntry();
-//   }
-//
-// For simplicity, error checking is omitted in the example code above. The
-// production code should check return values from all of these functions.
+// This class is used for reading zip files.
 class ZipReader {
 public:
     // A callback that is called when the operation is successful.
@@ -73,9 +57,7 @@ public:
     using SuccessCallback = std::function<void()>;
     // A callback that is called when the operation fails.
     using FailureCallback = std::function<void()>;
-    // A callback that is called periodically during the operation with the number
-    // of bytes that have been processed so far.
-    // using ProgressCallback = base::RepeatingCallback<void(int64_t)>;
+    
     using ProgressCallback = std::function<void(int64_t)>;
 
     // This class represents information of an entry (file or directory) in
@@ -129,11 +111,11 @@ public:
 
     private:
         FilePath filePath_;
-        int64_t originalSize_;
+        int64_t originalSize_ = 0;
         struct tm lastModified_;
-        bool isDirectory_;
-        bool isUnsafe_;
-        bool isEncrypted_;
+        bool isDirectory_ = false;
+        bool isUnsafe_ = false;
+        bool isEncrypted_ = false;
         DISALLOW_COPY_AND_ASSIGN(EntryInfo);
     };
 
@@ -182,20 +164,6 @@ public:
     // starting from the beginning of the entry. Return value specifies whether
     // the entire file was extracted.
     bool ExtractCurrentEntry(WriterDelegate *delegate, uint64_t numBytesToExtract) const;
-
-    // Extracts the current entry into memory. If the current entry is a
-    // directory, the |output| parameter is set to the empty string. If the
-    // current entry is a file, the |output| parameter is filled with its
-    // contents. OpenCurrentEntryInZip() must be called beforehand. Note: the
-    // |output| parameter can be filled with a big amount of data, avoid passing
-    // it around by value, but by reference or pointer. Note: the value returned
-    // by EntryInfo::original_size() cannot be trusted, so the real size of the
-    // uncompressed contents can be different. |max_read_bytes| limits the ammount
-    // of memory used to carry the entry. Returns true if the entire content is
-    // read. If the entry is bigger than |max_read_bytes|, returns false and
-    // |output| is filled with |max_read_bytes| of data. If an error occurs,
-    // returns false, and |output| is set to the empty string.
-    // bool ExtractCurrentEntryToString(uint64_t max_read_bytes, std::string *output) const;
 
     // Returns the current entry info. Returns NULL if the current entry is
     // not yet opened. OpenCurrentEntryInZip() must be called beforehand.

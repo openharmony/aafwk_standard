@@ -67,7 +67,8 @@ public:
         }
     };
 
-    void SetMockStatus(bool nflag) {
+    void SetMockStatus(bool nflag)
+    {
         mockStatus = nflag;
     }
 

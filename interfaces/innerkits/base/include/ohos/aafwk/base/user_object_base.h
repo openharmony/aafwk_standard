@@ -123,7 +123,7 @@ private:
     static __attribute__((constructor)) void RegisterUserMapObject_##className()             \
     {                                                                                        \
         UserObjectBaseLoader::GetInstance().RegisterUserObject(                              \
-            #className, []() -> UserObjectBase * { return new (std::nothrow)(className); }); \
+            #className, []()->UserObjectBase * { return new (std::nothrow)(className); });   \
     }
 
 }  // namespace AAFwk
