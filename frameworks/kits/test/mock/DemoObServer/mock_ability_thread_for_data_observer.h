@@ -34,20 +34,17 @@ namespace AppExecFwk {
 sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()
 {
     sptr<AppExecFwk::AbilityThread> abilitythread(new (std::nothrow) AppExecFwk::AbilityThread());
-    if(abilitythread == nullptr)
-    {
+    if (abilitythread == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock abilityhreadptr is  nullptr called";
     }
 
     std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    if(application == nullptr)
-    {
+    if (application == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock applicationptr is  nullptr called";
     }
 
     std::shared_ptr<AbilityInfo> info = std::make_shared<AbilityInfo>();
-    if(info == nullptr)
-    {
+    if (info == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock AbilityInfo::info is  nullptr called";
     }
 
@@ -55,7 +52,6 @@ sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()
     info->type = AbilityType::DATA;
     info->isNativeAbility = true;
     std::cout << "info->name : " << (*info).name <<std::endl;
-    //std::cout << "info->type : " << (*info).type. <<std::endl;
 
     sptr<IRemoteObject> token = sptr<IRemoteObject>(new AbilityThread());
 

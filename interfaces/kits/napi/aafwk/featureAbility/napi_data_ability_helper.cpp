@@ -234,10 +234,10 @@ void AnalysisValuesBucket(NativeRdb::ValuesBucket &valuesBucket, const napi_env 
     }
     HILOG_INFO("ValuesBucket num:%{public}d ", arrLen);
     for (size_t i = 0; i < arrLen; ++i) {
-        napi_value key;
+        napi_value key = 0;
         status = napi_get_element(env, keys, i, &key);
         std::string keyStr = UnwrapStringFromJS(env, key);
-        napi_value value;
+        napi_value value = 0;
         napi_get_property(env, arg, key, &value);
 
         SetValuesBucketObject(valuesBucket, env, keyStr, value);
@@ -257,7 +257,7 @@ void SetValuesBucketObject(
             valueString.c_str());
         valuesBucket.PutString(keyStr, valueString);
     } else if (valueType == napi_number) {
-        double valueNumber;
+        double valueNumber = 0;
         napi_get_value_double(env, value, &valueNumber);
         valuesBucket.PutDouble(keyStr, valueNumber);
         HILOG_INFO(
@@ -420,7 +420,6 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
     return result;
 }
 
-
 /**
  * @brief DataAbilityHelper NAPI method : notifyChange.
  *
@@ -432,19 +431,24 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
 napi_value NAPI_NotifyChange(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperNotifyChangeCB *notifyChangeCB = new (std::nothrow) DAHelperNotifyChangeCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperNotifyChangeCB *notifyChangeCB = new (std::nothrow) DAHelperNotifyChangeCB;
+    if (notifyChangeCB == nullptr) {
+        HILOG_ERROR("%{public}s, notifyChangeCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    notifyChangeCB->cbBase.cbInfo.env = env;
+    notifyChangeCB->cbBase.asyncWork = nullptr;
+    notifyChangeCB->cbBase.deferred = nullptr;
+    notifyChangeCB->cbBase.ability = nullptr;
 
     napi_value ret = NotifyChangeWrap(env, info, notifyChangeCB);
     if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
         if (notifyChangeCB != nullptr) {
             delete notifyChangeCB;
             notifyChangeCB = nullptr;
         }
+        ret = WrapVoidToJS(env);
     }
     return ret;
 }
@@ -557,7 +561,7 @@ napi_value NotifyChangePromise(napi_env env, DAHelperNotifyChangeCB *notifyChang
 void NotifyChangeExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_NotifyChange, worker pool thread execute.");
-    DAHelperNotifyChangeCB *notifyChangeCB = (DAHelperNotifyChangeCB *)data;
+    DAHelperNotifyChangeCB *notifyChangeCB = static_cast<DAHelperNotifyChangeCB *>(data);
     if (notifyChangeCB->dataAbilityHelper != nullptr) {
         OHOS::Uri uri(notifyChangeCB->uri);
         notifyChangeCB->dataAbilityHelper->NotifyChange(uri);
@@ -567,7 +571,7 @@ void NotifyChangeExecuteCB(napi_env env, void *data)
 void NotifyChangeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_NotifyChange, main event thread complete.");
-    DAHelperNotifyChangeCB *notifyChangeCB = (DAHelperNotifyChangeCB *)data;
+    DAHelperNotifyChangeCB *notifyChangeCB = static_cast<DAHelperNotifyChangeCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -590,7 +594,7 @@ void NotifyChangeAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void NotifyChangePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_NotifyChange,  main event thread complete.");
-    DAHelperNotifyChangeCB *notifyChangeCB = (DAHelperNotifyChangeCB *)data;
+    DAHelperNotifyChangeCB *notifyChangeCB = static_cast<DAHelperNotifyChangeCB *>(data);
     napi_value result = nullptr;
     napi_create_int32(env, 0, &result);
     NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, notifyChangeCB->cbBase.deferred, result));
@@ -610,15 +614,26 @@ void NotifyChangePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_Register(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperOnOffCB *onCB = new (std::nothrow) DAHelperOnOffCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperOnOffCB *onCB = new (std::nothrow) DAHelperOnOffCB;
+    if (onCB == nullptr) {
+        HILOG_ERROR("%{public}s, onCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    onCB->cbBase.cbInfo.env = env;
+    onCB->cbBase.asyncWork = nullptr;
+    onCB->cbBase.deferred = nullptr;
+    onCB->cbBase.ability = nullptr;
 
     napi_value ret = RegisterWrap(env, info, onCB);
-
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
+        if (onCB != nullptr) {
+            delete onCB;
+            onCB = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s,called end", __func__);
     return ret;
 }
 
@@ -700,7 +715,8 @@ napi_value RegisterAsync(
     }
 
     NAPI_CALL(env,
-        napi_create_async_work(env,
+        napi_create_async_work(
+            env,
             nullptr,
             resourceName,
             RegisterExecuteCB,
@@ -718,7 +734,7 @@ napi_value RegisterAsync(
 void RegisterExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_Register, worker pool thread execute.");
-    DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)data;
+    DAHelperOnOffCB *onCB = static_cast<DAHelperOnOffCB *>(data);
     if (onCB->dataAbilityHelper != nullptr) {
         onCB->observer->SetEnv(env);
         onCB->observer->SetCallbackRef(onCB->cbBase.cbInfo.callback);
@@ -739,15 +755,26 @@ void RegisterExecuteCB(napi_env env, void *data)
 napi_value NAPI_UnRegister(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    DAHelperOnOffCB *offCB = new (std::nothrow) DAHelperOnOffCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperOnOffCB *offCB = new (std::nothrow) DAHelperOnOffCB;
+    if (offCB == nullptr) {
+        HILOG_ERROR("%{public}s, offCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    offCB->cbBase.cbInfo.env = env;
+    offCB->cbBase.asyncWork = nullptr;
+    offCB->cbBase.deferred = nullptr;
+    offCB->cbBase.ability = nullptr;
 
     napi_value ret = UnRegisterWrap(env, info, offCB);
-
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
+        if (offCB != nullptr) {
+            delete offCB;
+            offCB = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s,called end", __func__);
     return ret;
 }
 
@@ -838,10 +865,11 @@ napi_value UnRegisterAsync(
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     NAPI_CALL(env,
-        napi_create_async_work(env,
+        napi_create_async_work(
+            env,
             nullptr,
             resourceName,
-            UnRegisterExecuteCB,
+            [](napi_env env, void *data) { HILOG_INFO("NAPI_UnRegister, worker pool thread execute."); },
             UnRegisterCompleteCB,
             (void *)offCB,
             &offCB->cbBase.asyncWork));
@@ -851,62 +879,11 @@ napi_value UnRegisterAsync(
     return result;
 }
 
-void UnRegisterExecuteCB(napi_env env, void *data)
-{
-    HILOG_INFO("NAPI_UnRegister, worker pool thread execute.");
-#if 0
-    DAHelperOnOffCB *offCB = (DAHelperOnOffCB *)data;
-    if (offCB->dataAbilityHelper != nullptr) {
-        HILOG_INFO("NAPI_UnRegister uri=%{public}s", offCB->uri.c_str());
-        if (offCB->uri != "") {
-            // with uri
-            std::string strUri = offCB->uri;
-            do {
-                HILOG_INFO("NAPI_UnRegister registerInstances_ size = %{public}d", registerInstances_.size());
-                auto helper = std::find_if(registerInstances_.begin(),
-                    registerInstances_.end(),
-                    [strUri](const DAHelperOnOffCB *helper) { return helper->uri == strUri; });
-                if (helper != registerInstances_.end()) {
-                    // match uri
-                    OHOS::Uri uri((*helper)->uri);
-                    (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    delete *helper;
-                    registerInstances_.erase(helper);
-                    HILOG_INFO("NAPI_UnRegister erase registerInstances_ size = %{public}d", registerInstances_.size());
-                } else {
-                    break;
-                }
-            } while (true);
-        } else {
-            // without both uri
-            DataAbilityHelper *dataAbilityHelper = offCB->dataAbilityHelper;
-            do {
-                HILOG_INFO("NAPI_UnRegister registerInstances_ size = %{public}d", registerInstances_.size());
-                auto helper = std::find_if(registerInstances_.begin(),
-                    registerInstances_.end(),
-                    [dataAbilityHelper](
-                        const DAHelperOnOffCB *helper) { return helper->dataAbilityHelper == dataAbilityHelper; });
-                if (helper != registerInstances_.end()) {
-                    // match dataAbilityHelper
-                    OHOS::Uri uri((*helper)->uri);
-                    (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    delete *helper;
-                    registerInstances_.erase(helper);
-                    HILOG_INFO("NAPI_UnRegister erase registerInstances_ size = %{public}d", registerInstances_.size());
-                } else {
-                    break;
-                }
-            } while (true);
-        }
-    }
-#endif
-}
-
 void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_UnRegister, main event thread complete.");
     // cannot run it in executeCB, because need to use napi_strict_equals compare callbacks.
-    DAHelperOnOffCB *offCB = (DAHelperOnOffCB *)data;
+    DAHelperOnOffCB *offCB = static_cast<DAHelperOnOffCB *>(data);
     if (offCB == nullptr || offCB->dataAbilityHelper == nullptr) {
         HILOG_ERROR("NAPI_UnRegister, offCB is null:%{public}p,%{public}p.", offCB, offCB->dataAbilityHelper);
         return;
@@ -916,8 +893,8 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
         // if match callback ,or match both callback and uri
         napi_ref callback = offCB->cbBase.cbInfo.callback;
         do {
-            auto helper =
-                std::find_if(registerInstances_.begin(), registerInstances_.end(), [callback](const DAHelperOnOffCB *helper) {
+            auto helper = std::find_if(
+                registerInstances_.begin(), registerInstances_.end(), [callback](const DAHelperOnOffCB *helper) {
                     bool result = false;
                     napi_value callbackA = 0;
                     napi_value callbackB = 0;
@@ -925,17 +902,17 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                     napi_get_reference_value(helper->cbBase.cbInfo.env, helper->cbBase.cbInfo.callback, &callbackA);
                     auto ret = napi_strict_equals(helper->cbBase.cbInfo.env, callbackA, callbackB, &result);
                     HILOG_INFO("NAPI_UnRegister cb equals status=%{public}d result=%{public}d.", ret, result);
-                    // return helper->cbBase.cbInfo.callback == callback;
                     return result;
                 });
             if (helper != registerInstances_.end()) {
                 OHOS::Uri uri((*helper)->uri);
                 // if uri is not empty, uri and callback has to be equal at the same time.
-                if ((offCB->uri == "") || (offCB->uri == uri.ToString())) {
+                if (offCB->uri == uri.ToString()) {
                     // match callback, or match both callback and uri
                     (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    delete *helper;
                     registerInstances_.erase(helper);
+                    delete *helper;
+                    *helper = nullptr;
                     HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
                 } else {
                     HILOG_INFO("NAPI_UnRegister uri=%{public}s,helper.Uri=%{public}s",
@@ -943,6 +920,7 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                         uri.ToString().c_str());
                 }
             } else {
+                HILOG_INFO("NAPI_UnRegister not match any callback.");
                 break;  // not match any callback
             }
         } while (true);
@@ -959,32 +937,17 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                     // match uri
                     OHOS::Uri uri((*helper)->uri);
                     (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    delete *helper;
                     registerInstances_.erase(helper);
+                    delete *helper;
+                    *helper = nullptr;
                     HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
                 } else {
+                    HILOG_INFO("NAPI_UnRegister not match any uri.");
                     break;  // not match any uri
                 }
             } while (true);
         } else {
-            // without both uri and callback, unregister all observers corresponding the helper
-            DataAbilityHelper *dataAbilityHelper = offCB->dataAbilityHelper;
-            do {
-                auto helper = std::find_if(
-                    registerInstances_.begin(), registerInstances_.end(), [dataAbilityHelper](const DAHelperOnOffCB *helper) {
-                        return helper->dataAbilityHelper == dataAbilityHelper;
-                    });
-                if (helper != registerInstances_.end()) {
-                    // match dataAbilityHelper
-                    OHOS::Uri uri((*helper)->uri);
-                    (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    delete *helper;
-                    registerInstances_.erase(helper);
-                    HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
-                } else {
-                    break;  // not match any helper
-                }
-            } while (true);
+            HILOG_ERROR("NAPI_UnRegister, error: uri is null.");
         }
     }
 }
@@ -1004,17 +967,33 @@ void NAPIDataAbilityObserver::OnChange()
     HILOG_INFO("%{public}s, called.", __func__);
 
     uv_loop_s *loop = nullptr;
-
-#if NAPI_VERSION >= 2
     napi_get_uv_event_loop(env_, &loop);
-#endif  // NAPI_VERSION >= 2
+    if (loop == nullptr) {
+        HILOG_ERROR("%{public}s, loop == nullptr.", __func__);
+        return;
+    }
 
     uv_work_t *work = new uv_work_t;
-    DAHelperOnOffCB *onCB =
-        new (std::nothrow) DAHelperOnOffCB{.cbBase.cbInfo.env = env_, .cbBase.cbInfo.callback = ref_};
+    if (work == nullptr) {
+        HILOG_ERROR("%{public}s, work==nullptr.", __func__);
+        return;
+    }
+
+    DAHelperOnOffCB *onCB = new (std::nothrow) DAHelperOnOffCB;
+    if (onCB == nullptr) {
+        HILOG_ERROR("%{public}s, onCB == nullptr.", __func__);
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+        return;
+    }
+    onCB->cbBase.cbInfo.env = env_;
+    onCB->cbBase.cbInfo.callback = ref_;
     work->data = (void *)onCB;
 
-    uv_queue_work(loop,
+    int rev = uv_queue_work(
+        loop,
         work,
         [](uv_work_t *work) {},
         [](uv_work_t *work, int status) {
@@ -1037,7 +1016,18 @@ void NAPIDataAbilityObserver::OnChange()
             delete event;
             delete work;
         });
+    if (rev != 0) {
+        if (onCB != nullptr) {
+            delete onCB;
+            onCB = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+    }
 }
+
 napi_value NAPI_GetType(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
@@ -2957,19 +2947,24 @@ void ReleasePromiseCompleteCB(napi_env env, napi_status status, void *data)
 napi_value NAPI_ExecuteBatch(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,start", __func__);
-    DAHelperExecuteBatchCB *executeBatchCB = new (std::nothrow) DAHelperExecuteBatchCB{
-        .cbBase.cbInfo.env = env,
-        .cbBase.asyncWork = nullptr,
-        .cbBase.deferred = nullptr,
-        .cbBase.ability = nullptr,
-    };
+    DAHelperExecuteBatchCB *executeBatchCB = new (std::nothrow) DAHelperExecuteBatchCB;
+    if (executeBatchCB == nullptr) {
+        HILOG_ERROR("%{public}s, executeBatchCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    executeBatchCB->cbBase.cbInfo.env = env;
+    executeBatchCB->cbBase.asyncWork = nullptr;
+    executeBatchCB->cbBase.deferred = nullptr;
+    executeBatchCB->cbBase.ability = nullptr;
 
     napi_value ret = ExecuteBatchWrap(env, info, executeBatchCB);
     if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
         if (executeBatchCB != nullptr) {
             delete executeBatchCB;
             executeBatchCB = nullptr;
         }
+        ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
     return ret;
@@ -3110,7 +3105,7 @@ napi_value ExecuteBatchPromise(napi_env env, DAHelperExecuteBatchCB *executeBatc
 void ExecuteBatchExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s,NAPI_ExecuteBatch, worker pool thread execute start.", __func__);
-    DAHelperExecuteBatchCB *executeBatchCB = (DAHelperExecuteBatchCB *)data;
+    DAHelperExecuteBatchCB *executeBatchCB = static_cast<DAHelperExecuteBatchCB *>(data);
     if (executeBatchCB->dataAbilityHelper != nullptr) {
         OHOS::Uri uri(executeBatchCB->uri);
         executeBatchCB->result = executeBatchCB->dataAbilityHelper->ExecuteBatch(uri, executeBatchCB->operations);
@@ -3122,7 +3117,7 @@ void ExecuteBatchExecuteCB(napi_env env, void *data)
 void ExecuteBatchAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s, NAPI_ExecuteBatch, main event thread complete start.", __func__);
-    DAHelperExecuteBatchCB *executeBatchCB = (DAHelperExecuteBatchCB *)data;
+    DAHelperExecuteBatchCB *executeBatchCB = static_cast<DAHelperExecuteBatchCB *>(data);
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
@@ -3147,7 +3142,7 @@ void ExecuteBatchAsyncCompleteCB(napi_env env, napi_status status, void *data)
 void ExecuteBatchPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s, NAPI_ExecuteBatch, main event thread complete start.", __func__);
-    DAHelperExecuteBatchCB *executeBatchCB = (DAHelperExecuteBatchCB *)data;
+    DAHelperExecuteBatchCB *executeBatchCB = static_cast<DAHelperExecuteBatchCB *>(data);
     napi_value result = nullptr;
     napi_create_array(env, &result);
     GetDataAbilityResultForResult(env, executeBatchCB->result, result);

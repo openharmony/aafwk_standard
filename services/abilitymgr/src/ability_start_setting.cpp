@@ -56,7 +56,7 @@ AbilityStartSetting &AbilityStartSetting::operator=(const AbilityStartSetting &o
  */
 std::shared_ptr<AbilityStartSetting> AbilityStartSettingCreator()
 {
-    std::shared_ptr<AbilityStartSetting> abilityStartSetting{new (std::nothrow) AbilityStartSetting()};
+    std::shared_ptr<AbilityStartSetting> abilityStartSetting {new (std::nothrow) AbilityStartSetting()};
     return abilityStartSetting;
 }
 

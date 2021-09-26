@@ -26,7 +26,7 @@ const std::string ReverseContinuationSchedulerPrimaryStub::DESCRIPTOR(
 
 ReverseContinuationSchedulerPrimaryStub::ReverseContinuationSchedulerPrimaryStub()
 {
-    requestFuncMap_[NOTIFY_SLAVE_TERMINATED] = &ReverseContinuationSchedulerPrimaryStub::NotifyReplicaTerminatedInner;
+    requestFuncMap_[NOTIFY_REPLICA_TERMINATED] = &ReverseContinuationSchedulerPrimaryStub::NotifyReplicaTerminatedInner;
     requestFuncMap_[CONTINUATION_BACK] = &ReverseContinuationSchedulerPrimaryStub::ContinuationBackInner;
 }
 

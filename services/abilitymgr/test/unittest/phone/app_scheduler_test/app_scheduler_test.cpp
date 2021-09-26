@@ -172,7 +172,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_004, TestSize.Level0)
  */
 HWTEST_F(AppSchedulerTest, AppScheduler_oprator_005, TestSize.Level0)
 {
-    // EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
+    EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
 }
 
 /*

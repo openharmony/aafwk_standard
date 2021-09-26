@@ -36,7 +36,7 @@ AppScheduler::~AppScheduler()
 bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
 {
     HILOG_INFO("Test AppScheduler::Init()");
-    if(!callback.lock()){
+    if (!callback.lock()) {
         return false;
     }
     return true;
@@ -46,7 +46,7 @@ int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo)
 {
     HILOG_INFO("Test AppScheduler::LoadAbility()");
-    if(applicationInfo.bundleName.find("com.ix.First.Test") != std::string::npos){
+    if (applicationInfo.bundleName.find("com.ix.First.Test") != std::string::npos) {
         return INNER_ERR;
     }
     return ERR_OK;

@@ -447,7 +447,7 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         return false;
     }
     if (referenceSize >= REFERENCE_THRESHOLD) {
-        APP_LOGI("DataAbilityOperation::ReadFromParcel referenceSize:%{public}d >= REFERENCE_THRESHOLD:%{public}d",referenceSize ,REFERENCE_THRESHOLD);
+        APP_LOGI("DataAbilityOperation::ReadFromParcel referenceSize:%{public}d >= REFERENCE_THRESHOLD:%{public}d", referenceSize, REFERENCE_THRESHOLD);
         return true;
     }
 
@@ -465,7 +465,6 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         dataAbilityPredicatesBackReferences_.insert(std::make_pair(first, second));
     }
 
-    // interrupted_ = in.ReadBool();
     APP_LOGD("DataAbilityOperation::ReadFromParcel end");
     return true;
 }

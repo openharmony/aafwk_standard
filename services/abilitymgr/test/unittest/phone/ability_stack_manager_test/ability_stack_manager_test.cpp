@@ -1840,7 +1840,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_052, TestSize.
     EXPECT_EQ(0, result);
 
     auto musicMisionRecord = stackManager_->GetTopMissionRecord();
-    // auto musicMisionRecordId = musicMisionRecord->GetMissionRecordId();
 
     auto topAbilityRecord = stackManager_->GetCurrentTopAbility();
     topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);

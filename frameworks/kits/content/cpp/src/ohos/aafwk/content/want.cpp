@@ -1336,7 +1336,7 @@ void Want::ToUriStringInner(std::string &uriString) const
     }
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
-        char buf[HEX_STRING_BUF_LEN]{0};
+        char buf[HEX_STRING_BUF_LEN] {0};
         std::size_t len = snprintf_s(buf, HEX_STRING_BUF_LEN, HEX_STRING_BUF_LEN - 1, "0x%08x", operation_.GetFlags());
         if (len == HEX_STRING_LEN) {
             std::string flag = buf;

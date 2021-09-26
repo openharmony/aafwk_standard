@@ -109,7 +109,6 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
 
             NativeRdb::DataAbilityPredicates predicates("test");
             std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = abilitythread->Query(uri, columns, predicates);
-            // EXPECT_STREQ(resultSet->testInf_.c_str(), "TestResultSet");
             EXPECT_TRUE(resultSet != nullptr);
         }
     }

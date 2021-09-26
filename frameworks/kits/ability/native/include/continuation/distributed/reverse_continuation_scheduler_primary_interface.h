@@ -41,7 +41,7 @@ public:
     virtual bool ContinuationBack(const AAFwk::Want &want) = 0;
 
     enum {
-        NOTIFY_SLAVE_TERMINATED = 1,
+        NOTIFY_REPLICA_TERMINATED = 1,
         CONTINUATION_BACK,
     };
 };
