@@ -81,7 +81,7 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_Create_0200, Funct
     Parcel in;
     std::shared_ptr<DataAbilityOperation> dataAbilityOperation = std::make_shared<DataAbilityOperation>(in);
     EXPECT_EQ(dataAbilityOperation->GetUri(), nullptr);
-    EXPECT_EQ(dataAbilityOperation->GetType(), 0);
+    EXPECT_EQ(dataAbilityOperation->GetType(), -1);
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_Create_0200 end";
 }
 
@@ -113,7 +113,7 @@ HWTEST_F(DataAbilityOperationTest, AaFwk_DataAbilityOperation_Create_0400, Funct
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(URI);
     std::unique_ptr<DataAbilityOperation> operation = std::make_unique<DataAbilityOperation>(dataAbilityOperation, uri);
     EXPECT_EQ(operation->GetUri()->ToString(), URI);
-    EXPECT_EQ(operation->GetType(), 0);
+    EXPECT_EQ(operation->GetType(), -1);
     dataAbilityOperation.reset();
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_Create_0400 end";
 }

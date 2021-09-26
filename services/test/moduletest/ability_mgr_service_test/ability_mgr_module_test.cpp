@@ -391,8 +391,9 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
 void AbilityMgrModuleTest::MockLoadHandlerInner(int &testId, sptr<MockAbilityScheduler> &scheduler)
 {
     auto handler = [&testId](const Want &want, bool restart, int startid) { testId = startid; };
+    int counts = 3;
     EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _))
-        .Times(3)
+        .Times(counts)
         .WillOnce(Invoke(handler))
         .WillOnce(Invoke(handler))
         .WillOnce(Invoke(handler));

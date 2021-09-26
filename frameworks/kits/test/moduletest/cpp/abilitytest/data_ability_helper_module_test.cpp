@@ -254,10 +254,9 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0100, Func
         }
         string stringstr(str);
         EXPECT_STREQ(stringstr.c_str(), result.c_str());
-
-        fclose(file);
-        system("rm /dataability_openfile_test.txt");
     }
+    fclose(file);
+    system("rm /dataability_openfile_test.txt");
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0100 end";
 }
@@ -295,10 +294,9 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0200, Func
         }
         string stringstr(str);
         EXPECT_STREQ(stringstr.c_str(), result.c_str());
-
-        fclose(file);
-        system("rm /dataability_openfile_test.txt");
     }
+    fclose(file);
+    system("rm /dataability_openfile_test.txt");
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0200 end";
 }

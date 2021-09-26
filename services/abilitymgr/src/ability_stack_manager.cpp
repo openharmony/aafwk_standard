@@ -2749,7 +2749,7 @@ int AbilityStackManager::CheckMultiWindowCondition(
 
     if (currentTopAbility && 
         AbilityUtil::IsSystemDialogAbility(
-            currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name)) {
+        currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name)) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher.");
         return START_ABILITY_SETTING_FAILED;
     }

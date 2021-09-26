@@ -786,15 +786,19 @@ AsyncJSCallbackInfo *CreateAsyncJSCallbackInfo(napi_env env)
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
 
-    AsyncJSCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncJSCallbackInfo{
-        .cbInfo.env = env,
-        .cbInfo.callback = nullptr,
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .ability = ability,
-        .abilityType = AbilityType::UNKNOWN,
-        .aceCallback = nullptr,
-    };
+    AsyncJSCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncJSCallbackInfo;
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr.", __func__);
+        return nullptr;
+    }
+    asyncCallbackInfo->cbInfo.env = env;
+    asyncCallbackInfo->cbInfo.callback = nullptr;
+    asyncCallbackInfo->asyncWork = nullptr;
+    asyncCallbackInfo->deferred = nullptr;
+    asyncCallbackInfo->ability = ability;
+    asyncCallbackInfo->abilityType = AbilityType::UNKNOWN;
+    asyncCallbackInfo->aceCallback = nullptr;
+
     if (asyncCallbackInfo != nullptr) {
         ClearThreadReturnData(&asyncCallbackInfo->native_data);
     }
@@ -1050,7 +1054,7 @@ std::vector<std::string> ConvertStrVector(napi_env env, napi_value value, size_t
     char *buf = new char[strMax + 1];
     size_t len = 0;
     for (size_t i = 0; i < arrLen; ++i) {
-        napi_value element;
+        napi_value element = nullptr;
         napi_get_element(env, value, i, &element);
         len = 0;
         napi_get_value_string_utf8(env, element, buf, strMax, &len);
@@ -1069,15 +1073,15 @@ std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
     }
 
     napi_typedarray_type type;
-    size_t length;
-    napi_value buffer;
-    size_t offset;
+    size_t length = 0;
+    napi_value buffer = nullptr;
+    size_t offset = 0;
     NAPI_CALL_BASE(env, napi_get_typedarray_info(env, jsValue, &type, &length, nullptr, &buffer, &offset), {});
     if (type != napi_uint8_array) {
         return {};
     }
-    uint8_t *data;
-    size_t total;
+    uint8_t *data = nullptr;
+    size_t total = 0;
     NAPI_CALL_BASE(env, napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total), {});
     length = std::min<size_t>(length, total - offset);
     std::vector<uint8_t> result(sizeof(uint8_t) + length);
@@ -1111,7 +1115,7 @@ napi_value ConvertJSValue(napi_env env, std::string &value)
 
 napi_value ConvertJSValue(napi_env env, std::vector<uint8_t> &value)
 {
-    napi_value jsValue;
+    napi_value jsValue = nullptr;
     void *native = nullptr;
     napi_value buffer = nullptr;
     napi_status status = napi_create_arraybuffer(env, value.size(), &native, &buffer);

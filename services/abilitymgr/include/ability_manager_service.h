@@ -576,7 +576,7 @@ private:
     void StartingLauncherAbility();
 
     /**
-     *starting system ui abilites.
+     * starting system ui abilites.
      *
      */
     void StartingSystemUiAbility(const SatrtUiMode &mode);

@@ -596,52 +596,52 @@ HWTEST_F(AbilityManagerServiceTest, Interface_015, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level1)
 {
-    // Want wantLuncher;
-    // ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
-    // wantLuncher.SetElement(elementLun);
-    // StartAbility(wantLuncher);
-    // WaitUntilTaskFinished();
+    Want wantLuncher;
+    ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
+    wantLuncher.SetElement(elementLun);
+    StartAbility(wantLuncher);
+    WaitUntilTaskFinished();
 
-    // EXPECT_TRUE(abilityMs_->GetStackManager() != nullptr);
-    // EXPECT_TRUE(abilityMs_->GetStackManager()->GetTopMissionRecord() != nullptr);
-    // EXPECT_TRUE(abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord() != nullptr);
-    // auto launcherWant = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord()->GetWant();
+    EXPECT_TRUE(abilityMs_->GetStackManager() != nullptr);
+    EXPECT_TRUE(abilityMs_->GetStackManager()->GetTopMissionRecord() != nullptr);
+    EXPECT_TRUE(abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord() != nullptr);
+    auto launcherWant = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord()->GetWant();
 
-    // EXPECT_EQ(abilityMs_->RemoveMission(-1), OHOS::ERR_INVALID_VALUE);
+    EXPECT_EQ(abilityMs_->RemoveMission(-1), OHOS::ERR_INVALID_VALUE);
 
-    // EXPECT_EQ(abilityMs_->RemoveMission(100), REMOVE_MISSION_ID_NOT_EXIST);
+    EXPECT_EQ(abilityMs_->RemoveMission(100), REMOVE_MISSION_ID_NOT_EXIST);
 
-    // auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
-    // EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), REMOVE_MISSION_LAUNCHER_DENIED);
-    // GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
-    // abilityMs_->GetStackManager()->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    // Want want;
-    // want.AddEntity(Want::ENTITY_HOME);
-    // ElementName element("device", "com.ix.music", "MusicAbility");
-    // want.SetElement(element);
-    // auto result = StartAbility(want);
-    // WaitUntilTaskFinished();
-    // EXPECT_EQ(OHOS::ERR_OK, result);
+    auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
+    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), REMOVE_MISSION_LAUNCHER_DENIED);
+    GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
+    abilityMs_->GetStackManager()->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+    Want want;
+    want.AddEntity(Want::ENTITY_HOME);
+    ElementName element("device", "com.ix.music", "MusicAbility");
+    want.SetElement(element);
+    auto result = StartAbility(want);
+    WaitUntilTaskFinished();
+    EXPECT_EQ(OHOS::ERR_OK, result);
 
-    // topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
-    // GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
-    // EXPECT_FALSE(abilityMs_->GetStackManager()->IsLauncherMission(topMissionId));
-    // EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
+    topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
+    GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
+    EXPECT_FALSE(abilityMs_->GetStackManager()->IsLauncherMission(topMissionId));
+    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
 
-    // auto musicAbility = abilityMs_->GetStackManager()->GetCurrentTopAbility();
-    // musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    // EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
+    auto musicAbility = abilityMs_->GetStackManager()->GetCurrentTopAbility();
+    musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
 
-    // auto result1 = StartAbility(launcherWant);
-    // WaitUntilTaskFinished();
-    // EXPECT_EQ(OHOS::ERR_OK, result1);
+    auto result1 = StartAbility(launcherWant);
+    WaitUntilTaskFinished();
+    EXPECT_EQ(OHOS::ERR_OK, result1);
 
-    // EXPECT_EQ(musicAbility->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
-    // EXPECT_NE(topMissionId, abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId());
-    // musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
+    EXPECT_EQ(musicAbility->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
+    EXPECT_NE(topMissionId, abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId());
+    musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
 
-    // EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), 0);
-    // WaitUntilTaskFinished();
+    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), 0);
+    WaitUntilTaskFinished();
 }
 
 /*
@@ -788,11 +788,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
     EXPECT_EQ(stackManage->GetCurrentMissionStack()->GetMissionRecordCount(), 1);
     EXPECT_EQ(abilityMs_->RemoveStack(1), ERR_OK);
 
-    // stackManage->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    // auto launcherWant = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord()->GetWant();
-    // auto result2 = abilityMs_->StartAbility(launcherWant);
-    // WaitUntilTaskFinished();
-    // EXPECT_EQ(OHOS::ERR_OK, result2);
 }
 
 /*
