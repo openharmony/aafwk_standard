@@ -499,8 +499,6 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilitySchedulerProxy::Query(
         HILOG_ERROR("Query fail to SendRequest. err: %d", err);
         return nullptr;
     }
-
-    HILOG_INFO("AbilitySchedulerProxy::Query end");
     return OHOS::NativeRdb::ISharedResultSet::ReadFromParcel(reply);
 }
 

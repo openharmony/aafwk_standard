@@ -30,7 +30,7 @@ private:                                      \
     friend DelayedIPCSingleton<MyClass>;      \
     MyClass();
 
-template <typename T>
+template<typename T>
 class DelayedIPCSingleton : public NoCopyable {
 public:
     static sptr<T> GetInstance()
@@ -52,13 +52,13 @@ private:
     static std::mutex mutex_;
 };
 
-template <typename T>
+template<typename T>
 sptr<T> DelayedIPCSingleton<T>::instance_ = nullptr;
 
-template <typename T>
+template<typename T>
 std::mutex DelayedIPCSingleton<T>::mutex_;
 
-template <typename T>
+template<typename T>
 void DelayedIPCSingleton<T>::DestroyInstance()
 {
     std::lock_guard<std::mutex> lock(mutex_);

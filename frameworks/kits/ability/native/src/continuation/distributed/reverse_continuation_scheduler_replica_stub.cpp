@@ -20,7 +20,7 @@ namespace OHOS {
 namespace AppExecFwk {
 ReverseContinuationSchedulerReplicaStub::ReverseContinuationSchedulerReplicaStub()
 {
-    continuationFuncMap_[static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::PASS_MASTER)] =
+    continuationFuncMap_[static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::PASS_PRIMARY)] =
         &ReverseContinuationSchedulerReplicaStub::PassPrimaryInner;
     continuationFuncMap_[static_cast<uint32_t>(IReverseContinuationSchedulerReplica::Message::REVERSE_CONTINUATION)] =
         &ReverseContinuationSchedulerReplicaStub::ReverseContinuationInner;

@@ -633,7 +633,7 @@ bool WantParams::Marshalling(Parcel &parcel) const
     return true;
 }
 
-template <typename dataType, typename className>
+template<typename dataType, typename className>
 static bool SetArray(const InterfaceID &id, const std::vector<dataType> &value, sptr<IArray> &ao)
 {
     typename std::vector<dataType>::size_type size = value.size();
@@ -647,7 +647,7 @@ static bool SetArray(const InterfaceID &id, const std::vector<dataType> &value, 
     return false;
 }
 
-template <typename T1, typename T2, typename T3>
+template<typename T1, typename T2, typename T3>
 static void FillArray(IArray *ao, std::vector<T1> &array)
 {
     auto func = [&](IInterface *object) {
@@ -661,7 +661,7 @@ static void FillArray(IArray *ao, std::vector<T1> &array)
     Array::ForEach(ao, func);
 }
 // inner use template function
-template <typename T1, typename T2, typename T3>
+template<typename T1, typename T2, typename T3>
 static void SetNewArray(const AAFwk::InterfaceID &id, AAFwk::IArray *orgIArray, sptr<AAFwk::IArray> &ao)
 {
     if (orgIArray == nullptr) {

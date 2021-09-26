@@ -125,16 +125,19 @@ FilePath FilePath::DirName()
     std::string::size_type letter = FindDriveLetter(newPath.path_);
     std::string::size_type lastSeparator =
         newPath.path_.find_last_of(kSeparators, std::string::npos, kSeparatorsLength - 1);
+    std::string::size_type one = 1;
+    std::string::size_type two = 2;
+    std::string::size_type three = 3;
     if (lastSeparator == std::string::npos) {
         // path_ is in the current directory.
-        newPath.path_.resize(letter + 1);
-    } else if (lastSeparator == letter + 1) {
+        newPath.path_.resize(letter + one);
+    } else if (lastSeparator == letter + one) {
         // path_ is in the root directory.
-        newPath.path_.resize(letter + 2);
-    } else if (lastSeparator == letter + 2 && IsSeparator(newPath.path_[letter + 1])) {
+        newPath.path_.resize(letter + two);
+    } else if (lastSeparator == letter + two && IsSeparator(newPath.path_[letter + one])) {
         // path_ is in "//" (possibly with a drive letter); leave the double
         // separator intact indicating alternate root.
-        newPath.path_.resize(letter + 3);
+        newPath.path_.resize(letter + three);
     } else if (lastSeparator != 0) {
         // path_ is somewhere else, trim the basename.
         newPath.path_.resize(lastSeparator);
@@ -173,11 +176,13 @@ void FilePath::StripTrailingSeparatorsInternal()
     if (path_.size() == 0) {
         return;
     }
-    std::string::size_type start = FindDriveLetter(path_) + 2;
+    std::string::size_type one = 1;
+    std::string::size_type two = 2;
+    std::string::size_type start = FindDriveLetter(path_) + two;
     std::string::size_type lastStripped = std::string::npos;
-    for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - 1]); --pos) {
-        if (pos != start + 1 || lastStripped == start + 2 || !FilePath::IsSeparator(path_[start - 1])) {
-            path_.resize(pos - 1);
+    for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - one]); --pos) {
+        if (pos != start + one || lastStripped == start + two || !FilePath::IsSeparator(path_[start - one])) {
+            path_.resize(pos - one);
             lastStripped = pos;
         }
     }
@@ -229,13 +234,13 @@ bool FilePath::CreateDirectory(const FilePath &fullPath)
         subpaths.push_back(path);
         lastPath = path;
     }
-
+    mode_t rootMode= 0777;
     // Iterate through the parents and create the missing ones.
     for (std::vector<FilePath>::reverse_iterator i = subpaths.rbegin(); i != subpaths.rend(); ++i) {
         if (DirectoryExists(*i)) {
             continue;
         }
-        if (mkdir(i->Value().c_str(), 0777) == 0) {
+        if (mkdir(i->Value().c_str(), rootMode) == 0) {
             continue;
         }
 

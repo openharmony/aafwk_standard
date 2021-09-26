@@ -30,11 +30,11 @@ struct LookUpHelper {};
 struct LookUpHelper2 : public hidden::LookUpHelper {};
 
 // IsPtr - partial specialization only
-template <typename T>
+template<typename T>
 struct IsPtr {
     enum { value = false };
 };
-template <typename T>
+template<typename T>
 struct IsPtr<T *> {
     enum { value = true };
 };
@@ -78,11 +78,11 @@ private:
 
 // implementation
 namespace hidden {
-template <typename T, typename X, bool isPtr>
+template<typename T, typename X, bool isPtr>
 struct checked_cast_impl;
 
 // pointer variant
-template <typename T, typename X>
+template<typename T, typename X>
 struct checked_cast_impl<T, X, true> {
     static T cast(X &x, hidden::LookUpHelper2 const &)
     {
@@ -113,21 +113,17 @@ struct checked_cast_impl<T, X, true> {
     }
 };
 
-template <typename T, typename X>
+template<typename T, typename X>
 struct checked_cast_impl<T, X, false> {
     static T cast(X &x, hidden::LookUpHelper2 const &)
     {
 #ifdef CHECKED_CAST_SAFE_CONVERSATION
-        try {
-            T t = dynamic_cast<T>(x);
-
-            // check cross cast
-            if (&t != &static_cast<T>(x))
-                throw std::bad_cast();
-            return t;
-        } catch (...) {
-            BAD_CHECKED_CAST(x, T);
-        }
+    T t = dynamic_cast<T>(x);
+    // check cross cast
+    if (&t != &static_cast<T>(x)) {
+        throw std::bad_cast();
+    }
+    return t;
 #else
         return static_cast<T>(x);
 #endif
@@ -154,12 +150,12 @@ struct checked_cast_impl<T, X, false> {
 
 }  // namespace hidden
 
-template <typename T, typename X>
+template<typename T, typename X>
 inline T checked_cast(X &x)
 {
     return hidden::checked_cast_impl<T, X, hidden::IsPtr<X>::value>::cast(x, hidden::LookUpHelper2());
 }
-template <typename T, typename X>
+template<typename T, typename X>
 inline T checked_cast(X const &x)
 {
     return hidden::checked_cast_impl<T, X, hidden::IsPtr<X>::value>::cast(x, hidden::LookUpHelper2());

@@ -124,7 +124,7 @@ int DataObsMgrService::RegisterObserver(const Uri &uri, const sptr<IDataAbilityO
         return DATAOBS_SERVICE_OBS_LIMMIT;
     }
 
-    std::function<void()> registerObserverFunc =
+    std::function <void()> registerObserverFunc =
         std::bind(&DataObsMgrInner::HandleRegisterObserver, dataObsMgrInner_, uri, dataObserver);
 
     dataObsMgrInner_->AtomicAddTaskCount();
@@ -160,7 +160,7 @@ int DataObsMgrService::UnregisterObserver(const Uri &uri, const sptr<IDataAbilit
         return DATAOBS_SERVICE_TASK_LIMMIT;
     }
 
-    std::function<void()> unregisterObserverFunc =
+    std::function <void()> unregisterObserverFunc =
         std::bind(&DataObsMgrInner::HandleUnregisterObserver, dataObsMgrInner_, uri, dataObserver);
 
     dataObsMgrInner_->AtomicAddTaskCount();
@@ -191,7 +191,7 @@ int DataObsMgrService::NotifyChange(const Uri &uri)
         return DATAOBS_SERVICE_TASK_LIMMIT;
     }
 
-    std::function<void()> notifyChangeFunc = std::bind(&DataObsMgrInner::HandleNotifyChange, dataObsMgrInner_, uri);
+    std::function <void()> notifyChangeFunc = std::bind(&DataObsMgrInner::HandleNotifyChange, dataObsMgrInner_, uri);
 
     dataObsMgrInner_->AtomicAddTaskCount();
     bool ret = handler_->PostTask(notifyChangeFunc);
