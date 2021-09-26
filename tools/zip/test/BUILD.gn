@@ -34,7 +34,6 @@ ohos_unittest("zip_test") {
   include_dirs = [ "//foundation/aafwk/standard/tools/zip/include" ]
   sources = [
     "//foundation/aafwk/standard/tools/zip/src/file_path.cpp",
-    "//foundation/aafwk/standard/tools/zip/src/utf.cpp",
     "//foundation/aafwk/standard/tools/zip/src/zip.cpp",
     "//foundation/aafwk/standard/tools/zip/src/zip_internal.cpp",
     "//foundation/aafwk/standard/tools/zip/src/zip_reader.cpp",

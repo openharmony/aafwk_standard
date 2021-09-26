@@ -25,6 +25,7 @@ namespace AppExecFwk {
 const std::int32_t STR_MAX_SIZE = 128;
 
 napi_value *GetGlobalClassContext(void);
+napi_value GetGlobalDataAbilityHelper(void);
 void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg);
 napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo);
 
@@ -150,8 +151,6 @@ napi_value GetContinueAbilityOptionsInfoCommon(
 napi_value GetContinueAbilityOptionsReversible(
     const napi_env &env, const napi_value &value, ContinueAbilityOptionsInfo &info);
 
-napi_value ConvertAbilityInfo(napi_env env, const AbilityInfo &abilityInfo);
-
 /**
  * @brief Obtains the continue ability Info this application.
  *
@@ -221,6 +220,8 @@ napi_value AcquireDataAbilityHelperWrap(
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+napi_value ConvertAbilityInfo(napi_env env, const AbilityInfo &abilityInfo);
 
 struct ConnecttionKey {
     Want want;

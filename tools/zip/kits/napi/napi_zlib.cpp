@@ -105,7 +105,7 @@ AsyncZipCallbackInfo *CreateZipAsyncCallbackInfo(napi_env env)
         HILOG_ERROR("%{public}s get_global=%{public}d err:%{public}s", __func__, ret, errorInfo->error_message);
     }
 
-    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo{
+    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo {
         .asyncWork = nullptr,
         .aceCallback = nullptr,
     };
@@ -145,6 +145,11 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info)
 
     ret = ZipFileWrap(env, info, asyncZipCallbackInfo);
     if (ret == nullptr) {
+
+        if (g_zipAceCallbackInfo!= nullptr) {
+            g_zipAceCallbackInfo.reset();
+            g_zipAceCallbackInfo = nullptr;
+        }
         if (asyncZipCallbackInfo != nullptr) {
             delete asyncZipCallbackInfo;
             asyncZipCallbackInfo = nullptr;
@@ -479,7 +484,19 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
     } else {
         ret = UnzipFilePromise(env, asyncZipCallbackInfo);
     }
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s,ret == nullptr", __func__);
+        if(g_unzipAceCallbackInfo!= nullptr){
+            g_unzipAceCallbackInfo.reset();
+            g_unzipAceCallbackInfo = nullptr;
+        }
+        if (asyncZipCallbackInfo != nullptr) {
+            delete asyncZipCallbackInfo;
+            asyncZipCallbackInfo = nullptr;
+        }
 
+    }
+    HILOG_INFO("%{public}s,end", __func__);
     return ret;
 }
 napi_value UnzipFilePromise(napi_env env, AsyncZipCallbackInfo *asyncZipCallbackInfo)
@@ -605,7 +622,7 @@ void UnzipFilePromiseCallBack(int result)
     }
     ZipAndUnzipFileAsyncCallBack(g_unzipAceCallbackInfo, result);
 }
-void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work, int status)
+void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
 {
     // JS Thread
     ZlibCallbackInfo *asyncCallbackInfo = (ZlibCallbackInfo *)work->data;
@@ -638,10 +655,6 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work, int status)
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
     }
-    if (work != nullptr) {
-        delete work;
-        work = nullptr;
-    }
 }
 void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallbackInfo, int result)
 {
@@ -662,6 +675,8 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     }
     ZlibCallbackInfo *asyncCallbackInfo = new (std::nothrow) ZlibCallbackInfo();
     if (asyncCallbackInfo == nullptr) {
+        delete work;
+        work = nullptr;
         return;
     }
     asyncCallbackInfo->callbackResult = result;
@@ -675,7 +690,7 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
         [](uv_work_t *work) {},
         [](uv_work_t *work, int status) {
             HILOG_INFO("ZipAndUnzipFileAsyncCallBack, uv_queue_work");
-            ZipAndUnzipFileAsyncCallBackInnerJsThread(work, status);
+            ZipAndUnzipFileAsyncCallBackInnerJsThread(work);
             HILOG_INFO("ZipAndUnzipFileAsyncCallBack, uv_queue_work end.");
         });
     if (rev != E_OK) {

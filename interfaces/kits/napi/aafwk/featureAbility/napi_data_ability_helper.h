@@ -27,8 +27,8 @@ public:
     void SetCallbackRef(const napi_ref &ref);
 
 private:
-    napi_env env_;
-    napi_ref ref_;
+    napi_env env_ = nullptr;
+    napi_ref ref_ = nullptr;
 };
 
 /**
@@ -255,7 +255,6 @@ napi_value UnRegisterAsync(
  * @param env The environment that the Node-API call is invoked under.
  * @param data Point to asynchronous processing of data.
  */
-void UnRegisterExecuteCB(napi_env env, void *data);
 void UnRegisterCompleteCB(napi_env env, napi_status status, void *data);
 /**
  * @brief Parse the ValuesBucket parameters.
