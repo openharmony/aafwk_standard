@@ -77,7 +77,9 @@ public:
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;
 
-    void NotifyTopActiveAbilityChanged(bool flag) override{};
+    void NotifyTopActiveAbilityChanged(bool flag) override
+    {
+    };
     virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
     {
         return true;

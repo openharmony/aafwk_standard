@@ -16,9 +16,11 @@
 #include <algorithm>
 namespace OHOS {
 namespace AAFwk {
+#define WANT_PARAM_WRAPPER_TWO 2    
 IINTERFACE_IMPL_1(WantParamWrapper, Object, IWantParams);
 const InterfaceID g_IID_IWantParams = {
-    0xa75b9db6, 0x9813, 0x4371, 0x8848, {0xd, 0x2, 0x9, 0x6, 0x6, 0xc, 0xe, 0x6, 0xe, 0xc, 0x6, 0x8}};
+    0xa75b9db6, 0x9813, 0x4371, 0x8848, {0xd, 0x2, 0x9, 0x6, 0x6, 0xc, 0xe, 0x6, 0xe, 0xc, 0x6, 0x8}
+};
 ErrCode WantParamWrapper::GetValue(WantParams &value)
 {
 
@@ -77,7 +79,7 @@ bool WantParamWrapper::ValidateStr(const std::string &str)
     if (str == "" || str == "{}" || str == "{\"\"}") {
         return false;
     }
-    if (count(str.begin(), str.end(), '\"') % 2 != 0) {
+    if (count(str.begin(), str.end(), '\"') % WANT_PARAM_WRAPPER_TWO != 0) {
         return false;
     }
     if (count(str.begin(), str.end(), '{') != count(str.begin(), str.end(), '}')) {

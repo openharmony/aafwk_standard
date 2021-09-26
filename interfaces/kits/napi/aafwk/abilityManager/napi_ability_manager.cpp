@@ -56,7 +56,7 @@ napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value arg
     size_t len = 0;
     napi_get_value_string_utf8(env, args, buf, BUFFER_LENGTH_MAX, &len);
     HILOG_INFO("bundleName= [%{public}s].", buf);
-    bundleName = std::string{buf};
+    bundleName = std::string(buf);
     // create reutrn
     napi_value ret = 0;
     NAPI_CALL(env, napi_create_int32(env, 0, &ret));
@@ -162,6 +162,14 @@ void GetAbilityMissionInfosForResult(
             napi_create_string_utf8(env, item.baseAbility.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &abilityName));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, baseAbility, "abilityName", abilityName));
 
+        napi_value uri = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &uri));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, baseAbility, "uri", uri));
+
+        napi_value shortName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &shortName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, baseAbility, "shortName", shortName));
+
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objRecentMissionInfo, "bottomAbility", baseAbility));
 
         napi_value topAbility = nullptr;
@@ -178,6 +186,13 @@ void GetAbilityMissionInfosForResult(
         NAPI_CALL_RETURN_VOID(env,
             napi_create_string_utf8(env, item.topAbility.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &abilityName));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "abilityName", abilityName));
+
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &uri));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "uri", uri));
+
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &shortName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, topAbility, "shortName", shortName));
+
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objRecentMissionInfo, "topAbility", topAbility));
 
         napi_value nWindowMode = nullptr;

@@ -410,7 +410,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 if (work != nullptr) {
                     delete work;
                     work = nullptr;
-                }                
+                }
                 return;
             }
 
@@ -430,7 +430,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 
             for (size_t i = 0; i < onRequestPermissionCB->permissions.size(); i++) {
                 napi_create_string_utf8(onRequestPermissionCB->cb.env,
-                    onRequestPermissionCB->permissions[i].c_str(),
+                    onRequestPermissionCB->permissions[i].c_str(), 
                     NAPI_AUTO_LENGTH,
                     &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, perArray, i, perValue);
@@ -441,9 +441,9 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
             napi_value grantArray;
             napi_create_array(onRequestPermissionCB->cb.env, &grantArray);
 
-            for (size_t i = 0; i < onRequestPermissionCB->grantResults.size(); i++) {
-                napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->grantResults[i], &perValue);
-                napi_set_element(onRequestPermissionCB->cb.env, grantArray, i, perValue);
+            for (size_t j = 0; j < onRequestPermissionCB->grantResults.size(); j++) {
+                napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->grantResults[j], &perValue);
+                napi_set_element(onRequestPermissionCB->cb.env, grantArray, j, perValue);
             }
             napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "authResults", grantArray);
 
@@ -2254,12 +2254,21 @@ void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
     std::string dataDir = getOrCreateLocalDirCB->cbBase.ability->GetAbilityInfo()->applicationInfo.dataDir;
     std::shared_ptr<HapModuleInfo> hap = getOrCreateLocalDirCB->cbBase.ability->GetHapModuleInfo();
     std::string moduleName = (hap != nullptr) ? hap->name : std::string();
+    std::string dataDirWithModuleName = dataDir + CONTEXT_DEAL_FILE_SEPARATOR + moduleName;
+    HILOG_INFO("NAPI_GetOrCreateLocalDir, dataDir:%{public}s moduleName:%{public}s abilityName:%{public}s",
+        dataDir.c_str(),
+        moduleName.c_str(),
+        abilityName.c_str());
 
-    HILOG_INFO("NAPI_GetOrCreateLocalDir, abilityName:%{public}s moduleName:%{public}s",
-        abilityName.c_str(),
-        moduleName.c_str());
-    getOrCreateLocalDirCB->rootDir =
-        dataDir + CONTEXT_DEAL_FILE_SEPARATOR + moduleName + CONTEXT_DEAL_FILE_SEPARATOR + abilityName;
+    // if dataDirWithModuleName is not exits, do nothing and return.
+    if (!OHOS::FileExists(dataDirWithModuleName)) {
+        getOrCreateLocalDirCB->rootDir = "";
+        HILOG_INFO("NAPI_GetOrCreateLocalDir, dirWithModuleName is not exits:%{public}s, do nothing and return null.",
+            dataDirWithModuleName.c_str());
+        return;
+    }
+
+    getOrCreateLocalDirCB->rootDir = dataDirWithModuleName + CONTEXT_DEAL_FILE_SEPARATOR + abilityName;
     HILOG_INFO("NAPI_GetOrCreateLocalDir, GetDir rootDir:%{public}s", getOrCreateLocalDirCB->rootDir.c_str());
     if (!OHOS::FileExists(getOrCreateLocalDirCB->rootDir)) {
         HILOG_INFO("NAPI_GetOrCreateLocalDir dir is not exits, create dir.");

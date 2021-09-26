@@ -25,14 +25,18 @@ namespace OHOS {
 namespace AppExecFwk {
 napi_value DataAbilityOperationInit(napi_env env, napi_value exports)
 {
+    const int INSERT = 1;
+    const int UPDATE = 2;
+    const int DELETE = 3;
+    const int ASSERT = 4;
     HILOG_INFO("%{public}s called.", __func__);
 
     napi_value dataAbilityOperationType = nullptr;
     napi_create_object(env, &dataAbilityOperationType);
-    SetNamedProperty(env, dataAbilityOperationType, "TYPE_INSERT", 1);
-    SetNamedProperty(env, dataAbilityOperationType, "TYPE_UPDATE", 2);
-    SetNamedProperty(env, dataAbilityOperationType, "TYPE_DELETE", 3);
-    SetNamedProperty(env, dataAbilityOperationType, "TYPE_ASSERT", 4);
+    SetNamedProperty(env, dataAbilityOperationType, "TYPE_INSERT", INSERT);
+    SetNamedProperty(env, dataAbilityOperationType, "TYPE_UPDATE", UPDATE);
+    SetNamedProperty(env, dataAbilityOperationType, "TYPE_DELETE", DELETE);
+    SetNamedProperty(env, dataAbilityOperationType, "TYPE_ASSERT", ASSERT);
 
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_PROPERTY("DataAbilityOperationType", dataAbilityOperationType),
@@ -70,7 +74,7 @@ napi_value BuildDataAbilityOperation(
     std::shared_ptr<Uri> uri = std::make_shared<Uri>(uriStr);
 
     // get type property
-    int type;
+    int type = 0;
     if (!UnwrapInt32ByPropertyName(env, param, "type", type)) {
         HILOG_ERROR("%{public}s, type:%{public}d is not exist.", __func__, type);
         return nullptr;
@@ -101,7 +105,7 @@ napi_value BuildDataAbilityOperation(
     }
 
     // get expectedcount property
-    int expectedCount;
+    int expectedCount = 0;
     UnwrapInt32ByPropertyName(env, param, "expectedCount", expectedCount);
     HILOG_INFO("%{public}s, expectedCount:%{public}d", __func__, expectedCount);
     if (expectedCount > 0) {
@@ -114,7 +118,7 @@ napi_value BuildDataAbilityOperation(
     UnwrapDataAbilityPredicatesBackReferences(builder, env, jsPredicatesBackReferences);
 
     // get interrupted property
-    bool interrupted;
+    bool interrupted = false;
     UnwrapBooleanByPropertyName(env, param, "interrupted", interrupted);
     builder->WithInterruptionAllowed(interrupted);
 
