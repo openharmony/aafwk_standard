@@ -73,32 +73,218 @@ foundation/
 ```
 
 ## 使用说明
+### 启动Abiltiy
+启动新的ability(callback形式)
 
-当前版本用户程序框架不具备权限管理的能力。
+* startAbility参数描述
 
-以下模块的JS接口为非正式API，仅供Launcher、Settings、SystemUI等系统应用使用，不排除对这些接口进行变更的可能性，后续版本将提供正式API。
+| 名称      | 读写属性 | 类型                  | 必填 | 描述                |
+| --------- | -------- | --------------------- | ---- | ------------------- |
+| parameter | 读写     | StartAbilityParameter | 是   | 表示被启动的Ability |
+| callback  | 只读     | AsyncCallback         | 是   | 被指定的回调方法    |
 
-- @ohos.feature_ability.d.ts
+- StartAbilityParameter类型说明
 
-- @ohos.napi_ability_manager.d.ts
+| 名称                | 读写属性 | 类型   | 必填 | 描述                               |
+| ------------------- | -------- | ------ | ---- | ---------------------------------- |
+| want                | 读写     | want   | 是   | 表示需要包含有关目标启动能力的信息 |
+| abilityStartSetting | 只读     | string | 否   | 指示启动能力中使用的特殊启动设置   |
 
-- abilityinfo.d.ts
+- want类型说明
 
-- abilitymissioninfo.d.ts
+| 名称        | 读写属性 | 类型                 | 必填 | 描述                       |
+| ----------- | -------- | -------------------- | ---- | -------------------------- |
+| deviceId    | 读写     | string               | 否   | 设备id                     |
+| bundleName  | 读写     | string               | 否   | Bundle名                   |
+| abilityName | 读写     | string               | 否   | Ability 名                 |
+| uri         | 读写     | string               | 否   | 请求中URI的描述            |
+| type        | 读写     | string               | 否   | Want中类型的说明           |
+| flags       | 读写     | number               | 否   | Want中标志的选项，必填     |
+| action      | 读写     | string               | 否   | Want中对操作的描述         |
+| parameters  | 读写     | {[key: string]: any} | 否   | Want中WantParams对象的描述 |
+| entities    | 读写     | string               | 否   | 对象中实体的描述           |
 
-- applicationinfo.d.ts
+* 返回值
 
-- appprocessstate.ts
+  void
 
-- common.d.ts
+* 示例
 
-- elementname.d.ts
+```javascript
+import featureAbility from '@ohos.ability.featureAbility'
+function addSlotsCallBack(err) {
+	console.info("==========================>startAbility=======================>");
+}
+featureAbility.startAbility(
+        {
+        want:
+        {
+            action: "",
+            entities: [""],
+            type: "",
+            options: {
+                // indicates the grant to perform read operations on the URI
+                authReadUriPermission: true,
+                // indicates the grant to perform write operations on the URI
+                authWriteUriPermission: true,
+                // support forward intent result to origin ability
+                abilityForwardResult: true,
+                // used for marking the ability start-up is triggered by continuation
+                abilityContinuation: true,
+                // specifies whether a component does not belong to ohos
+                notOhosComponent: true,
+                // specifies whether an ability is started
+                abilityFormEnabled: true,
+                // indicates the grant for possible persisting on the URI.
+                authPersistableUriPermission: true,
+                // indicates the grant for possible persisting on the URI.
+                authPrefixUriPermission: true,
+                // support distributed scheduling system start up multiple devices
+                abilitySliceMultiDevice: true,
+                // indicates that an ability using the service template is started regardless of whether the
+                // host application has been started.
+                startForegroundAbility: true,
+                // install the specified ability if it's not installed.
+                installOnDemand: true,
+                // return result to origin ability slice
+                abilitySliceForwardResult: true,
+                // install the specified ability with background mode if it's not installed.
+                installWithBackgroundMode: true
+            },
+            deviceId: "",
+            bundleName: "com.example.startability",
+            abilityName: "com.example.startability.MainAbility",
+            uri: ""
+        },
+    },
+  );
+)
+```
+启动新的ability(Promise形式)
+* startAbility参数描述
 
-- moduleinfo.d.ts
+| 名称      | 读写属性 | 类型                  | 必填 | 描述                |
+| --------- | -------- | --------------------- | ---- | ------------------- |
+| parameter | 读写     | StartAbilityParameter | 是   | 表示被启动的Ability |
 
-- processinfo.d.ts
+- StartAbilityParameter类型说明
 
-- want.d.ts
+| 名称                | 读写属性 | 类型   | 必填 | 描述                               |
+| ------------------- | -------- | ------ | ---- | ---------------------------------- |
+| want                | 读写     | want   | 是   | 表示需要包含有关目标启动能力的信息 |
+| abilityStartSetting | 只读     | string | 否   | 指示启动能力中使用的特殊启动设置   |
+
+- want类型说明
+
+| 名称        | 读写属性 | 类型                 | 必填 | 描述                       |
+| ----------- | -------- | -------------------- | ---- | -------------------------- |
+| deviceId    | 读写     | string               | 否   | 设备id                     |
+| bundleName  | 读写     | string               | 否   | Bundle名                   |
+| abilityName | 读写     | string               | 否   | Ability 名字               |
+| uri         | 读写     | string               | 否   | 请求中URI的描述            |
+| type        | 读写     | string               | 否   | Want中类型的说明           |
+| flags       | 读写     | number               | 否   | Want中标志的选项，必填     |
+| action      | 读写     | string               | 否   | Want中对操作的描述         |
+| parameters  | 读写     | {[key: string]: any} | 否   | Want中WantParams对象的描述 |
+| entities    | 读写     | string               | 否   | 对象中实体的描述           |
+
+* 返回值
+
+  void
+
+* 示例
+
+```javascript
+import featureAbility from '@ohos.ability.featureAbility'
+featureAbility.startAbility(
+    {
+        want:
+        {
+            action: "action.system.home",
+            entities: ["entity.system.home"],
+            type: "MIMETYPE",
+            options: {
+                // indicates the grant to perform read operations on the URI
+                authReadUriPermission: true,
+                // indicates the grant to perform write operations on the URI
+                authWriteUriPermission: true,
+                // support forward intent result to origin ability
+                abilityForwardResult: true,
+                // used for marking the ability start-up is triggered by continuation
+                abilityContinuation: true,
+                // specifies whether a component does not belong to ohos
+                notOhosComponent: true,
+                // specifies whether an ability is started
+                abilityFormEnabled: true,
+                // indicates the grant for possible persisting on the URI.
+                authPersistableUriPermission: true,
+                // indicates the grant for possible persisting on the URI.
+                authPrefixUriPermission: true,
+                // support distributed scheduling system start up multiple devices
+                abilitySliceMultiDevice: true,
+                // indicates that an ability using the service template is started regardless of whether the
+                // host application has been started.
+                startForegroundAbility: true,
+                // install the specified ability if it's not installed.
+                installOnDemand: true,
+                // return result to origin ability slice
+                abilitySliceForwardResult: true,
+                // install the specified ability with background mode if it's not installed.
+                installWithBackgroundMode: true
+            },
+            deviceId: "",
+            bundleName: "com.example.startability",
+            abilityName: "com.example.startability.MainAbility",
+            uri: ""
+        },
+    }
+   ).then((void) => {
+	console.info("==========================>startAbility=======================>");
+});
+```
+
+### 停止Ability
+
+设置page ability返回给被调用方的结果代码和数据，并销毁此page ability(callback形式)
+
+* 参数描述
+
+| 名称     | 读写属性 | 类型                 | 必填 | 描述             |
+| -------- | -------- | -------------------- | ---- | ---------------- |
+| callback | 只读     | AsyncCallback\<void> | 是   | 被指定的回调方法 |
+
+* 返回值
+
+  void
+
+* 示例
+
+```javascript
+import featureAbility from '@ohos.ability.featureability';
+function terminateSelfCallBack(err) {
+	console.info("==========================>terminateSelfCallBack=======================>");
+}
+featureAbility.terminateSelf()
+```
+
+设置page ability返回给被调用方的结果代码和数据，并销毁此page ability(Promise形式)
+
+* 参数描述
+
+  Null
+
+* 返回值
+
+* void
+
+* 示例
+
+```javascript
+import featureAbility from '@ohos.ability.featureability';
+featureAbility.terminateSelf().then((void) => {		    console.info("==========================>terminateSelfCallBack=======================>");
+});
+```
+
 
 ## **aa命令**
 
