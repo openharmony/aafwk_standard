@@ -131,6 +131,22 @@ bool InnerWrapWantParamsBool(
     return false;
 }
 
+bool InnerWrapWantParamsByte(
+    napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
+{
+    auto value = wantParams.GetParam(key);
+    AAFwk::IByte *bo = AAFwk::IByte::Query(value);
+    if (bo != nullptr) {
+        byte natValue = AAFwk::Byte::Unbox(bo);
+        napi_value jsValue = WrapInt32ToJS(env, natValue);
+        if (jsValue != nullptr) {
+            NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+            return true;
+        }
+    }
+    return false;
+}
+
 bool InnerWrapWantParamsShort(
     napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
 {
@@ -425,8 +441,10 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
         return InnerWrapWantParamsArrayLong(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsFloatArray(ao)) {
         return InnerWrapWantParamsArrayFloat(env, jsObject, key, ao);
-    } else if (AAFwk::Array::IsDoubleArray(ao)) {
-        return InnerWrapWantParamsArrayDouble(env, jsObject, key, ao);
+    } else if (AAFwk::Array::IsByteArray(ao)) {
+        return InnerWrapWantParamsArrayInt32(env, jsObject, key, ao);
+    } else if (AAFwk::Array::IsCharArray(ao)) {
+        return InnerWrapWantParamsArrayString(env, jsObject, key, ao);
     } else {
         return false;
     }
@@ -456,6 +474,10 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
             InnerWrapWantParamsFloat(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IDouble::Query(iter->second) != nullptr) {
             InnerWrapWantParamsDouble(env, jsObject, iter->first, wantParams);
+        } else if (AAFwk::IChar::Query(iter->second) != nullptr) {
+            InnerWrapWantParamsString(env, jsObject, iter->first, wantParams);
+        } else if (AAFwk::IByte::Query(iter->second) != nullptr) {
+            InnerWrapWantParamsByte(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IArray::Query(iter->second) != nullptr) {
             AAFwk::IArray *ao = AAFwk::IArray::Query(iter->second);
             if (ao != nullptr) {
