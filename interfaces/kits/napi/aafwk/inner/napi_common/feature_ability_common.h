@@ -165,6 +165,16 @@ struct GetOrCreateLocalDirCB {
     std::string rootDir;
 };
 
+struct DatabaseDirCB {
+    CBBase cbBase;
+    std::string dataBaseDir;
+};
+
+struct PreferencesDirCB {
+    CBBase cbBase;
+    std::string preferencesDir;
+};
+
 struct ElementNameCB {
     CBBase cbBase;
     std::string deviceId;
@@ -328,7 +338,6 @@ struct DAHelperReleaseCB {
     DataAbilityHelper *dataAbilityHelper = nullptr;
     bool result = false;
 };
-
 
 struct DAHelperExecuteBatchCB {
     CBBase cbBase;

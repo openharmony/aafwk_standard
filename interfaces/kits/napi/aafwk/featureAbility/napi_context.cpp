@@ -28,7 +28,9 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-const std::string CONTEXT_DEAL_FILE_SEPARATOR = std::string("/");
+const std::string NAPI_CONTEXT_FILE_SEPARATOR = std::string("/");
+const std::string NAPI_CONTEXT_DATABASE = std::string("database");
+const std::string NAPI_CONTEXT_PREFERENCES = std::string("preferences");
 CallbackInfo aceCallbackInfoPermission;
 
 napi_value ContextConstructor(napi_env env, napi_callback_info info)
@@ -430,7 +432,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 
             for (size_t i = 0; i < onRequestPermissionCB->permissions.size(); i++) {
                 napi_create_string_utf8(onRequestPermissionCB->cb.env,
-                    onRequestPermissionCB->permissions[i].c_str(), 
+                    onRequestPermissionCB->permissions[i].c_str(),
                     NAPI_AUTO_LENGTH,
                     &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, perArray, i, perValue);
@@ -2254,7 +2256,7 @@ void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
     std::string dataDir = getOrCreateLocalDirCB->cbBase.ability->GetAbilityInfo()->applicationInfo.dataDir;
     std::shared_ptr<HapModuleInfo> hap = getOrCreateLocalDirCB->cbBase.ability->GetHapModuleInfo();
     std::string moduleName = (hap != nullptr) ? hap->name : std::string();
-    std::string dataDirWithModuleName = dataDir + CONTEXT_DEAL_FILE_SEPARATOR + moduleName;
+    std::string dataDirWithModuleName = dataDir + NAPI_CONTEXT_FILE_SEPARATOR + moduleName;
     HILOG_INFO("NAPI_GetOrCreateLocalDir, dataDir:%{public}s moduleName:%{public}s abilityName:%{public}s",
         dataDir.c_str(),
         moduleName.c_str(),
@@ -2268,7 +2270,7 @@ void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
         return;
     }
 
-    getOrCreateLocalDirCB->rootDir = dataDirWithModuleName + CONTEXT_DEAL_FILE_SEPARATOR + abilityName;
+    getOrCreateLocalDirCB->rootDir = dataDirWithModuleName + NAPI_CONTEXT_FILE_SEPARATOR + abilityName;
     HILOG_INFO("NAPI_GetOrCreateLocalDir, GetDir rootDir:%{public}s", getOrCreateLocalDirCB->rootDir.c_str());
     if (!OHOS::FileExists(getOrCreateLocalDirCB->rootDir)) {
         HILOG_INFO("NAPI_GetOrCreateLocalDir dir is not exits, create dir.");
@@ -2668,6 +2670,251 @@ napi_value NAPI_GetOrCreateLocalDir(napi_env env, napi_callback_info info)
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
 }
+
+/**
+ * @brief Create asynchronous data.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ *
+ * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
+ */
+DatabaseDirCB *CreateGetDatabaseDirCBInfo(napi_env env)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+
+    DatabaseDirCB *getDatabaseDirCB = new (std::nothrow) DatabaseDirCB;
+    if (getDatabaseDirCB == nullptr) {
+        HILOG_ERROR("%{public}s, getDatabaseDirCB == nullptr.", __func__);
+        return nullptr;
+    }
+    getDatabaseDirCB->cbBase.cbInfo.env = env;
+    getDatabaseDirCB->cbBase.asyncWork = nullptr;
+    getDatabaseDirCB->cbBase.deferred = nullptr;
+    getDatabaseDirCB->cbBase.ability = ability;
+
+    HILOG_INFO("%{public}s end.", __func__);
+    return getDatabaseDirCB;
+}
+
+/**
+ * @brief GetOrCreateLocalDir processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param CallingBundleCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value GetDatabaseDirWrap(napi_env env, napi_callback_info info, DatabaseDirCB *getDatabaseDirCB)
+{
+    HILOG_INFO("%{public}s, called.", __func__);
+    if (getDatabaseDirCB == nullptr) {
+        HILOG_ERROR("%{public}s, getDatabaseDirCB == nullptr.", __func__);
+        return nullptr;
+    }
+
+    getDatabaseDirCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+    if (getDatabaseDirCB->cbBase.ability == nullptr) {
+        HILOG_ERROR("NAPI_GetDatabaseDir, ability == nullptr");
+        getDatabaseDirCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
+        return nullptr;
+    }
+
+    std::string abilityName = getDatabaseDirCB->cbBase.ability->GetAbilityInfo()->name;
+    std::string dataDir = getDatabaseDirCB->cbBase.ability->GetAbilityInfo()->applicationInfo.dataDir;
+    std::shared_ptr<HapModuleInfo> hap = getDatabaseDirCB->cbBase.ability->GetHapModuleInfo();
+    std::string moduleName = (hap != nullptr) ? hap->name : std::string();
+    std::string dataDirWithModuleName = dataDir + NAPI_CONTEXT_FILE_SEPARATOR + moduleName;
+    HILOG_INFO("%{public}s, dataDir:%{public}s moduleName:%{public}s abilityName:%{public}s",
+        __func__,
+        dataDir.c_str(),
+        moduleName.c_str(),
+        abilityName.c_str());
+
+    // if dataDirWithModuleName is not exits, do nothing and return.
+    if (!OHOS::FileExists(dataDirWithModuleName)) {
+        getDatabaseDirCB->dataBaseDir = "";
+        HILOG_INFO("%{public}s, dirWithModuleName is not exits:%{public}s, do nothing and return null.",
+            __func__,
+            dataDirWithModuleName.c_str());
+    } else {
+        getDatabaseDirCB->dataBaseDir = dataDirWithModuleName + NAPI_CONTEXT_FILE_SEPARATOR + abilityName +
+                                        NAPI_CONTEXT_FILE_SEPARATOR + NAPI_CONTEXT_DATABASE;
+        HILOG_INFO("%{public}s, GetDir dataBaseDir:%{public}s", __func__, getDatabaseDirCB->dataBaseDir.c_str());
+        if (!OHOS::FileExists(getDatabaseDirCB->dataBaseDir)) {
+            HILOG_INFO("NAPI_GetDatabaseDir dir is not exits, create dir.");
+            OHOS::ForceCreateDirectory(getDatabaseDirCB->dataBaseDir);
+            OHOS::ChangeModeDirectory(getDatabaseDirCB->dataBaseDir, MODE);
+        }
+    }
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, getDatabaseDirCB->dataBaseDir.c_str(), NAPI_AUTO_LENGTH, &result));
+
+    HILOG_INFO("%{public}s, end.", __func__);
+    return result;
+}
+
+/**
+ * @brief Obtains the local database path. If it is the first call, the dir will be created.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetDatabaseDirSync(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    DatabaseDirCB *getDatabaseDirCB = CreateGetDatabaseDirCBInfo(env);
+    if (getDatabaseDirCB == nullptr) {
+        return WrapVoidToJS(env);
+    }
+
+    getDatabaseDirCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+    napi_value ret = GetDatabaseDirWrap(env, info, getDatabaseDirCB);
+
+    delete getDatabaseDirCB;
+    getDatabaseDirCB = nullptr;
+
+    if (ret == nullptr) {
+        ret = WrapVoidToJS(env);
+        HILOG_ERROR("%{public}s ret == nullptr", __func__);
+    } else {
+        HILOG_INFO("%{public}s, end.", __func__);
+    }
+    return ret;
+}
+
+/**
+ * @brief Create asynchronous data.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ *
+ * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
+ */
+PreferencesDirCB *CreateGetPreferencesDirCBInfo(napi_env env)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+
+    PreferencesDirCB *getPreferencesDirCB = new (std::nothrow) PreferencesDirCB;
+    if (getPreferencesDirCB == nullptr) {
+        HILOG_ERROR("%{public}s, getPreferencesDirCB == nullptr.", __func__);
+        return nullptr;
+    }
+    getPreferencesDirCB->cbBase.cbInfo.env = env;
+    getPreferencesDirCB->cbBase.asyncWork = nullptr;
+    getPreferencesDirCB->cbBase.deferred = nullptr;
+    getPreferencesDirCB->cbBase.ability = ability;
+
+    HILOG_INFO("%{public}s end.", __func__);
+    return getPreferencesDirCB;
+}
+
+/**
+ * @brief GetOrCreateLocalDir processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param CallingBundleCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value GetPreferencesDirWrap(napi_env env, napi_callback_info info, PreferencesDirCB *getPreferencesDirCB)
+{
+    HILOG_INFO("%{public}s, called.", __func__);
+    if (getPreferencesDirCB == nullptr) {
+        HILOG_ERROR("%{public}s, getPreferencesDirCB == nullptr.", __func__);
+        return nullptr;
+    }
+
+    getPreferencesDirCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+    if (getPreferencesDirCB->cbBase.ability == nullptr) {
+        HILOG_ERROR("%{public}s, ability == nullptr", __func__);
+        getPreferencesDirCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
+        return nullptr;
+    }
+
+    std::string abilityName = getPreferencesDirCB->cbBase.ability->GetAbilityInfo()->name;
+    std::string dataDir = getPreferencesDirCB->cbBase.ability->GetAbilityInfo()->applicationInfo.dataDir;
+    std::shared_ptr<HapModuleInfo> hap = getPreferencesDirCB->cbBase.ability->GetHapModuleInfo();
+    std::string moduleName = (hap != nullptr) ? hap->name : std::string();
+    std::string dataDirWithModuleName = dataDir + NAPI_CONTEXT_FILE_SEPARATOR + moduleName;
+    HILOG_INFO("%{public}s, dataDir:%{public}s moduleName:%{public}s abilityName:%{public}s",
+        __func__,
+        dataDir.c_str(),
+        moduleName.c_str(),
+        abilityName.c_str());
+
+    // if dataDirWithModuleName is not exits, do nothing and return.
+    if (!OHOS::FileExists(dataDirWithModuleName)) {
+        getPreferencesDirCB->preferencesDir = "";
+        HILOG_INFO("%{public}s, dirWithModuleName is not exits:%{public}s, do nothing and return null.",
+            __func__,
+            dataDirWithModuleName.c_str());
+    } else {
+        getPreferencesDirCB->preferencesDir = dataDirWithModuleName + NAPI_CONTEXT_FILE_SEPARATOR + abilityName +
+                                              NAPI_CONTEXT_FILE_SEPARATOR + NAPI_CONTEXT_PREFERENCES;
+        HILOG_INFO(
+            "%{public}s, GetDir preferencesDir:%{public}s", __func__, getPreferencesDirCB->preferencesDir.c_str());
+        if (!OHOS::FileExists(getPreferencesDirCB->preferencesDir)) {
+            HILOG_INFO("NAPI_GetPreferencesDir dir is not exits, create dir.");
+            OHOS::ForceCreateDirectory(getPreferencesDirCB->preferencesDir);
+            OHOS::ChangeModeDirectory(getPreferencesDirCB->preferencesDir, MODE);
+        }
+    }
+    napi_value result = nullptr;
+    NAPI_CALL(
+        env, napi_create_string_utf8(env, getPreferencesDirCB->preferencesDir.c_str(), NAPI_AUTO_LENGTH, &result));
+
+    HILOG_INFO("%{public}s, end.", __func__);
+    return result;
+}
+
+/**
+ * @brief Obtains the local database path. If it is the first call, the dir will be created.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetPreferencesDirSync(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    PreferencesDirCB *preferencesDirCB = CreateGetPreferencesDirCBInfo(env);
+    if (preferencesDirCB == nullptr) {
+        return WrapVoidToJS(env);
+    }
+
+    preferencesDirCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+    napi_value ret = GetPreferencesDirWrap(env, info, preferencesDirCB);
+
+    delete preferencesDirCB;
+    preferencesDirCB = nullptr;
+
+    if (ret == nullptr) {
+        ret = WrapVoidToJS(env);
+        HILOG_ERROR("%{public}s ret == nullptr", __func__);
+    } else {
+        HILOG_INFO("%{public}s, end.", __func__);
+    }
+    return ret;
+}
+
 /**
  * @brief Context NAPI module registration.
  *
@@ -2695,6 +2942,8 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getCallingBundle", NAPI_GetCallingBundle),
         DECLARE_NAPI_FUNCTION("getOrCreateLocalDir", NAPI_GetOrCreateLocalDir),
         DECLARE_NAPI_FUNCTION("getFilesDir", NAPI_GetFilesDir),
+        DECLARE_NAPI_FUNCTION("getDatabaseDirSync", NAPI_GetDatabaseDirSync),
+        DECLARE_NAPI_FUNCTION("getPreferencesDirSync", NAPI_GetPreferencesDirSync),
     };
 
     NAPI_CALL(env,

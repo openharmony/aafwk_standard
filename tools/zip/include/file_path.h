@@ -81,7 +81,7 @@ private:
     std::string path_;
 
     void StripTrailingSeparatorsInternal();
-    std::string::size_type FindDriveLetter(const std::string &path);
+    int FindDriveLetter(const std::string &path);
     bool AreAllSeparators(const std::string &input);
 };
 }  // namespace LIBZIP
