@@ -95,7 +95,7 @@ private:
     ErrCode RunAsDumpCommand();
 
     ErrCode RunAsDumpCommandOptopt();
-    ErrCode MakeWantFromCmd(Want &want);
+    ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
 };
 
 }  // namespace AAFwk
