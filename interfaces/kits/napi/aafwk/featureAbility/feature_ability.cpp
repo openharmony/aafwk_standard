@@ -65,6 +65,7 @@ napi_value FeatureAbilityInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("connectAbility", NAPI_FAConnectAbility),
         DECLARE_NAPI_FUNCTION("disconnectAbility", NAPI_FADisConnectAbility),
         DECLARE_NAPI_FUNCTION("continueAbility", NAPI_FAContinueAbility),
+        DECLARE_NAPI_FUNCTION("getWantSync", NAPI_GetWantSync),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
 
@@ -990,6 +991,77 @@ napi_value UnwrapAbilityResult(CallAbilityParam &param, napi_env env, napi_value
 }
 
 /**
+ * @brief GetWantSyncWrap processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param CallingBundleCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value GetWantSyncWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo)
+{
+    HILOG_INFO("%{public}s, called.", __func__);
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr.", __func__);
+        return nullptr;
+    }
+
+    asyncCallbackInfo->errCode = NAPI_ERR_NO_ERROR;
+    if (asyncCallbackInfo->ability == nullptr) {
+        HILOG_ERROR("%{public}s, ability == nullptr", __func__);
+        asyncCallbackInfo->errCode = NAPI_ERR_ACE_ABILITY;
+        return nullptr;
+    }
+
+    std::shared_ptr<AAFwk::Want> ptrWant = asyncCallbackInfo->ability->GetWant();
+    if (ptrWant != nullptr) {
+        asyncCallbackInfo->param.want = *ptrWant;
+    } else {
+        asyncCallbackInfo->errCode = NAPI_ERR_ABILITY_CALL_INVALID;
+    }
+
+    napi_value result = nullptr;
+    if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
+        result = WrapWant(env, asyncCallbackInfo->param.want);
+    } else {
+        result = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s, end.", __func__);
+    return result;
+}
+
+/**
+ * @brief Get want(Sync).
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetWantSync(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        return WrapVoidToJS(env);
+    }
+
+    asyncCallbackInfo->errCode = NAPI_ERR_NO_ERROR;
+    napi_value ret = GetWantSyncWrap(env, info, asyncCallbackInfo);
+
+    delete asyncCallbackInfo;
+    asyncCallbackInfo = nullptr;
+
+    if (ret == nullptr) {
+        ret = WrapVoidToJS(env);
+        HILOG_ERROR("%{public}s ret == nullptr", __func__);
+    } else {
+        HILOG_INFO("%{public}s, end.", __func__);
+    }
+    return ret;
+}
+
+/**
  * @brief Get want.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -1205,7 +1277,8 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
+    NAPI_CALL_RETURN_VOID(
+        env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
 
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
     result[PARAM1] = dataAbilityHelperCB->result;
@@ -1227,7 +1300,8 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
     napi_value uri = nullptr;
     napi_value result = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
-    NAPI_CALL_RETURN_VOID(env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
+    NAPI_CALL_RETURN_VOID(
+        env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
     result = dataAbilityHelperCB->result;
 
     NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));
