@@ -26,6 +26,7 @@
 #include "ohos/aafwk/base/long_wrapper.h"
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
+#include "ohos/aafwk/base/zchar_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -97,6 +98,22 @@ bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName)
     }
     return true;
 }
+bool InnerWrapWantParamsChar(
+    napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
+{
+    auto value = wantParams.GetParam(key);
+    AAFwk::IChar *ao = AAFwk::IChar::Query(value);
+    if (ao != nullptr) {
+        std::string natValue(static_cast<Char *>(ao)->ToString());
+        HILOG_INFO("%{public}s called. key=%{public}s, natValue=%{public}s", __func__, key.c_str(), natValue.c_str());
+        napi_value jsValue = WrapStringToJS(env, natValue);
+        if (jsValue != nullptr) {
+            NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+            return true;
+        }
+    }
+    return false;
+}
 
 bool InnerWrapWantParamsString(
     napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
@@ -137,8 +154,8 @@ bool InnerWrapWantParamsByte(
     auto value = wantParams.GetParam(key);
     AAFwk::IByte *bo = AAFwk::IByte::Query(value);
     if (bo != nullptr) {
-        byte natValue = AAFwk::Byte::Unbox(bo);
-        napi_value jsValue = WrapInt32ToJS(env, natValue);
+        int intValue = AAFwk::Byte::Unbox(bo);
+        napi_value jsValue = WrapInt32ToJS(env, intValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
             return true;
@@ -180,14 +197,14 @@ bool InnerWrapWantParamsInt32(
     return false;
 }
 
-bool InnerWrapWantParamsLong(
+bool InnerWrapWantParamsInt64(
     napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
 {
     auto value = wantParams.GetParam(key);
     AAFwk::ILong *ao = AAFwk::ILong::Query(value);
     if (ao != nullptr) {
-        long natValue = AAFwk::Long::Unbox(ao);
-        napi_value jsValue = WrapLongToJS(env, natValue);
+        int64_t natValue = AAFwk::Long::Unbox(ao);
+        napi_value jsValue = WrapInt64ToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
             return true;
@@ -241,6 +258,34 @@ bool InnerWrapWantParamsWantParams(
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
             return true;
         }
+    }
+    return false;
+}
+bool InnerWrapWantParamsArrayChar(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    long size = 0;
+    if (ao->GetLength(size) != ERR_OK) {
+        return false;
+    }
+
+    std::vector<std::string> natArray;
+    for (long i = 0; i < size; i++) {
+        sptr<AAFwk::IInterface> iface = nullptr;
+        if (ao->Get(i, iface) == ERR_OK) {
+            AAFwk::IChar *iValue = AAFwk::IChar::Query(iface);
+            if (iValue != nullptr) {
+                std::string str(static_cast<Char *>(iValue)->ToString());
+                HILOG_INFO("%{public}s called. str=%{public}s", __func__, str.c_str());
+                natArray.push_back(str);
+            }
+        }
+    }
+
+    napi_value jsValue = WrapArrayStringToJS(env, natArray);
+    if (jsValue != nullptr) {
+        NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+        return true;
     }
     return false;
 }
@@ -322,6 +367,32 @@ bool InnerWrapWantParamsArrayShort(napi_env env, napi_value jsObject, const std:
     }
     return false;
 }
+bool InnerWrapWantParamsArrayByte(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
+{
+    long size = 0;
+    if (ao->GetLength(size) != ERR_OK) {
+        return false;
+    }
+
+    std::vector<int> natArray;
+    for (long i = 0; i < size; i++) {
+        sptr<AAFwk::IInterface> iface = nullptr;
+        if (ao->Get(i, iface) == ERR_OK) {
+            AAFwk::IByte *iValue = AAFwk::IByte::Query(iface);
+            if (iValue != nullptr) {
+                int intValue = AAFwk::Byte::Unbox(iValue);
+                natArray.push_back(intValue);
+            }
+        }
+    }
+
+    napi_value jsValue = WrapArrayInt32ToJS(env, natArray);
+    if (jsValue != nullptr) {
+        NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+        return true;
+    }
+    return false;
+}
 
 bool InnerWrapWantParamsArrayInt32(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
 {
@@ -349,14 +420,14 @@ bool InnerWrapWantParamsArrayInt32(napi_env env, napi_value jsObject, const std:
     return false;
 }
 
-bool InnerWrapWantParamsArrayLong(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
+bool InnerWrapWantParamsArrayInt64(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
 {
     long size = 0;
     if (ao->GetLength(size) != ERR_OK) {
         return false;
     }
 
-    std::vector<long> natArray;
+    std::vector<int64_t> natArray;
     for (long i = 0; i < size; i++) {
         sptr<AAFwk::IInterface> iface = nullptr;
         if (ao->Get(i, iface) == ERR_OK) {
@@ -367,7 +438,7 @@ bool InnerWrapWantParamsArrayLong(napi_env env, napi_value jsObject, const std::
         }
     }
 
-    napi_value jsValue = WrapArrayLongToJS(env, natArray);
+    napi_value jsValue = WrapArrayInt64ToJS(env, natArray);
     if (jsValue != nullptr) {
         NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
         return true;
@@ -429,6 +500,7 @@ bool InnerWrapWantParamsArrayDouble(napi_env env, napi_value jsObject, const std
 
 bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
 {
+    HILOG_INFO("%{public}s called. key=%{public}s", __func__, key.c_str());
     if (AAFwk::Array::IsStringArray(ao)) {
         return InnerWrapWantParamsArrayString(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsBooleanArray(ao)) {
@@ -438,13 +510,13 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
     } else if (AAFwk::Array::IsIntegerArray(ao)) {
         return InnerWrapWantParamsArrayInt32(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsLongArray(ao)) {
-        return InnerWrapWantParamsArrayLong(env, jsObject, key, ao);
+        return InnerWrapWantParamsArrayInt64(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsFloatArray(ao)) {
         return InnerWrapWantParamsArrayFloat(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsByteArray(ao)) {
-        return InnerWrapWantParamsArrayInt32(env, jsObject, key, ao);
+        return InnerWrapWantParamsArrayByte(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsCharArray(ao)) {
-        return InnerWrapWantParamsArrayString(env, jsObject, key, ao);
+        return InnerWrapWantParamsArrayChar(env, jsObject, key, ao);
     } else {
         return false;
     }
@@ -469,13 +541,13 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
         } else if (AAFwk::IInteger::Query(iter->second) != nullptr) {
             InnerWrapWantParamsInt32(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::ILong::Query(iter->second) != nullptr) {
-            InnerWrapWantParamsLong(env, jsObject, iter->first, wantParams);
+            InnerWrapWantParamsInt64(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IFloat::Query(iter->second) != nullptr) {
             InnerWrapWantParamsFloat(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IDouble::Query(iter->second) != nullptr) {
             InnerWrapWantParamsDouble(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IChar::Query(iter->second) != nullptr) {
-            InnerWrapWantParamsString(env, jsObject, iter->first, wantParams);
+            InnerWrapWantParamsChar(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IByte::Query(iter->second) != nullptr) {
             InnerWrapWantParamsByte(env, jsObject, iter->first, wantParams);
         } else if (AAFwk::IArray::Query(iter->second) != nullptr) {
