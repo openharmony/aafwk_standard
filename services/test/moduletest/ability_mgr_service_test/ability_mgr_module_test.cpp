@@ -1667,19 +1667,19 @@ HWTEST_F(AbilityMgrModuleTest, AmsConfigurationParameter_026, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, AmsConfigurationParameter_027, TestSize.Level1)
 {
-    bool startLuncher = false;
+    bool startLauncher = false;
     bool startstatusbar = false;
     bool startnavigationbar = false;
     nlohmann::json info;
     std::ifstream file(AmsConfig::AMS_CONFIG_FILE_PATH, std::ios::in);
     if (file.is_open()) {
         file >> info;
-        info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LUNCHER).get_to(startLuncher);
+        info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get_to(startLauncher);
         info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get_to(startstatusbar);
         info.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get_to(startnavigationbar);
     }
 
-    EXPECT_EQ(startLuncher, abilityMgrServ_->amsConfigResolver_->GetStartLuncherState());
+    EXPECT_EQ(startLauncher, abilityMgrServ_->amsConfigResolver_->GetStartLauncherState());
     EXPECT_EQ(startstatusbar, abilityMgrServ_->amsConfigResolver_->GetStatusBarState());
     EXPECT_EQ(startnavigationbar, abilityMgrServ_->amsConfigResolver_->GetNavigationBarState());
 }

@@ -24,13 +24,14 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string SHORT_OPTIONS = "hd:a:b:p:";
+const std::string SHORT_OPTIONS = "h:d:a:b:p:s:";
 const struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
     {"ability", required_argument, nullptr, 'a'},
     {"bundle", required_argument, nullptr, 'b'},
     {"power", required_argument, nullptr, 'p'},
+    {"setting", required_argument, nullptr, 's'},
 };
 
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::";
@@ -460,9 +461,19 @@ ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
 ErrCode AbilityManagerShellCommand::RunAsStartAbility()
 {
     Want want;
-    ErrCode result = MakeWantFromCmd(want);
+    std::string windowMode;
+    ErrCode result = MakeWantFromCmd(want, windowMode);
     if (result == OHOS::ERR_OK) {
-        result = AbilityManagerClient::GetInstance()->StartAbility(want);
+        int windowModeKey = std::atoi(windowMode.c_str());
+        if (windowModeKey > 0) {
+            auto setting = AbilityStartSetting::GetEmptySetting();
+            if (setting != nullptr) {
+                setting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY, windowMode);
+                result = AbilityManagerClient::GetInstance()->StartAbility(want, *(setting.get()), nullptr, -1);
+            }
+        } else {
+            result = AbilityManagerClient::GetInstance()->StartAbility(want);
+        }
         if (result == OHOS::ERR_OK) {
             HILOG_INFO("%{public}s", STRING_START_ABILITY_OK.c_str());
             resultReceiver_ = STRING_START_ABILITY_OK + "\n";
@@ -485,7 +496,8 @@ ErrCode AbilityManagerShellCommand::RunAsStopService()
     ErrCode result = OHOS::ERR_OK;
 
     Want want;
-    result = MakeWantFromCmd(want);
+    std::string windowMode;
+    result = MakeWantFromCmd(want, windowMode);
     if (result == OHOS::ERR_OK) {
         result = AbilityManagerClient::GetInstance()->StopServiceAbility(want);
         if (result == OHOS::ERR_OK) {
@@ -657,7 +669,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
     return result;
 }
 
-ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
+ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &windowMode)
 {
     int result = OHOS::ERR_OK;
 
@@ -735,6 +747,18 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
                 }
+                case 's': {
+                    // 'aa start -s' with no argument
+                    // 'aa stop-service -s' with no argument
+                    HILOG_INFO("'aa %{public}s -s' with no argument.", cmd_.c_str());
+
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append(argv_[optind - 1]);
+                    resultReceiver_.append("' requires a value.\n");
+
+                    result = OHOS::ERR_INVALID_VALUE;
+                    break;
+                }
                 case 0: {
                     // 'aa start' with an unknown option: aa start --x
                     // 'aa start' with an unknown option: aa start --xxx
@@ -800,6 +824,12 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want)
 
                 // save bundle name
                 bundleName = optarg;
+                break;
+            }
+            case 's': {
+                // 'aa start -s xxx'
+                // save windowMode
+                windowMode = optarg;
                 break;
             }
             case 0: {

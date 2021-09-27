@@ -885,7 +885,7 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
     // cannot run it in executeCB, because need to use napi_strict_equals compare callbacks.
     DAHelperOnOffCB *offCB = static_cast<DAHelperOnOffCB *>(data);
     if (offCB == nullptr || offCB->dataAbilityHelper == nullptr) {
-        HILOG_ERROR("NAPI_UnRegister, offCB is null:%{public}p,%{public}p.", offCB, offCB->dataAbilityHelper);
+        HILOG_ERROR("NAPI_UnRegister, param is null.");
         return;
     }
     if (offCB->cbBase.cbInfo.callback != nullptr) {
