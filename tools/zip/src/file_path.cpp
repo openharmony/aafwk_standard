@@ -111,8 +111,8 @@ void FilePath::GetComponents(std::vector<std::string> &components)
 
     // Capture drive letter, if any.
     FilePath dir = current.DirName();
-    std::string::size_type letter = FindDriveLetter(dir.path_);
-    if (letter != std::string::npos) {
+    int letter = FindDriveLetter(dir.path_);
+    if (letter != static_cast<int>(std::string::npos)) {
         components.push_back(std::string(dir.path_, 0, letter + 1));
     }
 }
@@ -122,12 +122,12 @@ FilePath FilePath::DirName()
     FilePath newPath(path_);
     newPath.StripTrailingSeparatorsInternal();
 
-    std::string::size_type letter = FindDriveLetter(newPath.path_);
+    int letter = FindDriveLetter(newPath.path_);
     std::string::size_type lastSeparator =
         newPath.path_.find_last_of(kSeparators, std::string::npos, kSeparatorsLength - 1);
-    std::string::size_type one = 1;
-    std::string::size_type two = 2;
-    std::string::size_type three = 3;
+    int one = 1;
+    int two = 2;
+    int three = 3;
     if (lastSeparator == std::string::npos) {
         // path_ is in the current directory.
         newPath.path_.resize(letter + one);
@@ -155,8 +155,8 @@ FilePath FilePath::BaseName()
     FilePath newPath(path_);
     newPath.StripTrailingSeparatorsInternal();
     // The drive letter, if any, is always stripped.
-    std::string::size_type letter = FindDriveLetter(newPath.path_);
-    if (letter != std::string::npos) {
+    int letter = FindDriveLetter(newPath.path_);
+    if (letter != static_cast<int>(std::string::npos)) {
         newPath.path_.erase(0, letter + 1);
     }
 
@@ -178,7 +178,7 @@ void FilePath::StripTrailingSeparatorsInternal()
     }
     std::string::size_type one = 1;
     std::string::size_type two = 2;
-    std::string::size_type start = FindDriveLetter(path_) + two;
+    int start = FindDriveLetter(path_) + two;
     std::string::size_type lastStripped = std::string::npos;
     for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - one]); --pos) {
         if (pos != start + one || lastStripped == start + two || !FilePath::IsSeparator(path_[start - one])) {
@@ -188,9 +188,9 @@ void FilePath::StripTrailingSeparatorsInternal()
     }
 }
 
-std::string::size_type FilePath::FindDriveLetter(const std::string &path)
+int FilePath::FindDriveLetter(const std::string &path)
 {
-    return std::string::npos;
+    return (int)std::string::npos;
 }
 
 bool FilePath::AreAllSeparators(const std::string &input)
