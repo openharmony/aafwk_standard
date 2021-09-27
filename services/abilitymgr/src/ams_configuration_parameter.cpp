@@ -26,9 +26,9 @@ void AmsConfigurationParameter::Parse()
     HILOG_INFO("load config ref : %{public}d", ref);
 }
 
-bool AmsConfigurationParameter::GetStartLuncherState() const
+bool AmsConfigurationParameter::GetStartLauncherState() const
 {
-    return canStartLuncher;
+    return canStartLauncher;
 }
 
 bool AmsConfigurationParameter::GetStatusBarState() const
@@ -68,7 +68,7 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
     }
 
     if (amsJson.contains(AmsConfig::SERVICE_ITEM_AMS)) {
-        canStartLuncher = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LUNCHER).get<bool>();
+        canStartLauncher = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
         canStartUiStatusBar = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
         canStartUiNavigationBar =
             amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
