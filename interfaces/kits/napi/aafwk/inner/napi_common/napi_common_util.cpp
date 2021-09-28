@@ -356,6 +356,51 @@ bool UnwrapArrayLongFromJS(napi_env env, napi_value param, std::vector<long> &va
     return true;
 }
 
+napi_value WrapArrayInt64ToJS(napi_env env, const std::vector<int64_t> &value)
+{
+    napi_value jsArray = nullptr;
+    napi_value jsValue = nullptr;
+    uint32_t index = 0;
+
+    NAPI_CALL(env, napi_create_array(env, &jsArray));
+    for (uint32_t i = 0; i < value.size(); i++) {
+        jsValue = nullptr;
+        if (napi_create_int64(env, value[i], &jsValue) == napi_ok) {
+            if (napi_set_element(env, jsArray, index, jsValue) == napi_ok) {
+                index++;
+            }
+        }
+    }
+    return jsArray;
+}
+
+bool UnwrapArrayInt64FromJS(napi_env env, napi_value param, std::vector<int64_t> &value)
+{
+    uint32_t arraySize = 0;
+    napi_value jsValue = nullptr;
+    int64_t natValue = 0;
+
+    if (!IsArrayForNapiValue(env, param, arraySize)) {
+        return false;
+    }
+
+    value.clear();
+    for (uint32_t i = 0; i < arraySize; i++) {
+        jsValue = nullptr;
+        natValue = 0;
+        if (napi_get_element(env, param, i, &jsValue) != napi_ok) {
+            return false;
+        }
+
+        if (!UnwrapInt64FromJS2(env, jsValue, natValue)) {
+            return false;
+        }
+
+        value.push_back(natValue);
+    }
+    return true;
+}
+
 napi_value WrapArrayDoubleToJS(napi_env env, const std::vector<double> &value)
 {
     napi_value jsArray = nullptr;
@@ -1043,28 +1088,6 @@ void CompletePromiseCallbackWork(napi_env env, napi_status status, void *data)
     asyncCallbackInfo = nullptr;
 }
 
-std::vector<std::string> ConvertStrVector(napi_env env, napi_value value, size_t strMax)
-{
-    uint32_t arrLen = 0;
-    napi_get_array_length(env, value, &arrLen);
-    if (arrLen == 0) {
-        return {};
-    }
-    std::vector<std::string> result;
-    char *buf = new char[strMax + 1];
-    size_t len = 0;
-    for (size_t i = 0; i < arrLen; ++i) {
-        napi_value element = nullptr;
-        napi_get_element(env, value, i, &element);
-        len = 0;
-        napi_get_value_string_utf8(env, element, buf, strMax, &len);
-        buf[len] = 0;
-        result.push_back(buf);
-    }
-    delete[] buf;
-    return result;
-}
-
 std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
 {
     bool isTypedArray = false;
@@ -1087,77 +1110,6 @@ std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
     std::vector<uint8_t> result(sizeof(uint8_t) + length);
     memcpy_s(result.data(), result.size(), &data[offset], length);
     return result;
-}
-
-napi_value ConvertJSValue(napi_env env, std::vector<std::string> &value)
-{
-    napi_value jsValue;
-    napi_status status = napi_create_array_with_length(env, value.size(), &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-
-    for (size_t i = 0; i < value.size(); ++i) {
-        napi_set_element(env, jsValue, i, ConvertJSValue(env, value[i]));
-    }
-    return jsValue;
-}
-
-napi_value ConvertJSValue(napi_env env, std::string &value)
-{
-    napi_value jsValue;
-    napi_status status = napi_create_string_utf8(env, value.c_str(), value.size(), &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    return jsValue;
-}
-
-napi_value ConvertJSValue(napi_env env, std::vector<uint8_t> &value)
-{
-    napi_value jsValue = nullptr;
-    void *native = nullptr;
-    napi_value buffer = nullptr;
-    napi_status status = napi_create_arraybuffer(env, value.size(), &native, &buffer);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    (void)memcpy_s(native, value.size(), value.data(), value.size());
-    status = napi_create_typedarray(env, napi_uint8_array, value.size(), buffer, 0, &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    return jsValue;
-}
-
-napi_value ConvertJSValue(napi_env env, int32_t value)
-{
-    napi_value jsValue;
-    napi_status status = napi_create_int32(env, value, &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    return jsValue;
-}
-
-napi_value ConvertJSValue(napi_env env, int64_t value)
-{
-    napi_value jsValue;
-    napi_status status = napi_create_int64(env, value, &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    return jsValue;
-}
-
-napi_value ConvertJSValue(napi_env env, double value)
-{
-    napi_value jsValue;
-    napi_status status = napi_create_double(env, value, &jsValue);
-    if (status != napi_ok) {
-        return nullptr;
-    }
-    return jsValue;
 }
 
 }  // namespace AppExecFwk

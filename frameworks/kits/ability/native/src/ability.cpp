@@ -1157,23 +1157,6 @@ void Ability::ContinueAbilityReversibly(const std::string &deviceId)
 }
 
 /**
- * @brief Migrates this ability to another device on the same distributed network in a reversible way that allows this
- * ability to be migrated back to the local device through reverseContinueAbility(). If there are multiple candidate
- * devices, a pop-up will be displayed for users to choose the desired one. The ability to migrate and its ability
- * slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown, indicating that the
- * ability does not support migration.
- *
- */
-void Ability::ContinueAbilityReversibly()
-{
-    if (!VerifySupportForContinuation()) {
-        APP_LOGE("Ability::ContinueAbilityReversibly failed. VerifySupportForContinuation faled");
-        return;
-    }
-    continuationManager_->ContinueAbility(true, "");
-}
-
-/**
  * @brief  public final String getOriginalDeviceId​() throws UnsupportedOperationException
  * Obtains the ID of the source device from which this ability is migrated.
  *
@@ -1915,7 +1898,7 @@ void Ability::ProcessFormUpdate(const FormJsInfo &formJsInfo)
 void Ability::ProcessFormUninstall(const int64_t formId)
 {
     APP_LOGI("%{public}s start.", __func__);
-    // check formId 
+    // check formId
     if (formId <= 0) {
         APP_LOGE("%{public}s error, the passed in formId can't be negative or zero.", __func__);
         return;
@@ -1925,8 +1908,7 @@ void Ability::ProcessFormUninstall(const int64_t formId)
     {
         std::lock_guard<std::mutex> lock(formLock);
         // get callback iterator by formId
-        std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator = 
-            appCallbacks_.find(formId);
+        std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator = appCallbacks_.find(formId);
 
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
@@ -2044,10 +2026,8 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
         // form lock
         std::lock_guard<std::mutex> lock(formLock);
         // clean form resource when form is temp form
-        if (std::find(
-            lostedByReconnectTempForms_.begin(), 
-            lostedByReconnectTempForms_.end(), 
-            formId) != lostedByReconnectTempForms_.end()) {
+        if (std::find(lostedByReconnectTempForms_.begin(), lostedByReconnectTempForms_.end(), formId) !=
+            lostedByReconnectTempForms_.end()) {
             CleanFormResource(formId);
             // the delete temp form is successfully
             return true;
@@ -2087,7 +2067,7 @@ void Ability::CleanFormResource(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // compatible with int form id
-    int64_t cleanId {-1L};
+    int64_t cleanId{-1L};
     for (auto param : userReqParams_) {
         uint64_t unsignedFormId = static_cast<uint64_t>(formId);
         uint64_t unsignedParamFirst = static_cast<uint64_t>(param.first);
@@ -2372,9 +2352,8 @@ void Ability::OnDeathReceived()
         {
             std::lock_guard<std::mutex> lock(formLock);
             want = userReqRaram.second;
-            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false)
-                && std::find(lostedTempForms.begin(), lostedTempForms.end(),
-                formId) == lostedTempForms.end()) {
+            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false) &&
+                std::find(lostedTempForms.begin(), lostedTempForms.end(), formId) == lostedTempForms.end()) {
                 lostedTempForms.emplace_back(formId);
                 continue;
             }
@@ -2430,8 +2409,8 @@ bool Ability::ReAcquireForm(const int64_t formId, const Want &want)
 
     // reacquire form
     FormJsInfo formJsInfo;
-    if (FormMgr::GetInstance().AddForm(formId, want, formHostClient, formJsInfo) != ERR_OK
-        || formJsInfo.formId <= 0 || formJsInfo.formId != formId) {
+    if (FormMgr::GetInstance().AddForm(formId, want, formHostClient, formJsInfo) != ERR_OK || formJsInfo.formId <= 0 ||
+        formJsInfo.formId != formId) {
         APP_LOGE("%{public}s error, fms reacquire form failed, formId:%{public}" PRId64 ".", __func__, formId);
         return false;
     }
@@ -2594,8 +2573,10 @@ bool Ability::CheckFormPermission(const std::string &bundleName) const
 
     int result = PermissionKit::VerifyPermission(bundleName, Constants::PERMISSION_REQUIRE_FORM, 0);
     if (result != PermissionState::PERMISSION_GRANTED) {
-        APP_LOGW("permission = %{public}s, bundleName = %{public}s, result = %{public}d", 
-        Constants::PERMISSION_REQUIRE_FORM.c_str(), bundleName.c_str(), result);
+        APP_LOGW("permission = %{public}s, bundleName = %{public}s, result = %{public}d",
+            Constants::PERMISSION_REQUIRE_FORM.c_str(),
+            bundleName.c_str(),
+            result);
     }
     return result == PermissionState::PERMISSION_GRANTED;
 }
@@ -2764,7 +2745,9 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
     }
 
     for (auto iterMap : predicatesBackReferencesMap) {
-        APP_LOGI("Ability::ParsePredictionArgsReference predicatesBackReferencesMap first:%{public}d second:%{public}d", iterMap.first, iterMap.second);
+        APP_LOGI("Ability::ParsePredictionArgsReference predicatesBackReferencesMap first:%{public}d second:%{public}d",
+            iterMap.first,
+            iterMap.second);
         int tempCount = ChangeRef2Value(results, numRefs, iterMap.second);
         if (tempCount < 0) {
             APP_LOGE("Ability::ParsePredictionArgsReference tempCount:%{public}d", tempCount);
@@ -2814,67 +2797,65 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
             continue;
         }
         switch (obj.GetType()) {
-            case NativeRdb::ValueObjectType::TYPE_INT:
-                {
-                    int val = 0;
-                    if (obj.GetInt(val) != 0) {
-                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
-                        break;
-                    }
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)", key.c_str(), val);
-                    retValueBucket.PutInt(key, val);
+            case NativeRdb::ValueObjectType::TYPE_INT: {
+                int val = 0;
+                if (obj.GetInt(val) != 0) {
+                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
+                    break;
                 }
-                break;
-            case NativeRdb::ValueObjectType::TYPE_DOUBLE:
-                {
-                    double val = 0.0;
-                    if (obj.GetDouble(val) != 0) {
-                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
-                        break;
-                    }
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutDouble(%{public}s, %{public}f)", key.c_str(), val);
-                    retValueBucket.PutDouble(key, val);
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)",
+                    key.c_str(),
+                    val);
+                retValueBucket.PutInt(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
+                double val = 0.0;
+                if (obj.GetDouble(val) != 0) {
+                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
+                    break;
                 }
-                break;
-            case NativeRdb::ValueObjectType::TYPE_STRING:
-                {
-                    std::string val = "";
-                    if (obj.GetString(val) != 0) {
-                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetString() error");
-                        break;
-                    }
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutString(%{public}s, %{public}s)", key.c_str(), val.c_str());
-                    retValueBucket.PutString(key, val);
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutDouble(%{public}s, %{public}f)",
+                    key.c_str(),
+                    val);
+                retValueBucket.PutDouble(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_STRING: {
+                std::string val = "";
+                if (obj.GetString(val) != 0) {
+                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetString() error");
+                    break;
                 }
-                break;
-            case NativeRdb::ValueObjectType::TYPE_BLOB:
-                {
-                    std::vector<uint8_t> val;
-                    if (obj.GetBlob(val) != 0) {
-                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
-                        break;
-                    }
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBlob(%{public}s, %{public}zu)", key.c_str(), val.size());
-                    retValueBucket.PutBlob(key, val);
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutString(%{public}s, %{public}s)",
+                    key.c_str(),
+                    val.c_str());
+                retValueBucket.PutString(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_BLOB: {
+                std::vector<uint8_t> val;
+                if (obj.GetBlob(val) != 0) {
+                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
+                    break;
                 }
-                break;
-            case NativeRdb::ValueObjectType::TYPE_BOOL:
-                {
-                    bool val = false;
-                    if (obj.GetBool(val) != 0) {
-                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
-                        break;
-                    }
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBool(%{public}s, %{public}s)", key.c_str(), val ? "true" : "false");
-                    retValueBucket.PutBool(key, val);
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBlob(%{public}s, %{public}zu)",
+                    key.c_str(),
+                    val.size());
+                retValueBucket.PutBlob(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_BOOL: {
+                bool val = false;
+                if (obj.GetBool(val) != 0) {
+                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
+                    break;
                 }
-                break;
-            default:
-                {
-                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
-                    retValueBucket.PutNull(key);
-                }
-                break;
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutBool(%{public}s, %{public}s)",
+                    key.c_str(),
+                    val ? "true" : "false");
+                retValueBucket.PutBool(key, val);
+            } break;
+            default: {
+                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
+                retValueBucket.PutNull(key);
+            } break;
         }
     }
 
