@@ -27,7 +27,6 @@ const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_LAUNCHER {"startup_launcher"};
 const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
-const std::string STARTUP_PHONE_SERVICE{"startup_phone_service"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -57,11 +56,6 @@ public:
      */
     bool GetNavigationBarState() const;
     /**
-     * return true : ams can start phone service
-     * return false : ams do not start phone service
-     */
-    bool GetPhoneServiceState() const;
-    /**
      * Get profile information
      */
     void Parse();
@@ -80,7 +74,6 @@ private:
     bool canStartLauncher {false};
     bool canStartUiStatusBar {false};
     bool canStartUiNavigationBar {false};
-    bool canStartPhoneService{false};
 };
 }  // namespace AAFwk
 }  // namespace OHOS
