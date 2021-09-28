@@ -1075,27 +1075,6 @@ void AbilityManagerService::StartingLauncherAbility()
     return;
 }
 
-void AbilityManagerService::StartingPhoneServiceAbility()
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    if (!iBundleManager_) {
-        HILOG_INFO("bms service is null");
-        return;
-    }
-
-    AppExecFwk::AbilityInfo phoneServiceInfo;
-    Want phoneServiceWant;
-    phoneServiceWant.SetElementName(AbilityConfig::PHONE_SERVICE_BUNDLE_NAME,
-        AbilityConfig::PHONE_SERVICE_ABILITY_NAME);
-
-    while (!(iBundleManager_->QueryAbilityInfo(phoneServiceWant, phoneServiceInfo))) {
-        HILOG_INFO("Waiting query phone service completed.");
-        usleep(REPOLL_TIME_MICRO_SECONDS);
-    }
-
-    (void)StartAbility(phoneServiceWant, DEFAULT_INVAL_VALUE);
-}
-
 void AbilityManagerService::StartSystemUi(const std::string abilityName)
 {
     HILOG_INFO("Starting system ui app.");
@@ -1544,11 +1523,6 @@ void AbilityManagerService::StartSystemApplication()
     if (amsConfigResolver_->GetNavigationBarState()) {
         HILOG_INFO("start navigation bar");
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
-    }
-
-    if (amsConfigResolver_->GetPhoneServiceState()) {
-        HILOG_INFO("start phone service");
-        StartingPhoneServiceAbility();
     }
 }
 
