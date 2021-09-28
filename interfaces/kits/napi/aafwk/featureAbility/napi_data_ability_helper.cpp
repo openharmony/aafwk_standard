@@ -450,6 +450,7 @@ napi_value NAPI_NotifyChange(napi_env env, napi_callback_info info)
         }
         ret = WrapVoidToJS(env);
     }
+    HILOG_INFO("%{public}s,end", __func__);
     return ret;
 }
 
@@ -722,6 +723,11 @@ napi_value RegisterAsync(
             RegisterExecuteCB,
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("NAPI_Register, main event thread complete.");
+                DAHelperOnOffCB *onCB = static_cast<DAHelperOnOffCB *>(data);
+                if (onCB != nullptr) {
+                    delete onCB;
+                    onCB = nullptr;
+                }
             },
             (void *)onCB,
             &onCB->cbBase.asyncWork));
@@ -886,6 +892,10 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
     DAHelperOnOffCB *offCB = static_cast<DAHelperOnOffCB *>(data);
     if (offCB == nullptr || offCB->dataAbilityHelper == nullptr) {
         HILOG_ERROR("NAPI_UnRegister, param is null.");
+        if (offCB != nullptr) {
+            delete offCB;
+            offCB = nullptr;
+        }
         return;
     }
     if (offCB->cbBase.cbInfo.callback != nullptr) {
@@ -950,6 +960,10 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
             HILOG_ERROR("NAPI_UnRegister, error: uri is null.");
         }
     }
+    if (offCB != nullptr) {
+        delete offCB;
+        offCB = nullptr;
+    }
 }
 
 void NAPIDataAbilityObserver::SetEnv(const napi_env &env)
@@ -999,22 +1013,28 @@ void NAPIDataAbilityObserver::OnChange()
         [](uv_work_t *work, int status) {
             HILOG_INFO("OnChange, uv_queue_work");
             // JS Thread
-            DAHelperOnOffCB *event = (DAHelperOnOffCB *)work->data;
+            DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
             napi_value result[ARGS_TWO] = {0};
-            result[PARAM0] = GetCallbackErrorValue(event->cbBase.cbInfo.env, NO_ERROR);
+            result[PARAM0] = GetCallbackErrorValue(onCB->cbBase.cbInfo.env, NO_ERROR);
 
             napi_value callback = 0;
             napi_value undefined = 0;
-            napi_get_undefined(event->cbBase.cbInfo.env, &undefined);
+            napi_get_undefined(onCB->cbBase.cbInfo.env, &undefined);
             napi_value callResult = 0;
-            napi_get_reference_value(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback, &callback);
+            napi_get_reference_value(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback, &callback);
 
-            napi_call_function(event->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
-            if (event->cbBase.cbInfo.callback != nullptr) {
-                napi_delete_reference(event->cbBase.cbInfo.env, event->cbBase.cbInfo.callback);
+            napi_call_function(onCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+            if (onCB->cbBase.cbInfo.callback != nullptr) {
+                napi_delete_reference(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback);
             }
-            delete event;
-            delete work;
+            if (onCB != nullptr) {
+                delete onCB;
+                onCB = nullptr;
+            }
+            if (work != nullptr) {
+                delete work;
+                work = nullptr;
+            }
         });
     if (rev != 0) {
         if (onCB != nullptr) {

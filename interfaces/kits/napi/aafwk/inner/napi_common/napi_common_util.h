@@ -235,15 +235,7 @@ void CompleteAsyncCallbackWork(napi_env env, napi_status status, void *data);
  */
 void CompletePromiseCallbackWork(napi_env env, napi_status status, void *data);
 
-std::vector<std::string> ConvertStrVector(napi_env env, napi_value value, size_t strMax);
 std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue);
-
-napi_value ConvertJSValue(napi_env env, std::vector<std::string> &value);
-napi_value ConvertJSValue(napi_env env, std::string &value);
-napi_value ConvertJSValue(napi_env env, std::vector<uint8_t> &value);
-napi_value ConvertJSValue(napi_env env, int32_t value);
-napi_value ConvertJSValue(napi_env env, int64_t value);
-napi_value ConvertJSValue(napi_env env, double value);
 
 }  // namespace AppExecFwk
 }  // namespace OHOS
