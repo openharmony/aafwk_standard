@@ -2797,21 +2797,19 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
             continue;
         }
         switch (obj.GetType()) {
-            case NativeRdb::ValueObjectType::TYPE_INT: 
-	    {
-                int val = 0;
-                if (obj.GetInt(val) != 0) {
-                    APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
-                    break;
+            case NativeRdb::ValueObjectType::TYPE_INT:
+                {
+                    int val = 0;
+                    if (obj.GetInt(val) != 0) {
+                        APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
+                        break;
+                    }
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)", key.c_str(), val);
+                    retValueBucket.PutInt(key, val);
                 }
-                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)",
-                    key.c_str(),
-                    val);
-                retValueBucket.PutInt(key, val);
-                }
-	        break;
-            case NativeRdb::ValueObjectType::TYPE_DOUBLE: 
-			    {
+                break;
+            case NativeRdb::ValueObjectType::TYPE_DOUBLE:
+                {
                     double val = 0.0;
                     if (obj.GetDouble(val) != 0) {
                         APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
@@ -2822,9 +2820,9 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                         val);
                     retValueBucket.PutDouble(key, val);
                 }
-				break;
-            case NativeRdb::ValueObjectType::TYPE_STRING: 
-			    {
+                break;
+            case NativeRdb::ValueObjectType::TYPE_STRING:
+                {
                     std::string val = "";
                     if (obj.GetString(val) != 0) {
                         APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetString() error");
@@ -2834,10 +2832,10 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                         key.c_str(),
                         val.c_str());
                     retValueBucket.PutString(key, val);
-				}
-				break;
+                }
+                break;
             case NativeRdb::ValueObjectType::TYPE_BLOB:
-			    {
+                {
                     std::vector<uint8_t> val;
                     if (obj.GetBlob(val) != 0) {
                         APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
@@ -2848,9 +2846,9 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                         val.size());
                     retValueBucket.PutBlob(key, val);
                 }
-				break;
+                break;
             case NativeRdb::ValueObjectType::TYPE_BOOL:
-			    {
+                {
                     bool val = false;
                     if (obj.GetBool(val) != 0) {
                         APP_LOGE("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
@@ -2860,14 +2858,14 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                         key.c_str(),
                         val ? "true" : "false");
                     retValueBucket.PutBool(key, val);
-				}
-			    break;
-            default: 
-			    {
-                APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
-                retValueBucket.PutNull(key);
-				}
-				break;
+                }
+                break;
+            default:
+                {
+                    APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
+                    retValueBucket.PutNull(key);
+                }
+                break;
         }
     }
 
