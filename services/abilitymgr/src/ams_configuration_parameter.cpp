@@ -41,11 +41,6 @@ bool AmsConfigurationParameter::GetNavigationBarState() const
     return canStartUiNavigationBar;
 }
 
-bool AmsConfigurationParameter::GetPhoneServiceState() const
-{
-    return canStartPhoneService;
-}
-
 bool AmsConfigurationParameter::NonConfigFile() const
 {
     return nonConfigFile;
@@ -77,7 +72,6 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
         canStartUiStatusBar = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
         canStartUiNavigationBar =
             amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
-        canStartPhoneService = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
         HILOG_INFO("get ams service config succes!");
     } else {
         HILOG_INFO("json no have service item ...");
