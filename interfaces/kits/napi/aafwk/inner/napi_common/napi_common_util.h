@@ -64,6 +64,9 @@ bool UnwrapArrayInt32FromJS(napi_env env, napi_value param, std::vector<int> &va
 napi_value WrapArrayLongToJS(napi_env env, const std::vector<long> &value);
 bool UnwrapArrayLongFromJS(napi_env env, napi_value param, std::vector<long> &value);
 
+napi_value WrapArrayInt64ToJS(napi_env env, const std::vector<int64_t> &value);
+bool UnwrapArrayInt64FromJS(napi_env env, napi_value param, std::vector<int64_t> &value);
+
 napi_value WrapArrayDoubleToJS(napi_env env, const std::vector<double> &value);
 bool UnwrapArrayDoubleFromJS(napi_env env, napi_value param, std::vector<double> &value);
 
