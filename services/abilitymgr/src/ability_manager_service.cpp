@@ -1531,8 +1531,8 @@ void AbilityManagerService::StartSystemApplication()
         return;
     }
 
-    if (amsConfigResolver_->GetStartLuncherState()) {
-        HILOG_INFO("start luncher");
+    if (amsConfigResolver_->GetStartLauncherState()) {
+        HILOG_INFO("start launcher");
         StartingLauncherAbility();
     }
 

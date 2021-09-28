@@ -2572,7 +2572,7 @@ HWTEST_F(AbilityManagerServiceTest, AmsConfigurationParameter_002, TestSize.Leve
 {
     EXPECT_TRUE(abilityMs_->amsConfigResolver_);
     // At present, all three are started and may be changed later
-    EXPECT_TRUE(abilityMs_->amsConfigResolver_->GetStartLuncherState());
+    EXPECT_TRUE(abilityMs_->amsConfigResolver_->GetStartLauncherState());
     EXPECT_TRUE(abilityMs_->amsConfigResolver_->GetStatusBarState());
     EXPECT_TRUE(abilityMs_->amsConfigResolver_->GetNavigationBarState());
 }
