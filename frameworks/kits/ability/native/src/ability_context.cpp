@@ -14,7 +14,9 @@
  */
 
 #include "ability_context.h"
+#include "ability_distributed_connection.h"
 #include "ability_manager_client.h"
+#include "distributed_client.h"
 #include "app_log_wrapper.h"
 #include "resource_manager.h"
 #include "bundle_constants.h"
@@ -236,14 +238,37 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
     APP_LOGI("%{public}s begin.", __func__);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
+
+    std::shared_ptr<AbilityInfo> abilityInfo = GetAbilityInfo();
+    if (abilityInfo == nullptr) {
+        APP_LOGE("AbilityContext::ConnectAbility info == nullptr");
+        return false;
+    }
+
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         APP_LOGE("AbilityContext::ConnectAbility AbilityType = %{public}d", type);
         return false;
     }
 
-    APP_LOGI("%{public}s begin ams->ConnectAbility", __func__);
-    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
-    APP_LOGI("%{public}s end ams->ConnectAbility, ret=%{public}d", __func__, ret);
+    ErrCode ret = ERR_OK;
+    if (want.GetOperation().GetDeviceId() == "") {
+        APP_LOGI("%{public}s begin ams->ConnectAbilityLocal", __func__);
+        ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
+    } else {
+        APP_LOGI("%{public}s begin ams->ConnectAbilityRemote", __func__);
+        auto pos = abilityConnectionMap_.find(conn);
+        if (pos != abilityConnectionMap_.end()) {
+            APP_LOGI("%{public}s begin ams->ConnectAbilityHasDistributedConnection", __func__);
+            return false;
+        } else {
+            APP_LOGI("%{public}s begin ams->ConnectAbilitySetDistributedConnection", __func__);
+            sptr<AbilityDistributedConnection> distributedConnection = new AbilityDistributedConnection(conn);
+            abilityConnectionMap_.emplace(conn, distributedConnection);
+            ret = DistributedClient::GetInstance()->ConnectRemoteAbility(want, *abilityInfo, distributedConnection);
+        }
+    }
+
+    APP_LOGI("%{public}s end ConnectAbility, ret=%{public}d", __func__, ret);
     bool value = ((ret == ERR_OK) ? true : false);
     if (!value) {
         APP_LOGE("AbilityContext::ConnectAbility ErrorCode = %{public}d", ret);
@@ -254,12 +279,12 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
 
 /**
  *
- * @param conn Indicates the IAbilityConnection callback object passed by connectAbility after the connection
- *              is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
+ * @param conn Indicates the IAbilityDisConnection callback object passed by disconnectAbility after the disconnection
+ *              is set up. The IAbilityDisConnection object uniquely identifies a disconnection between two abilities.
  */
 void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    APP_LOGD("AbilityContext::DisconnectAbility begin");
+    APP_LOGI("%{public}s begin.", __func__);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
@@ -267,9 +292,18 @@ void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &co
         return;
     }
 
-    APP_LOGI("%{public}s begin ams->DisconnectAbility", __func__);
-    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
-    APP_LOGI("%{public}s end ams->ConnectAbility, ret=%{public}d", __func__, ret);
+    ErrCode ret = ERR_OK;
+    auto pos = abilityConnectionMap_.find(conn);
+    if (pos != abilityConnectionMap_.end()) {
+        APP_LOGI("%{public}s begin ams->DisconnectAbilityRemote", __func__);
+        ret = DistributedClient::GetInstance()->DisconnectRemoteAbility(pos->second);
+        abilityConnectionMap_.erase(conn);
+    } else {
+        APP_LOGI("%{public}s begin ams->DisconnectAbilityLocal", __func__);
+        ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
+    }
+
+    APP_LOGI("%{public}s end ams->DisconnectAbility, ret=%{public}d", __func__, ret);
     if (ret != ERR_OK) {
         APP_LOGE("AbilityContext::DisconnectAbility error");
     }
@@ -833,7 +867,7 @@ void AbilityContext::AttachBaseContext(const std::shared_ptr<Context> &base)
     ContextContainer::AttachBaseContext(base);
     APP_LOGI("AbilityContext::AttachBaseContext. End.");
 }
-    
+
 /**
  * @brief Obtains the absolute path to the application-specific cache directory
  * on the primary external or shared storage device.

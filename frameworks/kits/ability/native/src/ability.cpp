@@ -171,19 +171,6 @@ void Ability::OnStart(const Want &want)
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
             winType);
-
-        if (setting_ != nullptr) {
-            auto windowMode = static_cast<AbilityWindowConfiguration>(
-                std::atoi(setting_->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
-            APP_LOGI("%{public}s windowMode : %{public}d", __func__, windowMode);
-            if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING) {
-                APP_LOGI("%{public}s begin SetWindowMode : WINDOW_MODE_FREE.", __func__);
-                config->SetWindowType(WINDOW_TYPE_FLOAT);
-                APP_LOGI("%{public}s end SetWindowMode : WINDOW_MODE_FREE.", __func__);
-            }
-        } else {
-            APP_LOGI("Ability::OnStart setting_ == nullptr.");
-        }
         SetUIContent(config);
 
         if (abilityWindow_ != nullptr) {
@@ -1170,23 +1157,6 @@ void Ability::ContinueAbilityReversibly(const std::string &deviceId)
 }
 
 /**
- * @brief Migrates this ability to another device on the same distributed network in a reversible way that allows this
- * ability to be migrated back to the local device through reverseContinueAbility(). If there are multiple candidate
- * devices, a pop-up will be displayed for users to choose the desired one. The ability to migrate and its ability
- * slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown, indicating that the
- * ability does not support migration.
- *
- */
-void Ability::ContinueAbilityReversibly()
-{
-    if (!VerifySupportForContinuation()) {
-        APP_LOGE("Ability::ContinueAbilityReversibly failed. VerifySupportForContinuation faled");
-        return;
-    }
-    continuationManager_->ContinueAbility(true, "");
-}
-
-/**
  * @brief  public final String getOriginalDeviceId​() throws UnsupportedOperationException
  * Obtains the ID of the source device from which this ability is migrated.
  *
@@ -2097,7 +2067,7 @@ void Ability::CleanFormResource(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // compatible with int form id
-    int64_t cleanId {-1L};
+    int64_t cleanId{-1L};
     for (auto param : userReqParams_) {
         uint64_t unsignedFormId = static_cast<uint64_t>(formId);
         uint64_t unsignedParamFirst = static_cast<uint64_t>(param.first);
@@ -2382,9 +2352,8 @@ void Ability::OnDeathReceived()
         {
             std::lock_guard<std::mutex> lock(formLock);
             want = userReqRaram.second;
-            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false)
-                && std::find(lostedTempForms.begin(), lostedTempForms.end(),
-                formId) == lostedTempForms.end()) {
+            if (want.GetBoolParam(Constants::PARAM_FORM_TEMPORARY_KEY, false) &&
+                std::find(lostedTempForms.begin(), lostedTempForms.end(), formId) == lostedTempForms.end()) {
                 lostedTempForms.emplace_back(formId);
                 continue;
             }

@@ -697,16 +697,6 @@ public:
     virtual void SetMainRoute(const std::string &entry) final;
 
     /**
-     * @brief Migrates this ability to another device on the same distributed network in a reversible way that allows
-     * this ability to be migrated back to the local device through reverseContinueAbility(). If there are multiple
-     * candidate devices, a pop-up will be displayed for users to choose the desired one. The ability to migrate and its
-     * ability slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown, indicating
-     * that the ability does not support migration.
-     *
-     */
-    virtual void ContinueAbilityReversibly() final;
-
-    /**
      * @brief Migrates this ability to the given device on the same distributed network in a reversible way that allows
      * this ability to be migrated back to the local device through reverseContinueAbility(). The ability to migrate and
      * its ability slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown,

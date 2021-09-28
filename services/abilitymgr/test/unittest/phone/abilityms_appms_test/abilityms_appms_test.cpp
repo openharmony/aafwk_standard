@@ -105,6 +105,7 @@ void AbilityMsAppmsTest::SetUp(void)
 
     DelayedSingleton<AppScheduler>::GetInstance()->Init(callback_);
     DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
+    WaitUntilTaskFinished();
     startAbility();
     GTEST_LOG_(INFO) << "SetUp";
 }
@@ -143,6 +144,10 @@ void AbilityMsAppmsTest::startAbility()
     ApplicationInfo applicationInfo;
 
     auto abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
+    EXPECT_TRUE(abilityMs_->currentStackManager_);
+    auto currentTopAbilityRecord = abilityMs_->currentStackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(currentTopAbilityRecord);
+    currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
     ElementName element("device", "com.ix.hiworld", "luncherAbility");
     want.SetElement(element);
     abilityMs_->StartAbility(want);
