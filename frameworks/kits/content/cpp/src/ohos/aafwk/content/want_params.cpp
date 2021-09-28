@@ -915,7 +915,17 @@ bool WantParams::ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao)
     if (!parcel.ReadInt64Vector(&value)) {
         return false;
     }
-    return SetArray<int64_t, Long>(g_IID_ILong, value, ao);
+
+    #ifdef WANT_PARAM_USE_LONG
+        return SetArray<int64_t, Long>(g_IID_ILong, value, ao);
+    #else
+        std::vector<std::string> strList;
+
+        for (size_t i=0; i<value.size(); i++) {
+            strList.push_back(std::to_string(value[i]));
+        }
+        return SetArray<std::string, String>(g_IID_IString, strList, ao);
+    #endif 
 }
 
 bool WantParams::ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao)
@@ -1057,7 +1067,11 @@ bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
 {
     int64_t value;
     if (parcel.ReadInt64(value)) {
-        sptr<IInterface> intf = Long::Box(value);
+        #ifdef WANT_PARAM_USE_LONG
+            sptr<IInterface> intf = Long::Box(value);
+        #else
+            sptr<IInterface> intf = String::Box(std::to_string(value));
+        #endif    
         if (intf) {
             SetParam(key, intf);
         }
