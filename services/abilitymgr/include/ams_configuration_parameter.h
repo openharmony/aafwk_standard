@@ -24,7 +24,7 @@ namespace AAFwk {
 namespace AmsConfig {
 const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
-const std::string STARTUP_LUNCHER {"startup_launcher"};
+const std::string STARTUP_LAUNCHER {"startup_launcher"};
 const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 const std::string STARTUP_PHONE_SERVICE{"startup_phone_service"};
@@ -42,10 +42,10 @@ public:
      */
     bool NonConfigFile() const;
     /**
-     * return true : ams can start luncher
-     * return false : ams do not start luncher
+     * return true : ams can start launcher
+     * return false : ams do not start launcher
      */
-    bool GetStartLuncherState() const;
+    bool GetStartLauncherState() const;
     /**
      * return true : ams can start system ui status bar
      * return false : ams do not start system ui status bar
@@ -77,7 +77,7 @@ private:
 
 private:
     bool nonConfigFile {false};
-    bool canStartLuncher {false};
+    bool canStartLauncher {false};
     bool canStartUiStatusBar {false};
     bool canStartUiNavigationBar {false};
     bool canStartPhoneService{false};
