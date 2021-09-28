@@ -197,9 +197,6 @@ bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBAC
         for (auto iter = pendingEntries_.begin(); iter != pendingEntries_.begin() + entry_count; ++iter) {
             // The FileAccessor requires absolute paths.
             absolutePaths.push_back(FilePath(rootDir_.Value() + iter->Value()));
-
-            printf("--zip-33--relativePaths=%s--\n", relativePaths[0].Value().c_str());
-            printf("--zip-55--absolutePaths=%s--\n", (rootDir_.Value() + iter->Value()).c_str());
         }
         pendingEntries_.erase(pendingEntries_.begin(), pendingEntries_.begin() + entry_count);
 
@@ -211,15 +208,12 @@ bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBAC
             FilePath &relativePath = relativePaths[i];
             FilePath &absolutePath = absolutePaths[i];
             if (FilePath::PathIsValid(absolutePath)) {
-                printf("--zip-88--relativePath=%s--\n", relativePath.Value().c_str());
-                printf("--zip-99--absolutePath=%s--\n", absolutePath.Value().c_str());
                 if (!AddFileEntryToZip(zipFile_, relativePath, absolutePath, options)) {
                     CALLING_CALL_BACK(callback, ERROR_CODE_ERRNO)
                     HILOG_INFO("%{public}s called, Failed to write file", __func__);
                     return false;
                 }
             } else {
-                printf("--zip-66--\n");
                 // Missing file or directory case.
                 struct tm *last_modified = GetCurrentSystemTime();
                 if (!AddDirectoryEntryToZip(zipFile_, relativePath, last_modified, options)) {

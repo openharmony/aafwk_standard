@@ -128,6 +128,8 @@ ohos_shared_library("abilitykit_native") {
     # "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.cpp",
     # "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_util.cpp",
     # "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
+    "${SUBSYSTEM_DIR}/src/continuation/distributed/ability_distributed_connect_callback_stub.cpp",
+    "${SUBSYSTEM_DIR}/src/continuation/distributed/ability_distributed_connection.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/continuation_handler.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/continuation_manager.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/continuation_scheduler.cpp",
