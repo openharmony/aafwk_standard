@@ -3148,8 +3148,16 @@ void NAPIAbilityConnection::SetDisconnectCBRef(const napi_ref &ref)
 void UvWorkOnAbilityConnectDone(uv_work_t *work, int status)
 {
     HILOG_INFO("UvWorkOnAbilityConnectDone, uv_queue_work");
+    if (work == nullptr) {
+        HILOG_ERROR("UvWorkOnAbilityConnectDone, work is null");
+        return;
+    }
     // JS Thread
     ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
+    if (connectAbilityCB == nullptr) {
+        HILOG_ERROR("UvWorkOnAbilityConnectDone, connectAbilityCB is null");
+        return;
+    }
     napi_value result[ARGS_TWO] = {0};
     result[PARAM0] =
         WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);
@@ -3235,8 +3243,16 @@ void NAPIAbilityConnection::OnAbilityConnectDone(
 void UvWorkOnAbilityDisconnectDone(uv_work_t *work, int status)
 {
     HILOG_INFO("UvWorkOnAbilityDisconnectDone, uv_queue_work");
+    if (work == nullptr) {
+        HILOG_ERROR("UvWorkOnAbilityDisconnectDone, work is null");
+        return;
+    }
     // JS Thread
     ConnectAbilityCB *connectAbilityCB = static_cast<ConnectAbilityCB *>(work->data);
+    if (connectAbilityCB == nullptr) {
+        HILOG_ERROR("UvWorkOnAbilityDisconnectDone, connectAbilityCB is null");
+        return;
+    }
     napi_value result = nullptr;
     result = WrapElementName(connectAbilityCB->cbBase.cbInfo.env, connectAbilityCB->abilityConnectionCB.elementName);
 
@@ -3347,13 +3363,17 @@ napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info 
     }
 
     napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
+    napi_get_global(env, &global);
     napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+    napi_get_named_property(env, global, "ability", &abilityObj);
     Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+    napi_get_value_external(env, abilityObj, (void **)&ability);
     if (ability == nullptr) {
         HILOG_ERROR("%{public}s, ability == nullptr", __func__);
+        if (dataAbilityHelperCB != nullptr) {
+            delete dataAbilityHelperCB;
+            dataAbilityHelperCB = nullptr;
+        }
         return WrapVoidToJS(env);
     }
 

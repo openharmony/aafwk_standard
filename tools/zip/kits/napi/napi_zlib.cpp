@@ -26,9 +26,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-namespace {
-const int E_OK = 0;
-}
 #define NO_ERROR 0
 
 #define COMPRESS_LEVE_CHECK(level, ret)                                              \
@@ -491,10 +488,10 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
             g_unzipAceCallbackInfo = nullptr;
         }
         if (asyncZipCallbackInfo != nullptr) {
+            napi_delete_async_work(env, asyncZipCallbackInfo->asyncWork);
             delete asyncZipCallbackInfo;
             asyncZipCallbackInfo = nullptr;
         }
-
     }
     HILOG_INFO("%{public}s,end", __func__);
     return ret;
@@ -684,7 +681,7 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
     zipAceCallbackInfo.reset();
     zipAceCallbackInfo = nullptr;
     work->data = (void *)asyncCallbackInfo;
-    int rev = uv_queue_work(
+    uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
@@ -693,22 +690,19 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             ZipAndUnzipFileAsyncCallBackInnerJsThread(work);
             HILOG_INFO("ZipAndUnzipFileAsyncCallBack, uv_queue_work end.");
         });
-    if (rev != E_OK) {
-        if (asyncCallbackInfo->isCallBack) {
-            if (asyncCallbackInfo->callback != nullptr) {
-                napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
-            }
-        }
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
+    if (asyncCallbackInfo->isCallBack) {
+        if (asyncCallbackInfo->callback != nullptr) {
+            napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
         }
     }
-    return;
+    if (asyncCallbackInfo != nullptr) {
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+    }
+    if (work != nullptr) {
+        delete work;
+        work = nullptr;
+    }
 }
 
 }  // namespace LIBZIP
