@@ -18,6 +18,7 @@
 #include <exception>
 #include <typeinfo>
 #include <cassert>
+#include "hilog_wrapper.h"
 
 namespace hidden {
 // workaroud for T& equally matching f(T&) and f(T const&)
@@ -88,10 +89,10 @@ struct checked_cast_impl<T, X, true> {
     {
 #ifdef CHECKED_CAST_SAFE_CONVERSATION
         T t = dynamic_cast<T>(x);
-
         // check cross cast
-        if (t != static_cast<T>(x))
+        if (t != static_cast<T>(x)) {
             BAD_CHECKED_CAST(x, T);
+        }
         return t;
 #else
         return static_cast<T>(x);
@@ -104,8 +105,9 @@ struct checked_cast_impl<T, X, true> {
         T t = dynamic_cast<T>(x);
 
         // check cross cast
-        if (t != static_cast<T>(x))
+        if (t != static_cast<T>(x)) {
             BAD_CHECKED_CAST(x, T);
+        }
         return t;
 #else
         return static_cast<T>(x);
@@ -118,12 +120,12 @@ struct checked_cast_impl<T, X, false> {
     static T cast(X &x, hidden::LookUpHelper2 const &)
     {
 #ifdef CHECKED_CAST_SAFE_CONVERSATION
-    T t = dynamic_cast<T>(x);
-    // check cross cast
-    if (&t != &static_cast<T>(x)) {
-        throw std::bad_cast();
-    }
-    return t;
+        T t = dynamic_cast<T>(x);
+        // check cross cast
+        if (&t != &static_cast<T>(x)) {
+            HILOG_ERROR("!!!bad cast!!!");
+        }
+        return t;
 #else
         return static_cast<T>(x);
 #endif
@@ -132,16 +134,12 @@ struct checked_cast_impl<T, X, false> {
     static T cast(X const &x, hidden::LookUpHelper const &)
     {
 #ifdef CHECKED_CAST_SAFE_CONVERSATION
-        try {
-            T t = dynamic_cast<T>(x);
-
-            // check cross cast
-            if (&t != &static_cast<T>(x))
-                std::bad_cast();
-            return t;
-        } catch (...) {
-            BAD_CHECKED_CAST(x, T);
+        T t = dynamic_cast<T>(x);
+        // check cross cast
+        if (&t != &static_cast<T>(x)) {
+            std::bad_cast();
         }
+        return t;
 #else
         return static_cast<T>(x);
 #endif

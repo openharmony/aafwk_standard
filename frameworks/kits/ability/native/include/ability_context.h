@@ -16,6 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_CONTEXT_H
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_CONTEXT_H
 
+#include <map>
+
 #include "context_container.h"
 #include "data_ability_helper.h"
 #include "distributed_sched_interface.h"
@@ -722,6 +724,7 @@ protected:
     std::string callingDeviceId_;
     std::string callingBundleName_;
     std::string callingAbilityName_;
+    std::map<sptr<AAFwk::IAbilityConnection>, sptr<IRemoteObject>> abilityConnectionMap_;
 };
 
 }  // namespace AppExecFwk

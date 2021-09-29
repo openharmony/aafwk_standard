@@ -16,7 +16,7 @@
 import { AsyncCallback } from './basic';
 
 declare namespace zlib {
-    //Zlib library constant definition
+    // Zlib library constant definition
     export enum FlushType {
         FLUSH_TYPE_NO_FLUSH = 0,
         FLUSH_TYPE_PARTIAL_FLUSH = 1,
@@ -42,7 +42,7 @@ declare namespace zlib {
         ERROR_CODE_VERSION_ERROR = -6
     }
 	
-    //enum CompressLevel
+    // enum CompressLevel
     export enum CompressLevel {
         COMPRESS_LEVEL_NO_COMPRESSION = 0,
         COMPRESS_LEVEL_BEST_SPEED = 1,
@@ -50,7 +50,7 @@ declare namespace zlib {
         COMPRESS_LEVEL_DEFAULT_COMPRESSION = -1
     }
 
-    //enum CompressStrategy
+    // enum CompressStrategy
     export enum CompressStrategy {
         COMPRESS_STRATEGY_DEFAULT_STRATEGY = 0,
         COMPRESS_STRATEGY_FILTERED = 1,
@@ -59,34 +59,34 @@ declare namespace zlib {
         COMPRESS_STRATEGY_FIXED = 4
     }
 
-    //enum MemLevel
+    // enum MemLevel
     export enum MemLevel {
         MEM_LEVEL_MIN_MEMLEVEL = 1,
         MEM_LEVEL_DEFAULT_MEMLEVEL = 8,
         MEM_LEVEL_MAX_MEMLEVEL = 9
     }
 
-    //zip options
+    // zip options
     interface Options {
-        flush?: FlushType;       //corresponding zlib library macro
-        finishFlush?: FlushType; //corresponding zlib library macro  #define Z_FINISH        4
-        chunkSize?: number;      //Buffer size，>64
-        level?: CompressLevel;   //Compression level. The compression level is a number from 0 to 9.
-								 //0 has the fastest compression speed (compression process), 9 has the slowest compression speed,
+        flush?: FlushType;       // corresponding zlib library macro
+        finishFlush?: FlushType; // corresponding zlib library macro  #define Z_FINISH        4
+        chunkSize?: number;      // Buffer size，>64
+        level?: CompressLevel;   // Compression level. The compression level is a number from 0 to 9.
+								 // 0 has the fastest compression speed (compression process), 9 has the slowest compression speed,
 								 // the largest compression rate, and 0 does not compress.
 								 
-        memLevel?: MemLevel;     //How much memory should be allocated for the specified internal compression state. 
+        memLevel?: MemLevel;     // How much memory should be allocated for the specified internal compression state. 
 								 // Memlevel = 1 uses the minimum memory, but it is very slow, reducing the compression ratio; Memlevel = 9 uses the maximum memory to get the best speed. The default value is 8.
-        strategy?: CompressStrategy;    //CompressStrategy
-        dictionary?: ArrayBuffer; //deflate/inflate only, empty dictionary by default
+        strategy?: CompressStrategy;    // CompressStrategy
+        dictionary?: ArrayBuffer; // deflate/inflate only, empty dictionary by default
     }
     
   
-    //The interface for compressing the specified file. There is only one callback callback interface
+    // The interface for compressing the specified file. There is only one callback callback interface
     function zipFile(inFile:string, outFile:string, options: Options, callback: AsyncCallback<void>): void;
 	function zipFile(inFile:string, outFile:string, options: Options): Promise<number>;
 
-    //The interface for decompressing the specified file. There is only one callback callback interface
+    // The interface for decompressing the specified file. There is only one callback callback interface
     function unzipFile(inFile:string, outFile:string, options: Options, callback: AsyncCallback<void>): void;
 	function unzipFile(inFile:string, outFile:string, options: Options): Promise<number>;
 }

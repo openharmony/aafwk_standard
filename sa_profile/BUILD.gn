@@ -14,7 +14,10 @@
 import("//build/ohos/sa_profile/sa_profile.gni")
 
 ohos_sa_profile("aafwk_sa_profile") {
-  sources = [ "180.xml" ]
+  sources = [
+    "180.xml",
+    "182.xml",
+  ]
 
   part_name = "aafwk_standard"
 }

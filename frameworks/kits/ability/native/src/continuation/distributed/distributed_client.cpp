@@ -99,6 +99,39 @@ ErrCode DistributedClient::StartContinuation(
     return dmsProxy_->StartContinuation(want, abilityInfo, abilityToken);
 }
 
+ErrCode DistributedClient::ConnectRemoteAbility(
+    const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, const sptr<IRemoteObject> &connect)
+{
+    APP_LOGI("%{public}s called", __func__);
+    if (remoteObject_ == nullptr) {
+        ErrCode err = Connect();
+        if (err != ERR_OK) {
+            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
+        }
+    }
+    if (connect == nullptr) {
+        return INCOMING_PARAMETER_POINTER_IS_NULL;
+    }
+
+    return dmsProxy_->ConnectRemoteAbility(want, abilityInfo, connect);
+}
+
+ErrCode DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject> &connect)
+{
+    APP_LOGI("%{public}s called", __func__);
+    if (remoteObject_ == nullptr) {
+        ErrCode err = Connect();
+        if (err != ERR_OK) {
+            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
+        }
+    }
+    if (connect == nullptr) {
+        return INCOMING_PARAMETER_POINTER_IS_NULL;
+    }
+
+    return dmsProxy_->DisconnectRemoteAbility(connect);
+}
+
 ErrCode DistributedClient::NotifyCompleteContinuation(
     const std::u16string &devId, int32_t sessionId, bool isSuccess, const sptr<IRemoteObject> &reverseScheduler)
 {
