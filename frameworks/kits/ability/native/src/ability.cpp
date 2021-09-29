@@ -171,6 +171,18 @@ void Ability::OnStart(const Want &want)
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
             winType);
+        if (setting_ != nullptr) {
+            auto windowMode = static_cast<AbilityWindowConfiguration>(
+                std::atoi(setting_->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
+            APP_LOGI("%{public}s windowMode : %{public}d", __func__, windowMode);
+            if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING) {
+                APP_LOGI("%{public}s begin SetWindowMode : WINDOW_MODE_FREE.", __func__);
+                config->SetWindowType(WINDOW_TYPE_FLOAT);
+                APP_LOGI("%{public}s end SetWindowMode : WINDOW_MODE_FREE.", __func__);
+            }
+        } else {
+            APP_LOGI("Ability::OnStart setting_ == nullptr.");
+        }
         SetUIContent(config);
 
         if (abilityWindow_ != nullptr) {
