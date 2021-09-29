@@ -132,7 +132,8 @@ void ContinuationHandler::SetReversible(bool reversible)
 void ContinuationHandler::SetAbilityInfo(std::shared_ptr<AbilityInfo> &abilityInfo)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    abilityInfo_ = abilityInfo;
+    abilityInfo_ = std::make_shared<AbilityInfo>(*(abilityInfo.get()));
+    ClearDeviceInfo(abilityInfo_);
     APP_LOGI("%{public}s called end", __func__);
 }
 
