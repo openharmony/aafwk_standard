@@ -48,7 +48,6 @@ ohos_unittest("ability_manager_test") {
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
   ]
 
-  cflags_cc = [ "-fexceptions" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
