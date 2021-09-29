@@ -25,7 +25,7 @@ namespace AppExecFwk {
 const std::int32_t STR_MAX_SIZE = 128;
 
 napi_value *GetGlobalClassContext(void);
-napi_value GetGlobalDataAbilityHelper(void);
+napi_value &GetGlobalDataAbilityHelper(void);
 void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg);
 napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo);
 
