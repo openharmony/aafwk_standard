@@ -19,7 +19,6 @@
 #include "napi/native_node_api.h"
 #include <uv.h>
 #include <vector>
-#include <exception>
 
 using namespace OHOS;
 using namespace OHOS::AAFwk;
@@ -2157,16 +2156,16 @@ napi_value NAPI_GetAllFormsInfo(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncGetAllFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncGetAllFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncGetAllFormsCallbackInfo *)data;
 
                 InnerGetAllFormsInfo(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                HILOG_INFO("%{public}s, napi_create_async_work complete", __func__); 
+                HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
 
-                AsyncGetAllFormsCallbackInfo *asyncCallbackInfo = 
-                (AsyncGetAllFormsCallbackInfo *)data; 
+                AsyncGetAllFormsCallbackInfo *asyncCallbackInfo =
+                (AsyncGetAllFormsCallbackInfo *)data;
 
                 napi_value arrayFormInfos;
                 napi_create_array(env, &arrayFormInfos);
@@ -2462,8 +2461,8 @@ static void InnerGetFormsInfoByModule(napi_env env, AsyncGetFormsInfoByModuleCal
     OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
 
     bool ret = ability->GetFormsInfoByModule(
-        asyncCallbackInfo->bundleName, 
-        asyncCallbackInfo->moduleName, 
+        asyncCallbackInfo->bundleName,
+        asyncCallbackInfo->moduleName,
         asyncCallbackInfo->formInfos);
 
     if (ret) {
@@ -2622,7 +2621,7 @@ napi_value NAPI_GetFormsInfoByModule(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
 
-                AsyncGetFormsInfoByModuleCallbackInfo *asyncCallbackInfo = 
+                AsyncGetFormsInfoByModuleCallbackInfo *asyncCallbackInfo =
                 (AsyncGetFormsInfoByModuleCallbackInfo *)data;
 
                 InnerGetFormsInfoByModule(env, asyncCallbackInfo);
@@ -2630,7 +2629,7 @@ napi_value NAPI_GetFormsInfoByModule(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
                 
-                AsyncGetFormsInfoByModuleCallbackInfo *asyncCallbackInfo = 
+                AsyncGetFormsInfoByModuleCallbackInfo *asyncCallbackInfo =
                 (AsyncGetFormsInfoByModuleCallbackInfo *)data;
 
                 napi_value arrayFormInfos;
