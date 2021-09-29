@@ -19,7 +19,6 @@
 #include "napi/native_node_api.h"
 #include <uv.h>
 #include <vector>
-#include <exception>
 
 using namespace OHOS;
 using namespace OHOS::AAFwk;
