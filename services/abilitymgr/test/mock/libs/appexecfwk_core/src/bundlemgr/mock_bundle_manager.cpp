@@ -104,13 +104,11 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
     if (CheckWantEntity(want, abilityInfo)) {
         return true;
     }
-
     ElementName elementTemp = want.GetElement();
     std::string abilityNameTemp = elementTemp.GetAbilityName();
     std::string bundleNameTemp = elementTemp.GetBundleName();
     abilityInfo.deviceId = elementTemp.GetDeviceID();
     abilityInfo.visible = true;
-
     if (bundleNameTemp.empty() || abilityNameTemp.empty()) {
         return false;
     }
@@ -132,7 +130,7 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
     abilityInfo.deviceId = elementTemp.GetDeviceID();
     abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
     abilityInfo.applicationInfo.name = "hello";
-    if (want.HasEntity(Want::ENTITY_HOME) && want.GetAction() == Want::ACTION_HOME) {
+    if (elementTemp.GetAbilityName().find("com.ohos.launcher.MainAbility") != std::string::npos) {
         abilityInfo.applicationInfo.isLauncherApp = true;
     } else {
         abilityInfo.applicationInfo.isLauncherApp = false;

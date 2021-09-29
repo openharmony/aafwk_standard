@@ -141,6 +141,10 @@ void AbilityDumpTest::TearDown()
 
 void AbilityDumpTest::StartAbilityes()
 {
+    EXPECT_TRUE(g_abilityMs->currentStackManager_);
+    auto currentTopAbilityRecord = g_abilityMs->currentStackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(currentTopAbilityRecord);
+    currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
     startAbility6();
     startAbility1();
     startAbility2();

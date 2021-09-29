@@ -126,6 +126,12 @@ void LifecycleTest::TearDown(void)
 
 bool LifecycleTest::StartLauncherAbility()
 {
+    auto stackManager = aams_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+
     ElementName element("device", "com.ix.hiWord", "LauncherAbility");
     Want want;
     want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
@@ -137,8 +143,7 @@ bool LifecycleTest::StartLauncherAbility()
         GTEST_LOG_(ERROR) << "fail to start Launcher ability";
         return false;
     }
-    auto stackManager = aams_->GetStackManager();
-    EXPECT_TRUE(stackManager);
+
     launcherAbilityRecord_ = (stackManager->GetCurrentTopAbility());
     EXPECT_TRUE(launcherAbilityRecord_);
     if (launcherAbilityRecord_) {

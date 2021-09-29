@@ -240,23 +240,25 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0100, Func
     int fd = dataAbilityHelper->OpenFile(urivalue, mode);
     EXPECT_NE(fd, -1);
 
-    std::string result = "123456";
-    FILE *file = nullptr;
-    file = fdopen(fd, "r");
-    EXPECT_NE(file, nullptr);
+    if (fd > 0) {
+        std::string result = "123456";
+        FILE *file = nullptr;
+        file = fdopen(fd, "r");
+        EXPECT_NE(file, nullptr);
 
-    if (file != nullptr) {
-        int strSize = 7;
-        std::string str("");
-        str.resize(strSize);
-        if (!feof(file)) {
-            fgets(&str[0], strSize, file);
+        if (file != nullptr) {
+            int strSize = 7;
+            std::string str("");
+            str.resize(strSize);
+            if (!feof(file)) {
+                fgets(&str[0], strSize, file);
+            }
+            string stringstr(str);
+            EXPECT_STREQ(stringstr.c_str(), result.c_str());
+            fclose(file);
+            system("rm /dataability_openfile_test.txt");
         }
-        string stringstr(str);
-        EXPECT_STREQ(stringstr.c_str(), result.c_str());
     }
-    fclose(file);
-    system("rm /dataability_openfile_test.txt");
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0100 end";
 }
@@ -280,23 +282,25 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_OpenFile_Test_0200, Func
     int fd = dataAbilityHelper->OpenFile(urivalue, mode);
     EXPECT_NE(fd, -1);
 
-    std::string result = "123456";
-    FILE *file = nullptr;
-    file = fdopen(fd, "r");
-    EXPECT_NE(file, nullptr);
+    if (fd > 0) {
+        std::string result = "123456";
+        FILE *file = nullptr;
+        file = fdopen(fd, "r");
+        EXPECT_NE(file, nullptr);
 
-    if (file != nullptr) {
-        int strSize = 7;
-        std::string str("");
-        str.resize(strSize);
-        if (!feof(file)) {
-            fgets(&str[0], strSize, file);
+        if (file != nullptr) {
+            int strSize = 7;
+            std::string str("");
+            str.resize(strSize);
+            if (!feof(file)) {
+                fgets(&str[0], strSize, file);
+            }
+            string stringstr(str);
+            EXPECT_STREQ(stringstr.c_str(), result.c_str());
+            fclose(file);
+            system("rm /dataability_openfile_test.txt");
         }
-        string stringstr(str);
-        EXPECT_STREQ(stringstr.c_str(), result.c_str());
     }
-    fclose(file);
-    system("rm /dataability_openfile_test.txt");
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_Test_0200 end";
 }

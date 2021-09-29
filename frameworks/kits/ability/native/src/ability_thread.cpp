@@ -869,22 +869,6 @@ void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
         return;
     }
 
-    if (flag) {
-        // true: normal windowMode -> free windowMode
-        if (winModeKey == MULTI_WINDOW_DISPLAY_FLOATING) {
-            APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_FREE begin.");
-            window->SetWindowType(WINDOW_TYPE_FLOAT);
-            APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_FREE end.");
-        } else {
-            APP_LOGI("NotifyMultiWinModeChanged.key:%{public}d", winModeKey);
-        }
-    } else {
-        // false: free windowMode -> normal windowMode
-        APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_TOP begin.");
-        window->SetWindowType(WINDOW_TYPE_NORMAL);
-        APP_LOGI("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_TOP end.");
-    }
-
     return;
 }
 
