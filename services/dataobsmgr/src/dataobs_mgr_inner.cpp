@@ -79,21 +79,27 @@ int DataObsMgrInner::HandleUnregisterObserver(const Uri &uri, const sptr<IDataAb
         return NO_OBS_FOR_URI;
     }
 
-    auto obs = std::find(obslist.begin(), obslist.end(), dataObserver);
+    HILOG_INFO("DataObsMgrInner::HandleUnregisterObserver obslist size is %{public}zu", obslist.size());
+    auto obs = obslist.begin();
+    for (; obs != obslist.end(); obs++) {
+        if ((*obs)->AsObject() == dataObserver->AsObject()) {
+            break;
+        }
+    }
     if (obs == obslist.end()) {
         AtomicSubTaskCount();
         HILOG_ERROR("DataObsMgrInner::HandleUnregisterObserver the obs is not registered to the uri.");
         return NO_OBS_FOR_URI;
     }
-
-    obslist.remove(dataObserver);
+    sptr<IDataAbilityObserver> removeObs = *obs;
+    obslist.remove(removeObs);
     obsmap_.erase(uri.ToString());
     if (!obslist.empty()) {
         obsmap_.emplace(uri.ToString(), obslist);
     }
 
-    if (!ObsExistInMap(dataObserver)) {
-        RemoveObsDeathRecipient(dataObserver);
+    if (!ObsExistInMap(removeObs)) {
+        RemoveObsDeathRecipient(removeObs);
     }
 
     AtomicSubTaskCount();
@@ -120,7 +126,7 @@ int DataObsMgrInner::HandleNotifyChange(const Uri &uri)
     }
 
     AtomicSubTaskCount();
-    HILOG_INFO("DataObsMgrInner::HandleNotifyChange called end");
+    HILOG_INFO("DataObsMgrInner::HandleNotifyChange called end %{public}zu", obslist.size());
     return NO_ERROR;
 }
 
