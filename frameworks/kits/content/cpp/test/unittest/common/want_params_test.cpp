@@ -135,7 +135,8 @@ HWTEST_F(WantParamsBaseTest, AaFwk_WantParams_Parcelable_0400, Function | Medium
     Parcel in;
     wantParamsIn_->Marshalling(in);
     std::shared_ptr<WantParams> wantParamsOut_(WantParams::Unmarshalling(in));
-    EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(wantParamsOut_->GetParam(keyStr))));
+    std::string outString(String::Unbox(IString::Query(wantParamsOut_->GetParam(keyStr))));
+    EXPECT_STREQ(std::to_string(valueLong).c_str(), outString.c_str());
 }
 }
 }
