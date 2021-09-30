@@ -27,7 +27,7 @@
 #include "data_ability_result.h"
 #include "data_ability_operation.h"
 #include "napi_data_ability_operation.h"
-
+#include "../inner/napi_common/napi_common_ability.h"
 #include "message_parcel.h"
 
 using namespace OHOS::AAFwk;
@@ -35,7 +35,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-extern napi_value g_dataAbilityHelper;
 std::list<std::shared_ptr<DataAbilityHelper>> g_dataAbilityHelperList;
 
 /**
@@ -74,7 +73,7 @@ napi_value DataAbilityHelperInit(napi_env env, napi_value exports)
             nullptr,
             sizeof(properties) / sizeof(*properties),
             properties,
-            &g_dataAbilityHelper));
+            &GetGlobalDataAbilityHelper()));
     g_dataAbilityHelperList.clear();
     return exports;
 }
@@ -689,11 +688,6 @@ napi_value RegisterWrap(napi_env env, napi_callback_info info, DAHelperOnOffCB *
     HILOG_INFO("DataAbilityHelper objectInfo = %{public}p", objectInfo);
     onCB->dataAbilityHelper = objectInfo;
 
-    sptr<NAPIDataAbilityObserver> observer(new (std::nothrow) NAPIDataAbilityObserver());
-    onCB->observer = observer;
-
-    registerInstances_.emplace_back(onCB);
-    HILOG_INFO("regInstances_ emplace_back size = %{public}zu", registerInstances_.size());
     ret = RegisterAsync(env, args, argcAsync, argcPromise, onCB);
     return ret;
 }
@@ -712,8 +706,14 @@ napi_value RegisterAsync(
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, args[argcPromise], &valuetype));
     if (valuetype == napi_function) {
+        HILOG_INFO("valuetype is napi_function");
         NAPI_CALL(env, napi_create_reference(env, args[argcPromise], 1, &onCB->cbBase.cbInfo.callback));
+    } else {
+        HILOG_INFO("not valuetype isn't napi_function");
     }
+
+    sptr<NAPIDataAbilityObserver> observer(new (std::nothrow) NAPIDataAbilityObserver());
+    onCB->observer = observer;
 
     NAPI_CALL(env,
         napi_create_async_work(
@@ -725,8 +725,8 @@ napi_value RegisterAsync(
                 HILOG_INFO("NAPI_Register, main event thread complete.");
                 DAHelperOnOffCB *onCB = static_cast<DAHelperOnOffCB *>(data);
                 if (onCB != nullptr) {
-                    delete onCB;
-                    onCB = nullptr;
+                    registerInstances_.emplace_back(onCB);
+                    HILOG_INFO("regInstances_ emplace_back size = %{public}zu", registerInstances_.size());
                 }
             },
             (void *)onCB,
@@ -901,15 +901,19 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
     if (offCB->cbBase.cbInfo.callback != nullptr) {
         HILOG_INFO("NAPI_UnRegister, callback is not null.");
         // if match callback ,or match both callback and uri
-        napi_ref callback = offCB->cbBase.cbInfo.callback;
+        napi_value callbackA = 0;
+        napi_get_reference_value(offCB->cbBase.cbInfo.env, offCB->cbBase.cbInfo.callback, &callbackA);
         do {
             auto helper = std::find_if(
-                registerInstances_.begin(), registerInstances_.end(), [callback](const DAHelperOnOffCB *helper) {
+                registerInstances_.begin(), registerInstances_.end(), [callbackA](const DAHelperOnOffCB *helper) {
                     bool result = false;
-                    napi_value callbackA = 0;
+                    if (helper == nullptr || helper->cbBase.cbInfo.callback == nullptr) {
+                        HILOG_ERROR("UnRegisterCompleteCB %{public}s is nullptr",
+                            ((helper == nullptr) ? "helper" : "helper->cbBase.cbInfo.callback"));
+                        return result;
+                    }
                     napi_value callbackB = 0;
-                    napi_get_reference_value(helper->cbBase.cbInfo.env, callback, &callbackA);
-                    napi_get_reference_value(helper->cbBase.cbInfo.env, helper->cbBase.cbInfo.callback, &callbackA);
+                    napi_get_reference_value(helper->cbBase.cbInfo.env, helper->cbBase.cbInfo.callback, &callbackB);
                     auto ret = napi_strict_equals(helper->cbBase.cbInfo.env, callbackA, callbackB, &result);
                     HILOG_INFO("NAPI_UnRegister cb equals status=%{public}d result=%{public}d.", ret, result);
                     return result;
@@ -920,9 +924,9 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                 if (offCB->uri == uri.ToString()) {
                     // match callback, or match both callback and uri
                     (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    registerInstances_.erase(helper);
                     delete *helper;
                     *helper = nullptr;
+                    registerInstances_.erase(helper);
                     HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
                 } else {
                     HILOG_INFO("NAPI_UnRegister uri=%{public}s,helper.Uri=%{public}s",
@@ -947,9 +951,9 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                     // match uri
                     OHOS::Uri uri((*helper)->uri);
                     (*helper)->dataAbilityHelper->UnregisterObserver(uri, (*helper)->observer);
-                    registerInstances_.erase(helper);
                     delete *helper;
                     *helper = nullptr;
+                    registerInstances_.erase(helper);
                     HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
                 } else {
                     HILOG_INFO("NAPI_UnRegister not match any uri.");
@@ -1016,17 +1020,12 @@ void NAPIDataAbilityObserver::OnChange()
             DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
             napi_value result[ARGS_TWO] = {0};
             result[PARAM0] = GetCallbackErrorValue(onCB->cbBase.cbInfo.env, NO_ERROR);
-
             napi_value callback = 0;
             napi_value undefined = 0;
             napi_get_undefined(onCB->cbBase.cbInfo.env, &undefined);
             napi_value callResult = 0;
             napi_get_reference_value(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback, &callback);
-
             napi_call_function(onCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
-            if (onCB->cbBase.cbInfo.callback != nullptr) {
-                napi_delete_reference(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback);
-            }
             if (onCB != nullptr) {
                 delete onCB;
                 onCB = nullptr;
