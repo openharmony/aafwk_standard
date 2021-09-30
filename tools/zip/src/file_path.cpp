@@ -176,8 +176,8 @@ void FilePath::StripTrailingSeparatorsInternal()
     if (path_.size() == 0) {
         return;
     }
-    std::string::size_type one = 1;
-    std::string::size_type two = 2;
+    int one = 1;
+    int two = 2;
     int start = FindDriveLetter(path_) + two;
     std::string::size_type lastStripped = std::string::npos;
     for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - one]); --pos) {
