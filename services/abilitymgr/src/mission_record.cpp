@@ -341,6 +341,7 @@ void MissionRecord::Resume(const std::shared_ptr<MissionRecord> &backup)
 
     for (auto &ability : abilities_) {
         if (ability->IsAbilityState(AbilityState::INITIAL)) {
+            ability->ClearFlag();
             ability->SetRestarting(true);
         }
     }
