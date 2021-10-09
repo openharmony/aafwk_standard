@@ -2119,7 +2119,6 @@ void AbilityStackManager::OnAbilityDiedByLauncher(std::shared_ptr<AbilityRecord>
     // Process the dead ability record
     if (mission->GetBottomAbilityRecord() == abilityRecord && abilityRecord->IsLauncherRoot()) {
         HILOG_DEBUG("Root launcher ability died, set state: INITIAL.");
-        abilityRecord->ClearFlag();
         abilityRecord->SetAbilityState(AbilityState::INITIAL);
     } else {
         mission->RemoveAbilityRecord(abilityRecord);
@@ -2212,7 +2211,6 @@ void AbilityStackManager::OnAbilityDiedByDefault(std::shared_ptr<AbilityRecord> 
     } else {
         if (mission->GetBottomAbilityRecord() == abilityRecord) {
             HILOG_INFO("Ability died, state: INITIAL, %{public}d", __LINE__);
-            abilityRecord->ClearFlag();
             abilityRecord->SetAbilityState(AbilityState::INITIAL);
         } else {
             HILOG_INFO("Ability died, remove record, %{public}d", __LINE__);
