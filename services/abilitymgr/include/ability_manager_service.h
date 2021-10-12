@@ -27,6 +27,7 @@
 #include "ability_stack_manager.h"
 #include "app_scheduler.h"
 #include "bundlemgr/bundle_mgr_interface.h"
+#include "bundle_constants.h"
 #include "data_ability_manager.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
