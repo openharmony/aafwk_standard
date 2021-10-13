@@ -20,11 +20,21 @@ ohos_shared_library("particleability") {
     "//third_party/libuv/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/aafwk/standard/services/common/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
   ]
 
   sources = [
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_operation.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/js_utils.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
     "native_module.cpp",
     "particle_ability.cpp",
   ]
@@ -32,6 +42,7 @@ ohos_shared_library("particleability") {
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/kits:appkit_native",
@@ -48,6 +59,9 @@ ohos_shared_library("particleability") {
     "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "native_appdatamgr:native_appdatafwk",
+    "native_appdatamgr:native_dataability",
+    "native_appdatamgr:native_rdb",
   ]
 
   relative_install_dir = "module/ability"

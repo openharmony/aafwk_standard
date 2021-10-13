@@ -633,7 +633,7 @@ bool WantParams::Marshalling(Parcel &parcel) const
     return true;
 }
 
-template<typename dataType, typename className>
+template <typename dataType, typename className>
 static bool SetArray(const InterfaceID &id, const std::vector<dataType> &value, sptr<IArray> &ao)
 {
     typename std::vector<dataType>::size_type size = value.size();
@@ -647,7 +647,7 @@ static bool SetArray(const InterfaceID &id, const std::vector<dataType> &value, 
     return false;
 }
 
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 static void FillArray(IArray *ao, std::vector<T1> &array)
 {
     auto func = [&](IInterface *object) {
@@ -661,7 +661,7 @@ static void FillArray(IArray *ao, std::vector<T1> &array)
     Array::ForEach(ao, func);
 }
 // inner use template function
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 static void SetNewArray(const AAFwk::InterfaceID &id, AAFwk::IArray *orgIArray, sptr<AAFwk::IArray> &ao)
 {
     if (orgIArray == nullptr) {
@@ -967,17 +967,17 @@ bool WantParams::ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao)
         return false;
     }
 
-    #ifdef WANT_PARAM_USE_LONG
-        return SetArray<int64_t, Long>(g_IID_ILong, value, ao);
-    #else
-        std::vector<std::string> strList;
+#ifdef WANT_PARAM_USE_LONG
+    return SetArray<int64_t, Long>(g_IID_ILong, value, ao);
+#else
+    std::vector<std::string> strList;
 
-        for (size_t i=0; i<value.size(); i++) {
-            strList.push_back(std::to_string(value[i]));
-            APP_LOGI("%{public}s long of array: %{public}s", __func__, std::to_string(value[i]).c_str());
-        }
-        return SetArray<std::string, String>(g_IID_IString, strList, ao);
-    #endif 
+    for (size_t i = 0; i < value.size(); i++) {
+        strList.push_back(std::to_string(value[i]));
+        APP_LOGI("%{public}s long of array: %{public}s", __func__, std::to_string(value[i]).c_str());
+    }
+    return SetArray<std::string, String>(g_IID_IString, strList, ao);
+#endif
 }
 
 bool WantParams::ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao)
@@ -1058,12 +1058,13 @@ bool WantParams::ReadFromParcelString(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s, value=%{public}s.", __func__, key.c_str(), strValue.c_str());
     sptr<IInterface> intf = String::Box(Str16ToStr8(value));
     if (intf) {
-        APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}s.",
-            __func__, key.c_str(), strValue.c_str());
+        APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}s.", __func__, key.c_str(), strValue.c_str());
         SetParam(key, intf);
     } else {
         APP_LOGI("%{public}s insert param fail, intf=nullptr: key=%{public}s, value=%{public}s.",
-            __func__, key.c_str(), strValue.c_str());
+            __func__,
+            key.c_str(),
+            strValue.c_str());
     }
     return true;
 }
@@ -1183,15 +1184,15 @@ bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
     if (parcel.ReadInt64(value)) {
         std::string strValue(std::to_string(value));
         APP_LOGI("%{public}s key=%{public}s, value=%{public}s", __func__, key.c_str(), strValue.c_str());
-        #ifdef WANT_PARAM_USE_LONG
-            sptr<IInterface> intf = Long::Box(value);
-        #else
-            sptr<IInterface> intf = String::Box(std::to_string(value));
-        #endif    
+#ifdef WANT_PARAM_USE_LONG
+        sptr<IInterface> intf = Long::Box(value);
+#else
+        sptr<IInterface> intf = String::Box(std::to_string(value));
+#endif
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}s",
-                __func__, key.c_str(), strValue.c_str());
+            APP_LOGI(
+                "%{public}s insert param: key=%{public}s, value=%{public}s", __func__, key.c_str(), strValue.c_str());
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1398,7 +1399,7 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 
 void WantParams::DumpInfo(int level) const
 {
-    APP_LOGI("=======WantParams::DumpInfo level： %{public}d start=============", level);
+    APP_LOGI("=======WantParams::DumpInfo level: %{public}d start=============", level);
 
     int params_size = params_.size();
     APP_LOGI("===WantParams::params_: count %{public}d =============", params_size);
@@ -1413,7 +1414,7 @@ void WantParams::DumpInfo(int level) const
             APP_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
         }
     }
-    APP_LOGI("=======WantParams::DumpInfo level： %{public}d end=============", level);
+    APP_LOGI("=======WantParams::DumpInfo level: %{public}d end=============", level);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

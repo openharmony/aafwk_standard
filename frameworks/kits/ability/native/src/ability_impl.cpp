@@ -443,6 +443,7 @@ void AbilityImpl::NewWant(const Want &want)
  */
 std::vector<std::string> AbilityImpl::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
+    APP_LOGI("AbilityImpl::GetFileTypes");
     std::vector<std::string> types;
     return types;
 }
@@ -460,6 +461,7 @@ std::vector<std::string> AbilityImpl::GetFileTypes(const Uri &uri, const std::st
  */
 int AbilityImpl::OpenFile(const Uri &uri, const std::string &mode)
 {
+    APP_LOGI("AbilityImpl::OpenFile");
     return -1;
 }
 
@@ -477,6 +479,7 @@ int AbilityImpl::OpenFile(const Uri &uri, const std::string &mode)
  */
 int AbilityImpl::OpenRawFile(const Uri &uri, const std::string &mode)
 {
+    APP_LOGI("AbilityImpl::OpenRawFile");
     return -1;
 }
 
@@ -490,6 +493,7 @@ int AbilityImpl::OpenRawFile(const Uri &uri, const std::string &mode)
  */
 int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
+    APP_LOGI("AbilityImpl::Insert");
     return -1;
 }
 
@@ -505,6 +509,7 @@ int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 int AbilityImpl::Update(
     const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    APP_LOGI("AbilityImpl::Update");
     return -1;
 }
 
@@ -518,6 +523,7 @@ int AbilityImpl::Update(
  */
 int AbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    APP_LOGI("AbilityImpl::Delete");
     return -1;
 }
 
@@ -533,6 +539,7 @@ int AbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &
 std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityImpl::Query(
     const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    APP_LOGI("AbilityImpl::Query");
     return nullptr;
 }
 
@@ -546,6 +553,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityImpl::Query(
  */
 std::string AbilityImpl::GetType(const Uri &uri)
 {
+    APP_LOGI("AbilityImpl::GetType");
     return "";
 }
 
@@ -574,6 +582,7 @@ bool AbilityImpl::Reload(const Uri &uri, const PacMap &extras)
  */
 int AbilityImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
+    APP_LOGI("AbilityImpl::BatchInsert");
     return -1;
 }
 
@@ -661,6 +670,7 @@ void AbilityImpl::SetCallingContext(
  */
 Uri AbilityImpl::NormalizeUri(const Uri &uri)
 {
+    APP_LOGI("AbilityImpl::NormalizeUri");
     return uri;
 }
 
@@ -676,6 +686,7 @@ Uri AbilityImpl::NormalizeUri(const Uri &uri)
  */
 Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 {
+    APP_LOGI("AbilityImpl::DenormalizeUri");
     return uri;
 }
 
