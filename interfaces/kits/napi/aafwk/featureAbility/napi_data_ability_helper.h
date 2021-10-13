@@ -25,6 +25,7 @@ public:
     void OnChange() override;
     void SetEnv(const napi_env &env);
     void SetCallbackRef(const napi_ref &ref);
+    void ReleaseJSCallback();
 
 private:
     napi_env env_ = nullptr;

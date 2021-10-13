@@ -271,27 +271,27 @@ enum {
     CLOSE_MULTI_WINDOW_FAILED,
 
     /**
-     * Result(2097202) for start ability by setting failed
+     * Result(2097206) for start ability by setting failed
      */
     START_ABILITY_SETTING_FAILED,
     
     /**
-     * Result(2097206) for start ability by setting ,the ability not support multiwindow.
+     * Result(2097207) for start ability by setting ,the ability not support multiwindow.
      */
     START_ABILITY_SETTING_NOT_SUPPORT_MULTI_WIN,
 
     /**
-     * Result(2097207) for no found abilityrecord by caller
+     * Result(2097208) for no found abilityrecord by caller
      */
     NO_FOUND_ABILITY_BY_CALLER,
 
     /**
-     * Result(2097208) for ability visible attribute is false.
+     * Result(2097209) for ability visible attribute is false.
      */
     ABILITY_VISIBLE_FALSE_DENY_REQUEST,
 
     /**
-     * Result(2097209) for caller is not systemapp.
+     * Result(2097210) for caller is not systemapp.
      */
     CALLER_ISNOT_SYSTEMAPP,
 };

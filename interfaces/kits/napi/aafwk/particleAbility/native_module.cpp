@@ -20,6 +20,8 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "particle_ability.h"
+#include "napi_context.h"
+#include "napi_data_ability_helper.h"
 namespace OHOS {
 namespace AppExecFwk {
 EXTERN_C_START
@@ -29,6 +31,8 @@ EXTERN_C_START
 static napi_value ParticleInit(napi_env env, napi_value exports)
 {
     ParticleAbilityInit(env, exports);
+    ContextPermissionInit(env, exports);
+    DataAbilityHelperInit(env, exports);
     return exports;
 }
 EXTERN_C_END
@@ -36,15 +40,13 @@ EXTERN_C_END
 /*
  * The module definition.
  */
-static napi_module _module = {
-    .nm_version = 1,
+static napi_module _module = {.nm_version = 1,
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = ParticleInit,
     .nm_modname = "ability.particleAbility",
     .nm_priv = ((void *)0),
-    .reserved = {0}
-};
+    .reserved = {0}};
 
 /*
  * The module registration.

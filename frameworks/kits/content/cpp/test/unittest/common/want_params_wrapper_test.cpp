@@ -32,7 +32,7 @@ const std::string STRING_WANT_PARAMS_STRING_01 = "{\"key01\":{\"9\":\"value01\"}
 const std::string STRING_WANT_PARAMS_KEY_02 = "key02";
 const std::string STRING_WANT_PARAMS_VALUE_02 = "value02";
 const std::string STRING_WANT_PARAMS_STRING_0201 =
-    "{\"key01\":{\"21\":{\"key02\":{\"9\":\"value02\"}}},\"key02\":{\"9\":\"value02\"}}";
+    "{\"key01\":{\"101\":{\"key02\":{\"9\":\"value02\"}}},\"key02\":{\"9\":\"value02\"}}";
 }  // namespace
 
 class WantParamWrapperBaseTest : public testing::Test {
