@@ -226,10 +226,15 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Generate ability request error.");
         return result;
     }
+    auto abilityInfo = abilityRequest.abilityInfo;
+    result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
+        return result;
+    }
 
     abilityRequest.startSetting = std::make_shared<AbilityStartSetting>(abilityStartSetting);
 
-    auto abilityInfo = abilityRequest.abilityInfo;
     if (abilityInfo.type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
@@ -656,7 +661,7 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
     const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s, called. uid %{public}d", __func__, IPCSkeleton::GetCallingUid());
-    bool isSystem = (IPCSkeleton::GetCallingUid() == AbilityUtil::SYSTEM_UID);
+    bool isSystem = (IPCSkeleton::GetCallingUid() <= AppExecFwk::Constants::BASE_SYS_UID);
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
         if (!VerificationToken(callerToken)) {
@@ -713,7 +718,7 @@ int AbilityManagerService::ReleaseDataAbility(
     sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s, called.", __func__);
-    bool isSystem = (IPCSkeleton::GetCallingUid() == AbilityUtil::SYSTEM_UID);
+    bool isSystem = (IPCSkeleton::GetCallingUid() <= AppExecFwk::Constants::BASE_SYS_UID);
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
         if (!VerificationToken(callerToken)) {
