@@ -51,7 +51,7 @@ public:
 
     enum {
         // ipc id for OnAbilityDistributeConnectDone
-        ON_ABILITY_DISTRIBUTE_CONNECT_DONE = 0,
+        ON_ABILITY_DISTRIBUTE_CONNECT_DONE = 1,
 
         // ipc id for OnAbilityDistributeDisConnectDone
         ON_ABILITY_DISTRIBUTE_DISCONNECT_DONE
