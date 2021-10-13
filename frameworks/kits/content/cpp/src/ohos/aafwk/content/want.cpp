@@ -1336,7 +1336,7 @@ void Want::ToUriStringInner(std::string &uriString) const
     }
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
-        char buf[HEX_STRING_BUF_LEN] {0};
+        char buf[HEX_STRING_BUF_LEN]{0};
         std::size_t len = snprintf_s(buf, HEX_STRING_BUF_LEN, HEX_STRING_BUF_LEN - 1, "0x%08x", operation_.GetFlags());
         if (len == HEX_STRING_LEN) {
             std::string flag = buf;
@@ -1879,14 +1879,14 @@ bool Want::CheckAndSetParameters(Want &want, const std::string &key, std::string
 
 void Want::DumpInfo(int level) const
 {
-    APP_LOGI("==================Want::DumpInfo level： %{public}d start=============", level);
+    APP_LOGI("==================Want::DumpInfo level: %{public}d start=============", level);
     operation_.DumpInfo(level);
     parameters_.DumpInfo(level);
 
     if (picker_ != nullptr) {
         picker_->DumpInfo(level + 1);
     }
-    APP_LOGI("==================Want::DumpInfo level： %{public}d end=============", level);
+    APP_LOGI("==================Want::DumpInfo level: %{public}d end=============", level);
 }
 
 }  // namespace AAFwk

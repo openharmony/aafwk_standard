@@ -1147,6 +1147,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
             return;
         }
         if (isActiveAbility) {
+            abilityRecord->SetPowerState(false);
             return;
         }
         HILOG_DEBUG("Not top ability, need complete inactive.");

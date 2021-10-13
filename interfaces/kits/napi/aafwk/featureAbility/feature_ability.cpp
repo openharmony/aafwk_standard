@@ -1278,10 +1278,14 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback));
     NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
-
+        env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &uri, &dataAbilityHelperCB->result));
+    if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
+        result[PARAM1] = dataAbilityHelperCB->result;
+    } else {
+        HILOG_INFO("NAPI_GetDataAbilityHelper, helper is nullptr.");
+        result[PARAM1] = WrapVoidToJS(env);
+    }
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
-    result[PARAM1] = dataAbilityHelperCB->result;
     NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
 
     if (dataAbilityHelperCB->cbBase.cbInfo.callback != nullptr) {
@@ -1301,10 +1305,15 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
     napi_value result = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &uri, &dataAbilityHelperCB->result));
-    result = dataAbilityHelperCB->result;
-
-    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));
+        env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &uri, &dataAbilityHelperCB->result));
+    if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
+        result = dataAbilityHelperCB->result;
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));
+    } else {
+        result = GetCallbackErrorValue(env, dataAbilityHelperCB->cbBase.errCode);
+        napi_reject_deferred(env, dataAbilityHelperCB->cbBase.deferred, result);
+        HILOG_INFO("NAPI_GetDataAbilityHelper, helper is nullptr.");
+    }
     NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork));
     delete dataAbilityHelperCB;
     dataAbilityHelperCB = nullptr;

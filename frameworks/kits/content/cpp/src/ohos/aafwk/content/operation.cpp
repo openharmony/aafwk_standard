@@ -373,7 +373,7 @@ void Operation::SetEntities(const std::vector<std::string> &entities)
 
 void Operation::DumpInfo(int level) const
 {
-    APP_LOGI("=======Operation::DumpInfo level： %{public}d start=============", level);
+    APP_LOGI("=======Operation::DumpInfo level: %{public}d start=============", level);
 
     APP_LOGI("===Operation::abilityName_ %{public}s =============", abilityName_.c_str());
     APP_LOGI("===Operation::action_ %{public}s =============", action_.c_str());
@@ -387,7 +387,7 @@ void Operation::DumpInfo(int level) const
     APP_LOGI("===Operation::flags_ %{public}ud =============", flags_);
     APP_LOGI("===Operation::uri_ %{public}s =============", uri_.ToString().c_str());
 
-    APP_LOGI("=======Operation::DumpInfo level： %{public}d end=============", level);
+    APP_LOGI("=======Operation::DumpInfo level: %{public}d end=============", level);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

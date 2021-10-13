@@ -1123,7 +1123,7 @@ bool AbilityThread::ScheduleUnregisterObserver(const Uri &uri, const sptr<AAFwk:
         return false;
     }
 
-    bool ret = abilityHandler_->PostTask(task);
+    bool ret = abilityHandler_->PostSyncTask(task);
     if (!ret) {
         APP_LOGE("AbilityThread::ScheduleUnregisterObserver PostTask error");
     }
