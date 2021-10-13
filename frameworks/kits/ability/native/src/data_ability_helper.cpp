@@ -837,6 +837,7 @@ bool DataAbilityHelper::CheckOhosUri(const Uri &uri)
  */
 void DataAbilityHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
+    APP_LOGI("DataAbilityHelper::RegisterObserver start.");
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return;
@@ -877,6 +878,7 @@ void DataAbilityHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IData
         return;
     }
     dataAbilityProxy->ScheduleRegisterObserver(uri, dataObserver);
+    APP_LOGI("DataAbilityHelper::RegisterObserver end.");
 }
 
 /**
@@ -887,6 +889,7 @@ void DataAbilityHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IData
  */
 void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
+    APP_LOGI("DataAbilityHelper::UnregisterObserver start.");
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return;
@@ -917,17 +920,18 @@ void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
     }
 
     if (dataAbilityProxy == nullptr) {
-        APP_LOGE("DataAbilityHelper::RegisterObserver failed dataAbility == nullptr");
+        APP_LOGE("DataAbilityHelper::UnregisterObserver failed dataAbility == nullptr");
         return;
     }
 
     dataAbilityProxy->ScheduleUnregisterObserver(uri, dataObserver);
     int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy, token_);
     if (err != ERR_OK) {
-        APP_LOGE("DataAbilityHelper::RegisterObserver failed to ReleaseDataAbility err = %{public}d", err);
+        APP_LOGE("DataAbilityHelper::UnregisterObserver failed to ReleaseDataAbility err = %{public}d", err);
     }
     registerMap_.erase(dataObserver);
     uriMap_.erase(dataObserver);
+    APP_LOGI("DataAbilityHelper::UnregisterObserver end.");
 }
 
 /**
@@ -937,6 +941,7 @@ void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
  */
 void DataAbilityHelper::NotifyChange(const Uri &uri)
 {
+    APP_LOGI("DataAbilityHelper::NotifyChange start.");
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return;
@@ -959,6 +964,7 @@ void DataAbilityHelper::NotifyChange(const Uri &uri)
         }
         dataAbilityProxy_ = nullptr;
     }
+    APP_LOGI("DataAbilityHelper::NotifyChange end.");
 }
 
 /**

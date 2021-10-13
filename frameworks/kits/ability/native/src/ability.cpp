@@ -2657,7 +2657,7 @@ std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
         }
         ExecuteOperation(operation, results, i);
     }
-    APP_LOGI("Ability::ExecuteBatch end");
+    APP_LOGI("Ability::ExecuteBatch end, %{public}zu", results.size());
     return results;
 }
 void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
@@ -2723,7 +2723,11 @@ void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
             operation->GetExpectedCount(),
             numRows);
     } else {
-        results.push_back(std::make_shared<DataAbilityResult>(numRows));
+        if (operation->GetUri() != nullptr) {
+            results.push_back(std::make_shared<DataAbilityResult>(*operation->GetUri(), numRows));
+        } else {
+            results.push_back(std::make_shared<DataAbilityResult>(Uri(std::string("")), numRows));
+        }
     }
 }
 
