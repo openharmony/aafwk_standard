@@ -29,16 +29,10 @@
 #include "dummy_values_bucket.h"
 #include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
-
-#ifdef MMI_COMPILE
-#include "key_events.h"
-#include "touch_events.h"
-#include "ability_keyevent.h"
-#include "ability_touchevent.h"
-#else
 #include "key_event.h"
 #include "touch_event.h"
-#endif
+#include "ability_keyevent.h"
+#include "ability_touchevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -425,10 +419,8 @@ private:
      */
     void MMIUnRegister();
 
-#ifdef MMI_COMPILE
     sptr<AbilityKeyEventHandle> abilityKeyEventHandle_ = nullptr;
     sptr<AbilityTouchEventHandle> abilityTouchEventHandle_ = nullptr;
-#endif
     bool hasSaveData_ = false;
     PacMap restoreData_;
 };
