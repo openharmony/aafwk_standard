@@ -43,11 +43,6 @@
 #include "form_provider_info.h"
 #include "form_info.h"
 
-#ifndef MMI_COMPILE
-#include "key_event.h"
-#include "touch_event.h"
-#endif
-
 using Uri = OHOS::Uri;
 
 namespace OHOS {
@@ -56,10 +51,8 @@ class AbsSharedResultSet;
 class DataAbilityPredicates;
 class ValuesBucket;
 }  // namespace NativeRdb
-#ifdef MMI_COMPILE
 class KeyEvent;
 class TouchEvent;
-#endif
 namespace AppExecFwk {
 class DataAbilityResult;
 class DataAbilityOperation;

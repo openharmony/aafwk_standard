@@ -43,13 +43,9 @@
 #include "data_ability_operation.h"
 #include "data_uri_utils.h"
 
-#ifdef MMI_COMPILE
-#include "key_events.h"
-#include "touch_events.h"
-#else
+
 #include "key_event.h"
 #include "touch_event.h"
-#endif
 #include "form_host_client.h"
 #include "form_mgr.h"
 #include "ipc_skeleton.h"
@@ -501,11 +497,7 @@ bool Ability::OnKeyUp(int keyCode, const KeyEvent &keyEvent)
     APP_LOGI("Ability::OnKeyUp called");
     APP_LOGI("Ability::OnKeyUp keyCode: %{public}d.", keyCode);
     switch (keyCode) {
-#ifdef MMI_COMPILE
         case OHOS::KeyEventEnum::KEY_BACK:
-#else
-        case KeyEvent::CODE_BACK:
-#endif
             APP_LOGI("Ability::OnKey Back key pressed.");
             OnBackPressed();
             return true;
