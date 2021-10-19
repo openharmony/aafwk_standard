@@ -23,8 +23,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 class AbilityImpl;
-class AbilityTouchEventHandle : public MMI::TouchEventHandler
-{
+class AbilityTouchEventHandle : public MMI::TouchEventHandler {
 public:
     AbilityTouchEventHandle(std::shared_ptr<AbilityImpl> ability);
     virtual ~AbilityTouchEventHandle();
