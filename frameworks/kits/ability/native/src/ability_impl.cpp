@@ -44,11 +44,9 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     contextDeal_ = contextDeal;
 
     // Multimodal Events
-#ifdef MMI_COMPILE
     abilityKeyEventHandle_ = sptr<AbilityKeyEventHandle>(new (std::nothrow) AbilityKeyEventHandle(shared_from_this()));
     abilityTouchEventHandle_ =
         sptr<AbilityTouchEventHandle>(new (std::nothrow) AbilityTouchEventHandle(shared_from_this()));
-#endif
 
     APP_LOGI("AbilityImpl::init end");
 }
@@ -709,28 +707,26 @@ void AbilityImpl::ScheduleUpdateConfiguration(const AAFwk::DummyConfiguration &c
  */
 void AbilityImpl::MMIRegister()
 {
-#ifdef MMI_COMPILE
     APP_LOGI("%{public}s called.", __func__);
     int32_t ret = 0;
     int32_t windowID = 0;
     if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
         if (ability_->GetWindow() != nullptr) {
-            windowID = ability_->GetWindow()->GetWindowID();
+            windowID = ability_->GetWindow()->GetID();
         }
     }
 
     // register keyEvent
-    ret = MMIEventHdl->RegisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
+    ret = MMIEventHdl.RegisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
     APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
     APP_LOGI("MMIRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
     APP_LOGI("MMIRegister :RegisterkeyEventHandler ret:%{public}d", ret);
 
     // register touchEvent
-    ret = MMIEventHdl->RegisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
+    ret = MMIEventHdl.RegisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
     APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
     APP_LOGI("MMIRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
     APP_LOGI("MMIRegister :RegistertouchEventHandler ret:%{public}d", ret);
-#endif
 }
 
 /**
@@ -738,27 +734,25 @@ void AbilityImpl::MMIRegister()
  */
 void AbilityImpl::MMIUnRegister()
 {
-#ifdef MMI_COMPILE
     APP_LOGI("%{public}s called.", __func__);
     int32_t ret = 0;
     int32_t windowID = 0;
     if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
         if (ability_->GetWindow() != nullptr) {
-            windowID = ability_->GetWindow()->GetWindowID();
+            windowID = ability_->GetWindow()->GetID();
         }
     }
     // unregister keyEvent
-    ret = MMIEventHdl->UnregisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
+    ret = MMIEventHdl.UnregisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
     APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
     APP_LOGI("MMIUnRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
     APP_LOGI("MMIUnRegister :UnRegisterkeyEventHandler ret:%{public}d", ret);
 
     // unregister touchEvent
-    ret = MMIEventHdl->UnregisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
+    ret = MMIEventHdl.UnregisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
     APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
     APP_LOGI("MMIUnRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
     APP_LOGI("MMIUnRegister :UnRegistertouchEventHandler ret:%{public}d", ret);
-#endif
 }
 
 /**

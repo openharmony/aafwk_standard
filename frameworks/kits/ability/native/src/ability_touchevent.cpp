@@ -30,7 +30,6 @@ AbilityTouchEventHandle::~AbilityTouchEventHandle()
     APP_LOGI("AbilityTouchEventHandle is destroyed");
 }
 
-#ifdef MMI_COMPILE
 /**
  * @brief Called back when on touch.
  */
@@ -63,6 +62,5 @@ bool AbilityTouchEventHandle::OnTouch(const TouchEvent &touchEvent)
         touchEvent.GetPhase());
     return ret;
 }
-#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

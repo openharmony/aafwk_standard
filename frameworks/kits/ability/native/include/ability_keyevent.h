@@ -17,32 +17,21 @@
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_KEYEVENT_HANDLE_H
 
 #include <memory>
-
-#ifdef MMI_COMPILE
-#include "multimodal_events_handler.h"
-#include "key_events_handler.h"
-#endif
+#include "multimodal_event_handler.h"
+#include "key_event_handler.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 class AbilityImpl;
-
-#ifdef MMI_COMPILE
 class AbilityKeyEventHandle : public MMI::KeyEventHandler {
-#else
-class AbilityKeyEventHandle {
-#endif
-
 public:
     AbilityKeyEventHandle(const std::shared_ptr<AbilityImpl> &ability);
     ~AbilityKeyEventHandle();
 
-#ifdef MMI_COMPILE
     /**
      * @brief Called back when on key.
      */
     virtual bool OnKey(const KeyEvent& keyEvent) override;
-#endif
 
 private:
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;

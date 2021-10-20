@@ -84,9 +84,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
   ]
-  cflags = [
-    #"-DMMI_COMPILE"
-  ]
 
   sources = [
     "${SUBSYSTEM_APPEXEXFWK_DIR}/interfaces/innerkits/appexecfwk_core/src/appmgr/process_info.cpp",
@@ -184,13 +181,10 @@ ohos_shared_library("abilitykit_native") {
     "appexecfwk_standard:fmskit_native",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-
-    #"multimodalinput_base:libmmi-util",
-    #"multimodalinput_base:libmmi-client",
-    #"multimodalinput_base:mmi_event",
   ]
 
   public_deps = [
