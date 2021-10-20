@@ -331,7 +331,11 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
         while (it != clients_.end()) {
             if (!it->isSystem) {
                 auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
-                CHECK_POINTER_CONTINUE(clientAbilityRecord);
+                if (!clientAbilityRecord) {
+                    HILOG_ERROR("clientAbilityRecord is nullptr, continue.");
+                    ++it;
+                    continue;
+                }
                 if (clientAbilityRecord == client) {
                     appScheduler->AbilityBehaviorAnalysis(
                         ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
