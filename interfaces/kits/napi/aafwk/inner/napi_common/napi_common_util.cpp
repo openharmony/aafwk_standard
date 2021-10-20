@@ -27,6 +27,10 @@ bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectTyp
 {
     napi_valuetype valueType = napi_undefined;
 
+    if (param == nullptr) {
+        return false;
+    }
+
     if (napi_typeof(env, param, &valueType) != napi_ok) {
         return false;
     }
