@@ -45,10 +45,12 @@ int DataObsMgrInner::HandleRegisterObserver(const Uri &uri, const sptr<IDataAbil
     ObsListType obslist;
     bool exist = GetObsListFromMap(uri, obslist);
 
-    auto obs = std::find(obslist.begin(), obslist.end(), dataObserver);
-    if (obs != obslist.end()) {
-        HILOG_ERROR("DataObsMgrInner::HandleRegisterObserver the obs exist. no need to register.");
-        return OBS_EXIST;
+    auto obs = obslist.begin();
+    for (; obs != obslist.end(); obs++) {
+        if ((*obs)->AsObject() == dataObserver->AsObject()) {
+            HILOG_ERROR("DataObsMgrInner::HandleRegisterObserver the obs exist. no need to register.");
+            return OBS_EXIST;
+        }
     }
 
     obslist.push_back(dataObserver);

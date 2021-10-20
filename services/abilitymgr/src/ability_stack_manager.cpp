@@ -347,14 +347,6 @@ int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int 
         return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
-    // if ability is in multiwindow stack, and is bottom ability of this mission,
-    // just background, don't schedule terminate
-    if (!IsFullScreenStack(abilityRecord->GetMissionStackId()) &&
-        missionRecord->GetBottomAbilityRecord() == abilityRecord) {
-        HILOG_INFO("Mulitwindow stack , bottom ability of mission .just background, don't schedule terminate.");
-        return MoveMissionToEndLocked(missionRecord->GetMissionRecordId());
-    }
-
     HILOG_INFO("Schedule normal terminate process.");
     abilityRecord->SetTerminatingState();
     return TerminateAbilityLocked(abilityRecord, resultCode, resultWant);
@@ -1147,6 +1139,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
             return;
         }
         if (isActiveAbility) {
+            abilityRecord->SetPowerState(false);
             return;
         }
         HILOG_DEBUG("Not top ability, need complete inactive.");
@@ -2119,7 +2112,6 @@ void AbilityStackManager::OnAbilityDiedByLauncher(std::shared_ptr<AbilityRecord>
     // Process the dead ability record
     if (mission->GetBottomAbilityRecord() == abilityRecord && abilityRecord->IsLauncherRoot()) {
         HILOG_DEBUG("Root launcher ability died, set state: INITIAL.");
-        abilityRecord->ClearFlag();
         abilityRecord->SetAbilityState(AbilityState::INITIAL);
     } else {
         mission->RemoveAbilityRecord(abilityRecord);
@@ -2212,7 +2204,6 @@ void AbilityStackManager::OnAbilityDiedByDefault(std::shared_ptr<AbilityRecord> 
     } else {
         if (mission->GetBottomAbilityRecord() == abilityRecord) {
             HILOG_INFO("Ability died, state: INITIAL, %{public}d", __LINE__);
-            abilityRecord->ClearFlag();
             abilityRecord->SetAbilityState(AbilityState::INITIAL);
         } else {
             HILOG_INFO("Ability died, remove record, %{public}d", __LINE__);
