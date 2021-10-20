@@ -44,10 +44,9 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("notifyInvisibleForms", NAPI_NotifyInvisibleForms),
         DECLARE_NAPI_FUNCTION("enableFormsUpdate", NAPI_EnableFormsUpdate),
         DECLARE_NAPI_FUNCTION("disableFormsUpdate", NAPI_DisableFormsUpdate),
-        DECLARE_NAPI_FUNCTION("checkFMSReady", NAPI_CheckFMSReady),
+        DECLARE_NAPI_FUNCTION("isSystemReady", NAPI_CheckFMSReady),
         DECLARE_NAPI_FUNCTION("getAllFormsInfo", NAPI_GetAllFormsInfo),
-        DECLARE_NAPI_FUNCTION("getFormsInfoByApp", NAPI_GetFormsInfoByApp),
-        DECLARE_NAPI_FUNCTION("getFormsInfoByModule", NAPI_GetFormsInfoByModule),
+        DECLARE_NAPI_FUNCTION("getFormsInfo", NAPI_GetFormsInfo),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
     HILOG_INFO("napi_moudule Init end...");
@@ -63,7 +62,7 @@ static napi_module _module = {
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = Init,
-    .nm_modname = "ability.formmanager",
+    .nm_modname = "ability.formManager",
     .nm_priv = ((void *)0),
     .reserved = {0}
 };
