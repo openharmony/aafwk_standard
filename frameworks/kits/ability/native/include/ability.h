@@ -1189,19 +1189,6 @@ public:
     sptr<IBundleMgr> GetBundleMgr();
 
     /**
-     * @brief check permission of bundle, if it not existed.
-     * @return returns the permission is vaild, or false for failed.
-     */
-    bool CheckPermission();
-
-    /**
-     * @brief Permission check.
-     * @param bundleName bundleName.
-     * @return Returns true on success, false on failure.
-     */
-    bool CheckFormPermission(const std::string &bundleName) const;
-
-    /**
      * @brief Add the bundle manager instance for debug.
      * @param bundleManager the bundle manager ipc object.
      */
