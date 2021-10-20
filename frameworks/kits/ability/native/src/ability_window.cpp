@@ -120,11 +120,7 @@ bool AbilityWindow::OnKeyEvent(KeyEvent event)
         return ret;
     }
     switch (event.GetKeyCode()) {
-#ifdef MMI_COMPILE
         case OHOS::KeyEventEnum::KEY_BACK:
-#else
-        case KeyEvent::CODE_BACK:
-#endif
             APP_LOGI("AbilityWindow::OnKeyEvent Back key pressed.");
             if (!event.IsKeyDown()) {
                 ret = OnBackPressed(ability);

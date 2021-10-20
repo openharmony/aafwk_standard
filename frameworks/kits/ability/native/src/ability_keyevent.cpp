@@ -31,7 +31,6 @@ AbilityKeyEventHandle::~AbilityKeyEventHandle()
     APP_LOGI("AbilityKeyEventHandle is destroyed");
 }
 
-#ifdef MMI_COMPILE
 /**
  * @brief Called back when on key.
  */
@@ -77,6 +76,5 @@ bool AbilityKeyEventHandle::OnKey(const KeyEvent &keyEvent)
     APP_LOGI("AbilityKeyEventHandle::OnKey called end. return %{public}s", ret ? "true" : "false");
     return ret;
 }
-#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

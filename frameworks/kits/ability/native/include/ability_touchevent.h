@@ -17,31 +17,21 @@
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_TOUCHEVENT_HANDLE_H
 
 #include <memory>
-
-#ifdef MMI_COMPILE
-#include "multimodal_events_handler.h"
-#include "touch_events_handler.h"
-#endif
+#include "multimodal_event_handler.h"
+#include "touch_event_handler.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 class AbilityImpl;
-
-#ifdef MMI_COMPILE
 class AbilityTouchEventHandle : public MMI::TouchEventHandler {
-#else
-class AbilityTouchEventHandle {
-#endif
 public:
     AbilityTouchEventHandle(std::shared_ptr<AbilityImpl> ability);
     virtual ~AbilityTouchEventHandle();
 
-#ifdef MMI_COMPILE
     /**
      * @brief Called back when on touch.
      */
     virtual bool OnTouch(const TouchEvent& touchEvent) override;
-#endif
 
 private:
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;
