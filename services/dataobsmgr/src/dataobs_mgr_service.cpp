@@ -164,7 +164,7 @@ int DataObsMgrService::UnregisterObserver(const Uri &uri, const sptr<IDataAbilit
         std::bind(&DataObsMgrInner::HandleUnregisterObserver, dataObsMgrInner_, uri, dataObserver);
 
     dataObsMgrInner_->AtomicAddTaskCount();
-    bool ret = handler_->PostTask(unregisterObserverFunc);
+    bool ret = handler_->PostSyncTask(unregisterObserverFunc);
     if (!ret) {
         dataObsMgrInner_->AtomicSubTaskCount();
         HILOG_ERROR("DataObsMgrService::UnregisterObserver PostTask error");

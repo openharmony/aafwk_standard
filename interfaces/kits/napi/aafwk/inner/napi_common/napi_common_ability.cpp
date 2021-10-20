@@ -33,9 +33,9 @@ napi_value *GetGlobalClassContext(void)
     return &g_classContext;
 }
 
-napi_value &GetGlobalDataAbilityHelper(void)
+napi_value *GetGlobalDataAbilityHelper(void)
 {
-    return g_dataAbilityHelper;
+    return &g_dataAbilityHelper;
 }
 
 bool CheckAbilityType(AbilityType typeInAbility, AbilityType typeWant)
@@ -3433,7 +3433,13 @@ napi_value AcquireDataAbilityHelperWrap(napi_env env, napi_callback_info info, D
     }
 
     napi_value result = nullptr;
-    NAPI_CALL(env, napi_new_instance(env, GetGlobalDataAbilityHelper(), 1, &args[PARAM0], &result));
+    NAPI_CALL(env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &args[PARAM0], &result));
+
+    if (!IsTypeForNapiValue(env, result, napi_object)) {
+        HILOG_ERROR("%{public}s, IsTypeForNapiValue retval is false", __func__);
+        return nullptr;
+    }
+
     delete dataAbilityHelperCB;
     dataAbilityHelperCB = nullptr;
     HILOG_INFO("%{public}s,end", __func__);

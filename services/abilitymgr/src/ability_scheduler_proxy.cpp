@@ -885,8 +885,6 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
     MessageParcel reply;
     MessageOption option;
 
-    MessageParcel datatemp;
-
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> results;
     results.clear();
 
@@ -900,36 +898,18 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
         HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to WriteInt32 ret");
         return results;
     }
-    datatemp.WriteInt32(count);
 
     for (int i = 0; i < count; i++) {
         if (!data.WriteParcelable(operations[i].get())) {
             HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to WriteParcelable ret, index = %{public}d", i);
             return results;
         }
-        datatemp.WriteParcelable(operations[i].get());
     }
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_EXECUTEBATCH, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to SendRequest. err: %{public}d", err);
     }
-
-    int tempCount = 0;
-    if (!datatemp.ReadInt32(tempCount)) {
-        HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner fail to ReadInt32 count");
-        return results;
-    }
-    HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner datatemp.ReadInt32(tempCount) to %{public}d", tempCount);
-
-    for (int i = 0; i < tempCount; ++i) {
-        AppExecFwk::DataAbilityOperation *operation = datatemp.ReadParcelable<AppExecFwk::DataAbilityOperation>();
-        if (operation == nullptr) {
-            HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatchInner operation is nullptr, index = %{public}d", i);
-            return results;
-        }
-    }
-    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatchInner operation->testShow done ");
 
     int total = 0;
     if (!reply.ReadInt32(total)) {
@@ -946,7 +926,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
         std::shared_ptr<AppExecFwk::DataAbilityResult> dataAbilityResult(result);
         results.push_back(dataAbilityResult);
     }
-    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatch end");
+    HILOG_INFO("AbilitySchedulerProxy::ExecuteBatch end %{public}d", total);
     return results;
 }
 }  // namespace AAFwk
