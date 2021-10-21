@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
+#include "ability.h"
 #include <cinttypes>
 #include <thread>
 
-#include "ability.h"
 #include "ability_loader.h"
 #include "app_log_wrapper.h"
 #include "display_type.h"
@@ -1670,9 +1670,9 @@ bool Ability::CastTempForm(const int64_t formId)
     }
 
     APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
-    bool result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
+    int result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
 
-    if (!result) {
+    if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
         return false;
     }
@@ -2428,7 +2428,7 @@ bool Ability::ReAcquireForm(const int64_t formId, const Want &want)
 /**
  * @brief Check form manager service ready.
  *
- * @return Returns true if form manager service ready; returns false otherwise.
+ * @return Return true if form manager service ready; returns false otherwise.
  */
 bool Ability::CheckFMSReady()
 {
@@ -2448,8 +2448,8 @@ bool Ability::CheckFMSReady()
 /**
  * @brief Get All FormsInfo.
  *
- * @param formInfos Returns the forms' information of all forms provided.
- * @return Returns true if the request is successfully initiated; returns false otherwise.
+ * @param formInfos Return the forms' information of all forms provided.
+ * @return Return true if the request is successfully initiated; return false otherwise.
  */
 bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
@@ -2459,80 +2459,64 @@ bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
         APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
         return false;
     }
-
-    if (!CheckPermission()) {
-        return false;
+    bool isHaveFormsInfo = iBundleMgr->GetAllFormsInfo(formInfos);
+    if (formInfos.size() == 0 || formInfos.empty()) {
+        isHaveFormsInfo = false;
     }
-
-    return iBundleMgr->GetAllFormsInfo(formInfos);
+    return isHaveFormsInfo;
 }
 
 /**
- * @brief Get forms info by application name.
+ * @brief Get forms info by bundle name .
  *
  * @param bundleName Application name.
- * @param formInfos Returns the forms' information of the specify application name.
- * @return Returns true if the request is successfully initiated; returns false otherwise.
+ * @param formInfos Return the forms' information of the specify application name.
+ * @return Return true if the request is successfully initiated; return false otherwise.
  */
 bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-    bool IsGetFormsInfoByApp = false;
     if (bundleName.empty()) {
-        APP_LOGW("save info fail, empty bundle name");
-        IsGetFormsInfoByApp = false;
+        APP_LOGW("Failed to Get forms info, because empty bundle name");
+        return false;
     }
-
     sptr<IBundleMgr> iBundleMgr = GetBundleMgr();
     if (iBundleMgr == nullptr) {
         APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
-        return IsGetFormsInfoByApp;
+        return false;
     }
-
-    if (!CheckPermission()) {
-        return IsGetFormsInfoByApp;
+    bool isHaveFormsInfo = iBundleMgr->GetFormsInfoByApp(bundleName, formInfos);
+    if (formInfos.size() == 0 || formInfos.empty()) {
+        isHaveFormsInfo = false;
     }
-
-    IsGetFormsInfoByApp = iBundleMgr->GetFormsInfoByApp(bundleName, formInfos);
-    if (formInfos.size() == 0) {
-        return IsGetFormsInfoByApp;
-    }
-
-    return IsGetFormsInfoByApp;
+    return isHaveFormsInfo;
 }
 
 /**
- * @brief Get forms info by application name and module name.
+ * @brief Get forms info by bundle name and module name.
  *
- * @param bundleName Application name.
+ * @param bundleName bundle name.
  * @param moduleName Module name of hap.
- * @param formInfos Returns the forms' information of the specify application name and module name.
- * @return Returns true if the request is successfully initiated; returns false otherwise.
+ * @param formInfos Return the forms' information of the specify bundle name and module name.
+ * @return Return true if the request is successfully initiated; return false otherwise.
  */
 bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-    bool IsGetFormsInfoByModule = false;
     if (bundleName.empty() || moduleName.empty()) {
-        APP_LOGW("save info fail, empty bundle name");
-        return IsGetFormsInfoByModule;
+        APP_LOGW("Failed to Get forms info, because empty bundleName or moduleName");
+        return false;
     }
-
     sptr<IBundleMgr> iBundleMgr = GetBundleMgr();
     if (iBundleMgr == nullptr) {
         APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
-        return IsGetFormsInfoByModule;
+        return false;
     }
-
-    if (!CheckPermission()) {
-        return IsGetFormsInfoByModule;
+    bool isHaveFormsInfo = iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfos);
+    if (formInfos.size() == 0 || formInfos.empty()) {
+        isHaveFormsInfo = false;
     }
-
-    IsGetFormsInfoByModule = iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfos);
-    if (formInfos.size() == 0) {
-        IsGetFormsInfoByModule = false;
-    }
-    return IsGetFormsInfoByModule;
+    return isHaveFormsInfo;
 }
 
 /**
@@ -2561,29 +2545,6 @@ sptr<IBundleMgr> Ability::GetBundleMgr()
     return iBundleMgr_;
 }
 
-/**
- * @brief check permission of bundle, if it not existed.
- * @return returns the permission is vaild, or false for failed.
- */
-bool Ability::CheckPermission()
-{
-    APP_LOGI("%{public}s called.", __func__);
-    return true;
-}
-
-bool Ability::CheckFormPermission(const std::string &bundleName) const
-{
-    APP_LOGI("%{public}s called.", __func__);
-
-    int result = PermissionKit::VerifyPermission(bundleName, Constants::PERMISSION_REQUIRE_FORM, 0);
-    if (result != PermissionState::PERMISSION_GRANTED) {
-        APP_LOGW("permission = %{public}s, bundleName = %{public}s, result = %{public}d",
-            Constants::PERMISSION_REQUIRE_FORM.c_str(),
-            bundleName.c_str(),
-            result);
-    }
-    return result == PermissionState::PERMISSION_GRANTED;
-}
 /**
  * @brief Add the bundle manager instance for debug.
  * @param bundleManager the bundle manager ipc object.
