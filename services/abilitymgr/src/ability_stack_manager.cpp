@@ -347,14 +347,6 @@ int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int 
         return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
-    // if ability is in multiwindow stack, and is bottom ability of this mission,
-    // just background, don't schedule terminate
-    if (!IsFullScreenStack(abilityRecord->GetMissionStackId()) &&
-        missionRecord->GetBottomAbilityRecord() == abilityRecord) {
-        HILOG_INFO("Mulitwindow stack , bottom ability of mission .just background, don't schedule terminate.");
-        return MoveMissionToEndLocked(missionRecord->GetMissionRecordId());
-    }
-
     HILOG_INFO("Schedule normal terminate process.");
     abilityRecord->SetTerminatingState();
     return TerminateAbilityLocked(abilityRecord, resultCode, resultWant);
