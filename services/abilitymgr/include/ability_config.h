@@ -46,6 +46,9 @@ const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WIN
 
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
+
+const std::string PHONE_SERVICE_BUNDLE_NAME = "com.ohos.callui";
+const std::string PHONE_SERVICE_ABILITY_NAME = "com.ohos.callui.ServiceAbility";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS
