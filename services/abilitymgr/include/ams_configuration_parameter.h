@@ -27,7 +27,7 @@ const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_LAUNCHER {"startup_launcher"};
 const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
-const std::string STARTUP_PHONE_SERVICE{"startup_phone_service"};
+const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
