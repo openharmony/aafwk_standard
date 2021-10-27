@@ -14,6 +14,7 @@
  */
 
 #include "ability.h"
+
 #include <cinttypes>
 #include <thread>
 
@@ -42,8 +43,6 @@
 #include "data_ability_result.h"
 #include "data_ability_operation.h"
 #include "data_uri_utils.h"
-
-
 #include "key_event.h"
 #include "touch_event.h"
 #include "form_host_client.h"
@@ -419,8 +418,8 @@ void Ability::StartAbilityForResult(const Want &want, int requestCode)
  * number.
  *
  * @param want Indicates the ability to start.
- * @param requestCode Indicates the request code returned after the ability is started. You can define the request code
- * to identify the results returned by abilities. The value ranges from 0 to 65535.
+ * @param requestCode Indicates the request code returned after the ability is started. You can define the request
+ * code to identify the results returned by abilities. The value ranges from 0 to 65535.
  * @param abilityStartSetting Indicates the setting ability used to start.
  */
 void Ability::StartAbilityForResult(const Want &want, int requestCode, AbilityStartSetting abilityStartSetting)
@@ -656,8 +655,8 @@ void Ability::OnRequestPermissionsFromUserResult(
 {}
 
 /**
- * @brief Called when this ability is about to leave the foreground and enter the background due to a user operation,
- * for example, when the user touches the Home key.
+ * @brief Called when this ability is about to leave the foreground and enter the background due to a user
+ * operation, for example, when the user touches the Home key.
  *
  */
 void Ability::OnLeaveForeground()
@@ -728,7 +727,8 @@ int Ability::OpenRawFile(const Uri &uri, const std::string &mode)
  *
  * @param uri Indicates the database table storing the data to update.
  * @param value Indicates the data to update. This parameter can be null.
- * @param predicates Indicates filter criteria. If this parameter is null, all data records will be updated by default.
+ * @param predicates Indicates filter criteria. If this parameter is null, all data records will be updated by
+ * default.
  *
  * @return Returns the number of data records updated.
  */
@@ -781,15 +781,15 @@ bool Ability::IsTerminating()
 }
 
 /**
- * @brief Called when startAbilityForResult(ohos.aafwk.content.Want,int) is called to start an ability and the result is
- * returned. This method is called only on Page abilities. You can start a new ability to perform some calculations and
- * use setResult (int,ohos.aafwk.content.Want) to return the calculation result. Then the system calls back the current
- * method to use the returned data to execute its own logic.
+ * @brief Called when startAbilityForResult(ohos.aafwk.content.Want,int) is called to start an ability and the
+ * result is returned. This method is called only on Page abilities. You can start a new ability to perform some
+ * calculations and use setResult (int,ohos.aafwk.content.Want) to return the calculation result. Then the system
+ * calls back the current method to use the returned data to execute its own logic.
  *
- * @param requestCode Indicates the request code returned after the ability is started. You can define the request code
- * to identify the results returned by abilities. The value ranges from 0 to 65535.
- * @param resultCode Indicates the result code returned after the ability is started. You can define the result code to
- * identify an error.
+ * @param requestCode Indicates the request code returned after the ability is started. You can define the request
+ * code to identify the results returned by abilities. The value ranges from 0 to 65535.
+ * @param resultCode Indicates the result code returned after the ability is started. You can define the result code
+ * to identify an error.
  * @param resultData Indicates the data returned after the ability is started. You can define the data returned. The
  * value can be null.
  *
@@ -829,10 +829,11 @@ void Ability::OnNewWant(const Want &want)
 }
 
 /**
- * @brief Restores data and states of an ability when it is restored by the system. This method should be implemented by
- * a Page ability. This method is called if an ability was destroyed at a certain time due to resource reclaim or was
- * unexpectedly destroyed and the onSaveAbilityState(ohos.utils.PacMap) method was called to save its user data and
- * states. Generally, this method is called after the onStart(ohos.aafwk.content.Want) method.
+ * @brief Restores data and states of an ability when it is restored by the system. This method should be
+ * implemented by a Page ability. This method is called if an ability was destroyed at a certain time due to
+ * resource reclaim or was unexpectedly destroyed and the onSaveAbilityState(ohos.utils.PacMap) method was called to
+ * save its user data and states. Generally, this method is called after the onStart(ohos.aafwk.content.Want)
+ * method.
  *
  *  @param inState Indicates the PacMap object used for storing data and states. This parameter can not be null.
  *
@@ -844,11 +845,12 @@ void Ability::OnRestoreAbilityState(const PacMap &inState)
 
 /**
  * @brief Saves temporary data and states of this ability. This method should be implemented by a Page ability.
- * This method is called when the system determines that the ability may be destroyed in an unexpected situation, for
- * example, when the screen orientation changes or the user touches the Home key. Generally, this method is used only to
- * save temporary states.
+ * This method is called when the system determines that the ability may be destroyed in an unexpected situation,
+ * for example, when the screen orientation changes or the user touches the Home key. Generally, this method is used
+ * only to save temporary states.
  *
- *  @param outState Indicates the PacMap object used for storing user data and states. This parameter cannot be null.
+ *  @param outState Indicates the PacMap object used for storing user data and states. This parameter cannot be
+ * null.
  *
  */
 void Ability::OnSaveAbilityState(PacMap &outState)
@@ -889,12 +891,13 @@ std::shared_ptr<AAFwk::Want> Ability::GetWant()
 /**
  * @brief Sets the result code and data to be returned by this Page ability to the caller.
  * When a Page ability is destroyed, the caller overrides the AbilitySlice#onAbilityResult(int, int, Want) method to
- * receive the result set in the current method. This method can be called only after the ability has been initialized.
+ * receive the result set in the current method. This method can be called only after the ability has been
+ * initialized.
  *
- * @param resultCode Indicates the result code returned after the ability is destroyed. You can define the result code
- * to identify an error.
- * @param resultData Indicates the data returned after the ability is destroyed. You can define the data returned. This
- * parameter can be null.
+ * @param resultCode Indicates the result code returned after the ability is destroyed. You can define the result
+ * code to identify an error.
+ * @param resultData Indicates the data returned after the ability is destroyed. You can define the data returned.
+ * This parameter can be null.
  */
 void Ability::SetResult(int resultCode, const Want &resultData)
 {
@@ -926,11 +929,11 @@ void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
  * logic.
  *
  * @param want Indicates the want of Service to start.
- * @param restart Indicates the startup mode. The value true indicates that Service is restarted after being destroyed,
- * and the value false indicates a normal startup.
- * @param startId Indicates the number of times the Service ability has been started. The startId is incremented by 1
- * every time the ability is started. For example, if the ability has been started for six times, the value of startId
- * is 6.
+ * @param restart Indicates the startup mode. The value true indicates that Service is restarted after being
+ * destroyed, and the value false indicates a normal startup.
+ * @param startId Indicates the number of times the Service ability has been started. The startId is incremented by
+ * 1 every time the ability is started. For example, if the ability has been started for six times, the value of
+ * startId is 6.
  */
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
@@ -1031,9 +1034,10 @@ void Ability::CancelBackgroundRunning()
  * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
  * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
  * context has changed. If you implement URI normalization for a Data ability, you must also implement
- * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to any
- * method that is called on the Data ability must require normalization verification and denormalization. The default
- * implementation of this method returns null, indicating that this Data ability does not support URI normalization.
+ * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to
+ * any method that is called on the Data ability must require normalization verification and denormalization. The
+ * default implementation of this method returns null, indicating that this Data ability does not support URI
+ * normalization.
  *
  * @param uri Indicates the Uri object to normalize.
  *
@@ -1048,7 +1052,8 @@ Uri Ability::NormalizeUri(const Uri &uri)
  * @brief Deletes one or more data records. This method should be implemented by a Data ability.
  *
  * @param uri Indicates the database table storing the data to delete.
- * @param predicates Indicates filter criteria. If this parameter is null, all data records will be deleted by default.
+ * @param predicates Indicates filter criteria. If this parameter is null, all data records will be deleted by
+ * default.
  *
  * @return Returns the number of data records deleted.
  */
@@ -1066,7 +1071,8 @@ int Ability::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &pred
  * 2. image/ *: Obtains files whose main type is image of any subtype.
  * 3. * /jpg: Obtains files whose subtype is JPG of any main type.
  *
- * @return Returns the MIME type of the matched files; returns null if there is no type that matches the Data ability.
+ * @return Returns the MIME type of the matched files; returns null if there is no type that matches the Data
+ * ability.
  */
 std::vector<std::string> Ability::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
@@ -1095,7 +1101,8 @@ int Ability::OpenFile(const Uri &uri, const std::string &mode)
  * @param uri Indicates the database table storing the data to query.
  * @param columns Indicates the columns to be queried, in array, for example, {"name","age"}. You should define the
  * processing logic when this parameter is null.
- * @param predicates Indicates filter criteria. If this parameter is null, all data records will be queried by default.
+ * @param predicates Indicates filter criteria. If this parameter is null, all data records will be queried by
+ * default.
  *
  * @return Returns the queried data.
  */
@@ -1142,13 +1149,13 @@ int Ability::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBuck
 }
 
 /**
- * @brief Migrates this ability to the given device on the same distributed network in a reversible way that allows this
- * ability to be migrated back to the local device through reverseContinueAbility(). The ability to migrate and its
- * ability slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown, indicating that
- * the ability does not support migration.
+ * @brief Migrates this ability to the given device on the same distributed network in a reversible way that allows
+ * this ability to be migrated back to the local device through reverseContinueAbility(). The ability to migrate and
+ * its ability slices must implement the IAbilityContinuation interface. Otherwise, an exception is thrown,
+ * indicating that the ability does not support migration.
  *
- * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter is
- * null, this method has the same effect as ContinueAbilityReversibly().
+ * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
+ * is null, this method has the same effect as ContinueAbilityReversibly().
  *
  */
 void Ability::ContinueAbilityReversibly(const std::string &deviceId)
@@ -1202,9 +1209,9 @@ std::shared_ptr<AbilityPackage> Ability::GetAbilityPackage()
  *
  * @param uri uri Indicates the Uri object to denormalize.
  *
- * @return Returns the denormalized Uri object if the denormalization is successful; returns the original Uri passed to
- * this method if there is nothing to do; returns null if the data identified by the original Uri cannot be found in the
- * current environment.
+ * @return Returns the denormalized Uri object if the denormalization is successful; returns the original Uri passed
+ * to this method if there is nothing to do; returns null if the data identified by the original Uri cannot be found
+ * in the current environment.
  */
 Uri Ability::DenormalizeUri(const Uri &uri)
 {
@@ -1240,9 +1247,9 @@ AbilityLifecycleExecutor::LifecycleState Ability::GetState()
 }
 
 /**
- * @brief A Page or Service ability uses this method to start a specific ability. The system locates the target ability
- * from installed abilities based on the value of the intent parameter and then starts it. You can specify the ability
- * to start using the intent parameter.
+ * @brief A Page or Service ability uses this method to start a specific ability. The system locates the target
+ * ability from installed abilities based on the value of the intent parameter and then starts it. You can specify
+ * the ability to start using the intent parameter.
  *
  * @param intent Indicates the ability to start.
  */
@@ -1292,8 +1299,8 @@ void Ability::SetMainRoute(const std::string &entry)
 {}
 
 /**
- * @brief By binding an action, you can set different action parameters in Intent to present different initial pages.
- *         You must register actions in the profile file.
+ * @brief By binding an action, you can set different action parameters in Intent to present different initial
+ * pages. You must register actions in the profile file.
  *
  * @param action Indicates the action to bind.
  *
@@ -1362,8 +1369,8 @@ bool Ability::StopAbility(const AAFwk::Want &want)
 
 /**
  * @brief Posts a scheduled Runnable task to a new non-UI thread.
- * The task posted via this method will be executed in a new thread, which allows you to perform certain time-consuming
- * operations. To use this method, you must also override the supportHighPerformanceUI() method.
+ * The task posted via this method will be executed in a new thread, which allows you to perform certain
+ * time-consuming operations. To use this method, you must also override the supportHighPerformanceUI() method.
  *
  * @param task Indicates the Runnable task to post.
  *
@@ -1974,7 +1981,8 @@ void Ability::OnUpdate(const int64_t formId)
 {}
 
 /**
- * @brief Called when the form provider is notified that a temporary form is successfully converted to a normal form.
+ * @brief Called when the form provider is notified that a temporary form is successfully converted to a normal
+ * form.
  *
  * @param formId Indicates the ID of the form.
  * @return None.
