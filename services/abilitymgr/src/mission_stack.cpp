@@ -126,6 +126,17 @@ std::shared_ptr<MissionRecord> MissionStack::GetMissionRecordById(int id)
     return nullptr;
 }
 
+std::list<std::shared_ptr<MissionRecord>> MissionStack::GetMissionRecordByWinMode(int key)
+{
+    std::list<std::shared_ptr<MissionRecord>> missions;
+    for (auto iter = missions_.begin(); iter != missions_.end(); iter++) {
+        if ((*iter) != nullptr && (*iter)->GetMissionOption().winModeKey == key) {
+            missions.push_back(*iter);
+        }
+    }
+    return missions;
+}
+
 std::shared_ptr<AbilityRecord> MissionStack::GetAbilityRecordByToken(const sptr<IRemoteObject> &token)
 {
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
@@ -192,8 +203,46 @@ void MissionStack::AddMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
     };
     auto iter = std::find_if(missions_.begin(), missions_.end(), isExist);
     if (iter == missions_.end()) {
+        missions_.emplace_front(mission);
+    }
+}
+
+void MissionStack::AddMissionRecordToEnd(std::shared_ptr<MissionRecord> mission)
+{
+    CHECK_POINTER(mission);
+    auto isExist = [targetMission = mission](const std::shared_ptr<MissionRecord> &mission) {
+        if (mission == nullptr) {
+            return false;
+        }
+        return targetMission == mission;
+    };
+    auto iter = std::find_if(missions_.begin(), missions_.end(), isExist);
+    if (iter == missions_.end()) {
+        missions_.emplace_back(mission);
+    }
+}
+
+std::shared_ptr<MissionRecord> MissionStack::EmplaceMissionRecord(
+    int winModeKey, std::shared_ptr<MissionRecord> mission)
+{
+    if (!mission) {
+        HILOG_ERROR("pointer is nullptr.");
+        return nullptr;
+    }
+    std::shared_ptr<MissionRecord> oldMission;
+    for (auto iter = missions_.begin(); iter != missions_.end(); iter++) {
+        if ((*iter)->GetMissionOption().winModeKey == winModeKey) {
+            oldMission = (*iter);
+            missions_.erase(iter++);
+            missions_.emplace(iter, mission);
+            break;
+        }
+    }
+    if (oldMission == nullptr) {
         missions_.push_front(mission);
     }
+
+    return oldMission;
 }
 
 void MissionStack::MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
