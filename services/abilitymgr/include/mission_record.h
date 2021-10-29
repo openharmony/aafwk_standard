@@ -222,9 +222,6 @@ public:
     bool IsEmpty();
     void Resume(const std::shared_ptr<MissionRecord> &backup);
 
-    void UpdateActiveTimestamp();
-    int64_t GetActiveTimestamp() const;
-
 protected:
     virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
     virtual unsigned int GetChildSize() override;
@@ -241,7 +238,6 @@ private:
 
     std::shared_ptr<MissionDescriptionInfo> missionDescriptionInfo_ = nullptr;
     MissionOption option_;
-    int64_t activeTimestamp_ {0};
 };
 }  // namespace AAFwk
 }  // namespace OHOS

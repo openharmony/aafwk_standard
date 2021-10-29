@@ -437,11 +437,6 @@ int AbilityManagerStub::StartAbilityForSettingsInner(MessageParcel &data, Messag
         return ERR_INVALID_VALUE;
     }
     AbilityStartSetting *abilityStartSetting = data.ReadParcelable<AbilityStartSetting>();
-    if (abilityStartSetting == nullptr) {
-        HILOG_ERROR("abilityStartSetting is nullptr");
-        delete want;
-        return ERR_INVALID_VALUE;
-    }
     auto callerToken = data.ReadParcelable<IRemoteObject>();
     int requestCode = data.ReadInt32();
     int32_t result = StartAbility(*want, *abilityStartSetting, callerToken, requestCode);
@@ -467,21 +462,14 @@ int AbilityManagerStub::MoveMissionToFloatingStackInner(MessageParcel &data, Mes
 
 int AbilityManagerStub::MoveMissionToSplitScreenStackInner(MessageParcel &data, MessageParcel &reply)
 {
-    MissionOption *primary = data.ReadParcelable<MissionOption>();
-    if (primary == nullptr) {
+    MissionOption *missionOption = data.ReadParcelable<MissionOption>();
+    if (missionOption == nullptr) {
         HILOG_ERROR("missionOption is nullptr");
         return ERR_INVALID_VALUE;
     }
-    MissionOption *secondary = data.ReadParcelable<MissionOption>();
-    if (secondary == nullptr) {
-        HILOG_ERROR("missionOption is nullptr");
-        delete primary;
-        return ERR_INVALID_VALUE;
-    }
-    auto result = MoveMissionToSplitScreenStack(*primary, *secondary);
+    auto result = MoveMissionToSplitScreenStack(*missionOption);
     reply.WriteInt32(result);
-    delete primary;
-    delete secondary;
+    delete missionOption;
     return NO_ERROR;
 }
 

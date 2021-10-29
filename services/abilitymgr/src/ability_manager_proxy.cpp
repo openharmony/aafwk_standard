@@ -752,7 +752,7 @@ int AbilityManagerProxy::MoveMissionToFloatingStack(const MissionOption &mission
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
+int AbilityManagerProxy::MoveMissionToSplitScreenStack(const MissionOption &missionOption)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -761,7 +761,7 @@ int AbilityManagerProxy::MoveMissionToSplitScreenStack(const MissionOption &prim
     if (!WriteInterfaceToken(data)) {
         return INNER_ERR;
     }
-    if (!data.WriteParcelable(&primary) || !data.WriteParcelable(&secondary)) {
+    if (!data.WriteParcelable(&missionOption)) {
         HILOG_ERROR("fail to write to parcel.");
         return INNER_ERR;
     }

@@ -92,7 +92,7 @@ bool IsTestAbilityExist2(const std::string &data)
  * Function: GetRecordId
  * SubFunction: GetRecordId
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify create one abilityRecord could through GetRecordId 1
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetRecordId, TestSize.Level1)
@@ -105,7 +105,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetRecordId, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: LoadAbility Activate Inactivate MoveToBackground
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: LoadAbility Activate Inactivate MoveToBackground UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_UpdateLifeState, TestSize.Level1)
@@ -125,7 +125,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_UpdateLifeState, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetMissionRecord GetMissionRecord
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetMissionRecord GetMissionRecord UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetMissionRecord, TestSize.Level1)
@@ -140,7 +140,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetMissionRecord, TestSize.Level1
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetAbilityInfo GetAbilityInfo
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetAbilityInfo GetAbilityInfo UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetAbilityInfo, TestSize.Level1)
@@ -158,7 +158,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetAbilityInfo, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetApplicationInfo GetApplicationInfo
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetApplicationInfo GetApplicationInfo UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetApplicationInfo, TestSize.Level1)
@@ -176,7 +176,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetApplicationInfo, TestSize.Leve
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetAbilityState GetAbilityState
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetAbilityState GetAbilityState UT.
  */
 HWTEST_P(AbilityRecordTest, AaFwk_AbilityMS_SetGetAbilityState, TestSize.Level1)
@@ -196,7 +196,7 @@ INSTANTIATE_TEST_CASE_P(AbilityRecordTestCaseP, AbilityRecordTest,
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetAbilityState GetAbilityState
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetAbilityState GetAbilityState UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetToken, TestSize.Level1)
@@ -209,7 +209,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetToken, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetPreAbilityRecord SetNextAbilityRecord GetPreAbilityRecord GetNextAbilityRecord
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetPreAbilityRecord SetNextAbilityRecord GetPreAbilityRecord GetNextAbilityRecord UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetPreNextAbilityReocrd, TestSize.Level1)
@@ -232,7 +232,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetPreNextAbilityReocrd, TestSize
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: SetEventId GetEventId
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: SetEventId GetEventId UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetEventId, TestSize.Level1)
@@ -247,7 +247,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetEventId, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: IsReady
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: IsReady UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsReady, TestSize.Level1)
@@ -263,7 +263,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsReady, TestSize.Level1)
  * Function: create AbilityRecord
  * SubFunction: NA
  * FunctionPoints: IsLauncherAbility
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: IsLauncherAbility UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsLauncherAbility, TestSize.Level1)
@@ -284,7 +284,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsLauncherAbility, TestSize.Level1)
  * Function: Add connection record to ability record' list
  * SubFunction: NA
  * FunctionPoints: AddConnectRecordToList
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: AddConnectRecordToList UT.
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Level0)
@@ -341,7 +341,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Lev
  * Function: ConvertAbilityState
  * SubFunction: NA
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify ConvertAbilityState convert success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_ConvertAbilityState, TestSize.Level1)
@@ -371,7 +371,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_ConvertAbilityState, TestSize.Level1
  * Function: IsTerminating
  * SubFunction: IsTerminating SetTerminatingState
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify IsTerminating SetTerminatingState success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsTerminating, TestSize.Level1)
@@ -385,7 +385,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsTerminating, TestSize.Level1)
  * Function: Activate
  * SubFunction: Activate
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify lifecycleDeal_ is nullptr cause Activate is not call
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Activate, TestSize.Level1)
@@ -404,7 +404,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Activate, TestSize.Level1)
  * Function: Inactivate
  * SubFunction: Inactivate
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify lifecycleDeal_ is nullptr cause Inactivate is not call
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Inactivate, TestSize.Level1)
@@ -423,7 +423,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Inactivate, TestSize.Level1)
  * Function: MoveToBackground
  * SubFunction: MoveToBackground
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify lifecycleDeal_ is nullptr cause MoveToBackground is not call
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_MoveToBackground, TestSize.Level1)
@@ -446,7 +446,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_MoveToBackground, TestSize.Level1)
  * Function: Terminate
  * SubFunction: Terminate
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify lifecycleDeal_ is nullptr cause Terminate is not call
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Terminate, TestSize.Level1)
@@ -469,7 +469,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Terminate, TestSize.Level1)
  * Function: GetWindowInfo
  * SubFunction: GetWindowInfo RemoveWindowInfo AddWindowInfo
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify windowInfo set get remove success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetWindowInfo, TestSize.Level1)
@@ -486,7 +486,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetWindowInfo, TestSize.Level1)
  * Function: SetScheduler
  * SubFunction: SetScheduler
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify AbilityRecord SetScheduler success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetScheduler, TestSize.Level1)
@@ -503,7 +503,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetScheduler, TestSize.Level1)
  * Function: GetAbilityRecordByToken
  * SubFunction: GetAbilityRecordByToken
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify AbilityRecord token GetAbilityRecordByToken success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetAbilityRecordByToken, TestSize.Level1)
@@ -517,7 +517,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetAbilityRecordByToken, TestSize.Le
  * Function: Dump
  * SubFunction: Dump
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify Dump success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Dump, TestSize.Level1)
@@ -562,7 +562,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Dump, TestSize.Level1)
  * Function: SetWant GetWant
  * SubFunction: SetWant GetWant
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify SetWant GetWant can get,set success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Want, TestSize.Level1)
@@ -578,7 +578,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Want, TestSize.Level1)
  * Function: GetRequestCode
  * SubFunction: GetRequestCode
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify GetRequestCode success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetRequestCode, TestSize.Level1)
@@ -591,7 +591,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetRequestCode, TestSize.Level1)
  * Function: GetAbilityTypeString
  * SubFunction: GetAbilityTypeString
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify GetAbilityTypeString can get success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetAbilityTypeString, TestSize.Level1)
@@ -638,7 +638,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetAbilityTypeString, TestSize.Level
  * Function: SetResult GetResult
  * SubFunction: SetResult GetResult
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify SetResult GetResult can get,set success
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Result, TestSize.Level1)
@@ -653,7 +653,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Result, TestSize.Level1)
  * Function: SendResult
  * SubFunction: SendResult
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify SendResult scheduler is nullptr
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SendResult, TestSize.Level1)
@@ -670,7 +670,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SendResult, TestSize.Level1)
  * Function: SetConnRemoteObject GetConnRemoteObject
  * SubFunction: SetConnRemoteObject GetConnRemoteObject
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify SetConnRemoteObject GetConnRemoteObject UT
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_ConnRemoteObject, TestSize.Level1)
@@ -685,7 +685,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_ConnRemoteObject, TestSize.Level1)
  * Function: IsCreateByConnect SetCreateByConnectMode
  * SubFunction: IsCreateByConnect SetCreateByConnectMode
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify IsCreateByConnect SetCreateByConnectMode UT
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CreateByConnect, TestSize.Level1)
@@ -699,7 +699,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CreateByConnect, TestSize.Level1)
  * Function: OnConfigurationChanged
  * SubFunction: Configuration Changed
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify Configuration Changed UT
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_001, TestSize.Level1)
@@ -713,7 +713,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_001, TestSize
  * Function: OnConfigurationChanged
  * SubFunction: Configuration Changed
  * FunctionPoints: NA
- * EnvConditions: NA
+ * EnvConditions:NA
  * CaseDescription: Verify Configuration Changed UT 
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_002, TestSize.Level1)
@@ -723,55 +723,5 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_002, TestSize
     EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
 }
 
-/*
- * Feature: AbilityRecord
- * Function: SetMovingBackgroundFlag, IsMovingBackground
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetMovingBackgroundFlag_001, TestSize.Level1)
-{
-    EXPECT_EQ(false, abilityRecord_->IsMovingBackground());
-    abilityRecord_->SetMovingBackgroundFlag(true);
-    EXPECT_EQ(true, abilityRecord_->IsMovingBackground());
-}
-
-/*
- * Feature: AbilityRecord
- * Function: IsActiveState
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsActiveState_001, TestSize.Level1)
-{
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::TERMINATING);
-    EXPECT_EQ(false, abilityRecord_->IsActiveState());
-
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    EXPECT_EQ(true, abilityRecord_->IsActiveState());
-}
-
-/*
- * Feature: AbilityRecord
- * Function: SetAbilityState
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetAbilityState_001, TestSize.Level1)
-{
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::TERMINATING);
-    auto state = abilityRecord_->GetAbilityState();
-    EXPECT_EQ(state, OHOS::AAFwk::AbilityState::TERMINATING);
-
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    state = abilityRecord_->GetAbilityState();
-    EXPECT_EQ(state, OHOS::AAFwk::AbilityState::ACTIVE);
-}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -236,12 +236,17 @@ public:
         return 0;
     }
 
+    int UpdateConfiguration(const DummyConfiguration &config)
+    {
+        return 0;
+    }
+
     int MoveMissionToFloatingStack(const MissionOption &missionOption)
     {
         return 0;
     }
 
-    int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
+    int MoveMissionToSplitScreenStack(const MissionOption &missionOption)
     {
         return 0;
     }
@@ -272,11 +277,6 @@ public:
     }
 
     int SetMissionStackSetting(const StackSetting &stackSetting)
-    {
-        return 0;
-    }
-
-    int UpdateConfiguration(const DummyConfiguration &config)
     {
         return 0;
     }

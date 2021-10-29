@@ -84,6 +84,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
   ]
+
   sources = [
     "${SUBSYSTEM_APPEXEXFWK_DIR}/interfaces/innerkits/appexecfwk_core/src/appmgr/process_info.cpp",
     "${SUBSYSTEM_DIR}/src/ability.cpp",
