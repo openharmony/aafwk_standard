@@ -202,6 +202,12 @@ AbilityState AbilityRecord::GetAbilityState() const
 void AbilityRecord::SetAbilityState(AbilityState state)
 {
     currentState_ = state;
+    if (state == AbilityState::ACTIVE) {
+        auto mission = GetMissionRecord();
+        if (mission) {
+            mission->UpdateActiveTimestamp();
+        }
+    }
 }
 
 void AbilityRecord::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
@@ -374,7 +380,7 @@ void AbilityRecord::ProcessActivateInMoving()
 
 void AbilityRecord::ProcessInactivateInMoving()
 {
-    HILOG_DEBUG("ProcessActivateInMovingState.");
+    HILOG_DEBUG("ProcessInactivateInMoving.");
     if (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING)) {
         SetInMovingState(true);
         ProcessInactivate();
@@ -937,6 +943,12 @@ bool AbilityRecord::IsAbilityState(const AbilityState &state) const
     return (currentState_ == state);
 }
 
+bool AbilityRecord::IsActiveState() const
+{
+    return (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING) ||
+            IsAbilityState(AbilityState::INITIAL));
+}
+
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
 {
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
@@ -1104,6 +1116,16 @@ void AbilityRecord::ClearFlag()
     backAbilityRecord_.reset();
     startTime_ = 0;
     appState_ = AppState::END;
+}
+
+void AbilityRecord::SetMovingBackgroundFlag(bool isMoving)
+{
+    isMovingBackground_ = isMoving;
+}
+
+bool AbilityRecord::IsMovingBackground() const
+{
+    return isMovingBackground_;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

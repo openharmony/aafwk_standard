@@ -317,6 +317,9 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
     EXPECT_TRUE(abilityRecord->IsReady());
 
     for (int i = 0; i < COUNT; ++i) {
+
+        EXPECT_CALL(*mockAbilityScheduerStub, ScheduleSaveAbilityState(_)).Times(1);
+          
         // Activate
         auto mockActivateHandler = [&](const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo) {
             testResult = (lifeCycleStateInfo.state == AbilityLifeCycleState::ABILITY_STATE_ACTIVE);

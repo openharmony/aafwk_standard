@@ -106,10 +106,52 @@ public:
     void startAbility4();
     void startAbility5();
     void startAbility6();
+    void OnStartAms();
 
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
 };
+
+void AbilityDumpTest::OnStartAms()
+{
+    if (g_abilityMs) {
+        if (g_abilityMs->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+   
+        g_abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        g_abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(g_abilityMs->eventLoop_);
+
+        g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
+        EXPECT_TRUE(g_abilityMs->handler_);
+        EXPECT_TRUE(g_abilityMs->connectManager_);
+
+        g_abilityMs->connectManager_->SetEventHandler(g_abilityMs->handler_);
+
+        g_abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(g_abilityMs->dataAbilityManager_);
+
+        g_abilityMs->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(g_abilityMs->amsConfigResolver_);
+        g_abilityMs->amsConfigResolver_->Parse();
+
+        g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(g_abilityMs->pendingWantManager_);
+      
+        int userId = g_abilityMs->GetUserId();
+        g_abilityMs->SetStackManager(userId);
+        g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(g_abilityMs->systemAppManager_);
+
+        g_abilityMs->eventLoop_->Run();
+
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
 
 void AbilityDumpTest::SetUpTestCase()
 {
@@ -127,7 +169,7 @@ void AbilityDumpTest::SetUp()
 
     g_abilityMs = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     g_appTestService = OHOS::DelayedSingleton<AppManagerTestService>::GetInstance();
-    g_abilityMs->OnStart();
+    OnStartAms();
     WaitUntilTaskFinished();
     g_appTestService->Start();
 
@@ -136,6 +178,7 @@ void AbilityDumpTest::SetUp()
 
 void AbilityDumpTest::TearDown()
 {
+    g_abilityMs->OnStop();
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
@@ -143,8 +186,10 @@ void AbilityDumpTest::StartAbilityes()
 {
     EXPECT_TRUE(g_abilityMs->currentStackManager_);
     auto currentTopAbilityRecord = g_abilityMs->currentStackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(currentTopAbilityRecord);
-    currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
+    if (currentTopAbilityRecord) {
+        currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
+    }
+    
     startAbility6();
     startAbility1();
     startAbility2();

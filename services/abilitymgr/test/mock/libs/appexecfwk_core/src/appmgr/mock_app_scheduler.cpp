@@ -115,6 +115,11 @@ void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
     HILOG_INFO("Test AppScheduler::AttachTimeOut()");
 }
 
+void AppScheduler::PrepareTerminate(const sptr<IRemoteObject> &token)
+{
+    HILOG_INFO("Test AppScheduler::PrepareTerminate()");
+}
+
 int AppScheduler::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
     HILOG_INFO("Test AppScheduler::CompelVerifyPermission()");

@@ -89,6 +89,13 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "code", jsValue));
     return jsObject;
 }
+
+void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const int propValue)
+{
+    napi_value prop = nullptr;
+    napi_create_int32(env, propValue, &prop);
+    napi_set_named_property(env, obj, propName, prop);
+}
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

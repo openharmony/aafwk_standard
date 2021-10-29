@@ -75,7 +75,7 @@ AbilityRequest MissionRecordTest::GenerateAbilityRequest(const std::string &devi
  * Function: GetAbilityRecordCount and GetMissionRecordId
  * SubFunction: NA
  * FunctionPoints: MissionRecord GetAbilityRecordCount and GetMissionRecordId
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify GetAbilityRecordCount and GetMissionRecordId value
  */
 HWTEST_F(MissionRecordTest, stack_operating_001, TestSize.Level1)
@@ -90,7 +90,7 @@ HWTEST_F(MissionRecordTest, stack_operating_001, TestSize.Level1)
  * Function: AddAbilityRecordToTop and GetTopAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord AddAbilityRecordToTop and GetTopAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: add ability record, Verify get top ability record equality
  */
 HWTEST_F(MissionRecordTest, stack_operating_002, TestSize.Level1)
@@ -107,7 +107,7 @@ HWTEST_F(MissionRecordTest, stack_operating_002, TestSize.Level1)
  * Function: AddAbilityRecordToTop and GetTopAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord AddAbilityRecordToTop and GetTopAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: add null ability record, Verify that get top ability record is empty
  */
 HWTEST_F(MissionRecordTest, stack_operating_003, TestSize.Level1)
@@ -124,7 +124,7 @@ HWTEST_F(MissionRecordTest, stack_operating_003, TestSize.Level1)
  * Function: GetAbilityRecordCount and GetTopAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord GetAbilityRecordCount and GetTopAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Create a mission record to view the value
  */
 HWTEST_F(MissionRecordTest, stack_operating_005, TestSize.Level1)
@@ -139,7 +139,7 @@ HWTEST_F(MissionRecordTest, stack_operating_005, TestSize.Level1)
  * Function: RemoveAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord RemoveAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Create a mission record, add ability, Verify the removeabilityrecord operation
  */
 HWTEST_F(MissionRecordTest, stack_operating_006, TestSize.Level1)
@@ -157,7 +157,7 @@ HWTEST_F(MissionRecordTest, stack_operating_006, TestSize.Level1)
  * Function: RemoveAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord RemoveAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Create a mission record, add ability, remove ability2 fail
  */
 HWTEST_F(MissionRecordTest, stack_operating_007, TestSize.Level1)
@@ -175,7 +175,7 @@ HWTEST_F(MissionRecordTest, stack_operating_007, TestSize.Level1)
  * Function: RemoveAll
  * SubFunction: NA
  * FunctionPoints: MissionRecord RemoveAll
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: mission record reomve all, Verify count
  */
 HWTEST_F(MissionRecordTest, stack_operating_008, TestSize.Level1)
@@ -195,7 +195,7 @@ HWTEST_F(MissionRecordTest, stack_operating_008, TestSize.Level1)
  * Function: GetBottomAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord GetBottomAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify GetBottomAbilityRecord value
  */
 HWTEST_F(MissionRecordTest, stack_operating_009, TestSize.Level1)
@@ -214,7 +214,7 @@ HWTEST_F(MissionRecordTest, stack_operating_009, TestSize.Level1)
  * Function: GetAbilityRecordByToken
  * SubFunction: NA
  * FunctionPoints: MissionRecord GetAbilityRecordByToken
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify GetAbilityRecordByToken value
  */
 HWTEST_F(MissionRecordTest, stack_operating_010, TestSize.Level1)
@@ -238,7 +238,7 @@ HWTEST_F(MissionRecordTest, stack_operating_010, TestSize.Level1)
  * Function: RemoveTopAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord RemoveTopAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify RemoveTopAbilityRecord operation
  */
 HWTEST_F(MissionRecordTest, stack_operating_011, TestSize.Level1)
@@ -256,7 +256,7 @@ HWTEST_F(MissionRecordTest, stack_operating_011, TestSize.Level1)
  * Function: RemoveTopAbilityRecord
  * SubFunction: NA
  * FunctionPoints: MissionRecord RemoveTopAbilityRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify RemoveTopAbilityRecord operation
  */
 HWTEST_F(MissionRecordTest, stack_operating_012, TestSize.Level1)
@@ -283,7 +283,7 @@ HWTEST_F(MissionRecordTest, stack_operating_012, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: SetPreMissionRecord GetPreMissionRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: SetPreMissionRecord GetPreMissionRecord UT.
  */
 HWTEST_F(MissionRecordTest, stack_operating_013, TestSize.Level1)
@@ -299,7 +299,7 @@ HWTEST_F(MissionRecordTest, stack_operating_013, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: SetIsLauncherCreate IsLauncherCreate
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: SetIsLauncherCreate IsLauncherCreate UT.
  */
 HWTEST_F(MissionRecordTest, stack_operating_014, TestSize.Level1)
@@ -314,7 +314,7 @@ HWTEST_F(MissionRecordTest, stack_operating_014, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionRecordTest, stack_operating_015, TestSize.Level1)
@@ -328,7 +328,7 @@ HWTEST_F(MissionRecordTest, stack_operating_015, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionRecordTest, stack_operating_016, TestSize.Level1)
@@ -346,7 +346,7 @@ HWTEST_F(MissionRecordTest, stack_operating_016, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionRecordTest, stack_operating_017, TestSize.Level1)
@@ -365,7 +365,7 @@ HWTEST_F(MissionRecordTest, stack_operating_017, TestSize.Level1)
  * Function: NA
  * SubFunction: NA
  * FunctionPoints: SetIsLauncherCreate IsLauncherCreate
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: SetIsLauncherCreate IsLauncherCreate UT.
  */
 HWTEST_F(MissionRecordTest, stack_Resume_001, TestSize.Level1)
@@ -381,6 +381,26 @@ HWTEST_F(MissionRecordTest, stack_Resume_001, TestSize.Level1)
     missionRecord->Resume(backup);
     EXPECT_TRUE(1 == missionRecord->abilities_.size());
     EXPECT_EQ(true, ability->IsRestarting());
+}
+
+/*
+ * Feature: MissionRecord
+ * Function: UpdateActiveTimestamp, GetActiveTimestamp
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(MissionRecordTest, stack_ActiveTimestamp_001, TestSize.Level1)
+{
+    auto missionRecord = std::make_shared<MissionRecord>();
+    int time = 0;
+
+    auto activeTime = missionRecord->GetActiveTimestamp();
+    EXPECT_EQ(activeTime, time);
+    missionRecord->UpdateActiveTimestamp();
+    activeTime = missionRecord->GetActiveTimestamp();
+    EXPECT_TRUE(time < activeTime);
 }
 
 }  // namespace AAFwk

@@ -146,6 +146,51 @@ bool AbilityMgrModuleTest::MockAppClent()
     return true;
 }
 
+static void OnStartAms()
+{
+    if (AbilityMgrModuleTest::abilityMgrServ_) {
+        if (AbilityMgrModuleTest::abilityMgrServ_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        AbilityMgrModuleTest::abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
+        AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ =
+            AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_);
+
+        AbilityMgrModuleTest::abilityMgrServ_->handler_ =
+            std::make_shared<AbilityEventHandler>(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ ,
+                                                    AbilityMgrModuleTest::abilityMgrServ_);
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
+
+        AbilityMgrModuleTest::abilityMgrServ_->connectManager_-> \
+            SetEventHandler(AbilityMgrModuleTest::abilityMgrServ_->handler_);
+
+        AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_);
+
+        AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_);
+        AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_->Parse();
+
+        AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
+      
+        int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
+        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId);
+        AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
+
+        AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
+
+        GTEST_LOG_(INFO)<< "OnStart success";
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
+
 void AbilityMgrModuleTest::SetUpTestCase(void)
 {
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
@@ -154,6 +199,8 @@ void AbilityMgrModuleTest::SetUpTestCase(void)
 
     abilityMgrServ_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     mockAppMgrClient_ = std::make_shared<MockAppMgrClient>();
+
+    OnStartAms();
 }
 
 void AbilityMgrModuleTest::TearDownTestCase(void)
@@ -170,11 +217,6 @@ void AbilityMgrModuleTest::SetUp(void)
 
         MockAppClent();
     }
-    auto state = abilityMgrServ_->QueryServiceState();
-    if (state != ServiceRunningState::STATE_RUNNING) {
-        abilityMgrServ_->OnStart();
-    }
-
     WaitAMS();
 }
 
@@ -511,7 +553,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_002, TestSize.Level1)
 
     int result = abilityMgrServ_->TerminateAbility(abilityRecord2->GetToken(), -1, nullptr);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::INACTIVATING, abilityRecord2->GetAbilityState());
-    EXPECT_EQ(1, mission->GetAbilityRecordCount());
+    EXPECT_EQ(2, mission->GetAbilityRecordCount());
     EXPECT_EQ(OHOS::ERR_OK, result);
 }
 
@@ -586,12 +628,12 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_003, TestSize.Level1)
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_004, TestSize.Level1)
 {
     // It's turned on during initialization, so it's turned off here
-    abilityMgrServ_->OnStop();
+    abilityMgrServ_->state_ = ServiceRunningState::STATE_NOT_START;
 
     auto state = abilityMgrServ_->QueryServiceState();
     EXPECT_EQ(state, ServiceRunningState::STATE_NOT_START);
 
-    abilityMgrServ_->OnStart();
+    abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
     WaitAMS();
 
     EXPECT_TRUE(abilityMgrServ_->dataAbilityManager_);

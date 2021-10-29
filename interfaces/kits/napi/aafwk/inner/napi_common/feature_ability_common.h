@@ -252,6 +252,8 @@ struct DAHelperOnOffCB {
     sptr<NAPIDataAbilityObserver> observer;
     std::string uri;
     int result = 0;
+    std::vector<DAHelperOnOffCB *> NotifyList;
+    std::vector<DAHelperOnOffCB *> DestoryList;
 };
 
 static inline std::string NapiValueToStringUtf8(napi_env env, napi_value value)
