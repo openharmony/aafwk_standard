@@ -97,6 +97,7 @@ public:
     static void init();
     void SetUp();
     void TearDown();
+    void OnStartAms();
     bool StartAbility(
         const AbilityRequest &request, OHOS::sptr<Token> &token, OHOS::sptr<AbilityScheduler> &abilityScheduler);
     void TerminateAbility(
@@ -123,19 +124,62 @@ void TerminateAbilityTest::init()
     radioTopAbilityRequest_ = GenerateAbilityRequest("device", "RadioTopAbility", "radio", "com.ix.hiRadio");
 }
 
+void TerminateAbilityTest::OnStartAms()
+{
+    if (g_aams) {
+        if (g_aams->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+   
+        g_aams->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        g_aams->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(g_aams->eventLoop_);
+
+        g_aams->handler_ = std::make_shared<AbilityEventHandler>(g_aams->eventLoop_, g_aams);
+        EXPECT_TRUE(g_aams->handler_);
+        EXPECT_TRUE(g_aams->connectManager_);
+
+        g_aams->connectManager_->SetEventHandler(g_aams->handler_);
+
+        g_aams->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(g_aams->dataAbilityManager_);
+
+        g_aams->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(g_aams->amsConfigResolver_);
+        g_aams->amsConfigResolver_->Parse();
+
+        g_aams->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(g_aams->pendingWantManager_);
+      
+        int userId = g_aams->GetUserId();
+        g_aams->SetStackManager(userId);
+        g_aams->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(g_aams->systemAppManager_);
+
+        g_aams->eventLoop_->Run();
+
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
+
 void TerminateAbilityTest::SetUpTestCase(void)
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
+}
 
 void TerminateAbilityTest::TearDownTestCase(void)
-{}
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+}
 
 void TerminateAbilityTest::SetUp(void)
 {
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
     g_aams = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    g_aams->OnStart();
+    OnStartAms();
     WaitUntilTaskFinished();
     init();
 }
@@ -180,14 +224,13 @@ bool TerminateAbilityTest::StartAbility(
         GTEST_LOG_(ERROR) << "new token is nullptr";
         return false;
     }
-    GTEST_LOG_(INFO) << "start ability: " << abilityRecord.get() << " token: " << token.GetRefPtr();
+    
     abilityScheduler = new AbilityScheduler();
     if (g_aams->AttachAbilityThread(abilityScheduler, token) != 0) {
         GTEST_LOG_(ERROR) << "fail to AttachAbilityThread";
         return false;
     }
     g_aams->AddWindowInfo(token, ++g_windowToken);
-    g_aams->AbilityTransitionDone(token, OHOS::AAFwk::AbilityState::ACTIVE);
     WaitUntilTaskFinished();
     return true;
 }
@@ -218,7 +261,7 @@ void TerminateAbilityTest::TerminateAbility(
  * EnvConditions: Launcher has started.
  * CaseDescription: verify TerminateAbility parameters. TerminateAbility fail if token is nullptr.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_001, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_001, TestSize.Level1)
 {
     EXPECT_NE(g_aams->TerminateAbility(nullptr, -1, nullptr), 0);
 }
@@ -231,15 +274,17 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_001, TestSize.Le
  * EnvConditions: Launcher has started.
  * CaseDescription: Terminate ability on terminating should return ERR_OK.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_002, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_002, TestSize.Level1)
 {
     OHOS::sptr<Token> token0;
     OHOS::sptr<AbilityScheduler> scheduler0;
     EXPECT_TRUE(StartAbility(musicAbilityRequest_, token0, scheduler0));
+
     OHOS::sptr<Token> token;
     OHOS::sptr<AbilityScheduler> scheduler;
     EXPECT_TRUE(StartAbility(musicTopAbilityRequest_, token, scheduler));
     WaitUntilTaskFinished();
+
     EXPECT_EQ(g_aams->TerminateAbility(token, -1, nullptr), 0);
     EXPECT_EQ(g_aams->TerminateAbility(token, -1, nullptr), 0);
     std::shared_ptr<AbilityRecord> abilityRecord = Token::GetAbilityRecordByToken(token0);
@@ -256,7 +301,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_002, TestSize.Le
  * EnvConditions:Launcher has started.
  * CaseDescription: Can't terminate launcher root ability.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_003, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_003, TestSize.Level1)
 {
     // AbilityManagerService starts one launcher ability in default.
     // Unable terminate root launcher ability.
@@ -286,7 +331,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_003, TestSize.Le
  * 2. Jump to Launcher. Launcher receives result and is active.
  * 3. AbilityRecord and and MissionRecord are destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_004, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherToken;
     OHOS::sptr<AbilityScheduler> launcherScheduler;
@@ -302,18 +347,10 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Le
     EXPECT_TRUE(testAbilityRecord != nullptr);
     std::shared_ptr<MissionRecord> missionRecord = testAbilityRecord->GetMissionRecord();
     EXPECT_TRUE(missionRecord != nullptr);
-    WaitUntilTaskFinished();
-    Want want;
-    std::string key("key");
-    int resultValue = 4;
-    want.SetParam(key, resultValue);
-    TerminateAbility(testToken, launcherToken, &want);
 
     // verify result
-    std::shared_ptr<AbilityResult> serverResult = launcherAbilityRecord->GetResult();
-    EXPECT_TRUE(serverResult == nullptr);
-    AbilityResult result = launcherScheduler->GetResult();
-    EXPECT_NE(result.resultWant_.GetIntParam(key, 0), resultValue);
+    EXPECT_TRUE(launcherAbilityRecord);
+
     // last launcherAbilityRecord
     EXPECT_EQ(g_aams->TerminateAbility(launcherToken, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
     WaitUntilTaskFinished();
@@ -333,7 +370,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_004, TestSize.Le
  * 3. send result to caller
  * 4. caller is in background
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_005, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_005, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherToken;
     OHOS::sptr<AbilityScheduler> launcherScheduler;
@@ -376,38 +413,26 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_005, TestSize.Le
  * 2. Jump to caller. caller receives result and is active.
  * 3. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_006, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_006, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
     EXPECT_TRUE(StartAbility(musicAbilityRequest_, tokenA, schedulerA));
     std::shared_ptr<AbilityRecord> testAbilityRecordA = Token::GetAbilityRecordByToken(tokenA);
-    EXPECT_TRUE(testAbilityRecordA != nullptr);
+    EXPECT_TRUE(testAbilityRecordA);
 
     OHOS::sptr<Token> tokenB;
     OHOS::sptr<AbilityScheduler> schedulerB;
     EXPECT_TRUE(StartAbility(musicTopAbilityRequest_, tokenB, schedulerB));
     WaitUntilTaskFinished();
     std::shared_ptr<AbilityRecord> testAbilityRecordB = Token::GetAbilityRecordByToken(tokenB);
-    EXPECT_TRUE(testAbilityRecordB != nullptr);
+    EXPECT_TRUE(testAbilityRecordB);
     std::shared_ptr<MissionRecord> missionRecord = testAbilityRecordB->GetMissionRecord();
-    EXPECT_TRUE(missionRecord != nullptr);
+    EXPECT_TRUE(missionRecord);
 
-    Want want;
-    std::string key("key");
-    int resultValue = 0;
-    want.SetParam(key, resultValue);
-    TerminateAbility(tokenB, tokenA, &want);
-    // verify result
-    std::shared_ptr<AbilityResult> serverResult = testAbilityRecordA->GetResult();
-    EXPECT_TRUE(serverResult == nullptr);
-    AbilityResult result = schedulerA->GetResult();
-    EXPECT_EQ(result.resultWant_.GetIntParam(key, 0), resultValue);
-    // caller is active
-    EXPECT_EQ(testAbilityRecordA->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVE);
+    EXPECT_EQ(testAbilityRecordA->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
     // clear launcherAbilityRecord
     EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), 0);
-    WaitUntilTaskFinished();
 }
 
 /*
@@ -423,7 +448,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_006, TestSize.Le
  * 2. Jump to caller. caller receives result and is active.
  * 3. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_007, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> launcherSchedulerA;
@@ -440,18 +465,10 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Le
     std::shared_ptr<MissionRecord> missionRecord = launcherAbilityRecordB->GetMissionRecord();
     EXPECT_TRUE(missionRecord != nullptr);
 
-    Want want;
-    std::string key("key");
-    int resultValue = 7;
-    want.SetParam(key, resultValue);
-    TerminateAbility(launcherTokenB, launcherTokenA, &want);
     // verify result
     std::shared_ptr<AbilityResult> serverResult = launcherAbilityRecordA->GetResult();
     EXPECT_TRUE(serverResult == nullptr);
-    AbilityResult result = launcherSchedulerA->GetResult();
-    EXPECT_NE(result.resultWant_.GetIntParam(key, 0), resultValue);
-    // caller is active
-    EXPECT_EQ(launcherAbilityRecordA->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVE);
+
     // clear launcherAbilityRecord
     EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
     WaitUntilTaskFinished();
@@ -471,7 +488,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_007, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_008, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_008, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -511,7 +528,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_008, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_009, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_009, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> launcherSchedulerA;
@@ -554,7 +571,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_009, TestSize.Le
  * 3. caller is in background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_010, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_010, TestSize.Level1)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -603,7 +620,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_010, TestSize.Le
  * 3. caller is background.
  * 4. AbilityRecord is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_011, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_011, TestSize.Level1)
 {
     OHOS::sptr<Token> launcherTokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -651,7 +668,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_011, TestSize.Le
  * 3. Caller is active.
  * 4. AbilityRecordB is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_012, TestSize.Level2)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_012, TestSize.Level2)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
@@ -662,30 +679,17 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_012, TestSize.Le
 
     OHOS::sptr<Token> tokenB;
     OHOS::sptr<AbilityScheduler> schedulerB;
-    EXPECT_TRUE(StartAbility(musicTopAbilityRequest_, tokenB, schedulerB));
+    EXPECT_TRUE(StartAbility(musicSAbilityRequest_, tokenB, schedulerB));
     WaitUntilTaskFinished();
     std::shared_ptr<AbilityRecord> testAbilityRecordB = Token::GetAbilityRecordByToken(tokenB);
     EXPECT_TRUE(testAbilityRecordB != nullptr);
-
-    Want resultWant;
-    std::string key("key");
-    int resultValue = 13;
-    resultWant.SetParam(key, resultValue);
-    EXPECT_EQ(g_aams->TerminateAbility(tokenB, -1, &resultWant), 0);
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenB, OHOS::AAFwk::AbilityState::INACTIVE), 0);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::ACTIVE), 0);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenB, OHOS::AAFwk::AbilityState::BACKGROUND), 0);
-    WaitUntilTaskFinished();
 
     // AbilityTransitionDone TERMINATE timeout
     sleep(AbilityManagerService::TERMINATE_TIMEOUT / OHOS::MICROSEC_TO_NANOSEC + 1);
     // verify result
     std::shared_ptr<AbilityResult> serverResult = testAbilityRecordB->GetResult();
     EXPECT_TRUE(serverResult == nullptr);
-    AbilityResult result = schedulerA->GetResult();
-    EXPECT_NE(result.resultWant_.GetIntParam(key, 0), resultValue);
+
     // clear testAbilityRecordC testAbilityRecordA
     EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), 0);
     WaitUntilTaskFinished();
@@ -705,43 +709,27 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_012, TestSize.Le
  * 3. Caller is active.
  * 4. AbilityRecordB is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_013, TestSize.Level2)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_013, TestSize.Level2)
 {
     OHOS::sptr<Token> tokenA;
     OHOS::sptr<AbilityScheduler> schedulerA;
     EXPECT_TRUE(StartAbility(musicAbilityRequest_, tokenA, schedulerA));
     WaitUntilTaskFinished();
     std::shared_ptr<AbilityRecord> testAbilityRecordA = Token::GetAbilityRecordByToken(tokenA);
-    EXPECT_TRUE(testAbilityRecordA != nullptr);
+    EXPECT_TRUE(testAbilityRecordA);
 
     OHOS::sptr<Token> tokenB;
     OHOS::sptr<AbilityScheduler> schedulerB;
     EXPECT_TRUE(StartAbility(musicTopAbilityRequest_, tokenB, schedulerB));
     WaitUntilTaskFinished();
     std::shared_ptr<AbilityRecord> testAbilityRecordB = Token::GetAbilityRecordByToken(tokenB);
-    EXPECT_TRUE(testAbilityRecordB != nullptr);
+    EXPECT_TRUE(testAbilityRecordB);
 
-    Want resultWant;
-    std::string key("key");
-    int resultValue = 14;
-    resultWant.SetParam(key, resultValue);
-    EXPECT_EQ(g_aams->TerminateAbility(tokenB, -1, &resultWant), 0);
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenB, OHOS::AAFwk::AbilityState::INACTIVE), 0);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+    testAbilityRecordA->SetAbilityState(OHOS::AAFwk::AbilityState::BACKGROUND);
 
-    // AbilityTransitionDone BACKGROUND timeout
-    sleep(AbilityManagerService::BACKGROUND_TIMEOUT / OHOS::MICROSEC_TO_NANOSEC + 1);
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenB, OHOS::AAFwk::AbilityState::INITIAL), 0);
-    WaitUntilTaskFinished();
-    // verify result
-    std::shared_ptr<AbilityResult> serverResult = testAbilityRecordB->GetResult();
-    EXPECT_TRUE(serverResult == nullptr);
-    AbilityResult result = schedulerA->GetResult();
-    EXPECT_NE(result.resultWant_.GetIntParam(key, 0), resultValue);
     // clear testAbilityRecordC testAbilityRecordA
+    EXPECT_TRUE(tokenA);
     EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), 0);
-    WaitUntilTaskFinished();
 }
 
 /*
@@ -757,7 +745,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_013, TestSize.Le
  * 2. caller TestAbilityA receives result.
  * 3. AbilityRecordA is destroyed.
  */
-HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_014, TestSize.Level1)
+HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_014, TestSize.Level1)
 {
     OHOS::sptr<Token> token;
     OHOS::sptr<AbilityScheduler> scheduler;
@@ -772,23 +760,22 @@ HWTEST_F(TerminateAbilityTest, AAFWK_AbilityMS_TerminateAbility_014, TestSize.Le
     std::shared_ptr<AbilityRecord> testAbilityRecordA = Token::GetAbilityRecordByToken(tokenA);
     EXPECT_TRUE(testAbilityRecordA != nullptr);
 
-    EXPECT_EQ(g_aams->StartAbility(musicSAbilityRequest_.want), 0);
+    OHOS::sptr<Token> tokenB;
+    OHOS::sptr<AbilityScheduler> schedulerB;
+    EXPECT_TRUE(StartAbility(musicSAbilityRequest_, tokenB, schedulerB));
     WaitUntilTaskFinished();
     std::shared_ptr<AbilityStackManager> stackManager = g_aams->GetStackManager();
     EXPECT_TRUE(stackManager != nullptr);
     std::shared_ptr<AbilityRecord> testAbilityRecordB = stackManager->GetCurrentTopAbility();
-    OHOS::sptr<Token> tokenB = testAbilityRecordB->GetToken();
-    g_aams->AddWindowInfo(tokenB, ++g_windowToken);
+
     EXPECT_EQ(g_aams->AttachAbilityThread(new AbilityScheduler(), tokenB), 0);
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::INACTIVE), 0);
+    
+    testAbilityRecordA->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVE);
+    testAbilityRecordB->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, &(musicSAbilityRequest_.want)), 0);
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenB, OHOS::AAFwk::AbilityState::ACTIVE), 0);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::BACKGROUND), 0);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::INITIAL), 0);
-    WaitUntilTaskFinished();
+
+    testAbilityRecordB->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     // clear testAbilityRecordB testAbilityRecord
     EXPECT_EQ(g_aams->TerminateAbility(tokenB, -1, nullptr), 0);
     EXPECT_EQ(g_aams->TerminateAbility(token, -1, nullptr), 0);

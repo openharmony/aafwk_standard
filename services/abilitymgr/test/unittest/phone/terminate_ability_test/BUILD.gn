@@ -27,7 +27,8 @@ ohos_unittest("terminate_ability_test") {
   ]
 
   sources = [
-    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    # "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "terminate_ability_test.cpp",  # add mock file
   ]
 
