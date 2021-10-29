@@ -20,15 +20,11 @@ namespace OHOS {
 namespace AAFwk {
 bool MissionOption::IsSameWindowMode(const AbilityWindowConfiguration &key) const
 {
-    if (winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-        winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
-        return (winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY &&
-                   key == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) ||
-               (key == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY &&
-                   winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY);
-    } else {
-        return (winModeKey == key);
-    }
+    return ((winModeKey == key) ||
+            (winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY &&
+                key == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) ||
+            (key == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY &&
+                winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY));
 }
 
 bool MissionOption::ReadFromParcel(Parcel &parcel)

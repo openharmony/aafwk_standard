@@ -310,12 +310,11 @@ ErrCode AbilityManagerClient::MoveMissionToFloatingStack(const MissionOption &mi
     return abms->MoveMissionToFloatingStack(missionOption);
 }
 
-ErrCode AbilityManagerClient::MoveMissionToSplitScreenStack(
-    const MissionOption &primary, const MissionOption &secondary)
+ErrCode AbilityManagerClient::MoveMissionToSplitScreenStack(const MissionOption &missionOption)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->MoveMissionToSplitScreenStack(primary, secondary);
+    return abms->MoveMissionToSplitScreenStack(missionOption);
 }
 
 ErrCode AbilityManagerClient::MinimizeMultiWindow(int missionId)

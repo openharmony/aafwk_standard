@@ -107,8 +107,6 @@ int AbilityScheduler::BatchInsert(const Uri &uri, const std::vector<NativeRdb::V
     return -1;
 }
 
-void AbilityScheduler::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
-{}
 Uri AbilityScheduler::NormalizeUri(const Uri &uri)
 {
     Uri urivalue("");
@@ -120,5 +118,8 @@ Uri AbilityScheduler::DenormalizeUri(const Uri &uri)
     Uri urivalue("");
     return urivalue;
 }
+
+void AbilityScheduler::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
+{}
 }  // namespace AAFwk
 }  // namespace OHOS

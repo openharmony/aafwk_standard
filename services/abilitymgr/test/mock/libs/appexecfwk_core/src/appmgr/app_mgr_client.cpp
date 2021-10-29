@@ -108,9 +108,6 @@ AppMgrResultCode AppMgrClient::ConnectAppMgrService()
 void AppMgrClient::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {}
 
-void AppMgrClient::PrepareTerminate(const sptr<IRemoteObject> &token)
-{}
-
 int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
     return AppMgrResultCode::RESULT_OK;

@@ -312,11 +312,10 @@ public:
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param primary, display primary mission option
-     * @param secondary, display secondary mission option
+     * @param missionOption, target mission option
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary) = 0;
+    virtual int MoveMissionToSplitScreenStack(const MissionOption &missionOption) = 0;
 
     /**
      * Change the focus of ability in the mission stack.
