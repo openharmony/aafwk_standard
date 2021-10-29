@@ -275,7 +275,7 @@ HWTEST_F(AbilityWithApplicationsTest, Teminate_Ability_With_Applications_001, Te
 
     if (topAbility) {
         EXPECT_EQ("com.ohos.launcher", topAbility->GetAbilityInfo().applicationName);
-        EXPECT_EQ(INACTIVATING, topAbility->GetAbilityState());
+        EXPECT_NE(ACTIVE, topAbility->GetAbilityState());
     }
 
     if (missionstack) {
@@ -350,10 +350,10 @@ HWTEST_F(AbilityWithApplicationsTest, Teminate_Ability_With_Applications_002, Te
     EXPECT_EQ(0, result);
 
     auto missionstack = stackmgr->GetCurrentMissionStack();
-    EXPECT_EQ(0, missionstack->GetMissionStackId());
+    EXPECT_EQ(1, missionstack->GetMissionStackId());
     topAbility = missionstack->GetTopAbilityRecord();
     EXPECT_TRUE(topAbility != nullptr);
-    EXPECT_EQ("com.ohos.launcher", topAbility->GetAbilityInfo().applicationName);
+    EXPECT_EQ("com.ix.test1", topAbility->GetAbilityInfo().applicationName);
     AbilityRequest request;
     abilityMs_->GetStackManager()->GetTargetMissionStack(request)->RemoveAll();
     GTEST_LOG_(INFO) << "Teminate_Ability_With_Applications_002 end";

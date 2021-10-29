@@ -106,7 +106,7 @@ std::shared_ptr<MissionRecord> getSecondMissionRecord()
  * Function: RemoveAll
  * SubFunction: NA
  * FunctionPoints: MissionStack RemoveAll
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Results after verifying removeAll
  */
 HWTEST_F(MissionStackTest, MS_oprator_01, TestSize.Level0)
@@ -121,7 +121,7 @@ HWTEST_F(MissionStackTest, MS_oprator_01, TestSize.Level0)
  * Function: AddMissionRecordToTop
  * SubFunction: NA
  * FunctionPoints: MissionStack AddMissionRecordToTop
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the top ability record is the same as the added record
  */
 HWTEST_F(MissionStackTest, MS_oprator_002, TestSize.Level0)
@@ -150,7 +150,7 @@ HWTEST_F(MissionStackTest, MS_oprator_002, TestSize.Level0)
  * Function: AddMissionRecordToTop
  * SubFunction: NA
  * FunctionPoints: MissionStack AddMissionRecordToTop
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the top mission record is not empty
  */
 HWTEST_F(MissionStackTest, MS_oprator_003, TestSize.Level0)
@@ -166,7 +166,7 @@ HWTEST_F(MissionStackTest, MS_oprator_003, TestSize.Level0)
  * Function: GetTopMissionRecord
  * SubFunction: NA
  * FunctionPoints: MissionStack GetTopMissionRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the top mission record is the same as the added record
  */
 HWTEST_F(MissionStackTest, MS_oprator_004, TestSize.Level0)
@@ -191,7 +191,7 @@ HWTEST_F(MissionStackTest, MS_oprator_004, TestSize.Level0)
  * Function: GetMissionStackId
  * SubFunction: NA
  * FunctionPoints: MissionStack GetMissionStackId
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the mission stack id is not 0
  */
 HWTEST_F(MissionStackTest, MS_oprator_005, TestSize.Level0)
@@ -205,7 +205,7 @@ HWTEST_F(MissionStackTest, MS_oprator_005, TestSize.Level0)
  * Function: GetTargetMissionRecord
  * SubFunction: NA
  * FunctionPoints: MissionStack GetTargetMissionRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the get target mission record is equal to the one added
  */
 HWTEST_F(MissionStackTest, MS_oprator_006, TestSize.Level0)
@@ -231,7 +231,7 @@ HWTEST_F(MissionStackTest, MS_oprator_006, TestSize.Level0)
  * Function: GetMissionStackId GetMissionStackUserId
  * SubFunction: NA
  * FunctionPoints: MissionStack GetMissionStackId and GetMissionStackUserId
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify the value of get mission stack ID and get mission stack user ID
  */
 HWTEST_F(MissionStackTest, MS_oprator_007, TestSize.Level0)
@@ -245,7 +245,7 @@ HWTEST_F(MissionStackTest, MS_oprator_007, TestSize.Level0)
  * Function: GetMissionRecordCount
  * SubFunction: NA
  * FunctionPoints: MissionStack GetMissionRecordCount
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify the value of get mission record count
  */
 HWTEST_F(MissionStackTest, MS_oprator_008, TestSize.Level0)
@@ -260,7 +260,7 @@ HWTEST_F(MissionStackTest, MS_oprator_008, TestSize.Level0)
  * Function: GetTopMissionRecord
  * SubFunction: NA
  * FunctionPoints: MissionStack GetTopMissionRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the get top mission record is equal to the one added
  */
 HWTEST_F(MissionStackTest, MS_oprator_009, TestSize.Level0)
@@ -288,7 +288,7 @@ HWTEST_F(MissionStackTest, MS_oprator_009, TestSize.Level0)
  * Function: Dump DumpStackList
  * SubFunction: NA
  * FunctionPoints: MissionStack Dump and DumpStackList
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify Dump and DumpStackList results
  */
 HWTEST_F(MissionStackTest, MS_oprator_010, TestSize.Level0)
@@ -326,7 +326,7 @@ HWTEST_F(MissionStackTest, MS_oprator_010, TestSize.Level0)
  * Function: GetMissionRecordById
  * SubFunction: NA
  * FunctionPoints: MissionStack GetMissionRecordById
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the get mission record by ID value is empty
  */
 HWTEST_F(MissionStackTest, MS_oprator_011, TestSize.Level0)
@@ -352,7 +352,7 @@ HWTEST_F(MissionStackTest, MS_oprator_011, TestSize.Level0)
  * Function: GetMissionRecordById
  * SubFunction: NA
  * FunctionPoints: MissionStack GetMissionRecordById
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify the get mission record by ID value
  */
 HWTEST_F(MissionStackTest, MS_oprator_012, TestSize.Level0)
@@ -378,7 +378,7 @@ HWTEST_F(MissionStackTest, MS_oprator_012, TestSize.Level0)
  * Function: GetAbilityRecordByToken
  * SubFunction: NA
  * FunctionPoints: MissionStack GetAbilityRecordByToken
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that the values of get ability record by token are equal
  */
 HWTEST_F(MissionStackTest, MS_oprator_013, TestSize.Level0)
@@ -406,7 +406,7 @@ HWTEST_F(MissionStackTest, MS_oprator_013, TestSize.Level0)
  * Function: RemoveAbilityRecordByToken
  * SubFunction: NA
  * FunctionPoints: MissionStack RemoveAbilityRecordByToken
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that remove ability record by token is successful
  */
 HWTEST_F(MissionStackTest, MS_oprator_014, TestSize.Level0)
@@ -433,7 +433,7 @@ HWTEST_F(MissionStackTest, MS_oprator_014, TestSize.Level0)
  * Function: RemoveMissionRecord
  * SubFunction: NA
  * FunctionPoints: MissionStack RemoveMissionRecord
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Verify that remove mission record is successful
  */
 HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level0)
@@ -459,7 +459,7 @@ HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level0)
  * Function: FindChild
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionStackTest, MS_oprator_016, TestSize.Level1)
@@ -472,7 +472,7 @@ HWTEST_F(MissionStackTest, MS_oprator_016, TestSize.Level1)
  * Function: FindChild
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionStackTest, MS_oprator_017, TestSize.Level1)
@@ -490,7 +490,7 @@ HWTEST_F(MissionStackTest, MS_oprator_017, TestSize.Level1)
  * Function: FindChild
  * SubFunction: NA
  * FunctionPoints: Find Child
- * EnvConditions:NA
+ * EnvConditions: NA
  * CaseDescription: Find Child UT.
  */
 HWTEST_F(MissionStackTest, MS_oprator_018, TestSize.Level1)
@@ -503,5 +503,97 @@ HWTEST_F(MissionStackTest, MS_oprator_018, TestSize.Level1)
     EXPECT_EQ((*iter), missionStack_->FindChild(0));
 }
 
+/*
+ * Feature: MissionStack
+ * Function: GetMissionRecordByWinMode
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(MissionStackTest, MS_oprator_019, TestSize.Level1)
+{
+    missionStack_->missions_.clear();
+
+    auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
+    auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
+    
+    MissionOption option;
+    option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
+    missionRecordOne->SetMissionOption(option);
+
+    option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
+    missionRecordTwo->SetMissionOption(option);
+
+    missionStack_->missions_.push_back(missionRecordOne);
+    missionStack_->missions_.push_back(missionRecordTwo);
+
+    auto missionRecordList = 
+        missionStack_->GetMissionRecordByWinMode(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY);
+    EXPECT_TRUE(missionRecordList.size() == 1);
+    auto mission = missionRecordList.back();
+    EXPECT_EQ(mission->GetMissionOption().winModeKey, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY);
+}
+
+/*
+ * Feature: MissionStack
+ * Function: AddMissionRecordToEnd
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(MissionStackTest, MS_oprator_020, TestSize.Level1)
+{
+    missionStack_->missions_.clear();
+
+    auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
+    auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
+    
+    EXPECT_EQ(0, missionStack_->missions_.size());
+
+    missionStack_->AddMissionRecordToEnd(missionRecordOne);
+    EXPECT_EQ(1, missionStack_->missions_.size());
+
+    missionStack_->AddMissionRecordToEnd(missionRecordTwo);
+    EXPECT_EQ(2, missionStack_->missions_.size());
+
+    auto backMission = missionStack_->missions_.back();
+    EXPECT_TRUE(backMission == missionRecordTwo);
+}
+
+/*
+ * Feature: MissionStack
+ * Function: EmplaceMissionRecord
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(MissionStackTest, MS_oprator_021, TestSize.Level1)
+{
+    missionStack_->missions_.clear();
+
+    auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
+    auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
+    
+    MissionOption option;
+    option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
+    missionRecordOne->SetMissionOption(option);
+    missionRecordTwo->SetMissionOption(option);
+
+    EXPECT_EQ(0, missionStack_->missions_.size());
+
+    auto missionRecord = missionStack_->EmplaceMissionRecord(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY,
+        missionRecordOne);
+    EXPECT_FALSE(missionRecord);
+    EXPECT_EQ(1, missionStack_->missions_.size());
+
+    missionRecord = missionStack_->EmplaceMissionRecord(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY,
+        missionRecordTwo);
+    EXPECT_TRUE(missionRecord);
+    // Just replace
+    EXPECT_EQ(1, missionStack_->missions_.size());
+}
 }  // namespace AAFwk
 }  // namespace OHOS
