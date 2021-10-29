@@ -645,6 +645,7 @@ public:
     bool IsLauncherRoot() const;
 
     bool IsAbilityState(const AbilityState &state) const;
+    bool IsActiveState() const;
 
     bool SupportMultWindow() const;
     void NotifyMultiWinModeChanged(const AbilityWindowConfiguration &winModeKey, bool flag);
@@ -667,6 +668,9 @@ public:
 
     unsigned int GetIntConfigChanges();
     void ClearFlag();
+
+    void SetMovingBackgroundFlag(bool isMoving);
+    bool IsMovingBackground() const;
 
 protected:
     virtual bool OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges) override;
@@ -740,6 +744,7 @@ private:
     PacMap stateDatas_;             // ability saved ability state data
     bool isRestarting_ = false;     // is restarting ?
     bool isInMovingState_ = false;  // whether complete multi window moving state.
+    bool isMovingBackground_ = false;
     AppState appState_ = AppState::BEGIN;
 };
 }  // namespace AAFwk
