@@ -105,7 +105,7 @@ HWTEST_F(WantSenderInfoTest, WantSenderInfoTest_0100, TestSize.Level1)
     EXPECT_EQ(unInfo->allWants.at(0).want.GetElement().GetAbilityName(), "MusicSAbility");
     EXPECT_EQ(unInfo->allWants.at(0).resolvedTypes, "nihao");
     EXPECT_EQ(unInfo->requestCode, 100);
-    EXPECT_EQ(static_cast<int>(unInfo->flags), 3);
+    EXPECT_EQ(unInfo->flags, 3);
     EXPECT_EQ(unInfo->userId, 99);
     delete unInfo;
 }

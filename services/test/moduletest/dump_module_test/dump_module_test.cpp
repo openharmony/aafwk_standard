@@ -91,16 +91,15 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-    void OnStartAms();
     void StartAllAbilities();
     bool SearchAbilityNameFromStackInfo(const std::string &abilityName, const std::vector<AbilityRecordInfo> &vec);
 
-    Want want11 {};
-    Want want22 {};
-    Want want33 {};
-    Want want44 {};
-    Want want55 {};
-    Want wantLauncher {};
+    Want want11{};
+    Want want22{};
+    Want want33{};
+    Want want44{};
+    Want want55{};
+    Want wantLauncher{};
 };
 
 bool DumpModuleTest::SearchAbilityNameFromStackInfo(
@@ -112,62 +111,20 @@ bool DumpModuleTest::SearchAbilityNameFromStackInfo(
     return ((iter == vec.end()) ? false : true);
 }
 
-void DumpModuleTest::OnStartAms()
-{
-    if(g_abilityMs) {
-        if(g_abilityMs->state_ == ServiceRunningState::STATE_RUNNING) {
-            return;
-        }
-   
-        g_abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
-        
-        g_abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
-        EXPECT_TRUE(g_abilityMs->eventLoop_);
-
-        g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
-        EXPECT_TRUE(g_abilityMs->handler_);
-        EXPECT_TRUE(g_abilityMs->connectManager_);
-
-        g_abilityMs->connectManager_->SetEventHandler(g_abilityMs->handler_);
-
-        g_abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
-        EXPECT_TRUE(g_abilityMs->dataAbilityManager_);
-
-        g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
-        EXPECT_TRUE(g_abilityMs->pendingWantManager_);
-      
-        int userId = g_abilityMs->GetUserId();
-        g_abilityMs->SetStackManager(userId);
-        g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(g_abilityMs->systemAppManager_);
-
-        g_abilityMs->eventLoop_->Run();
-
-        GTEST_LOG_(INFO) << "OnStart success";
-        return;
-    }
-
-    GTEST_LOG_(INFO) << "OnStart fail";
-}
-
 void DumpModuleTest::SetUpTestCase()
-{
-    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
-    GTEST_LOG_(INFO) << "SetUpTestCase OK";
-}
+{}
 
 void DumpModuleTest::TearDownTestCase()
-{
-    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
-    GTEST_LOG_(INFO) << "TearDownTestCase OK";
-}
+{}
 
 void DumpModuleTest::SetUp()
 {
-    g_abilityMs = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    OnStartAms();
+    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
+    OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
 
+    g_abilityMs = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
+    g_abilityMs->OnStart();
     WaitUntilTaskFinished();
 
     want11.SetElement(G_TESTABILITY1);
@@ -177,14 +134,6 @@ void DumpModuleTest::SetUp()
     want55.SetElement(G_TESTABILITY6);
     wantLauncher.SetElement(G_LAUNCHABILITY);
     StartAllAbilities();
-    GTEST_LOG_(INFO) << "SetUp OK";
-}
-
-void DumpModuleTest::TearDown()
-{
-    g_abilityMs->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-    GTEST_LOG_(INFO) << "TearDown OK";
 }
 
 void DumpModuleTest::StartAllAbilities()
@@ -233,7 +182,11 @@ void DumpModuleTest::StartAllAbilities()
     }
 }
 
-
+void DumpModuleTest::TearDown()
+{
+    g_abilityMs->OnStop();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
 
 /*
  * Feature: Aafwk

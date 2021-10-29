@@ -369,11 +369,10 @@ public:
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param primary, display primary mission option
-     * @param secondary, display secondary mission option
+     * @param missionOption, target mission option
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary);
+    ErrCode MoveMissionToSplitScreenStack(const MissionOption &missionOption);
 
     /**
      * minimize multiwindow by mission id.

@@ -98,6 +98,7 @@ private:
     int UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
 
     int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToEndTestInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
