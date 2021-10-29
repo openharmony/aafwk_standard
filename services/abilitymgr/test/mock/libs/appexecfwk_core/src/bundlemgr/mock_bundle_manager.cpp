@@ -14,7 +14,6 @@
  */
 
 #include "mock_bundle_manager.h"
-#include "clean_cache_callback_interface.h"
 #include "ability_info.h"
 #include "application_info.h"
 #include "hilog_wrapper.h"
@@ -157,7 +156,7 @@ bool BundleMgrService::GetApplicationInfo(
 
 bool BundleMgrService::CheckIsSystemAppByUid(const int uid)
 {
-    int maxSysUid {MAX_SYS_UID};
+    int maxSysUid{MAX_SYS_UID};
     int baseSysUid{ROOT_UID};
     if (uid >= baseSysUid && uid <= maxSysUid) {
         return true;

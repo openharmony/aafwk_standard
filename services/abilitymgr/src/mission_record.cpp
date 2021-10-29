@@ -178,8 +178,7 @@ void MissionRecord::Dump(std::vector<std::string> &info)
     std::string dumpInfo = "    MissionRecord ID #" + std::to_string(missionId_);
     std::shared_ptr<AbilityRecord> bottomAbility = GetBottomAbilityRecord();
     if (bottomAbility) {
-        dumpInfo += "  bottom app [" + bottomAbility->GetAbilityInfo().name + "]" + "  winMode #" +
-                    std::to_string(option_.winModeKey);
+        dumpInfo += "  bottom app [" + bottomAbility->GetAbilityInfo().name + "]";
         info.push_back(dumpInfo);
         for (auto abilityRecord : abilities_) {
             abilityRecord->Dump(info);
@@ -346,16 +345,6 @@ void MissionRecord::Resume(const std::shared_ptr<MissionRecord> &backup)
             ability->SetRestarting(true);
         }
     }
-}
-
-void MissionRecord::UpdateActiveTimestamp()
-{
-    activeTimestamp_ = AbilityUtil::SystemTimeMillis();
-}
-
-int64_t MissionRecord::GetActiveTimestamp() const
-{
-    return activeTimestamp_;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

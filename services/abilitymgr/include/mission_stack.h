@@ -94,13 +94,6 @@ public:
     std::shared_ptr<MissionRecord> GetMissionRecordById(int id);
 
     /**
-     * get the mission by winmode
-     *
-     * @return MissionRecord list.
-     */
-    std::list<std::shared_ptr<MissionRecord>> GetMissionRecordByWinMode(int key);
-
-    /**
      * get the mission by token
      *
      * @return AbilityRecord.
@@ -142,8 +135,6 @@ public:
      */
     void AddMissionRecordToTop(std::shared_ptr<MissionRecord> mission);
 
-    void AddMissionRecordToEnd(std::shared_ptr<MissionRecord> mission);
-
     /**
      * put the mission at the top of the stack
      */
@@ -172,8 +163,6 @@ public:
     bool IsEqualStackId(int stackId);
 
     bool IsEmpty();
-
-    std::shared_ptr<MissionRecord> EmplaceMissionRecord(int winModeKey, std::shared_ptr<MissionRecord> mission);
 
 protected:
     virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
