@@ -157,6 +157,12 @@ void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
     appMgrClient_->AbilityAttachTimeOut(token);
 }
 
+void AppScheduler::PrepareTerminate(const sptr<IRemoteObject> &token)
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->PrepareTerminate(token);
+}
+
 int AppScheduler::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
