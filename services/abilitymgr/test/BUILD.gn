@@ -128,7 +128,6 @@ group("unittest") {
     "unittest/phone/ability_manager_proxy_test:unittest",
     "unittest/phone/ability_manager_service_test:unittest",
     "unittest/phone/ability_manager_stub_test:unittest",
-    "unittest/phone/ability_manager_test:unittest",
     "unittest/phone/ability_record_test:unittest",
     "unittest/phone/ability_scheduler_proxy_test:unittest",
     "unittest/phone/ability_scheduler_stub_test:unittest",
