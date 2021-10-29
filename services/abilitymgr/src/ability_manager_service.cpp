@@ -1094,7 +1094,7 @@ void AbilityManagerService::StartingPhoneServiceAbility()
         AbilityConfig::PHONE_SERVICE_ABILITY_NAME);
 
     while (!(iBundleManager_->QueryAbilityInfo(phoneServiceWant, phoneServiceInfo))) {
-        HILOG_INFO("Waiting query phone service completed.");
+        HILOG_INFO("Waiting query phone service ability info completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
     }
 
