@@ -1127,5 +1127,10 @@ bool AbilityRecord::IsMovingBackground() const
 {
     return isMovingBackground_;
 }
+
+void AbilityRecord::SetConfiguration(const std::shared_ptr<DummyConfiguration> &config)
+{
+    ConfigurationHolder::Init(config);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
