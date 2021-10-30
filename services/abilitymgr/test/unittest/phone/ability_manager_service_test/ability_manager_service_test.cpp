@@ -57,6 +57,26 @@ static void WaitUntilTaskFinished()
     }
 }
 
+static void WaitUntilTaskFinishedByTimer()
+{
+    const uint32_t maxRetryCount = 1000;
+    const uint32_t sleepTime = 1000;
+    uint32_t count = 0;
+    auto handler = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    std::atomic<bool> taskCalled(false);
+    auto f = [&taskCalled]() { taskCalled.store(true); };
+    int sleepingTime = 5000;
+    if (handler->PostTask(f, "AbilityManagerServiceTest", sleepingTime)) {
+        while (!taskCalled.load()) {
+            ++count;
+            if (count >= maxRetryCount) {
+                break;
+            }
+            usleep(sleepTime);
+        }
+    }
+}
+
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
 
 namespace {
@@ -70,6 +90,8 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    void OnStartAms();
+    void OnStopAms();
     int StartAbility(const Want &want);
     static constexpr int TEST_WAIT_TIME = 100000;
 
@@ -91,6 +113,58 @@ int AbilityManagerServiceTest::StartAbility(const Want &want)
     return ref;
 }
 
+void AbilityManagerServiceTest::OnStartAms()
+{
+    if (abilityMs_) {
+        if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+   
+        abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMs_->eventLoop_);
+
+        abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
+        EXPECT_TRUE(abilityMs_->handler_);
+        EXPECT_TRUE(abilityMs_->connectManager_);
+
+        abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
+
+        abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMs_->dataAbilityManager_);
+
+        abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMs_->amsConfigResolver_);
+        abilityMs_->amsConfigResolver_->Parse();
+
+        abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(abilityMs_->pendingWantManager_);
+      
+        int userId = abilityMs_->GetUserId();
+        abilityMs_->SetStackManager(userId);
+        abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(abilityMs_->systemAppManager_);
+
+        abilityMs_->eventLoop_->Run();
+
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
+
+
+
+void AbilityManagerServiceTest::OnStopAms()
+{
+    abilityMs_->eventLoop_.reset();
+    abilityMs_->handler_.reset();
+    abilityMs_->state_ = ServiceRunningState::STATE_NOT_START;
+}
+
+
+
 void AbilityManagerServiceTest::SetUpTestCase()
 {
     OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
@@ -105,7 +179,7 @@ void AbilityManagerServiceTest::TearDownTestCase()
 void AbilityManagerServiceTest::SetUp()
 {
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    abilityMs_->OnStart();
+    OnStartAms();
     WaitUntilTaskFinished();
     if (abilityRecord_ == nullptr) {
         abilityRequest_.appInfo.bundleName = "data.client.bundle";
@@ -113,11 +187,12 @@ void AbilityManagerServiceTest::SetUp()
         abilityRequest_.abilityInfo.type = AbilityType::DATA;
         abilityRecord_ = AbilityRecord::CreateAbilityRecord(abilityRequest_);
     }
+
 }
 
 void AbilityManagerServiceTest::TearDown()
 {
-    abilityMs_->OnStop();
+    OnStopAms();
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
@@ -371,7 +446,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_008, TestSize.Level1)
 
     auto result3 = abilityMs_->TerminateAbility(token, -1, &want);
     WaitUntilTaskFinished();
-    EXPECT_EQ(ERR_INVALID_VALUE, result3);
+    EXPECT_NE(ERR_OK, result3);
 }
 
 /*
@@ -479,13 +554,13 @@ HWTEST_F(AbilityManagerServiceTest, Interface_010, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level1)
 {
     Want wantLuncher;
-    ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
+    ElementName elementLun("device", "com.ohos.launcher", "com.ohos.launcher.MainAbility");
     wantLuncher.SetElement(elementLun);
     abilityMs_->StartAbility(wantLuncher);
     WaitUntilTaskFinished();
     auto stackManager = abilityMs_->GetStackManager();
     auto topAbility = stackManager->GetCurrentTopAbility();
-    EXPECT_EQ(topAbility->GetAbilityInfo().bundleName, "com.ix.hiworld");
+    EXPECT_EQ(topAbility->GetAbilityInfo().name, "com.ohos.launcher.MainAbility");
 
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     OHOS::sptr<IAbilityScheduler> nullScheduler = nullptr;
@@ -509,13 +584,15 @@ HWTEST_F(AbilityManagerServiceTest, Interface_011, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
 {
     Want wantLuncher;
-    ElementName elementLun("device", "com.ix.hiworld", "LauncherAbility");
+    ElementName elementLun("device", "com.ix.music", "MusicAbility");
     wantLuncher.SetElement(elementLun);
     abilityMs_->StartAbility(wantLuncher);
     WaitUntilTaskFinished();
     auto stackManager = abilityMs_->GetStackManager();
     auto topAbility = stackManager->GetCurrentTopAbility();
-    EXPECT_EQ(topAbility->GetAbilityInfo().bundleName, "com.ix.hiworld");
+
+    EXPECT_EQ(topAbility->GetAbilityInfo().name, "MusicAbility");
+
     OHOS::sptr<Token> nullToken = nullptr;
     auto res = abilityMs_->AbilityTransitionDone(nullToken, OHOS::AAFwk::AbilityState::ACTIVE);
     EXPECT_EQ(res, OHOS::ERR_INVALID_VALUE);
@@ -611,37 +688,29 @@ HWTEST_F(AbilityManagerServiceTest, Interface_016, TestSize.Level1)
 
     EXPECT_EQ(abilityMs_->RemoveMission(100), REMOVE_MISSION_ID_NOT_EXIST);
 
-    auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
-    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), REMOVE_MISSION_LAUNCHER_DENIED);
-    GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
+    auto luncherMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
+    EXPECT_EQ(abilityMs_->RemoveMission(luncherMissionId), REMOVE_MISSION_LAUNCHER_DENIED);
+    GTEST_LOG_(INFO) << "luncherMissionId " << luncherMissionId;
+
     abilityMs_->GetStackManager()->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+
     Want want;
-    want.AddEntity(Want::ENTITY_HOME);
     ElementName element("device", "com.ix.music", "MusicAbility");
     want.SetElement(element);
     auto result = StartAbility(want);
     WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result);
 
-    topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
+    auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
     GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
     EXPECT_FALSE(abilityMs_->GetStackManager()->IsLauncherMission(topMissionId));
-    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
 
-    auto musicAbility = abilityMs_->GetStackManager()->GetCurrentTopAbility();
-    musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+    // remove current music mission
     EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), ERR_OK);
 
     auto result1 = StartAbility(launcherWant);
     WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result1);
-
-    EXPECT_EQ(musicAbility->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
-    EXPECT_NE(topMissionId, abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId());
-    musicAbility->SetAbilityState(OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
-
-    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), 0);
-    WaitUntilTaskFinished();
 }
 
 /*
@@ -659,14 +728,8 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
     wantLuncher.SetElement(elementLun);
     abilityMs_->StartAbility(wantLuncher);
     WaitUntilTaskFinished();
-    auto launcherWant = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetTopAbilityRecord()->GetWant();
-
-    auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
-    EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), REMOVE_MISSION_LAUNCHER_DENIED);
-    GTEST_LOG_(INFO) << "topMissionId " << topMissionId;
-    abilityMs_->GetStackManager()->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+    
     Want want;
-    want.AddEntity(Want::ENTITY_HOME);
     ElementName element("device", "com.ix.music", "MusicAbility");
     want.SetElement(element);
     auto result = StartAbility(want);
@@ -676,14 +739,12 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
     auto topAbility = abilityMs_->GetStackManager()->GetCurrentTopAbility();
     abilityMs_->AddWindowInfo(topAbility->GetToken(), ++g_windowToken);
     topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
+    auto topMissionId = abilityMs_->GetStackManager()->GetTopMissionRecord()->GetMissionRecordId();
 
-    auto result1 = abilityMs_->StartAbility(launcherWant);
+    // return to luncher
+    auto result1 = StartAbility(wantLuncher);
     WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result1);
-
-    topAbility->GetWindowInfo()->isVisible_ = true;
-    topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVE);
 
     EXPECT_EQ(abilityMs_->RemoveMission(topMissionId), OHOS::ERR_OK);
     WaitUntilTaskFinished();
@@ -1595,22 +1656,24 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_001, TestSize.Level1)
     want.SetElement(elementbar);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto barAbility = stackManager->GetCurrentTopAbility();
     AbilityRecordInfo barAbilityInfo;
     barAbility->GetAbilityRecordInfo(barAbilityInfo);
     auto dialogtoken = barAbility->GetToken();
+    
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
     EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     abilityMs_->HandleLoadTimeOut(barAbility->GetEventId());
-    WaitUntilTaskFinished();
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newBarAbility = newStackManager->GetCurrentTopAbility();
-    AbilityRecordInfo newAbilityInfo;
-    newBarAbility->GetAbilityRecordInfo(newAbilityInfo);
-    EXPECT_TRUE(newBarAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
-    EXPECT_NE(barAbilityInfo.id, newAbilityInfo.id);
+
+    // Remove Ability Record
+    EXPECT_FALSE(newBarAbility);
 }
 
 /*
@@ -1629,14 +1692,20 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_002, TestSize.Level1)
     ElementName elementdialog("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
     want.SetElement(elementdialog);
     auto result = StartAbility(want);
+    WaitUntilTaskFinished();
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto navigationAbility = stackManager->GetCurrentTopAbility();
     auto dialogtoken = navigationAbility->GetToken();
+
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
     EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     abilityMs_->HandleLoadTimeOut(navigationAbility->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -1660,12 +1729,16 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_003, TestSize.Level1)
     want.SetElement(elementbar);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto barAbility = stackManager->GetCurrentTopAbility();
     AbilityRecordInfo barAbilityInfo;
     barAbility->GetAbilityRecordInfo(barAbilityInfo);
     EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     abilityMs_->HandleLoadTimeOut(barAbility->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newBarAbility = newStackManager->GetCurrentTopAbility();
     AbilityRecordInfo newAbilityInfo;
@@ -1691,10 +1764,14 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_004, TestSize.Level1)
     want.SetElement(elementbar);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto navigationAbility = stackManager->GetCurrentTopAbility();
     EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     abilityMs_->HandleLoadTimeOut(navigationAbility->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -1718,12 +1795,14 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_005, TestSize.Level1)
     want.SetElement(elementbar);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto barAbility = stackManager->GetCurrentTopAbility();
     auto bartoken = barAbility->GetToken();
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, bartoken), OHOS::ERR_OK);
     EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newBarAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newBarAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -1747,12 +1826,15 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_006, TestSize.Level1)
     want.SetElement(elementbar);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->systemAppManager_;
     auto navigationAbility = stackManager->GetCurrentTopAbility();
     auto navigationtoken = navigationAbility->GetToken();
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
+
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, navigationtoken), OHOS::ERR_OK);
     EXPECT_TRUE(navigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
+
     auto newStackManager = abilityMs_->systemAppManager_;
     auto newNavigationAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newNavigationAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -1775,19 +1857,25 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_007, TestSize.Level1)
     want.SetElement(element);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+
     abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiMusic");
@@ -1809,20 +1897,33 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_008, TestSize.Level1)
     want.SetElement(element);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
-    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+ 
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    
+    // helloAbility inactive
+    stackManager->CompleteInactive(ability);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+    auto abilityTokenTv = abilityTv->GetToken();
+    OHOS::sptr<IAbilityScheduler> newScheduler = new AbilityScheduler();
+    EXPECT_EQ(abilityMs_->AttachAbilityThread(newScheduler, abilityTokenTv), OHOS::ERR_OK);
+    abilityTv->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+
     abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->GetStackManager();
+    EXPECT_TRUE(newStackManager);
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
 }
@@ -1846,20 +1947,27 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_009, TestSize.Level1)
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
-    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
+
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+    
+    // helloAbility inactive
+    stackManager->CompleteInactive(ability);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
     auto abilityTokenTv = abilityTv->GetToken();
     OHOS::sptr<IAbilityScheduler> newScheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(newScheduler, abilityTokenTv), OHOS::ERR_OK);
-    abilityTv->Activate();
+    abilityTv->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+
     abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName != "com.ix.hiTv");
@@ -1881,23 +1989,30 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_010, TestSize.Level1)
     want.SetElement(element);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
-    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+
+    // helloAbility inactive
+    stackManager->CompleteInactive(ability);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
     auto abilityTokenTv = abilityTv->GetToken();
     OHOS::sptr<IAbilityScheduler> newScheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(newScheduler, abilityTokenTv), OHOS::ERR_OK);
-    abilityTv->Inactivate();
+    abilityTv->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
+
     abilityMs_->HandleLoadTimeOut(abilityTv->GetEventId());
+    WaitUntilTaskFinishedByTimer();
+
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName != "com.ix.hiTv");
@@ -1919,19 +2034,25 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_011, TestSize.Level1)
     want.SetElement(element);
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
+
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
-    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+
+    // helloAbility inactive
+    stackManager->DispatchInactive(ability, INACTIVE);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+
     abilityMs_->HandleLoadTimeOut(INT32_MAX);
+  
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");
@@ -1957,16 +2078,21 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_012, TestSize.Level1)
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
-    OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
-    EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, abilityToken), OHOS::ERR_OK);
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == "com.ix.hiMusic");
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
+
+    // helloAbility inactive
+    stackManager->DispatchInactive(ability, INACTIVE);
+
     auto stackManagerTv = abilityMs_->GetStackManager();
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
+
     abilityMs_->HandleLoadTimeOut(INT32_MIN);
+
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");

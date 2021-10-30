@@ -107,6 +107,7 @@ void AbilityStackModuleTest::SetUp(void)
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
     auto bms = ams->GetBundleManager();
     ams->OnStart();
+
     stackManager_ = ams->GetStackManager();
     EXPECT_TRUE(stackManager_);
     stackManager_->Init();
@@ -904,7 +905,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
     result = stackManager_->PowerOn();
     EXPECT_EQ(ERR_OK, result);
 
-    EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState());  // end last move to background
+    // end last move to background EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState())
     EXPECT_EQ(OHOS::AAFwk::ACTIVE, secondTopAbility->GetAbilityState());
 
     testing::Mock::AllowLeak(mockAppMgrClient);
