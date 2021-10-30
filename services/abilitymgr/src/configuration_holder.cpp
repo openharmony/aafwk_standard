@@ -17,6 +17,10 @@
 
 namespace OHOS {
 namespace AAFwk {
+void ConfigurationHolder::Init(const std::shared_ptr<DummyConfiguration> &config)
+{
+    baseConfiguration_ = config;
+}
 
 void ConfigurationHolder::UpdateConfiguration(const std::shared_ptr<DummyConfiguration> config)
 {
@@ -25,6 +29,7 @@ void ConfigurationHolder::UpdateConfiguration(const std::shared_ptr<DummyConfigu
         return;
     }
     auto configChanges = baseConfiguration_ ? baseConfiguration_->Differ(config) : CHANGE_CONFIG_ALL_CHANGED;
+
     if (configChanges > 0) {
         // update base configuration immediately
         baseConfiguration_ = config;
@@ -70,12 +75,13 @@ bool ConfigurationHolder::ProcessConfigurationChangeInner(const std::shared_ptr<
 {
     auto configChanges = baseConfiguration_ ? baseConfiguration_->Differ(config) : CHANGE_CONFIG_ALL_CHANGED;
     if (configChanges > 0) {
+        if (baseConfiguration_) {
+            baseConfiguration_ = config;
+            return OnConfigurationChanged(*(baseConfiguration_.get()), configChanges);
+        }
         // update base configuration immediately
         baseConfiguration_ = config;
         HILOG_DEBUG("have changes.");
-        if (baseConfiguration_) {
-            return OnConfigurationChanged(*(baseConfiguration_.get()), configChanges);
-        }
     }
     HILOG_DEBUG("there is no change.");
     return false;

@@ -198,6 +198,8 @@ void KernalSystemAppManager::GetOrCreateAbilityRecord(
         return;
     }
     targetAbility = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    auto configSptr = std::make_shared<DummyConfiguration>();
+    targetAbility->SetConfiguration(configSptr);
     abilities_.push_front(targetAbility);
 }
 
