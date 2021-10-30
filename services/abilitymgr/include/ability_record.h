@@ -672,6 +672,8 @@ public:
     void SetMovingBackgroundFlag(bool isMoving);
     bool IsMovingBackground() const;
 
+    void SetConfiguration(const std::shared_ptr<DummyConfiguration> &config);
+
 protected:
     virtual bool OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges) override;
     virtual std::shared_ptr<ConfigurationHolder> GetParent() override;

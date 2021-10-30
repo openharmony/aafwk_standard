@@ -20,7 +20,10 @@
 namespace OHOS {
 namespace AAFwk {
 MissionStack::MissionStack(int id, int userId) : missionStackId_(id), userId_(userId)
-{}
+{
+    auto configSptr = std::make_shared<DummyConfiguration>();
+    ConfigurationHolder::Init(configSptr);
+}
 
 MissionStack::~MissionStack()
 {}
