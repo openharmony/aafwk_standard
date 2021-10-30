@@ -158,9 +158,8 @@ static void OnStartAms()
             AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->handler_ =
-            std::make_shared<AbilityEventHandler>(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ ,
-                                                    AbilityMgrModuleTest::abilityMgrServ_);
+        AbilityMgrModuleTest::abilityMgrServ_->handler_ = std::make_shared<AbilityEventHandler>(
+            AbilityMgrModuleTest::abilityMgrServ_->eventLoop_, AbilityMgrModuleTest::abilityMgrServ_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
 
