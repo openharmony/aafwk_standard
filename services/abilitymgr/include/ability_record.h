@@ -667,6 +667,7 @@ public:
 
     unsigned int GetIntConfigChanges();
     void ClearFlag();
+	void SetConfiguration(const std::shared_ptr<DummyConfiguration> &config);
 
 protected:
     virtual bool OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges) override;

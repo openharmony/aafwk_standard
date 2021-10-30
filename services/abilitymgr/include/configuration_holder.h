@@ -30,6 +30,7 @@ public:
     ConfigurationHolder() = default;
     virtual ~ConfigurationHolder() = default;
 
+    void Init(const std::shared_ptr<DummyConfiguration> &config);
     void UpdateConfiguration(const std::shared_ptr<DummyConfiguration> config);
     std::shared_ptr<DummyConfiguration> GetConfiguration() const;
     bool ProcessConfigurationChange();
