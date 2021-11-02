@@ -85,9 +85,9 @@ public:
     void startAbility();
 
 public:
-    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
-    std::shared_ptr<AppStateCallbackS> callback_{nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
+    std::shared_ptr<AppStateCallbackS> callback_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 void AbilityMsAppmsTest::OnStartabilityAms()
@@ -187,7 +187,7 @@ void AbilityMsAppmsTest::startAbility()
 
     EXPECT_TRUE(abilityMs_->currentStackManager_);
     auto currentTopAbilityRecord = abilityMs_->currentStackManager_->GetCurrentTopAbility();
-    if(currentTopAbilityRecord){
+    if (currentTopAbilityRecord) {
         currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
     }
 

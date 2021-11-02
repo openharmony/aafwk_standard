@@ -80,14 +80,14 @@ public:
 public:
     int startLancherFlag_ = false;
 
-    std::shared_ptr<OHOS::AAFwk::AbilityManagerService> abilityMs_{nullptr};
-    std::shared_ptr<OHOS::AAFwk::AbilityRecord> launcherAbilityRecord_{nullptr};  // launcher ability
-    OHOS::sptr<OHOS::IRemoteObject> launcherToken_{nullptr};                      // token of launcher ability
-    std::shared_ptr<OHOS::AAFwk::AbilityRecord> nextAbilityRecord_{nullptr};      // ability being launched
-    OHOS::sptr<OHOS::IRemoteObject> nextToken_{nullptr};                          // token of ability being launched
-    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> launcherScheduler_{nullptr};        // launcher ability thread interface
-    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> nextScheduler_{nullptr};            // next ability thread interface
-    std::unique_ptr<LifeTestCommand> command_{nullptr};                           // test command_ interact with ams_
+    std::shared_ptr<OHOS::AAFwk::AbilityManagerService> abilityMs_ {nullptr};
+    std::shared_ptr<OHOS::AAFwk::AbilityRecord> launcherAbilityRecord_ {nullptr};  // launcher ability
+    OHOS::sptr<OHOS::IRemoteObject> launcherToken_ {nullptr};                      // token of launcher ability
+    std::shared_ptr<OHOS::AAFwk::AbilityRecord> nextAbilityRecord_ {nullptr};      // ability being launched
+    OHOS::sptr<OHOS::IRemoteObject> nextToken_ {nullptr};                          // token of ability being launched
+    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> launcherScheduler_ {nullptr};        // launcher ability thread interface
+    OHOS::sptr<OHOS::AAFwk::AbilityScheduler> nextScheduler_ {nullptr};            // next ability thread interface
+    std::unique_ptr<LifeTestCommand> command_ {nullptr};                           // test command_ interact with ams_
 };
 
 void LifecycleTest::OnStartabilityAms()
@@ -171,10 +171,10 @@ bool LifecycleTest::StartLauncherAbility()
     auto stackManager = abilityMs_->GetStackManager();
     EXPECT_TRUE(stackManager);
     auto topAbility = stackManager->GetCurrentTopAbility();
-    if(topAbility){
+    if (topAbility) {
         topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     }
-  
+
     ElementName element("device", "com.ix.hiWord", "LauncherAbility");
     Want want;
     want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
