@@ -1105,5 +1105,10 @@ void AbilityRecord::ClearFlag()
     startTime_ = 0;
     appState_ = AppState::END;
 }
+
+void AbilityRecord::SetConfiguration(const std::shared_ptr<DummyConfiguration> &config)
+{
+    ConfigurationHolder::Init(config);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
