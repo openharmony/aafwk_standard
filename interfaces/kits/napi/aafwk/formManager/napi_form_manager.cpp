@@ -2431,7 +2431,7 @@ napi_value NAPI_GetFormsInfo(napi_env env, napi_callback_info info)
         HILOG_INFO("%{public}s, ARGS_SIZE_TWO.", __func__);
         return GetFormsInfoTwoArgv(env, argv, asyncCallbackInfo);
     } else if (argc == ARGS_SIZE_ONE) { // GetFormsInfoByApp promise
-        return GetFormsInfoPromise(env, asyncCallbackInfo, false);
+        return GetFormsInfoPromise(env, asyncCallbackInfo, true);
     }
     return NapiGetResut(env, 1);
 }
