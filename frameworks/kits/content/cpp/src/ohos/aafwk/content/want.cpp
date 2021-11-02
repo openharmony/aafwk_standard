@@ -14,6 +14,8 @@
  */
 
 #include "want.h"
+#include <cstdlib>
+#include <regex>
 #include <climits>
 #include <securec.h>
 #include <algorithm>
@@ -37,7 +39,9 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
+namespace {
+const std::regex NUMBER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
+};  // namespace
 const std::string Want::ACTION_PLAY("action.system.play");
 const std::string Want::ACTION_HOME("action.system.home");
 
@@ -895,13 +899,33 @@ Want &Want::SetParam(const std::string &key, const std::vector<float> &value)
 long Want::GetLongParam(const std::string &key, long defaultValue) const
 {
     auto value = parameters_.GetParam(key);
-    ILong *ao = ILong::Query(value);
-    if (ao != nullptr) {
-        return Long::Unbox(ao);
+
+    if (ILong::Query(value) != nullptr) {
+        return Long::Unbox(ILong::Query(value));
+    } else if (IString::Query(value) != nullptr) {
+        // Marshalling
+        std::string str = String::Unbox(IString::Query(value));
+        if (std::regex_match(str, NUMBER_REGEX)) {
+            return std::atoll(str.c_str());
+        }
     }
+
     return defaultValue;
 }
+void ArrayAddData(IInterface *object, std::vector<long> &array)
+{
+    if (object == nullptr) {
+        return;
+    }
 
+    IString *o = IString::Query(object);
+    if (o != nullptr) {
+        std::string str = String::Unbox(o);
+        if (std::regex_match(str, NUMBER_REGEX)) {
+            array.push_back(std::atoll(str.c_str()));
+        }
+    }
+}
 /**
  * @description: Obtains a long array matching the given key.
  * @param key Indicates the key of wantParams.
@@ -923,7 +947,12 @@ std::vector<long> Want::GetLongArrayParam(const std::string &key) const
             }
         };
         Array::ForEach(ao, func);
+    } else if (ao != nullptr && Array::IsStringArray(ao)) {
+        // Marshalling
+        auto func = [&](IInterface *object) { ArrayAddData(object, array); };
+        Array::ForEach(ao, func);
     }
+
     return array;
 }
 
