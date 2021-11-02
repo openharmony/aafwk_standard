@@ -2763,7 +2763,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_074, TestSize.
     missionOption.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY;
     MissionOption primary;
     auto ref = stackManager_->MoveMissionToSplitScreenStack(primary, missionOption);
-    EXPECT_EQ(ref, MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN);
+    EXPECT_NE(ref, ERR_OK);
 
     auto stack = launcherMissionRecord->GetMissionStack();
     EXPECT_EQ(stack->GetMissionStackId(), LAUNCHER_MISSION_STACK_ID);
