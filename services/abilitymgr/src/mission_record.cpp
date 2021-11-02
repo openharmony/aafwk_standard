@@ -256,7 +256,7 @@ void MissionRecord::SetMissionStack(const std::shared_ptr<MissionStack> &mission
 {
     CHECK_POINTER(missionStack);
     parentMissionStack_ = missionStack;
-    UpdateConfiguration(missionStack->GetConfiguration());
+    ConfigurationHolder::Init(missionStack->GetConfiguration());
     for (auto &it : abilities_) {
         it->SetMissionStackId(stackId);
     }
