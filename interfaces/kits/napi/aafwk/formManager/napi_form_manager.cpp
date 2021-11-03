@@ -488,6 +488,90 @@ static void InnerReleaseForm(napi_env env, AsyncReleaseFormCallbackInfo* const a
     HILOG_DEBUG("%{public}s end", __func__);
 }
 
+// NAPI_ReleaseForm InnerReleaseForm callback execute
+auto NAPI_ReleaseFormAsyncExecute = [](napi_env env, void *data) {
+    HILOG_INFO("NAPI_ReleaseForm InnerReleaseForm execute callback");
+    AsyncReleaseFormCallbackInfo *asyncCallbackInfo =
+    (AsyncReleaseFormCallbackInfo *)data;
+    InnerReleaseForm(env, asyncCallbackInfo);
+};
+
+// NAPI_ReleaseForm callback complete
+auto NAPI_ReleaseFormAsyncComplete = [](napi_env env, napi_status status, void *data) {
+    HILOG_INFO("NAPI_ReleaseForm compeleted callback");
+    AsyncReleaseFormCallbackInfo *asyncCallbackInfo =
+    (AsyncReleaseFormCallbackInfo *)data;
+
+    if (asyncCallbackInfo->callback != nullptr) {
+        napi_value result;
+        napi_create_int32(env, asyncCallbackInfo->result, &result);
+        napi_value callback;
+        napi_value undefined;
+        napi_get_undefined(env, &undefined);
+        napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
+        napi_value callResult;
+        napi_call_function(env, undefined, callback, ARGS_SIZE_ONE, &result, &callResult);
+        napi_delete_reference(env, asyncCallbackInfo->callback);
+    }
+    napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+    delete asyncCallbackInfo;
+};
+
+// NAPI_ReleaseForm promise Complete
+auto NAPI_ReleaseFormPromiseComplete = [](napi_env env, napi_status status, void *data) {
+    HILOG_INFO("%{public}s, promise complete", __func__);
+    AsyncReleaseFormCallbackInfo *asyncCallbackInfo =
+    (AsyncReleaseFormCallbackInfo *)data;
+
+    napi_value result;
+    napi_create_int32(env, asyncCallbackInfo->result, &result);
+    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+    delete asyncCallbackInfo;
+};
+
+// ReleaseForm callback
+napi_value ReleaseFormCallback(napi_env env, AsyncReleaseFormCallbackInfo *asyncCallbackInfo)
+{
+    HILOG_INFO("%{public}s, asyncCallback.", __func__);
+
+    napi_value resourceName;
+    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    napi_create_async_work(
+        env,
+        nullptr,
+        resourceName,
+        NAPI_ReleaseFormAsyncExecute,
+        NAPI_ReleaseFormAsyncComplete,
+        (void *)asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork);
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return NapiGetResut(env, 1);
+}
+
+// ReleaseForm promise
+napi_value ReleaseFormPromise(napi_env env, AsyncReleaseFormCallbackInfo *asyncCallbackInfo)
+{
+    HILOG_INFO("%{public}s, promise.", __func__);
+    napi_deferred deferred;
+    napi_value promise;
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+
+    napi_value resourceName;
+    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    napi_create_async_work(
+        env,
+        nullptr,
+        resourceName,
+        NAPI_ReleaseFormAsyncExecute,
+        NAPI_ReleaseFormPromiseComplete,
+        (void *)asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork);
+    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    return promise;
+}
+
 /**
  * @brief  The implementation of Node-API interface: releaseForm 
  *
@@ -504,7 +588,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
     size_t argc = ARGS_SIZE_THREE;
     napi_value argv[ARGS_SIZE_THREE] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr));
-    if (argc < ARGS_SIZE_TWO || argc > ARGS_SIZE_THREE) {
+    if (argc < ARGS_SIZE_ONE || argc > ARGS_SIZE_THREE) {
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
@@ -512,24 +596,16 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
 
     // Check the value type of the arguments
     napi_valuetype valueType;
-    NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
+    NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_ZERO], &valueType));
     NAPI_ASSERT(env, valueType == napi_string, "The arguments[0] type of releaseForm is incorrect,\
     expected type is string.");
 
-    std::string strFormId = GetStringFromNAPI(env, argv[0]);
+    std::string strFormId = GetStringFromNAPI(env, argv[ARGS_SIZE_ZERO]);
     int64_t formId;
     bool isConversionSucceeded = ConvertStringToInt64(strFormId, formId);
     NAPI_ASSERT(env, isConversionSucceeded, "The arguments[0] type of releaseForm is incorrect,\
     expected type is string and the content must be numeric,\
     value range is: 0x8000000000000000~0x7FFFFFFFFFFFFFFF.");
-
-    valueType = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    NAPI_ASSERT(env, valueType == napi_boolean, "The arguments[1] type of releaseForm is incorrect,\
-    expected type is boolean.");
-
-    bool isReleaseCache = false;
-    napi_get_value_bool(env, argv[1], &isReleaseCache);
 
     AsyncReleaseFormCallbackInfo *asyncCallbackInfo = new
     AsyncReleaseFormCallbackInfo {
@@ -539,87 +615,41 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
         .deferred = nullptr,
         .callback = nullptr,
         .formId = formId,
-        .isReleaseCache = isReleaseCache,
+        .isReleaseCache = false,
         .result = 0,
     };
-    
-    if (argc == ARGS_SIZE_THREE) {
+    if (argc == ARGS_SIZE_ONE) { // release promise, one argv
+        ReleaseFormPromise(env, asyncCallbackInfo);
+    } else if (argc == ARGS_SIZE_THREE) { // release callback, three argv
         HILOG_INFO("%{public}s, asyncCallback.", __func__);
+        valueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_ONE], &valueType));
+        NAPI_ASSERT(env, valueType == napi_boolean, "The arguments[1] type of releaseForm is incorrect,\
+        expected type is boolean.");
+
+        napi_get_value_bool(env, argv[ARGS_SIZE_ONE], &asyncCallbackInfo->isReleaseCache);
 
         // Check the value type of the arguments
         valueType = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[2], &valueType));
+        NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_TWO], &valueType));
         NAPI_ASSERT(env, valueType == napi_function, "The arguments[2] type of releaseForm is incorrect,\
         expected type is function.");
-
         napi_create_reference(env, argv[ARGS_SIZE_TWO], REF_COUNT, &asyncCallbackInfo->callback);
-
-        napi_value resourceName;
-        napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-        napi_create_async_work(
-            env,
-            nullptr,
-            resourceName,
-            [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
-                AsyncReleaseFormCallbackInfo *asyncCallbackInfo = (AsyncReleaseFormCallbackInfo *)data;
-                InnerReleaseForm(env, asyncCallbackInfo);
-            },
-            [](napi_env env, napi_status status, void *data) {
-                AsyncReleaseFormCallbackInfo *asyncCallbackInfo = (AsyncReleaseFormCallbackInfo *)data;
-                HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
-
-                if (asyncCallbackInfo->callback != nullptr) {
-                    napi_value result;
-                    napi_create_int32(env, asyncCallbackInfo->result, &result);
-                    napi_value callback;
-                    napi_value undefined;
-                    napi_get_undefined(env, &undefined);
-                    napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
-                    napi_value callResult;
-                    napi_call_function(env, undefined, callback, ARGS_SIZE_ONE, &result, &callResult);
-                    napi_delete_reference(env, asyncCallbackInfo->callback);
-                }
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-            },
-            (void *)asyncCallbackInfo,
-            &asyncCallbackInfo->asyncWork);
-        NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-        return NapiGetResut(env, 1);
+        ReleaseFormCallback(env, asyncCallbackInfo);
     } else {
-        HILOG_INFO("%{public}s, promise.", __func__);
-        napi_deferred deferred;
-        napi_value promise;
-        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-        asyncCallbackInfo->deferred = deferred;
-
-        napi_value resourceName;
-        napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-        napi_create_async_work(
-            env,
-            nullptr,
-            resourceName,
-            [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise running,", __func__);
-                AsyncReleaseFormCallbackInfo *asyncCallbackInfo = (AsyncReleaseFormCallbackInfo *)data;
-                InnerReleaseForm(env, asyncCallbackInfo);
-            },
-            [](napi_env env, napi_status status, void *data) {
-                HILOG_INFO("%{public}s, promise complete", __func__);
-                AsyncReleaseFormCallbackInfo *asyncCallbackInfo = (AsyncReleaseFormCallbackInfo *)data;
-
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-            },
-            (void *)asyncCallbackInfo,
-            &asyncCallbackInfo->asyncWork);
-        napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
-        return promise;
+        valueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_ONE], &valueType));
+        if (valueType == napi_function) { // release callback, two argv
+            napi_create_reference(env, argv[ARGS_SIZE_ONE], REF_COUNT, &asyncCallbackInfo->callback);
+            ReleaseFormCallback(env, asyncCallbackInfo);
+        } else if (valueType == napi_boolean) { // release promise, two argv
+            ReleaseFormPromise(env, asyncCallbackInfo);
+        } else {
+            NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
+                "The arguments[2] type of releaseForm is incorrect,expected type is function or boolean.");
+        }
     }
+    return NapiGetResut(env, 1);
 }
 
 /**
@@ -2431,7 +2461,8 @@ napi_value NAPI_GetFormsInfo(napi_env env, napi_callback_info info)
         HILOG_INFO("%{public}s, ARGS_SIZE_TWO.", __func__);
         return GetFormsInfoTwoArgv(env, argv, asyncCallbackInfo);
     } else if (argc == ARGS_SIZE_ONE) { // GetFormsInfoByApp promise
-        return GetFormsInfoPromise(env, asyncCallbackInfo, false);
+        return GetFormsInfoPromise(env, asyncCallbackInfo, true);
     }
     return NapiGetResut(env, 1);
 }
+
