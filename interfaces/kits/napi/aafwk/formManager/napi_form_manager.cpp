@@ -639,15 +639,14 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
     } else {
         valueType = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_ONE], &valueType));
-        if ( valueType == napi_function) { // release callback, two argv
+        if (valueType == napi_function) { // release callback, two argv
             napi_create_reference(env, argv[ARGS_SIZE_ONE], REF_COUNT, &asyncCallbackInfo->callback);
             ReleaseFormCallback(env, asyncCallbackInfo);
         } else if (valueType == napi_boolean) { // release promise, two argv
             ReleaseFormPromise(env, asyncCallbackInfo);
         } else {
             NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
-            "The arguments[2] type of releaseForm is incorrect,\
-            expected type is function or boolean.");
+            "The arguments[2] type of releaseForm is incorrect,expected type is function or boolean.");
         }
     }
     return NapiGetResut(env, 1);
