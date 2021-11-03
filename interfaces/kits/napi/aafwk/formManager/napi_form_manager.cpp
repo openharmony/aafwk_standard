@@ -646,7 +646,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
             ReleaseFormPromise(env, asyncCallbackInfo);
         } else {
             NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
-            "The arguments[2] type of releaseForm is incorrect,expected type is function or boolean.");
+                "The arguments[2] type of releaseForm is incorrect,expected type is function or boolean.");
         }
     }
     return NapiGetResut(env, 1);
