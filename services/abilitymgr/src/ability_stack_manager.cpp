@@ -387,6 +387,7 @@ void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRec
     targetAbilityRecord->SetMissionRecord(targetMissionRecord);
     // reparent mission record, currentMissionStack is the target mission stack.
     targetMissionRecord->SetMissionStack(currentMissionStack_, currentMissionStack_->GetMissionStackId());
+    targetAbilityRecord->SetMissionStackId(currentMissionStack_->GetMissionStackId());
     // add ability record to mission record.
     // if this ability record exist this mission record, do not add.
     targetMissionRecord->AddAbilityRecordToTop(targetAbilityRecord);

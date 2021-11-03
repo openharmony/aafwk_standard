@@ -107,7 +107,6 @@ void AbilityStackModuleTest::SetUp(void)
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
     auto bms = ams->GetBundleManager();
     ams->OnStart();
-
     stackManager_ = ams->GetStackManager();
     EXPECT_TRUE(stackManager_);
     stackManager_->Init();
@@ -599,7 +598,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_007, TestSize.Level1)
     curMissionStack->AddMissionRecordToTop(mission);
 
     OHOS::sptr<MockAbilityScheduler> abilityScheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*abilityScheduler, AsObject()).Times(2);
     // ams handler is non statrt so times is 0
     EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_)).Times(1);
 
@@ -3939,94 +3937,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_065, TestSize.Level1)
     EXPECT_TRUE(token);
     stackManager_->MoveMissionToEnd(token, true);
     EXPECT_EQ(stackManager_->GetCurrentTopAbility(), abilityRecordWorld);
-}
-
-/*
- * Feature: AaFwk
- * Function:SortRecentMissions
- * SubFunction: Sort Recent Missions
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription: Sort Recent Missions
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_066, TestSize.Level1)
-{
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    stackManager_->Init();
-    std::vector<MissionRecordInfo> missionInfos;
-    // start launcher
-    auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
-    auto ref = stackManager_->StartAbility(worldAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordWorld = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordWorld);
-    abilityRecordWorld->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    auto missionRecordMusic = stackManager_->GetTopMissionRecord();
-    EXPECT_TRUE(abilityRecordMusic);
-    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    MissionRecordInfo missionRecordInfo;
-    missionRecordInfo.id = 1;
-    missionRecordMusic->GetAllAbilityInfo(missionRecordInfo.abilityRecordInfos);
-    missionInfos.emplace_back(missionRecordInfo);
-
-    auto musicTopAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "musicTop", "com.ix.hiTopMusic");
-    ref = stackManager_->StartAbility(musicTopAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    auto topMissionRecordMusic = stackManager_->GetTopMissionRecord();
-    EXPECT_TRUE(topAbilityRecordMusic);
-    topAbilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    MissionRecordInfo missionRecordInfo1;
-    missionRecordInfo1.id = 3;
-    missionRecordMusic->GetAllAbilityInfo(missionRecordInfo1.abilityRecordInfos);
-    missionInfos.emplace_back(missionRecordInfo1);
-
-    // start split ability
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
-    EXPECT_TRUE(abilityStartSetting);
-    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
-        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY));
-    radioAbilityRequest.startSetting = abilityStartSetting;
-    ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    auto topMissionRecordRadio = stackManager_->GetTopMissionRecord();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    MissionRecordInfo missionRecordInfo2;
-    missionRecordInfo2.id = 2;
-    missionRecordMusic->GetAllAbilityInfo(missionRecordInfo2.abilityRecordInfos);
-    missionInfos.emplace_back(missionRecordInfo2);
-
-    auto topFullStack = stackManager_->GetTopFullScreenStack();
-    EXPECT_TRUE(topFullStack);
-    auto topFullAbility = topFullStack->GetTopAbilityRecord();
-    ref = stackManager_->CheckSplitSrceenCondition(radioAbilityRequest, topFullAbility);
-    EXPECT_EQ(true, ref);
-
-    stackManager_->SortRecentMissions(missionInfos);
-    EXPECT_EQ(missionInfos[1].id, 3);
-    EXPECT_EQ(missionInfos[2].id, 2);
-    EXPECT_EQ(missionInfos[3].id, 0);
-
-    auto missionId = topAbilityRecordRadio->GetMissionRecordId();
-    ref = stackManager_->RemoveMissionById(missionId);
-    EXPECT_EQ(ERR_OK, ref);
-    auto splitScreenStack = stackManager_->GetTopSplitScreenStack();
-    EXPECT_TRUE(splitScreenStack == nullptr);
 }
 
 /*

@@ -47,32 +47,13 @@ static ElementName g_testAbility3("device", "com.ix.test3", "MainAbility3");
 static ElementName g_testAbility4("device", "com.ix.test4", "MainAbility4");
 static ElementName g_launcherAbility("device", "com.ix.hiworld", "MainAbility");
 }  // namespace
-
-static void WaitUntilTaskFinished()
-{
-    const uint32_t maxRetryCount = 1000;
-    const uint32_t sleepTime = 1000;
-    uint32_t count = 0;
-    auto handler = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    std::atomic<bool> taskCalled(false);
-    auto f = [&taskCalled]() { taskCalled.store(true); };
-    if (handler->PostTask(f)) {
-        while (!taskCalled.load()) {
-            ++count;
-            if (count >= maxRetryCount) {
-                break;
-            }
-            usleep(sleepTime);
-        }
-    }
-}
 class AbilityWithApplicationsTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-
+    void OnStartabilityAms();
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
     std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
@@ -91,14 +72,54 @@ void AbilityWithApplicationsTest::TearDownTestCase()
 void AbilityWithApplicationsTest::SetUp()
 {
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    abilityMs_->OnStart();
-    WaitUntilTaskFinished(); /* wait for Service Start Complete */
+    OnStartabilityAms();
 }
 
 void AbilityWithApplicationsTest::TearDown()
 {
     abilityMs_->OnStop();
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
+
+void AbilityWithApplicationsTest::OnStartabilityAms()
+{
+    if (abilityMs_) {
+        if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMs_->eventLoop_);
+
+        abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
+        EXPECT_TRUE(abilityMs_->handler_);
+        EXPECT_TRUE(abilityMs_->connectManager_);
+
+        abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
+
+        abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMs_->dataAbilityManager_);
+
+        abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMs_->amsConfigResolver_);
+        abilityMs_->amsConfigResolver_->Parse();
+
+        abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(abilityMs_->pendingWantManager_);
+      
+        int userId = abilityMs_->GetUserId();
+        abilityMs_->SetStackManager(userId);
+        abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(abilityMs_->systemAppManager_);
+
+        abilityMs_->eventLoop_->Run();
+
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
 }
 
 /*
