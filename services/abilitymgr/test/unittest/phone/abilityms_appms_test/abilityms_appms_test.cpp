@@ -79,15 +79,57 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-
+    void OnStartabilityAms();
     std::shared_ptr<AbilityRecord> GetAbilityRecord() const;
     void ResetAbilityRecord();
     void startAbility();
 
 public:
-    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
-    std::shared_ptr<AppStateCallbackS> callback_{nullptr};
+    std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
+    std::shared_ptr<AppStateCallbackS> callback_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
+
+void AbilityMsAppmsTest::OnStartabilityAms()
+{
+    if (abilityMs_) {
+        if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMs_->eventLoop_);
+
+        abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
+        EXPECT_TRUE(abilityMs_->handler_);
+        EXPECT_TRUE(abilityMs_->connectManager_);
+
+        abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
+
+        abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMs_->dataAbilityManager_);
+
+        abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMs_->amsConfigResolver_);
+        abilityMs_->amsConfigResolver_->Parse();
+
+        abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(abilityMs_->pendingWantManager_);
+      
+        int userId = abilityMs_->GetUserId();
+        abilityMs_->SetStackManager(userId);
+        abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(abilityMs_->systemAppManager_);
+
+        abilityMs_->eventLoop_->Run();
+
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
 
 void AbilityMsAppmsTest::SetUpTestCase(void)
 {}
@@ -104,8 +146,8 @@ void AbilityMsAppmsTest::SetUp(void)
     callback_ = std::make_shared<AppStateCallbackS>();
 
     DelayedSingleton<AppScheduler>::GetInstance()->Init(callback_);
-    DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
-    WaitUntilTaskFinished();
+    abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
+    OnStartabilityAms();
     startAbility();
     GTEST_LOG_(INFO) << "SetUp";
 }
@@ -143,11 +185,12 @@ void AbilityMsAppmsTest::startAbility()
     AbilityInfo abilityInfo;
     ApplicationInfo applicationInfo;
 
-    auto abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
     EXPECT_TRUE(abilityMs_->currentStackManager_);
     auto currentTopAbilityRecord = abilityMs_->currentStackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(currentTopAbilityRecord);
-    currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
+    if (currentTopAbilityRecord) {
+        currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
+    }
+
     ElementName element("device", "com.ix.hiworld", "luncherAbility");
     want.SetElement(element);
     abilityMs_->StartAbility(want);
