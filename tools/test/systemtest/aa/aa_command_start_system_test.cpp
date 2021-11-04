@@ -69,7 +69,7 @@ void AaCommandStartSystemTest::TearDown()
 /**
  * @tc.number: Aa_Command_Start_SystemTest_0100
  * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa start -d <device-id> -a <ability-name> -b <bundle-name>" command.
+ * @tc.desc: Verify the "aa start -d <device-id> -a <ability-name> -b <bundle-name> -D" command.
  */
 HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0100, Function | MediumTest | Level1)
 {
@@ -81,7 +81,7 @@ HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0100, Function | 
 
     // start the page ability
     std::string command = "aa start -d " + STRING_DEVICE_NAME + " -a " + STRING_PAGE_ABILITY_NAME + " -b " +
-                          STRING_PAGE_ABILITY_BUNDLE_NAME;
+                          STRING_PAGE_ABILITY_BUNDLE_NAME + " -D";
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
     EXPECT_EQ(commandResult, STRING_START_ABILITY_OK + "\n");
