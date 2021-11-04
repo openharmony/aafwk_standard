@@ -34,20 +34,20 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
 const std::string HELP_MSG_SCREEN =
     "usage: aa screen <options>\n"
     "options list:\n"
-    "  -h, --help                                               list available commands\n"
-    "  -p, --power <state>                                      power on or off with a state name\n";
+    "  -h, --help                                                   list available commands\n"
+    "  -p, --power <state>                                          power on or off with a state name\n";
 
 const std::string HELP_MSG_START =
     "usage: aa start <options>\n"
     "options list:\n"
-    "  -h, --help                                               list available commands\n"
-    "  [-d <device-id>] -a <ability-name> -b <bundle-name>      start ability with an element name\n";
+    "  -h, --help                                                   list available commands\n"
+    "  [-d <device-id>] -a <ability-name> -b <bundle-name> [-D]     start ability with an element name\n";
 
 const std::string HELP_MSG_STOP_SERVICE =
     "usage: aa stop-service <options>\n"
     "options list:\n"
-    "  -h, --help                                               list available commands\n"
-    "  [-d <device-id>] -a <ability-name> -b <bundle-name>      stop service with an element name\n";
+    "  -h, --help                                                   list available commands\n"
+    "  [-d <device-id>] -a <ability-name> -b <bundle-name>          stop service with an element name\n";
 
 const std::string HELP_MSG_DUMP = "usage: aa dump <options>\n"
                                   "options list:\n"
