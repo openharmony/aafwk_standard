@@ -364,24 +364,6 @@ void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int sta
 }
 
 /**
- * @description: Handle the SaveAbility state.
- * @param state Indicates save ability state used to dispatchSaveAbilityState.
- */
-void AbilityThread::HandleSaveAbilityState(PacMap &state)
-{
-    APP_LOGI("AbilityThread::HandleSaveAbilityState begin");
-    if (abilityImpl_ == nullptr) {
-        APP_LOGE("AbilityThread::HandleSaveAbilityState abilityImpl_ == nullptr");
-        return;
-    }
-
-    APP_LOGI("AbilityThread::HandleSaveAbilityState before abilityImpl_->DispatchSaveAbilityState");
-    abilityImpl_->DispatchSaveAbilityState(state);
-    APP_LOGI("AbilityThread::HandleSaveAbilityState after abilityImpl_->DispatchSaveAbilityState");
-    APP_LOGI("AbilityThread::HandleSaveAbilityState end");
-}
-
-/**
  * @description: Handle the restoreAbility state.
  * @param state  Indicates save ability state used to dispatchRestoreAbilityState.
  */
@@ -401,9 +383,8 @@ void AbilityThread::HandleRestoreAbilityState(const PacMap &state)
 
 /**
  * @description: Provide operating system SaveabilityState information to the observer
- * @param state Indicates save ability state used to dispatch.
  */
-void AbilityThread::ScheduleSaveAbilityState(PacMap &state)
+void AbilityThread::ScheduleSaveAbilityState()
 {
     APP_LOGI("AbilityThread::ScheduleSaveAbilityState begin");
     if (abilityImpl_ == nullptr) {
@@ -412,7 +393,9 @@ void AbilityThread::ScheduleSaveAbilityState(PacMap &state)
     }
 
     APP_LOGI("AbilityThread::ScheduleSaveAbilityState before abilityImpl_->DispatchSaveAbilityState");
-    abilityImpl_->DispatchSaveAbilityState(state);
+
+    abilityImpl_->DispatchSaveAbilityState();
+
     APP_LOGI("AbilityThread::ScheduleSaveAbilityState after abilityImpl_->DispatchSaveAbilityState");
     APP_LOGI("AbilityThread::ScheduleSaveAbilityState end");
 }

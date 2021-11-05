@@ -70,11 +70,11 @@ ErrCode AbilityManagerClient::AttachAbilityThread(
     return abms->AttachAbilityThread(scheduler, token);
 }
 
-ErrCode AbilityManagerClient::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+ErrCode AbilityManagerClient::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->AbilityTransitionDone(token, state);
+    return abms->AbilityTransitionDone(token, state, saveData);
 }
 
 ErrCode AbilityManagerClient::ScheduleConnectAbilityDone(

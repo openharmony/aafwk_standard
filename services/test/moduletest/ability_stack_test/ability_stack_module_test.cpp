@@ -642,7 +642,9 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_008, TestSize.Level1)
         std::make_shared<AbilityEventHandler>(nullptr, OHOS::DelayedSingleton<AbilityManagerService>::GetInstance());
     OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->handler_ = handler;
 
-    int result = stackManager_->AbilityTransitionDone(abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::INITIAL);
+    PacMap saveData;
+    int result = stackManager_->AbilityTransitionDone(
+        abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::INITIAL, saveData);
     EXPECT_EQ(OHOS::ERR_OK, result);
 
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_008 end";
@@ -755,7 +757,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
         .Times(testing::AtLeast(2))
         .WillOnce(testing::Invoke(transactionDoneCaller))
         .WillOnce(testing::Invoke(transactionDoneCaller2));
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(_)).Times(AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(AtLeast(1));
 
     firstTopAbility->SetScheduler(scheduler);
 
@@ -817,7 +819,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
         .WillOnce(Return(nullptr))
         .WillOnce(Return(nullptr));
 
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(testing::_)).Times(testing::AtLeast(3));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(3));
 
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
         .Times(testing::AtLeast(3))
@@ -825,7 +827,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
         .WillOnce(testing::Invoke(transactionDoneCaller2))
         .WillOnce(testing::Invoke(transactionDoneCaller3))
         .WillOnce(testing::Invoke(transactionDoneCaller));
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(_)).Times(AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(AtLeast(1));
 
     firstTopAbility->SetScheduler(scheduler);
 
@@ -852,14 +854,14 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
         .WillOnce(Return(nullptr))
         .WillOnce(Return(nullptr));
 
-    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState(testing::_)).Times(testing::AtLeast(3));
+    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState()).Times(testing::AtLeast(3));
 
     EXPECT_CALL(*scheduler2, ScheduleAbilityTransaction(testing::_, testing::_))
         .Times(testing::AtLeast(3))
         .WillOnce(testing::Invoke(transactionDoneCaller2_1))
         .WillOnce(testing::Invoke(transactionDoneCaller2_2))
         .WillOnce(testing::Invoke(transactionDoneCaller2_3));
-    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState(_)).Times(AtLeast(1));
+    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState()).Times(AtLeast(1));
 
     secondTopAbility->SetScheduler(scheduler2);
 
@@ -1024,7 +1026,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_014, TestSize.Level1)
         .Times(testing::AtLeast(2))
         .WillOnce(testing::Invoke(transactionDoneCaller3))
         .WillOnce(testing::Invoke(transactionDoneCaller4));
-    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState(_)).Times(AtLeast(1));
+    EXPECT_CALL(*scheduler2, ScheduleSaveAbilityState()).Times(AtLeast(1));
 
     secondTopAbility->SetAbilityState(OHOS::AAFwk::INACTIVE);
     auto musicMisionRecord = secondTopAbility->GetMissionRecord();
@@ -1362,7 +1364,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_021, TestSize.Level1)
         .WillOnce(testing::Invoke(transactionDoneTerminate));
 
     // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(testing::_)).Times(testing::AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
     // when restart ability restore the ability state
     EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
 
@@ -1434,7 +1436,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_022, TestSize.Level1)
         .WillOnce(testing::Invoke(transactionDoneTerminate));
 
     // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(testing::_)).Times(testing::AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
     // when restart ability restore the ability state
     EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
 
@@ -1500,7 +1502,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_023, TestSize.Level1)
         .WillOnce(testing::Invoke(transactionDoneTerminate));
 
     // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState(testing::_)).Times(testing::AtLeast(1));
+    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
     // when restart ability restore the ability state
     EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
 

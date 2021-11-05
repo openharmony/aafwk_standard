@@ -437,6 +437,7 @@ public:
      *
      */
     void SaveAbilityState();
+    void SaveAbilityState(const PacMap &inState);
 
     /**
      * restore ability state.

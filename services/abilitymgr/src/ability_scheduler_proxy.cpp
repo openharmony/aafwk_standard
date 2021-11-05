@@ -129,7 +129,7 @@ void AbilitySchedulerProxy::ScheduleCommandAbility(const Want &want, bool restar
     }
 }
 
-void AbilitySchedulerProxy::ScheduleSaveAbilityState(PacMap &outState)
+void AbilitySchedulerProxy::ScheduleSaveAbilityState()
 {
     MessageParcel data;
     MessageParcel reply;
@@ -141,12 +141,6 @@ void AbilitySchedulerProxy::ScheduleSaveAbilityState(PacMap &outState)
     if (err != NO_ERROR) {
         HILOG_ERROR("ScheduleSaveAbilityState fail to SendRequest. err: %d", err);
     }
-    std::unique_ptr<PacMap> pacMap(reply.ReadParcelable<PacMap>());
-    if (!pacMap) {
-        HILOG_ERROR("readParcelableInfo<PacMap> failed");
-        return;
-    }
-    outState = *pacMap;
 }
 
 void AbilitySchedulerProxy::ScheduleRestoreAbilityState(const PacMap &inState)

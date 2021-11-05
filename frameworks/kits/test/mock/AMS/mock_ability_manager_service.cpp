@@ -95,7 +95,7 @@ int MockAbilityManagerService::ConnectAbility(
 {
     if (abilityScheduler_ != nullptr) {
         PacMap inState;
-        abilityScheduler_->ScheduleSaveAbilityState(inState);
+        abilityScheduler_->ScheduleSaveAbilityState();
         abilityScheduler_->ScheduleRestoreAbilityState(inState);
     }
     return 0;
@@ -128,7 +128,8 @@ int MockAbilityManagerService::AttachAbilityThread(
 void MockAbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
 {}
 
-int MockAbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int MockAbilityManagerService::AbilityTransitionDone(
+    const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     GTEST_LOG_(INFO) << "MockAbilityManagerService::AbilityTransitionDone called";
     EXPECT_EQ(curstate_, state);

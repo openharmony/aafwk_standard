@@ -248,6 +248,9 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level0)
     WriteInterfaceToken(data);
     data.WriteParcelable(token);
     data.WriteInt32(1);
+    PacMap pMap;
+    pMap.PutIntValue(std::string("1"), 1);
+    data.WriteParcelable(&pMap);
     int res = stub_->OnRemoteRequest(IAbilityManager::ABILITY_TRANSITION_DONE, data, reply, option);
 
     EXPECT_EQ(res, NO_ERROR);

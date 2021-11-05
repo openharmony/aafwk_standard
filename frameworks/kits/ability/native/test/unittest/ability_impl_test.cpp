@@ -216,6 +216,8 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Stop_001, TestSize.Level1)
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                contextDeal->SetAbilityInfo(abilityInfo);
+                ability->AttachBaseContext(contextDeal);
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
                 mockAbilityimpl->ImplStop();
@@ -617,10 +619,8 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DispatchSaveAbilityState_001, TestSi
             std::shared_ptr<Ability> ability = std::make_shared<Ability>();
             std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
             mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
-            PacMap outState;
             AbilityLifecycleExecutor AbilityLifecycleExecutor_;
-            mockAbilityimpl->DispatchSaveAbilityState(outState);
+            mockAbilityimpl->DispatchSaveAbilityState();
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_DispatchSaveAbilityState_001 end";
@@ -653,9 +653,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DispatchSaveAbilityState_002, TestSi
             std::shared_ptr<Ability> ability = nullptr;
             std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
             mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
-            PacMap outState;
-            mockAbilityimpl->DispatchSaveAbilityState(outState);
+            mockAbilityimpl->DispatchSaveAbilityState();
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_DispatchSaveAbilityState_002 end";
@@ -1340,5 +1338,89 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Query_001, TestSize.Level1)
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Query_001 end";
 }
+
+/*
+ * Feature: AbilityImpl
+ * Function: CheckAndSave
+ * SubFunction: NA
+ * FunctionPoints: CheckAndSave
+ * EnvConditions: NA
+ * CaseDescription: Test the normal behavior of the AbilityImpl::CheckAndSave
+ */
+HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CheckAndSave_001, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndSave_001 start";
+    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
+    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = "pageAbility";
+    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+    EXPECT_NE(token, nullptr);
+    if (token != nullptr) {
+        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+        EXPECT_NE(abilityThread, nullptr);
+        if (abilityThread != nullptr) {
+            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+            std::shared_ptr<Ability> ability;
+            MockPageAbility *pMocKPageAbility = new (std::nothrow) MockPageAbility();
+            EXPECT_NE(pMocKPageAbility, nullptr);
+            if (pMocKPageAbility != nullptr) {
+                ability.reset(pMocKPageAbility);
+                std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
+
+                EXPECT_FALSE(mockAbilityimpl->CheckAndSave());
+                mockAbilityimpl->DispatchSaveAbilityState();
+                EXPECT_TRUE(mockAbilityimpl->CheckAndSave());
+            }
+        }
+    }
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndSave_001 end";
+}
+
+/*
+ * Feature: AbilityImpl
+ * Function: CheckAndRestore
+ * SubFunction: NA
+ * FunctionPoints: CheckAndRestore
+ * EnvConditions: NA
+ * CaseDescription: Test the normal behavior of the AbilityImpl::CheckAndRestore
+ */
+HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CheckAndRestore_001, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndRestore_001 start";
+    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
+    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = "pageAbility";
+    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+    EXPECT_NE(token, nullptr);
+    if (token != nullptr) {
+        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+        EXPECT_NE(abilityThread, nullptr);
+        if (abilityThread != nullptr) {
+            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+            std::shared_ptr<Ability> ability;
+            MockPageAbility *pMocKPageAbility = new (std::nothrow) MockPageAbility();
+            EXPECT_NE(pMocKPageAbility, nullptr);
+            if (pMocKPageAbility != nullptr) {
+                ability.reset(pMocKPageAbility);
+                std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
+
+                EXPECT_FALSE(mockAbilityimpl->CheckAndRestore());
+                PacMap inState;
+                mockAbilityimpl->DispatchRestoreAbilityState(inState);
+                EXPECT_TRUE(mockAbilityimpl->CheckAndRestore());
+            }
+        }
+    }
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndRestore_001 end";
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

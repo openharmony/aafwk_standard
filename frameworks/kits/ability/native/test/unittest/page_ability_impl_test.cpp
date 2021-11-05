@@ -601,9 +601,7 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DispatchSaveAbilityState_010
 
     std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
-
-    PacMap outState;
-    pageAbilityImpl_->DispatchSaveAbilityState(outState);
+    pageAbilityImpl_->DispatchSaveAbilityState();
 
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DispatchSaveAbilityState_0100 end";
 }

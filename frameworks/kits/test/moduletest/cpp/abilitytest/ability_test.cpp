@@ -52,7 +52,7 @@ public:
     void SetUp();
     void TearDown();
     OHOS::sptr<OHOS::IRemoteObject> abilityObject_;
-    static constexpr int TEST_WAIT_TIME = 500 * 1000;  // 500 ms
+    static constexpr int TEST_WAIT_TIME = 500 * 1000 * 2;  // 500 ms * 2
     static const int RESULT_CODE = 1992;
 
 public:
@@ -881,6 +881,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Launch_0100, Function | MediumT
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->type = AppExecFwk::AbilityType::DATA;
         abilityInfo->name = "DemoAbility";
+        abilityInfo->isNativeAbility = true;
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 

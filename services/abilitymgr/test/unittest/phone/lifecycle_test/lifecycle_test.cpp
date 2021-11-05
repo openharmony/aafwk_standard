@@ -376,7 +376,8 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_StartLauncherAbilityLifeCycle_005, TestS
             pthread_join(tid, nullptr);
             return;
         }
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, command_->state_), OHOS::ERR_OK);
+        PacMap saveData;
+        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, command_->state_, saveData), OHOS::ERR_OK);
         if (launcherAbilityRecord_->GetAbilityState() != OHOS::AAFwk::AbilityState::ACTIVE) {
             WaitUntilTaskFinished();
             EXPECT_EQ(launcherAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVE);
@@ -454,7 +455,8 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_002, TestSize.Leve
         EXPECT_EQ(AttachAbility(launcherScheduler_, launcherToken_), 0);
         EXPECT_TRUE(StartNextAbility());
         // launcher is in inactivating process.
-        EXPECT_NE(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+        PacMap saveData;
+        EXPECT_NE(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
         WaitUntilTaskFinished();
         EXPECT_EQ(launcherAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
         EXPECT_EQ(nextAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::INITIAL);
@@ -479,7 +481,8 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_003, TestSize.Leve
         WaitUntilTaskFinished();
         EXPECT_TRUE(StartNextAbility());
         launcherAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVATING);
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE), 0);
+        PacMap saveData;
+        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE, saveData), 0);
         // launcher oninactive done.
         pthread_t tid = 0;
         pthread_create(&tid, nullptr, LifecycleTest::AbilityStartThread, command_.get());
@@ -510,11 +513,12 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_004, TestSize.Leve
         EXPECT_EQ(AttachAbility(launcherScheduler_, launcherToken_), 0);
         EXPECT_TRUE(StartNextAbility());
         launcherAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVATING);
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE), 0);
+        PacMap saveData;
+        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE, saveData), 0);
         // launcher oninactive done.
         nextAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INITIAL);
         EXPECT_EQ(AttachAbility(nextScheduler_, nextToken_), 0);
-        EXPECT_NE(abilityMs_->AbilityTransitionDone(nullptr, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+        EXPECT_NE(abilityMs_->AbilityTransitionDone(nullptr, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
     }
 }
 
@@ -538,7 +542,8 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_005, TestSize.Leve
         EXPECT_EQ(AttachAbility(launcherScheduler_, launcherToken_), 0);
         EXPECT_TRUE(StartNextAbility());
         launcherAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVATING);
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE), 0);
+        PacMap saveData;
+        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE, saveData), 0);
         WaitUntilTaskFinished();
         // launcher oninactive done.
         nextAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INITIAL);
@@ -606,7 +611,9 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_007, TestSize.Leve
         EXPECT_EQ(AttachAbility(launcherScheduler_, launcherToken_), 0);
         EXPECT_TRUE(StartNextAbility());
         launcherAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVATING);
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE), OHOS::ERR_OK);
+        PacMap saveData;
+        EXPECT_EQ(abilityMs_->AbilityTransitionDone(
+            launcherToken_, OHOS::AAFwk::AbilityState::INACTIVE, saveData), OHOS::ERR_OK);
         // launcher oninactive done.
         WaitUntilTaskFinished();
         EXPECT_EQ(launcherAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVE);

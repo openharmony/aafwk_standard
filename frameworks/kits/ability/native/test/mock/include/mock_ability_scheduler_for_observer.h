@@ -36,7 +36,7 @@ public:
     MOCK_METHOD1(ScheduleConnectAbility, void(const AAFwk::Want &));
     MOCK_METHOD1(ScheduleDisconnectAbility, void(const AAFwk::Want &));
     MOCK_METHOD3(ScheduleCommandAbility, void(const AAFwk::Want &, bool, int));
-    MOCK_METHOD1(ScheduleSaveAbilityState, void(PacMap &));
+    MOCK_METHOD0(ScheduleSaveAbilityState, void());
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &));
     MOCK_METHOD1(ScheduleUpdateConfiguration, void(const AAFwk::DummyConfiguration &));
     MOCK_METHOD2(GetFileTypes, std::vector<std::string>(const Uri &, const std::string &));
