@@ -36,6 +36,9 @@ int MockAbilityManagerStub::StartAbility(const Want &want, int requestCode)
         return RESOLVE_APP_ERR;
     }
 
+    auto isDebugApp = want.GetBoolParam("debugApp", false);
+    HILOG_INFO("isDebugApp: %{public}d", isDebugApp);
+
     return ERR_OK;
 }
 
