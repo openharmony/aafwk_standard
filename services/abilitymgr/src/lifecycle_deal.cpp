@@ -88,11 +88,11 @@ void LifecycleDeal::CommandAbility(const Want &want, bool reStart, int startId)
     abilityScheduler_->ScheduleCommandAbility(want, reStart, startId);
 }
 
-void LifecycleDeal::SaveAbilityState(PacMap &outState)
+void LifecycleDeal::SaveAbilityState()
 {
     HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
     CHECK_POINTER(abilityScheduler_);
-    abilityScheduler_->ScheduleSaveAbilityState(outState);
+    abilityScheduler_->ScheduleSaveAbilityState();
 }
 
 void LifecycleDeal::RestoreAbilityState(const PacMap &inState)

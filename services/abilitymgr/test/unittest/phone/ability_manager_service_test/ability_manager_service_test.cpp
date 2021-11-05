@@ -594,12 +594,13 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
     EXPECT_EQ(topAbility->GetAbilityInfo().name, "MusicAbility");
 
     OHOS::sptr<Token> nullToken = nullptr;
-    auto res = abilityMs_->AbilityTransitionDone(nullToken, OHOS::AAFwk::AbilityState::ACTIVE);
+    PacMap saveData;
+    auto res = abilityMs_->AbilityTransitionDone(nullToken, OHOS::AAFwk::AbilityState::ACTIVE, saveData);
     EXPECT_EQ(res, OHOS::ERR_INVALID_VALUE);
 
     std::shared_ptr<AbilityRecord> record = nullptr;
     OHOS::sptr<Token> token = new Token(record);
-    auto res1 = abilityMs_->AbilityTransitionDone(token, OHOS::AAFwk::AbilityState::ACTIVE);
+    auto res1 = abilityMs_->AbilityTransitionDone(token, OHOS::AAFwk::AbilityState::ACTIVE, saveData);
     EXPECT_EQ(res1, OHOS::ERR_INVALID_VALUE);
 }
 

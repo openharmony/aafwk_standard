@@ -128,10 +128,11 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_002, TestSize.Level1)
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-        EXPECT_CALL(*mockAbilityMgr, AbilityTransitionDone(_, _))
+        EXPECT_CALL(*mockAbilityMgr, AbilityTransitionDone(_, _, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->AbilityTransitionDone(abilityRecord->GetToken(), 0);
+        PacMap pmap;
+        abilityMgrClient->AbilityTransitionDone(abilityRecord->GetToken(), 0, pmap);
         mockAbilityMgr->Wait();
     }
 

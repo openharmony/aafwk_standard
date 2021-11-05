@@ -96,7 +96,7 @@ void AbilityImpl::Background()
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Background called";
 }
 
-void AbilityImpl::DispatchSaveAbilityState(PacMap &outState)
+void AbilityImpl::DispatchSaveAbilityState()
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::DispatchSaveAbilityState called";
 }

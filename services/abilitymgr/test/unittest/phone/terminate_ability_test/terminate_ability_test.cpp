@@ -239,18 +239,19 @@ void TerminateAbilityTest::TerminateAbility(
     const OHOS::sptr<Token> &curToken, const OHOS::sptr<Token> &preToken, const Want *resultWant)
 {
     EXPECT_EQ(g_aams->TerminateAbility(curToken, -1, resultWant), 0);
+    PacMap saveData;
     if (Token::GetAbilityRecordByToken(curToken)->GetAbilityState() != OHOS::AAFwk::AbilityState::INACTIVATING) {
-        EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INITIAL), 0);
+        EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INITIAL, saveData), 0);
         WaitUntilTaskFinished();
         return;
     }
-    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INACTIVE), 0);
+    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INACTIVE, saveData), 0);
     WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(preToken, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+    EXPECT_EQ(g_aams->AbilityTransitionDone(preToken, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
     WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::BACKGROUND), 0);
+    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::BACKGROUND, saveData), 0);
     WaitUntilTaskFinished();
-    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INITIAL), 0);
+    EXPECT_EQ(g_aams->AbilityTransitionDone(curToken, OHOS::AAFwk::AbilityState::INITIAL, saveData), 0);
 }
 
 /*
@@ -599,7 +600,8 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_010, TestSize.Level1
     int resultValue = 10;
     want.SetParam(key, resultValue);
     EXPECT_EQ(g_aams->TerminateAbility(tokenB, -1, &musicAbilityRequest_.want), 0);
-    EXPECT_NE(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+    PacMap saveData;
+    EXPECT_NE(g_aams->AbilityTransitionDone(tokenA, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
     // clear testAbilityRecordC testAbilityRecordA
     EXPECT_EQ(g_aams->TerminateAbility(tokenC, -1, nullptr), 0);
     EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), 0);
@@ -648,7 +650,8 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_011, TestSize.Level1
     int resultValue = 11;
     want.SetParam(key, resultValue);
     EXPECT_EQ(g_aams->TerminateAbility(launcherTokenB, -1, &launcherAbilityRequest_.want), 0);
-    EXPECT_NE(g_aams->AbilityTransitionDone(launcherTokenA, OHOS::AAFwk::AbilityState::ACTIVE), 0);
+    PacMap saveData;
+    EXPECT_NE(g_aams->AbilityTransitionDone(launcherTokenA, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
     EXPECT_EQ(g_aams->TerminateAbility(launcherTokenC, -1, &want), 0);
     EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, &want), TERMINATE_LAUNCHER_DENIED);
     WaitUntilTaskFinished();

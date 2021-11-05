@@ -120,9 +120,8 @@ public:
 
     /**
      * @description: Provide operating system SaveabilityState information to the observer
-     * @param state Indicates save ability state used to dispatch.
      */
-    void ScheduleSaveAbilityState(PacMap &state);
+    void ScheduleSaveAbilityState();
 
     /**
      * @description:  Provide operating system RestoreAbilityState information to the observer
@@ -413,12 +412,6 @@ private:
      * startId is 6.
      */
     void HandleCommandAbility(const Want &want, bool restart, int startId);
-
-    /**
-     * @description: Handle the SaveAbility state.
-     * @param state Indicates save ability state used to dispatchSaveAbilityState.
-     */
-    void HandleSaveAbilityState(PacMap &state);
 
     /**
      * @description: Handle the restoreAbility state.

@@ -932,23 +932,24 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_023, TestSize.
     auto topAbility = stackManager_->GetCurrentTopAbility();
     topAbility->SetAbilityState(OHOS::AAFwk::INITIAL);
     auto token = topAbility->GetToken();
-    EXPECT_NE(stackManager_->AbilityTransitionDone(token, OHOS::AAFwk::ACTIVE), 0);
+    PacMap saveData;
+    EXPECT_NE(stackManager_->AbilityTransitionDone(token, OHOS::AAFwk::ACTIVE, saveData), 0);
 
     std::shared_ptr<AbilityRecord> record = nullptr;
     auto nullToken = new Token(record);
-    EXPECT_NE(stackManager_->AbilityTransitionDone(nullToken, OHOS::AAFwk::INACTIVE), 0);
+    EXPECT_NE(stackManager_->AbilityTransitionDone(nullToken, OHOS::AAFwk::INACTIVE, saveData), 0);
 
     auto token1 = topAbility->GetToken();
-    EXPECT_NE(stackManager_->AbilityTransitionDone(token1, OHOS::AAFwk::BACKGROUND), 0);
+    EXPECT_NE(stackManager_->AbilityTransitionDone(token1, OHOS::AAFwk::BACKGROUND, saveData), 0);
 
     auto token2 = topAbility->GetToken();
-    EXPECT_NE(stackManager_->AbilityTransitionDone(token2, OHOS::AAFwk::INITIAL), 0);
+    EXPECT_NE(stackManager_->AbilityTransitionDone(token2, OHOS::AAFwk::INITIAL, saveData), 0);
 
     auto token3 = topAbility->GetToken();
-    EXPECT_NE(stackManager_->AbilityTransitionDone(token3, OHOS::AAFwk::TERMINATING), 0);
+    EXPECT_NE(stackManager_->AbilityTransitionDone(token3, OHOS::AAFwk::TERMINATING, saveData), 0);
 
     auto token4 = topAbility->GetToken();
-    EXPECT_NE(stackManager_->AbilityTransitionDone(token4, OHOS::AAFwk::INACTIVE), 0);
+    EXPECT_NE(stackManager_->AbilityTransitionDone(token4, OHOS::AAFwk::INACTIVE, saveData), 0);
 }
 
 /*

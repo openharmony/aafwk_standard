@@ -54,7 +54,7 @@ public:
      * @param state,.the state of ability lift cycle.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode AbilityTransitionDone(const sptr<IRemoteObject> &token, int state);
+    ErrCode AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData);
 
     /**
      * ScheduleConnectAbilityDone, service ability call this interface while session was connected.

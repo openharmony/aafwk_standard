@@ -152,12 +152,7 @@ int AbilitySchedulerStub::CommandAbilityInner(MessageParcel &data, MessageParcel
 
 int AbilitySchedulerStub::SaveAbilityStateInner(MessageParcel &data, MessageParcel &reply)
 {
-    PacMap pacMap;
-    ScheduleSaveAbilityState(pacMap);
-    if (!reply.WriteParcelable(&pacMap)) {
-        HILOG_ERROR("AbilityManagerStub: SaveAbilityState error");
-        return ERR_INVALID_VALUE;
-    }
+    ScheduleSaveAbilityState();
     return NO_ERROR;
 }
 
