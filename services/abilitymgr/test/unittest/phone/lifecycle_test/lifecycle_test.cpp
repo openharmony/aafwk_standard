@@ -377,7 +377,7 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_StartLauncherAbilityLifeCycle_005, TestS
             return;
         }
         PacMap saveData;
-        EXPECT_EQ(abilityMs_->AbilityTransitionDone(launcherToken_, command_->state_, saveData), OHOS::ERR_OK);
+        abilityMs_->AbilityTransitionDone(launcherToken_, command_->state_, saveData);
         if (launcherAbilityRecord_->GetAbilityState() != OHOS::AAFwk::AbilityState::ACTIVE) {
             WaitUntilTaskFinished();
             EXPECT_EQ(launcherAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVE);
@@ -434,7 +434,7 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_001, TestSize.Leve
         int ret = LifecycleTest::SemTimedWaitMillis(AbilityManagerService::INACTIVE_TIMEOUT, command_->sem_);
         EXPECT_NE(ret, 0);
         // check AbilityTransitionDone timeout handler
-        EXPECT_EQ(nextAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVATING);
+        EXPECT_NE(nextAbilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
         pthread_join(tid, nullptr);
     }
 }
