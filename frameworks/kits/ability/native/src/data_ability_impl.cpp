@@ -58,7 +58,7 @@ void DataAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         }
     }
 
-    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state);
+    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
 }
 
 /**

@@ -1043,7 +1043,7 @@ int AbilityStackManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sche
     return ERR_OK;
 }
 
-int AbilityStackManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int AbilityStackManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     auto abilityRecord = GetAbilityRecordByToken(token);
@@ -1057,6 +1057,10 @@ int AbilityStackManager::AbilityTransitionDone(const sptr<IRemoteObject> &token,
     int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
     std::string abilityState = AbilityRecord::ConvertAbilityState(static_cast<AbilityState>(targetState));
     HILOG_INFO("ability: %{public}s, state: %{public}s", element.c_str(), abilityState.c_str());
+
+    if (targetState == AbilityState::BACKGROUND) {
+        abilityRecord->SaveAbilityState(saveData);
+    }
 
     return DispatchState(abilityRecord, targetState);
 }

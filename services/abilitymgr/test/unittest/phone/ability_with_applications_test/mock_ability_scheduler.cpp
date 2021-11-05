@@ -45,7 +45,7 @@ void AbilityScheduler::ScheduleDisconnectAbility(const Want &want)
 void AbilityScheduler::ScheduleCommandAbility(const Want &want, bool restart, int startId)
 {}
 
-void AbilityScheduler::ScheduleSaveAbilityState(PacMap &outState)
+void AbilityScheduler::ScheduleSaveAbilityState()
 {}
 
 void AbilityScheduler::ScheduleRestoreAbilityState(const PacMap &inState)

@@ -50,11 +50,15 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         Inactive();
     }
 
+    if (targetState.state == AAFwk::ABILITY_STATE_BACKGROUND) {
+        CheckAndSave();
+    }
+
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
         APP_LOGI("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
-        AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state);
+        AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
         APP_LOGI("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
     APP_LOGI("PageAbilityImpl::HandleAbilityTransaction end");

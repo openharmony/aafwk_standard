@@ -65,7 +65,7 @@ void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk:
 
     if (ret) {
         APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
-        AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state);
+        AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
         APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
     APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction end");

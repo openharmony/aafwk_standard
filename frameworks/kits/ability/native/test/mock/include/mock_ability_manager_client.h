@@ -49,14 +49,14 @@ public:
 
 class MockAbilityThread : public IRemoteStub<AAFwk::IAbilityScheduler> {
 public:
-    virtual void ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &targetState){};
-    virtual void SendResult(int requestCode, int resultCode, const Want &resultWant){};
-    virtual void ScheduleConnectAbility(const Want &want){};
-    virtual void ScheduleDisconnectAbility(const Want &want){};
-    virtual void ScheduleCommandAbility(const Want &want, bool restart, int startId){};
-    virtual void ScheduleSaveAbilityState(PacMap &outState){};
-    virtual void ScheduleRestoreAbilityState(const PacMap &inState){};
-    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config){};
+    virtual void ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &targetState) {};
+    virtual void SendResult(int requestCode, int resultCode, const Want &resultWant) {};
+    virtual void ScheduleConnectAbility(const Want &want) {};
+    virtual void ScheduleDisconnectAbility(const Want &want) {};
+    virtual void ScheduleCommandAbility(const Want &want, bool restart, int startId) {};
+    virtual void ScheduleSaveAbilityState() {};
+    virtual void ScheduleRestoreAbilityState(const PacMap &inState) {};
+    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config) {};
     virtual std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
         return std::vector<std::string>();
@@ -106,8 +106,8 @@ public:
     {
         return true;
     };
-    virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag){};
-    virtual void NotifyTopActiveAbilityChanged(bool flag){};
+    virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) {};
+    virtual void NotifyTopActiveAbilityChanged(bool flag) {};
     virtual bool ScheduleNotifyChange(const Uri &uri)
     {
         return true;

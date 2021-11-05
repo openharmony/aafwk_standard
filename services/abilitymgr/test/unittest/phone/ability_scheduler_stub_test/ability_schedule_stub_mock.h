@@ -36,7 +36,7 @@ public:
     virtual void ScheduleCommandAbility(const Want &want, bool restart, int startId) override
     {}
 
-    virtual void ScheduleSaveAbilityState(PacMap &outState) override
+    virtual void ScheduleSaveAbilityState() override
     {}
     virtual void ScheduleRestoreAbilityState(const PacMap &inState) override
     {}

@@ -118,7 +118,8 @@ void AppMgrEventHandler::ScheduleAbilityTransaction(const AppExecFwk::InnerEvent
             usleep(BLOCK_TEST_TIME);
         }
     }
-    server_->AbilityTransitionDone(ability->GetToken(), targetState);
+    PacMap saveData;
+    server_->AbilityTransitionDone(ability->GetToken(), targetState, saveData);
     return;
 }
 

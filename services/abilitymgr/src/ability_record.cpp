@@ -517,7 +517,13 @@ void AbilityRecord::SaveAbilityState()
 {
     HILOG_INFO("%{public}s", __func__);
     CHECK_POINTER(lifecycleDeal_);
-    lifecycleDeal_->SaveAbilityState(stateDatas_);
+    lifecycleDeal_->SaveAbilityState();
+}
+
+void AbilityRecord::SaveAbilityState(const PacMap &inState)
+{
+    HILOG_INFO("%{public}s : pacmap save", __func__);
+    stateDatas_ = inState;
 }
 
 void AbilityRecord::RestoreAbilityState()

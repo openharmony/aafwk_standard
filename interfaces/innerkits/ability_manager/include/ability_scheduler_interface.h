@@ -84,7 +84,7 @@ public:
     /*
      * ScheduleSaveAbilityState, scheduling save ability state.
      */
-    virtual void ScheduleSaveAbilityState(PacMap &outState) = 0;
+    virtual void ScheduleSaveAbilityState() = 0;
 
     /*
      * ScheduleRestoreAbilityState, scheduling restore ability state.

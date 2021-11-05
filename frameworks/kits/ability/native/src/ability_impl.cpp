@@ -204,10 +204,9 @@ void AbilityImpl::Background()
 /**
  * @brief Save data and states of an ability when it is restored by the system. and Calling information back to Ability.
  *        This method should be implemented by a Page ability.
- * @param instate The Want object to connect to.
  *
  */
-void AbilityImpl::DispatchSaveAbilityState(PacMap &outState)
+void AbilityImpl::DispatchSaveAbilityState()
 {
     APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
@@ -216,8 +215,7 @@ void AbilityImpl::DispatchSaveAbilityState(PacMap &outState)
     }
 
     APP_LOGI("AbilityImpl::DispatchSaveAbilityState");
-    ability_->OnSaveAbilityState(outState);
-    abilityLifecycleCallbacks_->OnAbilitySaveState(outState);
+    needSaveDate_ = true;
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -635,6 +633,39 @@ bool AbilityImpl::CheckAndRestore()
 
     APP_LOGI("AbilityImpl::CheckAndRestore called end");
     return true;
+}
+
+/**
+ * @brief Check if it needs to save the data to the ability.
+ *
+ * @return Return true if need and success, otherwise return false.
+ */
+bool AbilityImpl::CheckAndSave()
+{
+    APP_LOGI("AbilityImpl::CheckAndSave called start");
+    if (!needSaveDate_) {
+        APP_LOGE("AbilityImpl::CheckAndSave needSaveDate_ is false");
+        return false;
+    }
+
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::CheckAndSave ability_ is nullptr");
+        return false;
+    }
+
+    APP_LOGI("AbilityImpl::CheckAndSave ready to save");
+    ability_->OnSaveAbilityState(restoreData_);
+    abilityLifecycleCallbacks_->OnAbilitySaveState(restoreData_);
+
+    needSaveDate_ = false;
+
+    APP_LOGI("AbilityImpl::CheckAndSave called end");
+    return true;
+}
+
+PacMap & AbilityImpl::GetRestoreData()
+{
+    return restoreData_;
 }
 
 /**

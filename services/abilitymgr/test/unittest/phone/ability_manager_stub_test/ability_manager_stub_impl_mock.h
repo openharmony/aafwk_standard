@@ -105,7 +105,7 @@ public:
         return 0;
     }
 
-    virtual int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+    virtual int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
     {
         return 0;
     }

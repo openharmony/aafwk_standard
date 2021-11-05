@@ -898,7 +898,7 @@ void AbilityManagerService::DumpState(const std::string &args, std::vector<std::
     info.push_back("error: invalid argument, please see 'ability dump -h'.");
 }
 
-int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     HILOG_INFO("Ability transition done, state:%{public}d", state);
     if (!VerificationToken(token)) {
@@ -921,7 +921,7 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
         return systemAppManager_->AbilityTransitionDone(token, state);
     }
 
-    return currentStackManager_->AbilityTransitionDone(token, state);
+    return currentStackManager_->AbilityTransitionDone(token, state, saveData);
 }
 
 int AbilityManagerService::ScheduleConnectAbilityDone(

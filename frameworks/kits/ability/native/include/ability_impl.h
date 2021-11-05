@@ -88,10 +88,9 @@ public:
     /**
      * @brief Save data and states of an ability when it is restored by the system. and Calling information back to
      * Ability. This method should be implemented by a Page ability.
-     * @param instate The Want object to connect to.
      *
      */
-    void DispatchSaveAbilityState(PacMap &outState);
+    void DispatchSaveAbilityState();
 
     /**
      * @brief Restores data and states of an ability when it is restored by the system. and Calling information back
@@ -390,6 +389,15 @@ protected:
      */
     bool CheckAndRestore();
 
+    /**
+     * @brief Check if it needs to save the data to the ability.
+     *
+     * @return Return true if success, otherwise return false.
+     */
+    bool CheckAndSave();
+
+    PacMap & GetRestoreData();
+
     int lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     sptr<IRemoteObject> token_;
     std::shared_ptr<Ability> ability_;
@@ -422,6 +430,7 @@ private:
     sptr<AbilityKeyEventHandle> abilityKeyEventHandle_ = nullptr;
     sptr<AbilityTouchEventHandle> abilityTouchEventHandle_ = nullptr;
     bool hasSaveData_ = false;
+    bool needSaveDate_ = false;
     PacMap restoreData_;
 };
 }  // namespace AppExecFwk
