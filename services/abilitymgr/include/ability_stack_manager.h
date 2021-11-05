@@ -200,9 +200,10 @@ public:
      *
      * @param token,.ability's token.
      * @param state,.the state of ability lift cycle.
+     * @param saveData, save ability data
      * @return Returns ERR_OK on success, others on failure.
      */
-    int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state);
+    int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData);
 
     /**
      * AddWindowInfo, add windowToken to AbilityRecord.

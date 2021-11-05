@@ -51,7 +51,7 @@ public:
     void DisconnectAbility(const Want &want);
     void Terminate(const Want &want, LifeCycleStateInfo &stateInfo);
     void CommandAbility(const Want &want, bool reStart, int startId);
-    void SaveAbilityState(PacMap &outState);
+    void SaveAbilityState();
     void RestoreAbilityState(const PacMap &inState);
     void UpdateConfiguration(const DummyConfiguration &config);
 

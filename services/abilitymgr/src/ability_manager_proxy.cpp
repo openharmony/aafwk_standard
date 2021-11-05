@@ -311,7 +311,7 @@ int AbilityManagerProxy::AttachAbilityThread(const sptr<IAbilityScheduler> &sche
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int AbilityManagerProxy::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     int error;
     MessageParcel data;
@@ -322,6 +322,10 @@ int AbilityManagerProxy::AbilityTransitionDone(const sptr<IRemoteObject> &token,
         return INNER_ERR;
     }
     if (!data.WriteParcelable(token) || !data.WriteInt32(state)) {
+        HILOG_ERROR("data write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(&saveData)) {
         HILOG_ERROR("data write failed.");
         return INNER_ERR;
     }

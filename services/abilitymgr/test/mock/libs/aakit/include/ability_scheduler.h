@@ -45,7 +45,7 @@ public:
 
     void ScheduleCommandAbility(const Want &want, bool restart, int startId) override;
 
-    void ScheduleSaveAbilityState(PacMap &outState) override;
+    void ScheduleSaveAbilityState() override;
 
     void ScheduleRestoreAbilityState(const PacMap &inState) override;
 

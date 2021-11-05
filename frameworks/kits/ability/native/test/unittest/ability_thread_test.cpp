@@ -99,8 +99,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleSaveAbilityState_0100, F
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
             abilitythread->Attach(application, abilityRecord, mainRunner);
 
-            PacMap state;
-            abilitythread->ScheduleSaveAbilityState(state);
+            abilitythread->ScheduleSaveAbilityState();
 
             sleep(1);
         }
@@ -120,8 +119,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleSaveAbilityState_0200, F
     AbilityThread *abilitythread = new (std::nothrow) AbilityThread();
     EXPECT_NE(abilitythread, nullptr);
     if (abilitythread != nullptr) {
-        PacMap state;
-        abilitythread->ScheduleSaveAbilityState(state);
+        abilitythread->ScheduleSaveAbilityState();
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_ScheduleSaveAbilityState_0200 end";
 }
@@ -171,8 +169,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleRestoreAbilityState_0200
     AbilityThread *abilitythread = new (std::nothrow) AbilityThread();
     EXPECT_NE(abilitythread, nullptr);
     if (abilitythread != nullptr) {
-        PacMap state;
-        abilitythread->ScheduleSaveAbilityState(state);
+        abilitythread->ScheduleSaveAbilityState();
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_ScheduleRestoreAbilityState_0200 end";
 }
@@ -475,6 +472,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleCommandAbility_0100, Fun
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockServiceAbility";
         abilityInfo->type = AbilityType::SERVICE;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -482,7 +480,6 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleCommandAbility_0100, Fun
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            std::shared_ptr<AbilityImpl> abilityimpl = std::make_shared<AbilityImpl>();
             abilitythread->Attach(application, abilityRecord, mainRunner);
 
             Want want;

@@ -104,7 +104,8 @@ int MockServiceAbilityManagerService::AttachAbilityThread(
 void MockServiceAbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
 {}
 
-int MockServiceAbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int MockServiceAbilityManagerService::AbilityTransitionDone(
+    const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::AbilityTransitionDone startAbility is " << startAbility;
     want_.SetElementName("BundleName", "abilityName");

@@ -81,6 +81,16 @@ public:
         return ability_;
     }
 
+    bool CheckAndSave()
+    {
+        return AbilityImpl::CheckAndSave();
+    }
+
+    bool CheckAndRestore()
+    {
+        return AbilityImpl::CheckAndRestore();
+    }
+
 private:
     AbilityImpl AbilityImpl_;
 };

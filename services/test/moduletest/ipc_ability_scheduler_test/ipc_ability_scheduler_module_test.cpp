@@ -238,15 +238,14 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, ScheduleSaveAbilityState_001, TestSize.L
         sptr<IAbilityScheduler> proxy = iface_cast<IAbilityScheduler>(stub);
 
         bool testResult = false;
-        auto mockHandler = [&](const PacMap &pacMap) {
+        auto mockHandler = [&]() {
             testResult = true;
             sem.Post();
         };
 
-        EXPECT_CALL(*stub, ScheduleSaveAbilityState(_)).Times(1).WillOnce(Invoke(mockHandler));
+        EXPECT_CALL(*stub, ScheduleSaveAbilityState()).Times(1).WillOnce(Invoke(mockHandler));
 
-        PacMap pacMap;
-        proxy->ScheduleSaveAbilityState(pacMap);
+        proxy->ScheduleSaveAbilityState();
 
         sem.Wait();
 

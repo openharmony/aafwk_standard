@@ -399,7 +399,6 @@ HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_AbilityTransitionDone_
     HILOG_INFO("AaFwk_DataAbilityManager_AbilityTransitionDone_001 start.");
 
     std::unique_ptr<DataAbilityManager> dataAbilityManager = std::make_unique<DataAbilityManager>();
-
     EXPECT_EQ(dataAbilityManager->AbilityTransitionDone(nullptr, INACTIVE), ERR_NULL_OBJECT);
 
     HILOG_INFO("AaFwk_DataAbilityManager_AbilityTransitionDone_001 end.");

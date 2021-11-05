@@ -76,7 +76,7 @@ public:
     /*
      * ScheduleSaveAbilityState, scheduling save ability state.
      */
-    void ScheduleSaveAbilityState(PacMap &outState) override;
+    void ScheduleSaveAbilityState() override;
 
     /*
      * ScheduleRestoreAbilityState, scheduling restore ability state.

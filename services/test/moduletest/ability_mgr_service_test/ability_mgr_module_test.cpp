@@ -298,8 +298,9 @@ void AbilityMgrModuleTest::MockAbilityTransitionDone(bool &testFailed, sptr<IRem
     auto mockAbilityTransation = [&testFailed, &dataAbilityToken, &abilityMgrServ](
                                      const Want &want, const LifeCycleStateInfo &targetState) {
         testFailed = testFailed || (targetState.state != ABILITY_STATE_ACTIVE);
-        std::thread(&AbilityManagerService::AbilityTransitionDone, abilityMgrServ.get(), dataAbilityToken, ACTIVE)
-            .detach();
+        PacMap saveData;
+        std::thread(&AbilityManagerService::AbilityTransitionDone,
+            abilityMgrServ.get(), dataAbilityToken, ACTIVE, saveData).detach();
     };
 
     EXPECT_CALL(*mockDataAbilityScheduler, ScheduleAbilityTransaction(_, _))
@@ -416,8 +417,9 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->GetConnectRecordListByCallback(callback2).size());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(counts);
-    abilityMgrServ_->AbilityTransitionDone(record1->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
-    abilityMgrServ_->AbilityTransitionDone(record2->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record1->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
+    abilityMgrServ_->AbilityTransitionDone(record2->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record1->GetAbilityState());
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record2->GetAbilityState());
 
@@ -759,7 +761,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_007, TestSize.Level1)
     EXPECT_TRUE(curMissionStack);
     curMissionStack->AddMissionRecordToTop(mission);
 
-    int result = abilityMgrServ_->AbilityTransitionDone(abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::ACTIVE);
+    PacMap saveData;
+    int result = abilityMgrServ_->AbilityTransitionDone(
+        abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::ACTIVE, saveData);
     usleep(50 * 1000);
     EXPECT_EQ(OHOS::ERR_OK, result);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::ACTIVE, abilityRecord->GetAbilityState());
@@ -817,7 +821,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
     EXPECT_EQ(OHOS::AAFwk::AbilityState::INACTIVATING, record->GetAbilityState());
 
     EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE, saveData);
     EXPECT_TRUE(record->GetConnectingRecord());
     EXPECT_EQ(OHOS::AAFwk::ConnectionState::CONNECTING, connectRecord->GetConnectState());
 
@@ -879,7 +884,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetConnectMap().size());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
     EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
@@ -1009,7 +1015,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     int testId = 0;
     auto handler = [&](const Want &want, bool restart, int startid) { testId = startid; };
     EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _)).Times(1).WillOnce(Invoke(handler));
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE, saveData);
     EXPECT_EQ(1, testId);
 
     abilityMgrServ_->ScheduleCommandAbilityDone(record->GetToken());
@@ -1079,7 +1086,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     int testId = 0;
     auto handler = [&](const Want &want, bool restart, int startid) { testId = startid; };
     EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _)).Times(1).WillOnce(Invoke(handler));
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE, saveData);
     EXPECT_EQ(1, testId);
 
     abilityMgrServ_->ScheduleCommandAbilityDone(record->GetToken());
@@ -1173,7 +1181,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
 
     EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
@@ -1218,7 +1227,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
 
     EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
@@ -1385,7 +1395,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
@@ -1452,7 +1463,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);

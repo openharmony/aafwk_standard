@@ -112,7 +112,8 @@ int MockAbilityManagerService::AttachAbilityThread(
 void MockAbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
 {}
 
-int MockAbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
+int MockAbilityManagerService::AbilityTransitionDone(
+    const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     return 0;
 }

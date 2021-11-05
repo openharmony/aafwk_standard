@@ -157,7 +157,12 @@ int AbilityManagerStub::AbilityTransitionDoneInner(MessageParcel &data, MessageP
 {
     auto token = data.ReadParcelable<IRemoteObject>();
     int targetState = data.ReadInt32();
-    int32_t result = AbilityTransitionDone(token, targetState);
+    std::unique_ptr<PacMap> saveData(data.ReadParcelable<PacMap>());
+    if (!saveData) {
+        HILOG_INFO("save data is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    int32_t result = AbilityTransitionDone(token, targetState, *saveData);
     reply.WriteInt32(result);
     return NO_ERROR;
 }
