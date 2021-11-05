@@ -45,6 +45,7 @@ ohos_source_set("tools_aa_source_set") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr:abilityms",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

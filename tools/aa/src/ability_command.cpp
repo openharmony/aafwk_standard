@@ -13,18 +13,20 @@
  * limitations under the License.
  */
 
-#include "ability_command.h"
-
 #include <getopt.h>
+
 #include "ability_manager_client.h"
 #include "hilog_wrapper.h"
+#include "ohos/aafwk/base/bool_wrapper.h"
+
+#include "ability_command.h"
 
 using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string SHORT_OPTIONS = "hd:a:b:p:s:";
+const std::string SHORT_OPTIONS = "hd:a:b:p:s:D";
 const struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
@@ -32,6 +34,7 @@ const struct option LONG_OPTIONS[] = {
     {"bundle", required_argument, nullptr, 'b'},
     {"power", required_argument, nullptr, 'p'},
     {"setting", required_argument, nullptr, 's'},
+    {"debug", no_argument, nullptr, 'D'},
 };
 
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::";
@@ -48,7 +51,11 @@ const struct option LONG_OPTIONS_DUMP[] = {
 }  // namespace
 
 AbilityManagerShellCommand::AbilityManagerShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, TOOL_NAME)
-{}
+{
+    for (int i = 0; i < argc_; i++) {
+        HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
+    }
+}
 
 ErrCode AbilityManagerShellCommand::CreateCommandMap()
 {
@@ -680,6 +687,8 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
     std::string bundleName = "";
     std::string abilityName = "";
 
+    bool isDebugApp = false;
+
     while (true) {
         counter++;
 
@@ -832,6 +841,12 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
                 windowMode = optarg;
                 break;
             }
+            case 'D': {
+                // 'aa start -D'
+                // debug app
+                isDebugApp = true;
+                break;
+            }
             case 0: {
                 break;
             }
@@ -859,6 +874,13 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
         } else {
             ElementName element(deviceId, bundleName, abilityName);
             want.SetElement(element);
+
+            if (isDebugApp) {
+                WantParams wantParams;
+                wantParams.SetParam("debugApp", Boolean::Box(isDebugApp));
+
+                want.SetParams(wantParams);
+            }
         }
     }
 
