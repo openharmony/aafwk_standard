@@ -894,6 +894,51 @@ napi_value UnRegisterAsync(
     return result;
 }
 
+static void FindRegisterObsByCallBack(napi_env env, DAHelperOnOffCB *data)
+{
+    HILOG_INFO("NAPI_UnRegister, UnRegisterExecuteCB callback is not null.");
+    if (data == nullptr || data->dataAbilityHelper == nullptr) {
+        HILOG_ERROR("NAPI_UnRegister, param is null.");
+        return;
+    }
+    // if match callback ,or match both callback and uri
+    napi_value callbackA = 0;
+    napi_get_reference_value(data->cbBase.cbInfo.env, data->cbBase.cbInfo.callback, &callbackA);
+    std::string strUri = data->uri;
+    do {
+        auto helper = std::find_if(
+            registerInstances_.begin(),
+            registerInstances_.end(),
+            [callbackA, strUri](const DAHelperOnOffCB *helper) {
+                bool result = false;
+                if (helper == nullptr || helper->cbBase.cbInfo.callback == nullptr) {
+                    HILOG_ERROR("UnRegisterExecuteCB %{public}s is nullptr",
+                        ((helper == nullptr) ? "helper" : "helper->cbBase.cbInfo.callback"));
+                    return result;
+                }
+                if (helper->uri != strUri) {
+                    HILOG_ERROR("UnRegisterExecuteCB find uri inconsistent, h=[%{public}s] u=[%{public}s]",
+                        helper->uri.c_str(), strUri.c_str());
+                    return result;
+                }
+                napi_value callbackB = 0;
+                napi_get_reference_value(helper->cbBase.cbInfo.env, helper->cbBase.cbInfo.callback, &callbackB);
+                auto ret = napi_strict_equals(helper->cbBase.cbInfo.env, callbackA, callbackB, &result);
+                HILOG_INFO("NAPI_UnRegister cb equals status=%{public}d result=%{public}d.", ret, result);
+                return result;
+            });
+        if (helper != registerInstances_.end()) {
+            data->NotifyList.emplace_back(*helper);
+            registerInstances_.erase(helper);
+                HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
+        } else {
+            HILOG_INFO("NAPI_UnRegister not match any callback. %{public}zu", registerInstances_.size());
+            break;  // not match any callback
+        }
+    } while (true);
+    HILOG_INFO("NAPI_UnRegister, UnRegisterExecuteCB FindRegisterObsByCallBack Called End.");
+}
+
 void FindRegisterObs(napi_env env, DAHelperOnOffCB *data)
 {
     HILOG_INFO("NAPI_UnRegister, FindRegisterObs main event thread execute.");
@@ -903,39 +948,7 @@ void FindRegisterObs(napi_env env, DAHelperOnOffCB *data)
     }
     if (data->cbBase.cbInfo.callback != nullptr) {
         HILOG_INFO("NAPI_UnRegister, UnRegisterExecuteCB callback is not null.");
-        // if match callback ,or match both callback and uri
-        napi_value callbackA = 0;
-        napi_get_reference_value(data->cbBase.cbInfo.env, data->cbBase.cbInfo.callback, &callbackA);
-        std::string strUri = data->uri;
-        do {
-            auto helper = std::find_if(
-                registerInstances_.begin(), registerInstances_.end(), [callbackA, strUri](const DAHelperOnOffCB *helper) {
-                    bool result = false;
-                    if (helper == nullptr || helper->cbBase.cbInfo.callback == nullptr) {
-                        HILOG_ERROR("UnRegisterExecuteCB %{public}s is nullptr",
-                            ((helper == nullptr) ? "helper" : "helper->cbBase.cbInfo.callback"));
-                        return result;
-                    }
-                    if (helper->uri != strUri) {
-                        HILOG_ERROR("UnRegisterExecuteCB find uri inconsistent, h=[%{public}s] u=[%{public}s]",
-                            helper->uri.c_str(), strUri.c_str());
-                        return result;
-                    }
-                    napi_value callbackB = 0;
-                    napi_get_reference_value(helper->cbBase.cbInfo.env, helper->cbBase.cbInfo.callback, &callbackB);
-                    auto ret = napi_strict_equals(helper->cbBase.cbInfo.env, callbackA, callbackB, &result);
-                    HILOG_INFO("NAPI_UnRegister cb equals status=%{public}d result=%{public}d.", ret, result);
-                    return result;
-                });
-            if (helper != registerInstances_.end()) {
-                data->NotifyList.emplace_back(*helper);
-                registerInstances_.erase(helper);
-                    HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
-            } else {
-                HILOG_INFO("NAPI_UnRegister not match any callback. %{public}zu", registerInstances_.size());
-                break;  // not match any callback
-            }
-        } while (true);
+        FindRegisterObsByCallBack(env, data);
     } else {
         HILOG_INFO("NAPI_UnRegister, uri=%{public}s.", data->uri.c_str());
         if (data->uri != "") {
@@ -1114,6 +1127,54 @@ void NAPIDataAbilityObserver::SetCallbackRef(const napi_ref &ref)
     HILOG_INFO("NAPIDataAbilityObserver::%{public}s, called. end", __func__);
 }
 
+static void OnChangeJSThreadWorker(uv_work_t *work, int status)
+{
+    HILOG_INFO("OnChange, uv_queue_work");
+    if (work == nullptr) {
+       HILOG_ERROR("OnChange, uv_queue_work input work is nullptr");
+       return;
+    }
+    DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
+    NAPIDataAbilityObserver* obs = onCB->observer;
+    onCB->observer = nullptr;
+    if (obs != nullptr) {
+        obs->ChangeWorkRun();
+    }
+    napi_value result[ARGS_TWO] = {0};
+    result[PARAM0] = GetCallbackErrorValue(onCB->cbBase.cbInfo.env, NO_ERROR);
+    napi_value callback = 0;
+    napi_value undefined = 0;
+    napi_get_undefined(onCB->cbBase.cbInfo.env, &undefined);
+    napi_value callResult = 0;
+    napi_get_reference_value(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback, &callback);
+    napi_call_function(onCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+    if (obs != nullptr) {
+        if (obs->GetWorkInt() == 1) {
+            obs->ReleaseJSCallback();
+            DAHelperOnOffCB* assicuated = obs->GetAssociatedObject();
+            if (assicuated != nullptr) {
+                HILOG_INFO("OnChange, uv_queue_work ReleaseJSCallback Called");
+                obs->SetAssociatedObject(nullptr);
+                delete assicuated;
+                assicuated = nullptr;
+            }
+        }
+        else {
+            obs->ChangeWorkRunDone();
+            obs->ChangeWorkPreDone();
+        }
+    }
+    if (onCB != nullptr) {
+        delete onCB;
+        onCB = nullptr;
+    }
+    if (work != nullptr) {
+        delete work;
+        work = nullptr;
+    }
+    HILOG_INFO("OnChange, uv_queue_work. end");
+}
+
 void NAPIDataAbilityObserver::OnChange()
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -1153,51 +1214,7 @@ void NAPIDataAbilityObserver::OnChange()
         loop,
         work,
         [](uv_work_t *work) {},
-        [](uv_work_t *work, int status) {
-            HILOG_INFO("OnChange, uv_queue_work");
-            // JS Thread
-            DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
-            NAPIDataAbilityObserver* obs = onCB->observer;
-            onCB->observer = nullptr;
-            if (obs != nullptr) {
-                obs->ChangeWorkRun();
-            }
-            napi_value result[ARGS_TWO] = {0};
-            result[PARAM0] = GetCallbackErrorValue(onCB->cbBase.cbInfo.env, NO_ERROR);
-            napi_value callback = 0;
-            napi_value undefined = 0;
-            napi_get_undefined(onCB->cbBase.cbInfo.env, &undefined);
-            napi_value callResult = 0;
-            napi_get_reference_value(onCB->cbBase.cbInfo.env, onCB->cbBase.cbInfo.callback, &callback);
-            napi_call_function(onCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
-
-            if (obs != nullptr) {
-                if (obs->GetWorkInt() == 1) {
-                    obs->ReleaseJSCallback();
-                    DAHelperOnOffCB* assicuated = obs->GetAssociatedObject();
-                    if (assicuated != nullptr) {
-                        HILOG_INFO("OnChange, uv_queue_work ReleaseJSCallback Called");
-                        obs->SetAssociatedObject(nullptr);
-                        delete assicuated;
-                        assicuated = nullptr;
-                    }
-                }
-                else {
-                    obs->ChangeWorkRunDone();
-                    obs->ChangeWorkPreDone();
-                }
-            }
-
-            if (onCB != nullptr) {
-                delete onCB;
-                onCB = nullptr;
-            }
-            if (work != nullptr) {
-                delete work;
-                work = nullptr;
-            }
-			HILOG_INFO("OnChange, uv_queue_work. end");
-        });
+        OnChangeJSThreadWorker);
     if (rev != 0) {
         if (onCB != nullptr) {
             delete onCB;

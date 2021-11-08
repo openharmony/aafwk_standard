@@ -22,7 +22,7 @@ namespace OHOS {
 namespace AppExecFwk {
 
 bool BundleMgrProxy::GetApplicationInfo(
-        const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
+    const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
 {
     if (appName.empty()) {
         return false;
@@ -32,7 +32,7 @@ bool BundleMgrProxy::GetApplicationInfo(
     return true;
 }
 bool BundleMgrProxy::GetApplicationInfos(
-        const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos)
+    const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos)
 {
     return true;
 }
@@ -145,7 +145,7 @@ bool BundleMgrProxy::GetAllPermissionGroupDefs(std::vector<PermissionDef> &permi
     return true;
 }
 bool BundleMgrProxy::GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames)
+    const std::vector<std::string> &permissions, std::vector<std::string> &appNames)
 {
     return true;
 }
@@ -162,7 +162,7 @@ bool BundleMgrProxy::IsSafeMode()
     return true;
 }
 bool BundleMgrProxy::CleanBundleCacheFiles(
-        const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback)
+    const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback)
 {
     return true;
 }
@@ -207,12 +207,12 @@ std::string BundleMgrProxy::GetAbilityIcon(const std::string &bundleName, const 
     return "";
 }
 bool BundleMgrProxy::CanRequestPermission(
-        const std::string &bundleName, const std::string &permissionName, const int userId)
+    const std::string &bundleName, const std::string &permissionName, const int userId)
 {
     return true;
 }
 bool BundleMgrProxy::RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId)
+    const std::string &bundleName, const std::string &permission, const int userId)
 {
     return true;
 }
@@ -221,7 +221,7 @@ bool BundleMgrProxy::RegisterAllPermissionsChanged(const sptr<OnPermissionChange
     return true;
 }
 bool BundleMgrProxy::RegisterPermissionsChanged(
-        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback)
+    const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback)
 {
     return true;
 }
@@ -238,7 +238,7 @@ bool BundleMgrProxy::GetFormsInfoByApp(const std::string &bundleName, std::vecto
     return true;
 }
 bool BundleMgrProxy::GetFormsInfoByModule(
-        const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos)
+    const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     return true;
 }
@@ -255,7 +255,7 @@ sptr<IBundleInstaller> BundleMgrProxy::GetBundleInstaller()
     return nullptr;
 }
 bool BundleMgrProxy::NotifyActivityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;
 }
@@ -267,7 +267,7 @@ int BundleMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessagePa
 }
 
 bool BundleMgrService::GetApplicationInfo(
-        const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
+    const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
 {
     if (appName.empty()) {
         return false;
@@ -277,7 +277,7 @@ bool BundleMgrService::GetApplicationInfo(
     return true;
 }
 bool BundleMgrService::GetApplicationInfos(
-        const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos)
+    const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos)
 {
     return true;
 }
@@ -367,7 +367,7 @@ std::string BundleMgrService::GetAbilityLabel(const std::string &bundleName, con
     return "";
 }
 bool BundleMgrService::GetBundleArchiveInfo(
-        const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
+    const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
 {
     return true;
 }
@@ -398,7 +398,7 @@ bool BundleMgrService::GetAllPermissionGroupDefs(std::vector<PermissionDef> &per
     return true;
 }
 bool BundleMgrService::GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames)
+    const std::vector<std::string> &permissions, std::vector<std::string> &appNames)
 {
     return true;
 }
@@ -415,7 +415,7 @@ bool BundleMgrService::IsSafeMode()
     return true;
 }
 bool BundleMgrService::CleanBundleCacheFiles(
-        const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback)
+    const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback)
 {
     return true;
 }
@@ -460,12 +460,12 @@ std::string BundleMgrService::GetAbilityIcon(const std::string &bundleName, cons
     return "";
 }
 bool BundleMgrService::CanRequestPermission(
-        const std::string &bundleName, const std::string &permissionName, const int userId)
+    const std::string &bundleName, const std::string &permissionName, const int userId)
 {
     return true;
 }
 bool BundleMgrService::RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId)
+    const std::string &bundleName, const std::string &permission, const int userId)
 {
     return true;
 }
@@ -474,7 +474,7 @@ bool BundleMgrService::RegisterAllPermissionsChanged(const sptr<OnPermissionChan
     return true;
 }
 bool BundleMgrService::RegisterPermissionsChanged(
-        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback)
+    const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback)
 {
     return true;
 }
@@ -491,7 +491,7 @@ bool BundleMgrService::GetFormsInfoByApp(const std::string &bundleName, std::vec
     return true;
 }
 bool BundleMgrService::GetFormsInfoByModule(
-        const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos)
+    const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     return true;
 }
@@ -508,7 +508,7 @@ sptr<IBundleInstaller> BundleMgrService::GetBundleInstaller()
     return nullptr;
 }
 bool BundleMgrService::NotifyActivityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;
 }
