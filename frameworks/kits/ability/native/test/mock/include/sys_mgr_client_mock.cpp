@@ -30,7 +30,8 @@ SysMrgClient::~SysMrgClient()
 
 sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId)
 {
-    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( " << systemAbilityId << " )";
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( "
+        << systemAbilityId << " )";
     if (servicesMap_[systemAbilityId] == nullptr) {
         OHOS::sptr<ISystemAbilityManager> abilityManager =
             SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -42,13 +43,15 @@ sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId
         servicesMap_[systemAbilityId] = object;
     }
     auto ret = servicesMap_[systemAbilityId];
-    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( " << ret.GetRefPtr() << " )";
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( " 
+        << ret.GetRefPtr() << " )";
     return ret;
 }
 
 void SysMrgClient::RegisterSystemAbility(const int32_t systemAbilityId, sptr<IRemoteObject> broker)
 {
-    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::RegisterSystemAbility( " << broker.GetRefPtr() << " )";
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::RegisterSystemAbility( "
+        << broker.GetRefPtr() << " )";
     servicesMap_[systemAbilityId] = broker;
 }
 }  // namespace AppExecFwk

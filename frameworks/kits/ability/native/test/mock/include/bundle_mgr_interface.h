@@ -31,7 +31,6 @@ using OHOS::AAFwk::Want;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 struct FormInfo;
 struct ShortcutInfo;
 
