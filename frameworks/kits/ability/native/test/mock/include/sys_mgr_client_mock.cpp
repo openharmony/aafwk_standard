@@ -43,7 +43,7 @@ sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId
         servicesMap_[systemAbilityId] = object;
     }
     auto ret = servicesMap_[systemAbilityId];
-    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( " 
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( "
         << ret.GetRefPtr() << " )";
     return ret;
 }

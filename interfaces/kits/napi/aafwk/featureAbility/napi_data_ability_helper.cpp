@@ -1132,8 +1132,8 @@ static void OnChangeJSThreadWorker(uv_work_t *work, int status)
 {
     HILOG_INFO("OnChange, uv_queue_work");
     if (work == nullptr) {
-       HILOG_ERROR("OnChange, uv_queue_work input work is nullptr");
-       return;
+        HILOG_ERROR("OnChange, uv_queue_work input work is nullptr");
+        return;
     }
     DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
     NAPIDataAbilityObserver* obs = onCB->observer;
@@ -1159,8 +1159,7 @@ static void OnChangeJSThreadWorker(uv_work_t *work, int status)
                 delete assicuated;
                 assicuated = nullptr;
             }
-        }
-        else {
+        } else {
             obs->ChangeWorkRunDone();
             obs->ChangeWorkPreDone();
         }
