@@ -31,6 +31,9 @@ using OHOS::AAFwk::Want;
 
 namespace OHOS {
 namespace AppExecFwk {
+struct FormInfo;
+struct ShortcutInfo;
+
 enum class DumpFlag {
     DUMP_BUNDLE_LIST = 1,
     DUMP_ALL_BUNDLE_INFO,
@@ -205,11 +208,16 @@ public:
     virtual bool RegisterPermissionsChanged(
         const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) = 0;
     virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) = 0;
+    virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfos) = 0;
+    virtual bool GetFormsInfoByApp(const std::string &bundleName, std::vector<FormInfo> &formInfos) = 0;
+    virtual bool GetFormsInfoByModule(
+        const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos) = 0;
+    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos) = 0;
+    virtual bool GetModuleUsageRecords(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
-    virtual bool GetModuleUsageRecords(
-        const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
     virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
+
     enum class Message {
         GET_APPLICATION_INFO,
         GET_APPLICATION_INFOS,
@@ -225,6 +233,7 @@ public:
         CHECK_IS_SYSTEM_APP_BY_UID,
         GET_BUNDLE_INFOS_BY_METADATA,
         QUERY_ABILITY_INFO,
+        QUERY_ABILITY_INFOS,
         QUERY_ABILITY_INFO_BY_URI,
         QUERY_KEEPALIVE_BUNDLE_INFOS,
         GET_ABILITY_LABEL,
@@ -255,7 +264,13 @@ public:
         REGISTER_ALL_PERMISSIONS_CHANGED,
         REGISTER_PERMISSIONS_CHANGED,
         UNREGISTER_PERMISSIONS_CHANGED,
+        GET_ALL_FORMS_INFO,
+        GET_FORMS_INFO_BY_APP,
+        GET_FORMS_INFO_BY_MODULE,
+        GET_MODULE_USAGE_RECORD,
+        GET_SHORTCUT_INFO,
         GET_BUNDLE_INSTALLER,
+        NOTIFY_ACTIVITY_LIFE_STATUS,
     };
 };
 }  // namespace AppExecFwk

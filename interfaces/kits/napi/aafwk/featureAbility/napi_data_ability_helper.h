@@ -27,9 +27,26 @@ public:
     void SetCallbackRef(const napi_ref &ref);
     void ReleaseJSCallback();
 
+    void SetAssociatedObject(DAHelperOnOffCB* object);
+    DAHelperOnOffCB* GetAssociatedObject(void);
+
+    void ChangeWorkPre();
+    void ChangeWorkRun();
+    void ChangeWorkInt();
+    void ChangeWorkPreDone();
+    void ChangeWorkRunDone();
+    int GetWorkPre();
+    int GetWorkRun();
+    int GetWorkInt();
+
 private:
     napi_env env_ = nullptr;
     napi_ref ref_ = nullptr;
+    DAHelperOnOffCB* onCB_ = nullptr;
+    int workPre_ = 0;
+    int workRun_ = 0;
+    int intrust_ = 0;
+    std::mutex mutex_;
 };
 
 /**
@@ -256,7 +273,9 @@ napi_value UnRegisterAsync(
  * @param env The environment that the Node-API call is invoked under.
  * @param data Point to asynchronous processing of data.
  */
+void UnRegisterExecuteCB(napi_env env, void *data);
 void UnRegisterCompleteCB(napi_env env, napi_status status, void *data);
+void FindRegisterObs(napi_env env, DAHelperOnOffCB *data);
 /**
  * @brief Parse the ValuesBucket parameters.
  *
