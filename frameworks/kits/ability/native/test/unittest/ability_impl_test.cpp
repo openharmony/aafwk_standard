@@ -216,6 +216,8 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Stop_001, TestSize.Level1)
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                contextDeal->SetAbilityInfo(abilityInfo);
+                ability->AttachBaseContext(contextDeal);
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
                 mockAbilityimpl->ImplStop();
