@@ -80,9 +80,9 @@ public:
     std::shared_ptr<AbilityRecord> GetTopAbility();
     void ClearStack();
 
-    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_{nullptr};
-    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_{nullptr};
-    sptr<MockAbilityScheduler> scheduler_{nullptr};
+    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_ {nullptr};
+    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
+    sptr<MockAbilityScheduler> scheduler_ {nullptr};
     inline static bool doOnce_ = false;  // In order for mock to execute once
 
     static constexpr int TEST_WAIT_TIME = 100000;
