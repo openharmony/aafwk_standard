@@ -906,13 +906,19 @@ void FindRegisterObs(napi_env env, DAHelperOnOffCB *data)
         // if match callback ,or match both callback and uri
         napi_value callbackA = 0;
         napi_get_reference_value(data->cbBase.cbInfo.env, data->cbBase.cbInfo.callback, &callbackA);
+        std::string strUri = data->uri;
         do {
             auto helper = std::find_if(
-                registerInstances_.begin(), registerInstances_.end(), [callbackA](const DAHelperOnOffCB *helper) {
+                registerInstances_.begin(), registerInstances_.end(), [callbackA, strUri](const DAHelperOnOffCB *helper) {
                     bool result = false;
                     if (helper == nullptr || helper->cbBase.cbInfo.callback == nullptr) {
                         HILOG_ERROR("UnRegisterExecuteCB %{public}s is nullptr",
                             ((helper == nullptr) ? "helper" : "helper->cbBase.cbInfo.callback"));
+                        return result;
+                    }
+                    if (helper->uri != strUri) {
+                        HILOG_ERROR("UnRegisterExecuteCB find uri inconsistent, h=[%{public}s] u=[%{public}s]",
+                            helper->uri.c_str(), strUri.c_str());
                         return result;
                     }
                     napi_value callbackB = 0;
@@ -922,18 +928,9 @@ void FindRegisterObs(napi_env env, DAHelperOnOffCB *data)
                     return result;
                 });
             if (helper != registerInstances_.end()) {
-                OHOS::Uri uri((*helper)->uri);
-                // if uri is not empty, uri and callback has to be equal at the same time.
-                if (data->uri == uri.ToString()) {
-                    // match callback, or match both callback and uri
-                    data->NotifyList.emplace_back(*helper);
-                    registerInstances_.erase(helper);
+                data->NotifyList.emplace_back(*helper);
+                registerInstances_.erase(helper);
                     HILOG_INFO("NAPI_UnRegister Instances erase size = %{public}zu", registerInstances_.size());
-                } else {
-                    HILOG_INFO("NAPI_UnRegister uri=%{public}s,helper.Uri=%{public}s",
-                        data->uri.c_str(),
-                        uri.ToString().c_str());
-                }
             } else {
                 HILOG_INFO("NAPI_UnRegister not match any callback. %{public}zu", registerInstances_.size());
                 break;  // not match any callback
