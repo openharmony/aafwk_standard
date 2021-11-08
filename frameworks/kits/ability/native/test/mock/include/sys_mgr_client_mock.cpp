@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <gtest/gtest.h>
 #include "sys_mgr_client.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
@@ -30,6 +30,8 @@ SysMrgClient::~SysMrgClient()
 
 sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId)
 {
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( "
+        << systemAbilityId << " )";
     if (servicesMap_[systemAbilityId] == nullptr) {
         OHOS::sptr<ISystemAbilityManager> abilityManager =
             SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -40,11 +42,16 @@ sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId
         OHOS::sptr<OHOS::IRemoteObject> object = abilityManager->GetSystemAbility(systemAbilityId);
         servicesMap_[systemAbilityId] = object;
     }
-    return servicesMap_[systemAbilityId];
+    auto ret = servicesMap_[systemAbilityId];
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::GetSystemAbility( "
+        << ret.GetRefPtr() << " )";
+    return ret;
 }
 
 void SysMrgClient::RegisterSystemAbility(const int32_t systemAbilityId, sptr<IRemoteObject> broker)
 {
+    GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 SysMrgClient::RegisterSystemAbility( "
+        << broker.GetRefPtr() << " )";
     servicesMap_[systemAbilityId] = broker;
 }
 }  // namespace AppExecFwk
