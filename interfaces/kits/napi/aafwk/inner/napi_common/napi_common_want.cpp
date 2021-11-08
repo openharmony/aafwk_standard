@@ -517,6 +517,8 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
         return InnerWrapWantParamsArrayByte(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsCharArray(ao)) {
         return InnerWrapWantParamsArrayChar(env, jsObject, key, ao);
+    } else if (AAFwk::Array::IsDoubleArray(ao)) {
+        return InnerWrapWantParamsArrayDouble(env, jsObject, key, ao);
     } else {
         return false;
     }
