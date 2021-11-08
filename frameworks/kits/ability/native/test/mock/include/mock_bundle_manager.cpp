@@ -114,7 +114,7 @@ std::string BundleMgrProxy::GetAbilityLabel(const std::string &bundleName, const
     return "";
 }
 bool BundleMgrProxy::GetBundleArchiveInfo(
-        const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
+    const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
 {
     return true;
 }
