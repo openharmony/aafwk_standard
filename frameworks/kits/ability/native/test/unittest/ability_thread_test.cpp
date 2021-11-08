@@ -475,6 +475,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleCommandAbility_0100, Fun
         std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
         abilityInfo->name = "MockServiceAbility";
         abilityInfo->type = AbilityType::SERVICE;
+        abilityInfo->isNativeAbility = true;
         sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
         EXPECT_NE(token, nullptr);
         if (token != nullptr) {
@@ -482,7 +483,6 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleCommandAbility_0100, Fun
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            std::shared_ptr<AbilityImpl> abilityimpl = std::make_shared<AbilityImpl>();
             abilitythread->Attach(application, abilityRecord, mainRunner);
 
             Want want;

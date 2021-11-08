@@ -52,6 +52,8 @@ void AbilityContextTest::SetUpTestCase(void)
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase start";
     OHOS::sptr<OHOS::IRemoteObject> bundleObject = new (std::nothrow) BundleMgrService();
     OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) OHOS::AAFwk::MockAbilityManagerService();
+    GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase bundleObject->" << bundleObject.GetRefPtr();
+    GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase abilityObject->" << abilityObject.GetRefPtr();
 
     auto sysMgr = OHOS::DelayedSingleton<SysMrgClient>::GetInstance();
     if (sysMgr == NULL) {
@@ -565,13 +567,14 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_GetHapModuleInfo_0100, TestSize.Level
 
     std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    std::string name = "Captain";
-    abilityInfo->name = name;
+    std::string name = "com.ohos.callui";
+    std::string package = "com.ohos.callui";
+    abilityInfo->bundleName = name;
+    abilityInfo->package = package;
     contextDeal->SetAbilityInfo(abilityInfo);
     context_->AttachBaseContext(contextDeal);
-    Want want;
     std::shared_ptr<HapModuleInfo> info = context_->GetHapModuleInfo();
-    EXPECT_STREQ(info->name.c_str(), name.c_str());
+    EXPECT_STREQ(info->name.c_str(), package.c_str());
     GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 end";
 }
 }  // namespace AppExecFwk

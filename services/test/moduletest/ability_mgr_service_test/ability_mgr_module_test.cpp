@@ -80,9 +80,9 @@ public:
     std::shared_ptr<AbilityRecord> GetTopAbility();
     void ClearStack();
 
-    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_{nullptr};
-    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_{nullptr};
-    sptr<MockAbilityScheduler> scheduler_{nullptr};
+    inline static std::shared_ptr<AppExecFwk::MockAppMgrClient> mockAppMgrClient_ {nullptr};
+    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
+    sptr<MockAbilityScheduler> scheduler_ {nullptr};
     inline static bool doOnce_ = false;  // In order for mock to execute once
 
     static constexpr int TEST_WAIT_TIME = 100000;
@@ -197,7 +197,7 @@ void AbilityMgrModuleTest::SetUpTestCase(void)
         OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new (std::nothrow) BundleMgrService());
 
     abilityMgrServ_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    mockAppMgrClient_ = std::make_shared<MockAppMgrClient>();
+    mockAppMgrClient_ = std::make_shared<AppExecFwk::MockAppMgrClient>();
 
     OnStartAms();
 }
