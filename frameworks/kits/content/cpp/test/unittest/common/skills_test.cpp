@@ -125,7 +125,8 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Parcelable_0200, Function | MediumTest | L
 
     if (SkillsOut_ != nullptr) {
         CompareSkills(SkillsIn_, SkillsOut_);
-        EXPECT_EQ(valueLong, Long::Unbox(ILong::Query(SkillsOut_->GetWantParams().GetParam(keyStr))));
+        std::string result = String::Unbox(IString::Query(SkillsOut_->GetWantParams().GetParam(keyStr)));
+        EXPECT_STREQ(std::to_string(valueLong).c_str(), result.c_str());
     }
 }
 
