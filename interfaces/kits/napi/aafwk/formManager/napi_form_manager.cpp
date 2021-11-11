@@ -619,7 +619,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
         .result = 0,
     };
     if (argc == ARGS_SIZE_ONE) { // release promise, one argv
-        ReleaseFormPromise(env, asyncCallbackInfo);
+        return ReleaseFormPromise(env, asyncCallbackInfo);
     } else if (argc == ARGS_SIZE_THREE) { // release callback, three argv
         HILOG_INFO("%{public}s, asyncCallback.", __func__);
         valueType = napi_undefined;
@@ -643,7 +643,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
             napi_create_reference(env, argv[ARGS_SIZE_ONE], REF_COUNT, &asyncCallbackInfo->callback);
             ReleaseFormCallback(env, asyncCallbackInfo);
         } else if (valueType == napi_boolean) { // release promise, two argv
-            ReleaseFormPromise(env, asyncCallbackInfo);
+            return ReleaseFormPromise(env, asyncCallbackInfo);
         } else {
             NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
                 "The arguments[2] type of releaseForm is incorrect,expected type is function or boolean.");
