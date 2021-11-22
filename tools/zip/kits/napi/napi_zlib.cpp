@@ -29,25 +29,25 @@ namespace AAFwk {
 namespace LIBZIP {
 #define NO_ERROR 0
 
-#define COMPRESS_LEVE_CHECK(level, ret)                                                            \
-    if (!(level == COMPRESS_LEVEL_NO_COMPRESSION || level == COMPRESS_LEVEL_DEFAULT_COMPRESSION || \
-            level == COMPRESS_LEVEL_BEST_SPEED || level == COMPRESS_LEVEL_BEST_COMPRESSION)) {     \
-        HILOG_ERROR("level parameter =[%{public}d] value is incorrect", (int)level);               \
-        return ret;                                                                                \
+#define COMPRESS_LEVE_CHECK(level, ret)                                                                 \
+    if (!((level) == COMPRESS_LEVEL_NO_COMPRESSION || (level) == COMPRESS_LEVEL_DEFAULT_COMPRESSION ||  \
+        (level) == COMPRESS_LEVEL_BEST_SPEED || (level) == COMPRESS_LEVEL_BEST_COMPRESSION)) {          \
+        HILOG_ERROR("level parameter =[%{public}d] value is incorrect", (int)(level));                  \
+        return ret;                                                                                     \
     }
 
-#define COMPRESS_STRATEGY_CHECK(strategy, false)                                                      \
-    if (!(strategy == COMPRESS_STRATEGY_DEFAULT_STRATEGY || strategy == COMPRESS_STRATEGY_FILTERED || \
-            strategy == COMPRESS_STRATEGY_HUFFMAN_ONLY || strategy == COMPRESS_STRATEGY_RLE ||        \
-            strategy == COMPRESS_STRATEGY_FIXED)) {                                                   \
-        HILOG_ERROR("strategy parameter= [%{public}d] value is incorrect", (int)strategy);            \
-        return ret;                                                                                   \
+#define COMPRESS_STRATEGY_CHECK(strategy, false)                                                          \
+    if (!((strategy) == COMPRESS_STRATEGY_DEFAULT_STRATEGY || (strategy) == COMPRESS_STRATEGY_FILTERED || \
+        (strategy) == COMPRESS_STRATEGY_HUFFMAN_ONLY || (strategy) == COMPRESS_STRATEGY_RLE ||            \
+        (strategy) == COMPRESS_STRATEGY_FIXED)) {                                                         \
+        HILOG_ERROR("strategy parameter= [%{public}d] value is incorrect", (int)(strategy));              \
+        return ret;                                                                                       \
     }
 
-#define COMPRESS_MEM_CHECK(mem, false)                                                                            \
-    if (!(mem == MEM_LEVEL_MIN_MEMLEVEL || mem == MEM_LEVEL_DEFAULT_MEMLEVEL || mem == MEM_LEVEL_MAX_MEMLEVEL)) { \
-        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)mem);                             \
-        return ret;                                                                                               \
+#define COMPRESS_MEM_CHECK(mem, false)                                                                                  \
+    if (!((mem) == MEM_LEVEL_MIN_MEMLEVEL || (mem) == MEM_LEVEL_DEFAULT_MEMLEVEL || (mem) == MEM_LEVEL_MAX_MEMLEVEL)) { \
+        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)(mem));                                 \
+        return ret;                                                                                                     \
     }
 
 std::shared_ptr<ZlibCallbackInfo> g_zipAceCallbackInfo = nullptr;
