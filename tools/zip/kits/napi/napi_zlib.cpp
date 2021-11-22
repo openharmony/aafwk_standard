@@ -44,10 +44,11 @@ namespace LIBZIP {
         return ret;                                                                                       \
     }
 
-#define COMPRESS_MEM_CHECK(mem, false)                                                                                  \
-    if (!((mem) == MEM_LEVEL_MIN_MEMLEVEL || (mem) == MEM_LEVEL_DEFAULT_MEMLEVEL || (mem) == MEM_LEVEL_MAX_MEMLEVEL)) { \
-        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)(mem));                                 \
-        return ret;                                                                                                     \
+#define COMPRESS_MEM_CHECK(mem, false)                                                   \
+    if (!((mem) == MEM_LEVEL_MIN_MEMLEVEL || (mem) == MEM_LEVEL_DEFAULT_MEMLEVEL ||      \
+        (mem) == MEM_LEVEL_MAX_MEMLEVEL)) {                                              \
+        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)(mem));  \
+        return ret;                                                                      \
     }
 
 std::shared_ptr<ZlibCallbackInfo> g_zipAceCallbackInfo = nullptr;
