@@ -158,6 +158,7 @@ ZipWriter::~ZipWriter()
 
 bool ZipWriter::WriteEntries(const std::vector<FilePath> &paths, const OPTIONS &options, CALLBACK callback)
 {
+    HILOG_INFO("%{public}s called", __func__);
     return AddEntries(paths, options, callback) && Close(options, callback);
 }
 

@@ -22,28 +22,32 @@
 #include "napi_zlib_common.h"
 #include "file_path.h"
 #include "zip.h"
+#include "zip_utils.h"
 
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
 #define NO_ERROR 0
 
-#define COMPRESS_LEVE_CHECK(level, ret)                                              \
-    if (!(level == 0 || level == -1 || level == 1 || level == 9)) {                  \
-        HILOG_ERROR("level parameter =[%{public}d] value is incorrect", (int)level); \
-        return ret;                                                                  \
+#define COMPRESS_LEVE_CHECK(level, ret)                                                            \
+    if (!(level == COMPRESS_LEVEL_NO_COMPRESSION || level == COMPRESS_LEVEL_DEFAULT_COMPRESSION || \
+            level == COMPRESS_LEVEL_BEST_SPEED || level == COMPRESS_LEVEL_BEST_COMPRESSION)) {     \
+        HILOG_ERROR("level parameter =[%{public}d] value is incorrect", (int)level);               \
+        return ret;                                                                                \
     }
 
-#define COMPRESS_STRATEGY_CHECK(strategy, false)                                                \
-    if (!(strategy == 0 || strategy == 1 || strategy == 2 || strategy == 3 || strategy == 4)) { \
-        HILOG_ERROR("strategy parameter= [%{public}d] value is incorrect", (int)strategy);      \
-        return ret;                                                                             \
+#define COMPRESS_STRATEGY_CHECK(strategy, false)                                                      \
+    if (!(strategy == COMPRESS_STRATEGY_DEFAULT_STRATEGY || strategy == COMPRESS_STRATEGY_FILTERED || \
+            strategy == COMPRESS_STRATEGY_HUFFMAN_ONLY || strategy == COMPRESS_STRATEGY_RLE ||        \
+            strategy == COMPRESS_STRATEGY_FIXED)) {                                                   \
+        HILOG_ERROR("strategy parameter= [%{public}d] value is incorrect", (int)strategy);            \
+        return ret;                                                                                   \
     }
 
-#define COMPRESS_MEM_CHECK(mem, false)                                                \
-    if (!(mem == 1 || mem == 8 || mem == 9)) {                                        \
-        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)mem); \
-        return ret;                                                                   \
+#define COMPRESS_MEM_CHECK(mem, false)                                                                            \
+    if (!(mem == MEM_LEVEL_MIN_MEMLEVEL || mem == MEM_LEVEL_DEFAULT_MEMLEVEL || mem == MEM_LEVEL_MAX_MEMLEVEL)) { \
+        HILOG_ERROR("memLevel parameter =[%{public}d] value is incorrect", (int)mem);                             \
+        return ret;                                                                                               \
     }
 
 std::shared_ptr<ZlibCallbackInfo> g_zipAceCallbackInfo = nullptr;
@@ -63,6 +67,174 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
 napi_value ZipFilePromise(napi_env env, AsyncZipCallbackInfo *asyncZipCallbackInfo);
 napi_value UnzipFilePromise(napi_env env, AsyncZipCallbackInfo *asyncZipCallbackInfo);
 void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work, int status);
+
+/**
+ * @brief FlushType data initialization.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param exports An empty object via the exports parameter as a convenience.
+ *
+ * @return The return value from Init is treated as the exports object for the module.
+ */
+napi_value FlushTypeInit(napi_env env, napi_value exports)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    const int FLUSH_TYPE_NO_FLUSH = 0;
+    const int FLUSH_TYPE_PARTIAL_FLUSH = 1;
+    const int FLUSH_TYPE_SYNC_FLUSH = 2;
+    const int FLUSH_TYPE_FULL_FLUSH = 3;
+    const int FLUSH_TYPE_FINISH = 4;
+    const int FLUSH_TYPE_BLOCK = 5;
+    const int FLUSH_TYPE_TREES = 6;
+
+    napi_value flushType = nullptr;
+    napi_create_object(env, &flushType);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_NO_FLUSH", FLUSH_TYPE_NO_FLUSH);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_PARTIAL_FLUSH", FLUSH_TYPE_PARTIAL_FLUSH);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_SYNC_FLUSH", FLUSH_TYPE_SYNC_FLUSH);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_FULL_FLUSH", FLUSH_TYPE_FULL_FLUSH);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_FINISH", FLUSH_TYPE_FINISH);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_BLOCK", FLUSH_TYPE_BLOCK);
+    SetNamedProperty(env, flushType, "FLUSH_TYPE_TREES", FLUSH_TYPE_TREES);
+
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_PROPERTY("FlushType", flushType),
+    };
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+
+    return exports;
+}
+/**
+ * @brief CompressLevel data initialization.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param exports An empty object via the exports parameter as a convenience.
+ *
+ * @return The return value from Init is treated as the exports object for the module.
+ */
+napi_value CompressLevelInit(napi_env env, napi_value exports)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    const int COMPRESS_LEVEL_NO_COMPRESSION = 0;
+    const int COMPRESS_LEVEL_BEST_SPEED = 1;
+    const int COMPRESS_LEVEL_BEST_COMPRESSION = 9;
+    const int COMPRESS_LEVEL_DEFAULT_COMPRESSION = -1;
+
+    napi_value compressLevel = nullptr;
+    napi_create_object(env, &compressLevel);
+    SetNamedProperty(env, compressLevel, "COMPRESS_LEVEL_NO_COMPRESSION", COMPRESS_LEVEL_NO_COMPRESSION);
+    SetNamedProperty(env, compressLevel, "COMPRESS_LEVEL_BEST_SPEED", COMPRESS_LEVEL_BEST_SPEED);
+    SetNamedProperty(env, compressLevel, "COMPRESS_LEVEL_BEST_COMPRESSION", COMPRESS_LEVEL_BEST_COMPRESSION);
+    SetNamedProperty(env, compressLevel, "COMPRESS_LEVEL_DEFAULT_COMPRESSION", COMPRESS_LEVEL_DEFAULT_COMPRESSION);
+
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_PROPERTY("CompressLevel", compressLevel),
+    };
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+
+    return exports;
+}
+/**
+ * @brief CompressStrategy data initialization.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param exports An empty object via the exports parameter as a convenience.
+ *
+ * @return The return value from Init is treated as the exports object for the module.
+ */
+napi_value CompressStrategyInit(napi_env env, napi_value exports)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    const int COMPRESS_STRATEGY_DEFAULT_STRATEGY = 0;
+    const int COMPRESS_STRATEGY_FILTERED = 1;
+    const int COMPRESS_STRATEGY_HUFFMAN_ONLY = 2;
+    const int COMPRESS_STRATEGY_RLE = 3;
+    const int COMPRESS_STRATEGY_FIXED = 4;
+
+    napi_value compressStrategy = nullptr;
+    napi_create_object(env, &compressStrategy);
+    SetNamedProperty(env, compressStrategy, "COMPRESS_STRATEGY_DEFAULT_STRATEGY", COMPRESS_STRATEGY_DEFAULT_STRATEGY);
+    SetNamedProperty(env, compressStrategy, "COMPRESS_STRATEGY_FILTERED", COMPRESS_STRATEGY_FILTERED);
+    SetNamedProperty(env, compressStrategy, "COMPRESS_STRATEGY_HUFFMAN_ONLY", COMPRESS_STRATEGY_HUFFMAN_ONLY);
+    SetNamedProperty(env, compressStrategy, "COMPRESS_STRATEGY_RLE", COMPRESS_STRATEGY_RLE);
+    SetNamedProperty(env, compressStrategy, "COMPRESS_STRATEGY_FIXED", COMPRESS_STRATEGY_FIXED);
+
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_PROPERTY("CompressStrategy", compressStrategy),
+    };
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+
+    return exports;
+}
+/**
+ * @brief MemLevel data initialization.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param exports An empty object via the exports parameter as a convenience.
+ *
+ * @return The return value from Init is treated as the exports object for the module.
+ */
+napi_value MemLevelInit(napi_env env, napi_value exports)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    const int MEM_LEVEL_MIN_MEMLEVEL = 1;
+    const int MEM_LEVEL_DEFAULT_MEMLEVEL = 8;
+    const int MEM_LEVEL_MAX_MEMLEVEL = 9;
+
+    napi_value memLevel = nullptr;
+    napi_create_object(env, &memLevel);
+    SetNamedProperty(env, memLevel, "MEM_LEVEL_MIN_MEMLEVEL", MEM_LEVEL_MIN_MEMLEVEL);
+    SetNamedProperty(env, memLevel, "MEM_LEVEL_DEFAULT_MEMLEVEL", MEM_LEVEL_DEFAULT_MEMLEVEL);
+    SetNamedProperty(env, memLevel, "MEM_LEVEL_MAX_MEMLEVEL", MEM_LEVEL_MAX_MEMLEVEL);
+
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_PROPERTY("MemLevel", memLevel),
+    };
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+
+    return exports;
+}
+/**
+ * @brief Errorcode data initialization.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param exports An empty object via the exports parameter as a convenience.
+ *
+ * @return The return value from Init is treated as the exports object for the module.
+ */
+napi_value ErrorCodeInit(napi_env env, napi_value exports)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    const int ERROR_CODE_OK = 0;
+    const int ERROR_CODE_STREAM_END = 1;
+    const int ERROR_CODE_NEED_DICT = 2;
+    const int ERROR_CODE_ERRNO = -1;
+    const int ERROR_CODE_STREAM_ERROR = -2;
+    const int ERROR_CODE_DATA_ERROR = -3;
+    const int ERROR_CODE_MEM_ERROR = -4;
+    const int ERROR_CODE_BUF_ERROR = -5;
+    const int ERROR_CODE_VERSION_ERROR = -6;
+
+    napi_value errorCode = nullptr;
+    napi_create_object(env, &errorCode);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_OK", ERROR_CODE_OK);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_STREAM_END", ERROR_CODE_STREAM_END);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_NEED_DICT", ERROR_CODE_NEED_DICT);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_ERRNO", ERROR_CODE_ERRNO);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_STREAM_ERROR", ERROR_CODE_STREAM_ERROR);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_DATA_ERROR", ERROR_CODE_DATA_ERROR);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_MEM_ERROR", ERROR_CODE_MEM_ERROR);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_BUF_ERROR", ERROR_CODE_BUF_ERROR);
+    SetNamedProperty(env, errorCode, "ERROR_CODE_VERSION_ERROR", ERROR_CODE_VERSION_ERROR);
+
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_PROPERTY("ErrorCode", errorCode),
+    };
+    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
+
+    return exports;
+}
 
 /**
  * @brief FeatureAbility NAPI module registration.
@@ -319,6 +491,8 @@ bool UnwrapOptionsParams(OPTIONS &options, napi_env env, napi_value arg)
             options.strategy = static_cast<COMPRESS_STRATEGY>(ret);
         } else if (strProName == std::string("dictionary")) {
             continue;
+        } else {
+            continue;
         }
     }
     return true;
@@ -483,7 +657,7 @@ napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info)
     }
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if(g_unzipAceCallbackInfo!= nullptr){
+        if (g_unzipAceCallbackInfo != nullptr) {
             g_unzipAceCallbackInfo.reset();
             g_unzipAceCallbackInfo = nullptr;
         }
@@ -629,6 +803,8 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
     napi_value result[ARGS_TWO] = {0};
     // callback result
     napi_create_int32(asyncCallbackInfo->env, (int32_t)asyncCallbackInfo->callbackResult, &result[PARAM1]);
+    HILOG_INFO("%{public}s called, callbackResult =%{public}d", __func__, asyncCallbackInfo->callbackResult);
+
     if (asyncCallbackInfo->isCallBack) {
         napi_value callback = 0;
         napi_value undefined = 0;
@@ -652,13 +828,17 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
     }
+    if (work != nullptr) {
+        delete work;
+        work = nullptr;
+    }
 }
 void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallbackInfo, int result)
 {
     if (zipAceCallbackInfo == nullptr) {
         return;
     }
-    HILOG_INFO("%{public}s,called env=%{public}p", __func__, zipAceCallbackInfo->env);
+    HILOG_INFO("%{public}s,called env=%{public}p, result=%{public}d", __func__, zipAceCallbackInfo->env, result);
     uv_loop_s *loop = nullptr;
     napi_get_uv_event_loop(zipAceCallbackInfo->env, &loop);
     if (loop == nullptr) {
@@ -676,12 +856,12 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
         work = nullptr;
         return;
     }
-    asyncCallbackInfo->callbackResult = result;
     *asyncCallbackInfo = *zipAceCallbackInfo;
+    asyncCallbackInfo->callbackResult = result;
     zipAceCallbackInfo.reset();
     zipAceCallbackInfo = nullptr;
     work->data = (void *)asyncCallbackInfo;
-    uv_queue_work(
+    int rev = uv_queue_work(
         loop,
         work,
         [](uv_work_t *work) {},
@@ -690,18 +870,20 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
             ZipAndUnzipFileAsyncCallBackInnerJsThread(work);
             HILOG_INFO("ZipAndUnzipFileAsyncCallBack, uv_queue_work end.");
         });
-    if (asyncCallbackInfo->isCallBack) {
-        if (asyncCallbackInfo->callback != nullptr) {
-            napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
+    if (rev != napi_ok) {
+        if (asyncCallbackInfo->isCallBack) {
+            if (asyncCallbackInfo->callback != nullptr) {
+                napi_delete_reference(asyncCallbackInfo->env, asyncCallbackInfo->callback);
+            }
         }
-    }
-    if (asyncCallbackInfo != nullptr) {
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
-    }
-    if (work != nullptr) {
-        delete work;
-        work = nullptr;
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
     }
 }
 
