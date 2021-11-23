@@ -28,27 +28,32 @@ void AmsConfigurationParameter::Parse()
 
 bool AmsConfigurationParameter::GetStartLauncherState() const
 {
-    return canStartLauncher;
+    return canStartLauncher_;
 }
 
 bool AmsConfigurationParameter::GetStatusBarState() const
 {
-    return canStartUiStatusBar;
+    return canStartUiStatusBar_;
 }
 
 bool AmsConfigurationParameter::GetNavigationBarState() const
 {
-    return canStartUiNavigationBar;
+    return canStartUiNavigationBar_;
 }
 
 bool AmsConfigurationParameter::GetPhoneServiceState() const
 {
-    return canStartPhoneService;
+    return canStartPhoneService_;
 }
 
 bool AmsConfigurationParameter::NonConfigFile() const
 {
-    return nonConfigFile;
+    return nonConfigFile_;
+}
+
+int AmsConfigurationParameter::GetMissionSaveTime() const
+{
+    return missionSaveTime_;
 }
 
 int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
@@ -59,7 +64,7 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
     inFile.open(filePath, std::ios::in);
     if (!inFile.is_open()) {
         HILOG_INFO("read ams config error ...");
-        nonConfigFile = true;
+        nonConfigFile_ = true;
         return READ_FAIL;
     }
 
@@ -67,21 +72,23 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
     inFile >> amsJson;
     if (amsJson.is_discarded()) {
         HILOG_INFO("json discarded error ...");
-        nonConfigFile = true;
+        nonConfigFile_ = true;
         inFile.close();
         return READ_JSON_FAIL;
     }
 
     if (amsJson.contains(AmsConfig::SERVICE_ITEM_AMS)) {
-        canStartLauncher = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
-        canStartUiStatusBar = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
-        canStartUiNavigationBar =
+        canStartLauncher_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
+        canStartUiStatusBar_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
+        canStartUiNavigationBar_ =
             amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
-        canStartPhoneService = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
+        canStartPhoneService_ =
+            amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
+        missionSaveTime_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
         HILOG_INFO("get ams service config succes!");
     } else {
         HILOG_INFO("json no have service item ...");
-        nonConfigFile = true;
+        nonConfigFile_ = true;
         amsJson.clear();
         inFile.close();
         return READ_JSON_FAIL;
