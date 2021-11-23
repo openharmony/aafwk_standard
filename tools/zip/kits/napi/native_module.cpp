@@ -28,6 +28,11 @@ EXTERN_C_START
  */
 static napi_value Init(napi_env env, napi_value exports)
 {
+    FlushTypeInit(env, exports);
+    CompressLevelInit(env, exports);
+    CompressStrategyInit(env, exports);
+    MemLevelInit(env, exports);
+    ErrorCodeInit(env, exports);
     ZlibInit(env, exports);
     return exports;
 }

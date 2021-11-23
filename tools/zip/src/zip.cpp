@@ -150,7 +150,7 @@ bool Zip(const ZipParams &params, const OPTIONS &options, CALLBACK callback)
             allRelativeFiles.push_back(paramPath.BaseName());
         }
     }
-    std::unique_ptr<ZipWriter> zipWriter;
+    std::unique_ptr<ZipWriter> zipWriter = nullptr;
     FilePath rootPath = (endIsSeparator == false) ? FilePath(paramPath.DirName().Value() + SEPARATOR) : params.SrcDir();
     if (params.DestFd() != kInvalidPlatformFile) {
         zipWriter = ZipWriter::CreateWithFd(params.DestFd(), rootPath);
