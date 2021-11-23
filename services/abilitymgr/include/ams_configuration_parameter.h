@@ -28,6 +28,7 @@ const std::string STARTUP_LAUNCHER {"startup_launcher"};
 const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
+const std::string MISSION_SAVE_TIME {"mission_save_time"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -66,6 +67,8 @@ public:
      */
     void Parse();
 
+    int GetMissionSaveTime() const;
+
     enum { READ_OK = 0, READ_FAIL = 1, READ_JSON_FAIL = 2 };
 
 private:
@@ -76,11 +79,12 @@ private:
     int LoadAmsConfiguration(const std::string &filePath);
 
 private:
-    bool nonConfigFile {false};
-    bool canStartLauncher {false};
-    bool canStartUiStatusBar {false};
-    bool canStartUiNavigationBar {false};
-    bool canStartPhoneService {false};
+    bool nonConfigFile_ {false};
+    bool canStartLauncher_ {false};
+    bool canStartUiStatusBar_ {false};
+    bool canStartUiNavigationBar_ {false};
+    bool canStartPhoneService_ {false};
+    int missionSaveTime_ {12 * 60 * 60 * 1000};
 };
 }  // namespace AAFwk
 }  // namespace OHOS

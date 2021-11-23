@@ -1643,5 +1643,14 @@ bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
     HILOG_ERROR("callerUid %{public}d", callerUid);
     return bms->CheckIsSystemAppByUid(callerUid);
 }
+
+int AbilityManagerService::GetMissionSaveTime() const
+{
+    if (!amsConfigResolver_) {
+        return 0;
+    }
+
+    return amsConfigResolver_->GetMissionSaveTime();
+}
 }  // namespace AAFwk
 }  // namespace OHOS
