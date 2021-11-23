@@ -33,7 +33,6 @@ public:
 
 private:
     const std::string taskName_ = "ResumeMission#";
-    static constexpr int64_t recordSaveTime_ = 24 * 60 * 60 * 1000;
     std::map<int, std::shared_ptr<MissionRecord>> missionMaps_;
     std::shared_ptr<AbilityEventHandler> handler_;
 };

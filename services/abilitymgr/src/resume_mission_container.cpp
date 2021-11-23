@@ -16,6 +16,7 @@
 #include "resume_mission_container.h"
 #include "hilog_wrapper.h"
 #include "ability_util.h"
+#include "ability_manager_service.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -36,10 +37,12 @@ void ResumeMissionContainer::Save(const std::shared_ptr<MissionRecord> &mission)
         missionMaps_.emplace(missionId, backup);
     }
 
+    auto missionSaveTime = DelayedSingleton<AbilityManagerService>::GetInstance()->GetMissionSaveTime();
+    HILOG_INFO("mission save time : %{public}d", missionSaveTime);
     if (backup) {
         HILOG_INFO("start save time...");
         handler_->PostTask(
-            [this, missionId]() { Remove(missionId); }, taskName_ + std::to_string(missionId), recordSaveTime_);
+            [this, missionId]() { Remove(missionId); }, taskName_ + std::to_string(missionId), missionSaveTime);
     }
 }
 

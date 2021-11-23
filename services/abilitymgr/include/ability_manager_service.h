@@ -522,6 +522,8 @@ public:
 
     int CheckPermission(const std::string &bundleName, const std::string &permission);
 
+    int GetMissionSaveTime() const;
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;
