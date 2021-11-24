@@ -28,15 +28,15 @@
 using RunningProcessInfo = OHOS::AppExecFwk::RunningProcessInfo;
 using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
 
-#define BUFFER_LENGTH_MAX (128)
-#define DEFAULT_STACK_ID (1)
-#define DEFAULT_LAST_MEMORY_LEVEL (-1)
-#define DEFAULT_WEIGHT (-1)
+const int BUFFER_LENGTH_MAX = 128;
+const int DEFAULT_STACK_ID = 1;
+const int DEFAULT_LAST_MEMORY_LEVEL = -1;
+const int DEFAULT_WEIGHT = -1;
 
-#define MAX_MISSION_NUM (65535)
-#define QUERY_RECENT_RUNNING_MISSION_INFO_TYPE (2)
+const int MAX_MISSION_NUM = 65535;
+const int QUERY_RECENT_RUNNING_MISSION_INFO_TYPE = 2;
 
-#define BUSINESS_ERROR_CODE_OK 0
+const int BUSINESS_ERROR_CODE_OK = 0;
 
 namespace OHOS {
 namespace AppExecFwk {
