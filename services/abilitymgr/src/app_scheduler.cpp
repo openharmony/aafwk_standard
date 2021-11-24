@@ -186,5 +186,11 @@ void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
     info.state = static_cast<AppState>(appData.appState);
     callback->OnAppStateChanged(info);
 }
+
+void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig)
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->GetSystemMemoryAttr(memoryInfo, strConfig);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

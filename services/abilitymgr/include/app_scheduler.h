@@ -27,6 +27,7 @@
 #include "iremote_object.h"
 #include "refbase.h"
 #include "singleton.h"
+#include "system_memory_attr.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -179,6 +180,12 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
+
+    /**
+     * Get system memory information.
+     * @param SystemMemoryAttr, memory information.
+     */
+    void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig);
 
 protected:
     /**

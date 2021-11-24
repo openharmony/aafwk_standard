@@ -59,7 +59,7 @@ int AmsConfigurationParameter::GetMissionSaveTime() const
 int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
 {
     HILOG_DEBUG("%{public}s", __func__);
-
+    int ret[2] = {0};
     std::ifstream inFile;
     inFile.open(filePath, std::ios::in);
     if (!inFile.is_open()) {
@@ -77,27 +77,78 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
         return READ_JSON_FAIL;
     }
 
-    if (amsJson.contains(AmsConfig::SERVICE_ITEM_AMS)) {
-        canStartLauncher_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
-        canStartUiStatusBar_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
-        canStartUiNavigationBar_ =
-            amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
-        canStartPhoneService_ =
-            amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
-        missionSaveTime_ = amsJson.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
-        HILOG_INFO("get ams service config succes!");
-    } else {
-        HILOG_INFO("json no have service item ...");
-        nonConfigFile_ = true;
-        amsJson.clear();
-        inFile.close();
-        return READ_JSON_FAIL;
+    ret[0] = LoadAppConfigurationForStartUpService(amsJson);
+    if (ret[0] != 0) {
+        HILOG_ERROR("LoadAppConfigurationForStartUpService return error");
+    }
+
+    ret[1] = LoadAppConfigurationForMemoryThreshold(amsJson);
+    if (ret[1] != 0) {
+        HILOG_ERROR("LoadAppConfigurationForMemoryThreshold return error");
     }
 
     amsJson.clear();
     inFile.close();
+
+    for (auto& i : ret) {
+        if (i != 0) {
+            HILOG_ERROR("json no have service item ...");
+            return READ_JSON_FAIL;
+        }
+    }
+
     HILOG_INFO("read ams config succes!");
     return READ_OK;
+}
+
+int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::json& Object)
+{
+    int ret = -1;
+    if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
+        canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
+        canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
+        canStartUiNavigationBar_ =
+            Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
+        canStartPhoneService_ =
+            Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
+        missionSaveTime_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
+        HILOG_INFO("get ams service config succes!");
+        ret = 0;
+    }
+
+    return ret;
+}
+
+int AmsConfigurationParameter::LoadAppConfigurationForMemoryThreshold(nlohmann::json &Object)
+{
+    int ret = 0;
+    if (!Object.contains("memorythreshold")) {
+        HILOG_ERROR("LoadAppConfigurationForMemoryThreshold return error");
+        ret = -1;
+        return ret;
+    }
+
+    if (Object.at("memorythreshold").contains("home_application")) {
+        memThreshold_["home_application"] = Object.at("memorythreshold").at("home_application").get<std::string>();
+    } else {
+        HILOG_ERROR("LoadAppConfigurationForMemoryThreshold memorythreshold::home_application is nullptr");
+    }
+
+    return ret;
+}
+
+/**
+ * The low memory threshold under which the system will kill background processes
+ */
+int AmsConfigurationParameter::GetMemThreshold(const std::string &key)
+{
+    auto threshold = memThreshold_.find(key);
+    if (threshold == memThreshold_.end()) {
+        HILOG_ERROR("%{public}s, threshold[%{public}s] find failed", __func__, key.c_str());
+        return 20;
+    }
+
+    return std::stoi(threshold->second);
 }
 
 }  // namespace AAFwk

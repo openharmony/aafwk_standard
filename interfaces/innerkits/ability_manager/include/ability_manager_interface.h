@@ -36,6 +36,7 @@
 #include "want_sender_interface.h"
 #include "want_receiver_interface.h"
 #include "aafwk_dummy_configuration.h"
+#include "system_memory_attr.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -454,6 +455,12 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
 
+    /**
+     * Get system memory information.
+     * @param SystemMemoryAttr, memory information.
+     */
+    virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -607,6 +614,8 @@ public:
 
         // ipc id for starting ability by settings(1006)
         START_ABILITY_FOR_SETTINGS,
+
+        GET_SYSTEM_MEMORY_ATTR,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

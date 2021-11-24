@@ -16,7 +16,6 @@
 #include "app_log_wrapper.h"
 #include "ability_post_event_timeout.h"
 
-// #include "event_handler.h"
 #include "ability_handler.h"
 
 namespace OHOS {
@@ -33,11 +32,9 @@ AbilityPostEventTimeout::AbilityPostEventTimeout(std::string str, std::shared_pt
     task_ = str + strId;
     taskExec_ = false;
     handler_ = eventHandler;
-    APP_LOGI("AbilityPostEventTimeout::AbilityPostEventTimeout() call %{public}s", task_.c_str());
 }
 AbilityPostEventTimeout::~AbilityPostEventTimeout()
 {
-    APP_LOGI("AbilityPostEventTimeout::~AbilityPostEventTimeout() call %{public}s", task_.c_str());
     handler_.reset();
 }
 
@@ -54,7 +51,6 @@ void AbilityPostEventTimeout::TimingBegin(int64_t delaytime)
 }
 void AbilityPostEventTimeout::TimeEnd()
 {
-    APP_LOGI("AbilityPostEventTimeout::TimeEnd() call %{public}s", task_.c_str());
     if (handler_ == nullptr) {
         APP_LOGE("AbilityPostEventTimeout::TimeEnd %{public}s handler_ is nullptr", task_.c_str());
         return;

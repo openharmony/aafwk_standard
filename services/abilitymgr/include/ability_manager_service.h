@@ -496,6 +496,12 @@ public:
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
     /**
+     * Get system memory information.
+     * @param SystemMemoryAttr, memory information.
+     */
+    virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+
+    /**
      * get service record by element name.
      *
      */

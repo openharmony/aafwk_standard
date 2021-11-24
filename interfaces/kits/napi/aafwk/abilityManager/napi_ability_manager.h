@@ -22,6 +22,7 @@
 #include "napi/native_node_api.h"
 
 #include "running_process_info.h"
+#include "system_memory_attr.h"
 #include "ability_mission_info.h"
 
 using RunningProcessInfo = OHOS::AppExecFwk::RunningProcessInfo;
@@ -122,6 +123,13 @@ struct AsyncPreviousMissionInfosCallbackInfo {
     std::vector<AbilityMissionInfo> previousMissionInfo;
 };
 
+struct SystemMemroyInfoCB {
+    std::shared_ptr<SystemMemoryAttr> info = nullptr;
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
+};
+
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info);
@@ -136,6 +144,7 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
 void CreateWeightReasonCodeObject(napi_env env, napi_value value);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
+napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  //  NAPI_ABILITY_MANAGER_H

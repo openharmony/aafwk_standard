@@ -22,6 +22,9 @@
 namespace OHOS {
 namespace AAFwk {
 namespace AmsConfig {
+namespace MemThreshold {
+const std::string HOME_APP("home_application");
+}
 const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_LAUNCHER {"startup_launcher"};
@@ -67,6 +70,11 @@ public:
      */
     void Parse();
 
+    /**
+     * The low memory threshold under which the system will kill background processes
+     */
+    int GetMemThreshold(const std::string &key);
+
     int GetMissionSaveTime() const;
 
     enum { READ_OK = 0, READ_FAIL = 1, READ_JSON_FAIL = 2 };
@@ -77,6 +85,8 @@ private:
      *
      */
     int LoadAmsConfiguration(const std::string &filePath);
+    int LoadAppConfigurationForStartUpService(nlohmann::json& Object);
+    int LoadAppConfigurationForMemoryThreshold(nlohmann::json& Object);
 
 private:
     bool nonConfigFile_ {false};
@@ -85,6 +95,7 @@ private:
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
+    std::map<std::string, std::string> memThreshold_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

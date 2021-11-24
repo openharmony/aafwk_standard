@@ -116,5 +116,8 @@ int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid,
     return AppMgrResultCode::RESULT_OK;
 }
 
+void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string &strConfig)
+{}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
