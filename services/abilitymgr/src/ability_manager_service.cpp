@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <unistd.h>
+#include <nlohmann/json.hpp>
 #include "string_ex.h"
 
 #include "ability_util.h"
@@ -1642,6 +1643,32 @@ bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     HILOG_ERROR("callerUid %{public}d", callerUid);
     return bms->CheckIsSystemAppByUid(callerUid);
+}
+
+/**
+ * Get system memory information.
+ * @param SystemMemoryAttr, memory information.
+ */
+void AbilityManagerService::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo)
+{
+    auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
+    if (appScheduler == nullptr) {
+        HILOG_ERROR("%{public}s, appScheduler is nullptr", __func__);
+        return;
+    }
+
+    int memoryThreshold = 0;
+    if (amsConfigResolver_ == nullptr) {
+        HILOG_ERROR("%{public}s, amsConfigResolver_ is nullptr", __func__);
+        memoryThreshold = 20;
+    } else {
+        memoryThreshold = amsConfigResolver_->GetMemThreshold(AmsConfig::MemThreshold::HOME_APP);
+    }
+
+    nlohmann::json memJson = { "memoryThreshold", memoryThreshold };
+    std::string memConfig = memJson.dump();
+
+    appScheduler->GetSystemMemoryAttr(memoryInfo, memConfig);
 }
 
 int AbilityManagerService::GetMissionSaveTime() const

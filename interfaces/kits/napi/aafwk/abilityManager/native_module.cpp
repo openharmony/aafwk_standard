@@ -53,6 +53,7 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("killProcessesByBundleName", NAPI_KillProcessesByBundleName),
         DECLARE_NAPI_FUNCTION("clearUpApplicationData", NAPI_ClearUpApplicationData),
         DECLARE_NAPI_PROPERTY("WeightReasonCode", nWeightReasonCode),
+        DECLARE_NAPI_FUNCTION("getSystemMemoryAttr", NAPI_GetSystemMemoryAttr),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
