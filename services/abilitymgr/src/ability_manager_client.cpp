@@ -542,7 +542,6 @@ ErrCode AbilityManagerClient::GetPendingRequestWant(const sptr<IWantSender> &tar
 
 ErrCode AbilityManagerClient::SetShowOnLockScreen(bool isAwakenScreen)
 {
-    // TODO
     return ERR_OK;
 }
 
