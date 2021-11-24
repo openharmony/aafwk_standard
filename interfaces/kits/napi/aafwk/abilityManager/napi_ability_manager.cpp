@@ -52,9 +52,9 @@ napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value arg
     napi_valuetype valuetype = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, args, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
-    char buf[BUFFER_LENGTH_MAX] = {0};
+    char buf[NapiAbilityMgr::BUFFER_LENGTH_MAX] = {0};
     size_t len = 0;
-    napi_get_value_string_utf8(env, args, buf, BUFFER_LENGTH_MAX, &len);
+    napi_get_value_string_utf8(env, args, buf, NapiAbilityMgr::BUFFER_LENGTH_MAX, &len);
     HILOG_INFO("bundleName= [%{public}s].", buf);
     bundleName = std::string(buf);
     // create reutrn
@@ -231,12 +231,12 @@ void GetAllRunningProcessesForResult(napi_env env, const std::vector<RunningProc
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "uid", nUid));
 
         napi_value nLastMemoryLevel = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_LAST_MEMORY_LEVEL, &nLastMemoryLevel));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, NapiAbilityMgr::DEFAULT_STACK_ID, &nLastMemoryLevel));
         NAPI_CALL_RETURN_VOID(
             env, napi_set_named_property(env, objAppProcessInfo, "lastMemoryLevel", nLastMemoryLevel));
 
         napi_value nWeight = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_WEIGHT, &nWeight));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, NapiAbilityMgr::DEFAULT_WEIGHT, &nWeight));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "weight", nWeight));
 
         napi_value nWeightReasonCode = nullptr;
@@ -310,7 +310,7 @@ auto NAPI_QueryRecentAbilityMissionInfosAsyncCompleteCallback = [](napi_env env,
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetRecentMissionsForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -446,7 +446,7 @@ auto NAPI_GetpreviousAbilityMissionInfosAsyncCompleteCallback = [](napi_env env,
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAbilityMissionInfosForResult(env, async_callback_info->previousMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -580,7 +580,7 @@ auto NAPI_QueryRunningAbilityMissionInfosAsyncCompleteCallback = [](napi_env env
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetRecentMissionsForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -679,7 +679,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info
     }
 
     async_callback_info->maxMissionNum = value0;
-    async_callback_info->queryType = QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
+    async_callback_info->queryType = NapiAbilityMgr::QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
 
     if (callBackMode) {
         napi_create_reference(env, argv[1], 1, &async_callback_info->callback[0]);
@@ -713,7 +713,7 @@ auto NAPI_GetActiveAbilityMissionInfosAsyncCompleteCallback = [](napi_env env, n
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAbilityMissionInfosForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -812,7 +812,7 @@ napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info in
     }
 
     async_callback_info->maxMissionNum = value0;
-    async_callback_info->queryType = QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
+    async_callback_info->queryType = NapiAbilityMgr::QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
 
     if (callBackMode) {
         napi_create_reference(env, argv[1], 1, &async_callback_info->callback[0]);
@@ -841,7 +841,7 @@ auto NAPI_GetAllRunningProcessesAsyncCompleteCallback = [](napi_env env, napi_st
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAllRunningProcessesForResult(env, async_callback_info->info, result[1]);
     napi_get_undefined(env, &undefined);
@@ -959,7 +959,7 @@ auto NAPI_GetActiveProcessInfosAsyncCompleteCallback = [](napi_env env, napi_sta
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetActiveProcessInfosForResult(env, async_callback_info->info, result[1]);
     napi_get_undefined(env, &undefined);
@@ -1077,7 +1077,7 @@ auto NAPI_RemoveMissionAsyncCompleteCallback = [](napi_env env, napi_status stat
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1203,7 +1203,7 @@ auto NAPI_RemoveMissionsAsyncCompleteCallback = [](napi_env env, napi_status sta
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1329,7 +1329,7 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
 auto NAPI_ClearMissionsAsyncExecuteCallback = [](napi_env env, void *data) {
     HILOG_INFO("clearMissions called(CallBack Mode)...");
     AsyncClearMissionsCallbackInfo *async_callback_info = (AsyncClearMissionsCallbackInfo *)data;
-    async_callback_info->result = GetAbilityManagerInstance()->RemoveStack(DEFAULT_STACK_ID);
+    async_callback_info->result = GetAbilityManagerInstance()->RemoveStack(NapiAbilityMgr::DEFAULT_STACK_ID);
 };
 
 auto NAPI_ClearMissionsAsyncCompleteCallback = [](napi_env env, napi_status status, void *data) {
@@ -1340,7 +1340,7 @@ auto NAPI_ClearMissionsAsyncCompleteCallback = [](napi_env env, napi_status stat
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1458,7 +1458,7 @@ auto NAPI_MoveMissionToTopAsyncCompleteCallback = [](napi_env env, napi_status s
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1583,7 +1583,7 @@ auto NAPI_KillProcessesByBundleNameAsyncCompleteCallback = [](napi_env env, napi
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1704,7 +1704,7 @@ auto NAPI_ClearUpApplicationDataAsyncCompleteCallback = [](napi_env env, napi_st
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
