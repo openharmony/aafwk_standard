@@ -1879,10 +1879,10 @@ static napi_value SystemMemoryAttrConvertJSObject(napi_env env, const SystemMemo
     NAPI_CALL(env, napi_create_int64(env, memoryInfo.threshold_, &jsThreshold));
     NAPI_CALL(env, napi_get_boolean(env, memoryInfo.isSysInlowMem_, &jsIsSysInlowMem));
 
-    HILOG_DEBUG("SystemMemoryAttrConvertJSObject %{public}lld %{public}lld %{public}lld %{public}s",
-        memoryInfo.availSysMem_,
-        memoryInfo.totalSysMem_,
-        memoryInfo.threshold_,
+    HILOG_DEBUG("SystemMemoryAttrConvertJSObject %{public}zu %{public}zu %{public}zu %{public}s",
+        static_cast<size_t>(memoryInfo.availSysMem_),
+        static_cast<size_t>(memoryInfo.totalSysMem_),
+        static_cast<size_t>(memoryInfo.threshold_),
         (memoryInfo.isSysInlowMem_ ? "true" : "false"));
 
     NAPI_CALL(env, napi_set_named_property(env, retJsObject, "availSysMem", jsAvailSysMem));
@@ -2070,6 +2070,5 @@ napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info info)
     HILOG_INFO("%{public}s end", __func__);
     return ret;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

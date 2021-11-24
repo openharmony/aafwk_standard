@@ -19,6 +19,7 @@
 namespace OHOS {
 namespace AAFwk {
 using json = nlohmann::json;
+static const int experienceMemThreshold = 20;
 
 void AmsConfigurationParameter::Parse()
 {
@@ -145,7 +146,7 @@ int AmsConfigurationParameter::GetMemThreshold(const std::string &key)
     auto threshold = memThreshold_.find(key);
     if (threshold == memThreshold_.end()) {
         HILOG_ERROR("%{public}s, threshold[%{public}s] find failed", __func__, key.c_str());
-        return 20;
+        return experienceMemThreshold;
     }
 
     return std::stoi(threshold->second);

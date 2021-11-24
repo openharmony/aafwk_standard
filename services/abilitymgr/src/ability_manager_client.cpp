@@ -542,10 +542,8 @@ ErrCode AbilityManagerClient::GetPendingRequestWant(const sptr<IWantSender> &tar
 
 ErrCode AbilityManagerClient::SetShowOnLockScreen(bool isAwakenScreen)
 {
-    // CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-    // sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    // return abms->SetShowOnLockScreen(isAwakenScreen);
-	return ERR_OK;
+    // TODO
+    return ERR_OK;
 }
 
 /**
@@ -559,6 +557,5 @@ void AbilityManagerClient::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &mem
     abms->GetSystemMemoryAttr(memoryInfo);
     return;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

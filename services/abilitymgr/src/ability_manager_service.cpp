@@ -36,6 +36,7 @@ using OHOS::AppExecFwk::ElementName;
 namespace OHOS {
 namespace AAFwk {
 using namespace std::chrono;
+static const int experienceMemThreshold = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
@@ -1660,7 +1661,7 @@ void AbilityManagerService::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &me
     int memoryThreshold = 0;
     if (amsConfigResolver_ == nullptr) {
         HILOG_ERROR("%{public}s, amsConfigResolver_ is nullptr", __func__);
-        memoryThreshold = 20;
+        memoryThreshold = experienceMemThreshold;
     } else {
         memoryThreshold = amsConfigResolver_->GetMemThreshold(AmsConfig::MemThreshold::HOME_APP);
     }
