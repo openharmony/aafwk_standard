@@ -2713,7 +2713,7 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
         APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
     } else {
         APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
-        std::vector<std::string> strPredicatesList = predicates->GetWhereArgs();
+        strPredicatesList = predicates->GetWhereArgs();
     }
 
     if (strPredicatesList.empty()) {
