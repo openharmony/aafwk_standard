@@ -28,18 +28,16 @@
 using RunningProcessInfo = OHOS::AppExecFwk::RunningProcessInfo;
 using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
 
+
+namespace OHOS {
+namespace AppExecFwk {
 const int BUFFER_LENGTH_MAX = 128;
 const int DEFAULT_STACK_ID = 1;
 const int DEFAULT_LAST_MEMORY_LEVEL = -1;
 const int DEFAULT_WEIGHT = -1;
-
 const int MAX_MISSION_NUM = 65535;
 const int QUERY_RECENT_RUNNING_MISSION_INFO_TYPE = 2;
-
 const int BUSINESS_ERROR_CODE_OK = 0;
-
-namespace OHOS {
-namespace AppExecFwk {
 const uint8_t NUMBER_OF_PARAMETERS_TWO = 2;
 const uint8_t NUMBER_OF_PARAMETERS_THREE = 3;
 
