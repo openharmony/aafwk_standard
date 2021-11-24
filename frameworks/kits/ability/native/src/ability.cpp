@@ -2711,7 +2711,11 @@ void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
             operation->GetExpectedCount(),
             numRows);
     } else {
-        results.push_back(std::make_shared<DataAbilityResult>(numRows));
+        if (operation->GetUri() != nullptr) {
+            results.push_back(std::make_shared<DataAbilityResult>(*operation->GetUri(), numRows));
+        } else {
+            results.push_back(std::make_shared<DataAbilityResult>(Uri(std::string("")), numRows));
+        }
     }
 }
 
@@ -2736,7 +2740,7 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
         APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
     } else {
         APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
-        std::vector<std::string> strPredicatesList = predicates->GetWhereArgs();
+        strPredicatesList = predicates->GetWhereArgs();
     }
 
     if (strPredicatesList.empty()) {

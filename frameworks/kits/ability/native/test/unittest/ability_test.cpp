@@ -22,6 +22,11 @@
 #include "ability_start_setting.h"
 #include "context_deal.h"
 #include "mock_page_ability.h"
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
+#include "data_ability_operation.h"
+#include "data_ability_result.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -846,6 +851,50 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_PostTask_0100, Function | MediumTest | L
     ability_->PostTask(task, 1000);
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_PostTask_0100 end";
+}
+
+/**
+ * @tc.number: AaFwk_Ability_ExecuteBatch_0100
+ * @tc.name: ExecuteBatch
+ * @tc.desc: Test whether ExecuteBatch is called normally.
+ */
+HWTEST_F(AbilityBaseTest, AaFwk_Ability_ExecuteBatch_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_ExecuteBatch_0100 start";
+
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->type = AbilityType::DATA;
+    std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+    sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+    std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+    abilityInfo->isNativeAbility = true;
+
+    ability_->Init(abilityInfo, nullptr, handler, nullptr);
+
+    OHOS::NativeRdb::ValuesBucket calllogValues;
+    calllogValues.PutString("phone_number", "12345");
+    OHOS::NativeRdb::DataAbilityPredicates predicates;
+    predicates.GreaterThan("id", "0");
+    std::shared_ptr<OHOS::NativeRdb::ValuesBucket> values =
+        std::make_shared<OHOS::NativeRdb::ValuesBucket>(calllogValues);
+    std::shared_ptr<OHOS::NativeRdb::DataAbilityPredicates> executePredicates =
+        std::make_shared<OHOS::NativeRdb::DataAbilityPredicates>(predicates);
+    std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability:///com.ohos.test");
+    std::shared_ptr<DataAbilityOperation> operation =
+        DataAbilityOperation::NewUpdateBuilder(uri)
+        ->WithValuesBucket(values)
+        ->WithPredicatesBackReference(0, 0)
+        ->WithPredicates(executePredicates)
+        ->WithInterruptionAllowed(true)
+        ->Build();
+    std::vector<std::shared_ptr<DataAbilityOperation>> executeBatchOperations;
+    executeBatchOperations.push_back(operation);
+
+    std::vector<std::shared_ptr<DataAbilityResult>> ret = ability_->ExecuteBatch(executeBatchOperations);
+
+    EXPECT_STREQ(ret.at(0)->GetUri().ToString().c_str(), uri->ToString().c_str());
+
+    GTEST_LOG_(INFO) << "AaFwk_Ability_ExecuteBatch_0100 end";
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
