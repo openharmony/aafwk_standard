@@ -478,8 +478,8 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_ForResult_Test_0100, Fu
 }
 class AceAbilityTest final : public Ability {
 public:
-    AceAbilityTest(){}
-    virtual ~AceAbilityTest(){}
+    AceAbilityTest() {}
+    virtual ~AceAbilityTest() {}
 
     void OnBackPressed() override
     {
