@@ -478,8 +478,8 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_ForResult_Test_0100, Fu
 }
 class AceAbilityTest final : public Ability {
 public:
-    AceAbilityTest(){}
-    virtual ~AceAbilityTest(){}
+    AceAbilityTest() {}
+    virtual ~AceAbilityTest() {}
 
     void OnBackPressed() override
     {
@@ -535,9 +535,7 @@ void AbilityTerminateTest::TearDownTestCase(void)
 void AbilityTerminateTest::SetUp(void)
 {
     abilityObject_ = new MockAbilityManagerService();
-
     auto sysMgr = OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance();
-
     if (sysMgr == NULL) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;
