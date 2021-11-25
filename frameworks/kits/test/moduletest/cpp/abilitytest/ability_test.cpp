@@ -535,9 +535,7 @@ void AbilityTerminateTest::TearDownTestCase(void)
 void AbilityTerminateTest::SetUp(void)
 {
     abilityObject_ = new MockAbilityManagerService();
-
     auto sysMgr = OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance();
-
     if (sysMgr == NULL) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;
