@@ -896,5 +896,38 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_ExecuteBatch_0100, Function | MediumTest
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_ExecuteBatch_0100 end";
 }
+class AbilityTest final : public Ability {
+public:
+    AbilityTest() {}
+    virtual ~AbilityTest() {}
+
+    void OnBackPressed() override
+    {
+        Ability::OnBackPressed();
+        onBackPressed_ = true;
+    }
+
+public:
+    bool onBackPressed_ = false;
+};
+/**
+ * @tc.number: AaFwk_Ability_OnBackPressed_0100
+ * @tc.name: OnBackPress
+ * @tc.desc: Test whether OnBackPress can be called normally.
+ */
+HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackPressed_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackPressed_0100 start";
+    std::shared_ptr<AbilityTest> ability = std::make_shared<AbilityTest>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->type = AbilityType::PAGE;
+    std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+    sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+    std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+    ability->Init(abilityInfo, nullptr, handler, nullptr);
+    ability->OnBackPressed();
+    EXPECT_TRUE(ability->onBackPressed_);
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackPressed_0100 end";
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
