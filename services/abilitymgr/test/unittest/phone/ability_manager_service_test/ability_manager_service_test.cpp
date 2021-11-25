@@ -2719,5 +2719,28 @@ HWTEST_F(AbilityManagerServiceTest, AmsConfigurationParameter_003, TestSize.Leve
     EXPECT_EQ(ref, 1);
 }
 
+/*
+ * Feature: AbilityManagerService
+ * Function: AmsGetSystemMemoryAttr
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService CompelVerifyPermission
+ * EnvConditions: NA
+ * CaseDescription: Already configured
+ */
+HWTEST_F(AbilityManagerServiceTest, AmsGetSystemMemoryAttr_001, TestSize.Level1)
+{
+    OHOS::AppExecFwk::SystemMemoryAttr memInfo;
+
+    memInfo.availSysMem_ = -1;
+    memInfo.totalSysMem_ = -1;
+    memInfo.threshold_ = -1;
+
+    abilityMs_->GetSystemMemoryAttr(memInfo);
+
+    EXPECT_NE(-1, memInfo.availSysMem_);
+    EXPECT_NE(-1, memInfo.totalSysMem_);
+    EXPECT_NE(-1, memInfo.threshold_);
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS
