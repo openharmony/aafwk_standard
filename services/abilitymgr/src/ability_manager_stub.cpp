@@ -99,6 +99,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
+    requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -804,6 +805,14 @@ int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageP
         return ERR_INVALID_VALUE;
     }
     reply.WriteParcelable(want.get());
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply)
+{
+    AppExecFwk::SystemMemoryAttr memoryInfo;
+    GetSystemMemoryAttr(memoryInfo);
+    reply.WriteParcelable(&memoryInfo);
     return NO_ERROR;
 }
 }  // namespace AAFwk

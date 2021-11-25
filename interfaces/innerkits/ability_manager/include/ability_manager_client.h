@@ -25,6 +25,7 @@
 #include "want.h"
 
 #include "iremote_object.h"
+#include "system_memory_attr.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -417,6 +418,20 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode SetMissionStackSetting(const StackSetting &stackSetting);
+
+    /**
+     * set lock screen white list
+     *
+     * @param isAwakenScreen is it allow wake up screen.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode SetShowOnLockScreen(bool isAwakenScreen);
+
+    /**
+     * Get system memory information.
+     * @param SystemMemoryAttr, memory information.
+     */
+    void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo);
 
 private:
     static std::mutex mutex_;

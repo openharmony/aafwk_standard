@@ -1338,5 +1338,34 @@ int AbilityManagerProxy::GetPendingRequestWant(const sptr<IWantSender> &target, 
 
     return NO_ERROR;
 }
+/**
+ * Get system memory information.
+ * @param SystemMemoryAttr, memory information.
+ */
+void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken faild");
+        return;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_SYSTEM_MEMORY_ATTR, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return;
+    }
+
+    std::shared_ptr<AppExecFwk::SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<AppExecFwk::SystemMemoryAttr>());
+    if (remoteRetsult == nullptr) {
+        HILOG_ERROR("recv SystemMemoryAttr faild");
+        return;
+    }
+
+    memoryInfo = *remoteRetsult;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

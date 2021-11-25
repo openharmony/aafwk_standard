@@ -130,5 +130,13 @@ void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
 {
     HILOG_INFO("Test AppScheduler::OnAppStateChanged()");
 }
+
+void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig)
+{
+    const int64_t testValue = 10;
+    memoryInfo.availSysMem_ = testValue;
+    memoryInfo.totalSysMem_ = testValue;
+    memoryInfo.threshold_ = testValue;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

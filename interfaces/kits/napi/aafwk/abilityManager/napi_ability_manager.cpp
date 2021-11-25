@@ -52,9 +52,9 @@ napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value arg
     napi_valuetype valuetype = napi_valuetype::napi_null;
     NAPI_CALL(env, napi_typeof(env, args, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
-    char buf[BUFFER_LENGTH_MAX] = {0};
+    char buf[NapiAbilityMgr::BUFFER_LENGTH_MAX] = {0};
     size_t len = 0;
-    napi_get_value_string_utf8(env, args, buf, BUFFER_LENGTH_MAX, &len);
+    napi_get_value_string_utf8(env, args, buf, NapiAbilityMgr::BUFFER_LENGTH_MAX, &len);
     HILOG_INFO("bundleName= [%{public}s].", buf);
     bundleName = std::string(buf);
     // create reutrn
@@ -231,12 +231,12 @@ void GetAllRunningProcessesForResult(napi_env env, const std::vector<RunningProc
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "uid", nUid));
 
         napi_value nLastMemoryLevel = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_LAST_MEMORY_LEVEL, &nLastMemoryLevel));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, NapiAbilityMgr::DEFAULT_STACK_ID, &nLastMemoryLevel));
         NAPI_CALL_RETURN_VOID(
             env, napi_set_named_property(env, objAppProcessInfo, "lastMemoryLevel", nLastMemoryLevel));
 
         napi_value nWeight = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, DEFAULT_WEIGHT, &nWeight));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, NapiAbilityMgr::DEFAULT_WEIGHT, &nWeight));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objAppProcessInfo, "weight", nWeight));
 
         napi_value nWeightReasonCode = nullptr;
@@ -310,7 +310,7 @@ auto NAPI_QueryRecentAbilityMissionInfosAsyncCompleteCallback = [](napi_env env,
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetRecentMissionsForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -446,7 +446,7 @@ auto NAPI_GetpreviousAbilityMissionInfosAsyncCompleteCallback = [](napi_env env,
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAbilityMissionInfosForResult(env, async_callback_info->previousMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -580,7 +580,7 @@ auto NAPI_QueryRunningAbilityMissionInfosAsyncCompleteCallback = [](napi_env env
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetRecentMissionsForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -679,7 +679,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info
     }
 
     async_callback_info->maxMissionNum = value0;
-    async_callback_info->queryType = QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
+    async_callback_info->queryType = NapiAbilityMgr::QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
 
     if (callBackMode) {
         napi_create_reference(env, argv[1], 1, &async_callback_info->callback[0]);
@@ -713,7 +713,7 @@ auto NAPI_GetActiveAbilityMissionInfosAsyncCompleteCallback = [](napi_env env, n
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAbilityMissionInfosForResult(env, async_callback_info->recentMissionInfo, result[1]);
     napi_get_undefined(env, &undefined);
@@ -812,7 +812,7 @@ napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info in
     }
 
     async_callback_info->maxMissionNum = value0;
-    async_callback_info->queryType = QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
+    async_callback_info->queryType = NapiAbilityMgr::QUERY_RECENT_RUNNING_MISSION_INFO_TYPE;
 
     if (callBackMode) {
         napi_create_reference(env, argv[1], 1, &async_callback_info->callback[0]);
@@ -841,7 +841,7 @@ auto NAPI_GetAllRunningProcessesAsyncCompleteCallback = [](napi_env env, napi_st
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetAllRunningProcessesForResult(env, async_callback_info->info, result[1]);
     napi_get_undefined(env, &undefined);
@@ -959,7 +959,7 @@ auto NAPI_GetActiveProcessInfosAsyncCompleteCallback = [](napi_env env, napi_sta
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_array(env, &result[1]);
     GetActiveProcessInfosForResult(env, async_callback_info->info, result[1]);
     napi_get_undefined(env, &undefined);
@@ -1077,7 +1077,7 @@ auto NAPI_RemoveMissionAsyncCompleteCallback = [](napi_env env, napi_status stat
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1203,7 +1203,7 @@ auto NAPI_RemoveMissionsAsyncCompleteCallback = [](napi_env env, napi_status sta
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1329,7 +1329,7 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
 auto NAPI_ClearMissionsAsyncExecuteCallback = [](napi_env env, void *data) {
     HILOG_INFO("clearMissions called(CallBack Mode)...");
     AsyncClearMissionsCallbackInfo *async_callback_info = (AsyncClearMissionsCallbackInfo *)data;
-    async_callback_info->result = GetAbilityManagerInstance()->RemoveStack(DEFAULT_STACK_ID);
+    async_callback_info->result = GetAbilityManagerInstance()->RemoveStack(NapiAbilityMgr::DEFAULT_STACK_ID);
 };
 
 auto NAPI_ClearMissionsAsyncCompleteCallback = [](napi_env env, napi_status status, void *data) {
@@ -1340,7 +1340,7 @@ auto NAPI_ClearMissionsAsyncCompleteCallback = [](napi_env env, napi_status stat
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1458,7 +1458,7 @@ auto NAPI_MoveMissionToTopAsyncCompleteCallback = [](napi_env env, napi_status s
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1583,7 +1583,7 @@ auto NAPI_KillProcessesByBundleNameAsyncCompleteCallback = [](napi_env env, napi
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
 
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1704,7 +1704,7 @@ auto NAPI_ClearUpApplicationDataAsyncCompleteCallback = [](napi_env env, napi_st
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value callResult = nullptr;
-    result[0] = GetCallbackErrorValue(async_callback_info->env, BUSINESS_ERROR_CODE_OK);
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result[1]);
     napi_get_undefined(env, &undefined);
 
@@ -1864,6 +1864,211 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
     NAPI_CALL(env, napi_create_object(env, &result));
     NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
     return result;
+}
+
+static napi_value SystemMemoryAttrConvertJSObject(napi_env env, const SystemMemoryAttr &memoryInfo)
+{
+    napi_value retJsObject = nullptr;
+    napi_value jsAvailSysMem = nullptr;
+    napi_value jsTotalSysMem = nullptr;
+    napi_value jsThreshold = nullptr;
+    napi_value jsIsSysInlowMem = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &retJsObject));
+    NAPI_CALL(env, napi_create_int64(env, memoryInfo.availSysMem_, &jsAvailSysMem));
+    NAPI_CALL(env, napi_create_int64(env, memoryInfo.totalSysMem_, &jsTotalSysMem));
+    NAPI_CALL(env, napi_create_int64(env, memoryInfo.threshold_, &jsThreshold));
+    NAPI_CALL(env, napi_get_boolean(env, memoryInfo.isSysInlowMem_, &jsIsSysInlowMem));
+
+    HILOG_DEBUG("SystemMemoryAttrConvertJSObject %{public}zu %{public}zu %{public}zu %{public}s",
+        static_cast<size_t>(memoryInfo.availSysMem_),
+        static_cast<size_t>(memoryInfo.totalSysMem_),
+        static_cast<size_t>(memoryInfo.threshold_),
+        (memoryInfo.isSysInlowMem_ ? "true" : "false"));
+
+    NAPI_CALL(env, napi_set_named_property(env, retJsObject, "availSysMem", jsAvailSysMem));
+    NAPI_CALL(env, napi_set_named_property(env, retJsObject, "totalSysMem", jsTotalSysMem));
+    NAPI_CALL(env, napi_set_named_property(env, retJsObject, "threshold", jsThreshold));
+    NAPI_CALL(env, napi_set_named_property(env, retJsObject, "isSysInlowMem", jsIsSysInlowMem));
+
+    return retJsObject;
+}
+
+static void GetSystemMemoryAttrExecute(napi_env env, void *data)
+{
+    SystemMemroyInfoCB *pdata = static_cast<SystemMemroyInfoCB *>(data);
+    if (pdata == nullptr) {
+        HILOG_ERROR("GetSystemMemoryAttrExecute input params data is nullptr");
+        return;
+    }
+
+    if (pdata->info == nullptr) {
+        pdata->info = std::make_shared<SystemMemoryAttr>();
+        if (pdata->info == nullptr) {
+            HILOG_ERROR("GetSystemMemoryAttrExecute pdata->info is nullptr");
+            return;
+        }
+    }
+    GetAbilityManagerInstance()->GetSystemMemoryAttr(*pdata->info);
+}
+
+static void GetSystemMemoryAttrAsyncComplete(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("%{public}s, main event thread complete.", __func__);
+    const int errorCodeFailed = -1;
+    const int errorCodeSuccess = 0;
+    const unsigned int argsCount = 2;
+    const unsigned int paramFirst = 0;
+    const unsigned int paramSecond = 1;
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value result[argsCount] = {nullptr};
+    napi_value callResult = nullptr;
+    SystemMemroyInfoCB *pdata = static_cast<SystemMemroyInfoCB *>(data);
+    if (pdata == nullptr) {
+        HILOG_ERROR("%{public}s, main event thread complete end.", __func__);
+        return;
+    }
+
+    if (pdata->info == nullptr) {
+        result[paramFirst] = GetCallbackErrorValue(env, errorCodeFailed);
+        NAPI_CALL_RETURN_VOID(env, napi_get_null(env, &result[paramSecond]));
+        HILOG_ERROR("%{public}s, main event thread complete end.", __func__);
+    } else {
+        result[paramFirst] = GetCallbackErrorValue(env, errorCodeSuccess);
+        result[paramSecond] = SystemMemoryAttrConvertJSObject(env, *pdata->info);
+    }
+
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, pdata->callback, &callback));
+    NAPI_CALL_RETURN_VOID(
+        env, napi_call_function(env, undefined, callback, argsCount, &result[paramFirst], &callResult));
+    if (pdata->callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, pdata->callback));
+    }
+
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, pdata->asyncWork));
+    if (pdata != nullptr) {
+        delete pdata;
+        pdata = nullptr;
+    }
+    HILOG_INFO("%{public}s, main event thread complete end.", __func__);
+}
+
+static void GetSystemMemoryAttrPromiseComplete(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("%{public}s, main event thread complete.", __func__);
+    napi_value result = nullptr;
+    SystemMemroyInfoCB *pdata = static_cast<SystemMemroyInfoCB *>(data);
+    if (pdata == nullptr) {
+        HILOG_ERROR("%{public}s, main event thread complete end.", __func__);
+        return;
+    }
+
+    if (pdata->info == nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_get_null(env, &result));
+        HILOG_ERROR("%{public}s, info is nullptr.", __func__);
+    } else {
+        result = SystemMemoryAttrConvertJSObject(env, *pdata->info);
+    }
+
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, pdata->deferred, result));
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, pdata->asyncWork));
+    if (pdata != nullptr) {
+        delete pdata;
+        pdata = nullptr;
+    }
+    HILOG_INFO("%{public}s,  main event thread complete end.", __func__);
+}
+
+static napi_value GetSystemMemoryAttrPromiss(napi_env env)
+{
+    napi_value resourceName = nullptr;
+    napi_async_work asyncWork = nullptr;
+    napi_value retPromise = nullptr;
+    SystemMemroyInfoCB *cb = new (std::nothrow) SystemMemroyInfoCB;
+    if (cb == nullptr) {
+        HILOG_INFO("%{public}s, promise cb new failed", __func__);
+        NAPI_CALL(env, napi_get_null(env, &retPromise));
+        return retPromise;
+    }
+
+    cb->asyncWork = nullptr;
+    cb->callback = nullptr;
+    cb->deferred = nullptr;
+    cb->info = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_promise(env, &cb->deferred, &retPromise));
+    NAPI_CALL(env,
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            GetSystemMemoryAttrExecute,
+            GetSystemMemoryAttrPromiseComplete,
+            (void *)cb,
+            &asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncWork));
+    HILOG_INFO("%{public}s, promise end", __func__);
+    return retPromise;
+}
+
+static napi_value GetSystemMemoryAttrAsync(napi_env env, napi_value args)
+{
+    napi_value resourceName = nullptr;
+    napi_value retAsync = nullptr;
+    napi_valuetype valuetype = napi_undefined;
+    SystemMemroyInfoCB *cb = new (std::nothrow) SystemMemroyInfoCB;
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, async cb new failed", __func__);
+        NAPI_CALL(env, napi_get_null(env, &retAsync));
+        return retAsync;
+    }
+
+    cb->asyncWork = nullptr;
+    cb->callback = nullptr;
+    cb->deferred = nullptr;
+    cb->info = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_typeof(env, args, &valuetype));
+    if (valuetype == napi_function) {
+        NAPI_CALL(env, napi_create_reference(env, args, 1, &cb->callback));
+    }
+
+    NAPI_CALL(env,
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            GetSystemMemoryAttrExecute,
+            GetSystemMemoryAttrAsyncComplete,
+            (void *)cb,
+            &cb->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, cb->asyncWork));
+
+    HILOG_INFO("%{public}s, async end", __func__);
+    NAPI_CALL(env, napi_create_int32(env, 0, &retAsync));
+    return retAsync;
+}
+
+napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info info)
+{
+    size_t argc = 1;
+    napi_value args = nullptr;
+    napi_value ret = nullptr;
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, &args, NULL, NULL));
+    HILOG_INFO("%{public}s argc = [%{public}zu]", __func__, argc);
+
+    if (argc == 0) {
+        // promiss
+        ret = GetSystemMemoryAttrPromiss(env);
+    } else if (argc == 1) {
+        // async
+        ret = GetSystemMemoryAttrAsync(env, args);
+    } else {
+        HILOG_ERROR("%{public}s js input param error", __func__);
+        NAPI_CALL(env, napi_get_null(env, &ret));
+    }
+
+    HILOG_INFO("%{public}s end", __func__);
+    return ret;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
