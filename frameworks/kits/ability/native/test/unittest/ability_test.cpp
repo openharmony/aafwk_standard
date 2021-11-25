@@ -898,8 +898,8 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_ExecuteBatch_0100, Function | MediumTest
 }
 class AbilityTest final : public Ability {
 public:
-    AbilityTest(){}
-    virtual ~AbilityTest(){}
+    AbilityTest() {}
+    virtual ~AbilityTest() {}
 
     void OnBackPressed() override
     {
