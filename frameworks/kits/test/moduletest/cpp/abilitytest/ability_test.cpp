@@ -476,7 +476,36 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_ForResult_Test_0100, Fu
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
+class AceAbilityTest final : public Ability {
+public:
+    AceAbilityTest() {}
+    virtual ~AceAbilityTest() {}
 
+    void OnBackPressed() override
+    {
+        Ability::OnBackPressed();
+        onBackPressed_ = true;
+    }
+
+public:
+    bool onBackPressed_ = false;
+};
+
+/**
+ * @tc.number: AaFwk_Ability_OnBackPressed_Test_0100
+ * @tc.name: OnBackPressed
+ * @tc.desc: 1. AceAbilityTest object creation
+ *           2. Call Ability's OnBackPressed function
+ */
+HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackPressed_Test_0100, Function | MediumTest | Level1)
+{
+    std::unique_ptr<AceAbilityTest> ability = std::make_unique<AceAbilityTest>();
+    if (ability == nullptr) {
+        return;
+    }
+    ability->OnBackPressed();
+    EXPECT_TRUE(ability->onBackPressed_);
+}
 /*
  * Parameters:
  * Action
@@ -506,9 +535,7 @@ void AbilityTerminateTest::TearDownTestCase(void)
 void AbilityTerminateTest::SetUp(void)
 {
     abilityObject_ = new MockAbilityManagerService();
-
     auto sysMgr = OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance();
-
     if (sysMgr == NULL) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;
