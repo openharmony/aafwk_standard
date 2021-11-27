@@ -98,6 +98,7 @@ private:
     int UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
 
     int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
+    int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
 

@@ -314,7 +314,7 @@ public:
     /**
      * @brief ScheduleUpdateConfiguration, scheduling update configuration.
      */
-    void ScheduleUpdateConfiguration(const AAFwk::DummyConfiguration &config);
+    void ScheduleUpdateConfiguration(const Configuration &config);
 
     /**
      * @brief Create a PostEvent timeout task. The default delay is 5000ms

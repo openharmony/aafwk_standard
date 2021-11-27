@@ -32,6 +32,8 @@ const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
 const std::string MISSION_SAVE_TIME {"mission_save_time"};
+const std::string SYSTEM_CONFIGURATION {"system_configuration"};
+const std::string SYSTEM_ORIENTATION {"system_orientation"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -69,13 +71,18 @@ public:
      * Get profile information
      */
     void Parse();
-
     /**
      * The low memory threshold under which the system will kill background processes
      */
     int GetMemThreshold(const std::string &key);
-
+    /**
+     * Get the save time of the current content
+     */
     int GetMissionSaveTime() const;
+    /**
+     * Get current system direction parameters, Temporary method.
+     */
+    std::string GetOrientation() const;
 
     enum { READ_OK = 0, READ_FAIL = 1, READ_JSON_FAIL = 2 };
 
@@ -87,6 +94,7 @@ private:
     int LoadAmsConfiguration(const std::string &filePath);
     int LoadAppConfigurationForStartUpService(nlohmann::json& Object);
     int LoadAppConfigurationForMemoryThreshold(nlohmann::json& Object);
+    int LoadSystemConfiguration(nlohmann::json& Object);
 
 private:
     bool nonConfigFile_ {false};
@@ -94,6 +102,7 @@ private:
     bool canStartUiStatusBar_ {false};
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
+    std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
     std::map<std::string, std::string> memThreshold_;
 };

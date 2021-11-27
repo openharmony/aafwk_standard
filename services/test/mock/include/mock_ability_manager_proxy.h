@@ -58,6 +58,18 @@ public:
     MOCK_METHOD1(KillProcess, int(const std::string &));
     MOCK_METHOD1(UninstallApp, int(const std::string &));
     MOCK_METHOD4(OnRemoteRequest, int(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option));
+    MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
+    MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
+    MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
+    MOCK_METHOD0(PowerOff, int());
+    MOCK_METHOD0(PowerOn, int());
+    MOCK_METHOD1(LockMission, int(int));
+    MOCK_METHOD1(UnlockMission, int(int));
+    MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
+    MOCK_METHOD0(GetMissionLockModeState, int());
+    MOCK_METHOD1(UpdateConfiguration, int(const AppExecFwk::Configuration &));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -76,6 +88,8 @@ public:
     MOCK_METHOD0(PowerOff, int());
     MOCK_METHOD0(PowerOn, int());
     MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
+    MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
+
 public:
     int id_;
 };

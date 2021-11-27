@@ -313,57 +313,6 @@ HWTEST_F(MissionRecordTest, stack_operating_014, TestSize.Level1)
  * Feature: MissionRecord
  * Function: NA
  * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionRecordTest, stack_operating_015, TestSize.Level1)
-{
-    auto missionRecord = std::make_shared<MissionRecord>();
-    EXPECT_EQ(nullptr, missionRecord->FindChild(-1));
-}
-
-/*
- * Feature: MissionRecord
- * Function: NA
- * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionRecordTest, stack_operating_016, TestSize.Level1)
-{
-    auto missionRecord = std::make_shared<MissionRecord>();
-    missionRecord->RemoveAll();
-    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
-    missionRecord->AddAbilityRecordToTop(ability);
-
-    EXPECT_EQ(nullptr, missionRecord->FindChild(2));
-}
-
-/*
- * Feature: MissionRecord
- * Function: NA
- * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionRecordTest, stack_operating_017, TestSize.Level1)
-{
-    auto missionRecord = std::make_shared<MissionRecord>();
-    missionRecord->RemoveAll();
-    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
-    missionRecord->AddAbilityRecordToTop(ability);
-
-    auto iter = missionRecord->abilities_.begin();
-    EXPECT_EQ((*iter), missionRecord->FindChild(0));
-}
-
-/*
- * Feature: MissionRecord
- * Function: NA
- * SubFunction: NA
  * FunctionPoints: SetIsLauncherCreate IsLauncherCreate
  * EnvConditions: NA
  * CaseDescription: SetIsLauncherCreate IsLauncherCreate UT.

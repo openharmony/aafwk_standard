@@ -40,7 +40,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-using DummyConfiguration = AAFwk::DummyConfiguration;
+using Configuration = AppExecFwk::Configuration;
 class MockAbility : public AbilityContext {
 public:
     MockAbility() = default;
@@ -56,7 +56,7 @@ public:
     virtual void ScheduleCommandAbility(const Want &want, bool restart, int startId) {};
     virtual void ScheduleSaveAbilityState() {};
     virtual void ScheduleRestoreAbilityState(const PacMap &inState) {};
-    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config) {};
+    virtual void ScheduleUpdateConfiguration(const AppExecFwk::Configuration &config) {};
     virtual std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
         return std::vector<std::string>();

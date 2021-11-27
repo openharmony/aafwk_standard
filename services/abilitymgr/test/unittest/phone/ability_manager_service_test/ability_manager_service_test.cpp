@@ -140,7 +140,11 @@ void AbilityManagerServiceTest::OnStartAms()
 
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-      
+
+        abilityMs_->configuration_ = std::make_shared<AppExecFwk::Configuration>();
+        EXPECT_TRUE(abilityMs_->configuration_);
+        abilityMs_->GetGlobalConfiguration();
+
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId);
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
@@ -2340,6 +2344,7 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_003, TestSize.Level1)
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
+    ability->SetAbilityState(AbilityState::BACKGROUND);
     auto resultFunction = abilityMs_->MoveMissionToEnd(abilityToken, true);
     EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
 }
@@ -2363,6 +2368,7 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_004, TestSize.Level1)
     auto stackManager = abilityMs_->GetStackManager();
     auto ability = stackManager->GetCurrentTopAbility();
     auto abilityToken = ability->GetToken();
+    ability->SetAbilityState(AbilityState::BACKGROUND);
     auto resultFunction = abilityMs_->MoveMissionToEnd(abilityToken, false);
     EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
 }
@@ -2395,7 +2401,7 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_005, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     auto abilityTv = stackManager->GetCurrentTopAbility();
     auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), false);
-    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+    EXPECT_EQ(resultFunction, OHOS::ERR_OK);
 }
 
 /*
@@ -2427,7 +2433,7 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_006, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     auto abilityTv = stackManager->GetCurrentTopAbility();
     auto resultFunction = abilityMs_->MoveMissionToEnd(abilityTv->GetToken(), true);
-    EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
+    EXPECT_EQ(resultFunction, OHOS::ERR_OK);
 }
 
 /*
@@ -2721,6 +2727,60 @@ HWTEST_F(AbilityManagerServiceTest, AmsConfigurationParameter_003, TestSize.Leve
 
 /*
  * Feature: AbilityManagerService
+ * Function: UpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ * MoveMissionToEnd NA
+ */
+HWTEST_F(AbilityManagerServiceTest, UpdateConfiguration_001, TestSize.Level1)
+{
+    auto confiuration = abilityMs_->GetConfiguration();
+    EXPECT_TRUE(confiuration);
+
+    AppExecFwk::Configuration config;
+    int displayId = 1001;
+    std::string val {"中文"};
+    config.AddItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
+    auto ref = abilityMs_->UpdateConfiguration(config);
+    EXPECT_EQ(ref, 0);
+
+    AppExecFwk::Configuration config2;
+    int displayId2 = 1001;
+    std::string val2 {"德语"};
+    config2.AddItem(displayId2, GlobalConfigurationKey::SYSTEM_LANGUAGE, val2);
+    ref = abilityMs_->UpdateConfiguration(config2);
+    EXPECT_EQ(ref, 0);
+    
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: UpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ * MoveMissionToEnd NA
+ */
+HWTEST_F(AbilityManagerServiceTest, UpdateConfiguration_002, TestSize.Level1)
+{
+    auto confiuration = abilityMs_->GetConfiguration();
+    EXPECT_TRUE(confiuration);
+
+    AppExecFwk::Configuration config;
+    std::string val {"中文"};
+    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
+    auto ref = abilityMs_->UpdateConfiguration(config);
+    EXPECT_EQ(ref, 0);
+
+    // Because the original will be updated, no new ones will be added.
+    ref = abilityMs_->UpdateConfiguration(config);
+    EXPECT_EQ(ref, ERR_INVALID_VALUE);
+}
+
+/*
  * Function: AmsGetSystemMemoryAttr
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService CompelVerifyPermission
@@ -2741,6 +2801,5 @@ HWTEST_F(AbilityManagerServiceTest, AmsGetSystemMemoryAttr_001, TestSize.Level1)
     EXPECT_NE(-1, memInfo.totalSysMem_);
     EXPECT_NE(-1, memInfo.threshold_);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -223,6 +223,8 @@ napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info 
 
 napi_value ConvertAbilityInfo(napi_env env, const AbilityInfo &abilityInfo);
 
+bool CheckAbilityType(const CBBase *cbBase);
+
 struct ConnecttionKey {
     Want want;
     int64_t id;

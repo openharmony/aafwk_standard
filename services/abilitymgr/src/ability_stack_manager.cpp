@@ -47,6 +47,10 @@ void AbilityStackManager::Init()
 
     resumeMissionContainer_ = std::make_shared<ResumeMissionContainer>(
         DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler());
+    powerStorage_ = std::make_shared<PowerStorage>();
+    if (!SubscribeEvent()) {
+        HILOG_ERROR("SubscribeEvent Error.");
+    }
 
     // complete floating mission stack setting init.
     StackSetting floatSetting;
@@ -64,6 +68,18 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 {
     HILOG_DEBUG("Start ability.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
+
+    if (IsLockScreenState()) {
+        HILOG_DEBUG("Check whether the ability is on the white list");
+        std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
+        bool isAwakenScreen = false;
+        bool result = whiteList->FindBundleNameOnWhiteList(abilityRequest.abilityInfo.bundleName, isAwakenScreen);
+        whiteList.reset();
+        if (!result) {
+            HILOG_DEBUG("the ability is not on the white list...");
+            return START_ABILITY_NOT_ONTHE_WHITELIST;
+        }
+    }
 
     auto currentTopAbilityRecord = GetCurrentTopAbility();
     if (!CanStartInLockMissionState(abilityRequest, currentTopAbilityRecord)) {
@@ -86,7 +102,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
         return START_ABILITY_WAITING;
     }
 
-    if (currentTopAbilityRecord != nullptr) {
+    if (currentTopAbilityRecord != nullptr && !IsLockScreenState()) {
         std::string element = currentTopAbilityRecord->GetWant().GetElement().GetURI();
         HILOG_DEBUG("current top: %{public}s", element.c_str());
         if (currentTopAbilityRecord->GetAbilityState() != ACTIVE) {
@@ -102,6 +118,21 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 int AbilityStackManager::StartAbilityLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
+    // lock screen state
+    if (IsLockScreenState()) {
+        HILOG_DEBUG("Start ability with white list ...");
+        if (!lockScreenMissionStack_) {
+            return StartAbilityByAllowListLocked(nullptr, abilityRequest);
+        } else {
+            auto lockTopAbilityRecord = lockScreenMissionStack_->GetTopAbilityRecord();
+            if (lockTopAbilityRecord && lockTopAbilityRecord->GetAbilityState() != ACTIVE) {
+                HILOG_INFO("lock screen stack top ability is not active, so enqueue ability for waiting.");
+                EnqueueWaittingAbility(abilityRequest);
+                return START_ABILITY_WAITING;
+            }
+            return StartAbilityByAllowListLocked(lockTopAbilityRecord, abilityRequest);
+        }
+    }
     // start multi window
     if (abilityRequest.startSetting && !abilityRequest.abilityInfo.applicationInfo.isLauncherApp) {
         auto windowkey = static_cast<AbilityWindowConfiguration>(
@@ -343,6 +374,49 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     return ERR_OK;
 }
 
+int AbilityStackManager::StartAbilityByAllowListLocked(
+    const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
+{
+    HILOG_DEBUG("Start ability as allow list locked.");
+    // 1. lockscreen stack is target mission stack
+    std::shared_ptr<MissionStack> targetStack = GetTargetMissionStack(abilityRequest);
+    CHECK_POINTER_AND_RETURN(targetStack, CREATE_MISSION_STACK_FAILED);
+    HILOG_DEBUG("StartAbilityLocked targetStack id %{public}d", targetStack->GetMissionStackId());
+    // 2. move target mission stack to top, currentMissionStack will be changed.
+    currentMissionStack_ = targetStack;
+    CHECK_POINTER_AND_RETURN(currentMissionStack_, INNER_ERR);
+    // 3. get mission record and ability recode
+    std::shared_ptr<AbilityRecord> targetAbilityRecord;
+    std::shared_ptr<MissionRecord> targetMissionRecord;
+    GetMissionRecordAndAbilityRecord(abilityRequest, currentTopAbility, targetAbilityRecord, targetMissionRecord);
+    if (targetAbilityRecord == nullptr || targetMissionRecord == nullptr) {
+        HILOG_ERROR("Failed to get ability record or mission record.");
+        if (lockScreenMissionStack_ && lockScreenMissionStack_->IsEmpty()) {
+            missionStackList_.remove(lockScreenMissionStack_);
+            currentMissionStack_ = missionStackList_.front();
+            lockScreenMissionStack_.reset();
+        }
+        return ERR_INVALID_VALUE;
+    }
+    targetAbilityRecord->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
+    MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
+    // 4. start processing ability lifecycle
+    if (currentTopAbility == nullptr) {
+        // top ability is null
+        if (targetAbilityRecord->GetAbilityState() == INITIAL) {
+            targetAbilityRecord->SetLockScreenRoot();
+            return targetAbilityRecord->LoadAbility();
+        }
+        if (targetAbilityRecord->GetAbilityState() == BACKGROUND) {
+            targetAbilityRecord->ProcessActivate();
+        }
+    } else {
+        // complete ability background if needed.
+        currentTopAbility->Inactivate();
+    }
+    return ERR_OK;
+}
+
 void AbilityStackManager::SortPreMission(
     const std::shared_ptr<MissionRecord> &mission, const std::shared_ptr<MissionRecord> &nextMission)
 {
@@ -423,6 +497,20 @@ int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int 
         return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
+    if (IsLockScreenState() && abilityRecord->GetLockScreenState() &&
+        (missionRecord->GetAbilityRecordCount() == 1)) {
+        if (abilityRecord->IsAbilityState(AbilityState::BACKGROUND)) {
+            UpdatePowerOffRecord(missionRecord->GetMissionRecordId(), abilityRecord);
+            RestoreMissionRecordOnLockScreen(missionRecord);
+            abilityRecord->SetLockScreenState(false);
+            return ERR_OK;
+        }
+        if (abilityRecord->IsAbilityState(AbilityState::ACTIVE) ||
+            abilityRecord->IsAbilityState(AbilityState::ACTIVATING) ||
+            abilityRecord->IsAbilityState(AbilityState::INITIAL)) {
+            return MoveMissionToEndLocked(missionRecord->GetMissionRecordId());
+        }
+    }
     HILOG_INFO("Schedule normal terminate process.");
     abilityRecord->SetTerminatingState();
 
@@ -516,7 +604,11 @@ int AbilityStackManager::TerminateAbilityLocked(std::list<TerminatingAbility> &t
         if (unit.resultWant != nullptr) {
             ability->SaveResultToCallers(unit.resultCode, unit.resultWant);
         }
-
+        if (ability->IsAbilityState(AbilityState::INITIAL)) {
+            // ability on initial, remove AbilityRecord out of stack.
+            RemoveTerminatingAbility(ability, lastActiveAbility);
+            continue;
+        }
         // common case, ability terminate at active and at top position
         if (ability->IsActiveState()) {
             RemoveTerminatingAbility(ability, lastActiveAbility);
@@ -722,9 +814,30 @@ void AbilityStackManager::RemoveTerminatingAbility(
     // clear next ability record
     abilityRecord->SetNextAbilityRecord(nullptr);
 
+    if (IsLockScreenState() && abilityRecord->GetLockScreenState()) {
+        abilityRecord->SetLockScreenState(false);
+        if (!missionRecord->IsEmpty()) {
+            missionRecord->GetBottomAbilityRecord()->SetLockScreenState(true);
+        }
+    }
+
     if (!missionRecord->IsEmpty()) {
         if (abilityRecord == lastActiveAbility) {
             needTopAbility = missionRecord->GetTopAbilityRecord();
+            abilityRecord->SetNextAbilityRecord(needTopAbility);
+        }
+        return;
+    }
+
+    if (IsLockScreenState() && currentStack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
+        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
+        if (currentStack->IsEmpty()) {
+            missionStackList_.remove(lockScreenMissionStack_);
+            currentMissionStack_ = missionStackList_.front();
+            lockScreenMissionStack_.reset();
+        } else {
+            needTopAbility = currentStack->GetTopAbilityRecord();
+            CHECK_POINTER(needTopAbility);
             abilityRecord->SetNextAbilityRecord(needTopAbility);
         }
         return;
@@ -952,6 +1065,16 @@ void AbilityStackManager::MoveMissionStackToTop(const std::shared_ptr<MissionSta
 
 std::shared_ptr<MissionStack> AbilityStackManager::GetTargetMissionStack(const AbilityRequest &abilityRequest)
 {
+    // lockScreen : starting ability in lockScreen stack
+    if (IsLockScreenState()) {
+        if (!lockScreenMissionStack_) {
+            lockScreenMissionStack_ = std::make_shared<MissionStack>(LOCK_SCREEN_STACK_ID, userId_);
+            missionStackList_.remove(lockScreenMissionStack_);
+            missionStackList_.push_front(lockScreenMissionStack_);
+        }
+        return lockScreenMissionStack_;
+    }
+
     // priority : starting launcher ability .
     if (abilityRequest.abilityInfo.applicationInfo.isLauncherApp) {
         return launcherMissionStack_;
@@ -1316,7 +1439,12 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
     if (abilityRecord->GetPowerState()) {
         CHECK_POINTER(powerStorage_);
         bool isActiveAbility = false;
-        auto powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+        std::vector<PowerOffRecord> powerActiveStorages;
+        if (abilityRecord->GetPowerStateLockScreen()) {
+            powerActiveStorages = powerStorage_->GetPowerOffActiveRecordLockScreen();
+        } else {
+            powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+        }
         for (auto &powerActiveStorage : powerActiveStorages) {
             auto storageActiveAbility = powerActiveStorage.ability.lock();
             if (abilityRecord == storageActiveAbility) {
@@ -1326,13 +1454,15 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
         HILOG_DEBUG("isActiveAbility value %{public}d", static_cast<int>(isActiveAbility));
         if (isActiveAbility && abilityRecord == GetCurrentTopAbility()) {
             HILOG_DEBUG("Top ability, complete active.");
+            powerStorage_->Clear(abilityRecord->GetPowerStateLockScreen());
             abilityRecord->SetPowerState(false);
+            abilityRecord->SetPowerStateLockScreen(false);
             handler->PostTask(startWaittingAbilityTask, "startWaittingAbility");
-            powerStorage_.reset();
             return;
         }
         if (isActiveAbility) {
             abilityRecord->SetPowerState(false);
+            abilityRecord->SetPowerStateLockScreen(false);
             return;
         }
         HILOG_DEBUG("Not top ability, need complete inactive.");
@@ -1358,6 +1488,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
         auto isBackground =
             (!IsTopInMission(preAbilityRecord)) || preAbilityRecord->IsToEnd() ||
             ((IsFullScreenStack(preStackId) && IsFullScreenStack(currentStackId)) ||
+                (IsLockScreenStack(preStackId) && IsLockScreenStack(currentStackId)) ||
                 ((preStackId == FLOATING_MISSION_STACK_ID) && (currentStackId == FLOATING_MISSION_STACK_ID) &&
                     preMissionId == currentMissionId) ||
                 ((preStackId == FLOATING_MISSION_STACK_ID) && (currentStackId == FLOATING_MISSION_STACK_ID) &&
@@ -1399,6 +1530,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
     }
     if (powerOffing_ && waittingAbilityQueue_.empty()) {
         HILOG_INFO("Wait for the ability life cycle to complete and execute poweroff.");
+        powerOffing_ = false;
         PowerOffLocked();
     }
 }
@@ -1420,6 +1552,7 @@ void AbilityStackManager::MoveToBackgroundTask(const std::shared_ptr<AbilityReco
 void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    CHECK_POINTER(abilityRecord);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("ability: %{public}s", element.c_str());
     abilityRecord->SetAbilityState(AbilityState::INACTIVE);
@@ -1455,19 +1588,32 @@ void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> 
     // ability state is inactive
     if (abilityRecord->GetPowerState()) {
         CHECK_POINTER(powerStorage_);
-        auto powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+        std::vector<PowerOffRecord> powerActiveStorages;
+        if (abilityRecord->GetPowerStateLockScreen()) {
+            powerActiveStorages = powerStorage_->GetPowerOffActiveRecordLockScreen();
+        } else {
+            powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+        }
         for (auto &powerActiveStorage : powerActiveStorages) {
             auto storageActiveAbility = powerActiveStorage.ability.lock();
             if (abilityRecord == storageActiveAbility) {
                 abilityRecord->SetPowerState(false);
+                abilityRecord->SetPowerStateLockScreen(false);
                 MoveToBackgroundTask(abilityRecord);
                 return;
             }
         }
 
         HILOG_DEBUG("Complete ,target state is inactive.");
+        std::vector<PowerOffRecord> powerInActiveStorages;
+        bool isPowerStateLockScreen = abilityRecord->GetPowerStateLockScreen();
+        if (abilityRecord->GetPowerStateLockScreen()) {
+            powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecordLockScreen();
+        } else {
+            powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecord();
+        }
         abilityRecord->SetPowerState(false);
-        auto powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecord();
+        abilityRecord->SetPowerStateLockScreen(false);
         for (auto &powerInActiveStorage : powerInActiveStorages) {
             auto storageInActiveAbility = powerInActiveStorage.ability.lock();
             CHECK_POINTER_CONTINUE(storageInActiveAbility);
@@ -1477,7 +1623,7 @@ void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> 
                 return;
             }
         }
-        if (ChangedPowerStorageAbilityToActive(powerStorage_) != ERR_OK) {
+        if (ChangedPowerStorageAbilityToActive(powerStorage_, isPowerStateLockScreen) != ERR_OK) {
             HILOG_ERROR("ChangedPowerStorageAbilityToActive Fail");
             return;
         }
@@ -1528,6 +1674,7 @@ void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> 
 void AbilityStackManager::CompleteBackground(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    CHECK_POINTER(abilityRecord);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     sptr<Token> token = abilityRecord->GetToken();
     HILOG_INFO("ability: %{public}s", element.c_str());
@@ -1826,6 +1973,11 @@ void AbilityStackManager::GetRecordBySingleton(const AbilityRequest &abilityRequ
             targetAbilityRecord->SetWant(abilityRequest.want);
             targetAbilityRecord->SetIsNewWant(true);
             CheckMissionRecordIsResume(missionRecord);
+            if (IsLockScreenState() && !DeleteMissionRecordInStackOnLockScreen(missionRecord)) {
+                targetAbilityRecord = nullptr;
+                targetMissionRecord = nullptr;
+                return;
+            }
         }
         targetMissionRecord = missionRecord;
     }
@@ -1854,6 +2006,11 @@ void AbilityStackManager::GetRecordByStandard(const AbilityRequest &abilityReque
              *  True: Need to create a new one . Other: Restart the top ability of this mission.
              */
             CheckMissionRecordIsResume(missionRecord);
+            if (IsLockScreenState() && !DeleteMissionRecordInStackOnLockScreen(missionRecord)) {
+                targetAbilityRecord = nullptr;
+                targetMissionRecord = nullptr;
+                return;
+            }
 
             if (currentTopAbility && (!isStackChanged) &&
                 (currentTopAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) &&
@@ -1876,6 +2033,11 @@ void AbilityStackManager::GetRecordByStandard(const AbilityRequest &abilityReque
         // The requested ability is already top ability. Reuse top ability.
         targetMissionRecord = currentTopAbility->GetMissionRecord();
         CheckMissionRecordIsResume(targetMissionRecord);
+        if (IsLockScreenState() && !DeleteMissionRecordInStackOnLockScreen(targetMissionRecord)) {
+            targetAbilityRecord = nullptr;
+            targetMissionRecord = nullptr;
+            return;
+        }
         if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETOP &&
             currentTopAbility->GetMissionRecord()->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name)) {
             targetAbilityRecord = currentTopAbility;
@@ -2051,49 +2213,6 @@ int AbilityStackManager::GetMissionLockModeState()
     return lockMissionContainer_->GetLockedMissionState();
 }
 
-int AbilityStackManager::UpdateConfiguration(const DummyConfiguration &config)
-{
-    HILOG_INFO("%{public}s called", __FUNCTION__);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    // update all stack configuration.
-    for (auto &stack : missionStackList_) {
-        CHECK_POINTER_AND_RETURN(stack, ERR_INVALID_VALUE);
-        HILOG_DEBUG("stack id : %{public}d", stack->GetMissionStackId());
-        std::shared_ptr<DummyConfiguration> configSptr = std::make_shared<DummyConfiguration>(config);
-        stack->UpdateConfiguration(configSptr);
-    }
-
-    return ProcessConfigurationChange();
-}
-
-int AbilityStackManager::ProcessConfigurationChange()
-{
-    HILOG_INFO("%{public}s called.", __FUNCTION__);
-
-    // all active ability check whether process onconfigurationchanged
-    for (auto &stack : missionStackList_) {
-        CHECK_POINTER_AND_RETURN(stack, ERR_INVALID_VALUE);
-        HILOG_DEBUG("stack id : %{public}d", stack->GetMissionStackId());
-        std::vector<MissionRecordInfo> missionInfos;
-        stack->GetAllMissionInfo(missionInfos);
-        for (auto &mission : missionInfos) {
-            auto missionRecord = stack->GetMissionRecordById(mission.id);
-            if (!missionRecord) {
-                continue;
-            }
-            for (auto &it : mission.abilityRecordInfos) {
-                auto abilityRecord = missionRecord->GetAbilityRecordById(it.id);
-                if (abilityRecord && abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
-                    abilityRecord->ProcessConfigurationChange();
-                }
-            }
-        }
-    }
-
-    return ERR_OK;
-}
-
 void AbilityStackManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)
 {
     HILOG_INFO("%{public}s called", __FUNCTION__);
@@ -2266,11 +2385,41 @@ int AbilityStackManager::MoveMissionToEndLocked(int missionId)
     auto requestStack = requestMission->GetMissionStack();
     CHECK_POINTER_AND_RETURN(requestStack, MOVE_MISSION_FAILED);
 
-    if (!requestAbility->IsAbilityState(AbilityState::ACTIVE) ||
+    if ((!requestAbility->IsAbilityState(AbilityState::ACTIVE) &&
+        !requestAbility->IsAbilityState(AbilityState::ACTIVATING) &&
+        !requestAbility->IsAbilityState(AbilityState::INITIAL)) ||
         requestAbility->GetAbilityInfo().applicationInfo.isLauncherApp) {
         HILOG_ERROR("Ability is not active, or ability is launcher, can't move mission to end.");
         return MOVE_MISSION_FAILED;
     }
+    std::shared_ptr<AbilityRecord> targetAbilityRecord;
+    std::shared_ptr<MissionRecord> targetMissionRecord;
+    std::shared_ptr<MissionStack> targetMissionStack;
+
+    if (IsLockScreenState() && requestStack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
+        HILOG_INFO("MoveMissionToEndLocked When Lock Screen.");
+        UpdatePowerOffRecord(missionId, requestAbility);
+        RestoreMissionRecordOnLockScreen(requestMission);
+        if (requestStack->IsEmpty()) {
+            HILOG_INFO("Remove Lock Screen Stack.");
+            missionStackList_.remove(lockScreenMissionStack_);
+            currentMissionStack_ = missionStackList_.front();
+            lockScreenMissionStack_.reset();
+        } else {
+            HILOG_INFO("SetNextAbilityRecord On Lock Screen.");
+            targetMissionStack = requestStack;
+            targetMissionRecord = targetMissionStack->GetTopMissionRecord();
+            targetAbilityRecord = targetMissionRecord->GetTopAbilityRecord();
+            targetAbilityRecord->SetPreAbilityRecord(requestAbility);
+            requestAbility->SetNextAbilityRecord(targetAbilityRecord);
+            targetAbilityRecord->SetToEnd(true);
+        }
+        requestAbility->SetToEnd(true);
+        requestAbility->SetLockScreenState(false);
+        requestAbility->Inactivate();
+        return ERR_OK;
+    }
+
     // current top ability hold focus
     auto currentTopAbility = GetCurrentTopAbility();
     CHECK_POINTER_AND_RETURN(currentTopAbility, MOVE_MISSION_FAILED);
@@ -2321,10 +2470,6 @@ int AbilityStackManager::MoveMissionToEndLocked(int missionId)
                              requestMission->GetMissionStack()->GetBottomMissionRecord() == requestMission);
     requestStack->MoveMissionRecordToBottom(requestMission);
     requestMission->SetIsLauncherCreate();
-
-    std::shared_ptr<AbilityRecord> targetAbilityRecord;
-    std::shared_ptr<MissionRecord> targetMissionRecord;
-    std::shared_ptr<MissionStack> targetMissionStack;
 
     if (isActiveLauncher) {
         MoveMissionStackToTop(launcherMissionStack_);
@@ -2449,7 +2594,9 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
 
     auto isSplitScreenActiveDied = (IsSplitScreenStack(stack->GetMissionStackId()) &&
                                     (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING)));
-
+    auto isLockScreenActiveDied = ((topAbility == GetCurrentTopAbility()) &&
+                                    stack->IsEqualStackId(LOCK_SCREEN_STACK_ID) &&
+                                    (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING)));
     std::list<TerminatingAbility> terminateLists;
     std::vector<AbilityRecordInfo> abilityInfos;
     mission->GetAllAbilityInfo(abilityInfos);
@@ -2529,6 +2676,11 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
     if (isFullStackActiveDied || isSplitScreenActiveDied || isLauncherDied) {
         HILOG_INFO("full stack active ability died, back to launcher.");
         DelayedStartLauncher();
+    }
+
+    if (isLockScreenActiveDied) {
+        HILOG_INFO("lock stack active ability died.");
+        lockScreenStackAbilityDied(mission);
     }
 }
 
@@ -2629,7 +2781,9 @@ void AbilityStackManager::AddUninstallTags(const std::string &bundleName)
                 if (ability->GetAbilityInfo().bundleName == bundleName) {
                     if (ability->IsAbilityState(AbilityState::INITIAL)) {
                         mission->RemoveAbilityRecord(ability);
-                        stack->RemoveMissionRecord(mission->GetMissionRecordId());
+                        if (mission->IsEmpty()) {
+                            stack->RemoveMissionRecord(mission->GetMissionRecordId());
+                        }
                         CHECK_POINTER(resumeMissionContainer_);
                         resumeMissionContainer_->Remove(mission->GetMissionRecordId());
                         if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
@@ -2689,6 +2843,15 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         if (lockMissionContainer_->IsSameLockedMission(mission->GetName())) {
             lockMissionContainer_->ReleaseLockedMission(mission, -1, true);
         }
+    }
+
+    // release mission when lock screen.
+    auto stack = mission->GetMissionStack();
+    CHECK_POINTER(stack);
+    if (stack->GetMissionStackId() == LOCK_SCREEN_STACK_ID && (msgId == AbilityManagerService::LOAD_TIMEOUT_MSG ||
+        msgId == AbilityManagerService::ACTIVE_TIMEOUT_MSG)) {
+        ActiveTopAbility(abilityRecord);
+        return;
     }
     CHECK_POINTER_LOG(abilityRecord, "stack manager on time out event: ability record is nullptr.");
 
@@ -3385,6 +3548,11 @@ void AbilityStackManager::ActiveTopAbility(const std::shared_ptr<AbilityRecord> 
         DelayedStartLauncher();
         return;
     }
+    if (abilityRecord->IsLockScreenRoot()) {
+        HILOG_INFO("lock screen root load timeout, restart.");
+        DelayedStartLockScreenApp();
+        return;
+    }
 
     // Pre ability does not need to judge null
     auto preAbility = abilityRecord->GetPreAbilityRecord();
@@ -3528,27 +3696,32 @@ int AbilityStackManager::PowerOffLocked()
         return POWER_OFF_WAITING;
     }
 
-    powerStorage_ = std::make_shared<PowerStorage>();
     CHECK_POINTER_AND_RETURN(powerStorage_, POWER_OFF_FAILED);
-    for (auto &stack : missionStackList_) {
-        std::vector<MissionRecordInfo> missionInfos;
-        stack->GetAllMissionInfo(missionInfos);
-        auto checkAbility = [&](const MissionRecordInfo &missionInfo) {
-            auto missionRecord = stack->GetMissionRecordById(missionInfo.id);
-            CHECK_POINTER(missionRecord);
-            auto abilityRecord = missionRecord->GetTopAbilityRecord();
-            CHECK_POINTER(abilityRecord);
-            if (abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
-                powerStorage_->SetPowerOffActiveRecord(abilityRecord);
-                abilityRecord->SetPowerState(true);
-                abilityRecord->ProcessInactivate();
-            }
-            if (abilityRecord->IsAbilityState(AbilityState::INACTIVE)) {
-                powerStorage_->SetPowerOffInActiveRecord(abilityRecord);
-                MoveToBackgroundTask(abilityRecord);
-            }
-        };
-        for_each(missionInfos.begin(), missionInfos.end(), checkAbility);
+    if (IsLockScreenState()) {
+        SetPowerOffRecordWhenLockScreen(powerStorage_);
+    } else {
+        for (auto &stack : missionStackList_) {
+            std::vector<MissionRecordInfo> missionInfos;
+            stack->GetAllMissionInfo(missionInfos);
+            int32_t missionIndex = -1;
+            auto checkAbility = [&](const MissionRecordInfo &missionInfo) {
+                auto missionRecord = stack->GetMissionRecordById(missionInfo.id);
+                CHECK_POINTER(missionRecord);
+                missionRecord->SetMissionIndexInfo(stack->GetMissionStackId(), ++missionIndex);
+                auto abilityRecord = missionRecord->GetTopAbilityRecord();
+                CHECK_POINTER(abilityRecord);
+                if (abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
+                    powerStorage_->SetPowerOffActiveRecord(abilityRecord);
+                    abilityRecord->SetPowerState(true);
+                    abilityRecord->ProcessInactivate();
+                }
+                if (abilityRecord->IsAbilityState(AbilityState::INACTIVE)) {
+                    powerStorage_->SetPowerOffInActiveRecord(abilityRecord);
+                    MoveToBackgroundTask(abilityRecord);
+                }
+            };
+            for_each(missionInfos.begin(), missionInfos.end(), checkAbility);
+        }
     }
     return ERR_OK;
 }
@@ -3563,10 +3736,29 @@ int AbilityStackManager::PowerOn()
 int AbilityStackManager::PowerOnLocked()
 {
     HILOG_INFO("Power on locked.");
-    powerOffing_ = false;
-
     CHECK_POINTER_AND_RETURN(powerStorage_, POWER_ON_FAILED);
-    auto powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecord();
+    std::vector<PowerOffRecord> powerInActiveStorages;
+    std::vector<PowerOffRecord> powerActiveStorages;
+    if (IsLockScreenState()) {
+        powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecordLockScreen();
+        powerActiveStorages = powerStorage_->GetPowerOffActiveRecordLockScreen();
+    } else {
+        powerInActiveStorages = powerStorage_->GetPowerOffInActiveRecord();
+        powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+    }
+    auto isResumeRecord = [this](PowerOffRecord &record) {
+        int32_t missionId = record.missionId;
+        auto missionRecord = GetMissionRecordFromAllStacks(missionId);
+        CHECK_POINTER_LOG(missionRecord, "Mission record is not exist.");
+        if (resumeMissionContainer_ && resumeMissionContainer_->IsResume(missionRecord->GetMissionRecordId())) {
+            resumeMissionContainer_->Resume(missionRecord);
+            auto abilityRecord = missionRecord->GetTopAbilityRecord();
+            CHECK_POINTER(abilityRecord);
+            record.ability = abilityRecord;
+        }
+    };
+    std::for_each(powerInActiveStorages.begin(), powerInActiveStorages.end(), isResumeRecord);
+    std::for_each(powerActiveStorages.begin(), powerActiveStorages.end(), isResumeRecord);
     if (powerInActiveStorages.empty()) {
         if (ChangedPowerStorageAbilityToActive(powerStorage_) != ERR_OK) {
             HILOG_ERROR("ChangedPowerStorageAbilityToActive Fail");
@@ -3579,21 +3771,88 @@ int AbilityStackManager::PowerOnLocked()
         auto storageInActiveAbility = powerInActiveStorage.ability.lock();
         CHECK_POINTER_CONTINUE(storageInActiveAbility);
         storageInActiveAbility->SetPowerState(true);
+        if (IsLockScreenState()) {
+            HILOG_INFO("current is lock screen state");
+            storageInActiveAbility->SetPowerStateLockScreen(true);
+        }
         storageInActiveAbility->ProcessActivate();
     }
     return ERR_OK;
 }
 
-int AbilityStackManager::ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage)
+int AbilityStackManager::SetShowOnLockScreen(const std::string &bundleName, bool isAllow)
 {
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("SetShowOnLockScreen");
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    return SetShowOnLockScreenLocked(bundleName, isAllow);
+}
+
+int AbilityStackManager::SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow)
+{
+    HILOG_INFO("SetShowOnLockScreenLocked bundleName %{public}s, isAllow %{public}d",
+        bundleName.c_str(),
+        static_cast<int>(isAllow));
+    std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
+    bool ret = whiteList->SetWhiteListInfo(bundleName, isAllow);
+    if (!ret) {
+        HILOG_INFO("set white list fail");
+        whiteList.reset();
+        return SET_WHITE_LIST_FAIL;
+    }
+    whiteList.reset();
+    return ERR_OK;
+}
+
+void AbilityStackManager::SetPowerOffRecordWhenLockScreen(std::shared_ptr<PowerStorage> &powerStorage)
+{
+    HILOG_INFO("SetPowerOffRecordWhenLockScreen");
+    CHECK_POINTER(powerStorage);
+    CHECK_POINTER(lockScreenMissionStack_);
+    std::vector<MissionRecordInfo> missionInfos;
+    lockScreenMissionStack_->GetAllMissionInfo(missionInfos);
+    auto checkAbility = [&](const MissionRecordInfo &missionInfo) {
+        auto missionRecord = lockScreenMissionStack_->GetMissionRecordById(missionInfo.id);
+        CHECK_POINTER(missionRecord);
+        auto abilityRecord = missionRecord->GetTopAbilityRecord();
+        CHECK_POINTER(abilityRecord);
+        if (abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
+            HILOG_INFO("current is lock screen state");
+            powerStorage->SetPowerOffActiveRecordLockScreen(abilityRecord);
+            abilityRecord->SetPowerState(true);
+            abilityRecord->SetPowerStateLockScreen(true);
+            abilityRecord->ProcessInactivate();
+        }
+        if (abilityRecord->IsAbilityState(AbilityState::INACTIVE)) {
+            powerStorage->SetPowerOffInActiveRecordLockScreen(abilityRecord);
+            MoveToBackgroundTask(abilityRecord);
+        }
+    };
+    for_each(missionInfos.begin(), missionInfos.end(), checkAbility);
+}
+
+int AbilityStackManager::ChangedPowerStorageAbilityToActive(
+    std::shared_ptr<PowerStorage> &powerStorage, bool isPowerStateLockScreen)
+{
+    HILOG_INFO("%{public}s, isPowerStateLockScreen %{public}d", __func__, isPowerStateLockScreen);
     CHECK_POINTER_AND_RETURN(powerStorage, ERR_INVALID_VALUE);
-    auto powerActiveStorages = powerStorage->GetPowerOffActiveRecord();
+    std::vector<PowerOffRecord> powerActiveStorages;
+    if (IsLockScreenState() || isPowerStateLockScreen) {
+        powerActiveStorages = powerStorage_->GetPowerOffActiveRecordLockScreen();
+    } else {
+        powerActiveStorages = powerStorage_->GetPowerOffActiveRecord();
+    }
+    if (powerActiveStorages.empty()) {
+        return POWER_ON_FAILED;
+    }
     // Start the ability except the top of the stack
     for (auto &powerActiveStorage : powerActiveStorages) {
         auto storageActiveAbility = powerActiveStorage.ability.lock();
         CHECK_POINTER_CONTINUE(storageActiveAbility);
         storageActiveAbility->SetPowerState(true);
+        if (IsLockScreenState() || isPowerStateLockScreen) {
+            HILOG_INFO("current is lock screen state");
+            storageActiveAbility->SetPowerStateLockScreen(true);
+        }
         if (storageActiveAbility == GetCurrentTopAbility()) {
             HILOG_DEBUG("There is no ability in active state except the top of the stack");
             continue;
@@ -3755,6 +4014,11 @@ bool AbilityStackManager::IsFrontInAllStack(const std::shared_ptr<MissionStack> 
 bool AbilityStackManager::IsFullScreenStack(int stackId) const
 {
     return (stackId == DEFAULT_MISSION_STACK_ID || stackId == LAUNCHER_MISSION_STACK_ID);
+}
+
+bool AbilityStackManager::IsLockScreenStack(int stackId) const
+{
+    return (stackId == LOCK_SCREEN_STACK_ID);
 }
 
 bool AbilityStackManager::IsSplitScreenStack(int stackId) const
@@ -4039,6 +4303,88 @@ void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<Missi
     }
 }
 
+bool AbilityStackManager::IsLockScreenState()
+{
+    HILOG_INFO("Is Lock Screen State.");
+    return isLockScreen_;
+}
+
+bool AbilityStackManager::CheckMissionRecordInWhiteList(const std::shared_ptr<MissionRecord> &mission)
+{
+    HILOG_INFO("Check Mission Record In White List.");
+    if (!mission) {
+        HILOG_INFO("mission is nullptr");
+        return false;
+    }
+    auto stack = mission->GetMissionStack();
+    if (stack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
+        HILOG_INFO("mission is in the lock screen stack");
+        return true;
+    }
+    std::vector<AbilityRecordInfo> abilityInfos;
+    mission->GetAllAbilityInfo(abilityInfos);
+    std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
+    bool isAwakenScreen = false;
+    bool result = false;
+    for (auto &ability : abilityInfos) {
+        auto abilityRecord = mission->GetAbilityRecordById(ability.id);
+        if (abilityRecord == nullptr) {
+            HILOG_WARN("Ability record is not exist.");
+            continue;
+        }
+        result = whiteList->FindBundleNameOnWhiteList(abilityRecord->GetAbilityInfo().bundleName, isAwakenScreen);
+        if (!result) {
+            HILOG_INFO("ability not on the white list");
+            break;
+        }
+    }
+    whiteList.reset();
+    return result;
+}
+
+bool AbilityStackManager::DeleteMissionRecordInStackOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord)
+{
+    HILOG_INFO("DeleteMissionRecordInStackOnLockScreen Start.");
+    CHECK_POINTER_RETURN_BOOL(missionRecord);
+    if (!CheckMissionRecordInWhiteList(missionRecord)) {
+        HILOG_INFO("CheckMissionRecordInWhiteList fail.");
+        return false;
+    } else {
+        HILOG_INFO("CheckMissionRecordInWhiteList success.");
+        auto sourceStack = missionRecord->GetMissionStack();
+        if (sourceStack && sourceStack->GetMissionStackId() != LOCK_SCREEN_STACK_ID) {
+            HILOG_INFO("missionRecord not int the lock screen stack");
+            sourceStack->RemoveMissionRecord(missionRecord->GetMissionRecordId());
+            if (missionRecord->GetBottomAbilityRecord()) {
+                missionRecord->GetBottomAbilityRecord()->SetLockScreenState(true);
+            }
+        }
+    }
+    return true;
+}
+
+void AbilityStackManager::RestoreMissionRecordOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord)
+{
+    HILOG_INFO("RestoreMissionRecordOnLockScreen Start.");
+    CHECK_POINTER(missionRecord);
+    auto missionIndexInfo = missionRecord->GetMissionIndexInfo();
+    auto targetStack = GetStackById(missionIndexInfo.GetStackId());
+    CHECK_POINTER(targetStack);
+    auto sourceStack = missionRecord->GetMissionStack();
+    if (sourceStack) {
+        sourceStack->RemoveMissionRecord(missionRecord->GetMissionRecordId());
+    }
+    targetStack->AddMissionRecordByIndex(missionRecord, missionIndexInfo.GetMissionIndex());
+    missionRecord->SetMissionStack(targetStack, targetStack->GetMissionStackId());
+}
+
+void AbilityStackManager::UpdatePowerOffRecord(int32_t missionId, const std::shared_ptr<AbilityRecord> &ability)
+{
+    HILOG_INFO("UpdatePowerOffRecord Start.");
+    CHECK_POINTER(powerStorage_);
+    powerStorage_->UpdatePowerOffRecord(missionId, ability);
+}
+
 std::string AbilityStackManager::ConvertWindowModeState(const SystemWindowMode &mode)
 {
     auto it = windowModeToStrMap_.find(mode);
@@ -4046,6 +4392,133 @@ std::string AbilityStackManager::ConvertWindowModeState(const SystemWindowMode &
         return it->second;
     }
     return "none";
+}
+
+void AbilityStackManager::DelayedStartLockScreenApp()
+{
+    HILOG_INFO("DelayedStartLockScreenApp.");
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityManagerService);
+    auto handler = abilityManagerService->GetEventHandler();
+    CHECK_POINTER(handler);
+    auto timeoutTask = [stackManager = shared_from_this()]() {
+        HILOG_DEBUG("The lockscreen app needs to be restarted.");
+        stackManager->BackToLockScreen();
+    };
+    handler->PostTask(timeoutTask, "LockScreen_Restart", AbilityManagerService::RESTART_TIMEOUT);
+}
+
+void AbilityStackManager::BackToLockScreen()
+{
+    HILOG_INFO("Back to lockScreen.");
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    CHECK_POINTER(lockScreenMissionStack_);
+
+    auto currentTopAbility = lockScreenMissionStack_->GetTopAbilityRecord();
+    if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE) ||
+        currentTopAbility->IsAbilityState(AbilityState::ACTIVATING))) {
+        HILOG_WARN("Current top ability is active, no need to start launcher.");
+        return;
+    }
+    auto lockscreenAbility = GetLockScreenRootAbility();
+    CHECK_POINTER_LOG(lockscreenAbility, "There is no root lock screen ability record, back to lock screen failed.");
+
+    MoveMissionStackToTop(lockScreenMissionStack_);
+
+    auto missionRecord = lockscreenAbility->GetMissionRecord();
+    CHECK_POINTER_LOG(
+        missionRecord, "Can't get root lock screen ability record's mission, back to lock screen failed.");
+
+    CheckMissionRecordIsResume(missionRecord);
+
+    lockScreenMissionStack_->MoveMissionRecordToTop(missionRecord);
+    lockscreenAbility->ProcessActivate();
+}
+
+std::shared_ptr<AbilityRecord> AbilityStackManager::GetLockScreenRootAbility() const
+{
+    if (!lockScreenMissionStack_) {
+        HILOG_ERROR("Mission stack is invalid.");
+        return nullptr;
+    }
+    std::vector<MissionRecordInfo> missionInfos;
+    lockScreenMissionStack_->GetAllMissionInfo(missionInfos);
+    for (auto &mission : missionInfos) {
+        auto missionRecord = lockScreenMissionStack_->GetMissionRecordById(mission.id);
+        if (!missionRecord) {
+            continue;
+        }
+        for (auto &it : mission.abilityRecordInfos) {
+            auto abilityRecord = missionRecord->GetAbilityRecordById(it.id);
+            if (abilityRecord && abilityRecord->IsLockScreenRoot()) {
+                return abilityRecord;
+            }
+        }
+    }
+    return nullptr;
+}
+
+void AbilityStackManager::lockScreenStackAbilityDied(std::shared_ptr<MissionRecord> &mission)
+{
+    HILOG_INFO("BlockScreenStackAbilityDied.");
+    CHECK_POINTER(mission);
+    auto stack = mission->GetMissionStack();
+    CHECK_POINTER(stack);
+    if (stack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
+        std::list<TerminatingAbility> terminateLists;
+        std::vector<MissionRecordInfo> missionInfos;
+        stack->GetAllMissionInfo(missionInfos);
+        for (auto &missionInfo : missionInfos) {
+            auto missionRecord = stack->GetMissionRecordById(missionInfo.id);
+            CHECK_POINTER(missionRecord);
+            auto bottomAbility = missionRecord->GetBottomAbilityRecord();
+            CHECK_POINTER(bottomAbility);
+            if (bottomAbility->IsLockScreenRoot()) {
+                continue;
+            }
+            if (bottomAbility->GetLockScreenState()) {
+                RestoreMissionRecordOnLockScreen(missionRecord);
+                bottomAbility->SetLockScreenState(false);
+                continue;
+            }
+            std::vector<AbilityRecordInfo> abilityInfos;
+            missionRecord->GetAllAbilityInfo(abilityInfos);
+            for (auto &it : abilityInfos) {
+                auto ability = missionRecord->GetAbilityRecordById(it.id);
+                CHECK_POINTER(ability);
+                ability->SetForceTerminate(true);
+                ability->SetTerminatingState();
+                TerminatingAbility unit;
+                MakeTerminatingAbility(unit, ability, DEFAULT_INVAL_VALUE, nullptr);
+                terminateLists.emplace_back(unit);
+            }
+        }
+        TerminateAbilityLocked(terminateLists);
+    }
+    HILOG_INFO("lock stack active ability died, back to lock screen ability.");
+    DelayedStartLockScreenApp();
+}
+
+bool AbilityStackManager::SubscribeEvent()
+{
+    std::vector<std::string> eventList = {
+        AbilityConfig::LOCK_SCREEN_EVENT_NAME,
+    };
+    EventFwk::MatchingSkills matchingSkills;
+    for (const auto &e : eventList) {
+        matchingSkills.AddEvent(e);
+    }
+    EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    subscriber_ = std::make_shared<LockScreenEventSubscriber>(subscribeInfo, handler);
+    return EventFwk::CommonEventManager::SubscribeCommonEvent(subscriber_);
+}
+
+void AbilityStackManager::UpdateLockScreenState(bool isLockScreen)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    isLockScreen_ = isLockScreen;
 }
 
 void AbilityStackManager::ProcessInactivateInMoving(const std::shared_ptr<AbilityRecord> &abilityRecord)
@@ -4065,6 +4538,5 @@ void AbilityStackManager::ProcessInactivateInMoving(const std::shared_ptr<Abilit
         return;
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

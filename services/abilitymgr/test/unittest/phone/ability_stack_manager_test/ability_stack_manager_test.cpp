@@ -3182,58 +3182,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_084, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: ProcessConfigurationChange
- * SubFunction: NA
- * FunctionPoints: Process Configuration Change
- * EnvConditions: NA
- * CaseDescription: Process Configuration Change
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_085, TestSize.Level1)
-{
-    stackManager_->Init();
-    EXPECT_TRUE(stackManager_);
-    stackManager_->missionStackList_.clear();
-    std::shared_ptr<MissionStack> mission = nullptr;
-    stackManager_->missionStackList_.push_back(mission);
-    EXPECT_EQ(ERR_INVALID_VALUE, stackManager_->ProcessConfigurationChange());
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: ProcessConfigurationChange
- * SubFunction: NA
- * FunctionPoints: Process Configuration Change
- * EnvConditions: NA
- * CaseDescription: Process Configuration Change
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_086, TestSize.Level1)
-{
-    stackManager_->Init();
-    EXPECT_TRUE(stackManager_);
-    stackManager_->missionStackList_.clear();
-    stackManager_->missionStackList_.push_back(stackManager_->launcherMissionStack_);
-
-    std::string bundleName = "ddddd";
-    auto mission = std::make_shared<MissionRecord>(bundleName);
-    EXPECT_TRUE(mission);
-    mission->RemoveAll();
-    Want want_;
-    AbilityInfo abilityInfo_;
-    ApplicationInfo appInfo_;
-    auto ability = std::make_shared<AbilityRecord>(want_, abilityInfo_, appInfo_);
-    EXPECT_TRUE(ability);
-    mission->abilities_.push_back(ability);
-    stackManager_->launcherMissionStack_->RemoveAll();
-    stackManager_->launcherMissionStack_->AddMissionRecordToTop(mission);
-    AbilityRecordInfo abilityInfo;
-    ability->GetAbilityRecordInfo(abilityInfo);
-    auto abilityRecord = mission->GetAbilityRecordById(abilityInfo.id);
-    EXPECT_TRUE(abilityRecord);
-    abilityRecord->SetAbilityState(AbilityState::ACTIVE);
-}
-
-/*
- * Feature: AbilityStackManager
  * Function: GenerateMissinOptionsOfSplitScreen
  * SubFunction: NA
  * FunctionPoints: creat splitscerenn mission option
@@ -4828,7 +4776,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0133, TestSize
     stackTwo.isSyncVisual = true;
 
     StackSetting stackThree;
-    stackThree.stackId = (AAFwk::STACK_ID)3;
+    stackThree.stackId = (AAFwk::STACK_ID)4;
     stackThree.isSyncVisual = false;
 
     stackManager_->stackSettings_.push_back(stackOne);
@@ -4838,6 +4786,207 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0133, TestSize
     EXPECT_TRUE(stackManager_->SupportSyncVisualByStackId(stackThree.stackId));
     EXPECT_TRUE(stackManager_->SupportSyncVisualByStackId(stackTwo.stackId));
     EXPECT_FALSE(stackManager_->SupportSyncVisualByStackId(stackOne.stackId));
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: CheckMissionRecordInWhiteList
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0001, TestSize.Level1)
+{
+    std::shared_ptr<MissionRecord> mission = nullptr;
+    auto ret = stackManager_->CheckMissionRecordInWhiteList(mission);
+    EXPECT_EQ(ret, false);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: CheckMissionRecordInWhiteList
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0002, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(result, ERR_OK);
+    auto missionStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(missionStack);
+    auto missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_TRUE(missionRecord);
+    missionStack->missionStackId_ = 3;
+    auto ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
+    EXPECT_EQ(ret, true);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: CheckMissionRecordInWhiteList
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0003, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(result, ERR_OK);
+    auto missionStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(missionStack);
+    auto missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_TRUE(missionRecord);
+    missionStack->missionStackId_ = 2;
+    auto ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
+    EXPECT_EQ(ret, true);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: DeleteMissionRecordInStackOnLockScreen
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_DeleteMissionRecordInStackOnLockScreen_0001, TestSize.Level1)
+{
+    std::shared_ptr<MissionRecord> mission;
+    auto ret = stackManager_->DeleteMissionRecordInStackOnLockScreen(mission);
+    EXPECT_EQ(ret, false);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: DeleteMissionRecordInStackOnLockScreen
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_DeleteMissionRecordInStackOnLockScreen_0002, TestSize.Level1)
+{
+    std::shared_ptr<MissionRecord> mission = nullptr;
+    auto ret = stackManager_->DeleteMissionRecordInStackOnLockScreen(mission);
+    EXPECT_EQ(ret, false);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: DeleteMissionRecordInStackOnLockScreen
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_DeleteMissionRecordInStackOnLockScreen_0003, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(result, ERR_OK);
+    auto missionStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(missionStack);
+    auto missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_TRUE(missionRecord);
+    missionStack->missionStackId_ = 2;
+    auto ret = stackManager_->DeleteMissionRecordInStackOnLockScreen(missionRecord);
+    EXPECT_EQ(ret, true);
+    missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_FALSE(missionRecord);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: SetShowOnLockScreenLocked
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_SetShowOnLockScreenLocked_0001, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+
+    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
+    EXPECT_EQ(ret, ERR_OK);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: SetPowerOffRecordWhenLockScreen
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_SetPowerOffRecordWhenLockScreen_0001, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto missionStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(missionStack);
+    auto missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_TRUE(missionRecord);
+    auto topAbilityRecord = missionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    stackManager_->lockScreenMissionStack_ = missionStack;
+
+    auto powerStorage = std::make_shared<PowerStorage>();
+    EXPECT_TRUE(powerStorage);
+    stackManager_->SetPowerOffRecordWhenLockScreen(powerStorage);
+    EXPECT_EQ(topAbilityRecord->GetPowerState(), true);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: GetLockScreenRootAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_GetLockScreenRootAbility_0001, TestSize.Level1)
+{
+    stackManager_->lockScreenMissionStack_ = nullptr;
+    auto ret = stackManager_->GetLockScreenRootAbility();
+    EXPECT_EQ(ret, nullptr);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function: GetLockScreenRootAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_GetLockScreenRootAbility_0002, TestSize.Level1)
+{
+    stackManager_->Init();
+    auto result = stackManager_->StartAbility(musicAbilityRequest_);
+    EXPECT_EQ(0, result);
+    auto missionStack = stackManager_->GetCurrentMissionStack();
+    EXPECT_TRUE(missionStack);
+    auto missionRecord = missionStack->GetTopMissionRecord();
+    EXPECT_TRUE(missionRecord);
+    auto topAbilityRecord = missionRecord->GetTopAbilityRecord();
+    EXPECT_TRUE(topAbilityRecord);
+    topAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    topAbilityRecord->SetLockScreenRoot();
+    stackManager_->lockScreenMissionStack_ = missionStack;
+
+    auto ret = stackManager_->GetLockScreenRootAbility();
+    EXPECT_TRUE(ret);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

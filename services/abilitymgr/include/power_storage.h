@@ -36,10 +36,19 @@ public:
     std::vector<PowerOffRecord> GetPowerOffInActiveRecord() const;
     void SetPowerOffActiveRecord(const std::shared_ptr<AbilityRecord> &ability);
     std::vector<PowerOffRecord> GetPowerOffActiveRecord() const;
+    void UpdatePowerOffRecord(int32_t missionId, const std::shared_ptr<AbilityRecord> &ability);
+
+    void SetPowerOffInActiveRecordLockScreen(const std::shared_ptr<AbilityRecord> &ability);
+    std::vector<PowerOffRecord> GetPowerOffInActiveRecordLockScreen() const;
+    void SetPowerOffActiveRecordLockScreen(const std::shared_ptr<AbilityRecord> &ability);
+    std::vector<PowerOffRecord> GetPowerOffActiveRecordLockScreen() const;
+    void Clear(bool isLockScreen);
 
 private:
     std::vector<PowerOffRecord> inActiveRecord_;
     std::vector<PowerOffRecord> activeRecord_;
+    std::vector<PowerOffRecord> inActiveRecordLockScreen_;
+    std::vector<PowerOffRecord> activeRecordLockScreen_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
