@@ -667,20 +667,21 @@ public:
     void SetAppState(const AppState &state);
     AppState GetAppState() const;
 
-    unsigned int GetIntConfigChanges();
     void ClearFlag();
 
+    void SetLockScreenState(const bool isLock);
+    bool GetLockScreenState() const;
     void SetMovingBackgroundFlag(bool isMoving);
     bool IsMovingBackground() const;
 
-    void SetConfiguration(const std::shared_ptr<DummyConfiguration> &config);
+    void SetLockScreenRoot();
+    bool IsLockScreenRoot() const;
+    void SetPowerStateLockScreen(const bool isPower);
+    bool GetPowerStateLockScreen() const;
 
-protected:
-    virtual bool OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges) override;
-    virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
-    virtual unsigned int GetChildSize() override;
-    virtual std::shared_ptr<ConfigurationHolder> FindChild(unsigned int index) override;
+    void UpdateConfiguration(const AppExecFwk::Configuration &config) override;
 
+    int GetId() override;
 private:
     /**
      * get the type of ability.
@@ -743,11 +744,14 @@ private:
     bool isKernalSystemAbility_ = false;
     bool isLauncherRoot_ = false;
     bool isPowerState_ = false;  // ability to change state when poweroff and poweron.
+    bool isLockScreenState_ = false; // ability to change state when lockscreen.
 
     PacMap stateDatas_;             // ability saved ability state data
     bool isRestarting_ = false;     // is restarting ?
     bool isInMovingState_ = false;  // whether complete multi window moving state.
     bool isMovingBackground_ = false;
+    bool isLockScreenRoot_ = false;
+    bool isPowerStateLockScreen_ = false;
     AppState appState_ = AppState::BEGIN;
 };
 }  // namespace AAFwk

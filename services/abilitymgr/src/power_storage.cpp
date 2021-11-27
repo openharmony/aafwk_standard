@@ -50,5 +50,64 @@ std::vector<PowerOffRecord> PowerStorage::GetPowerOffActiveRecord() const
 {
     return activeRecord_;
 }
+
+void PowerStorage::UpdatePowerOffRecord(int32_t missionId, const std::shared_ptr<AbilityRecord> &ability)
+{
+    auto isExist = [targetMissionId = missionId](
+                    const PowerOffRecord &record) { return record.missionId == targetMissionId; };
+    auto iter = std::find_if(activeRecord_.begin(), activeRecord_.end(), isExist);
+    if (iter != activeRecord_.end()) {
+        (*iter).ability = ability;
+        return;
+    }
+    iter = std::find_if(inActiveRecord_.begin(), inActiveRecord_.end(), isExist);
+    if (iter != inActiveRecord_.end()) {
+        (*iter).ability = ability;
+        return;
+    }
+}
+
+void PowerStorage::SetPowerOffInActiveRecordLockScreen(const std::shared_ptr<AbilityRecord> &ability)
+{
+    CHECK_POINTER(ability);
+    PowerOffRecord record;
+    record.ability = ability;
+    record.StackId = ability->GetMissionRecord()->GetMissionStack()->GetMissionStackId();
+    record.missionId = ability->GetMissionRecord()->GetMissionRecordId();
+    record.state = ability->GetAbilityState();
+    inActiveRecordLockScreen_.emplace_back(record);
+}
+
+std::vector<PowerOffRecord> PowerStorage::GetPowerOffInActiveRecordLockScreen() const
+{
+    return inActiveRecordLockScreen_;
+}
+
+void PowerStorage::SetPowerOffActiveRecordLockScreen(const std::shared_ptr<AbilityRecord> &ability)
+{
+    CHECK_POINTER(ability);
+    PowerOffRecord record;
+    record.ability = ability;
+    record.StackId = ability->GetMissionRecord()->GetMissionStack()->GetMissionStackId();
+    record.missionId = ability->GetMissionRecord()->GetMissionRecordId();
+    record.state = ability->GetAbilityState();
+    activeRecordLockScreen_.emplace_back(record);
+}
+
+std::vector<PowerOffRecord> PowerStorage::GetPowerOffActiveRecordLockScreen() const
+{
+    return activeRecordLockScreen_;
+}
+
+void PowerStorage::Clear(bool isLockScreen)
+{
+    if (isLockScreen) {
+        activeRecordLockScreen_.clear();
+        inActiveRecordLockScreen_.clear();
+    } else {
+        activeRecord_.clear();
+        inActiveRecord_.clear();
+    }
+}
 }  // namespace AAFwk
 }  // namespace OHOS

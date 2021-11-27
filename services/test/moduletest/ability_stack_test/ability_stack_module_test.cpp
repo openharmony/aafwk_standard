@@ -26,7 +26,9 @@
 #include "ability_manager_service.h"
 #undef private
 #undef protected
-
+#include <thread>
+#include "common_event.h"
+#include "common_event_manager.h"
 #include "mock_bundle_mgr.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
@@ -50,6 +52,7 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+    void OnStartabilityMs(std::shared_ptr<AbilityManagerService> abilityMs);
     Want CreateWant(const std::string &entity);
     AbilityInfo CreateAbilityInfo(const std::string &name, const std::string &appName, const std::string &bundleName);
     ApplicationInfo CreateAppInfo(const std::string &appName, const std::string &bundleName);
@@ -60,23 +63,52 @@ public:
 public:
     std::shared_ptr<AbilityStackManager> stackManager_{nullptr};
     inline static BundleMgrService *bundleObject_{nullptr};
-    inline static MockAppMgrClient *mockAppMgrClient{nullptr};
     OHOS::sptr<MockAbilityScheduler> mockScheduler_ = nullptr;
 };
+
+void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerService> abilityMs)
+{
+    if (abilityMs) {
+        if (abilityMs->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
+
+        abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMs->eventLoop_);
+
+        abilityMs->handler_ = std::make_shared<AbilityEventHandler>(abilityMs->eventLoop_, abilityMs);
+        EXPECT_TRUE(abilityMs->handler_);
+        EXPECT_TRUE(abilityMs->connectManager_);
+
+        abilityMs->connectManager_->SetEventHandler(abilityMs->handler_);
+
+        abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMs->dataAbilityManager_);
+
+        abilityMs->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMs->amsConfigResolver_);
+        abilityMs->amsConfigResolver_->Parse();
+
+        abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(abilityMs->pendingWantManager_);
+
+        int userId = abilityMs->GetUserId();
+        abilityMs->SetStackManager(userId);
+        abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(abilityMs->systemAppManager_);
+
+        abilityMs->eventLoop_->Run();
+
+        return;
+    }
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
 
 void AbilityStackModuleTest::SetUpTestCase(void)
 {
     GTEST_LOG_(INFO) << "SetUpTestCase";
-    if (!mockAppMgrClient) {
-        mockAppMgrClient = new (std::nothrow) MockAppMgrClient();
-    }
-
-    auto appScheduler = OHOS::DelayedSingleton<AppScheduler>::GetInstance();
-
-    if (mockAppMgrClient && appScheduler) {
-        appScheduler->appMgrClient_.reset(mockAppMgrClient);
-    }
-
     if (!bundleObject_) {
         bundleObject_ = new (std::nothrow) BundleMgrService();
         if (bundleObject_) {
@@ -89,11 +121,6 @@ void AbilityStackModuleTest::SetUpTestCase(void)
 void AbilityStackModuleTest::TearDownTestCase(void)
 {
     GTEST_LOG_(INFO) << "TearDownTestCase";
-    if (mockAppMgrClient) {
-        delete mockAppMgrClient;
-        mockAppMgrClient = nullptr;
-    }
-
     if (bundleObject_) {
         delete bundleObject_;
         bundleObject_ = nullptr;
@@ -106,7 +133,7 @@ void AbilityStackModuleTest::SetUp(void)
 
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
     auto bms = ams->GetBundleManager();
-    ams->OnStart();
+    OnStartabilityMs(ams);
     stackManager_ = ams->GetStackManager();
     EXPECT_TRUE(stackManager_);
     stackManager_->Init();
@@ -246,7 +273,6 @@ ApplicationInfo AbilityStackModuleTest::CreateAppInfo(const std::string &appName
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_001, TestSize.Level1)
 {
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_001 start";
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
@@ -287,7 +313,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_001, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_002, TestSize.Level1)
 {
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_002 start";
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
@@ -331,7 +356,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_002, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_003, TestSize.Level1)
 {
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_003 start";
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
     int index = 1;
@@ -386,7 +410,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_004, TestSize.Level1)
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
     int index = 1;
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     AbilityRequest abilityRequest;
     abilityRequest.want = CreateWant(Want::ENTITY_HOME);
     std::string strInd = std::to_string(index);
@@ -437,7 +460,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_004, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_005, TestSize.Level1)
 {
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_005 start";
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
@@ -478,7 +500,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_005, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_006, TestSize.Level1)
 {
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_006 start";
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     std::string abilityName = "ability_name";
     std::string bundleName = "com.ix.aafwk.moduletest";
 
@@ -598,8 +619,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_007, TestSize.Level1)
     curMissionStack->AddMissionRecordToTop(mission);
 
     OHOS::sptr<MockAbilityScheduler> abilityScheduler(new MockAbilityScheduler());
-    // ams handler is non statrt so times is 0
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_)).Times(1);
 
     EXPECT_TRUE(abilityRecord->GetToken());
 
@@ -643,8 +662,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_008, TestSize.Level1)
     OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->handler_ = handler;
 
     PacMap saveData;
-    int result = stackManager_->AbilityTransitionDone(
-        abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::INITIAL, saveData);
+    int result =
+        stackManager_->AbilityTransitionDone(abilityRecord->GetToken(), OHOS::AAFwk::AbilityState::INITIAL, saveData);
     EXPECT_EQ(OHOS::ERR_OK, result);
 
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_008 end";
@@ -730,11 +749,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_010, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_))
-        .Times(1)
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     AbilityRequest launcherAbilityRequest_ =
         GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
 
@@ -781,11 +795,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_011, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_)).Times(testing::AtLeast(2));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     stackManager_->StartAbility(launcherAbilityRequest_);
     auto firstTopAbility = stackManager_->GetCurrentTopAbility();
@@ -880,35 +889,14 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
         EXPECT_EQ(it.ability.lock()->GetAbilityState(), OHOS::AAFwk::BACKGROUND);
     }
 
-    auto requestDone = [&](const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state) -> AppMgrResultCode {
-        firstTopAbility->Activate();
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    auto requestDone2 = [&](const sptr<IRemoteObject> &token,
-                            const AppExecFwk::AbilityState state) -> AppMgrResultCode {
-        secondTopAbility->Activate();
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    auto requestDone3 = [&](const sptr<IRemoteObject> &token,
-                            const AppExecFwk::AbilityState state) -> AppMgrResultCode {
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(testing::_, testing::_))
-        .Times(3)
-        .WillOnce(Invoke(requestDone))
-        .WillOnce(Invoke(requestDone2))
-        .WillOnce(Invoke(requestDone3));
-
     result = stackManager_->PowerOn();
+    firstTopAbility->Activate();
+    secondTopAbility->Activate();
     EXPECT_EQ(ERR_OK, result);
 
     // end last move to background EXPECT_EQ(OHOS::AAFwk::BACKGROUND, firstTopAbility->GetAbilityState())
     EXPECT_EQ(OHOS::AAFwk::ACTIVE, secondTopAbility->GetAbilityState());
 
-    testing::Mock::AllowLeak(mockAppMgrClient);
     testing::Mock::AllowLeak(scheduler);
     testing::Mock::AllowLeak(scheduler2);
 }
@@ -928,10 +916,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_013, TestSize.Level1)
         .Times(AtLeast(2))
         .WillOnce(Return(sysUid))
         .WillOnce(Return(sysUid));
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     stackManager_->StartAbility(launcherAbilityRequest_);
@@ -974,10 +958,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_014, TestSize.Level1)
         .Times(AtLeast(2))
         .WillOnce(Return(sysUid))
         .WillOnce(Return(sysUid));
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1060,10 +1040,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_015, TestSize.Level1)
         .WillOnce(Return(userUid))
         .WillOnce(Return(userUid));
 
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // start a SINGLETON ability
     auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     stackManager_->StartAbility(musicAbilityRequest_);
@@ -1108,10 +1084,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_016, TestSize.Level1)
         .WillOnce(Return(userUid))
         .WillOnce(Return(userUid));
 
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // start a SINGLETON ability
     auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     stackManager_->StartAbility(musicAbilityRequest_);
@@ -1150,10 +1122,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_017, TestSize.Level1)
         .Times(AtLeast(2))
         .WillOnce(Return(sysUid))
         .WillOnce(Return(sysUid));
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1208,10 +1176,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_018, TestSize.Level1)
         .WillOnce(Return(userUid))
         .WillOnce(Return(userUid));
 
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // start a SINGLETON ability
     auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     stackManager_->StartAbility(musicAbilityRequest_);
@@ -1232,323 +1196,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_018, TestSize.Level1)
 
 /*
  * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints:Update applied
- * EnvConditions: NA
- * CaseDescription: 1. launcher ability default concern locale and fontSize
- *                  2.  We pass in locale to test whether it can be called onConfigurationUpdated（ResConfig）
- *
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_019, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "luncher", "launcher", "com.ix.hiworld");
-    stackManager_->StartAbility(launcherAbilityRequest_);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    firstTopAbility->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
-    // Notify application executionon ConfigurationUpdated
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(testing::_)).Times(testing::AtLeast(1));
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration(FONTSIZE);
-    // test fun
-    auto ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints:Update applied
- * EnvConditions: NA
- * CaseDescription: 1. launcher ability + default ability default concern locale and fontSize
- *                  2. default ability in active
- *                  3. We pass in locale to test whether it can be called onConfigurationUpdated
- *
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_020, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
-    auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, ref);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "Music", "launcher", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(ERR_OK, ref);
-    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
-    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    secondTopAbility->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
-    // Notify application executionon ConfigurationUpdated
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(testing::_)).Times(testing::AtLeast(1));
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration(LAYOUT);
-    ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: Update applied
- * EnvConditions: NA
- * CaseDescription: 1.default ability default concern locale and fontSize
- *                  2. When ordinary applications do not pay attention to system attributes, they will be restart
- *
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_021, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    // When the application restarts, it is called
-    auto restartCall = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        return (AppMgrResultCode)stackManager_->AttachAbilityThread(scheduler, token);
-    };
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(testing::Invoke(restartCall));
-
-    EXPECT_CALL(*mockAppMgrClient, TerminateAbility(_)).Times(AtLeast(1)).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
-    stackManager_->StartAbility(launcherAbilityRequest_);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
-    firstTopAbility->SetScheduler(scheduler);
-
-    auto transactionDoneInactive = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteInactive(firstTopAbility);
-    };
-
-    auto transactionDoneBackground = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteBackground(firstTopAbility);
-    };
-
-    auto transactionDoneTerminate = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteTerminate(firstTopAbility);
-    };
-
-    //  first time call
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
-        .Times(testing::AtLeast(3))
-        .WillOnce(testing::Invoke(transactionDoneInactive))
-        .WillOnce(testing::Invoke(transactionDoneBackground))
-        .WillOnce(testing::Invoke(transactionDoneTerminate));
-
-    // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
-    // when restart ability restore the ability state
-    EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration(LANGUAGE);
-    auto ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: Notification application attribute change
- * EnvConditions: NA
- * CaseDescription: Notify if the system property change notification is registered
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_022, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    // When the application restarts, it is called
-    auto restartCall = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        return (AppMgrResultCode)stackManager_->AttachAbilityThread(scheduler, token);
-    };
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(testing::Invoke(restartCall));
-
-    EXPECT_CALL(*mockAppMgrClient, TerminateAbility(_)).Times(AtLeast(1)).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    // launcher ability
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
-    auto returen = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, returen);
-    auto launcherAbility = stackManager_->GetCurrentTopAbility();
-    launcherAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    // test ability
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
-    stackManager_->StartAbility(musicAbilityRequest);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
-    firstTopAbility->SetScheduler(scheduler);
-
-    auto transactionDoneInactive = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteInactive(firstTopAbility);
-    };
-
-    auto transactionDoneBackground = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteBackground(firstTopAbility);
-    };
-
-    auto transactionDoneTerminate = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteTerminate(firstTopAbility);
-    };
-
-    //  first time call
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
-        .Times(testing::AtLeast(3))
-        .WillOnce(testing::Invoke(transactionDoneInactive))
-        .WillOnce(testing::Invoke(transactionDoneBackground))
-        .WillOnce(testing::Invoke(transactionDoneTerminate));
-
-    // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
-    // when restart ability restore the ability state
-    EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration("");
-    auto ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints:Update applied
- * EnvConditions: NA
- * CaseDescription: 1. sigleton auncher ability
- *                  2. restart ability
- *
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_023, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    // When the application restarts, it is called
-    auto restartCall = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        return (AppMgrResultCode)stackManager_->AttachAbilityThread(scheduler, token);
-    };
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(testing::Invoke(restartCall));
-
-    EXPECT_CALL(*mockAppMgrClient, TerminateAbility(_)).Times(AtLeast(1)).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    auto musicRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
-    stackManager_->StartAbility(musicRequest);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
-    firstTopAbility->SetScheduler(scheduler);
-
-    auto transactionDoneInactive = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteInactive(firstTopAbility);
-    };
-
-    auto transactionDoneBackground = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteBackground(firstTopAbility);
-    };
-
-    auto transactionDoneTerminate = [&](const Want &want, const LifeCycleStateInfo &targetState) {
-        stackManager_->CompleteTerminate(firstTopAbility);
-    };
-
-    //  first time call
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_))
-        .Times(testing::AtLeast(3))
-        .WillOnce(testing::Invoke(transactionDoneInactive))
-        .WillOnce(testing::Invoke(transactionDoneBackground))
-        .WillOnce(testing::Invoke(transactionDoneTerminate));
-
-    // when restart ability save the ability state
-    EXPECT_CALL(*scheduler, ScheduleSaveAbilityState()).Times(testing::AtLeast(1));
-    // when restart ability restore the ability state
-    EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration(LANGUAGE);
-    auto ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints:Update applied
- * EnvConditions: NA
- * CaseDescription: 1.sigleton auncher ability
- *                  2. Will call onConfigurationUpdated（ResConfig）
- *
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_024, TestSize.Level1)
-{
-    OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    // singleton,focus
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicTon", "music", "com.ix.hiMusic");
-    stackManager_->StartAbility(musicAbilityRequest);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    firstTopAbility->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
-    // Notify application executionon ConfigurationUpdated
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(testing::_)).Times(testing::AtLeast(1));
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(testing::AtLeast(1));
-
-    DummyConfiguration DummyConfiguration(LAYOUT);
-    // test fun
-    auto ref = stackManager_->UpdateConfiguration(DummyConfiguration);
-    EXPECT_EQ(ERR_OK, ref);
-}
-
-/*
- * Feature: AaFwk
  * Function: StartAbility
  * SubFunction: NA
  * FunctionPoints: Resume mission record
@@ -1561,14 +1208,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_024, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_025, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1627,13 +1266,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_025, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_026, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1692,13 +1324,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_026, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_027, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1757,13 +1382,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_027, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_028, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1821,13 +1439,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_028, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_029, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1892,13 +1503,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_029, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_030, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1936,7 +1540,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_030, TestSize.Level1)
     stackManager_->MoveMissionToEnd(musicAbility->GetToken(), false);
 
     // attach radio ability
-    EXPECT_CALL(*mockScheduler_, ScheduleRestoreAbilityState(_)).Times(1);
     stackManager_->AttachAbilityThread(mockScheduler_, radioSAbility->GetToken());
     radioSAbility->SetScheduler(nullptr);
 }
@@ -1955,13 +1558,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_030, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_031, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    EXPECT_CALL(*mockAppMgrClient, UpdateAbilityState(_, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     // launcher ability
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -1999,7 +1595,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_031, TestSize.Level1)
     stackManager_->MoveMissionToEnd(musicSAbility->GetToken(), false);
 
     // attach radio ability
-    EXPECT_CALL(*mockScheduler_, ScheduleRestoreAbilityState(_)).Times(1);
     stackManager_->AttachAbilityThread(mockScheduler_, radioAbility->GetToken());
     radioAbility->SetScheduler(nullptr);
 }
@@ -2017,11 +1612,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_031, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_032, TestSize.Level1)
 {
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -2055,11 +1645,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_032, TestSize.Level1)
 
     // Notify application executionon ConfigurationUpdated
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(testing::AtLeast(1));
-    auto focusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
-
-    EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(focusChangeFlag));
     // test fun
     ref = stackManager_->MoveMissionToEnd(topAbilityRecord2->GetToken(), true);
     EXPECT_EQ(ERR_OK, ref);
@@ -2079,11 +1664,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_033, TestSize.Level1)
 {
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
     OHOS::sptr<MockAbilityScheduler> schedulerRadio(new MockAbilityScheduler());
-
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -2130,13 +1710,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_033, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).Times(testing::AtLeast(1));
     // Notify application executionon ConfigurationUpdated
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(testing::_, testing::_)).Times(testing::AtLeast(1));
-
-    auto focusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
-
-    EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(focusChangeFlag));
-
     // test fun
     ref = stackManager_->MoveMissionToEnd(topAbilityRecord2->GetToken(), true);
     EXPECT_EQ(ERR_OK, ref);
@@ -2152,11 +1725,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_033, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_034, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2196,11 +1764,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_034, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_035, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2247,11 +1810,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_035, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_036, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2300,11 +1858,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_036, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_037, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2352,10 +1905,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_037, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_038, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2384,11 +1933,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_038, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_039, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -2427,11 +1971,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_039, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_040, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -2471,11 +2010,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_040, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_041, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2518,10 +2052,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_041, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_042, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2545,11 +2075,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_042, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2584,15 +2109,10 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
     topAbilityRecordlauncher->SetScheduler(schedulerluncher);
 
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
-    auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
     EXPECT_CALL(*schedulerluncher, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
-
-    EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(loseFocusChangeFlag));
 
     EXPECT_EQ(topAbilityRecord->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
@@ -2614,10 +2134,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -2659,12 +2175,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_045, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2719,12 +2229,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_045, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_046, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2769,15 +2273,10 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_046, TestSize.Level1)
     topAbilityRecordlauncher->SetScheduler(schedulerluncher);
 
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
-    auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
     EXPECT_CALL(*schedulerluncher, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
-
-    EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(loseFocusChangeFlag));
 
     EXPECT_FALSE(musicAbilityRecord->IsToEnd());
 
@@ -2797,11 +2296,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_046, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2862,11 +2356,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -2906,7 +2395,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
     musicAbilityRecord->SetScheduler(schedulerMusic);
 
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
-    auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
 
     EXPECT_CALL(*schedulerMusic, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
@@ -2916,10 +2404,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordRadio->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(getFocusChangeFlag));
 
     // make sure both are active
     musicAbilityRecord->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -2939,11 +2423,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3013,10 +2492,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_050, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3065,10 +2540,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_050, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_051, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3116,10 +2587,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_051, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_052, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(1))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3176,11 +2643,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_052, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_053, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3222,11 +2684,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_053, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_054, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3290,11 +2747,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_054, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_055, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3356,11 +2808,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_055, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_056, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3432,11 +2879,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_056, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_057, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3493,11 +2935,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_057, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_058, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3548,12 +2985,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_058, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_059, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -3592,8 +3023,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_059, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordRadio->SetScheduler(scheduler);
 
-    EXPECT_CALL(*scheduler, ScheduleRestoreAbilityState(testing::_)).Times(testing::AtLeast(1));
-
     // let ability died
     stackManager_->OnAbilityDied(topAbilityRecordRadio);
 
@@ -3618,11 +3047,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_059, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic");
@@ -3632,7 +3056,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordMusic);
     topAbilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
     auto musicId = topAbilityRecordMusic->GetMissionRecord()->GetMissionRecordId();
-    GTEST_LOG_(INFO) << "musicId :"<<musicId;
+    GTEST_LOG_(INFO) << "musicId :" << musicId;
     // start split ability
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
     auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
@@ -3652,7 +3076,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
     EXPECT_TRUE(stackManager_->IsSplitScreenStack(topAbilityRecordMusic->GetMissionStackId()));
 
     auto missionId = topAbilityRecordRadio->GetMissionRecord()->GetMissionRecordId();
-    GTEST_LOG_(INFO) << "radioId :"<<missionId;
+    GTEST_LOG_(INFO) << "radioId :" << missionId;
 
     ref = stackManager_->RemoveMissionById(missionId);
     EXPECT_EQ(ERR_OK, ref);
@@ -3671,11 +3095,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_061, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic");
@@ -3686,7 +3105,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_061, TestSize.Level1)
     topAbilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
     // start split ability
-    int radioStackId = 3;
+    int radioStackId = 4;
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
     auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
     EXPECT_TRUE(abilityStartSetting);
@@ -3722,11 +3141,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_061, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_062, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     // start launcher
@@ -3773,11 +3187,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_062, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_063, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     // start launcher
@@ -3831,12 +3240,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_063, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_064, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -3878,7 +3281,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_064, TestSize.Level1)
     sptr<Token> token = topAbilityRecordMusic->GetToken();
     EXPECT_TRUE(token);
     stackManager_->MoveMissionToEnd(token, true);
-    
+
     EXPECT_EQ(stackManager_->GetCurrentTopAbility(), abilityRecordWorld);
 }
 
@@ -3892,12 +3295,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_064, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_065, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(3))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -3951,11 +3348,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_065, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_067, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -4016,11 +3408,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_067, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
@@ -4074,11 +3461,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
@@ -4132,11 +3514,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_070, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
@@ -4180,13 +3557,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_070, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_071, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(4))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -4246,13 +3616,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_071, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_072, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(4))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
@@ -4316,11 +3679,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_072, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_073, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -4382,11 +3740,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_073, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_074, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -4433,11 +3786,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_074, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_075, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     auto musicTopAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "musicTop", "com.ix.hiTopMusic");
@@ -4483,11 +3831,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_075, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK))
-        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
-
     stackManager_->Init();
 
     // start launcher
@@ -4535,6 +3878,227 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
     auto mission1 = abilityRecordMusic->GetMissionRecord();
     auto stack1 = mission->GetMissionStack()->GetMissionStackId();
     EXPECT_TRUE(stackManager_->IsSplitScreenStack(stack1));
+}
+
+/*
+ * Feature: AaFwk
+ * Function:CheckMissionRecordInWhiteList
+ * SubFunction: CheckMissionRecordInWhiteList
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: check all ability record in mission record are all on the white list.
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_077, TestSize.Level1)
+{
+    stackManager_->Init();
+    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
+    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
+    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto callerToken = topAbilityRecordRadio->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+
+    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityRecordMusic);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = abilityRecordMusic->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    auto mission = abilityRecordMusic->GetMissionRecord();
+    EXPECT_TRUE(mission);
+    EXPECT_FALSE(stackManager_->CheckMissionRecordInWhiteList(mission));
+}
+
+/*
+ * Feature: AaFwk
+ * Function:CheckMissionRecordInWhiteList
+ * SubFunction: CheckMissionRecordInWhiteList
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: check all ability record in mission record are all on the white list.
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_078, TestSize.Level1)
+{
+    stackManager_->Init();
+    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
+    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
+    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto callerToken = topAbilityRecordRadio->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+
+    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityRecordMusic);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = abilityRecordMusic->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    auto mission = abilityRecordMusic->GetMissionRecord();
+    EXPECT_TRUE(mission);
+    EXPECT_TRUE(stackManager_->CheckMissionRecordInWhiteList(mission));
+}
+
+/*
+ * Feature: AaFwk
+ * Function:DeleteMissionRecordInStackOnLockScreen
+ * SubFunction: DeleteMissionRecordInStackOnLockScreen
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: delete mission record in stack on lock screen.
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_079, TestSize.Level1)
+{
+    stackManager_->Init();
+    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
+    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
+    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto callerToken = topAbilityRecordRadio->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+
+    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityRecordMusic);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = abilityRecordMusic->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    auto mission = abilityRecordMusic->GetMissionRecord();
+    EXPECT_TRUE(mission);
+    EXPECT_FALSE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
+}
+
+/*
+ * Feature: AaFwk
+ * Function:DeleteMissionRecordInStackOnLockScreen
+ * SubFunction: DeleteMissionRecordInStackOnLockScreen
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: delete mission record in stack on lock screen.
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_080, TestSize.Level1)
+{
+    stackManager_->Init();
+    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
+    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
+    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto callerToken = topAbilityRecordRadio->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+
+    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityRecordMusic);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = abilityRecordMusic->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    auto mission = abilityRecordMusic->GetMissionRecord();
+    auto stack = mission->GetMissionStack();
+    EXPECT_TRUE(mission);
+    EXPECT_TRUE(stack);
+    EXPECT_TRUE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
+    EXPECT_TRUE(topAbilityRecordRadio->GetLockScreenState());
+    EXPECT_FALSE(abilityRecordMusic->GetLockScreenState());
+    EXPECT_FALSE(stack->IsTopMissionRecord(mission));
+    EXPECT_TRUE(stack->GetMissionRecordCount() == 0);
+}
+
+/*
+ * Feature: AaFwk
+ * Function:RestoreMissionRecordOnLockScreen and UpdatePowerOffRecord
+ * SubFunction: RestoreMissionRecordOnLockScreen and UpdatePowerOffRecord
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: StartAbility in lock screen stack.
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_081, TestSize.Level1)
+{
+    stackManager_->Init();
+    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
+    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
+    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioTopAbility", "radio", "com.ix.hiRadio");
+    auto ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    auto callerToken = topAbilityRecordRadio->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+    auto radioMission = topAbilityRecordRadio->GetMissionRecord();
+    auto radioStack = radioMission->GetMissionStack();
+    EXPECT_TRUE(radioMission);
+    EXPECT_TRUE(radioStack);
+    EXPECT_TRUE(radioStack->IsEqualStackId(DEFAULT_MISSION_STACK_ID));
+
+    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    ref = stackManager_->StartAbility(musicAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(abilityRecordMusic);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = abilityRecordMusic->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    auto musicMission = abilityRecordMusic->GetMissionRecord();
+    auto musicStack = musicMission->GetMissionStack();
+    EXPECT_TRUE(musicMission);
+    EXPECT_TRUE(musicStack);
+    EXPECT_TRUE(musicStack->IsEqualStackId(DEFAULT_MISSION_STACK_ID));
+    stackManager_->PowerOff();
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::BACKGROUND);
+    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::BACKGROUND);
+    handler->RemoveEvent(AbilityManagerService::ACTIVE_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
+    handler->RemoveEvent(AbilityManagerService::ACTIVE_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+    stackManager_->UpdateLockScreenState(true);
+    EXPECT_TRUE(stackManager_->IsLockScreenState());
+    ref = stackManager_->StartAbility(radioAbilityRequest);
+    EXPECT_EQ(ERR_OK, ref);
+    topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbilityRecordRadio);
+    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
+    callerToken = topAbilityRecordRadio->GetToken();
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
+    radioMission = topAbilityRecordRadio->GetMissionRecord();
+    radioStack = radioMission->GetMissionStack();
+    EXPECT_TRUE(radioMission);
+    EXPECT_TRUE(radioStack);
+    EXPECT_TRUE(radioStack->IsEqualStackId(LOCK_SCREEN_STACK_ID));
+    stackManager_->TerminateAbility(topAbilityRecordRadio->GetToken(), DEFAULT_INVAL_VALUE, nullptr);
+    radioMission = topAbilityRecordRadio->GetMissionRecord();
+    radioStack = radioMission->GetMissionStack();
+    EXPECT_TRUE(radioStack->IsEqualStackId(DEFAULT_MISSION_STACK_ID));
 }
 }  // namespace AAFwk
 }  // namespace OHOS

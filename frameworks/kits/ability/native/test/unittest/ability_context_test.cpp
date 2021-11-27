@@ -27,6 +27,7 @@
 #include "system_ability_definition.h"
 #include "sys_mgr_client.h"
 #include "sa_mgr_client.h"
+#include "mock_context_deal.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -575,6 +576,60 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_GetHapModuleInfo_0100, TestSize.Level
     std::shared_ptr<HapModuleInfo> info = context_->GetHapModuleInfo();
     EXPECT_STREQ(info->name.c_str(), package.c_str());
     GTEST_LOG_(INFO) << "AaFwk_Ability_GetHapModuleInfo_0100 end";
+}
+
+/**
+ * @tc.number: AaFwk_Ability_SetShowOnLockScreen_0100
+ * @tc.name: SetShowOnLockScreen
+ * @tc.desc: Test the attachbasecontext call to verify that the return value of gethapmoduleinfo is correct.
+ */
+HWTEST_F(AbilityContextTest, AaFwk_Ability_SetShowOnLockScreen_0100, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_SetShowOnLockScreen_0100 start";
+
+    std::shared_ptr<MockContextDeal> contextDeal = std::make_shared<MockContextDeal>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    std::string name = "Captain";
+    abilityInfo->name = name;
+    context_->AttachBaseContext(contextDeal);
+
+    auto returnGetFileTypes = [](bool isAwakenScreen) {
+        EXPECT_TRUE(isAwakenScreen);
+    };
+    EXPECT_CALL(*contextDeal, SetShowOnLockScreen(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetFileTypes));
+
+    context_->SetShowOnLockScreen(true);
+
+    GTEST_LOG_(INFO) << "AaFwk_Ability_SetShowOnLockScreen_0100 end";
+}
+
+/**
+ * @tc.number: AaFwk_Ability_SetShowOnLockScreen_0200
+ * @tc.name: SetShowOnLockScreen
+ * @tc.desc: Test the attachbasecontext call to verify that the return value of gethapmoduleinfo is correct.
+ */
+HWTEST_F(AbilityContextTest, AaFwk_Ability_SetShowOnLockScreen_0200, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_SetShowOnLockScreen_0200 start";
+
+    std::shared_ptr<MockContextDeal> contextDeal = std::make_shared<MockContextDeal>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    std::string name = "Captain";
+    abilityInfo->name = name;
+    context_->AttachBaseContext(contextDeal);
+
+    auto returnGetFileTypes = [](bool isAwakenScreen) {
+        EXPECT_FALSE(isAwakenScreen);
+    };
+    EXPECT_CALL(*contextDeal, SetShowOnLockScreen(testing::_))
+        .Times(1)
+        .WillOnce(testing::Invoke(returnGetFileTypes));
+
+    context_->SetShowOnLockScreen(false);
+
+    GTEST_LOG_(INFO) << "AaFwk_Ability_SetShowOnLockScreen_0200 end";
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

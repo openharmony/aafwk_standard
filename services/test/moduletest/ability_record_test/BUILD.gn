@@ -46,8 +46,6 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/connection_record.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
-
-    # "${services_path}/abilitymgr/src/dummy_configuration.cpp",
     "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/kernal_system_app_manager.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
@@ -88,6 +86,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
   }
   deps = [
     "${innerkits_path}/want:want",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",

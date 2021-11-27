@@ -25,12 +25,14 @@
 #include "ability_info.h"
 #include "ability_record.h"
 #include "application_info.h"
-#include "aafwk_dummy_configuration.h"
 #include "mission_record.h"
 #include "mission_stack.h"
+#include "mission_index_info.h"
 #include "mission_option.h"
 #include "ability_mission_info.h"
 #include "lock_mission_container.h"
+#include "lock_screen_event_subscriber.h"
+#include "lock_screen_white_list.h"
 #include "resume_mission_container.h"
 #include "stack_info.h"
 #include "power_storage.h"
@@ -50,6 +52,7 @@ struct TerminatingAbility {
     int resultCode;
     const Want *resultWant;
 };
+
 /**
  * @class AbilityStackManager
  * AbilityStackManager provides a facility for managing page ability life cycle.
@@ -418,14 +421,16 @@ public:
         const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description);
     int GetMissionLockModeState();
 
-    /**
-     * update configuration to ability
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int UpdateConfiguration(const DummyConfiguration &config);
-
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
+    /**
+     * set lock screen white list
+     *
+     * @param isAllow whether to allow startup on lock screen.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
+    void UpdateLockScreenState(bool isLockScreen);
 private:
     /**
      * dispatch ability life cycle .
@@ -463,6 +468,9 @@ private:
         const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest);
 
     int StartAbilityAsMultiWindowLocked(
+        const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest);
+
+    int StartAbilityByAllowListLocked(
         const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest);
 
     /**
@@ -673,6 +681,7 @@ private:
     bool InFrontOfFullScreenStack() const;
     bool IsExistSplitScreenStack() const;
     bool IsFullScreenStack(int stackId) const;
+    bool IsLockScreenStack(int stackId) const;
     bool IsSplitScreenStack(int stackId) const;
     std::shared_ptr<AbilityRecord> GetTopAbilityOfFullScreen();
     int GenerateMissinOptionsOfSplitScreen(
@@ -683,6 +692,7 @@ private:
         std::shared_ptr<AbilityRecord> lastTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
         std::shared_ptr<AbilityRecord> &needBackgroundAbility);
 
+    int SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow);
     /**
      * minimize multiwindow by mission id.
      * @param missionId, the id of target mission
@@ -693,13 +703,23 @@ private:
 
     void NotifyWindowModeChanged(const SystemWindowMode &windowMode);
 
-    int ProcessConfigurationChange();
-
     void UpdateFocusAbilityRecord(
         int displayId, const std::shared_ptr<AbilityRecord> &focusAbility, bool isNotify = false);
     void UpdateFocusAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord, bool isNotify = false);
     void CheckMissionRecordIsResume(const std::shared_ptr<MissionRecord> &mission);
-    int ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage);
+    int ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage,
+        bool isPowerStateLockScreen = false);
+    bool IsLockScreenState();
+    bool CheckMissionRecordInWhiteList(const std::shared_ptr<MissionRecord> &mission);
+    bool DeleteMissionRecordInStackOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord);
+    void RestoreMissionRecordOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord);
+    void UpdatePowerOffRecord(int32_t missionId, const std::shared_ptr<AbilityRecord> &ability);
+    void SetPowerOffRecordWhenLockScreen(std::shared_ptr<PowerStorage> &powerStorage);
+    void DelayedStartLockScreenApp();
+    void BackToLockScreen();
+    std::shared_ptr<AbilityRecord> GetLockScreenRootAbility() const;
+    void lockScreenStackAbilityDied(std::shared_ptr<MissionRecord> &mission);
+    bool SubscribeEvent();
 
     void MakeTerminatingAbility(TerminatingAbility &unit, const std::shared_ptr<AbilityRecord> &abilityRecord,
         int resultCode, const Want *resultWant);
@@ -731,6 +751,7 @@ private:
     std::shared_ptr<MissionStack> defaultMissionStack_;
     std::shared_ptr<MissionStack> currentMissionStack_;
     std::shared_ptr<MissionStack> lastMissionStack_;
+    std::shared_ptr<MissionStack> lockScreenMissionStack_ = nullptr;
     std::list<std::shared_ptr<MissionStack>> missionStackList_;
     std::list<std::shared_ptr<AbilityRecord>> terminateAbilityRecordList_;  // abilities on terminating put in this
                                                                             // list.
@@ -748,6 +769,8 @@ private:
     std::shared_ptr<ResumeMissionContainer> resumeMissionContainer_;
     static int64_t splitScreenStackId;
     const static std::map<SystemWindowMode, std::string> windowModeToStrMap_;
+    std::shared_ptr<LockScreenEventSubscriber> subscriber_ = nullptr;
+    bool isLockScreen_ = false;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

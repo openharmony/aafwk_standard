@@ -83,7 +83,7 @@ public:
      */
     void ScheduleRestoreAbilityState(const PacMap &inState) override;
 
-    void ScheduleUpdateConfiguration(const DummyConfiguration &config) override;
+    void ScheduleUpdateConfiguration(const AppExecFwk::Configuration &config) override;
 
     /**
      * @brief Obtains the MIME types of files supported.

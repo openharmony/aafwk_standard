@@ -722,7 +722,7 @@ Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 /*
  * @brief ScheduleUpdateConfiguration, scheduling update configuration.
  */
-void AbilityImpl::ScheduleUpdateConfiguration(const AAFwk::DummyConfiguration &config)
+void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("%{public}s begin.", __func__);
     if (ability_ == nullptr) {

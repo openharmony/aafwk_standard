@@ -161,7 +161,7 @@ void AbilitySchedulerProxy::ScheduleRestoreAbilityState(const PacMap &inState)
     }
 }
 
-void AbilitySchedulerProxy::ScheduleUpdateConfiguration(const DummyConfiguration &config)
+void AbilitySchedulerProxy::ScheduleUpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     MessageParcel data;
     MessageParcel reply;

@@ -277,7 +277,12 @@ public:
         return 0;
     }
 
-    int UpdateConfiguration(const DummyConfiguration &config)
+    virtual int SetShowOnLockScreen(bool isAllow) override
+    {
+        return 0;
+    }
+
+    int UpdateConfiguration(const AppExecFwk::Configuration &config)
     {
         return 0;
     }

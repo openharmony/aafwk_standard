@@ -35,8 +35,10 @@
 #include "sender_info.h"
 #include "want_sender_interface.h"
 #include "want_receiver_interface.h"
-#include "aafwk_dummy_configuration.h"
 #include "system_memory_attr.h"
+#include "configuration.h"
+#include "system_memory_attr.h"
+
 
 namespace OHOS {
 namespace AAFwk {
@@ -430,7 +432,7 @@ public:
      * @param config Indicates the new configuration
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UpdateConfiguration(const DummyConfiguration &config) = 0;
+    virtual int UpdateConfiguration(const AppExecFwk::Configuration &config) = 0;
 
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) = 0;
@@ -454,6 +456,14 @@ public:
     virtual void UnregisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) = 0;
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
+
+    /**
+     * set lock screen white list
+     *
+     * @param isAllow whether to allow startup on lock screen.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetShowOnLockScreen(bool isAllow) = 0;
 
     /**
      * Get system memory information.
@@ -611,6 +621,8 @@ public:
         UNREGISTER_CANCEL_LISTENER,
 
         GET_PENDING_REQUEST_WANT,
+
+        SET_SHOW_ON_LOCK_SCREEN,
 
         // ipc id for starting ability by settings(1006)
         START_ABILITY_FOR_SETTINGS,

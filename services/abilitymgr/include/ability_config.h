@@ -49,6 +49,7 @@ const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 
 const std::string PHONE_SERVICE_BUNDLE_NAME = "com.ohos.callui";
 const std::string PHONE_SERVICE_ABILITY_NAME = "com.ohos.callui.ServiceAbility";
+const std::string LOCK_SCREEN_EVENT_NAME = "lock_screen";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

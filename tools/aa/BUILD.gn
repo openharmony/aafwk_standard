@@ -18,6 +18,7 @@ config("ability_command_config") {
   include_dirs = [
     "include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
     "//utils/system/safwk/native/include",
     "//third_party/jsoncpp/include",
   ]

@@ -24,7 +24,7 @@
 #include "ability_event_handler.h"
 #include "ability_manager_service.h"
 #include "ability_scheduler_stub.h"
-
+#include "configuration_distributor.h"
 namespace OHOS {
 namespace AAFwk {
 int64_t AbilityRecord::abilityRecordId = 0;
@@ -395,11 +395,8 @@ void AbilityRecord::ProcessActivate()
     if (isReady_) {
         if (IsAbilityState(AbilityState::BACKGROUND)) {
             // background to activte state
-            if (!ProcessConfigurationChange()) {
-                // true: restartability, false: continue activate
-                HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-                DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
-            }
+            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
             Activate();
@@ -417,11 +414,8 @@ void AbilityRecord::ProcessInactivate()
     if (isReady_) {
         if (IsAbilityState(AbilityState::BACKGROUND)) {
             // background to activte state
-            if (!ProcessConfigurationChange()) {
-                // true: restartability, false: continue activate
-                HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-                DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
-            }
+            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else if (!IsAbilityState(AbilityState::INACTIVE) && !IsAbilityState(AbilityState::INACTIVATING)) {
             HILOG_DEBUG("Inactivate %{public}s", element.c_str());
             Inactivate();
@@ -1041,72 +1035,19 @@ AppState AbilityRecord::GetAppState() const
     return appState_;
 }
 
-bool AbilityRecord::OnConfigurationChanged(const DummyConfiguration &config, unsigned int configChanges)
+void AbilityRecord::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     HILOG_INFO("%{public}s called", __FUNCTION__);
-
-    HILOG_INFO("targetConfig: %{public}s, changeTypes:%{public}d", config.GetName().c_str(), configChanges);
-
-    unsigned int focusChanges = GetIntConfigChanges();
-    bool isFocused = ((focusChanges & configChanges) > 0);
-    if (isFocused) {
-        CHECK_POINTER_RETURN_BOOL(lifecycleDeal_);
-        if (isReady_) {
-            lifecycleDeal_->UpdateConfiguration(config);
-            return false;
-        }
+    CHECK_POINTER(lifecycleDeal_);
+    HILOG_INFO("ability name : %{public}s | ready state : %{public}d", abilityInfo_.name.c_str(), isReady_);
+    if (IsReady()) {
+        lifecycleDeal_->UpdateConfiguration(config);
     }
-
-    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER_RETURN_BOOL(abilityManagerService);
-    auto handler = abilityManagerService->GetEventHandler();
-    g_abilityRecordEventId_++;
-    eventId_ = g_abilityRecordEventId_;
-
-    CHECK_POINTER_RETURN_BOOL(handler);
-    auto task = [abilityManagerService, token = token_]() { abilityManagerService->RestartAbility(token); };
-    // eventId_ is a unique id of the task.
-    handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::RESTART_ABILITY_TIMEOUT);
-    return true;
 }
 
-std::shared_ptr<ConfigurationHolder> AbilityRecord::GetParent()
+int AbilityRecord::GetId()
 {
-    return missionRecord_.lock();
-}
-
-unsigned int AbilityRecord::GetChildSize()
-{
-    return 0;
-}
-
-std::shared_ptr<ConfigurationHolder> AbilityRecord::FindChild(unsigned int index)
-{
-    return nullptr;
-}
-
-unsigned int AbilityRecord::GetIntConfigChanges()
-{
-    auto changes = abilityInfo_.configChanges;
-    unsigned int intChangs = CHANGE_CONFIG_NONE;
-
-    for (auto item : changes) {
-        HILOG_INFO("configChange: %{public}s", item.c_str());
-        if (item == "locale") {
-            intChangs |= CHANGE_CONFIG_LOCALE;
-        } else if (item == "layout") {
-            intChangs |= CHANGE_CONFIG_LAYOUT;
-        } else if (item == "fontSize") {
-            intChangs |= CHANGE_CONFIG_FONTSIZE;
-        } else if (item == "orientation") {
-            intChangs |= CHANGE_CONFIG_ORIENTATION;
-        } else if (item == "density") {
-            intChangs |= CHANGE_CONFIG_DENSITY;
-        } else {
-            continue;
-        }
-    }
-    return intChangs;
+    return GetRecordId();
 }
 
 void AbilityRecord::ClearFlag()
@@ -1124,6 +1065,16 @@ void AbilityRecord::ClearFlag()
     appState_ = AppState::END;
 }
 
+void AbilityRecord::SetLockScreenState(const bool isLock)
+{
+    isLockScreenState_ = isLock;
+}
+
+bool AbilityRecord::GetLockScreenState() const
+{
+    return isLockScreenState_;
+}
+
 void AbilityRecord::SetMovingBackgroundFlag(bool isMoving)
 {
     isMovingBackground_ = isMoving;
@@ -1134,9 +1085,24 @@ bool AbilityRecord::IsMovingBackground() const
     return isMovingBackground_;
 }
 
-void AbilityRecord::SetConfiguration(const std::shared_ptr<DummyConfiguration> &config)
+void AbilityRecord::SetLockScreenRoot()
 {
-    ConfigurationHolder::Init(config);
+    isLockScreenRoot_ = true;
+}
+
+bool AbilityRecord::IsLockScreenRoot() const
+{
+    return isLockScreenRoot_;
+}
+
+void AbilityRecord::SetPowerStateLockScreen(const bool isPower)
+{
+    isPowerStateLockScreen_ = isPower;
+}
+
+bool AbilityRecord::GetPowerStateLockScreen() const
+{
+    return isPowerStateLockScreen_;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
