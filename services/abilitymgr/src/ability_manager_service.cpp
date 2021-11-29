@@ -590,11 +590,13 @@ sptr<IWantSender> AbilityManagerService::GetWantSender(
 
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     AppExecFwk::BundleInfo bundleInfo;
-    bool bundleMgrResult =
-        bms->GetBundleInfo(wantSenderInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
-    if (!bundleMgrResult) {
-        HILOG_ERROR("GetBundleInfo is fail.");
-        return nullptr;
+    if (!wantSenderInfo.bundleName.empty()) {
+        bool bundleMgrResult =
+            bms->GetBundleInfo(wantSenderInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
+        if (!bundleMgrResult) {
+            HILOG_ERROR("GetBundleInfo is fail.");
+            return nullptr;
+        }
     }
 
     HILOG_INFO("AbilityManagerService::GetWantSender: bundleName = %{public}s", wantSenderInfo.bundleName.c_str());

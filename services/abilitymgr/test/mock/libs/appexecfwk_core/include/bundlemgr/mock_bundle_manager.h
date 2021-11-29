@@ -26,6 +26,7 @@
 #include "iremote_stub.h"
 #include "form_info.h"
 #include "shortcut_info.h"
+#include "common_event_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -198,6 +199,7 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(GetAllCommonEventInfo, bool(const std::string &eventKey, std::vector<CommonEventInfo> &commonEventInfos));
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
@@ -276,6 +278,7 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(GetAllCommonEventInfo, bool(const std::string &eventKey, std::vector<CommonEventInfo> &commonEventInfos));
     MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
     MOCK_METHOD3(DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
