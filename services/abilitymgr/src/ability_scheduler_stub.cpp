@@ -489,7 +489,7 @@ int AbilitySchedulerStub::DenormalizeUriInner(MessageParcel &data, MessageParcel
 
 int AbilitySchedulerStub::UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply)
 {
-    std::shared_ptr<DummyConfiguration> globalConfiguration(data.ReadParcelable<DummyConfiguration>());
+    std::shared_ptr<AppExecFwk::Configuration> globalConfiguration(data.ReadParcelable<AppExecFwk::Configuration>());
     if (globalConfiguration == nullptr) {
         HILOG_ERROR("AbilitySchedulerStub globalConfiguration is nullptr");
         return ERR_INVALID_VALUE;

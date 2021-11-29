@@ -33,7 +33,7 @@ public:
     MOCK_METHOD0(AsObject, sptr<IRemoteObject>());
     MOCK_METHOD0(ScheduleSaveAbilityState, void());
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &inState));
-    MOCK_METHOD1(ScheduleUpdateConfiguration, void(const DummyConfiguration &));
+    MOCK_METHOD1(ScheduleUpdateConfiguration, void(const AppExecFwk::Configuration &config));
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));

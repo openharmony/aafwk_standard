@@ -337,7 +337,7 @@ public:
      */
     int GetMissionLockModeState();
 
-    int UpdateConfiguration(const DummyConfiguration &config);
+    int UpdateConfiguration(const AppExecFwk::Configuration &config);
 
     sptr<IWantSender> GetWantSender(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken);
 
@@ -422,10 +422,10 @@ public:
     /**
      * set lock screen white list
      *
-     * @param isAwakenScreen is it allow wake up screen.
+     * @param isAllow whether to allow startup on lock screen.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode SetShowOnLockScreen(bool isAwakenScreen);
+    ErrCode SetShowOnLockScreen(bool isAllow);
 
     /**
      * Get system memory information.

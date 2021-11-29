@@ -61,7 +61,7 @@ public:
     MOCK_METHOD1(UnlockMission, int(int));
     MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
     MOCK_METHOD0(GetMissionLockModeState, int());
-    MOCK_METHOD1(UpdateConfiguration, int(const DummyConfiguration &));
+    MOCK_METHOD1(UpdateConfiguration, int(const AppExecFwk::Configuration &));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -85,6 +85,7 @@ public:
     MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
+    MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
 
     void Wait()

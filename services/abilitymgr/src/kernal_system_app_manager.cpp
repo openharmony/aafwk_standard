@@ -198,8 +198,6 @@ void KernalSystemAppManager::GetOrCreateAbilityRecord(
         return;
     }
     targetAbility = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    auto configSptr = std::make_shared<DummyConfiguration>();
-    targetAbility->SetConfiguration(configSptr);
     abilities_.push_front(targetAbility);
 }
 
@@ -368,21 +366,6 @@ void KernalSystemAppManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         default:
             break;
     }
-}
-
-int KernalSystemAppManager::UpdateConfiguration(const DummyConfiguration &config)
-{
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    std::shared_ptr<DummyConfiguration> configPtr = std::make_shared<DummyConfiguration>(config);
-    for (auto &ability : abilities_) {
-        if (ability) {
-            if (ability->IsAbilityState(AbilityState::ACTIVE)) {
-                HILOG_DEBUG("system ui update configuration.");
-                ability->ForceProcessConfigurationChange(configPtr);
-            }
-        }
-    }
-    return ERR_OK;
 }
 
 void KernalSystemAppManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)

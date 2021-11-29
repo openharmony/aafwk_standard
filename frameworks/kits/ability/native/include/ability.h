@@ -16,12 +16,12 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_H
 
-#include "iremote_object.h"
-#include "ability_context.h"
-#include "ability_event_interface.h"
 #include <functional>
 #include <string>
 #include <unistd.h>
+#include "iremote_object.h"
+#include "ability_context.h"
+#include "ability_event_interface.h"
 #include "context.h"
 #include "want.h"
 #include "dummy_component_container.h"
@@ -29,8 +29,7 @@
 #include "dummy_notification_request.h"
 #include "continuation_state.h"
 #include "dummy_ability_package.h"
-#include "dummy_configuration.h"
-#include "aafwk_dummy_configuration.h"
+#include "configuration.h"
 #include "continuation_handler.h"
 #include "ability_window.h"
 #include "ability_lifecycle_interface.h"
@@ -1372,8 +1371,8 @@ private:
      * @param callback Indicates the callback to be invoked whenever the {@link FormJsInfo} instance is obtained.
      */
     void HandleAcquireResult(
-        const Want &want, 
-        const FormJsInfo &formJsInfo, 
+        const Want &want,
+        const FormJsInfo &formJsInfo,
         const std::shared_ptr<FormCallback> callback
         );
 

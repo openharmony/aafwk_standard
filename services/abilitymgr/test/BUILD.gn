@@ -19,7 +19,6 @@ EVENT_DIR = "//base/notification/ces_standard/"
 
 ohos_source_set("abilityms_test_source") {
   sources = [
-    "${services_path}/abilitymgr/src/aafwk_dummy_configuration.cpp",
     "${services_path}/abilitymgr/src/ability_connect_callback_stub.cpp",
     "${services_path}/abilitymgr/src/ability_connect_manager.cpp",
     "${services_path}/abilitymgr/src/ability_event_handler.cpp",
@@ -36,7 +35,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/ability_token_stub.cpp",
     "${services_path}/abilitymgr/src/ams_configuration_parameter.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
-    "${services_path}/abilitymgr/src/configuration_holder.cpp",
+    "${services_path}/abilitymgr/src/configuration_distributor.cpp",
     "${services_path}/abilitymgr/src/connection_record.cpp",
     "${services_path}/abilitymgr/src/data_ability_caller_recipient.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
@@ -46,7 +45,10 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
     "${services_path}/abilitymgr/src/lock_mission_container.cpp",
+    "${services_path}/abilitymgr/src/lock_screen_event_subscriber.cpp",
+    "${services_path}/abilitymgr/src/lock_screen_white_list.cpp",
     "${services_path}/abilitymgr/src/mission_description_info.cpp",
+    "${services_path}/abilitymgr/src/mission_index_info.cpp",
     "${services_path}/abilitymgr/src/mission_option.cpp",
     "${services_path}/abilitymgr/src/mission_record.cpp",
     "${services_path}/abilitymgr/src/mission_record_info.cpp",
@@ -101,7 +103,9 @@ ohos_source_set("abilityms_test_source") {
   deps = [
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//utils/native/base:utils",
   ]
@@ -138,7 +142,7 @@ group("unittest") {
     "unittest/phone/ability_with_applications_test:unittest",
     "unittest/phone/abilityms_appms_test:unittest",
     "unittest/phone/app_scheduler_test:unittest",
-    "unittest/phone/configuration_holder_test:unittest",
+    "unittest/phone/configuration_test:unittest",
     "unittest/phone/connection_record_test:unittest",
     "unittest/phone/data_ability_manager_test:unittest",
     "unittest/phone/data_ability_record_test:unittest",
@@ -146,6 +150,7 @@ group("unittest") {
     "unittest/phone/kernal_system_app_manager_test:unittest",
     "unittest/phone/lifecycle_deal_test:unittest",
     "unittest/phone/lifecycle_test:unittest",
+    "unittest/phone/lock_screen_white_list_test:unittest",
     "unittest/phone/mission_record_test:unittest",
     "unittest/phone/mission_stack_test:unittest",
     "unittest/phone/pending_want_key_test:unittest",

@@ -416,7 +416,7 @@ public:
      * @param config Indicates the new configuration
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UpdateConfiguration(const DummyConfiguration &config) override;
+    virtual int UpdateConfiguration(const AppExecFwk::Configuration &config) override;
 
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override;
@@ -441,6 +441,14 @@ public:
         const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) override;
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
+
+    /**
+     * set lock screen white list
+     *
+     * @param isAllow whether to allow startup on lock screen.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetShowOnLockScreen(bool isAllow) override;
 
     /**
      * Get system memory information.

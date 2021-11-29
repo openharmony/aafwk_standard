@@ -17,9 +17,7 @@
 #define OHOS_AAFWK_ABILITY_SCHEDULER_INTERFACE_H
 
 #include <iremote_broker.h>
-
-
-#include "aafwk_dummy_configuration.h"
+#include "configuration.h"
 #include "lifecycle_state_info.h"
 #include "pac_map.h"
 #include "want.h"
@@ -94,7 +92,7 @@ public:
     /*
      * ScheduleUpdateConfiguration, scheduling update configuration.
      */
-    virtual void ScheduleUpdateConfiguration(const DummyConfiguration &config) = 0;
+    virtual void ScheduleUpdateConfiguration(const AppExecFwk::Configuration &config) = 0;
 
     /**
      * @brief Obtains the MIME types of files supported.

@@ -274,7 +274,7 @@ enum {
      * Result(2097206) for start ability by setting failed
      */
     START_ABILITY_SETTING_FAILED,
-    
+
     /**
      * Result(2097207) for start ability by setting ,the ability not support multiwindow.
      */
@@ -294,6 +294,21 @@ enum {
      * Result(2097210) for caller is not systemapp.
      */
     CALLER_ISNOT_SYSTEMAPP,
+
+    /**
+     * Result(2097211) for get bundleName by uid fail.
+     */
+    GET_BUNDLENAME_BY_UID_FAIL,
+
+    /**
+     * Result(2097212) for set white list fail.
+     */
+    SET_WHITE_LIST_FAIL,
+
+    /**
+     * Result(2097213) for start ability failed,this ability is not on the white list
+     */
+    START_ABILITY_NOT_ONTHE_WHITELIST,
 };
 
 enum {

@@ -456,55 +456,6 @@ HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level0)
 
 /*
  * Feature: MissionStack
- * Function: FindChild
- * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionStackTest, MS_oprator_016, TestSize.Level1)
-{
-    EXPECT_EQ(nullptr, missionStack_->FindChild(-1));
-}
-
-/*
- * Feature: MissionStack
- * Function: FindChild
- * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionStackTest, MS_oprator_017, TestSize.Level1)
-{
-    missionStack_->missions_.clear();
-    auto missionRecord = std::make_shared<MissionRecord>();
-
-    missionStack_->missions_.push_back(missionRecord);
-
-    EXPECT_EQ(nullptr, missionStack_->FindChild(2));
-}
-
-/*
- * Feature: MissionStack
- * Function: FindChild
- * SubFunction: NA
- * FunctionPoints: Find Child
- * EnvConditions: NA
- * CaseDescription: Find Child UT.
- */
-HWTEST_F(MissionStackTest, MS_oprator_018, TestSize.Level1)
-{
-    missionStack_->missions_.clear();
-    auto missionRecord = std::make_shared<MissionRecord>();
-
-    missionStack_->missions_.push_back(missionRecord);
-    auto iter = missionStack_->missions_.begin();
-    EXPECT_EQ((*iter), missionStack_->FindChild(0));
-}
-
-/*
- * Feature: MissionStack
  * Function: GetMissionRecordByWinMode
  * SubFunction: NA
  * FunctionPoints: NA
@@ -550,13 +501,13 @@ HWTEST_F(MissionStackTest, MS_oprator_020, TestSize.Level1)
     auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
     auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
     
-    EXPECT_EQ(0, missionStack_->missions_.size());
+    EXPECT_EQ(0, (int)missionStack_->missions_.size());
 
     missionStack_->AddMissionRecordToEnd(missionRecordOne);
-    EXPECT_EQ(1, missionStack_->missions_.size());
+    EXPECT_EQ(1, (int)missionStack_->missions_.size());
 
     missionStack_->AddMissionRecordToEnd(missionRecordTwo);
-    EXPECT_EQ(2, missionStack_->missions_.size());
+    EXPECT_EQ(2, (int)missionStack_->missions_.size());
 
     auto backMission = missionStack_->missions_.back();
     EXPECT_TRUE(backMission == missionRecordTwo);
@@ -582,18 +533,18 @@ HWTEST_F(MissionStackTest, MS_oprator_021, TestSize.Level1)
     missionRecordOne->SetMissionOption(option);
     missionRecordTwo->SetMissionOption(option);
 
-    EXPECT_EQ(0, missionStack_->missions_.size());
+    EXPECT_EQ(0, (int)missionStack_->missions_.size());
 
     auto missionRecord = missionStack_->EmplaceMissionRecord(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY,
         missionRecordOne);
     EXPECT_FALSE(missionRecord);
-    EXPECT_EQ(1, missionStack_->missions_.size());
+    EXPECT_EQ(1, (int)missionStack_->missions_.size());
 
     missionRecord = missionStack_->EmplaceMissionRecord(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY,
         missionRecordTwo);
     EXPECT_TRUE(missionRecord);
     // Just replace
-    EXPECT_EQ(1, missionStack_->missions_.size());
+    EXPECT_EQ(1, (int)missionStack_->missions_.size());
 }
 }  // namespace AAFwk
 }  // namespace OHOS

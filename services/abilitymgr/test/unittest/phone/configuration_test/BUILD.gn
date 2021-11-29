@@ -16,7 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk_standard/abilitymgr"
 
-ohos_unittest("configuration_holder_test") {
+ohos_unittest("configuration_test") {
   module_out_path = module_output_path
 
   include_dirs = [
@@ -28,7 +28,7 @@ ohos_unittest("configuration_holder_test") {
 
   sources = [
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
-    "configuration_holder_test.cpp",  # add mock file
+    "configuration_test.cpp",  # add mock file
   ]
 
   configs = [
@@ -66,5 +66,5 @@ ohos_unittest("configuration_holder_test") {
 group("unittest") {
   testonly = true
 
-  deps = [ ":configuration_holder_test" ]
+  deps = [ ":configuration_test" ]
 }

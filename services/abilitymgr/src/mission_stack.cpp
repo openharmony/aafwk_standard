@@ -20,10 +20,7 @@
 namespace OHOS {
 namespace AAFwk {
 MissionStack::MissionStack(int id, int userId) : missionStackId_(id), userId_(userId)
-{
-    auto configSptr = std::make_shared<DummyConfiguration>();
-    ConfigurationHolder::Init(configSptr);
-}
+{}
 
 MissionStack::~MissionStack()
 {}
@@ -248,6 +245,20 @@ std::shared_ptr<MissionRecord> MissionStack::EmplaceMissionRecord(
     return oldMission;
 }
 
+void MissionStack::AddMissionRecordByIndex(std::shared_ptr<MissionRecord> mission, int32_t index)
+{
+    CHECK_POINTER(mission);
+    auto isExist = [targetIndex = index](const std::shared_ptr<MissionRecord> &missionRecord) {
+        if (missionRecord == nullptr) {
+            return false;
+        }
+        auto missionIndexInfo = missionRecord->GetMissionIndexInfo();
+        return targetIndex < missionIndexInfo.GetMissionIndex();
+    };
+    auto iter = std::find_if(missions_.begin(), missions_.end(), isExist);
+    missions_.insert(iter, mission);
+}
+
 void MissionStack::MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission)
 {
     CHECK_POINTER(mission);
@@ -329,26 +340,6 @@ bool MissionStack::IsEqualStackId(int stackId)
 bool MissionStack::IsEmpty()
 {
     return missions_.empty();
-}
-
-std::shared_ptr<ConfigurationHolder> MissionStack::GetParent()
-{
-    return nullptr;
-}
-
-unsigned int MissionStack::GetChildSize()
-{
-    return missions_.size();
-}
-
-std::shared_ptr<ConfigurationHolder> MissionStack::FindChild(unsigned int index)
-{
-    if (index < missions_.size() && index >= 0) {
-        auto iter = missions_.begin();
-        std::advance(iter, index);
-        return (*iter);
-    }
-    return nullptr;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -90,7 +90,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleUpdateConfiguration_0100
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_ScheduleUpdateConfiguration_0100 start";
     std::shared_ptr<AbilityThread> abilityThread = std::make_shared<AbilityThread>();
 
-    DummyConfiguration config;
+    AppExecFwk::Configuration config;
     uint32_t code = OHOS::AAFwk::IAbilityScheduler::SCHEDULE_UPDATE_CONFIGURATION;
     MessageParcel data;
     MessageParcel reply;

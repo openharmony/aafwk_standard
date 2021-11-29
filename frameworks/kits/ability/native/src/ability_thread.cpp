@@ -420,7 +420,7 @@ void AbilityThread::ScheduleRestoreAbilityState(const PacMap &state)
 /*
  * @brief ScheduleUpdateConfiguration, scheduling update configuration.
  */
-void AbilityThread::ScheduleUpdateConfiguration(const DummyConfiguration &config)
+void AbilityThread::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("AbilityThread::ScheduleUpdateConfiguration begin");
     if (abilityImpl_ == nullptr) {
@@ -445,7 +445,7 @@ void AbilityThread::ScheduleUpdateConfiguration(const DummyConfiguration &config
 /*
  * @brief Handle the scheduling update configuration.
  */
-void AbilityThread::HandleUpdateConfiguration(const DummyConfiguration &config)
+void AbilityThread::HandleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("AbilityThread::HandleUpdateConfiguration begin");
     if (abilityImpl_ == nullptr) {

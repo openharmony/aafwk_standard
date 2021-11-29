@@ -20,6 +20,7 @@ config("appmgr_test_service_config") {
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/services/common/include",
     "//base/notification/ces_standard/frameworks/core/include",
@@ -45,6 +46,7 @@ ohos_source_set("appmgr_test_service") {
   deps = [
     "${innerkits_path}/want:want",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",

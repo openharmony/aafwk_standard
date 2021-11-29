@@ -57,6 +57,11 @@ int AmsConfigurationParameter::GetMissionSaveTime() const
     return missionSaveTime_;
 }
 
+std::string AmsConfigurationParameter::GetOrientation() const
+{
+    return orientation_;
+}
+
 int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
 {
     HILOG_DEBUG("%{public}s", __func__);
@@ -88,6 +93,7 @@ int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
         HILOG_ERROR("LoadAppConfigurationForMemoryThreshold return error");
     }
 
+    LoadSystemConfiguration(amsJson);
     amsJson.clear();
     inFile.close();
 
@@ -136,6 +142,16 @@ int AmsConfigurationParameter::LoadAppConfigurationForMemoryThreshold(nlohmann::
     }
 
     return ret;
+}
+
+int AmsConfigurationParameter::LoadSystemConfiguration(nlohmann::json& Object)
+{
+    if (Object.contains(AmsConfig::SYSTEM_CONFIGURATION)) {
+        orientation_ = Object.at(AmsConfig::SYSTEM_CONFIGURATION).at(AmsConfig::SYSTEM_ORIENTATION).get<std::string>();
+        return READ_OK;
+    }
+
+    return READ_FAIL;
 }
 
 /**

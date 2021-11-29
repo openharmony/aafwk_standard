@@ -21,7 +21,7 @@
 #include "iremote_object.h"
 #include "app_scheduler.h"
 #include "app_launch_data.h"
-#include "dummy_configuration.h"
+#include "configuration.h"
 
 namespace OHOS {
 namespace AAFwk {
