@@ -729,8 +729,7 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
         APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
     }
 
-    Configuration configtest;
-    ability_->OnConfigurationUpdated(configtest);
+    ability_->OnConfigurationUpdated(config);
     APP_LOGI("%{public}s end.", __func__);
 }
 /**
