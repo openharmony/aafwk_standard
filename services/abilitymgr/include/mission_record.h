@@ -21,6 +21,7 @@
 #include "ability_record.h"
 #include "mission_stack.h"
 #include "mission_description_info.h"
+#include "mission_index_info.h"
 #include "mission_option.h"
 
 namespace OHOS {
@@ -30,7 +31,7 @@ class MissionStack;
  * @class MissionRecord
  * MissionRecord records mission info and ability records.
  */
-class MissionRecord : public ConfigurationHolder {
+class MissionRecord {
 public:
     MissionRecord(const std::string &bundleName = "");
     MissionRecord(const std::shared_ptr<MissionRecord> &mission);
@@ -222,13 +223,23 @@ public:
     bool IsEmpty();
     void Resume(const std::shared_ptr<MissionRecord> &backup);
 
+    /**
+     * save the mission index after locking the screen.
+     *
+     * @param stackId: the parent mission stack id
+     * @param missionIndex: index of mission in the parent mission stack
+     */
+    void SetMissionIndexInfo(int32_t stackId, int32_t missionIndex);
+
+    /**
+     * get the mission index after locking the screen.
+     *
+     * @param stackId: the parent mission stack id
+     * @param missionIndex: index of mission in the parent mission stack
+     */
+    MissionIndexInfo GetMissionIndexInfo();
     void UpdateActiveTimestamp();
     int64_t GetActiveTimestamp() const;
-
-protected:
-    virtual std::shared_ptr<ConfigurationHolder> GetParent() override;
-    virtual unsigned int GetChildSize() override;
-    virtual std::shared_ptr<ConfigurationHolder> FindChild(unsigned int index) override;
 
 private:
     static int nextMissionId_;
@@ -241,6 +252,7 @@ private:
 
     std::shared_ptr<MissionDescriptionInfo> missionDescriptionInfo_ = nullptr;
     MissionOption option_;
+    MissionIndexInfo indexInfo_;
     int64_t activeTimestamp_ {0};
 };
 }  // namespace AAFwk

@@ -31,6 +31,14 @@ namespace AbilityUtil {
 constexpr int32_t SYSTEM_UID = 1000;
 constexpr int32_t ROOT_UID = 0;
 
+static constexpr unsigned int CHANGE_CONFIG_ALL_CHANGED = 0xFFFFFFFF;
+static constexpr unsigned int CHANGE_CONFIG_NONE = 0x00000000;
+static constexpr unsigned int CHANGE_CONFIG_LOCALE = 0x00000001;
+static constexpr unsigned int CHANGE_CONFIG_LAYOUT = 0x00000002;
+static constexpr unsigned int CHANGE_CONFIG_FONTSIZE = 0x00000004;
+static constexpr unsigned int CHANGE_CONFIG_ORIENTATION = 0x00000008;
+static constexpr unsigned int CHANGE_CONFIG_DENSITY = 0x00000010;
+
 #define CHECK_POINTER_CONTINUE(object)      \
     if (!object) {                          \
         HILOG_ERROR("pointer is nullptr."); \

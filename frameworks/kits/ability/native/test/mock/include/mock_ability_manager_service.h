@@ -81,7 +81,7 @@ public:
         return 0;
     }
 
-    int UpdateConfiguration(const DummyConfiguration &config)
+    int UpdateConfiguration(const AppExecFwk::Configuration &config)
     {
         return 0;
     }
@@ -156,6 +156,11 @@ public:
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
 
     virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
+
+    virtual int SetShowOnLockScreen(bool isAllow) override
+    {
+        return 0;
+    }
 
     enum RequestCode {
         E_STATE_INITIAL = 0,

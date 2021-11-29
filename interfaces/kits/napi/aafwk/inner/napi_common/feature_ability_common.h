@@ -256,6 +256,11 @@ struct DAHelperOnOffCB {
     std::vector<DAHelperOnOffCB *> DestoryList;
 };
 
+struct ShowOnLockScreenCB {
+    CBBase cbBase;
+    bool isShow;
+};
+
 static inline std::string NapiValueToStringUtf8(napi_env env, napi_value value)
 {
     std::string result = "";

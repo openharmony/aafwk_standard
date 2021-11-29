@@ -696,35 +696,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CreateByConnect, TestSize.Level1)
 
 /*
  * Feature: AbilityRecord
- * Function: OnConfigurationChanged
- * SubFunction: Configuration Changed
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: Verify Configuration Changed UT
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_001, TestSize.Level1)
-{
-    const DummyConfiguration config;
-    abilityRecord_->abilityInfo_.configChanges.push_back("locale");
-    EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
-}
-/*
- * Feature: AbilityRecord
- * Function: OnConfigurationChanged
- * SubFunction: Configuration Changed
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: Verify Configuration Changed UT 
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_OnConfigurationChanged_002, TestSize.Level1)
-{
-    const DummyConfiguration config("layout");
-    abilityRecord_->abilityInfo_.configChanges.push_back("layout");
-    EXPECT_EQ(true, abilityRecord_->OnConfigurationChanged(config, CHANGE_CONFIG_LOCALE));
-}
-
-/*
- * Feature: AbilityRecord
  * Function: SetMovingBackgroundFlag, IsMovingBackground
  * SubFunction: NA
  * FunctionPoints: NA

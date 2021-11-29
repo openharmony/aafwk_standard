@@ -17,8 +17,11 @@
 
 #include <functional>
 #include <memory>
+#include <fstream>
 #include <string>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <nlohmann/json.hpp>
 #include "string_ex.h"
 
@@ -26,10 +29,13 @@
 #include "ability_info.h"
 #include "ability_manager_errors.h"
 #include "hilog_wrapper.h"
+#include "lock_screen_white_list.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
+#include "configuration_distributor.h"
+#include "locale_config.h"
 
 using OHOS::AppExecFwk::ElementName;
 
@@ -116,6 +122,9 @@ bool AbilityManagerService::Init()
     CHECK_POINTER_RETURN_BOOL(connectManager_);
     connectManager_->SetEventHandler(handler_);
 
+    // init ConfigurationDistributor
+    DelayedSingleton<ConfigurationDistributor>::GetInstance();
+
     auto dataAbilityManager = std::make_shared<DataAbilityManager>();
     CHECK_POINTER_RETURN_BOOL(dataAbilityManager);
 
@@ -131,6 +140,10 @@ bool AbilityManagerService::Init()
         return false;
     }
 
+    // after amsConfigResolver_
+    configuration_ = std::make_shared<AppExecFwk::Configuration>();
+    GetGlobalConfiguration();
+
     int userId = GetUserId();
     SetStackManager(userId);
     systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
@@ -138,6 +151,22 @@ bool AbilityManagerService::Init()
 
     auto startLauncherAbilityTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
     handler_->PostTask(startLauncherAbilityTask, "startLauncherAbility");
+    auto creatWhiteListTask = [aams = shared_from_this()]() {
+        if (access(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), F_OK) != 0) {
+            if (mkdir(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), S_IRWXO|S_IRWXG|S_IRWXU)) {
+                HILOG_ERROR("mkdir AmsWhiteList::AMS_WHITE_LIST_DIR_PATH Fail");
+                return;
+            }
+        }
+        if (aams->IsExistFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH)) {
+            HILOG_INFO("file exists");
+            return;
+        }
+        HILOG_INFO("no such file,creat...");
+        std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
+        outFile.close();
+    };
+    handler_->PostTask(creatWhiteListTask, "creatWhiteList");
     dataAbilityManager_ = dataAbilityManager;
     pendingWantManager_ = pendingWantManager;
     HILOG_INFO("Init success.");
@@ -150,6 +179,7 @@ void AbilityManagerService::OnStop()
     eventLoop_.reset();
     handler_.reset();
     state_ = ServiceRunningState::STATE_NOT_START;
+    DelayedSingleton<ConfigurationDistributor>::DestroyInstance();
 }
 
 ServiceRunningState AbilityManagerService::QueryServiceState() const
@@ -398,15 +428,64 @@ int AbilityManagerService::GetMissionLockModeState()
     return currentStackManager_->GetMissionLockModeState();
 }
 
-int AbilityManagerService::UpdateConfiguration(const DummyConfiguration &config)
+int AbilityManagerService::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     HILOG_INFO("%{public}s called", __func__);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(systemAppManager_, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(configuration_, ERR_INVALID_VALUE);
 
-    systemAppManager_->UpdateConfiguration(config);
+    std::vector<std::string> changeKeyV;
+    configuration_->CompareDifferent(changeKeyV, config);
+    int size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}d", size);
+    if (!changeKeyV.empty()) {
+        for (const auto &iter : changeKeyV) {
+            configuration_->Merge(iter, config);
+        }
+        auto FindKeyFromKeychain = [](const std::string &findItemKey, const std::vector<std::string> &keychain) -> int {
+                int amount = 0;
+                if (findItemKey.empty()) {
+                    return amount;
+                }
 
-    return currentStackManager_->UpdateConfiguration(config);
+                for (const auto &it :keychain) {
+                    if (it.find(findItemKey) != std::string::npos) {
+                        ++amount;
+                    }
+                }
+                HILOG_INFO("amount :%{public}d", amount);
+                return amount;
+        };
+        // the part that currently focuses on language
+        if (FindKeyFromKeychain(GlobalConfigurationKey::SYSTEM_LANGUAGE, changeKeyV) > 0 ||
+            FindKeyFromKeychain(GlobalConfigurationKey::SYSTEM_ORIENTATION, changeKeyV) > 0) {
+            DelayedSingleton<ConfigurationDistributor>::GetInstance()->UpdateConfiguration(*configuration_);
+        }
+
+        return ERR_OK;
+    }
+    return ERR_INVALID_VALUE;
+}
+
+void AbilityManagerService::GetGlobalConfiguration()
+{
+    if (!GetConfiguration()) {
+        HILOG_INFO("configuration_ is null");
+        return;
+    }
+    // Currently only this interface is known
+    auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
+    HILOG_INFO("current global language is : %{public}s", language.c_str());
+    GetConfiguration()->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+    CHECK_POINTER(amsConfigResolver_);
+    // This is a temporary plan
+    std::string direction = amsConfigResolver_->GetOrientation();
+    HILOG_INFO("current global direction is : %{public}s", direction.c_str());
+    GetConfiguration()->AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, direction);
+}
+
+std::shared_ptr<AppExecFwk::Configuration> AbilityManagerService::GetConfiguration()
+{
+    return configuration_;
 }
 
 int AbilityManagerService::MoveMissionToTop(int32_t missionId)
@@ -650,6 +729,22 @@ int AbilityManagerService::GetPendingRequestWant(const sptr<IWantSender> &target
     return pendingWantManager_->GetPendingRequestWant(target, want);
 }
 
+int AbilityManagerService::SetShowOnLockScreen(bool isAllow)
+{
+    HILOG_INFO("SetShowOnLockScreen");
+    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+    int callerUid = IPCSkeleton::GetCallingUid();
+    std::string bundleName;
+    bool result = bms->GetBundleNameForUid(callerUid, bundleName);
+    if (!result) {
+        HILOG_ERROR("GetBundleNameForUid fail");
+        return GET_BUNDLENAME_BY_UID_FAIL;
+    }
+    return currentStackManager_->SetShowOnLockScreen(bundleName, isAllow);
+}
+
 std::shared_ptr<AbilityRecord> AbilityManagerService::GetServiceRecordByElementName(const std::string &element)
 {
     return connectManager_->GetServiceRecordByElementName(element);
@@ -749,6 +844,11 @@ int AbilityManagerService::AttachAbilityThread(
 
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     auto type = abilityInfo.type;
+
+    if (type != AppExecFwk::AbilityType::DATA) {
+        DelayedSingleton<ConfigurationDistributor>::GetInstance()->Atach(abilityRecord);
+    }
+    
     if (type == AppExecFwk::AbilityType::SERVICE) {
         return connectManager_->AttachAbilityThreadLocked(scheduler, token);
     }
@@ -758,6 +858,7 @@ int AbilityManagerService::AttachAbilityThread(
     if (IsSystemUiApp(abilityInfo)) {
         return systemAppManager_->AttachAbilityThread(scheduler, token);
     }
+
     return currentStackManager_->AttachAbilityThread(scheduler, token);
 }
 
@@ -856,6 +957,20 @@ void AbilityManagerService::DumpStateInner(const std::string &args, std::vector<
     }
 }
 
+bool AbilityManagerService::IsExistFile(const std::string &path)
+{
+    HILOG_INFO("%{public}s", __func__);
+    if (path.empty()) {
+        return false;
+    }
+    struct stat buf = {};
+    if (stat(path.c_str(), &buf) != 0) {
+        return false;
+    }
+    HILOG_INFO("%{public}s  :file exists", __func__);
+    return S_ISREG(buf.st_mode);
+}
+
 void AbilityManagerService::DataDumpStateInner(const std::string &args, std::vector<std::string> &info)
 {
     std::vector<std::string> argList;
@@ -913,6 +1028,14 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     HILOG_DEBUG("state:%{public}d  name:%{public}s", state, abilityInfo.name.c_str());
     auto type = abilityInfo.type;
+
+    if (type != AppExecFwk::AbilityType::DATA) {
+        int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
+        if (targetState == AbilityState::INITIAL) {
+            DelayedSingleton<ConfigurationDistributor>::GetInstance()->Detach(abilityRecord);
+        }
+    }
+
     if (type == AppExecFwk::AbilityType::SERVICE) {
         return connectManager_->AbilityTransitionDone(token, state);
     }
@@ -1644,6 +1767,13 @@ bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     HILOG_ERROR("callerUid %{public}d", callerUid);
     return bms->CheckIsSystemAppByUid(callerUid);
+}
+
+void AbilityManagerService::UpdateLockScreenState(bool isLockScreen)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    CHECK_POINTER(currentStackManager_);
+    currentStackManager_->UpdateLockScreenState(isLockScreen);
 }
 
 /**

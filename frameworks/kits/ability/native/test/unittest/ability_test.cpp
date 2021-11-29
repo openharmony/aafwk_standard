@@ -896,6 +896,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_ExecuteBatch_0100, Function | MediumTest
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_ExecuteBatch_0100 end";
 }
+
 class AbilityTest final : public Ability {
 public:
     AbilityTest() {}

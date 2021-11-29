@@ -53,7 +53,7 @@ public:
     void CommandAbility(const Want &want, bool reStart, int startId);
     void SaveAbilityState();
     void RestoreAbilityState(const PacMap &inState);
-    void UpdateConfiguration(const DummyConfiguration &config);
+    void UpdateConfiguration(const AppExecFwk::Configuration &config);
 
 private:
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life

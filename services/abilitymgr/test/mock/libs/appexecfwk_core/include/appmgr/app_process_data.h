@@ -17,9 +17,7 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_APP_PROCESS_DATA_H
 
 #include <sys/types.h>
-
 #include "parcel.h"
-
 #include "app_mgr_constants.h"
 
 namespace OHOS {
@@ -48,13 +46,13 @@ struct AppProcessData : public Parcelable {
      */
     static AppProcessData *Unmarshalling(Parcel &parcel);
 
+
     std::string appName;
     std::string processName;
     ApplicationState appState = ApplicationState::APP_STATE_CREATE;
     pid_t pid = 0;
     int32_t uid = 0;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_APP_PROCESS_DATA_H

@@ -1337,5 +1337,16 @@ bool AbilityContext::SetMissionInformation(const MissionInformation &missionInfo
     return ContextContainer::SetMissionInformation(missionInformation);
 }
 
+/**
+ * set lock screen white list
+ *
+ * @param isAllow Whether to allow lock screen.
+ *
+ */
+void AbilityContext::SetShowOnLockScreen(bool isAllow)
+{
+    ContextContainer::SetShowOnLockScreen(isAllow);
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

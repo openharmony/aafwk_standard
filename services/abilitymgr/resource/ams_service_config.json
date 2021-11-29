@@ -8,5 +8,8 @@
     },
     "memorythreshold":{
         "home_application": "20"
+    },
+    "system_configuration":{
+        "system_orientation": "vertical"
     }
 }

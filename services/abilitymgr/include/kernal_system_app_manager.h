@@ -90,7 +90,6 @@ public:
      */
     std::shared_ptr<AbilityRecord> GetAbilityRecordByToken(const sptr<IRemoteObject> &token);
 
-    int UpdateConfiguration(const DummyConfiguration &config);
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
 private:

@@ -99,6 +99,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
+    requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
 }
 
@@ -636,7 +637,7 @@ int AbilityManagerStub::GetMissionLockModeStateInner(MessageParcel &data, Messag
 
 int AbilityManagerStub::UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply)
 {
-    std::unique_ptr<DummyConfiguration> config(data.ReadParcelable<DummyConfiguration>());
+    std::unique_ptr<AppExecFwk::Configuration> config(data.ReadParcelable<AppExecFwk::Configuration>());
     if (config == nullptr) {
         HILOG_ERROR("AbilityManagerStub: config is nullptr");
         return ERR_INVALID_VALUE;
@@ -805,6 +806,17 @@ int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageP
         return ERR_INVALID_VALUE;
     }
     reply.WriteParcelable(want.get());
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto isAllow = data.ReadBool();
+    int result = SetShowOnLockScreen(isAllow);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("SetShowOnLockScreen error");
+        return ERR_INVALID_VALUE;
+    }
     return NO_ERROR;
 }
 

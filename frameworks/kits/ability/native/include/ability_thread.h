@@ -35,7 +35,6 @@ namespace OHOS {
 namespace AppExecFwk {
 using AbilitySchedulerStub = OHOS::AAFwk::AbilitySchedulerStub;
 using LifeCycleStateInfo = OHOS::AAFwk::LifeCycleStateInfo;
-using DummyConfiguration = OHOS::AAFwk::DummyConfiguration;
 class AbilityImpl;
 class Ability;
 class AbilityHandler;
@@ -132,7 +131,7 @@ public:
     /**
      * @brief ScheduleUpdateConfiguration, scheduling update configuration.
      */
-    void ScheduleUpdateConfiguration(const DummyConfiguration &config);
+    void ScheduleUpdateConfiguration(const Configuration &config);
 
     /**
      * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -422,7 +421,7 @@ private:
     /*
      * @brief Handle the scheduling update configuration.
      */
-    void HandleUpdateConfiguration(const DummyConfiguration &config);
+    void HandleUpdateConfiguration(const Configuration &config);
 
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;
     sptr<IRemoteObject> token_;

@@ -93,7 +93,7 @@ private:
     ErrCode RunAsStartAbility();
     ErrCode RunAsStopService();
     ErrCode RunAsDumpCommand();
-
+    ErrCode RunAsUpdateConfig();
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
 };
