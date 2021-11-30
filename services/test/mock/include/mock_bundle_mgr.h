@@ -253,6 +253,8 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(GetAllCommonEventInfo, bool(const std::string &eventKey,
+        std::vector<CommonEventInfo> &commonEventInfos));
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
 };
@@ -319,6 +321,8 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+    MOCK_METHOD2(GetAllCommonEventInfo, bool(const std::string &eventKey,
+        std::vector<CommonEventInfo> &commonEventInfos));
     MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetModuleUsageRecords, bool(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords));
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;

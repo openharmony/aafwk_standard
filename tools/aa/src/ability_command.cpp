@@ -65,7 +65,6 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"start", std::bind(&AbilityManagerShellCommand::RunAsStartAbility, this)},
         {"stop-service", std::bind(&AbilityManagerShellCommand::RunAsStopService, this)},
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpCommand, this)},
-        {"update", std::bind(&AbilityManagerShellCommand::RunAsUpdateConfig, this)},
     };
 
     return OHOS::ERR_OK;
@@ -310,18 +309,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
     };
 
     return OHOS::ERR_OK;
-}
-
-ErrCode AbilityManagerShellCommand::RunAsUpdateConfig()
-{
-    HILOG_INFO("%{public}s, called", __func__);
-    std::string name = argv_[argc_ - 1];
-    HILOG_INFO("RunAsUpdateConfig CMD : %{public}s, called", name.c_str());
-    Configuration config;
-    config.AddItem(0, GlobalConfigurationKey::SYSTEM_LANGUAGE, name);
-    auto res = AbilityManagerClient::GetInstance()->UpdateConfiguration(config);
-    HILOG_INFO("%{public}s, res = %{public}d ", __func__, res);
-    return res;
 }
 
 ErrCode AbilityManagerShellCommand::init()
