@@ -2330,7 +2330,9 @@ void AbilityStackManager::AddUninstallTags(const std::string &bundleName)
                 if (ability->GetAbilityInfo().bundleName == bundleName) {
                     if (ability->IsAbilityState(AbilityState::INITIAL)) {
                         mission->RemoveAbilityRecord(ability);
-                        stack->RemoveMissionRecord(mission->GetMissionRecordId());
+                        if (mission->IsEmpty()) {
+                            stack->RemoveMissionRecord(mission->GetMissionRecordId());
+                        }
                         CHECK_POINTER(resumeMissionContainer_);
                         resumeMissionContainer_->Remove(mission->GetMissionRecordId());
                         if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
