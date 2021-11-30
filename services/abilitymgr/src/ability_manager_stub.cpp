@@ -659,7 +659,7 @@ int AbilityManagerStub::GetWantSenderInner(MessageParcel &data, MessageParcel &r
     }
     sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
     sptr<IWantSender> wantSender = GetWantSender(*wantSenderInfo, callerToken);
-    if (!reply.WriteParcelable(wantSender->AsObject())) {
+    if (wantSender == nullptr || !reply.WriteParcelable(wantSender->AsObject())) {
         HILOG_ERROR("failed to reply wantSender instance to client, for write parcel error");
         return ERR_INVALID_VALUE;
     }

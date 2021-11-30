@@ -4814,6 +4814,8 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhit
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0002, TestSize.Level1)
 {
     stackManager_->Init();
+    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
+    EXPECT_EQ(ret, ERR_OK);
     auto result = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(result, ERR_OK);
     auto missionStack = stackManager_->GetCurrentMissionStack();
@@ -4821,7 +4823,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhit
     auto missionRecord = missionStack->GetTopMissionRecord();
     EXPECT_TRUE(missionRecord);
     missionStack->missionStackId_ = 3;
-    auto ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
+    ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
     EXPECT_EQ(ret, true);
 }
 
@@ -4836,6 +4838,8 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhit
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0003, TestSize.Level1)
 {
     stackManager_->Init();
+    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
+    EXPECT_EQ(ret, ERR_OK);
     auto result = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(result, ERR_OK);
     auto missionStack = stackManager_->GetCurrentMissionStack();
@@ -4843,7 +4847,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhit
     auto missionRecord = missionStack->GetTopMissionRecord();
     EXPECT_TRUE(missionRecord);
     missionStack->missionStackId_ = 2;
-    auto ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
+    ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
     EXPECT_EQ(ret, true);
 }
 
