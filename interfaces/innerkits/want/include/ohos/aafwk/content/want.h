@@ -604,8 +604,6 @@ public:
      */
     std::vector<long> GetLongArrayParam(const std::string &key) const;
 
-    Want &SetParam(const std::string &key, long long value);
-
     /**
      * @description: Sets a parameter value of the long type.
      * @param key Indicates the key matching the parameter.
@@ -766,6 +764,15 @@ public:
     static const std::string ENTITY_HOME;
     static const std::string ENTITY_VIDEO;
     static const std::string FLAG_HOME_INTENT_FROM_SYSTEM;
+    static const std::string ENTITY_MUSIC;
+    static const std::string ENTITY_EMAIL;
+    static const std::string ENTITY_CONTACTS;
+    static const std::string ENTITY_MAPS;
+    static const std::string ENTITY_BROWSER;
+    static const std::string ENTITY_CALENDAR;
+    static const std::string ENTITY_MESSAGING;
+    static const std::string ENTITY_FILES;
+    static const std::string ENTITY_GALLERY;
 
     // flag definition
     static unsigned int FLAG_ABILITY_NEW_MISSION;
