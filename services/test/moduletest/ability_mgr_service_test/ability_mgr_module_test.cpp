@@ -36,8 +36,13 @@
 #include "ability_connect_callback_proxy.h"
 #include "ability_config.h"
 #include "configuration_distributor.h"
+#include "pending_want_manager.h"
+#include "pending_want_record.h"
 #undef private
 #undef protected
+#include "wants_info.h"
+#include "want_receiver_stub.h"
+#include "want_sender_stub.h"
 
 using namespace std::placeholders;
 using namespace testing::ext;
@@ -80,6 +85,8 @@ public:
     void SetActive();
     std::shared_ptr<AbilityRecord> GetTopAbility();
     void ClearStack();
+    WantSenderInfo MakeWantSenderInfo(std::vector<Want> &wants, int32_t flags, int32_t userId, int32_t type = 1);
+    WantSenderInfo MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type = 1);
 
     inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_ {nullptr};
     inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
@@ -189,7 +196,7 @@ static void OnStartAms()
 
         AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
 
-        GTEST_LOG_(INFO)<< "OnStart success";
+        GTEST_LOG_(INFO) << "OnStart success";
         return;
     }
 
@@ -471,6 +478,48 @@ void AbilityMgrModuleTest::WaitAMS()
             usleep(sleepTime);
         }
     }
+}
+
+WantSenderInfo AbilityMgrModuleTest::MakeWantSenderInfo(
+    std::vector<Want> &wants, int32_t flags, int32_t userId, int32_t type)
+{
+    WantSenderInfo wantSenderInfo;
+    wantSenderInfo.type = type;
+    // wantSenderInfo.type is OperationType::START_ABILITY
+    wantSenderInfo.bundleName = "com.ix.hiRadio";
+    wantSenderInfo.resultWho = "RadioTopAbility";
+    int requestCode = 10;
+    wantSenderInfo.requestCode = requestCode;
+    std::vector<WantsInfo> allWant;
+    for (auto want : wants) {
+        WantsInfo wantsInfo;
+        wantsInfo.want = want;
+        wantsInfo.resolvedTypes = "";
+        wantSenderInfo.allWants.push_back(wantsInfo);
+    }
+    wantSenderInfo.flags = flags;
+    wantSenderInfo.userId = userId;
+    return wantSenderInfo;
+}
+
+WantSenderInfo AbilityMgrModuleTest::MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type)
+{
+    WantSenderInfo wantSenderInfo;
+    wantSenderInfo.type = type;
+    // wantSenderInfo.type is OperationType::START_ABILITY
+    wantSenderInfo.bundleName = "com.ix.hiRadio";
+    wantSenderInfo.resultWho = "RadioTopAbility";
+    int requestCode = 10;
+    wantSenderInfo.requestCode = requestCode;
+    std::vector<WantsInfo> allWant;
+    WantsInfo wantInfo;
+    wantInfo.want = want;
+    wantInfo.resolvedTypes = "nihao";
+    allWant.emplace_back(wantInfo);
+    wantSenderInfo.allWants = allWant;
+    wantSenderInfo.flags = flags;
+    wantSenderInfo.userId = userId;
+    return wantSenderInfo;
 }
 
 /*
@@ -1762,7 +1811,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);
     EXPECT_EQ(startRef, 0);
-    
+
     auto abilityRecord = abilityMgrServ_->GetStackManager()->GetCurrentTopAbility();
     EXPECT_TRUE(abilityRecord);
 
@@ -1775,9 +1824,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
     };
 
     sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(1)
-        .WillOnce(Invoke(Compare));
+    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_)).Times(1).WillOnce(Invoke(Compare));
 
     auto ref = abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
     EXPECT_EQ(ref, 0);
@@ -1832,9 +1879,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
     };
 
     sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(1)
-        .WillOnce(Invoke(Compare));
+    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_)).Times(1).WillOnce(Invoke(Compare));
 
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
 
@@ -1888,9 +1933,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_030, TestSize.Level1)
     };
 
     sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(1)
-        .WillOnce(Invoke(Compare));
+    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_)).Times(1).WillOnce(Invoke(Compare));
 
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
 
@@ -1909,6 +1952,178 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_030, TestSize.Level1)
     int num = size - 1;
     size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
     EXPECT_EQ(size, num);
+}
+
+/*
+ * Function: UninstallApp
+ * SubFunction: NA
+ * FunctionPoints: UninstallApp
+ * EnvConditions: NA
+ * CaseDescription: UninstallApp
+ */
+HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
+{
+    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_NE(abilityMgrServ_->pendingWantManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
+    abilityMgrServ_->UninstallApp("bundleName3");
+    WaitAMS();
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
+}
+
+/*
+ * Function: UninstallApp
+ * SubFunction: NA
+ * FunctionPoints: UninstallApp
+ * EnvConditions: NA
+ * CaseDescription: UninstallApp
+ */
+HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
+{
+    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_NE(abilityMgrServ_->pendingWantManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
+    abilityMgrServ_->UninstallApp("bundleName2");
+    WaitAMS();
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 0);
+}
+
+/*
+ * Function: UninstallApp
+ * SubFunction: NA
+ * FunctionPoints: UninstallApp
+ * EnvConditions: NA
+ * CaseDescription: UninstallApp
+ */
+HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
+{
+    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_NE(abilityMgrServ_->pendingWantManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
+    abilityMgrServ_->UninstallApp("bundleName1");
+    WaitAMS();
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
+}
+
+/*
+ * Function: UninstallApp
+ * SubFunction: NA
+ * FunctionPoints: UninstallApp
+ * EnvConditions: NA
+ * CaseDescription: UninstallApp
+ */
+HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
+{
+    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    EXPECT_NE(abilityMgrServ_->pendingWantManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName3", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
+            ->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
+    abilityMgrServ_->UninstallApp("bundleName3");
+    WaitAMS();
+    EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

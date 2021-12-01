@@ -1361,6 +1361,8 @@ int AbilityManagerService::UninstallApp(const std::string &bundleName)
     HILOG_DEBUG("Uninstall app, bundleName: %{public}s", bundleName.c_str());
     CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
     currentStackManager_->UninstallApp(bundleName);
+    CHECK_POINTER_AND_RETURN(pendingWantManager_, ERR_NO_INIT);
+    pendingWantManager_->ClearPendingWantRecord(bundleName);
     int ret = DelayedSingleton<AppScheduler>::GetInstance()->KillApplication(bundleName);
     if (ret != ERR_OK) {
         return UNINSTALL_APP_FAILED;
