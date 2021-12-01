@@ -426,7 +426,7 @@ int32_t PendingWantManager::GetPendingRequestWant(const sptr<IWantSender> &targe
 
 void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
 {
-    HILOG_INFO("Uninstall app, bundleName: %{public}s", bundleName.c_str());
+    HILOG_INFO("ClearPendingWantRecord, bundleName: %{public}s", bundleName.c_str());
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);
     auto handler = abilityManagerService->GetEventHandler();
@@ -437,7 +437,7 @@ void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
 
 void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleName)
 {
-    HILOG_INFO("ClearPendingWantRecord, bundleName: %{public}s", bundleName.c_str());
+    HILOG_INFO("ClearPendingWantRecordTask, bundleName: %{public}s", bundleName.c_str());
     std::lock_guard<std::recursive_mutex> locker(mutex_);
     auto iter = wantRecords_.begin();
     while (iter != wantRecords_.end()) {

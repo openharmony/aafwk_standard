@@ -93,8 +93,8 @@ public:
     };
 
 public:
-    std::shared_ptr<PendingWantManager> pendingManager_{nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    std::shared_ptr<PendingWantManager> pendingManager_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 int PendingWantManagerTest::CancelReceiver::performReceiveCount = 0;
@@ -155,7 +155,8 @@ WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(Want &want, int32_t fl
     return wantSenderInfo;
 }
 
-WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(std::vector<Want> &wants, int32_t flags, int32_t userId, int32_t type)
+WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(std::vector<Want> &wants,
+    int32_t flags, int32_t userId, int32_t type)
 {
     WantSenderInfo wantSenderInfo;
     wantSenderInfo.type = type;
@@ -165,7 +166,7 @@ WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(std::vector<Want> &wan
     int requestCode = 10;
     wantSenderInfo.requestCode = requestCode;
     std::vector<WantsInfo> allWant;
-     for (auto want : wants) {
+    for (auto want : wants) {
         WantsInfo wantsInfo;
         wantsInfo.want = want;
         wantsInfo.resolvedTypes = "";

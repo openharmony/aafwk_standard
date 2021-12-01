@@ -1988,8 +1988,8 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
     EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     auto pendingRecord1 = iface_cast<PendingWantRecord>(
-        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
-            ->AsObject());
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId,
+        wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
     abilityMgrServ_->UninstallApp("bundleName3");
@@ -2031,8 +2031,8 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
     EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     auto pendingRecord1 = iface_cast<PendingWantRecord>(
-        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
-            ->AsObject());
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId,
+        wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
     abilityMgrServ_->UninstallApp("bundleName2");
@@ -2074,8 +2074,8 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
     EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     auto pendingRecord1 = iface_cast<PendingWantRecord>(
-        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
-            ->AsObject());
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId,
+        wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
     abilityMgrServ_->UninstallApp("bundleName1");
@@ -2117,8 +2117,8 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
     WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
     EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
     auto pendingRecord1 = iface_cast<PendingWantRecord>(
-        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)
-            ->AsObject());
+        abilityMgrServ_->pendingWantManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId,
+        wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
     abilityMgrServ_->UninstallApp("bundleName3");
