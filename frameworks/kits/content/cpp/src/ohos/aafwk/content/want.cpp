@@ -997,6 +997,12 @@ Want &Want::SetParam(const std::string &key, const std::vector<long> &value)
     return *this;
 }
 
+Want &Want::SetParam(const std::string &key, long long value)
+{
+    parameters_.SetParam(key, Long::Box(value));
+    return *this;
+}
+
 /**
  * @description: a short value matching the given key.
  * @param key Indicates the key of wantParams.
