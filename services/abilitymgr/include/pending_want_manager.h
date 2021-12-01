@@ -153,6 +153,7 @@ public:
     int32_t PendingWantStartAbilitys(const std::vector<WantsInfo> wnatsInfo, const sptr<IRemoteObject> &callerToken,
         int32_t requestCode, int32_t callerUid);
     int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo, int32_t callerUid);
+    void ClearPendingWantRecord(const std::string &bundleName);
 
 private:
     sptr<IWantSender> GetWantSenderLocked(const int32_t callingUid, const int32_t uid, const int32_t userId,
@@ -165,6 +166,7 @@ private:
 
     sptr<PendingWantRecord> GetPendingWantRecordByCode(int32_t code);
     static int32_t PendingRecordIdCreate();
+    void ClearPendingWantRecordTask(const std::string &bundleName);
 
 private:
     std::map<std::shared_ptr<PendingWantKey>, sptr<PendingWantRecord>> wantRecords_;
