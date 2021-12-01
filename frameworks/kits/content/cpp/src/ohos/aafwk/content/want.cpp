@@ -48,6 +48,15 @@ const std::string Want::ACTION_HOME("action.system.home");
 const std::string Want::ENTITY_HOME("entity.system.home");
 const std::string Want::ENTITY_VIDEO("entity.system.video");
 const std::string Want::FLAG_HOME_INTENT_FROM_SYSTEM("flag.home.intent.from.system");
+const std::string Want::ENTITY_MUSIC("entity.app.music");
+const std::string Want::ENTITY_EMAIL("entity.app.email");
+const std::string Want::ENTITY_CONTACTS("entity.app.contacts");
+const std::string Want::ENTITY_MAPS("entity.app.maps");
+const std::string Want::ENTITY_BROWSER("entity.app.browser");
+const std::string Want::ENTITY_CALENDAR("entity.app.calendar");
+const std::string Want::ENTITY_MESSAGING("entity.app.messaging");
+const std::string Want::ENTITY_FILES("entity.app.files");
+const std::string Want::ENTITY_GALLERY("entity.app.gallery");
 
 const std::string Want::OCT_EQUALSTO("075");   // '='
 const std::string Want::OCT_SEMICOLON("073");  // ';'
