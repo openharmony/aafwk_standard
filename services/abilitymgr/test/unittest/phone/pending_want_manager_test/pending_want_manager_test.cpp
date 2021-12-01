@@ -75,6 +75,7 @@ public:
     void SetUp();
     void TearDown();
     WantSenderInfo MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type = 1);
+    WantSenderInfo MakeWantSenderInfo(std::vector<Want> &wants, int32_t flags, int32_t userId, int32_t type = 1);
     std::shared_ptr<PendingWantKey> MakeWantKey(WantSenderInfo &wantSenderInfo);
     static constexpr int TEST_WAIT_TIME = 100000;
 
@@ -92,8 +93,8 @@ public:
     };
 
 public:
-    std::shared_ptr<PendingWantManager> pendingManager_{nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    std::shared_ptr<PendingWantManager> pendingManager_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 int PendingWantManagerTest::CancelReceiver::performReceiveCount = 0;
@@ -153,6 +154,29 @@ WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(Want &want, int32_t fl
     wantSenderInfo.userId = userId;
     return wantSenderInfo;
 }
+
+WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(std::vector<Want> &wants,
+    int32_t flags, int32_t userId, int32_t type)
+{
+    WantSenderInfo wantSenderInfo;
+    wantSenderInfo.type = type;
+    // wantSenderInfo.type is OperationType::START_ABILITY
+    wantSenderInfo.bundleName = "com.ix.hiRadio";
+    wantSenderInfo.resultWho = "RadioTopAbility";
+    int requestCode = 10;
+    wantSenderInfo.requestCode = requestCode;
+    std::vector<WantsInfo> allWant;
+    for (auto want : wants) {
+        WantsInfo wantsInfo;
+        wantsInfo.want = want;
+        wantsInfo.resolvedTypes = "";
+        wantSenderInfo.allWants.push_back(wantsInfo);
+    }
+    wantSenderInfo.flags = flags;
+    wantSenderInfo.userId = userId;
+    return wantSenderInfo;
+}
+
 
 std::shared_ptr<PendingWantKey> PendingWantManagerTest::MakeWantKey(WantSenderInfo &wantSenderInfo)
 {
@@ -870,6 +894,117 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3400, TestSize.Level1)
     EXPECT_NE(pendingRecord, nullptr);
     std::shared_ptr<Want> getWantInfo;
     EXPECT_EQ(pendingManager_->GetPendingRequestWant(pendingRecord, getWantInfo), ERR_INVALID_VALUE);
+}
+
+/*
+ * @tc.number    : PendingWantManagerTest_3500
+ * @tc.name      : PendingWantManager ClearPendingWantRecordTask
+ * @tc.desc      : 1.ClearPendingWantRecordTask.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3500, TestSize.Level1)
+{
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    pendingManager_ = std::make_shared<PendingWantManager>();
+    EXPECT_NE(pendingManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
+    pendingManager_->ClearPendingWantRecordTask("bundleName2");
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 0);
+}
+
+/*
+ * @tc.number    : PendingWantManagerTest_3600
+ * @tc.name      : PendingWantManager ClearPendingWantRecordTask
+ * @tc.desc      : 1.ClearPendingWantRecordTask.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3600, TestSize.Level1)
+{
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    pendingManager_ = std::make_shared<PendingWantManager>();
+    EXPECT_NE(pendingManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
+    pendingManager_->ClearPendingWantRecordTask("bundleName1");
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
+}
+
+/*
+ * @tc.number    : PendingWantManagerTest_3700
+ * @tc.name      : PendingWantManager ClearPendingWantRecordTask
+ * @tc.desc      : 1.ClearPendingWantRecordTask.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3700, TestSize.Level1)
+{
+    Want want1;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want1.SetElement(element);
+    Want want2;
+    ElementName element2("device", "bundleName2", "abilityName2");
+    want2.SetElement(element2);
+    std::vector<Want> wants;
+    wants.emplace_back(want1);
+    wants.emplace_back(want2);
+    WantSenderInfo wantSenderInfo = MakeWantSenderInfo(wants, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    pendingManager_ = std::make_shared<PendingWantManager>();
+    EXPECT_NE(pendingManager_, nullptr);
+    auto pendingRecord = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
+    Want want3;
+    ElementName element3("device", "bundleName2", "abilityName2");
+    want3.SetElement(element3);
+    WantSenderInfo wantSenderInfo1 = MakeWantSenderInfo(want3, 0, 0);
+    EXPECT_FALSE(((unsigned int)wantSenderInfo1.flags & (unsigned int)Flags::NO_BUILD_FLAG) != 0);
+    auto pendingRecord1 = iface_cast<PendingWantRecord>(
+        pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
+    EXPECT_NE(pendingRecord1, nullptr);
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
+    pendingManager_->ClearPendingWantRecordTask("bundleName3");
+    EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

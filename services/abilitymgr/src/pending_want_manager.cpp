@@ -19,6 +19,7 @@
 #include <chrono>
 #include <thread>
 
+#include "ability_util.h"
 #include "ability_manager_service.h"
 #include "hilog_wrapper.h"
 
@@ -108,6 +109,7 @@ sptr<IWantSender> PendingWantManager::GetWantSenderLocked(const int32_t callingU
         rec->SetCallerUid(callingUid);
         pendingKey->SetCode(PendingRecordIdCreate());
         wantRecords_.insert(std::make_pair(pendingKey, rec));
+        HILOG_INFO("wantRecords_ size %{public}zu", wantRecords_.size());
         return rec;
     }
     return nullptr;
@@ -420,6 +422,45 @@ int32_t PendingWantManager::GetPendingRequestWant(const sptr<IWantSender> &targe
     want.reset(new (std::nothrow) Want(record->GetKey()->GetRequestWant()));
     HILOG_ERROR("%{public}s:want is ok.", __func__);
     return NO_ERROR;
+}
+
+void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
+{
+    HILOG_INFO("ClearPendingWantRecord, bundleName: %{public}s", bundleName.c_str());
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityManagerService);
+    auto handler = abilityManagerService->GetEventHandler();
+    CHECK_POINTER(handler);
+    auto task = [bundleName, this]() { ClearPendingWantRecordTask(bundleName); };
+    handler->PostTask(task);
+}
+
+void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleName)
+{
+    HILOG_INFO("ClearPendingWantRecordTask, bundleName: %{public}s", bundleName.c_str());
+    std::lock_guard<std::recursive_mutex> locker(mutex_);
+    auto iter = wantRecords_.begin();
+    while (iter != wantRecords_.end()) {
+        bool hasBundle = false;
+        const auto &pendingRecord = iter->second;
+        if ((pendingRecord != nullptr)) {
+            auto wantInfos = pendingRecord->GetKey()->GetAllWantsInfos();
+            for (const auto &wantInfo: wantInfos) {
+                if (wantInfo.want.GetBundle() == bundleName) {
+                    hasBundle = true;
+                    break;
+                }
+            }
+            if (hasBundle) {
+                iter = wantRecords_.erase(iter);
+                HILOG_INFO("wantRecords_ size %{public}zu", wantRecords_.size());
+            } else {
+                ++iter;
+            }
+        } else {
+            ++iter;
+        }
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS
