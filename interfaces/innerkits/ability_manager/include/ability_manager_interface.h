@@ -24,7 +24,7 @@
 #include "ability_connect_callback_interface.h"
 #include "ability_scheduler_interface.h"
 #include "ability_start_setting.h"
-#include "mission_snapshot_info.h"
+#include "mission_snapshot.h"
 #include "ability_mission_info.h"
 #include "mission_option.h"
 #include "stack_info.h"
@@ -254,7 +254,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) = 0;
+    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) = 0;
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -626,6 +626,8 @@ public:
 
         // ipc id for starting ability by settings(1006)
         START_ABILITY_FOR_SETTINGS,
+
+        GET_ABILITY_MISSION_SNAPSHOT,
 
         GET_SYSTEM_MEMORY_ATTR,
 

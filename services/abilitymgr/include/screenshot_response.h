@@ -13,30 +13,34 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
-#define OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
+#ifndef OHOS_AAFWK_SCREEN_SHOT_RESPONSE_H
+#define OHOS_AAFWK_SCREEN_SHOT_RESPONSE_H
 
+#include <map>
+#include <memory>
+#include <mutex>
 #include <string>
-
-#include "parcel.h"
+#include <condition_variable>
+#include "nocopyable.h"
+#include "wm_common.h"
 
 namespace OHOS {
 namespace AAFwk {
-/**
- * @struct ImageInfo
- * ImageInfo is used to save informations about sanpshot.
- */
-struct ImageInfo : public Parcelable {
-    uint32_t width;
-    uint32_t height;
-    uint32_t format;
-    uint32_t size;
-    int32_t shmKey;
+class ScreenShotResponse {
+public:
+    ScreenShotResponse() = default;
+    virtual ~ScreenShotResponse() = default;
 
-    bool ReadFromParcel(Parcel &parcel);
-    virtual bool Marshalling(Parcel &parcel) const override;
-    static ImageInfo *Unmarshalling(Parcel &parcel);
+    void OnWindowShot(const struct WMImageInfo &info);
+    WMImageInfo GetImageInfo();
+
+private:
+    static constexpr int TIME_OUT = 200 * 1000;
+    std::mutex mutex_;
+    std::condition_variable condition_;
+    std::shared_ptr<WMImageInfo> info_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
-#endif  // OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
+
+#endif  // OHOS_AAFWK_SCREEN_SHOT_RESPONSE_H

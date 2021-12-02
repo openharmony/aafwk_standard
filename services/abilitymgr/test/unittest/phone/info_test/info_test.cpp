@@ -17,7 +17,7 @@
 #include "stack_info.h"
 #include "lifecycle_state_info.h"
 #include "image_info.h"
-#include "mission_snapshot_info.h"
+#include "mission_snapshot.h"
 #include "mission_description_info.h"
 #include "ability_mission_info.h"
 
@@ -32,16 +32,14 @@ public:
     void SetUp();
     void TearDown();
 
-    StackInfo Stackinfo_{};
-    MissionStackInfo missionStackInfo_{};
-    MissionRecordInfo missionRecordInfo_{};
-    AbilityRecordInfo abilityRecordInfo_{};
-    LifeCycleStateInfo lifeCycleStateInfo_{};
-    ImageInfo imageInfo_{};
-    ImageHeader imageHeader_{};
-    MissionSnapshotInfo missionSnapshotInfo_{};
-    MissionDescriptionInfo missionDescriptionInfo_{};
-    AbilityMissionInfo recentMissionInfo_{};
+    StackInfo Stackinfo_ {};
+    MissionStackInfo missionStackInfo_ {};
+    MissionRecordInfo missionRecordInfo_ {};
+    AbilityRecordInfo abilityRecordInfo_ {};
+    LifeCycleStateInfo lifeCycleStateInfo_ {};
+    ImageInfo imageInfo_ {};
+    MissionDescriptionInfo missionDescriptionInfo_ {};
+    AbilityMissionInfo recentMissionInfo_ {};
 };
 
 void InfoTest::SetUpTestCase(void)
@@ -229,30 +227,32 @@ HWTEST_F(InfoTest, stack_info_oprator_005, TestSize.Level0)
 }
 
 /*
- * Feature: ImageHeader
+ * Feature: ImageInfo
  * Function: ReadFromParcel and Marshalling and Unmarshalling
  * SubFunction: NA
- * FunctionPoints: ImageHeader ReadFromParcel and Marshalling and Unmarshalling
+ * FunctionPoints: ImageInfo ReadFromParcel and Marshalling and Unmarshalling
  * EnvConditions:NA
- * CaseDescription: The process of verifying ImageHeader parcel
+ * CaseDescription: The process of verifying ImageInfo parcel
  */
 HWTEST_F(InfoTest, stack_info_oprator_007, TestSize.Level0)
 {
-    imageHeader_.colorMode = 8;
-    imageHeader_.reserved = 24;
-    imageHeader_.width = 10;
-    imageHeader_.height = 10;
+    imageInfo_.width = 8;
+    imageInfo_.height = 24;
+    imageInfo_.format = 10;
+    imageInfo_.size = 10;
+    imageInfo_.shmKey = 30;
     Parcel parcel;
-    imageHeader_.Marshalling(parcel);
-    ImageHeader *obj = imageHeader_.Unmarshalling(parcel);
+    imageInfo_.Marshalling(parcel);
+    ImageInfo *obj = imageInfo_.Unmarshalling(parcel);
     if (!obj) {
         return;
     }
     EXPECT_TRUE(obj);
-    EXPECT_EQ(obj->colorMode, imageHeader_.colorMode);
-    EXPECT_EQ(obj->reserved, imageHeader_.reserved);
-    EXPECT_EQ(obj->width, imageHeader_.width);
-    EXPECT_EQ(obj->height, imageHeader_.height);
+    EXPECT_EQ(obj->width, imageInfo_.width);
+    EXPECT_EQ(obj->height, imageInfo_.height);
+    EXPECT_EQ(obj->format, imageInfo_.format);
+    EXPECT_EQ(obj->size, imageInfo_.size);
+    EXPECT_EQ(obj->shmKey, imageInfo_.shmKey);
 }
 
 /*

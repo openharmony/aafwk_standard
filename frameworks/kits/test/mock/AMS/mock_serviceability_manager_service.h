@@ -137,7 +137,7 @@ public:
         return 0;
     }
 
-    int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
     {
         return 0;
     }
