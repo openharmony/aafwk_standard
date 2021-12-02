@@ -1933,9 +1933,10 @@ napi_value NAPI_GetAbilityMissionSnapshotWrap(
 napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
 {
     size_t argc = 2;
+    const size_t maxSize = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}zu]", argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
@@ -1944,7 +1945,7 @@ napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_value_int32(env, argv[0], &missionId));
 
     bool callBackMode = false;
-    if (argc >= 2) {
+    if (argc >= maxSize) {
         napi_valuetype valuetype;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
