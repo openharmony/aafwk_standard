@@ -268,10 +268,10 @@ int AbilityManagerStub::ScheduleCommandAbilityDoneInner(MessageParcel &data, Mes
 
 int AbilityManagerStub::GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply)
 {
-    MissionSnapshotInfo snapshot;
+    MissionPixelMap missionPixelMap;
     int32_t missionId = data.ReadInt32();
-    int32_t result = GetMissionSnapshot(missionId, snapshot);
-    if (!reply.WriteParcelable(&snapshot)) {
+    int32_t result = GetMissionSnapshot(missionId, missionPixelMap);
+    if (!reply.WriteParcelable(&missionPixelMap)) {
         HILOG_ERROR("GetMissionSnapshot error");
         return ERR_INVALID_VALUE;
     }

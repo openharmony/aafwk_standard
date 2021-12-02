@@ -578,7 +578,7 @@ int AbilityManagerProxy::GetRecentMissions(
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     int error;
     MessageParcel data;
@@ -597,12 +597,12 @@ int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionSnap
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
     }
-    std::unique_ptr<MissionSnapshotInfo> info(reply.ReadParcelable<MissionSnapshotInfo>());
+    std::unique_ptr<MissionPixelMap> info(reply.ReadParcelable<MissionPixelMap>());
     if (!info) {
         HILOG_ERROR("readParcelableInfo failed.");
         return ERR_UNKNOWN_OBJECT;
     }
-    snapshot = *info;
+    missionPixelMap = *info;
     return reply.ReadInt32();
 }
 

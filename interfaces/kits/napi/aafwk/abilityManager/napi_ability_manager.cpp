@@ -292,6 +292,41 @@ int32_t RemoveMissionsForResult(const std::vector<int32_t> &missionIds)
     return error;
 }
 
+void GetMissionSnapshotInfoForResult(napi_env env, MissionSnapshot &recentMissionInfos, napi_value result)
+{
+    HILOG_INFO("%{public}s,%{public}d", __PRETTY_FUNCTION__, __LINE__);
+    napi_value objTopAbilityInfo;
+    NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &objTopAbilityInfo));
+    napi_value deviceId;
+    NAPI_CALL_RETURN_VOID(env,
+        napi_create_string_utf8(env, recentMissionInfos.topAbility.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &deviceId));
+    HILOG_INFO("deviceId = [%{public}s]", recentMissionInfos.topAbility.GetDeviceID().c_str());
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objTopAbilityInfo, "deviceId", deviceId));
+    napi_value bundleName;
+    NAPI_CALL_RETURN_VOID(env,
+        napi_create_string_utf8(
+            env, recentMissionInfos.topAbility.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &bundleName));
+    HILOG_INFO("bundleName = [%{public}s]", recentMissionInfos.topAbility.GetBundleName().c_str());
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objTopAbilityInfo, "bundleName", bundleName));
+    napi_value abilityName;
+    NAPI_CALL_RETURN_VOID(env,
+        napi_create_string_utf8(
+            env, recentMissionInfos.topAbility.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &abilityName));
+    HILOG_INFO("abilityName = [%{public}s]", recentMissionInfos.topAbility.GetAbilityName().c_str());
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objTopAbilityInfo, "abilityName", abilityName));
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "topAbility", objTopAbilityInfo));
+
+    if (recentMissionInfos.snapshot) {
+        HILOG_INFO("width = [%{public}d]", recentMissionInfos.snapshot->GetWidth());
+        HILOG_INFO("height = [%{public}d]", recentMissionInfos.snapshot->GetHeight());
+        napi_value iconResult = nullptr;
+        iconResult = Media::PixelMapNapi::CreatePixelMap(env, recentMissionInfos.snapshot);
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", iconResult));
+    } else {
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", NapiGetNull(env)));
+    }
+}
+
 auto NAPI_QueryRecentAbilityMissionInfosAsyncExecuteCallback = [](napi_env env, void *data) {
     HILOG_INFO("queryRecentAbilityMissionInfos called(CallBack Mode)...");
     AsyncMissionInfosCallbackInfo *async_callback_info = (AsyncMissionInfosCallbackInfo *)data;
@@ -1812,6 +1847,130 @@ napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
     return ((callBackMode) ? (nullptr) : (ret));
 }
 
+auto NAPI_GetAbilityMissionSnapshotAsyncExecute = [](napi_env env, void *data) {
+    HILOG_INFO("GetAbilityMissionSnapshotWrap called...");
+    AsyncGetMissionSnapshot *async_callback_info = (AsyncGetMissionSnapshot *)data;
+    AAFwk::AbilityManagerClient::GetInstance()->GetMissionSnapshot(async_callback_info->missionId,
+        async_callback_info->missionSnapshot);
+};
+
+auto NAPI_GetAbilityMissionSnapshotAsyncCompleteCallback = [](napi_env env, napi_status status, void *data) {
+    HILOG_INFO("GetAbilityMissionSnapshotWrap compeleted(CallBack Mode)...");
+    AsyncGetMissionSnapshot *async_callback_info = (AsyncGetMissionSnapshot *)data;
+    napi_value result[2] = {0};
+    napi_value callback;
+    napi_value undefined;
+    napi_value callResult = 0;
+
+    result[0] = GetCallbackErrorValue(async_callback_info->env, NapiAbilityMgr::BUSINESS_ERROR_CODE_OK);
+    napi_create_object(async_callback_info->env, &result[1]);
+    GetMissionSnapshotInfoForResult(
+        async_callback_info->env, async_callback_info->missionSnapshot, result[1]);
+    napi_get_undefined(env, &undefined);
+
+    napi_get_reference_value(env, async_callback_info->callback[0], &callback);
+    napi_call_function(env, undefined, callback, 2, &result[0], &callResult);
+    if (async_callback_info->callback[0] != nullptr) {
+            napi_delete_reference(env, async_callback_info->callback[0]);
+    }
+    napi_delete_async_work(env, async_callback_info->asyncWork);
+    delete async_callback_info;
+};
+
+auto NAPI_GetAbilityMissionSnapshotPromiseCompleteCallback = [](napi_env env, napi_status status, void *data) {
+    HILOG_INFO("GetAbilityMissionSnapshotWrap compeleted(Promise Mode)...");
+    AsyncGetMissionSnapshot *async_callback_info = (AsyncGetMissionSnapshot *)data;
+    napi_value result;
+    napi_create_object(async_callback_info->env, &result);
+    GetMissionSnapshotInfoForResult(async_callback_info->env, async_callback_info->missionSnapshot, result);
+    napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    napi_delete_async_work(env, async_callback_info->asyncWork);
+    delete async_callback_info;
+};
+
+napi_value NAPI_GetAbilityMissionSnapshotWrap(
+    napi_env env, napi_callback_info info, bool callBackMode, AsyncGetMissionSnapshot *async_callback_info)
+{
+    HILOG_INFO("NAPI_GetAbilityMissionSnapshotWrap called...");
+    if (callBackMode) {
+        napi_value resourceName;
+        napi_create_string_latin1(env, "NAPI_GetAbilityMissionSnapshotWrap", NAPI_AUTO_LENGTH, &resourceName);
+
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            NAPI_GetAbilityMissionSnapshotAsyncExecute,
+            NAPI_GetAbilityMissionSnapshotAsyncCompleteCallback,
+            (void *)async_callback_info,
+            &async_callback_info->asyncWork);
+
+        NAPI_CALL(env, napi_queue_async_work(env, async_callback_info->asyncWork));
+        // create reutrn
+        napi_value ret = 0;
+        NAPI_CALL(env, napi_create_int32(env, 0, &ret));
+        return ret;
+    } else {
+        napi_value resourceName;
+        napi_create_string_latin1(env, "NAPI_GetAbilityMissionSnapshotWrap", NAPI_AUTO_LENGTH, &resourceName);
+
+        napi_deferred deferred;
+        napi_value promise;
+        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+        async_callback_info->deferred = deferred;
+
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            NAPI_GetAbilityMissionSnapshotAsyncExecute,
+            NAPI_GetAbilityMissionSnapshotPromiseCompleteCallback,
+            (void *)async_callback_info,
+            &async_callback_info->asyncWork);
+        napi_queue_async_work(env, async_callback_info->asyncWork);
+        return promise;
+    }
+}
+
+napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
+{
+    size_t argc = 2;
+    napi_value argv[argc];
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    HILOG_INFO("argc = [%{public}d]", argc);
+
+    napi_valuetype valuetype0;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));
+    NAPI_ASSERT(env, valuetype0 == napi_number, "Wrong argument type. Numbers expected.");
+    int32_t missionId;
+    NAPI_CALL(env, napi_get_value_int32(env, argv[0], &missionId));
+
+    bool callBackMode = false;
+    if (argc >= 2) {
+        napi_valuetype valuetype;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
+        callBackMode = true;
+    }
+
+    AsyncGetMissionSnapshot *async_callback_info =
+        new (std::nothrow) AsyncGetMissionSnapshot {.env = env, .asyncWork = nullptr, .deferred = nullptr};
+    if (async_callback_info == nullptr) {
+        return NapiGetNull(env);
+    }
+
+    async_callback_info->missionId = missionId;
+    if (callBackMode) {
+        napi_create_reference(env, argv[1], 1, &async_callback_info->callback[0]);
+    }
+
+    napi_value ret = NAPI_GetAbilityMissionSnapshotWrap(env, info, callBackMode, async_callback_info);
+    if (ret == nullptr) {
+        delete async_callback_info;
+        async_callback_info = nullptr;
+    }
+
+    return ((callBackMode) ? (NapiGetNull(env)) : (ret));
+}
+
 void CreateWeightReasonCodeObject(napi_env env, napi_value value)
 {
     napi_value nUnknow = nullptr;
@@ -1863,6 +2022,13 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
     NAPI_CALL(env, napi_create_object(env, &result));
     NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
+    return result;
+}
+
+napi_value NapiGetNull(napi_env env)
+{
+    napi_value result = 0;
+    napi_get_null(env, &result);
     return result;
 }
 
