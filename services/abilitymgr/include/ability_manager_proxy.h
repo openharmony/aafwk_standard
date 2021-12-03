@@ -237,7 +237,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
+    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the

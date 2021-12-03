@@ -26,6 +26,7 @@
 #include "ability_record.h"
 #include "application_info.h"
 #include "mission_record.h"
+#include "mission_snapshot.h"
 #include "mission_stack.h"
 #include "mission_index_info.h"
 #include "mission_option.h"
@@ -37,6 +38,7 @@
 #include "stack_info.h"
 #include "power_storage.h"
 #include "want.h"
+#include "screenshot_handler.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -423,12 +425,8 @@ public:
 
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
-    /**
-     * set lock screen white list
-     *
-     * @param isAllow whether to allow startup on lock screen.
-     * @return Returns ERR_OK on success, others on failure.
-     */
+    int GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap);
+
     int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
     void UpdateLockScreenState(bool isLockScreen);
 private:
@@ -767,6 +765,7 @@ private:
     std::map<int, std::weak_ptr<AbilityRecord>> focusAbilityRecordMap_;  // abilities has been focused ,
                                                                          // key : display id, value: focused ability
     std::shared_ptr<ResumeMissionContainer> resumeMissionContainer_;
+    std::shared_ptr<ScreenshotHandler> screenshotHandler_;
     static int64_t splitScreenStackId;
     const static std::map<SystemWindowMode, std::string> windowModeToStrMap_;
     std::shared_ptr<LockScreenEventSubscriber> subscriber_ = nullptr;

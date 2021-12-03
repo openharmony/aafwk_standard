@@ -16,6 +16,7 @@
 #include <getopt.h>
 
 #include "ability_manager_client.h"
+#include "mission_snapshot.h"
 #include "hilog_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 
@@ -886,6 +887,7 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
 
     return result;
 }
+
 
 }  // namespace AAFwk
 }  // namespace OHOS

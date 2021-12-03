@@ -17,6 +17,10 @@
 
 #include <singleton.h>
 #include <map>
+#include <fstream>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include "hilog_wrapper.h"
 #include "ability_util.h"
@@ -25,6 +29,7 @@
 #include "app_scheduler.h"
 #include "common_event.h"
 #include "common_event_manager.h"
+#include "shared_memory.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -47,6 +52,7 @@ void AbilityStackManager::Init()
 
     resumeMissionContainer_ = std::make_shared<ResumeMissionContainer>(
         DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler());
+    screenshotHandler_ = std::make_shared<ScreenshotHandler>();
     powerStorage_ = std::make_shared<PowerStorage>();
     if (!SubscribeEvent()) {
         HILOG_ERROR("SubscribeEvent Error.");
@@ -4301,6 +4307,42 @@ void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<Missi
     if (resumeMissionContainer_ && resumeMissionContainer_->IsResume(mission->GetMissionRecordId())) {
         resumeMissionContainer_->Resume(mission);
     }
+}
+
+int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap)
+{
+    HILOG_INFO("Get mission snapshot.");
+
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+
+    auto missionRecord = GetMissionRecordFromAllStacks(missionId);
+    CHECK_POINTER_AND_RETURN_LOG(missionRecord, REMOVE_MISSION_ID_NOT_EXIST, "mission is invalid.");
+    auto topAbilityRecord = missionRecord->GetTopAbilityRecord();
+    CHECK_POINTER_AND_RETURN_LOG(topAbilityRecord, REMOVE_MISSION_ID_NOT_EXIST, "top ability is invalid.");
+    auto windowInfo = topAbilityRecord->GetWindowInfo();
+    int windowID = 0;
+    if (windowInfo) {
+        windowID = windowInfo->windowToken_;
+        HILOG_INFO("windowID is %{public}d", windowID);
+    }
+    screenshotHandler_->StartScreenshot(missionId, windowID);
+    auto topAbility = missionRecord->GetTopAbilityRecord();
+    if (topAbility) {
+        OHOS::AppExecFwk::ElementName topElement(topAbility->GetAbilityInfo().deviceId,
+            topAbility->GetAbilityInfo().bundleName,
+            topAbility->GetAbilityInfo().name);
+        missionPixelMap.topAbility = topElement;
+    }
+
+    auto imageInfo = screenshotHandler_->GetImageInfo(missionId);
+    screenshotHandler_->RemoveImageInfo(missionId);
+    HILOG_INFO("width : %{public}d, height: %{public}d", imageInfo.width, imageInfo.height);
+    missionPixelMap.imageInfo.width = imageInfo.width;
+    missionPixelMap.imageInfo.height = imageInfo.height;
+    missionPixelMap.imageInfo.format = imageInfo.format;
+    missionPixelMap.imageInfo.size = imageInfo.size;
+    missionPixelMap.imageInfo.shmKey = SharedMemory::PushSharedMemory(imageInfo.data, imageInfo.size);
+    return ERR_OK;
 }
 
 bool AbilityStackManager::IsLockScreenState()

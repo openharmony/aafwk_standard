@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "mission_snapshot_info.h"
+#include "mission_snapshot.h"
 
 #include "hilog_wrapper.h"
 #include "nlohmann/json.hpp"
@@ -21,19 +21,24 @@
 
 namespace OHOS {
 namespace AAFwk {
-bool MissionSnapshotInfo::ReadFromParcel(Parcel &parcel)
+bool MissionPixelMap::ReadFromParcel(Parcel &parcel)
 {
-    std::unique_ptr<ImageInfo> image(parcel.ReadParcelable<ImageInfo>());
-    if (image == nullptr) {
+    std::unique_ptr<AppExecFwk::ElementName> ability(parcel.ReadParcelable<AppExecFwk::ElementName>());
+    if (ability == nullptr) {
         return false;
     }
-    snapshot = *image;
+    topAbility = *ability;
+    std::unique_ptr<AAFwk::ImageInfo> image(parcel.ReadParcelable<AAFwk::ImageInfo>());
+    if (ability == nullptr) {
+        return false;
+    }
+    imageInfo = *image;
     return true;
 }
 
-MissionSnapshotInfo *MissionSnapshotInfo::Unmarshalling(Parcel &parcel)
+MissionPixelMap *MissionPixelMap::Unmarshalling(Parcel &parcel)
 {
-    MissionSnapshotInfo *info = new (std::nothrow) MissionSnapshotInfo();
+    MissionPixelMap *info = new (std::nothrow) MissionPixelMap();
     if (info == nullptr) {
         return nullptr;
     }
@@ -45,9 +50,14 @@ MissionSnapshotInfo *MissionSnapshotInfo::Unmarshalling(Parcel &parcel)
     return info;
 }
 
-bool MissionSnapshotInfo::Marshalling(Parcel &parcel) const
+bool MissionPixelMap::Marshalling(Parcel &parcel) const
 {
-    parcel.WriteParcelable(&snapshot);
+    if (!parcel.WriteParcelable(&topAbility)) {
+        return false;
+    }
+    if (!parcel.WriteParcelable(&imageInfo)) {
+        return false;
+    }
     return true;
 }
 }  // namespace AAFwk
