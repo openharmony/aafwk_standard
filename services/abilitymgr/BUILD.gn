@@ -47,10 +47,13 @@ config("abilityms_config") {
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/graphic/standard/interfaces/innerkits",
+    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "//foundation/graphic/standard/interfaces/innerkits/wmservice",
     "//base/global/i18n_standard/frameworks/intl/include",
   ]
   cflags = []
@@ -64,7 +67,6 @@ ohos_shared_library("abilityms") {
   sources += [ "${services_path}/abilitymgr/src/sa_mgr_client.cpp" ]
 
   configs = [ ":abilityms_config" ]
-
   deps = [
     "${innerkits_path}/want:want",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
@@ -79,6 +81,7 @@ ohos_shared_library("abilityms") {
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//utils/native/base:utils",
   ]
 
@@ -88,6 +91,8 @@ ohos_shared_library("abilityms") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
+
+  public_deps = [ "//foundation/graphic/standard:libwmservice" ]
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

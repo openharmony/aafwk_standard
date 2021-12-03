@@ -16,13 +16,13 @@
 #include "ability_manager_client.h"
 
 #include "string_ex.h"
-
 #include "ability_manager_interface.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "if_system_ability_manager.h"
 #include "system_ability_definition.h"
+#include "shared_memory.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -230,11 +230,41 @@ ErrCode AbilityManagerClient::GetRecentMissions(
     return abms->GetRecentMissions(numMax, flags, recentList);
 }
 
-ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->GetMissionSnapshot(missionId, snapshot);
+    MissionPixelMap missionPixelMap;
+    int ret = abms->GetMissionSnapshot(missionId, missionPixelMap);
+    if (ret == ERR_OK) {
+        HILOG_INFO("missionPixelMap.imageInfo.shmKey: %{public}d", missionPixelMap.imageInfo.shmKey);
+        if (missionPixelMap.imageInfo.size == 0) {
+            HILOG_INFO("size is 0.");
+            return -1;
+        }
+        void *data = SharedMemory::PopSharedMemory(missionPixelMap.imageInfo.shmKey, missionPixelMap.imageInfo.size);
+        if (!data) {
+            HILOG_INFO("SharedMemory::PopSharedMemory return value is nullptr.");
+            return -1;
+        }
+        Media::InitializationOptions mediaOption;
+        mediaOption.size.width = missionPixelMap.imageInfo.width;
+        mediaOption.size.height = missionPixelMap.imageInfo.height;
+        mediaOption.pixelFormat = Media::PixelFormat::BGRA_8888;
+        mediaOption.editable = true;
+        auto pixel = Media::PixelMap::Create(
+            (const uint32_t *)data, missionPixelMap.imageInfo.size / sizeof(uint32_t), mediaOption);
+        if (!pixel) {
+            HILOG_INFO(" Media::PixelMap::Create return value is nullptr.");
+            return -1;
+        }
+        HILOG_INFO("width = [%{public}d]", pixel->GetWidth());
+        HILOG_INFO("height = [%{public}d]", pixel->GetHeight());
+        HILOG_INFO("size = [%{public}d]", missionPixelMap.imageInfo.size);
+        missionSnapshot.topAbility = missionPixelMap.topAbility;
+        missionSnapshot.snapshot = std::move(pixel);
+    }
+    return ret;
 }
 
 ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)

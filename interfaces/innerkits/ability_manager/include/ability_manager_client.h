@@ -241,7 +241,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot);
+    ErrCode GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot);
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the

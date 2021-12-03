@@ -99,7 +99,7 @@ public:
     int GetRecentMissions(
         const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
 
-    int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
+    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
     int RemoveMission(int id) override;
 

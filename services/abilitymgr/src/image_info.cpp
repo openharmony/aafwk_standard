@@ -15,47 +15,20 @@
 
 #include "image_info.h"
 
-#include "string_ex.h"
-#include "nlohmann/json.hpp"
 #include "hilog_wrapper.h"
+#include "nlohmann/json.hpp"
+#include "string_ex.h"
 
 namespace OHOS {
 namespace AAFwk {
-bool ImageHeader::ReadFromParcel(Parcel &parcel)
-{
-    colorMode = parcel.ReadUint32();
-    reserved = parcel.ReadUint32();
-    width = parcel.ReadUint16();
-    height = parcel.ReadUint16();
-    return true;
-}
-
-ImageHeader *ImageHeader::Unmarshalling(Parcel &parcel)
-{
-    ImageHeader *info = new (std::nothrow) ImageHeader();
-    if (info == nullptr) {
-        return nullptr;
-    }
-
-    if (!info->ReadFromParcel(parcel)) {
-        delete info;
-        info = nullptr;
-    }
-    return info;
-}
-
-bool ImageHeader::Marshalling(Parcel &parcel) const
-{
-    parcel.WriteUint32(colorMode);
-    parcel.WriteUint32(reserved);
-    parcel.WriteUint16(width);
-    parcel.WriteUint16(height);
-    return true;
-}
-
 bool ImageInfo::ReadFromParcel(Parcel &parcel)
 {
-    return false;
+    parcel.ReadUint32(width);
+    parcel.ReadUint32(height);
+    parcel.ReadUint32(format);
+    parcel.ReadUint32(size);
+    parcel.ReadInt32(shmKey);
+    return true;
 }
 
 ImageInfo *ImageInfo::Unmarshalling(Parcel &parcel)
@@ -74,7 +47,12 @@ ImageInfo *ImageInfo::Unmarshalling(Parcel &parcel)
 
 bool ImageInfo::Marshalling(Parcel &parcel) const
 {
-    return false;
+    parcel.WriteUint32(width);
+    parcel.WriteUint32(height);
+    parcel.WriteUint32(format);
+    parcel.WriteUint32(size);
+    parcel.WriteInt32(shmKey);
+    return true;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

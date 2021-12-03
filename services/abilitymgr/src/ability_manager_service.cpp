@@ -403,9 +403,13 @@ int AbilityManagerService::GetRecentMissions(
     return currentStackManager_->GetRecentMissions(numMax, flags, recentList);
 }
 
-int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
-    return 0;
+    if (missionId < 0) {
+        HILOG_ERROR("GetMissionSnapshot failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return currentStackManager_->GetMissionSnapshot(missionId, missionPixelMap);
 }
 
 int AbilityManagerService::SetMissionDescriptionInfo(
