@@ -2976,7 +2976,7 @@ napi_value WrapResultSet(napi_env env, const std::shared_ptr<NativeRdb::AbsShare
     HILOG_INFO("%{public}s,called", __func__);
     if (resultSet == nullptr) {
         HILOG_ERROR("%{public}s, input parameter resultSet is nullptr", __func__);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     return RdbJsKit::ResultSetProxy::NewInstance(env, resultSet);
