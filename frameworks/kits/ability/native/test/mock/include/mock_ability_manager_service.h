@@ -39,6 +39,10 @@ public:
     {
         return 0;
     }
+    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid) override
+    {
+        return 0;
+    }
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
     int ConnectAbility(
@@ -57,7 +61,7 @@ public:
     void DumpState(const std::string &args, std::vector<std::string> &info) override;
 
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
-    int StopServiceAbility(const Want &want) override;
+    int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken) override;
     int PowerOff() override;
     int PowerOn() override;
 
@@ -113,7 +117,7 @@ public:
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
-
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     int RemoveMission(int id) override;
 
     int RemoveStack(int id) override;
@@ -144,7 +148,7 @@ public:
 
     int KillProcess(const std::string &bundleName) override;
 
-    int UninstallApp(const std::string &bundleName) override;
+    int UninstallApp(const std::string &bundleName, const int uid) override;
 
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override
     {
@@ -162,7 +166,7 @@ public:
         return 0;
     }
 
-    enum RequestCode {
+    enum class RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,
         E_STATE_ACTIVE,

@@ -51,7 +51,7 @@ void AbilityTokenStubTest::SetUp(void)
  * EnvConditions:NA
  * CaseDescription: verify AbilityTokenStub is create success
  */
-HWTEST_F(AbilityTokenStubTest, ability_token_stub_operating_001, TestSize.Level0)
+HWTEST_F(AbilityTokenStubTest, ability_token_stub_operating_001, TestSize.Level1)
 {
     EXPECT_NE(abilityTokenStub_, nullptr);
 }
@@ -64,7 +64,7 @@ HWTEST_F(AbilityTokenStubTest, ability_token_stub_operating_001, TestSize.Level0
  * EnvConditions:NA
  * CaseDescription: verify AbilityTokenRecipient is create success
  */
-HWTEST_F(AbilityTokenStubTest, ability_token_stub_operating_002, TestSize.Level0)
+HWTEST_F(AbilityTokenStubTest, ability_token_stub_operating_002, TestSize.Level1)
 {
     EXPECT_NE(abilityTokenRecipient_, nullptr);
 }

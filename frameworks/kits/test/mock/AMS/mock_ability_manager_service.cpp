@@ -165,7 +165,7 @@ int MockAbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> 
     return 0;
 }
 
-int MockAbilityManagerService::StopServiceAbility(const Want &want)
+int MockAbilityManagerService::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     return 0;
 }

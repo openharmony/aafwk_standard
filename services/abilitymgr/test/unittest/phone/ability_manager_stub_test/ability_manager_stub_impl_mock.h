@@ -45,7 +45,7 @@ public:
     MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
-
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {
         code_ = code;
@@ -134,12 +134,18 @@ public:
         return 0;
     }
 
-    virtual int StopServiceAbility(const Want &want)
+    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
     {
         return 0;
     }
 
     virtual int GetAllStackInfo(StackInfo &stackInfo)
+    {
+        return 0;
+    }
+
+    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+        int requestCode = -1, int requestUid = -1) override
     {
         return 0;
     }
@@ -183,7 +189,7 @@ public:
         return 0;
     }
 
-    virtual int UninstallApp(const std::string &bundleName)
+    virtual int UninstallApp(const std::string &bundleName, const int uid)
     {
         return 0;
     }

@@ -30,6 +30,7 @@ namespace AAFwk {
 namespace AbilityUtil {
 constexpr int32_t SYSTEM_UID = 1000;
 constexpr int32_t ROOT_UID = 0;
+constexpr int32_t DEFAULT_SIZE = 1;
 
 static constexpr unsigned int CHANGE_CONFIG_ALL_CHANGED = 0xFFFFFFFF;
 static constexpr unsigned int CHANGE_CONFIG_NONE = 0x00000000;
@@ -106,10 +107,23 @@ static constexpr unsigned int CHANGE_CONFIG_DENSITY = 0x00000010;
     return false;
 }
 
-[[maybe_unused]] static std::string ConvertBundleNameSingleton(const std::string &bundleName, const std::string &name)
+[[maybe_unused]] static bool IsMultiApplicationSelectorAbility
+    (const std::string &bundleName, const std::string &abilityName)
 {
-    std::string strName =
-        AbilityConfig::MISSION_NAME_MARK_HEAD + bundleName + AbilityConfig::MISSION_NAME_SEPARATOR + name;
+    if (abilityName == AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME &&
+        bundleName == AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME) {
+        return true;
+    }
+
+    return false;
+}
+
+[[maybe_unused]] static std::string ConvertBundleNameSingleton(
+    const std::string &bundleName, const int &uid, const std::string &name)
+{
+    std::string strName = AbilityConfig::MISSION_NAME_MARK_HEAD + std::to_string(uid) +
+                        AbilityConfig::MISSION_NAME_SEPARATOR + bundleName + AbilityConfig::MISSION_NAME_SEPARATOR +
+                        name;
     return strName;
 }
 
@@ -148,26 +162,26 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
 {
     HILOG_DEBUG("%{public}s begin", __func__);
     if (!abilityInfo.visible) {
-        HILOG_ERROR("ability visible is false");
+        HILOG_DEBUG("ability visible is false");
         if (callerUid == -1) {
             callerUid = IPCSkeleton::GetCallingUid();
         }
         if (ROOT_UID == callerUid) {
-            HILOG_ERROR("uid is root");
+            HILOG_DEBUG("uid is root,ability cannot be start when the visible is false");
             return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
         }
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
         auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
         if (callerUid != SYSTEM_UID && !isSystemApp) {
-            HILOG_ERROR("caller is not systemAp or system");
+            HILOG_DEBUG("caller is not systemApp or system");
             std::string bundleName;
             bool result = bms->GetBundleNameForUid(callerUid, bundleName);
             if (!result) {
                 HILOG_ERROR("GetBundleNameForUid fail");
                 return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
             }
-            if (bundleName != abilityInfo.bundleName) {
+            if (bundleName != abilityInfo.bundleName && callerUid != abilityInfo.applicationInfo.uid) {
                 HILOG_ERROR("caller ability bundlename not equal abilityInfo.bundleName bundleName: %{public}s "
                             "abilityInfo.bundleName: %{public}s",
                     bundleName.c_str(),

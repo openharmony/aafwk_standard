@@ -111,6 +111,18 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
+     * StartAbility with want, send want to ability manager service.
+     *
+     * @param want Ability want.
+     * @param callerToken, caller ability token.
+     * @param requestCode Ability request code.
+     * @param requestUid Ability request uid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+        int requestCode, int requestUid);
+
+    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -217,9 +229,10 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
+     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    ErrCode StopServiceAbility(const Want &want);
+    ErrCode StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr);
 
     /**
      * Get the list of the missions that the user has recently launched,
@@ -360,6 +373,8 @@ public:
     void UnregisterCancelListener(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &recevier);
 
     ErrCode GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want);
+
+    ErrCode GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info);
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).

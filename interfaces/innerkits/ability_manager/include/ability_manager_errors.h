@@ -296,17 +296,22 @@ enum {
     CALLER_ISNOT_SYSTEMAPP,
 
     /**
-     * Result(2097211) for get bundleName by uid fail.
+     * Result(2097211) for start multiple app to start application selector.
+     */
+    START_MULTI_APPLICATION_SELECTOR,
+
+    /**
+     * Result(2097212) for get bundleName by uid fail.
      */
     GET_BUNDLENAME_BY_UID_FAIL,
 
     /**
-     * Result(2097212) for set white list fail.
+     * Result(2097213) for set white list fail.
      */
     SET_WHITE_LIST_FAIL,
 
     /**
-     * Result(2097213) for start ability failed,this ability is not on the white list
+     * Result(2097214) for start ability failed,this ability is not on the white list
      */
     START_ABILITY_NOT_ONTHE_WHITELIST,
 };

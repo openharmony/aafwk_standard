@@ -175,7 +175,7 @@ bool LifecycleTest::StartLauncherAbility()
         topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     }
 
-    ElementName element("device", "com.ix.hiWord", "LauncherAbility");
+    ElementName element("device", "com.ix.hiworld", "LauncherAbility");
     Want want;
     want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
     want.SetElement(element);

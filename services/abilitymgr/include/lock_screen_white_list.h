@@ -22,8 +22,8 @@
 namespace OHOS {
 namespace AAFwk {
 namespace AmsWhiteList {
-const std::string AMS_WHITE_LIST_FILE_PATH {"/data/ams_white_list/ams_lock_screen_white_list.json"};
-const std::string AMS_WHITE_LIST_DIR_PATH {"/data/ams_white_list"};
+const std::string WHITE_LIST_FILE_PATH {"/data/white_list/lock_screen_white_list.json"};
+const std::string WHITE_LIST_DIR_PATH {"/data/white_list"};
 const std::string ISAWAKEN_SCREEN {"isawaken_screen"};
 constexpr int DUMP_INDENT = 4;
 }  // namespace AmsWhiteList

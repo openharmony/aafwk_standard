@@ -127,6 +127,42 @@ int AbilityManagerProxy::StartAbility(const Want &want, const sptr<IRemoteObject
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::StartAbility(
+    const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("want write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(callerToken)) {
+        HILOG_ERROR("callerToken write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(requestCode)) {
+        HILOG_ERROR("requestCode write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(requestUid)) {
+        HILOG_ERROR("requestUid write failed.");
+        return INNER_ERR;
+    }
+
+    error = Remote()->SendRequest(IAbilityManager::START_ABILITY_AND_REQUESTUID, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
     int error;
@@ -476,7 +512,7 @@ int AbilityManagerProxy::TerminateAbilityResult(const sptr<IRemoteObject> &token
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::StopServiceAbility(const Want &want)
+int AbilityManagerProxy::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     int error;
     MessageParcel data;
@@ -488,6 +524,10 @@ int AbilityManagerProxy::StopServiceAbility(const Want &want)
     }
     if (!data.WriteParcelable(&want)) {
         HILOG_ERROR("want write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(callerToken)) {
+        HILOG_ERROR("callerToken write failed.");
         return INNER_ERR;
     }
     error = Remote()->SendRequest(IAbilityManager::STOP_SERVICE_ABILITY, data, reply, option);
@@ -715,7 +755,7 @@ int AbilityManagerProxy::KillProcess(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
+int AbilityManagerProxy::UninstallApp(const std::string &bundleName, const int uid)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -724,7 +764,7 @@ int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
     if (!WriteInterfaceToken(data)) {
         return INNER_ERR;
     }
-    if (!data.WriteString16(Str8ToStr16(bundleName))) {
+    if (!data.WriteString16(Str8ToStr16(bundleName)) || !data.WriteInt32(uid)) {
         HILOG_ERROR("bundleName write failed.");
         return ERR_INVALID_VALUE;
     }
@@ -1335,6 +1375,37 @@ int AbilityManagerProxy::GetPendingRequestWant(const sptr<IWantSender> &target, 
         return INNER_ERR;
     }
     want = std::move(wantInfo);
+
+    return NO_ERROR;
+}
+
+int AbilityManagerProxy::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (target == nullptr || !data.WriteParcelable(target->AsObject())) {
+        HILOG_ERROR("target write failed.");
+        return INNER_ERR;
+    }
+    if (info == nullptr || !data.WriteParcelable(info.get())) {
+        HILOG_ERROR("info write failed.");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::GET_PENDING_WANT_SENDER_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    std::unique_ptr<WantSenderInfo> wantSenderInfo(reply.ReadParcelable<WantSenderInfo>());
+    if (!wantSenderInfo) {
+        HILOG_ERROR("readParcelable Info failed");
+        return INNER_ERR;
+    }
+    info = std::move(wantSenderInfo);
 
     return NO_ERROR;
 }

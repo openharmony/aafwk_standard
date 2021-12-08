@@ -42,7 +42,8 @@ const std::string STRING_STATE_OFF_INVALID = "invalid_off";
 class MockAbilityManagerStub : public AbilityManagerStub {
 public:
     int StartAbility(const Want &want, int requestCode = -1);
-
+    MOCK_METHOD4(
+        StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant));
     MOCK_METHOD3(ConnectAbility,
@@ -64,7 +65,7 @@ public:
 
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &token, int startId));
 
-    int StopServiceAbility(const Want &want);
+    int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken);
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
@@ -75,7 +76,7 @@ public:
     MOCK_METHOD1(RemoveMission, int(int id));
     MOCK_METHOD1(RemoveStack, int(int id));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
-    MOCK_METHOD1(UninstallApp, int(const std::string &bundleName));
+    MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, const int uid));
 
     MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
     MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
@@ -113,7 +114,7 @@ public:
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
-
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 public:
     std::string powerState_;
 };
