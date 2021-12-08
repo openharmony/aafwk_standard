@@ -55,6 +55,18 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
+     * StartAbility with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode, Ability request code.
+     * @param requestUid, Ability request uid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+        int requestCode, int requestUid = DEFAULT_INVAL_VALUE) override;
+
+    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -204,9 +216,10 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
+     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want) override;
+    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr) override;
 
     /**
      * Obtains information about ability stack that are running on the device.
@@ -285,9 +298,10 @@ public:
      * Uninstall app
      *
      * @param bundleName.
+     * @param uid, UninstallApp uid.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName) override;
+    virtual int UninstallApp(const std::string &bundleName, const int uid) override;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -442,6 +456,7 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
+    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
     /**
      * set lock screen white list
      *

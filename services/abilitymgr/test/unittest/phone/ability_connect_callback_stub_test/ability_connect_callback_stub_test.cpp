@@ -55,7 +55,7 @@ void AbilityConnectCallBackStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: ElementName is nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_001, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_001, TestSize.Level1)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -83,7 +83,7 @@ HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_001, Test
  * EnvConditions: ElementName is not nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_002, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_002, TestSize.Level1)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -113,7 +113,7 @@ HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_002, Test
  * EnvConditions: ElementName is nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_003, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_003, TestSize.Level1)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 
@@ -141,7 +141,7 @@ HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_003, Test
  * EnvConditions: ElementName is not nullptr
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_004, TestSize.Level0)
+HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_004, TestSize.Level1)
 {
     sptr<MockAbilityConnectCallback> mockAbilityConnectStub(new MockAbilityConnectCallback());
 

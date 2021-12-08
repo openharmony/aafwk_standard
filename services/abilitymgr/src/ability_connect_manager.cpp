@@ -168,7 +168,8 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
     HILOG_INFO("Stop service ability locked.");
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
-    auto abilityRecord = GetServiceRecordByElementName(element.GetURI());
+    std::string key = std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + "/" + element.GetURI();
+    auto abilityRecord = GetServiceRecordByElementName(key);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     if (abilityRecord->IsTerminating()) {
@@ -196,13 +197,14 @@ void AbilityConnectManager::GetOrCreateServiceRecord(const AbilityRequest &abili
 {
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
-    auto serviceMapIter = serviceMap_.find(element.GetURI());
+    std::string key = std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + "/" + element.GetURI();
+    auto serviceMapIter = serviceMap_.find(key);
     if (serviceMapIter == serviceMap_.end()) {
         targetService = AbilityRecord::CreateAbilityRecord(abilityRequest);
         if (isCreatedByConnect && targetService != nullptr) {
             targetService->SetCreateByConnectMode();
         }
-        serviceMap_.emplace(element.GetURI(), targetService);
+        serviceMap_.emplace(key, targetService);
         isLoadedAbility = false;
     } else {
         targetService = serviceMapIter->second;
@@ -365,6 +367,7 @@ void AbilityConnectManager::OnAppStateChanged(const AppInfo &info)
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     std::for_each(serviceMap_.begin(), serviceMap_.end(), [&info](ServiceMapType::reference service) {
         if (service.second && service.second->GetApplicationInfo().name == info.appName &&
+            service.second->GetAbilityInfo().applicationInfo.uid == info.uid &&
             (info.processName == service.second->GetAbilityInfo().process ||
             info.processName == service.second->GetApplicationInfo().bundleName)) {
             service.second->SetAppState(info.state);
@@ -749,7 +752,8 @@ void AbilityConnectManager::RemoveServiceAbility(const std::shared_ptr<AbilityRe
 {
     CHECK_POINTER(abilityRecord);
     const AppExecFwk::AbilityInfo &abilityInfo = abilityRecord->GetAbilityInfo();
-    std::string element = abilityInfo.deviceId + "/" + abilityInfo.bundleName + "/" + abilityInfo.name;
+    std::string element = std::to_string(abilityInfo.applicationInfo.uid) + "/" + abilityInfo.deviceId + "/" +
+    abilityInfo.bundleName + "/" + abilityInfo.name;
     HILOG_INFO("Remove service(%{public}s) from map.", element.c_str());
     auto it = serviceMap_.find(element);
     if (it != serviceMap_.end()) {

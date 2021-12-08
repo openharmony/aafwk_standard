@@ -151,6 +151,18 @@ int AppScheduler::KillApplication(const std::string &bundleName)
     return ERR_OK;
 }
 
+int AppScheduler::KillApplicationByUid(const std::string &bundleName, const int uid)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    int ret = (int)appMgrClient_->KillApplicationByUid(bundleName, uid);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("Fail to kill application by uid.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
+
 void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
 {
     CHECK_POINTER(appMgrClient_);

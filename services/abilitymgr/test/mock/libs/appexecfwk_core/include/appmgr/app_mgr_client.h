@@ -116,6 +116,14 @@ public:
     virtual AppMgrResultCode KillApplication(const std::string &bundleName);
 
     /**
+     * kill the application
+     *
+     * @param bundleName.
+     * @param uid.
+     */
+    virtual AppMgrResultCode KillApplicationByUid(const std::string &bundleName, const int uid);
+
+    /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
      * clear the application data.
      *

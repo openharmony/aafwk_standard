@@ -22,6 +22,7 @@
 #include <memory>
 #include <vector>
 
+#include "ability_connect_callback_interface.h"
 #include "ability_info.h"
 #include "ability_start_setting.h"
 #include "ability_token_stub.h"
@@ -34,6 +35,7 @@
 #include "lifecycle_state_info.h"
 #include "want.h"
 #include "window_info.h"
+#include "uri.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -110,14 +112,29 @@ private:
  * @class AbilityRequest
  * Wrap parameters of starting ability.
  */
+enum AbilityCallType {
+    INVALID_TYPE = 0,
+    START_ABILITY_TYPE,
+    START_ABILITY_SETTING_TYPE,
+    CONNECT_ABILITY_TYPE,
+    ACQUIRE_DATA_ABILITY_TYPE,
+    STOP_SERVICE_ABILITY_TYPE,
+};
 struct AbilityRequest {
     Want want;
     AppExecFwk::AbilityInfo abilityInfo;
     AppExecFwk::ApplicationInfo appInfo;
     int requestCode = -1;
     bool restart = false;
-    sptr<IRemoteObject> callerToken;
+    int requestUid = -1;
+    int callerUid = -1;
+    bool tryBind = false;
+    std::shared_ptr<OHOS::Uri> uri = nullptr;
+    AbilityCallType callType = AbilityCallType::INVALID_TYPE;
+    sptr<IRemoteObject> callerToken = nullptr;
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
+    sptr<IAbilityConnection> connect = nullptr;
+    sptr<IRemoteObject> multiApplicationToken = nullptr;
     void Dump(std::vector<std::string> &state)
     {
         std::string dumpInfo = "      want [" + want.ToUri() + "]";
@@ -673,6 +690,10 @@ public:
     bool GetLockScreenState() const;
     void SetMovingBackgroundFlag(bool isMoving);
     bool IsMovingBackground() const;
+    void SetWillSatrtAbilityRequest(const std::shared_ptr<AbilityRequest> &abilityRequestPtr);
+    std::shared_ptr<AbilityRequest> GetWillSatrtAbilityRequest() const;
+    void SetMoveSplitScreenStack(bool isMoveSplitScreenStack);
+    bool IsMoveSplitScreenStack() const;
 
     void SetLockScreenRoot();
     bool IsLockScreenRoot() const;
@@ -750,9 +771,12 @@ private:
     bool isRestarting_ = false;     // is restarting ?
     bool isInMovingState_ = false;  // whether complete multi window moving state.
     bool isMovingBackground_ = false;
+    bool isMoveSplitScreenStack_ = false;
     bool isLockScreenRoot_ = false;
     bool isPowerStateLockScreen_ = false;
     AppState appState_ = AppState::BEGIN;
+    std::shared_ptr<AbilityRequest> abilityRequestPtr_ = {};
+    // the abilityRequest that the multi application selector will start
 };
 }  // namespace AAFwk
 }  // namespace OHOS

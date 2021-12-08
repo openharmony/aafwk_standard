@@ -90,6 +90,7 @@ struct AppInfo_ {
     std::vector<std::string> permissions;
     std::vector<ModuleInfo> moduleInfos;
     std::string entryDir;
+    bool isCloned;
 };
 
 struct AppInfoCB {

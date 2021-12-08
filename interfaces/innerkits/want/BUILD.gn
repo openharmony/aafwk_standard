@@ -38,6 +38,7 @@ config("want_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
     "//third_party/jsoncpp/include",
+    "//third_party/json/include",
   ]
 }
 

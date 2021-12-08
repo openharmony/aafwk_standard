@@ -24,7 +24,7 @@
 using namespace testing;
 using namespace testing::ext;
 namespace {
-const std::string AMS_WHITE_LIST_FILE_PATH {"/data/ams_white_list/ams_lock_screen_white_list.json"};
+const std::string WHITE_LIST_FILE_PATH {"/data/white_list/lock_screen_white_list.json"};
 }
 
 namespace OHOS {
@@ -79,7 +79,7 @@ HWTEST_F(LockScreenWhiteListTest, IsExistFile_0001, TestSize.Level1)
  */
 HWTEST_F(LockScreenWhiteListTest, IsExistFile_0002, TestSize.Level1)
 {
-    std::string path = AMS_WHITE_LIST_FILE_PATH;
+    std::string path = WHITE_LIST_FILE_PATH;
     auto ret = lockScreenWhiteList_->IsExistFile(path);
     EXPECT_EQ(ret, true);
 }

@@ -73,6 +73,18 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) = 0;
 
     /**
+     * StartAbility with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode, Ability request code.
+     * @param requestUid, Ability request uid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+        int requestCode, int requestUid) = 0;
+
+    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -221,9 +233,10 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
+     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want) = 0;
+    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr) = 0;
 
     /**
      * Obtains information about ability stack that are running on the device.
@@ -302,9 +315,10 @@ public:
      * Uninstall app
      *
      * @param bundleName.
+     * @param uid, UninstallApp uid.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName) = 0;
+    virtual int UninstallApp(const std::string &bundleName, const int uid = DEFAULT_INVAL_VALUE) = 0;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -457,6 +471,7 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
 
+    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) = 0;
     /**
      * set lock screen white list
      *
@@ -621,6 +636,10 @@ public:
         UNREGISTER_CANCEL_LISTENER,
 
         GET_PENDING_REQUEST_WANT,
+
+        START_ABILITY_AND_REQUESTUID,
+
+        GET_PENDING_WANT_SENDER_INFO,
 
         SET_SHOW_ON_LOCK_SCREEN,
 

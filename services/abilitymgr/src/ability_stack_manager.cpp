@@ -102,6 +102,13 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
         return ERR_INVALID_VALUE;
     }
 
+    if (currentTopAbilityRecord &&
+        AbilityUtil::IsMultiApplicationSelectorAbility(
+            currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+        HILOG_ERROR("Top ability is MultiApplicationSelector, cannot start ability");
+        return ERR_INVALID_VALUE;
+    }
+
     if (!waittingAbilityQueue_.empty()) {
         HILOG_INFO("Waiting queue is not empty, so enqueue ability for waiting.");
         EnqueueWaittingAbility(abilityRequest);
@@ -163,6 +170,8 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
     std::shared_ptr<MissionStack> targetStack = GetTargetMissionStack(abilityRequest);
     CHECK_POINTER_AND_RETURN(targetStack, CREATE_MISSION_STACK_FAILED);
     auto lastTopAbility = targetStack->GetTopAbilityRecord();
+    bool isTopSplitScreen = InFrontOfFullScreenStack();
+    HILOG_ERROR("Start ability locked %{public}d.", isTopSplitScreen);
 
     // 2. move target mission stack to top, currentMissionStack will be changed.
     MoveMissionStackToTop(targetStack);
@@ -179,6 +188,15 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
     targetAbilityRecord->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
     MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
 
+    if (abilityRequest.multiApplicationToken) {
+        HILOG_DEBUG("targetAbilityRecord is user select ability");
+        auto multiApplicationRecord = Token::GetAbilityRecordByToken(abilityRequest.multiApplicationToken);
+        if (multiApplicationRecord && AbilityUtil::IsMultiApplicationSelectorAbility(
+            multiApplicationRecord->GetAbilityInfo().bundleName, multiApplicationRecord->GetAbilityInfo().name)) {
+            targetAbilityRecord->SetBackAbilityRecord(multiApplicationRecord);
+        }
+    }
+
     // 4. start processing ability lifecycle
     if (currentTopAbility == nullptr) {
         // top ability is null, then launch the first Ability.
@@ -186,12 +204,13 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
         return targetAbilityRecord->LoadAbility();
     } else {
         // complete ability background if needed.
-        return StartAbilityLifeCycle(lastTopAbility, currentTopAbility, targetAbilityRecord);
+        return StartAbilityLifeCycle(lastTopAbility, currentTopAbility, targetAbilityRecord, isTopSplitScreen);
     }
 }
 
 int AbilityStackManager::StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> lastTopAbility,
-    std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility)
+    std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
+    bool isTopSplitScreen)
 {
     CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(currentTopAbility, ERR_INVALID_VALUE);
@@ -201,9 +220,25 @@ int AbilityStackManager::StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> la
     bool isStackChanged = currentTopAbility->GetMissionStackId() != targetAbility->GetMissionStackId();
     bool isCurrentFull = IsFullScreenStack(currentTopAbility->GetMissionStackId());
     bool isTargetFull = IsFullScreenStack(targetAbility->GetMissionStackId());
+    bool isSplitAbilityInActive = false;
 
-    if (isStackChanged && ((IsSplitScreenStack(currentTopAbility->GetMissionStackId()) && isTargetFull) ||
-                              IsSplitScreenStack(targetAbility->GetMissionStackId()))) {
+    if (isTopSplitScreen) {
+        auto splitScreenStack = GetTopSplitScreenStack();
+        CHECK_POINTER_AND_RETURN(splitScreenStack, ERR_INVALID_VALUE);
+        auto topAbilityRecord = splitScreenStack->GetTopAbilityRecord();
+        CHECK_POINTER_AND_RETURN(topAbilityRecord, ERR_INVALID_VALUE);
+        isSplitAbilityInActive = topAbilityRecord->IsAbilityState(AbilityState::INACTIVE);
+    }
+
+    if ((isStackChanged &&
+        ((IsSplitScreenStack(currentTopAbility->GetMissionStackId()) && isTargetFull) ||
+        IsSplitScreenStack(targetAbility->GetMissionStackId()) ||
+        (isTopSplitScreen && isTargetFull))) || (isTopSplitScreen && isSplitAbilityInActive)) {
+            if (isTopSplitScreen && AbilityUtil::IsMultiApplicationSelectorAbility(
+                targetAbility->GetAbilityInfo().bundleName, targetAbility->GetAbilityInfo().name)) {
+                HILOG_ERROR("multi app selector SetMoveSplitScreenStack %{public}d.", isTopSplitScreen);
+                targetAbility->SetMoveSplitScreenStack(isTopSplitScreen);
+            }
         return DispatchLifecycle(currentTopAbility, targetAbility, false);
     }
 
@@ -240,6 +275,10 @@ int AbilityStackManager::StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> la
         // 3. usually, last top ability need inactive, target ability need active.
         case T_DEFAULT:
         default: {
+            if (needBackgroundAbility && needBackgroundAbility->IsAbilityState(AbilityState::INACTIVE)) {
+                targetAbility->ProcessActivate();
+                break;
+            }
             needBackgroundAbility->Inactivate();
             break;
         }
@@ -317,6 +356,8 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     auto targetStack = GetTargetMissionStack(abilityRequest);
     CHECK_POINTER_AND_RETURN(targetStack, CREATE_MISSION_STACK_FAILED);
     auto lastTopAbility = targetStack->GetTopAbilityRecord();
+    bool isTopSplitScreen = InFrontOfFullScreenStack();
+    HILOG_ERROR("Start Ability As Multi Window Locked %{public}d.", isTopSplitScreen);
 
     // 2. get mission record and ability recode
     std::shared_ptr<AbilityRecord> targetAbilityRecord;
@@ -335,6 +376,14 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
         std::atoi(abilityRequest.startSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
     targetMissionRecord->SetMissionOption(option);
     missionOptions.push_front(option);
+    if (abilityRequest.multiApplicationToken) {
+        HILOG_DEBUG("targetAbilityRecord is user select ability");
+        auto multiApplicationRecord = Token::GetAbilityRecordByToken(abilityRequest.multiApplicationToken);
+        if (multiApplicationRecord && AbilityUtil::IsMultiApplicationSelectorAbility(
+            multiApplicationRecord->GetAbilityInfo().bundleName, multiApplicationRecord->GetAbilityInfo().name)) {
+            targetAbilityRecord->SetBackAbilityRecord(multiApplicationRecord);
+        }
+    }
 
     if (IsSplitScreenStack(targetStack->GetMissionStackId())) {
         GenerateMissinOptionsOfSplitScreen(missionOptions, targetStack, targetMissionRecord);
@@ -350,7 +399,8 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
         MoveMissionStackToTop(targetStack);
         MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
         HILOG_DEBUG("First create mission record ,missionId:%{public}d", targetMissionRecord->GetMissionRecordId());
-        CHECK_RET_RETURN_RET(StartAbilityLifeCycle(lastTopAbility, currentTopAbility, targetAbilityRecord),
+        CHECK_RET_RETURN_RET(
+            StartAbilityLifeCycle(lastTopAbility, currentTopAbility, targetAbilityRecord, isTopSplitScreen),
             "Start ability lifecycle error.");
         NotifyWindowModeChanged(GetLatestSystemWindowMode());
         return ERR_OK;
@@ -479,7 +529,8 @@ void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRec
     currentMissionStack_->MoveMissionRecordToTop(targetMissionRecord);
 }
 
-int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
+int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant,
+    const std::shared_ptr<AbilityRequest> &abilityRequestPtr)
 {
     HILOG_INFO("Terminate ability.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
@@ -519,6 +570,10 @@ int AbilityStackManager::TerminateAbility(const sptr<IRemoteObject> &token, int 
     }
     HILOG_INFO("Schedule normal terminate process.");
     abilityRecord->SetTerminatingState();
+    if (abilityRequestPtr && AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+        abilityRecord->SetWillSatrtAbilityRequest(abilityRequestPtr);
+    }
 
     std::list<TerminatingAbility> list;
     TerminatingAbility unit;
@@ -812,10 +867,14 @@ void AbilityStackManager::RemoveTerminatingAbility(
 
     auto isActive = abilityRecord->IsActiveState();
 
-    missionRecord->RemoveAbilityRecord(abilityRecord);
     DelayedSingleton<AppScheduler>::GetInstance()->PrepareTerminate(abilityRecord->GetToken());
     terminateAbilityRecordList_.push_back(abilityRecord);
-
+    if (AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+        RemoveMultiAppSelectorAbility(abilityRecord);
+        return;
+    }
+    missionRecord->RemoveAbilityRecord(abilityRecord);
     std::shared_ptr<AbilityRecord> needTopAbility;
     // clear next ability record
     abilityRecord->SetNextAbilityRecord(nullptr);
@@ -1069,6 +1128,32 @@ void AbilityStackManager::MoveMissionStackToTop(const std::shared_ptr<MissionSta
     currentMissionStack_ = stack;
 }
 
+void AbilityStackManager::MoveMissionStackToFullStackTop(const std::shared_ptr<MissionStack> &stack)
+{
+    if (stack == nullptr) {
+        HILOG_ERROR("Stack is nullptr.");
+        return;
+    }
+    if (InFrontOfFullScreenStack()) {
+        HILOG_DEBUG("Stack is at the full stack list, mission id: %d", stack->GetMissionStackId());
+        return;
+    }
+    auto isExist = [&](const std::shared_ptr<MissionStack> &stack) {
+        return (stack->GetMissionStackId() == DEFAULT_MISSION_STACK_ID ||
+                stack->GetMissionStackId() == LAUNCHER_MISSION_STACK_ID ||
+                IsSplitScreenStack(stack->GetMissionStackId()));
+    };
+    missionStackList_.remove(stack);
+    auto iterExist = std::find_if(missionStackList_.begin(), missionStackList_.end(), isExist);
+    if (iterExist != missionStackList_.end()) {
+        missionStackList_.insert(iterExist, stack);
+        if (missionStackList_.front() == stack) {
+            lastMissionStack_ = currentMissionStack_;
+            currentMissionStack_ = stack;
+        }
+    }
+}
+
 std::shared_ptr<MissionStack> AbilityStackManager::GetTargetMissionStack(const AbilityRequest &abilityRequest)
 {
     // lockScreen : starting ability in lockScreen stack
@@ -1100,11 +1185,14 @@ std::shared_ptr<MissionStack> AbilityStackManager::GetTargetMissionStackByDefaul
     bool isSingleton = abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON;
     std::shared_ptr<MissionRecord> requestMission = nullptr;
     if (isSingleton) {
-        std::string bundleName = AbilityUtil::ConvertBundleNameSingleton(
-            abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+        std::string bundleName = AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName,
+        abilityRequest.abilityInfo.applicationInfo.uid,
+        abilityRequest.abilityInfo.name);
         requestMission = GetMissionRecordByName(bundleName);
     } else {
-        requestMission = GetMissionRecordByName(abilityRequest.abilityInfo.bundleName);
+        std::string bundleName =
+            std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + abilityRequest.abilityInfo.bundleName;
+        requestMission = GetMissionRecordByName(bundleName);
     }
 
     bool isExist = requestMission != nullptr;
@@ -1359,8 +1447,9 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
                 continue;
             }
             if (ability->GetApplicationInfo().name == info.appName &&
-                    (info.processName == ability->GetAbilityInfo().process ||
-                    info.processName == ability->GetApplicationInfo().bundleName)) {
+                ability->GetAbilityInfo().applicationInfo.uid == info.uid &&
+                (info.processName == ability->GetAbilityInfo().process ||
+                info.processName == ability->GetApplicationInfo().bundleName)) {
                 ability->SetAppState(info.state);
             }
         }
@@ -1384,6 +1473,7 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
                     }
 
                     if (ability->GetApplicationInfo().name == info.appName &&
+                        ability->GetAbilityInfo().applicationInfo.uid == info.uid &&
                         (info.processName == ability->GetAbilityInfo().process ||
                         info.processName == ability->GetApplicationInfo().bundleName)) {
                         ability->SetAppState(info.state);
@@ -1417,6 +1507,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
             abilityRecord->SetInMovingState(false);
             isMultiWinMoving_ = false;
             handler->PostTask(startWaittingAbilityTask, "startWaittingAbility");
+            BackAbilityRecordMoveToBackGround(abilityRecord);
             return;
         }
         // background to active state.
@@ -1428,7 +1519,8 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
     DelayedSingleton<AbilityManagerService>::GetInstance()->NotifyBmsAbilityLifeStatus(
         abilityRecord->GetAbilityInfo().bundleName,
         abilityRecord->GetAbilityInfo().name,
-        AbilityUtil::UTCTimeSeconds());
+        AbilityUtil::UTCTimeSeconds(),
+        abilityRecord->GetAbilityInfo().applicationInfo.uid);
 #if BINDER_IPC_32BIT
     HILOG_INFO("notify bms ability life status, bundle name:%{public}s, ability name:%{public}s, time:%{public}lld",
         abilityRecord->GetAbilityInfo().bundleName.c_str(),
@@ -1501,8 +1593,10 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
                     !SupportSyncVisualByStackId(FLOATING_MISSION_STACK_ID) && preMissionId != currentMissionId));
 
         if (isBackground && preAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
-            !AbilityUtil::IsSystemDialogAbility(
-            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+                (!AbilityUtil::IsSystemDialogAbility(
+                    abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
+                    !AbilityUtil::IsMultiApplicationSelectorAbility(
+                        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name))) {
             std::string preElement = preAbilityRecord->GetWant().GetElement().GetURI();
             HILOG_INFO("Pre ability record: %{public}s", preElement.c_str());
             // preAbility was inactive ,resume new want flag to false
@@ -1526,14 +1620,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
 
     // 3. when the mission ends and returns to lanucher directly, the next and back are inconsistent.
     // shoukd move back ability to background and then terminate.
-    std::shared_ptr<AbilityRecord> backAbilityRecord = abilityRecord->GetBackAbilityRecord();
-    if (backAbilityRecord != nullptr && backAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
-        backAbilityRecord->IsTerminating() &&
-        (nextAbilityRecord == nullptr || nextAbilityRecord->GetRecordId() != backAbilityRecord->GetRecordId())) {
-        std::string backElement = backAbilityRecord->GetWant().GetElement().GetURI();
-        HILOG_INFO("Back ability record: %{public}s", backElement.c_str());
-        MoveToBackgroundTask(backAbilityRecord);
-    }
+    BackAbilityRecordMoveToBackGround(abilityRecord);
     if (powerOffing_ && waittingAbilityQueue_.empty()) {
         HILOG_INFO("Wait for the ability life cycle to complete and execute poweroff.");
         powerOffing_ = false;
@@ -1563,13 +1650,24 @@ void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> 
     HILOG_INFO("ability: %{public}s", element.c_str());
     abilityRecord->SetAbilityState(AbilityState::INACTIVE);
 
+    if (AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+        HILOG_INFO("MultiApplicationSelectorStartTargetAbility: %{public}s", element.c_str());
+        MultiApplicationSelectorStartTargetAbility(abilityRecord);
+        return;
+    }
+
     // 0. multi window moving , complete lifecycle.
     if (abilityRecord->GetInMovingState()) {
         if (abilityRecord == GetCurrentTopAbility()) {
             ContinueLifecycle();
             return;
         }
-        MoveToBackgroundTask(abilityRecord);
+        if (!AbilityUtil::IsMultiApplicationSelectorAbility(
+            GetCurrentTopAbility()->GetAbilityInfo().bundleName, GetCurrentTopAbility()->GetAbilityInfo().name)) {
+            HILOG_INFO("GetCurrentTopAbility Isnot MultiApplicationSelectorAbility");
+            MoveToBackgroundTask(abilityRecord);
+        }
         abilityRecord->SetInMovingState(false);
         // to process next active ability
         ContinueLifecycle();
@@ -1933,10 +2031,12 @@ void AbilityStackManager::GetMissionRecordAndAbilityRecord(const AbilityRequest 
 void AbilityStackManager::GetRecordBySplitScreenMode(const AbilityRequest &abilityRequest,
     std::shared_ptr<AbilityRecord> &targetAbilityRecord, std::shared_ptr<MissionRecord> &targetMissionRecord)
 {
-    std::string bundleName = abilityRequest.abilityInfo.bundleName;
+    std::string bundleName =
+        std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + abilityRequest.abilityInfo.bundleName;
     if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON) {
-        bundleName = AbilityUtil::ConvertBundleNameSingleton(
-            abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+        bundleName = AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName,
+        abilityRequest.abilityInfo.applicationInfo.uid,
+        abilityRequest.abilityInfo.name);
     }
     auto topFullStack = GetTopFullScreenStackIncludeSplitScreen();
     CHECK_POINTER(topFullStack);
@@ -1967,8 +2067,9 @@ void AbilityStackManager::GetRecordBySingleton(const AbilityRequest &abilityRequ
     const std::shared_ptr<AbilityRecord> &currentTopAbility, std::shared_ptr<AbilityRecord> &targetAbilityRecord,
     std::shared_ptr<MissionRecord> &targetMissionRecord)
 {
-    std::string bundleName =
-        AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+    std::string bundleName = AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName,
+        abilityRequest.abilityInfo.applicationInfo.uid,
+        abilityRequest.abilityInfo.name);
     auto missionRecord = GetMissionRecordByName(bundleName);
     if (missionRecord == nullptr) {
         targetAbilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
@@ -2002,10 +2103,12 @@ void AbilityStackManager::GetRecordByStandard(const AbilityRequest &abilityReque
     if (currentTopAbility == nullptr || (currentTopAbility && isStackChanged) ||
         (currentTopAbility && currentTopAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON)) {
         // first get target mission record by bundleName
-        auto missionRecord = GetMissionRecordByName(abilityRequest.abilityInfo.bundleName);
+        std::string bundleName =
+            std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + abilityRequest.abilityInfo.bundleName;
+        auto missionRecord = GetMissionRecordByName(bundleName);
         if (missionRecord == nullptr) {
             targetAbilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-            targetMissionRecord = std::make_shared<MissionRecord>(abilityRequest.abilityInfo.bundleName);
+            targetMissionRecord = std::make_shared<MissionRecord>(bundleName);
         } else {
             /* If current top ability is singleton mode, target mission record will be changed.
              *  Check whether the requested ability is not at the top of the stack of the target mission,
@@ -2571,7 +2674,7 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
     }
 
     if (abilityRecord->IsAbilityState(AbilityState::ACTIVATING) ||
-        abilityRecord->IsAbilityState(AbilityState::INITIAL)) {
+        abilityRecord->IsAbilityState(AbilityState::INITIAL) || abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
         auto preAbility = abilityRecord->GetPreAbilityRecord();
         if (preAbility && preAbility->IsAbilityState(AbilityState::INACTIVE)) {
             MoveToBackgroundTask(preAbility);
@@ -2751,20 +2854,22 @@ std::shared_ptr<AbilityRecord> AbilityStackManager::GetLauncherRootAbility() con
     return nullptr;
 }
 
-void AbilityStackManager::UninstallApp(const std::string &bundleName)
+void AbilityStackManager::UninstallApp(const std::string &bundleName, const int uid)
 {
-    HILOG_INFO("Uninstall app, bundleName: %{public}s", bundleName.c_str());
+    HILOG_INFO("Uninstall app, bundleName: %{public}s, uid: %{public}d", bundleName.c_str(), uid);
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);
     auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
-    auto task = [bundleName, this]() { AddUninstallTags(bundleName); };
+    auto task = [bundleName, uid, this]() { this->AddUninstallTags(bundleName, uid); };
     handler->PostTask(task);
 }
 
-void AbilityStackManager::AddUninstallTags(const std::string &bundleName)
+void AbilityStackManager::AddUninstallTags(const std::string &bundleName, const int uid)
 {
-    HILOG_INFO("Add uninstall tags, bundleName: %{public}s", bundleName.c_str());
+    HILOG_INFO("Add uninstall tags, bundleName: %{public}s, uid: %{public}d", bundleName.c_str(), uid);
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityManagerService);
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     for (auto &stack : missionStackList_) {
         std::vector<MissionRecordInfo> missions;
@@ -2784,7 +2889,8 @@ void AbilityStackManager::AddUninstallTags(const std::string &bundleName)
                     continue;
                 }
 
-                if (ability->GetAbilityInfo().bundleName == bundleName) {
+                if (ability->GetAbilityInfo().bundleName == bundleName &&
+                    ability->GetAbilityInfo().applicationInfo.uid == uid) {
                     if (ability->IsAbilityState(AbilityState::INITIAL)) {
                         mission->RemoveAbilityRecord(ability);
                         if (mission->IsEmpty()) {
@@ -2862,6 +2968,12 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     CHECK_POINTER_LOG(abilityRecord, "stack manager on time out event: ability record is nullptr.");
 
     HILOG_DEBUG("Ability timeout ,msg:%{public}d,name:%{public}s", msgId, abilityRecord->GetAbilityInfo().name.c_str());
+    if (AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
+        (msgId == AbilityManagerService::LOAD_TIMEOUT_MSG || msgId == AbilityManagerService::ACTIVE_TIMEOUT_MSG)) {
+        ActiveTopAbility(abilityRecord);
+        return;
+    }
 
     switch (msgId) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG:
@@ -3150,6 +3262,16 @@ int AbilityStackManager::DispatchLifecycle(const std::shared_ptr<AbilityRecord> 
             CHECK_POINTER_AND_RETURN(missionRecord, ERR_INVALID_DATA);
             auto topAbility = missionRecord->GetTopAbilityRecord();
             CHECK_POINTER_AND_RETURN(topAbility, ERR_INVALID_DATA);
+            std::vector<AbilityRecordInfo> abilityInfos;
+            missionRecord->GetAllAbilityInfo(abilityInfos);
+            for (auto &ability : abilityInfos) {
+                auto abilityRecord = missionRecord->GetAbilityRecordById(ability.id);
+                if (abilityRecord && abilityRecord != lastTopAbility && abilityRecord != currentTopAbility &&
+                    abilityRecord != topAbility && abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
+                    HILOG_DEBUG("Ability isnot the top of the mission, need to background.");
+                    ProcessInactivateInMoving(abilityRecord);
+                }
+            }
 
             // last top active ability , need to inactive.
             if (topAbility == lastTopAbility || topAbility == currentTopAbility) {
@@ -3208,9 +3330,9 @@ int AbilityStackManager::DispatchLifecycle(const std::shared_ptr<AbilityRecord> 
         IsFullScreenStack(lastTopAbility->GetMissionStackId()) &&
         (!lastMissionStack->IsTopMissionRecord(lastMission) || lastMissionStack != topFullStack);
     bool isNotTopInMultiWin = (!IsFullScreenStack(lastTopAbility->GetMissionStackId()) &&
-                              !SupportSyncVisualByStackId(lastTopAbility->GetMissionStackId()) &&
-                              !lastMissionStack->IsTopMissionRecord(lastMission)) ||
-                                  (lastMission->GetMissionRecordId() == (currentTopAbility->GetMissionRecordId()));
+                                !SupportSyncVisualByStackId(lastTopAbility->GetMissionStackId()) &&
+                                !lastMissionStack->IsTopMissionRecord(lastMission)) ||
+                                (lastMission->GetMissionRecordId() == (currentTopAbility->GetMissionRecordId()));
 
     auto activeFun = [](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability->IsAbilityState(AbilityState::ACTIVE) || ability->IsAbilityState(AbilityState::ACTIVATING)) {
@@ -3271,8 +3393,10 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::list<MissionOption
 
     auto currentTopAbilityRecord = GetCurrentTopAbility();
     if (currentTopAbilityRecord &&
-        AbilityUtil::IsSystemDialogAbility(
-        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+        (AbilityUtil::IsSystemDialogAbility(
+            currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name) ||
+            AbilityUtil::IsMultiApplicationSelectorAbility(currentTopAbilityRecord->GetAbilityInfo().bundleName,
+                currentTopAbilityRecord->GetAbilityInfo().name))) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher");
         return MOVE_MISSION_TO_STACK_MOVING_DENIED;
     }
@@ -3334,9 +3458,11 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::shared_ptr<Ability
         return START_ABILITY_SETTING_FAILED;
     }
 
-    if (currentTopAbility && 
-        AbilityUtil::IsSystemDialogAbility(
-        currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name)) {
+    if (currentTopAbility &&
+        (AbilityUtil::IsSystemDialogAbility(
+            currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name) ||
+            AbilityUtil::IsMultiApplicationSelectorAbility(
+                currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name))) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher.");
         return START_ABILITY_SETTING_FAILED;
     }
@@ -3381,13 +3507,17 @@ bool AbilityStackManager::CheckSplitSrceenCondition(
         } else {
             if (topFullAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) {
                 if (topFullAbility->GetAbilityInfo().bundleName == abilityRequest.abilityInfo.bundleName &&
-                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name) {
+                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name &&
+                    topFullAbility->GetAbilityInfo().applicationInfo.uid ==
+                    abilityRequest.abilityInfo.applicationInfo.uid) {
                     HILOG_ERROR("can't only move full screen ability to splitscreen stack.");
                     return false;
                 }
             } else {
                 if (abilityRequest.abilityInfo.launchMode != AppExecFwk::LaunchMode::SINGLETON &&
-                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name) {
+                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name &&
+                    topFullAbility->GetAbilityInfo().applicationInfo.uid ==
+                    abilityRequest.abilityInfo.applicationInfo.uid) {
                     HILOG_ERROR("can't only move full screen ability to splitscreen stack.");
                     return false;
                 }
@@ -3548,6 +3678,23 @@ void AbilityStackManager::ActiveTopAbility(const std::shared_ptr<AbilityRecord> 
     CHECK_POINTER(abilityRecord);
 
     DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(abilityRecord->GetToken());
+    if (AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+        DelayedSingleton<AbilityManagerService>::GetInstance()->MultiAppSelectorDiedClearData(abilityRecord);
+        RemoveMultiAppSelectorAbility(abilityRecord);
+        HILOG_INFO("ability IsMultiApplicationSelectorAbility...");
+        auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
+        if (preAbilityRecord) {
+            auto topAbility = GetCurrentTopAbility();
+            CHECK_POINTER(topAbility);
+            MultiAppSelectorStartTargetAbilityFail(topAbility, abilityRecord);
+            return;
+        } else {
+            HILOG_INFO("Load timeout, back to launcher.");
+            BackToLauncher();
+        }
+        return;
+    }
 
     if (abilityRecord->IsLauncherRoot()) {
         HILOG_INFO("Launcher root load timeout, restart.");
@@ -3938,7 +4085,7 @@ bool AbilityStackManager::CheckLockMissionCondition(
     CHECK_POINTER_RETURN_BOOL(topability);
     CHECK_POINTER_RETURN_BOOL(bottomability);
     CHECK_POINTER_RETURN_BOOL(abilityManagerService);
-    lockUid = abilityManagerService->GetUidByBundleName(bottomability->GetAbilityInfo().bundleName);
+    lockUid = bottomability->GetAbilityInfo().applicationInfo.uid;
     HILOG_INFO("target mission uid :%{public}d", lockUid);
 
     if (isLock && !isSystemApp) {
@@ -3964,8 +4111,10 @@ bool AbilityStackManager::CanStartInLockMissionState(
     // current ability singeton mode
     if (currentTopAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) {
         if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON) {
-            std::string bundleName = AbilityConfig::MISSION_NAME_MARK_HEAD + abilityRequest.abilityInfo.bundleName +
-                                     AbilityConfig::MISSION_NAME_SEPARATOR + abilityRequest.abilityInfo.name;
+            std::string bundleName =
+            AbilityConfig::MISSION_NAME_MARK_HEAD + std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) +
+            AbilityConfig::MISSION_NAME_SEPARATOR + abilityRequest.abilityInfo.bundleName +
+            AbilityConfig::MISSION_NAME_SEPARATOR + abilityRequest.abilityInfo.name;
             return lockMissionContainer_->IsSameLockedMission(bundleName);
         }
         return false;
@@ -4347,7 +4496,9 @@ int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &
 
 bool AbilityStackManager::IsLockScreenState()
 {
-    HILOG_INFO("Is Lock Screen State.");
+    if (isLockScreen_) {
+        HILOG_INFO("Currently is Lock Screen State.");
+    }
     return isLockScreen_;
 }
 
@@ -4434,6 +4585,46 @@ std::string AbilityStackManager::ConvertWindowModeState(const SystemWindowMode &
         return it->second;
     }
     return "none";
+}
+
+void AbilityStackManager::MultiApplicationSelectorStartTargetAbility(
+    const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    CHECK_POINTER(abilityRecord);
+    auto topAbility = GetCurrentTopAbility();
+    CHECK_POINTER(topAbility);
+    HILOG_INFO("Ability is to MultiApplicationSelector terminate");
+    auto abilityRequestPtr = abilityRecord->GetWillSatrtAbilityRequest();
+    if (abilityRequestPtr) {
+        HILOG_INFO("MultiApplicationSelector have target AbilityRequest");
+        if (abilityRequestPtr->callerToken) {
+            auto callerAbilityRecord = Token::GetAbilityRecordByToken(abilityRequestPtr->callerToken);
+            CHECK_POINTER(callerAbilityRecord);
+            auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
+            CHECK_POINTER(preAbilityRecord);
+            if (preAbilityRecord != callerAbilityRecord &&
+                callerAbilityRecord->GetMissionStackId() == FLOATING_MISSION_STACK_ID &&
+                abilityRequestPtr->abilityInfo.launchMode != AppExecFwk::LaunchMode::SINGLETON) {
+                HILOG_INFO("Selector preAbilityRecord ProcessActivate");
+                preAbilityRecord->ProcessActivate();
+            }
+        }
+        HILOG_INFO("start user select ability");
+        if (AbilityCallType::START_ABILITY_TYPE == abilityRequestPtr->callType ||
+            AbilityCallType::START_ABILITY_SETTING_TYPE == abilityRequestPtr->callType) {
+            HILOG_DEBUG("Start ability...");
+            if (ERR_OK != StartAbilityLocked(topAbility, *abilityRequestPtr)) {
+                HILOG_DEBUG("Start ability Fail...");
+                MoveToBackgroundTask(abilityRecord);
+                MultiAppSelectorStartTargetAbilityFail(topAbility, abilityRecord);
+            }
+        }
+    } else {
+        HILOG_INFO("MultiApplicationSelector have not target AbilityRequest");
+        MoveToBackgroundTask(abilityRecord);
+        MultiAppSelectorStartTargetAbilityFail(topAbility, abilityRecord);
+    }
 }
 
 void AbilityStackManager::DelayedStartLockScreenApp()
@@ -4573,12 +4764,106 @@ void AbilityStackManager::ProcessInactivateInMoving(const std::shared_ptr<Abilit
         abilityRecord->ProcessInactivateInMoving();
         return;
     }
-    if (abilityRecord->IsAbilityState(AbilityState::INACTIVE) ||
-        abilityRecord->IsAbilityState(AbilityState::INACTIVATING)) {
+    if (abilityRecord->IsAbilityState(AbilityState::INACTIVE)) {
         HILOG_DEBUG("MoveToBackgroundTask...");
         MoveToBackgroundTask(abilityRecord);
         return;
     }
+}
+
+void AbilityStackManager::BackAbilityRecordMoveToBackGround(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    CHECK_POINTER(abilityRecord);
+    std::string element = abilityRecord->GetWant().GetElement().GetURI();
+    HILOG_INFO("ability: %{public}s", element.c_str());
+    std::shared_ptr<AbilityRecord> backAbilityRecord = abilityRecord->GetBackAbilityRecord();
+    std::shared_ptr<AbilityRecord> nextAbilityRecord = abilityRecord->GetNextAbilityRecord();
+    if (backAbilityRecord != nullptr && backAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
+        backAbilityRecord->IsTerminating() &&
+        (nextAbilityRecord == nullptr || nextAbilityRecord->GetRecordId() != backAbilityRecord->GetRecordId())) {
+        std::string backElement = backAbilityRecord->GetWant().GetElement().GetURI();
+        HILOG_INFO("Back ability record: %{public}s", backElement.c_str());
+        MoveToBackgroundTask(backAbilityRecord);
+    }
+}
+
+void AbilityStackManager::MultiAppSelectorStartTargetAbilityFail(
+    const std::shared_ptr<AbilityRecord> &topAbilityRecord, const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    CHECK_POINTER(abilityRecord);
+    CHECK_POINTER(topAbilityRecord);
+    auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
+    CHECK_POINTER(preAbilityRecord);
+    auto preMissionRecord = preAbilityRecord->GetMissionRecord();
+    CHECK_POINTER(preMissionRecord);
+    auto preCurrentStack = preMissionRecord->GetMissionStack();
+    CHECK_POINTER(preCurrentStack);
+    std::string element = preAbilityRecord->GetWant().GetElement().GetURI();
+    HILOG_INFO("ability IsMultiApplicationSelectorAbility: %{public}s", element.c_str());
+    if (IsSplitScreenStack(preAbilityRecord->GetMissionStackId()) || abilityRecord->IsMoveSplitScreenStack()) {
+        HILOG_INFO("preAbilityRecord is SplitScreenStack");
+        DispatchLifecycle(topAbilityRecord, preAbilityRecord, false);
+        return;
+    } else {
+        HILOG_INFO("preAbilityRecord is not SplitScreenStack");
+        preAbilityRecord->ProcessActivate();
+        return;
+    }
+}
+
+void AbilityStackManager::RemoveMultiAppSelectorAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    CHECK_POINTER(abilityRecord);
+    auto missionRecord = abilityRecord->GetMissionRecord();
+    CHECK_POINTER(missionRecord);
+    auto currentStack = missionRecord->GetMissionStack();
+    CHECK_POINTER(currentStack);
+    if (AbilityUtil::IsMultiApplicationSelectorAbility(
+        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+        missionRecord->RemoveAbilityRecord(abilityRecord);
+        if (missionRecord->IsEmpty()) {
+            HILOG_INFO("missionRecord is empty");
+            RemoveMissionRecordById(missionRecord->GetMissionRecordId());
+            JudgingIsRemoveMultiScreenStack(currentStack);
+        }
+        if (DEFAULT_MISSION_STACK_ID == currentStack->GetMissionStackId() && currentStack->IsEmpty()) {
+            HILOG_INFO("move launcher Stack to top");
+            MoveMissionStackToTop(launcherMissionStack_);
+        }
+        auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
+        CHECK_POINTER(preAbilityRecord);
+        auto preMissionRecord = preAbilityRecord->GetMissionRecord();
+        CHECK_POINTER(preMissionRecord);
+        auto preCurrentStack = preMissionRecord->GetMissionStack();
+        CHECK_POINTER(preCurrentStack);
+        std::string element = preAbilityRecord->GetWant().GetElement().GetURI();
+        HILOG_INFO("ability IsMultiApplicationSelectorAbility: %{public}s", element.c_str());
+        MoveMissionStackToTop(preCurrentStack);
+        if (abilityRecord->IsMoveSplitScreenStack()) {
+            auto splitScreenStack = GetTopSplitScreenStack();
+            if (splitScreenStack) {
+                HILOG_INFO("move Split Screen Stack to top");
+                MoveMissionStackToFullStackTop(splitScreenStack);
+            }
+        }
+        auto abilityRequestPtr = abilityRecord->GetWillSatrtAbilityRequest();
+        if (abilityRequestPtr) {
+            if (abilityRequestPtr->callerToken) {
+                HILOG_INFO("move callerAbility to top");
+                auto callerAbilityRecord = Token::GetAbilityRecordByToken(abilityRequestPtr->callerToken);
+                CHECK_POINTER(callerAbilityRecord);
+                auto callerMissionRecord = callerAbilityRecord->GetMissionRecord();
+                CHECK_POINTER(callerMissionRecord);
+                auto callerStack = callerMissionRecord->GetMissionStack();
+                CHECK_POINTER(callerStack);
+                MoveMissionStackToTop(callerStack);
+            }
+        }
+    }
+    return;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
