@@ -34,6 +34,8 @@ const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
 const std::string MISSION_SAVE_TIME {"mission_save_time"};
 const std::string SYSTEM_CONFIGURATION {"system_configuration"};
 const std::string SYSTEM_ORIENTATION {"system_orientation"};
+const std::string STARTUP_CONTACTS {"startup_contacts"};
+const std::string STARTUP_MMS {"startup_mms"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -67,6 +69,16 @@ public:
      * return false : ams do not start phone service
      */
     bool GetPhoneServiceState() const;
+    /**
+     * return true : ams can start contacts
+     * return false : ams do not start contacts
+     */
+    bool GetStartContactsState() const;
+    /**
+     * return true : ams can start mms
+     * return false : ams do not start mms
+     */
+    bool GetStartMmsState() const;
     /**
      * Get profile information
      */
@@ -102,6 +114,8 @@ private:
     bool canStartUiStatusBar_ {false};
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
+    bool canStartContacts {false};
+    bool canStartMms {false};
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
     std::map<std::string, std::string> memThreshold_;
