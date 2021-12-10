@@ -49,7 +49,14 @@ const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 
 const std::string PHONE_SERVICE_BUNDLE_NAME = "com.ohos.callui";
 const std::string PHONE_SERVICE_ABILITY_NAME = "com.ohos.callui.ServiceAbility";
+
 const std::string LOCK_SCREEN_EVENT_NAME = "lock_screen";
+
+const std::string CONTACTS_ABILITY_NAME = "com.ohos.contacts.ServiceAbility";
+const std::string CONTACTS_BUNDLE_NAME = "com.ohos.contacts";
+
+const std::string MMS_ABILITY_NAME = "com.ohos.mms.ServiceAbility";
+const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

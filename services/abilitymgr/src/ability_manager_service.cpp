@@ -1241,6 +1241,46 @@ void AbilityManagerService::StartingPhoneServiceAbility()
     (void)StartAbility(phoneServiceWant, DEFAULT_INVAL_VALUE);
 }
 
+void AbilityManagerService::StartingContactsAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+        return;
+    }
+
+    AppExecFwk::AbilityInfo contactsInfo;
+    Want contactsWant;
+    contactsWant.SetElementName(AbilityConfig::CONTACTS_BUNDLE_NAME, AbilityConfig::CONTACTS_ABILITY_NAME);
+
+    while (!(iBundleManager_->QueryAbilityInfo(contactsWant, contactsInfo))) {
+        HILOG_INFO("Waiting query contacts service completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+    }
+
+    (void)StartAbility(contactsWant, DEFAULT_INVAL_VALUE);
+}
+
+void AbilityManagerService::StartingMmsAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+        return;
+    }
+
+    AppExecFwk::AbilityInfo mmsInfo;
+    Want mmsWant;
+    mmsWant.SetElementName(AbilityConfig::MMS_BUNDLE_NAME, AbilityConfig::MMS_ABILITY_NAME);
+
+    while (!(iBundleManager_->QueryAbilityInfo(mmsWant, mmsInfo))) {
+        HILOG_INFO("Waiting query mms service completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+    }
+
+    (void)StartAbility(mmsWant, DEFAULT_INVAL_VALUE);
+}
+
 void AbilityManagerService::StartSystemUi(const std::string abilityName)
 {
     HILOG_INFO("Starting system ui app.");
@@ -1701,6 +1741,16 @@ void AbilityManagerService::StartSystemApplication()
     if (amsConfigResolver_->GetPhoneServiceState()) {
         HILOG_INFO("start phone service");
         StartingPhoneServiceAbility();
+    }
+
+    if (amsConfigResolver_->GetStartContactsState()) {
+        HILOG_INFO("start contacts");
+        StartingContactsAbility();
+    }
+
+    if (amsConfigResolver_->GetStartMmsState()) {
+        HILOG_INFO("start mms");
+        StartingMmsAbility();
     }
 }
 
