@@ -46,6 +46,10 @@ int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo)
 {
     HILOG_INFO("Test AppScheduler::LoadAbility()");
+    HILOG_INFO("LoadAbility name : %{public}s", abilityInfo.name.c_str());
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+    auto ability = Token::GetAbilityRecordByToken(token);
+    ability->SetAbilityState(AbilityState::ACTIVE);
     return ERR_OK;
 }
 
@@ -107,12 +111,6 @@ int AppScheduler::KillApplication(const std::string &bundleName)
     return ERR_OK;
 }
 
-int AppScheduler::KillApplicationByUid(const std::string &bundleName, const int uid)
-{
-    HILOG_INFO("Test AppScheduler::KillApplicationByUid()");
-    return ERR_OK;
-}
-
 void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("Test AppScheduler::AttachTimeOut()");
@@ -132,14 +130,6 @@ int AppScheduler::CompelVerifyPermission(const std::string &permission, int pid,
 void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
 {
     HILOG_INFO("Test AppScheduler::OnAppStateChanged()");
-}
-
-void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig)
-{
-    const int64_t testValue = 10;
-    memoryInfo.availSysMem_ = testValue;
-    memoryInfo.totalSysMem_ = testValue;
-    memoryInfo.threshold_ = testValue;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

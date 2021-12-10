@@ -142,6 +142,7 @@ void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
         appInfo.moduleInfos.emplace_back(appInfoOrg.moduleInfos.at(i));
     }
     appInfo.entryDir = appInfoOrg.entryDir;
+    appInfo.isCloned = appInfoOrg.isCloned;
     HILOG_INFO("%{public}s end.", __func__);
 }
 
@@ -276,6 +277,8 @@ napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo)
     NAPI_CALL(env, napi_set_named_property(env, result, "moduleInfos", jsArrayModuleInfo));
     NAPI_CALL(env, napi_create_string_utf8(env, appInfo.entryDir.c_str(), NAPI_AUTO_LENGTH, &proValue));
     NAPI_CALL(env, napi_set_named_property(env, result, "entryDir", proValue));
+    NAPI_CALL(env, napi_get_boolean(env, appInfo.isCloned, &proValue));
+    NAPI_CALL(env, napi_set_named_property(env, result, "isCloned", proValue));
     HILOG_INFO("%{public}s end.", __func__);
     return result;
 }

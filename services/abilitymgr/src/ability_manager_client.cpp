@@ -120,6 +120,14 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const sptr<IRemoteO
     return abms->StartAbility(want, callerToken, requestCode);
 }
 
+ErrCode AbilityManagerClient::StartAbility(
+    const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StartAbility(want, callerToken, requestCode, requestUid);
+}
+
 ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
     const sptr<IRemoteObject> &callerToken, int requestCode)
 {
@@ -215,11 +223,11 @@ ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
     return abms->GetAllStackInfo(stackInfo);
 }
 
-ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
+ErrCode AbilityManagerClient::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StopServiceAbility(want);
+    return abms->StopServiceAbility(want, callerToken);
 }
 
 ErrCode AbilityManagerClient::GetRecentMissions(
@@ -568,6 +576,21 @@ ErrCode AbilityManagerClient::GetPendingRequestWant(const sptr<IWantSender> &tar
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetPendingRequestWant(target, want);
+}
+
+ErrCode AbilityManagerClient::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    if (target == nullptr) {
+        HILOG_ERROR("target is nullptr.");
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    if (info == nullptr) {
+        HILOG_ERROR("info is nullptr.");
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetWantSenderInfo(target, info);
 }
 
 ErrCode AbilityManagerClient::SetShowOnLockScreen(bool isAllow)

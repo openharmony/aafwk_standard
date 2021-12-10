@@ -51,10 +51,12 @@ public:
     static sptr<IWantParams> Box(const WantParams &value);
 
     static WantParams Unbox(IWantParams *object);
-    
+
     static bool ValidateStr(const std::string &str);
 
     static sptr<IWantParams> Parse(const std::string &str);
+
+    static WantParams ParseWantParams(const std::string &str);
 
     static constexpr char SIGNATURE = 'W';
 

@@ -23,6 +23,7 @@
 
 #include "ability_connect_manager.h"
 #include "ability_event_handler.h"
+#include "ability_parameter_container.h"
 #include "ability_manager_stub.h"
 #include "ability_stack_manager.h"
 #include "app_scheduler.h"
@@ -36,6 +37,7 @@
 #include "uri.h"
 #include "ability_config.h"
 #include "pending_want_manager.h"
+#include "wait_multiapp_return_storage.h"
 #include "ams_configuration_parameter.h"
 
 namespace OHOS {
@@ -77,6 +79,18 @@ public:
      */
     virtual int StartAbility(
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+
+    /**
+     * StartAbility with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode, Ability request code.
+     * @param requestUid, Ability request uid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid) override;
 
     /**
      * Starts a new ability with specific start settings.
@@ -259,9 +273,10 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
+     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want) override;
+    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr) override;
 
     /**
      * Get the list of the missions that the user has recently launched,
@@ -332,9 +347,10 @@ public:
      * Uninstall app
      *
      * @param bundleName.
+     * @param uid, UninstallApp uid.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName) override;
+    virtual int UninstallApp(const std::string &bundleName, const int uid = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -495,6 +511,8 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
+    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
+
     /**
      * set lock screen white list
      *
@@ -530,11 +548,18 @@ public:
 
     void RestartAbility(const sptr<IRemoteObject> &token);
     void NotifyBmsAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime);
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid);
 
-    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid = -1);
+    int StartAbility(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid, int callerUid);
+
+    int ConnectAbility(const Want &want, const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken, int requestUid, int callerUid = DEFAULT_INVAL_VALUE);
+
+    int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestUid);
 
     int CheckPermission(const std::string &bundleName, const std::string &permission);
+    void MultiAppSelectorDiedClearData(std::shared_ptr<AbilityRecord> abilityRecord);
     void UpdateLockScreenState(bool isLockScreen);
 
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
@@ -581,7 +606,7 @@ public:
 
 protected:
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) override;
-    int GetUidByBundleName(std::string bundleName);
+    int GetUidByBundleName(std::string bundleName, const int userId = AppExecFwk::Constants::DEFAULT_USERID);
 
     void OnAppStateChanged(const AppInfo &info) override;
 
@@ -641,8 +666,8 @@ private:
      * generate ability request.
      *
      */
-    int GenerateAbilityRequest(
-        const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken);
+    int GenerateAbilityRequest(const Want &want, int requestCode, AbilityRequest &request,
+        const sptr<IRemoteObject> &callerToken, int requestUid = DEFAULT_INVAL_VALUE);
     /**
      * Select to start the application according to the configuration file of AMS
      *
@@ -655,7 +680,7 @@ private:
     void GetGlobalConfiguration();
 
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
-    int PreLoadAppDataAbilities(const std::string &bundleName);
+    int PreLoadAppDataAbilities(const std::string &bundleName, const int uid);
 
     bool VerificationToken(const sptr<IRemoteObject> &token);
     void RequestPermission(const Want *resultWant);
@@ -673,6 +698,16 @@ private:
     void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
     bool CheckCallerIsSystemAppByIpc();
+    int GetAbilityInfoFromBms(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+        const sptr<IRemoteObject> &callerToken, AbilityRequest &request, int requestUid = DEFAULT_INVAL_VALUE);
+    int GetAbilityInfoWhenHaveClone(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+        const sptr<IRemoteObject> &callerToken, AbilityRequest &request);
+    int StartMultiApplicationSelector(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos, AbilityRequest &request,
+        const std::shared_ptr<AbilityRecord> &abilityRecord);
+    std::shared_ptr<AbilityRequest> StartSelectedApplication(const Want *resultWant, const sptr<IRemoteObject> &token);
+    std::shared_ptr<AbilityRequest> GetAbilityRequestWhenStartAbility(AbilityRequest &request, int requestUid);
+    std::shared_ptr<AbilityRequest> GetAbilityRequestWhenStartAbilitySetting(AbilityRequest &request, int requestUid);
+    int CheckStartAbilityCondition(const AbilityRequest &abilityRequest);
     bool IsExistFile(const std::string &path);
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
@@ -692,10 +727,11 @@ private:
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
     std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
+    std::shared_ptr<AbilityParameterContainer> parameterContainer_;
+    std::shared_ptr<WaitMultiAppReturnStorage> waitmultiAppReturnStorage_;
     std::shared_ptr<AppExecFwk::Configuration> configuration_;
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_SERVICE_H

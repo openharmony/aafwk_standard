@@ -96,6 +96,7 @@ public:
     MOCK_METHOD1(ChangeFocusTest, void(const std::vector<int> missionId));
     MOCK_METHOD1(TerminateAbilityTest, void(int id));
     MOCK_METHOD1(MoveMissionToEnd, int(int id));
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 };
 }  // namespace AAFwk
 }  // namespace OHOS

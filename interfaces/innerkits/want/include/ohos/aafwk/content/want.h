@@ -25,6 +25,7 @@
 #include "element_name.h"
 #include "operation.h"
 #include "parcel.h"
+#include "nlohmann/json.hpp"
 
 using Operation = OHOS::AAFwk::Operation;
 
@@ -757,6 +758,9 @@ public:
 
     void DumpInfo(int level) const;
 
+    std::string ToString() const;
+
+    static Want *FromString(std::string &string);
 public:
     // action definition
     static const std::string ACTION_PLAY;
@@ -808,6 +812,8 @@ private:
     static bool CheckAndSetParameters(Want &want, const std::string &key, std::string &prop, const std::string &value);
     Uri GetLowerCaseScheme(const Uri &uri);
     void ToUriStringInner(std::string &uriString) const;
+    nlohmann::json ToJson() const;
+    bool ReadFromJson(nlohmann::json &wantJson);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -60,6 +60,7 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/shared_memory.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/wait_multiapp_return_storage.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_receiver_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_stub.cpp",

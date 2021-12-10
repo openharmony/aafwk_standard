@@ -135,9 +135,10 @@ int DataAbilityRecord::Attach(const sptr<IAbilityScheduler> &scheduler)
     ability_->SetScheduler(scheduler);
     scheduler_ = scheduler;
 
-    HILOG_INFO("Scheduling 'OnStart' for data ability '%{public}s|%{public}s'...",
+    HILOG_INFO("Scheduling 'OnStart' for data ability '%{public}s|%{public}s|%{public}d'...",
         ability_->GetApplicationInfo().bundleName.c_str(),
-        ability_->GetAbilityInfo().name.c_str());
+        ability_->GetAbilityInfo().name.c_str(),
+        ability_->GetAbilityInfo().applicationInfo.uid);
 
     ability_->SetAbilityState(ACTIVATING);
 
@@ -172,9 +173,10 @@ int DataAbilityRecord::OnTransitionDone(int state)
     ability_->SetAbilityState(ACTIVE);
     loadedCond_.notify_all();
 
-    HILOG_INFO("Data ability '%{public}s|%{public}s' is loaded.",
+    HILOG_INFO("Data ability '%{public}s|%{public}s|%{public}d' is loaded.",
         ability_->GetApplicationInfo().bundleName.c_str(),
-        ability_->GetAbilityInfo().name.c_str());
+        ability_->GetAbilityInfo().name.c_str(),
+        ability_->GetAbilityInfo().applicationInfo.uid);
 
     return ERR_OK;
 }
@@ -227,9 +229,10 @@ int DataAbilityRecord::AddClient(const sptr<IRemoteObject> &client, bool tryBind
         auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
         CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
         appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 1);
-        HILOG_INFO("Ability ability '%{public}s|%{public}s'.",
+        HILOG_INFO("Ability ability '%{public}s|%{public}s|%{public}d'.",
             clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
-            clientAbilityRecord->GetAbilityInfo().name.c_str());
+            clientAbilityRecord->GetAbilityInfo().name.c_str(),
+            clientAbilityRecord->GetAbilityInfo().applicationInfo.uid);
     }
 
     if (clients_.size() == 1) {
@@ -237,9 +240,10 @@ int DataAbilityRecord::AddClient(const sptr<IRemoteObject> &client, bool tryBind
         appScheduler->MoveToForground(ability_->GetToken());
     }
 
-    HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+    HILOG_INFO("Data ability '%{public}s|%{public}s|%{public}d'.",
         ability_->GetApplicationInfo().bundleName.c_str(),
-        ability_->GetAbilityInfo().name.c_str());
+        ability_->GetAbilityInfo().name.c_str(),
+        ability_->GetAbilityInfo().applicationInfo.uid);
 
     return ERR_OK;
 }
@@ -280,14 +284,16 @@ int DataAbilityRecord::RemoveClient(const sptr<IRemoteObject> &client, bool isSy
                 auto clientAbilityRecord = Token::GetAbilityRecordByToken(client);
                 CHECK_POINTER_AND_RETURN(clientAbilityRecord, ERR_UNKNOWN_OBJECT);
                 appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
-                HILOG_INFO("Ability ability '%{public}s|%{public}s'.",
+                HILOG_INFO("Ability ability '%{public}s|%{public}s|%{public}d'.",
                     clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
-                    clientAbilityRecord->GetAbilityInfo().name.c_str());
+                    clientAbilityRecord->GetAbilityInfo().name.c_str(),
+                    clientAbilityRecord->GetAbilityInfo().applicationInfo.uid);
             }
             clients_.erase(it);
-            HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+            HILOG_INFO("Data ability '%{public}s|%{public}s|%{public}d'.",
                 ability_->GetApplicationInfo().bundleName.c_str(),
-                ability_->GetAbilityInfo().name.c_str());
+                ability_->GetAbilityInfo().name.c_str(),
+                ability_->GetAbilityInfo().applicationInfo.uid);
             break;
         }
     }
@@ -340,11 +346,14 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
                     appScheduler->AbilityBehaviorAnalysis(
                         ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
                     it = clients_.erase(it);
-                    HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
+                    HILOG_INFO("Ability '%{public}s|%{public}s|%{public}d' --X-> Data ability "
+                        "'%{public}s|%{public}s|%{public}d'.",
                         client->GetApplicationInfo().bundleName.c_str(),
                         client->GetAbilityInfo().name.c_str(),
+                        client->GetAbilityInfo().applicationInfo.uid,
                         ability_->GetApplicationInfo().bundleName.c_str(),
-                        ability_->GetAbilityInfo().name.c_str());
+                        ability_->GetAbilityInfo().name.c_str(),
+                        ability_->GetAbilityInfo().applicationInfo.uid);
                 } else {
                     ++it;
                 }
@@ -365,11 +374,14 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
                 }
                 appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
                 it = clients_.erase(it);
-                HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
+                HILOG_INFO(
+                    "Ability '%{public}s|%{public}s|%{public}d' --X-> Data ability '%{public}s|%{public}s|%{public}d'.",
                     client->GetApplicationInfo().bundleName.c_str(),
                     client->GetAbilityInfo().name.c_str(),
+                    client->GetAbilityInfo().applicationInfo.uid,
                     ability_->GetApplicationInfo().bundleName.c_str(),
-                    ability_->GetAbilityInfo().name.c_str());
+                    ability_->GetAbilityInfo().name.c_str(),
+                    ability_->GetAbilityInfo().applicationInfo.uid);
             } else {
                 ++it;
             }
@@ -422,11 +434,14 @@ int DataAbilityRecord::KillBoundClientProcesses()
         if (it->tryBind && false == it->isSystem) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
-            HILOG_INFO("Killing bound client '%{public}s|%{public}s' of data ability '%{public}s|%{public}s'...",
+            HILOG_INFO("Killing bound client '%{public}s|%{public}s|%{public}d' of data ability "
+                "'%{public}s|%{public}s|%{public}d'...",
                 clientAbilityRecord->GetApplicationInfo().bundleName.c_str(),
                 clientAbilityRecord->GetAbilityInfo().name.c_str(),
+                clientAbilityRecord->GetAbilityInfo().applicationInfo.uid,
                 ability_->GetApplicationInfo().bundleName.c_str(),
-                ability_->GetAbilityInfo().name.c_str());
+                ability_->GetAbilityInfo().name.c_str(),
+                ability_->GetAbilityInfo().applicationInfo.uid);
             appScheduler->KillProcessByAbilityToken(clientAbilityRecord->GetToken());
         }
     }
@@ -533,9 +548,10 @@ void DataAbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
             if (it->client == object) {
                 HILOG_DEBUG("remove system caller record with filter...");
                 it = clients_.erase(it);
-                HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+                HILOG_INFO("Data ability '%{public}s|%{public}s|%{public}d'.",
                     ability_->GetApplicationInfo().bundleName.c_str(),
-                    ability_->GetAbilityInfo().name.c_str());
+                    ability_->GetAbilityInfo().name.c_str(),
+                    ability_->GetAbilityInfo().applicationInfo.uid);
             } else {
                 ++it;
             }
@@ -546,9 +562,10 @@ void DataAbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
             if (it->isSystem) {
                 HILOG_DEBUG("remove system caller record...");
                 it = clients_.erase(it);
-                HILOG_INFO("Data ability '%{public}s|%{public}s'.",
+                HILOG_INFO("Data ability '%{public}s|%{public}s|%{public}d'.",
                     ability_->GetApplicationInfo().bundleName.c_str(),
-                    ability_->GetAbilityInfo().name.c_str());
+                    ability_->GetAbilityInfo().name.c_str(),
+                    ability_->GetAbilityInfo().applicationInfo.uid);
             } else {
                 ++it;
             }

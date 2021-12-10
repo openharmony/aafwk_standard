@@ -427,7 +427,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_013, TestSize.Level1)
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
         const Want want;
 
-        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_))
+        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
         abilityMgrClient->StopServiceAbility(want);

@@ -53,6 +53,7 @@ using OHOS::sptr;
 using testing::_;
 using testing::Invoke;
 using testing::Return;
+using testing::AtLeast;
 
 namespace OHOS {
 namespace AAFwk {
@@ -67,29 +68,20 @@ public:
     ApplicationInfo CreateAppInfo(const std::string &appName, const std::string &name);
     Want CreateWant(const std::string &abilityName, const std::string &bundleName);
     void WaitAMS();
-    std::shared_ptr<AbilityRecord> GreatePageAbility(const std::string &abilityName, const std::string &bundleName);
-    void MockAbilityTransitionDone(bool &testFailed, sptr<IRemoteObject> &dataAbilityToken,
-        sptr<MockAbilityScheduler> &mockDataAbilityScheduler, std::shared_ptr<AbilityManagerService> &abilityMgrServ);
-    void MockDataAbilityLoadHandlerInner(bool &testFailed, sptr<IRemoteObject> &dataAbilityToken,
-        sptr<MockAbilityScheduler> &mockDataAbilityScheduler, std::shared_ptr<AbilityManagerService> &abilityMgrServ);
     void CreateAbilityRequest(const std::string &abilityName, const std::string bundleName, Want &want,
         std::shared_ptr<MissionStack> &curMissionStack, sptr<IRemoteObject> &recordToken);
-    void MockServiceAbilityLoadHandlerInner(bool &testResult, const std::string &bundleName,
-        const std::string &abilityName, sptr<IRemoteObject> &testToken);
-    void CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want,
+    void CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want, int uid,
         const sptr<AbilityConnectionProxy> &callback1, const sptr<AbilityConnectionProxy> &callback2);
     void CheckTestRecord(std::shared_ptr<AbilityRecord> &record1, std::shared_ptr<AbilityRecord> &record2,
         const sptr<AbilityConnectionProxy> &callback1, const sptr<AbilityConnectionProxy> &callback2);
-    void MockLoadHandlerInner(int &testId, sptr<MockAbilityScheduler> &scheduler);
-    bool MockAppClent();
     void SetActive();
     std::shared_ptr<AbilityRecord> GetTopAbility();
     void ClearStack();
+    void OnStartAms();
     WantSenderInfo MakeWantSenderInfo(std::vector<Want> &wants, int32_t flags, int32_t userId, int32_t type = 1);
     WantSenderInfo MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type = 1);
 
-    inline static std::shared_ptr<MockAppMgrClient> mockAppMgrClient_ {nullptr};
-    inline static std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
     sptr<MockAbilityScheduler> scheduler_ {nullptr};
     inline static bool doOnce_ = false;  // In order for mock to execute once
 
@@ -138,63 +130,49 @@ void AbilityMgrModuleTest::ClearStack()
     }
 }
 
-bool AbilityMgrModuleTest::MockAppClent()
+void AbilityMgrModuleTest::OnStartAms()
 {
-    if (!mockAppMgrClient_) {
-        GTEST_LOG_(INFO) << "MockAppClent::1";
-        return false;
-    }
-
-    if (!abilityMgrServ_->appScheduler_) {
-        GTEST_LOG_(INFO) << "MockAppClent::2";
-        return false;
-    }
-
-    abilityMgrServ_->appScheduler_->appMgrClient_.reset(mockAppMgrClient_.get());
-    return true;
-}
-
-static void OnStartAms()
-{
-    if (AbilityMgrModuleTest::abilityMgrServ_) {
-        if (AbilityMgrModuleTest::abilityMgrServ_->state_ == ServiceRunningState::STATE_RUNNING) {
+    if (abilityMgrServ_) {
+        if (abilityMgrServ_->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
+        abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
+        
+        abilityMgrServ_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMgrServ_->eventLoop_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
-        AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ =
-            AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_);
+        abilityMgrServ_->handler_ = std::make_shared<AbilityEventHandler>(abilityMgrServ_->eventLoop_,
+                                                                abilityMgrServ_);
+        EXPECT_TRUE(abilityMgrServ_->handler_);
+        EXPECT_TRUE(abilityMgrServ_->connectManager_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->handler_ =
-            std::make_shared<AbilityEventHandler>(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ ,
-                                                    AbilityMgrModuleTest::abilityMgrServ_);
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
+        abilityMgrServ_->connectManager_->SetEventHandler(abilityMgrServ_->handler_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->connectManager_-> \
-            SetEventHandler(AbilityMgrModuleTest::abilityMgrServ_->handler_);
+        abilityMgrServ_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMgrServ_->dataAbilityManager_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_);
+        abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMgrServ_->amsConfigResolver_);
+        abilityMgrServ_->amsConfigResolver_->Parse();
 
-        AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_);
-        AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_->Parse();
+        abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
+        EXPECT_TRUE(abilityMgrServ_->pendingWantManager_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
+        abilityMgrServ_->parameterContainer_ = std::make_shared<AbilityParameterContainer>();
+        EXPECT_TRUE(abilityMgrServ_->parameterContainer_);
+        
+        abilityMgrServ_->waitmultiAppReturnStorage_ = std::make_shared<WaitMultiAppReturnStorage>();
+        EXPECT_TRUE(abilityMgrServ_->waitmultiAppReturnStorage_);
+        abilityMgrServ_->configuration_ = std::make_shared<AppExecFwk::Configuration>();
+        EXPECT_TRUE(abilityMgrServ_->configuration_);
+        abilityMgrServ_->GetGlobalConfiguration();
 
-        AbilityMgrModuleTest::abilityMgrServ_->configuration_ = std::make_shared<AppExecFwk::Configuration>();
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->configuration_);
-        AbilityMgrModuleTest::abilityMgrServ_->GetGlobalConfiguration();
+        int userId = abilityMgrServ_->GetUserId();
+        abilityMgrServ_->SetStackManager(userId);
+        abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
+        EXPECT_TRUE(abilityMgrServ_->systemAppManager_);
 
-        int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
-        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId);
-        AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
-
-        AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
+        abilityMgrServ_->eventLoop_->Run();
 
         GTEST_LOG_(INFO) << "OnStart success";
         return;
@@ -205,35 +183,27 @@ static void OnStartAms()
 
 void AbilityMgrModuleTest::SetUpTestCase(void)
 {
-    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
     OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
         OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new (std::nothrow) BundleMgrService());
-
-    abilityMgrServ_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    mockAppMgrClient_ = std::make_shared<MockAppMgrClient>();
-
-    OnStartAms();
 }
 
 void AbilityMgrModuleTest::TearDownTestCase(void)
 {
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-    abilityMgrServ_.reset();
-    mockAppMgrClient_.reset();
 }
 void AbilityMgrModuleTest::SetUp(void)
 {
-    scheduler_ = new MockAbilityScheduler();
-    if (!doOnce_) {
-        doOnce_ = true;
+    abilityMgrServ_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
+    OnStartAms();
 
-        MockAppClent();
-    }
-    WaitAMS();
+    scheduler_ = new MockAbilityScheduler();
 }
 
 void AbilityMgrModuleTest::TearDown(void)
-{}
+{
+    abilityMgrServ_->OnStop();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    abilityMgrServ_.reset();
+}
 
 Want AbilityMgrModuleTest::CreateWant(const std::string &entity)
 {
@@ -273,82 +243,12 @@ ApplicationInfo AbilityMgrModuleTest::CreateAppInfo(const std::string &appName, 
 Want AbilityMgrModuleTest::CreateWant(const std::string &abilityName, const std::string &bundleName)
 {
     ElementName element;
-    element.SetDeviceID("devices");
+    element.SetDeviceID("deviceId");
     element.SetAbilityName(abilityName);
     element.SetBundleName(bundleName);
     Want want;
     want.SetElement(element);
     return want;
-}
-
-std::shared_ptr<AbilityRecord> AbilityMgrModuleTest::GreatePageAbility(
-    const std::string &abilityName, const std::string &bundleName)
-{
-    Want want = CreateWant(abilityName, bundleName);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    int testRequestCode = 1;
-    SetActive();
-    abilityMgrServ_->StartAbility(want, testRequestCode);
-    WaitAMS();
-
-    auto stack = abilityMgrServ_->GetStackManager();
-    if (!stack) {
-        return nullptr;
-    }
-    auto topAbility = stack->GetCurrentTopAbility();
-    if (!topAbility) {
-        return nullptr;
-    }
-    topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    return topAbility;
-}
-
-void AbilityMgrModuleTest::MockAbilityTransitionDone(bool &testFailed, sptr<IRemoteObject> &dataAbilityToken,
-    sptr<MockAbilityScheduler> &mockDataAbilityScheduler, std::shared_ptr<AbilityManagerService> &abilityMgrServ)
-{
-    auto mockAbilityTransation = [&testFailed, &dataAbilityToken, &abilityMgrServ](
-                                     const Want &want, const LifeCycleStateInfo &targetState) {
-        testFailed = testFailed || (targetState.state != ABILITY_STATE_ACTIVE);
-        PacMap saveData;
-        std::thread(&AbilityManagerService::AbilityTransitionDone,
-            abilityMgrServ.get(), dataAbilityToken, ACTIVE, saveData).detach();
-    };
-
-    EXPECT_CALL(*mockDataAbilityScheduler, ScheduleAbilityTransaction(_, _))
-        .Times(1)
-        .WillOnce(Invoke(mockAbilityTransation));
-}
-
-void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, sptr<IRemoteObject> &dataAbilityToken,
-    sptr<MockAbilityScheduler> &mockDataAbilityScheduler, std::shared_ptr<AbilityManagerService> &abilityMgrServ)
-{
-    // MOCK: data ability load handler
-
-    auto mockLoadAbility = [&testFailed, &dataAbilityToken, &mockDataAbilityScheduler, &abilityMgrServ](
-                               const sptr<IRemoteObject> &token,
-                               const sptr<IRemoteObject> &preToken,
-                               const AbilityInfo &abilityInfo,
-                               const ApplicationInfo &appInfo) {
-        dataAbilityToken = token;
-        testFailed = testFailed || (abilityInfo.type != AbilityType::DATA);
-        std::thread(&AbilityManagerService::AttachAbilityThread, abilityMgrServ.get(), mockDataAbilityScheduler, token)
-            .detach();
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
-    int counts = 2;
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _))
-        .Times(counts)
-        .WillOnce(Invoke([&testFailed](const sptr<IRemoteObject> &token, const OHOS::AppExecFwk::AbilityState state) {
-            testFailed = testFailed || (state != OHOS::AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
-            return AppMgrResultCode::RESULT_OK;
-        }))
-        .WillOnce(Invoke([&testFailed](const sptr<IRemoteObject> &token, const OHOS::AppExecFwk::AbilityState state) {
-            testFailed = testFailed || (state != OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
-            return AppMgrResultCode::RESULT_OK;
-        }));
 }
 
 void AbilityMgrModuleTest::CreateAbilityRequest(const std::string &abilityName, const std::string bundleName,
@@ -369,36 +269,23 @@ void AbilityMgrModuleTest::CreateAbilityRequest(const std::string &abilityName, 
     curMissionStack->AddMissionRecordToTop(mission);
     recordToken = abilityRecord2->GetToken();
 
-    want = CreateWant(abilityName + "_service", bundleName + "_service");
+    std::string serviceName = "hiService";
+    std::string serviceBundleName = "com.ix.musicService";
+    want = CreateWant(serviceName, serviceBundleName);
     AbilityRequest abilityRequest;
     abilityRequest.want = want;
     abilityRequest.abilityInfo =
-        CreateAbilityInfo(abilityName + "_service", bundleName + "_service", bundleName + "_service");
+        CreateAbilityInfo(serviceName, serviceBundleName, serviceBundleName);
     abilityRequest.abilityInfo.type = OHOS::AppExecFwk::AbilityType::SERVICE;
-    abilityRequest.appInfo = CreateAppInfo(bundleName + "_service", bundleName + "_service");
+    abilityRequest.appInfo = CreateAppInfo(serviceName, serviceBundleName);
     abilityMgrServ_->RemoveAllServiceRecord();
 }
 
-void AbilityMgrModuleTest::MockServiceAbilityLoadHandlerInner(
-    bool &testResult, const std::string &bundleName, const std::string &abilityName, sptr<IRemoteObject> &testToken)
-{
-    auto mockHandler = [&testResult, &bundleName, &abilityName, &testToken](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-}
-
-void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want,
+void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want, int uid,
     const sptr<AbilityConnectionProxy> &callback1, const sptr<AbilityConnectionProxy> &callback2)
 {
-    record = abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    record = abilityMgrServ_->connectManager_->GetServiceRecordByElementName(
+        std::to_string(uid) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_TRUE(abilityMgrServ_->connectManager_->IsAbilityConnected(
         record, abilityMgrServ_->GetConnectRecordListByCallback(callback1)));
@@ -414,7 +301,6 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
     const sptr<AbilityConnectionProxy> &callback2)
 {
     int size = 2;
-    int counts = 2;
     EXPECT_EQ((std::size_t)1, record1->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)1, record2->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->GetConnectRecordListByCallback(callback1).size());
@@ -428,31 +314,18 @@ void AbilityMgrModuleTest::CheckTestRecord(std::shared_ptr<AbilityRecord> &recor
     EXPECT_EQ((std::size_t)0, record2->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->GetConnectRecordListByCallback(callback2).size());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(counts);
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record1->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     abilityMgrServ_->AbilityTransitionDone(record2->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record1->GetAbilityState());
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record2->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(counts);
     abilityMgrServ_->OnAbilityRequestDone(
         record1->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     abilityMgrServ_->OnAbilityRequestDone(
         record2->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetConnectMap().size());
-}
-
-void AbilityMgrModuleTest::MockLoadHandlerInner(int &testId, sptr<MockAbilityScheduler> &scheduler)
-{
-    auto handler = [&testId](const Want &want, bool restart, int startid) { testId = startid; };
-    int counts = 3;
-    EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _))
-        .Times(counts)
-        .WillOnce(Invoke(handler))
-        .WillOnce(Invoke(handler))
-        .WillOnce(Invoke(handler));
 }
 
 void AbilityMgrModuleTest::WaitAMS()
@@ -532,35 +405,22 @@ WantSenderInfo AbilityMgrModuleTest::MakeWantSenderInfo(Want &want, int32_t flag
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-
     auto stackManager = abilityMgrServ_->GetStackManager();
     EXPECT_TRUE(stackManager);
 
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
     Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
     sptr<IRemoteObject> testToken;
 
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
-
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
+    auto ref = abilityMgrServ_->StartAbility(want, testRequestCode);
+    EXPECT_EQ(ref, 0);
+    auto stackMgr = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackMgr);
+    auto topAbility = stackMgr->GetCurrentTopAbility();
+    EXPECT_TRUE(stackMgr);
+    testToken = topAbility->GetToken();
 
     auto testAbilityRecord = stackManager->GetAbilityRecordByToken(testToken);
     EXPECT_TRUE(testAbilityRecord);
@@ -639,27 +499,20 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_003, TestSize.Level1)
     std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
     curMissionStack->AddMissionRecordToTop(mission);
 
-    Want want = CreateWant(abilityName + "_service", bundleName + "_service");
+    std::string serviceName = "hiService";
+    std::string serviceBundleName = "com.ix.musicService";
+    Want want = CreateWant(serviceName, serviceBundleName);
     AbilityRequest abilityRequest;
     abilityRequest.want = want;
-    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "_service", bundleName, bundleName + "_service");
+    abilityRequest.abilityInfo = CreateAbilityInfo(serviceName, bundleName, serviceBundleName);
     abilityRequest.abilityInfo.type = OHOS::AppExecFwk::AbilityType::SERVICE;
-    abilityRequest.appInfo = CreateAppInfo(bundleName, bundleName + "_service");
+    abilityRequest.appInfo = CreateAppInfo(serviceBundleName, serviceBundleName);
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
     abilityMgrServ_->RemoveAllServiceRecord();
     sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    std::shared_ptr<ConnectionRecord> connectRecord =
-        ConnectionRecord::CreateConnectionRecord(abilityRecord->GetToken(), abilityRecord, callback);
-    EXPECT_TRUE(connectRecord != nullptr);
-    connectRecord->SetConnectState(ConnectionState::CONNECTED);
-    abilityRecord->AddConnectRecordToList(connectRecord);
-    std::list<std::shared_ptr<ConnectionRecord> > connectList;
-    connectList.push_back(connectRecord);
-    abilityMgrServ_->connectManager_->connectMap_.emplace(callback->AsObject(), connectList);
-    abilityMgrServ_->connectManager_->serviceMap_.emplace(abilityRequest.want.GetElement().GetURI(), abilityRecord);
 
     int result = abilityMgrServ_->ConnectAbility(want, callback, abilityRecord2->GetToken());
     EXPECT_EQ(OHOS::ERR_OK, result);
@@ -779,7 +632,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_006, TestSize.Level1)
     auto eventLoop = OHOS::AppExecFwk::EventRunner::Create("NAME_ABILITY_MGR_SERVICE");
     std::shared_ptr<AbilityEventHandler> handler = std::make_shared<AbilityEventHandler>(eventLoop, abilityMgrServ_);
     abilityMgrServ_->handler_ = handler;
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
 
     testing::Mock::AllowLeak(scheduler);
@@ -847,25 +699,24 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 
     bool testResult = false;
     sptr<IRemoteObject> testToken;
-    MockServiceAbilityLoadHandlerInner(testResult, bundleName, abilityName, testToken);
 
     int result = abilityMgrServ_->ConnectAbility(want, callback, recordToken);
     EXPECT_EQ(testResult, result);
 
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->connectMap_.size());
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->connectManager_->GetServiceRecordByToken(testToken);
-    EXPECT_TRUE(record);
-    ElementName element;
-
-    std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectRecordList().front();
-    EXPECT_TRUE(connectRecord);
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
 
+    std::string key = std::to_string(10005) + "/" + want.GetElement().GetURI();
+    auto record = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(record);
+
+    std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectRecordList().front();
+    EXPECT_TRUE(connectRecord);
+
     EXPECT_CALL(*scheduler, AsObject()).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
     EXPECT_TRUE(record->isReady_);
 
@@ -904,18 +755,18 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
 {
-
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
     sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    abilityMgrServ_->ConnectAbility(want, callback, nullptr);
-    std::shared_ptr<AbilityRecord> record =
-        abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
+
+    auto result = abilityMgrServ_->ConnectAbility(want, callback, nullptr);
+    EXPECT_EQ(ERR_OK, result);
+    auto record = abilityMgrServ_->connectManager_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
     EXPECT_TRUE(connectRecord);
@@ -937,12 +788,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     EXPECT_EQ((std::size_t)0, record->GetConnectRecordList().size());
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetConnectMap().size());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
@@ -962,11 +811,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
 {
-    std::string abilityName1 = "MusicAbility_service_1";
-    std::string bundleName1 = "com.ix.hiMusic_service_1";
+    std::string abilityName1 = "hiService";
+    std::string bundleName1 = "com.ix.musicService";
     Want want1 = CreateWant(abilityName1, bundleName1);
-    std::string abilityName2 = "MusicAbility_service_2";
-    std::string bundleName2 = "com.ix.hiMusic_service_2";
+    std::string abilityName2 = "hiService";
+    std::string bundleName2 = "com.ix.hiService";
     Want want2 = CreateWant(abilityName2, bundleName2);
 
     sptr<MockAbilityConnectCallbackStub> stub1(new MockAbilityConnectCallbackStub());
@@ -976,7 +825,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
     abilityMgrServ_->ConnectAbility(want1, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want2, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want1, callback2, nullptr);
@@ -987,8 +835,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
 
     std::shared_ptr<AbilityRecord> record1;
     std::shared_ptr<AbilityRecord> record2;
-    CreateServiceRecord(record1, want1, callback1, callback2);
-    CreateServiceRecord(record2, want2, callback1, callback2);
+    CreateServiceRecord(record1, want1, 10005, callback1, callback2);
+    CreateServiceRecord(record2, want2, 10004, callback1, callback2);
 
     for (auto &connectRecord : record1->GetConnectRecordList()) {
         connectRecord->SetConnectState(ConnectionState::CONNECTED);
@@ -1028,36 +876,22 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
-    sptr<IRemoteObject> testToken;
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
     int testRequestCode = 123;
     SetActive();
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
 
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    auto record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
+
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
     EXPECT_TRUE(record->isReady_);
 
@@ -1089,6 +923,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     testing::Mock::AllowLeak(scheduler);
 }
+
 /*
  * Feature: AaFwk
  * Function: ability manager service
@@ -1099,36 +934,23 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
-    sptr<IRemoteObject> testToken;
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
+   
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     WaitAMS();
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
 
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    auto record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
 
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
+
     abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
     EXPECT_TRUE(record->isReady_);
 
@@ -1176,26 +998,26 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_013, TestSize.Level1)
 {
-    std::string abilityName1 = "MusicAbility_service_1";
-    std::string bundleName1 = "com.ix.hiMusic_service_1";
+    std::string abilityName1 = "hiService";
+    std::string bundleName1 = "com.ix.musicService";
     Want want1 = CreateWant(abilityName1, bundleName1);
-    std::string abilityName2 = "MusicAbility_service_2";
-    std::string bundleName2 = "com.ix.hiMusic_service_2";
+    std::string abilityName2 = "hiService";
+    std::string bundleName2 = "com.ix.hiService";
     Want want2 = CreateWant(abilityName2, bundleName2);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want1, testRequestCode);
     abilityMgrServ_->StartAbility(want2, testRequestCode);
 
-    std::shared_ptr<AbilityRecord> record1 =
-        abilityMgrServ_->GetServiceRecordByElementName(want1.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record1 = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want1.GetElement().GetURI());
     EXPECT_TRUE(record1);
     EXPECT_FALSE(record1->IsCreateByConnect());
 
     std::shared_ptr<AbilityRecord> record2 =
-        abilityMgrServ_->GetServiceRecordByElementName(want2.GetElement().GetURI());
+        abilityMgrServ_->GetServiceRecordByElementName(std::to_string(10004) + "/" + want2.GetElement().GetURI());
     EXPECT_TRUE(record2);
     EXPECT_FALSE(record2->IsCreateByConnect());
 
@@ -1212,15 +1034,16 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_013, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
@@ -1234,11 +1057,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     abilityMgrServ_->TerminateAbility(record->GetToken(), -1);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
 
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
@@ -1258,15 +1079,16 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
@@ -1279,12 +1101,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     abilityMgrServ_->StopServiceAbility(want);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
-
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
+    
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
 
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
@@ -1303,15 +1123,16 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
@@ -1352,15 +1173,16 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
@@ -1401,16 +1223,17 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     SetActive();
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->AddStartId();
@@ -1448,10 +1271,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     abilityMgrServ_->StopServiceAbility(want);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
+
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
@@ -1472,15 +1294,16 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
 {
-    std::string abilityName = "MusicAbilityService";
-    std::string bundleName = "com.ix.hiservice";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
     EXPECT_TRUE(abilityMgrServ_);
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
     record->AddStartId();
@@ -1516,10 +1339,9 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     abilityMgrServ_->TerminateAbility(record->GetToken(), -1);
     EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
 
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     PacMap saveData;
     abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
+
     abilityMgrServ_->OnAbilityRequestDone(
         record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
@@ -1539,20 +1361,20 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
 {
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
+    std::string abilityName = "hiService";
+    std::string bundleName = "com.ix.musicService";
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
     sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->connectMap_.size());
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
-    std::shared_ptr<AbilityRecord> record =
-        abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
+    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->connectManager_->GetServiceRecordByElementName(
+        std::to_string(10005) + "/" + want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_TRUE(record->IsCreateByConnect());
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
@@ -1582,8 +1404,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
 
     std::string abilityName = "MusicSAbility";
@@ -1594,9 +1414,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityMgrServ_->StartAbility(want);
@@ -1628,8 +1445,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
 
     std::string abilityName = "TVAbility";
@@ -1640,9 +1455,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
+
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(2);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityMgrServ_->StartAbility(want);
@@ -1674,10 +1487,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     Want want = CreateWant("RadioTopAbility", COM_IX_HIRADIO);
     abilityMgrServ_->StartAbility(want);
     auto testAbilityRecord = GetTopAbility();
@@ -1699,13 +1510,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
     auto stackManager = abilityMgrServ_->GetStackManager();
     EXPECT_TRUE(stackManager);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     Want want = CreateWant("PhoneAbility1", COM_IX_PHONE);
@@ -1735,14 +1544,10 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_025, TestSize.Level1)
 {
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
     const std::string permission = "permission";
     int pid = 100;
     int uid = 1000;
     std::string message;
-    int runTimes = 1;
-    EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(runTimes);
     auto resultFunction = abilityMgrServ_->CompelVerifyPermission(permission, pid, uid, message);
     EXPECT_EQ(resultFunction, 0);
 }
@@ -1806,12 +1611,9 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
     std::string bundleName = "com.ix.hiMusic";
 
     SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);
     EXPECT_EQ(startRef, 0);
-
     auto abilityRecord = abilityMgrServ_->GetStackManager()->GetCurrentTopAbility();
     EXPECT_TRUE(abilityRecord);
 
@@ -1857,12 +1659,10 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
 HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
 {
     EXPECT_TRUE(abilityMgrServ_);
-    std::string abilityName = "hiService";
-    std::string bundleName = "com.ix.hiService";
+    std::string abilityName = "MusicAbility";
+    std::string bundleName = "com.ix.hiMusic";
 
     SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);
     EXPECT_EQ(startRef, 0);
@@ -1879,7 +1679,9 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
     };
 
     sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_)).Times(1).WillOnce(Invoke(Compare));
+    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
+        .Times(1)
+        .WillOnce(Invoke(Compare));
 
     abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
 
@@ -1902,6 +1704,1374 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: start ability type is AbilityCallType::START_ABILITY_TYPE
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_028, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+
+    // Start the application more open
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int uid = 10012;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = uid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = uid+1;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    Want wantRadio;
+    ElementName elementRadio("deviceId", "com.ix.clock", "ClockAbility");
+    wantRadio.SetElement(elementRadio);
+
+
+    request.want = wantRadio;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, topAbility);
+
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto selectorToken = selectorAbility->GetToken();
+
+    auto abilityName = selectorAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(abilityName, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+
+    Want requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, uid);
+
+    int ref = abilityMgrServ_->TerminateAbility(selectorToken, -1, &requstWant);
+    EXPECT_EQ(ref, 0);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    WaitAMS();
+
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    auto name = radioAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: start ability type is AbilityCallType::START_ABILITY_SETTING_TYPE
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_029, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+
+    // Start the application more open
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int uid = 10012;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = uid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = uid+1;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+    EXPECT_TRUE(abilityStartSetting);
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+
+    AbilityRequest request;
+    Want wantRadio;
+    ElementName elementRadio("deviceId", "com.ix.clock", "ClockAbility");
+    wantRadio.SetElement(elementRadio);
+
+    request.want = wantRadio;
+    request.callerToken = callerToken;
+    request.callType = AbilityCallType::START_ABILITY_SETTING_TYPE;
+    request.startSetting = abilityStartSetting;
+
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, topAbility);
+
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto selectorToken = selectorAbility->GetToken();
+
+    auto abilityName = selectorAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(abilityName, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+
+    
+    Want requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, uid + 1);
+
+    int ref = abilityMgrServ_->TerminateAbility(selectorToken, -1, &requstWant);
+    EXPECT_EQ(ref, 0);
+    PacMap saveData;
+    abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    WaitAMS();
+
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    auto name = radioAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(name, "ClockAbility");
+    EXPECT_EQ(radioAbility->GetMissionStackId(), 2);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: PageAbility Start multi ServiceAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_033, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+    abilityMgrServ_->Init();
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::START_ABILITY_TYPE;
+    abilityRequest1.callerUid = -1;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.requestCode = -1;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, rootUid);
+    auto abilityRequest = abilityMgrServ_->StartSelectedApplication(&requstWant, selectorToken);
+    EXPECT_FALSE(abilityRequest);
+    WaitAMS();
+    std::string key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, false);
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: PageAbility Start multi ServiceAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_034, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+    abilityMgrServ_->Init();
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::START_ABILITY_TYPE;
+    abilityRequest1.callerUid = -1;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.requestCode = -1;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+    auto abilityRequest = abilityMgrServ_->StartSelectedApplication(&requstWant, selectorToken);
+    EXPECT_FALSE(abilityRequest);
+    WaitAMS();
+    std::string key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ConnectAbility/DisconnectAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: PageAbility Connect/Disconnect multi ServiceAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_035, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+    abilityMgrServ_->Init();
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
+    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::CONNECT_ABILITY_TYPE;
+    abilityRequest1.connect = callback;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+    auto abilityRequest = abilityMgrServ_->StartSelectedApplication(&requstWant, selectorToken);
+    EXPECT_FALSE(abilityRequest);
+    WaitAMS();
+    std::string key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord1);
+    std::shared_ptr<ConnectionRecord> connectRecord = serviceRecord->GetConnectingRecord();
+    EXPECT_TRUE(connectRecord);
+    EXPECT_EQ(OHOS::AAFwk::ConnectionState::CONNECTING, connectRecord->GetConnectState());
+    connectRecord->SetConnectState(ConnectionState::CONNECTED);
+    abilityMgrServ_->DisconnectAbility(callback);
+    EXPECT_EQ(OHOS::AAFwk::ConnectionState::DISCONNECTING, connectRecord->GetConnectState());
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ConnectAbility/DisconnectAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: PageAbility Connect/Disconnect multi ServiceAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_036, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+    abilityMgrServ_->Init();
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    // com.ix.hiService is multi app
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
+    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::CONNECT_ABILITY_TYPE;
+    abilityRequest1.connect = callback;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, rootUid);
+    auto abilityRequest = abilityMgrServ_->StartSelectedApplication(&requstWant, selectorToken);
+    EXPECT_FALSE(abilityRequest);
+    WaitAMS();
+    std::string key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, false);
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    auto serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord1);
+    std::shared_ptr<ConnectionRecord> connectRecord = serviceRecord->GetConnectingRecord();
+    EXPECT_TRUE(connectRecord);
+    EXPECT_EQ(OHOS::AAFwk::ConnectionState::CONNECTING, connectRecord->GetConnectState());
+    connectRecord->SetConnectState(ConnectionState::CONNECTED);
+    abilityMgrServ_->DisconnectAbility(callback);
+    EXPECT_EQ(OHOS::AAFwk::ConnectionState::DISCONNECTING, connectRecord->GetConnectState());
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: ServiceAbility Start multi ServiceAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_037, TestSize.Level1)
+{
+    int defValue = -1;
+    int callerUid = 10004;
+    int rootUid = 10011;
+    int twinUid = 10010;
+    abilityMgrServ_->Init();
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiService", "hiService");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    // uid Need add
+    std::string callerKey = std::to_string(callerUid) + "/" + element.GetURI();
+    auto callerServiceRecord = abilityMgrServ_->GetServiceRecordByElementName(callerKey);
+    EXPECT_TRUE(callerServiceRecord);
+    auto callerToken = callerServiceRecord->GetToken();
+    EXPECT_TRUE(callerToken);
+
+    Want serviceWant;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    result = abilityMgrServ_->StartAbility(serviceWant, callerToken, defValue, defValue, defValue);
+    EXPECT_EQ(result, ERR_OK);
+    std::string key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, false);
+    // uid is other
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: AcquireDataAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: ServiceAbility Start multi DataAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_038, TestSize.Level1)
+{
+    int callerUid = 10004;
+    abilityMgrServ_->Init();
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiService", "hiService");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    std::string callerKey = std::to_string(callerUid) + "/" + element.GetURI();
+    auto callerServiceRecord = abilityMgrServ_->GetServiceRecordByElementName(callerKey);
+    EXPECT_TRUE(callerServiceRecord);
+    auto callerToken = callerServiceRecord->GetToken();
+    EXPECT_TRUE(callerToken);
+
+    Want serviceWant;
+    std::string startBundleName = "com.ix.hiData";
+    std::string startAbilityName = "hiData";
+    ElementName elementService("deviceId", startBundleName, startAbilityName);
+    serviceWant.SetElement(elementService);
+    Uri dataAbilityUri("dataability:///" + startBundleName + "." + startAbilityName);
+    abilityMgrServ_->AcquireDataAbility(dataAbilityUri, false, callerToken);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: AcquireDataAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: PageAbility Start multi DataAbility
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_039, TestSize.Level1)
+{
+    Want want;
+    ElementName element("device", "com.ix.hiPhone", "PhoneAbility1");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+
+    // Start the application more open
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    // this uid is for data ability
+    int uid = 10006;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = uid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = 100061;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    Want wantRadio;
+    ElementName elementRadio("deviceId", "com.ix.hiData", "hiData");
+    wantRadio.SetElement(elementRadio);
+    std::string dataAbilityUri;
+    dataAbilityUri = "dataability:///com.ix.hiData.hiData";
+
+    request.want = wantRadio;
+    request.callType = AbilityCallType::ACQUIRE_DATA_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, topAbility);
+
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto selectorToken = selectorAbility->GetToken();
+
+    auto abilityName = selectorAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(abilityName, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+
+    Want requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, uid);
+
+    AbilityRequest needToStartRequest;
+    needToStartRequest.appInfo.name = "hiData";
+
+    auto abilityMgr = abilityMgrServ_.get();
+    auto task = [abilityMgr, dataAbilityUri, callerToken, &needToStartRequest]() -> void {
+        std::cout<<"=========================================task start==================================="<<std::endl;
+        EXPECT_TRUE(abilityMgr);
+        std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+        auto bms = abilityMgr->GetBundleManager();
+        EXPECT_TRUE(bms);
+        bms->QueryAbilityInfosByUri(dataAbilityUri, abilityInfos);
+
+        // wait
+        auto waitMultiAppReturnRecord =
+            abilityMgr->waitmultiAppReturnStorage_->AddRecord(callerToken);
+        EXPECT_TRUE(waitMultiAppReturnRecord);
+        auto requestUid = waitMultiAppReturnRecord->WaitForMultiAppSelectorReturn();
+
+        // Get information about the application that needs to be started (needToStartRequest)
+        abilityMgr->GetAbilityInfoFromBms(abilityInfos, callerToken,
+            needToStartRequest, requestUid);
+        std::cout<<"=========================================task end===================================="<<std::endl;
+    };
+
+    std::thread acquirc(task);
+
+    // wait for acquirc run
+    usleep(500);
+    int ref = abilityMgrServ_->TerminateAbility(selectorToken, -1, &requstWant);
+    WaitAMS();
+    EXPECT_EQ(ref, 0);
+
+    acquirc.join();
+
+    abilityMgrServ_->dataAbilityManager_->Acquire(needToStartRequest, false, callerToken, true);
+
+    const std::string dataAbilityName(std::to_string(needToStartRequest.abilityInfo.applicationInfo.uid) + '.' +
+        needToStartRequest.abilityInfo.bundleName + '.' + needToStartRequest.abilityInfo.name);
+    auto dateAbilityRecord = abilityMgrServ_->dataAbilityManager_->dataAbilityRecordsLoading_.find(dataAbilityName);
+
+    int size = abilityMgrServ_->dataAbilityManager_->dataAbilityRecordsLoading_.size();
+    EXPECT_EQ(size, 1);
+    EXPECT_TRUE(dateAbilityRecord != abilityMgrServ_->dataAbilityManager_->dataAbilityRecordsLoading_.end());
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: page ability start page ability
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_040, TestSize.Level1)
+{
+    int defValue = -1;
+    Want want;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    radioAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = radioAbility->GetToken();
+
+    // com.ix.clock is multi app
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int rootUid = 10012;
+    int twinUid = 10013;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = rootUid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = twinUid;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockAbility");
+    Want wantService;
+    wantService.SetElement(elementService);
+    request.want = wantService;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    auto ret = abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, radioAbility);
+    EXPECT_EQ(ret, ERR_OK);
+
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+
+    Want requstWant;
+    requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, radioAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, rootUid);
+
+    WaitAMS();
+    ret = abilityMgrServ_->TerminateAbility(selectorToken, defValue, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    auto clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    clockAbility1->SetAbilityState(AbilityState::ACTIVE);
+    auto clockToken = clockAbility1->GetToken();
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, false);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: page ability start page ability
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_041, TestSize.Level1)
+{
+    int defValue = -1;
+    Want want;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    radioAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = radioAbility->GetToken();
+
+    // com.ix.clock is multi app
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int rootUid = 10012;
+    int twinUid = 10013;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = rootUid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = twinUid;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockAbility");
+    Want wantService;
+    wantService.SetElement(elementService);
+    request.want = wantService;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    auto ret = abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, radioAbility);
+    EXPECT_EQ(ret, ERR_OK);
+
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+
+    Want requstWant;
+    requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, radioAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    ret = abilityMgrServ_->TerminateAbility(selectorToken, defValue, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    auto clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    clockAbility1->SetAbilityState(AbilityState::ACTIVE);
+    auto clockToken = clockAbility1->GetToken();
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, true);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: Terminate the Ontology application when the Ontology and the clone
+ *                  application are started at the same time (page ability -> page ability)
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_042, TestSize.Level1)
+{
+    int defValue = -1;
+    Want want;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    radioAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = radioAbility->GetToken();
+
+    // com.ix.clock is multi app
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int rootUid = 10012;
+    int twinUid = 10013;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = rootUid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = twinUid;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockAbility");
+    Want wantService;
+    wantService.SetElement(elementService);
+    request.want = wantService;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    auto ret = abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, radioAbility);
+    EXPECT_EQ(ret, ERR_OK);
+
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+
+    Want requstWant;
+    requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, radioAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    ret = abilityMgrServ_->TerminateAbility(selectorToken, defValue, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    auto clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    clockAbility1->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, true);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+    EXPECT_TRUE(abilityStartSetting);
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+
+    WaitAMS();
+    result = abilityMgrServ_->StartAbility(wantService, *abilityStartSetting, nullptr, defValue);
+    EXPECT_EQ(result, ERR_OK);
+
+    WaitAMS();
+    auto clockAbility2 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility2);
+    clockAbility2->SetAbilityState(AbilityState::ACTIVE);
+    auto clockToken = clockAbility2->GetToken();
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().applicationInfo.isCloned, false);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().name, "ClockAbility");
+
+    ret = abilityMgrServ_->TerminateAbility(clockToken, defValue, &wantService);
+    EXPECT_EQ(ERR_OK, ret);
+    WaitAMS();
+    clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, true);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: When the ontology and the clone application are started
+ *                  at the same time, terminate the clone application (page ability -> page ability)
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_043, TestSize.Level1)
+{
+    int defValue = -1;
+    Want want;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto radioAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(radioAbility);
+    radioAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = radioAbility->GetToken();
+
+    // com.ix.clock is multi app
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int rootUid = 10012;
+    int twinUid = 10013;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = rootUid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = twinUid;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockAbility");
+    Want wantService;
+    wantService.SetElement(elementService);
+    request.want = wantService;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    auto ret = abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, radioAbility);
+    EXPECT_EQ(ret, ERR_OK);
+
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+
+    Want requstWant;
+    requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, radioAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    ret = abilityMgrServ_->TerminateAbility(selectorToken, defValue, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    auto clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    clockAbility1->SetAbilityState(AbilityState::ACTIVE);
+    auto clockToken = clockAbility1->GetToken();
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, true);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+    EXPECT_TRUE(abilityStartSetting);
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+
+    WaitAMS();
+    result = abilityMgrServ_->StartAbility(wantService, *abilityStartSetting, nullptr, defValue);
+    EXPECT_EQ(result, ERR_OK);
+
+    WaitAMS();
+    auto clockAbility2 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility2);
+    clockAbility2->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().applicationInfo.isCloned, false);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().name, "ClockAbility");
+
+    ret = abilityMgrServ_->TerminateAbility(clockToken, defValue, &wantService);
+    EXPECT_EQ(ERR_OK, ret);
+    WaitAMS();
+    clockAbility2 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility2);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().applicationInfo.isCloned, false);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: Terminate the Ontology application when the Ontology and the clone
+ *                  application are started at the same time  (page ability -> service ability)
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_044, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    // com.ix.hiService is multi app
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
+    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::CONNECT_ABILITY_TYPE;
+    abilityRequest1.connect = callback;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    auto ret = abilityMgrServ_->TerminateAbility(selectorToken, -1, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    std::string key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord1);
+
+    WaitAMS();
+    result = abilityMgrServ_->StartAbility(serviceWant);
+    EXPECT_EQ(result, ERR_OK);
+
+    WaitAMS();
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    auto clockToken = serviceRecord1->GetToken();
+    EXPECT_TRUE(serviceRecord1);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.isCloned, false);
+
+    abilityMgrServ_->OnAbilityRequestDone(clockToken, 3);
+
+    WaitAMS();
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord1);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbility
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: When the ontology and the clone application are started
+ *                  at the same time, terminate the clone application  (page ability -> service ability)
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_045, TestSize.Level1)
+{
+    int rootUid = 10011;
+    int twinUid = 10010;
+
+    Want callerWant;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicSAbility");
+    callerWant.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(callerWant);
+    EXPECT_EQ(result, ERR_OK);
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbility->GetEventId());
+    Want serviceWant;
+    // com.ix.hiService is multi app
+    ElementName elementService("deviceId", "com.ix.clock", "ClockService");
+    serviceWant.SetElement(elementService);
+    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
+    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
+    AbilityRequest abilityRequest1;
+    abilityRequest1.callType = AbilityCallType::CONNECT_ABILITY_TYPE;
+    abilityRequest1.connect = callback;
+    abilityRequest1.want = serviceWant;
+    abilityRequest1.callerToken = callerToken;
+    abilityRequest1.requestUid = -1;
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    auto bms = abilityMgrServ_->GetBundleManager();
+    bms->QueryAbilityInfosForClone(serviceWant, abilityInfos);
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, abilityRequest1, topAbility);
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+    EXPECT_TRUE(handler);
+    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, selectorAbility->GetEventId());
+    Want requstWant;
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, topAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    auto ret = abilityMgrServ_->TerminateAbility(selectorToken, -1, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    std::string key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    auto serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    auto serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord1);
+
+    WaitAMS();
+    result = abilityMgrServ_->StartAbility(serviceWant);
+    EXPECT_EQ(result, ERR_OK);
+
+    WaitAMS();
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    serviceRecord->SetAbilityState(AbilityState::ACTIVE);
+    auto clockToken = serviceRecord->GetToken();
+    EXPECT_TRUE(serviceRecord);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.uid, twinUid);
+    EXPECT_EQ(serviceRecord->GetAbilityInfo().applicationInfo.isCloned, true);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    serviceRecord1->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_TRUE(serviceRecord1);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.isCloned, false);
+
+    WaitAMS();
+    abilityMgrServ_->OnAbilityRequestDone(clockToken, 3);
+
+    WaitAMS();
+    key = std::to_string(twinUid) + "/" + elementService.GetURI();
+    serviceRecord = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_FALSE(serviceRecord);
+    key = std::to_string(rootUid) + "/" + elementService.GetURI();
+    serviceRecord1 = abilityMgrServ_->GetServiceRecordByElementName(key);
+    EXPECT_TRUE(serviceRecord1);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.uid, rootUid);
+    EXPECT_EQ(serviceRecord1->GetAbilityInfo().applicationInfo.isCloned, false);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartSelectedApplication
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: luncher ability start Radio ability
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_046, TestSize.Level1)
+{
+    Want want;
+    ElementName element("deviceId", "com.ix.hiworld", "luncher");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto topAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(topAbility);
+    topAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = topAbility->GetToken();
+
+    // Start the application more open
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int uid = 10003;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = uid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = uid+1;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    Want wantRadio;
+    ElementName elementRadio("deviceId", "com.ix.hiRadio", "RadioAbility");
+    wantRadio.SetElement(elementRadio);
+
+    request.want = wantRadio;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, topAbility);
+
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto selectorToken = selectorAbility->GetToken();
+
+    auto abilityName = selectorAbility->GetWant().GetElement().GetAbilityName();
+    EXPECT_EQ(abilityName, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function:StartMultiApplicationSelector
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: the ontology and the clone application are started
+ *                  at the same time
+ */
+HWTEST_F(AbilityMgrModuleTest, StartSelectedApplication_047, TestSize.Level1)
+{
+    abilityMgrServ_->Init();
+    int defValue = -1;
+    Want want;
+    ElementName element("deviceId", "com.ix.hiMusic", "MusicAbility");
+    want.SetElement(element);
+    auto result = abilityMgrServ_->StartAbility(want);
+    EXPECT_EQ(result, ERR_OK);
+
+    auto stackManager = abilityMgrServ_->GetStackManager();
+    EXPECT_TRUE(stackManager);
+    auto musicAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(musicAbility);
+    musicAbility->SetAbilityState(AbilityState::ACTIVE);
+    auto callerToken = musicAbility->GetToken();
+
+    // com.ix.clock is multi app
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+
+    int rootUid = 10012;
+    int twinUid = 10013;
+    AppExecFwk::AbilityInfo theOne;
+    theOne.applicationInfo.uid = rootUid;
+    theOne.applicationInfo.isCloned = false;
+
+    AppExecFwk::AbilityInfo theTwo;
+    theOne.applicationInfo.uid = twinUid;
+    theOne.applicationInfo.isCloned = true;
+
+    abilityInfos.emplace_back(theOne);
+    abilityInfos.emplace_back(theTwo);
+
+    AbilityRequest request;
+    ElementName elementService("deviceId", "com.ix.clock", "ClockAbility");
+    Want wantService;
+    wantService.SetElement(elementService);
+    request.want = wantService;
+    request.callType = AbilityCallType::START_ABILITY_TYPE;
+    request.callerToken = callerToken;
+
+    auto ret = abilityMgrServ_->StartMultiApplicationSelector(abilityInfos, request, musicAbility);
+    EXPECT_EQ(ret, ERR_OK);
+
+    WaitAMS();
+    auto selectorAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(selectorAbility);
+    selectorAbility->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().bundleName, AbilityConfig::APPLICATION_SELECTOR_BUNDLE_NAME);
+    EXPECT_EQ(selectorAbility->GetAbilityInfo().name, AbilityConfig::APPLICATION_SELECTOR_ABILITY_NAME);
+    auto selectorToken = selectorAbility->GetToken();
+
+    Want requstWant;
+    requstWant = selectorAbility->GetWant();
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID, musicAbility->GetRecordId());
+    requstWant.SetParam(AbilityConfig::APPLICATION_SELECTOR_RESULT_UID, twinUid);
+
+    WaitAMS();
+    ret = abilityMgrServ_->TerminateAbility(selectorToken, defValue, &requstWant);
+    EXPECT_EQ(ERR_OK, ret);
+    PacMap saveData;
+    ret = abilityMgrServ_->AbilityTransitionDone(selectorToken, 1, saveData);
+    EXPECT_EQ(ERR_OK, ret);
+
+    WaitAMS();
+    auto clockAbility1 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility1);
+    clockAbility1->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().applicationInfo.isCloned, true);
+    EXPECT_EQ(clockAbility1->GetAbilityInfo().name, "ClockAbility");
+
+    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
+    EXPECT_TRUE(abilityStartSetting);
+    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
+        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING));
+
+    WaitAMS();
+    result = abilityMgrServ_->StartAbility(wantService, *abilityStartSetting, nullptr, defValue);
+    EXPECT_EQ(result, ERR_OK);
+
+    WaitAMS();
+    auto clockAbility2 = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(clockAbility2);
+    clockAbility2->SetAbilityState(AbilityState::ACTIVE);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().applicationInfo.isCloned, false);
+    EXPECT_EQ(clockAbility2->GetAbilityInfo().name, "ClockAbility");
+}
+
+/*
+ * Feature: AbilityManagerService
  * Function: UpdateConfiguration
  * SubFunction: NA
  * FunctionPoints: NA
@@ -1911,12 +3081,10 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
 HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_030, TestSize.Level1)
 {
     EXPECT_TRUE(abilityMgrServ_);
-    std::string abilityName = "hiworld";
+    std::string abilityName = "luncher";
     std::string bundleName = "com.ix.hiworld";
 
     SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);
     EXPECT_EQ(startRef, 0);
@@ -1963,7 +3131,6 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_030, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
     Want want1;
     ElementName element("device", "bundleName1", "abilityName1");
@@ -2006,7 +3173,6 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
     Want want1;
     ElementName element("device", "bundleName1", "abilityName1");
@@ -2049,7 +3215,6 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
     Want want1;
     ElementName element("device", "bundleName1", "abilityName1");
@@ -2092,7 +3257,6 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
 {
-    EXPECT_CALL(*mockAppMgrClient_, KillApplication(_)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     abilityMgrServ_->pendingWantManager_->wantRecords_.clear();
     Want want1;
     ElementName element("device", "bundleName1", "abilityName1");

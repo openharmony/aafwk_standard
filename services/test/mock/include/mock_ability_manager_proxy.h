@@ -48,7 +48,7 @@ public:
     MOCK_METHOD1(ScheduleCommandAbilityDone, int(const sptr<IRemoteObject> &));
     MOCK_METHOD2(DumpState, void(const std::string &args, std::vector<std::string> &state));
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int startId));
-    MOCK_METHOD1(StopServiceAbility, int(const Want &));
+    MOCK_METHOD2(StopServiceAbility, int(const Want &, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<RecentMissionInfo> &));
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
@@ -56,7 +56,7 @@ public:
     MOCK_METHOD1(RemoveStack, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(KillProcess, int(const std::string &));
-    MOCK_METHOD1(UninstallApp, int(const std::string &));
+    MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, const int uid));
     MOCK_METHOD4(OnRemoteRequest, int(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));

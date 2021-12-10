@@ -77,6 +77,11 @@ AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
     return AppMgrResultCode::RESULT_OK;
 }
 
+AppMgrResultCode AppMgrClient::KillApplicationByUid(const std::string &bundleName, const int uid)
+{
+    return AppMgrResultCode::RESULT_OK;
+}
+
 AppMgrResultCode AppMgrClient::ClearUpApplicationData(const std::string &bundleName)
 {
     return AppMgrResultCode::RESULT_OK;

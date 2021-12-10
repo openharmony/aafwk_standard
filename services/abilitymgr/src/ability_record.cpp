@@ -1085,6 +1085,26 @@ bool AbilityRecord::IsMovingBackground() const
     return isMovingBackground_;
 }
 
+void AbilityRecord::SetWillSatrtAbilityRequest(const std::shared_ptr<AbilityRequest> &abilityRequestPtr)
+{
+    abilityRequestPtr_ = abilityRequestPtr;
+}
+
+std::shared_ptr<AbilityRequest> AbilityRecord::GetWillSatrtAbilityRequest() const
+{
+    return abilityRequestPtr_;
+}
+
+void AbilityRecord::SetMoveSplitScreenStack(bool isMoveSplitScreenStack)
+{
+    isMoveSplitScreenStack_ = isMoveSplitScreenStack;
+}
+
+bool AbilityRecord::IsMoveSplitScreenStack() const
+{
+    return isMoveSplitScreenStack_;
+}
+
 void AbilityRecord::SetLockScreenRoot()
 {
     isLockScreenRoot_ = true;

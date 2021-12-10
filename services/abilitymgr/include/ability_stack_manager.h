@@ -84,9 +84,11 @@ public:
      * @param token, the token of service type's ability to terminate.
      * @param resultCode, the result code of service type's ability to terminate.
      * @param resultWant, the result want for service type's ability to terminate.
+     * @param abilityRequestPtr, passed in when the application selector starts selecting ability
      * @return Returns ERR_OK on success, others on failure.
      */
-    int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant);
+    int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant,
+        const std::shared_ptr<AbilityRequest> &abilityRequestPtr = nullptr);
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -346,8 +348,9 @@ public:
      * Uninstall app
      *
      * @param bundleName.
+     * @param uid.
      */
-    void UninstallApp(const std::string &bundleName);
+    void UninstallApp(const std::string &bundleName, const int uid);
 
     void OnTimeOut(uint32_t msgId, int64_t eventId);
     bool IsFirstInMission(const sptr<IRemoteObject> &token);
@@ -596,8 +599,9 @@ private:
      * Add uninstall tags to ability
      *
      * @param bundleName
+     * @param userId
      */
-    void AddUninstallTags(const std::string &bundleName);
+    void AddUninstallTags(const std::string &bundleName, const int uid);
 
     /**
      * Get target record by start mode.
@@ -655,7 +659,8 @@ private:
     SystemWindowMode GetLatestSystemWindowMode();
     int JudgingTargetStackId(AbilityWindowConfiguration config) const;
     int StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> lastTopAbility,
-        std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility);
+        std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
+        bool isTopSplitScreen = false);
 
     void ActiveTopAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
@@ -735,7 +740,13 @@ private:
 
     std::string ConvertWindowModeState(const SystemWindowMode &mode);
 
+    void MultiApplicationSelectorStartTargetAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void MultiAppSelectorStartTargetAbilityFail(const std::shared_ptr<AbilityRecord> &topAbilityRecord,
+        const std::shared_ptr<AbilityRecord> &abilityRecord);
     void ProcessInactivateInMoving(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void BackAbilityRecordMoveToBackGround(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void MoveMissionStackToFullStackTop(const std::shared_ptr<MissionStack> &stack);
+    void RemoveMultiAppSelectorAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
 private:
     static constexpr int MIN_MISSION_STACK_ID = LAUNCHER_MISSION_STACK_ID;

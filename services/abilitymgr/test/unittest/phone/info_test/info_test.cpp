@@ -59,7 +59,7 @@ void InfoTest::TearDown()
  * EnvConditions:NA
  * CaseDescription: The process of verifying stackenfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_001, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_001, TestSize.Level1)
 {
     MissionStackInfo missionInfo;
     missionInfo.id = 10;
@@ -86,7 +86,7 @@ HWTEST_F(InfoTest, stack_info_oprator_001, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying MissionStackInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_002, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_002, TestSize.Level1)
 {
     MissionRecordInfo info;
     info.id = 1;
@@ -111,7 +111,7 @@ HWTEST_F(InfoTest, stack_info_oprator_002, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying MissionRecordInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_003, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_003, TestSize.Level1)
 {
     AbilityRecordInfo info;
     info.id = 10;
@@ -162,7 +162,7 @@ HWTEST_F(InfoTest, stack_info_oprator_003, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying AbilityRecordInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_004, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_004, TestSize.Level1)
 {
     abilityRecordInfo_.id = 10;
     abilityRecordInfo_.elementName = "test";
@@ -210,7 +210,7 @@ HWTEST_F(InfoTest, stack_info_oprator_004, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying LifeCycleStateInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_005, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_005, TestSize.Level1)
 {
     lifeCycleStateInfo_.isNewWant = 10;
     lifeCycleStateInfo_.state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND;
@@ -234,7 +234,7 @@ HWTEST_F(InfoTest, stack_info_oprator_005, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying ImageInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_007, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_007, TestSize.Level1)
 {
     imageInfo_.width = 8;
     imageInfo_.height = 24;
@@ -263,7 +263,7 @@ HWTEST_F(InfoTest, stack_info_oprator_007, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying MissionDescriptionInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_008, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_008, TestSize.Level1)
 {
     missionDescriptionInfo_.label = "label";
     missionDescriptionInfo_.iconPath = "iconpath";
@@ -286,7 +286,7 @@ HWTEST_F(InfoTest, stack_info_oprator_008, TestSize.Level0)
  * EnvConditions:NA
  * CaseDescription: The process of verifying AbilityMissionInfo parcel
  */
-HWTEST_F(InfoTest, stack_info_oprator_009, TestSize.Level0)
+HWTEST_F(InfoTest, stack_info_oprator_009, TestSize.Level1)
 {
     recentMissionInfo_.id = 10;
     recentMissionInfo_.runingState = -1;

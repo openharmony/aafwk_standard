@@ -151,7 +151,7 @@ public:
     {
         return true;
     }
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) override
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override
     {
         return true;
     }
@@ -235,7 +235,7 @@ public:
     ~BundleMgrService() = default;
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
-    MOCK_METHOD1(CleanBundleDataFiles, bool(const std::string &bundleName));
+    MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
@@ -401,7 +401,7 @@ public:
         return true;
     }
     virtual bool NotifyActivityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) override
     {
         return true;
     }

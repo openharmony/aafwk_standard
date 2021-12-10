@@ -22,6 +22,7 @@ namespace OHOS {
 namespace AAFwk {
 namespace GlobalConfigurationKey {
     /* For the time being, there is no uniform standard */
+    /* Must be synchronized with the keystore(SystemConfigurationKeyStore)in the configuration */
     static const std::string SYSTEM_LANGUAGE {"ohos.system.language"};
     static const std::string SYSTEM_ORIENTATION {"ohos.system.orientation"};
 } // namespace GlobalConfigurationKey
