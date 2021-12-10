@@ -50,7 +50,7 @@ void AbilityTokenProxyTest::SetUp(void)
  * EnvConditions:NA
  * CaseDescription: verify AbilityTokenProxy is create success
  */
-HWTEST_F(AbilityTokenProxyTest, ability_token_proxy_operating_001, TestSize.Level0)
+HWTEST_F(AbilityTokenProxyTest, ability_token_proxy_operating_001, TestSize.Level1)
 {
     EXPECT_NE(abilityTokenProxy_, nullptr);
 }

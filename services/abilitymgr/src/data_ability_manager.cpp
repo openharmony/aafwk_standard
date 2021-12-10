@@ -57,7 +57,8 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
     }
 
     std::shared_ptr<AbilityRecord> clientAbilityRecord;
-    const std::string dataAbilityName(abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
+    const std::string dataAbilityName(std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + '.' +
+        abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
 
     if (client && !isSystem) {
         clientAbilityRecord = Token::GetAbilityRecordByToken(client);
@@ -65,7 +66,9 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
             HILOG_ERROR("Data ability manager acquire: invalid client token.");
             return nullptr;
         }
-        if (abilityRequest.abilityInfo.bundleName == clientAbilityRecord->GetAbilityInfo().bundleName &&
+        if (abilityRequest.abilityInfo.applicationInfo.uid ==
+            clientAbilityRecord->GetAbilityInfo().applicationInfo.uid &&
+            abilityRequest.abilityInfo.bundleName == clientAbilityRecord->GetAbilityInfo().bundleName &&
             abilityRequest.abilityInfo.name == clientAbilityRecord->GetAbilityInfo().name) {
             HILOG_ERROR("Data ability '%{public}s' cannot acquires itself.", dataAbilityName.c_str());
             return nullptr;
@@ -313,6 +316,7 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
+            abilityRecord->GetAbilityInfo().applicationInfo.uid == info.uid &&
             (info.processName == abilityRecord->GetAbilityInfo().process ||
             info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
             abilityRecord->SetAppState(info.state);
@@ -322,6 +326,7 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
+            abilityRecord->GetAbilityInfo().applicationInfo.uid == info.uid &&
             (info.processName == abilityRecord->GetAbilityInfo().process ||
             info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
             abilityRecord->SetAppState(info.state);

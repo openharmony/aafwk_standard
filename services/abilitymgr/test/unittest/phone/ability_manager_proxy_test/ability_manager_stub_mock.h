@@ -147,7 +147,7 @@ public:
         return 0;
     }
 
-    virtual int StopServiceAbility(const Want &want)
+    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
     {
         return 0;
     }
@@ -183,7 +183,7 @@ public:
         return 0;
     }
 
-    virtual int UninstallApp(const std::string &bundleName)
+    virtual int UninstallApp(const std::string &bundleName, const int uid)
     {
         return 0;
     }
@@ -291,6 +291,7 @@ public:
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD4(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int uid));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -304,6 +305,7 @@ public:
     MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 };
 }  // namespace AAFwk
 }  // namespace OHOS

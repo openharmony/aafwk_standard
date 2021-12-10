@@ -330,7 +330,7 @@ bool AbilityContext::StopAbility(const AAFwk::Want &want)
     }
 
     APP_LOGI("%{public}s begin ams->StopServiceAbility", __func__);
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want, token_);
     APP_LOGI("%{public}s end ams->StopServiceAbility, ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         APP_LOGE("AbilityContext::StopAbility is failed %{public}d", err);

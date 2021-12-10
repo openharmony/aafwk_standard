@@ -59,7 +59,7 @@ public:
     AbilityInfo CreateAbilityInfo(const std::string &name, const std::string &appName, const std::string &bundleName);
     ApplicationInfo CreateAppInfo(const std::string &appName, const std::string &bundleName);
     AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
-        const std::string &appName, const std::string &bundleName);
+        const std::string &appName, const std::string &bundleName, const int uid = -1);
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
 
 public:
@@ -158,7 +158,7 @@ void AbilityStackModuleTest::TearDown(void)
 }
 
 AbilityRequest AbilityStackModuleTest::GenerateAbilityRequest(const std::string &deviceName,
-    const std::string &abilityName, const std::string &appName, const std::string &bundleName)
+    const std::string &abilityName, const std::string &appName, const std::string &bundleName, const int uid)
 {
     GTEST_LOG_(INFO) << "GenerateAbilityRequest start ability :" << abilityName;
     ElementName element(deviceName, abilityName, bundleName);
@@ -173,6 +173,7 @@ AbilityRequest AbilityStackModuleTest::GenerateAbilityRequest(const std::string 
     abilityInfo.applicationName = appName;
     abilityInfo.applicationInfo.bundleName = bundleName;
     abilityInfo.applicationInfo.name = appName;
+    abilityInfo.applicationInfo.uid = uid;
 
     makeScene(abilityName, bundleName, abilityInfo, want);
 
@@ -281,12 +282,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, Test
     // set mock
     stackManager_->screenshotHandler_->windowMS_ = mockWindowManager;
     sptr<PromiseWMSImageInfo> promise = new PromiseWMSImageInfo();
-    auto infos = [promise](int32_t id) -> sptr<PromiseWMSImageInfo> {
-        return promise;
-    };
-    EXPECT_CALL(*mockWindowManager, ShotWindow)
-        .Times(AtLeast(1))
-        .WillOnce(Invoke(infos));
+    auto infos = [promise](int32_t id) -> sptr<PromiseWMSImageInfo> { return promise; };
+    EXPECT_CALL(*mockWindowManager, ShotWindow).Times(AtLeast(1)).WillOnce(Invoke(infos));
 
     auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
@@ -302,13 +299,14 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, Test
         imageInfo.height = 3;
         imageInfo.format = 10;
         promise->Resolve(imageInfo);
-    }).detach();
+    })
+        .detach();
     auto ret = stackManager_->GetMissionSnapshot(missionId, missionPixelMap);
 
     EXPECT_TRUE(missionPixelMap.topAbility.abilityName_ == "LauncherAbility");
     EXPECT_TRUE(missionPixelMap.topAbility.bundleName_ == "com.ix.hiworld");
     EXPECT_TRUE(missionPixelMap.imageInfo.width == 2);
-    EXPECT_TRUE(missionPixelMap.imageInfo.height== 3);
+    EXPECT_TRUE(missionPixelMap.imageInfo.height == 3);
     EXPECT_TRUE(missionPixelMap.imageInfo.format == 10);
     EXPECT_TRUE(ERR_OK == ret);
 }
@@ -963,12 +961,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_012, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_013, TestSize.Level1)
 {
     int sysUid = 1000;
-    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(sysUid))
-        .WillOnce(Return(sysUid));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    auto launcherAbilityRequest_ =
+        GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld", sysUid);
     stackManager_->StartAbility(launcherAbilityRequest_);
     auto firstTopAbility = stackManager_->GetCurrentTopAbility();
     firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -1005,18 +999,15 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_013, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_014, TestSize.Level1)
 {
     int sysUid = 1000;
-    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(sysUid))
-        .WillOnce(Return(sysUid));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiworld");
+    auto launcherAbilityRequest_ =
+        GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiworld", sysUid);
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
     auto firstTopAbility = stackManager_->GetCurrentTopAbility();
     firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic");
+    auto musicAbilityRequest_ =
+        GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic", sysUid);
     ref = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
     auto secondTopAbility = stackManager_->GetCurrentTopAbility();
@@ -1092,7 +1083,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_015, TestSize.Level1)
         .WillOnce(Return(userUid));
 
     // start a SINGLETON ability
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic", userUid);
     stackManager_->StartAbility(musicAbilityRequest_);
     auto secondTopAbility = stackManager_->GetCurrentTopAbility();
     secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -1130,13 +1121,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_015, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_016, TestSize.Level1)
 {
     int userUid = 10;
-    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(userUid))
-        .WillOnce(Return(userUid));
-
     // start a SINGLETON ability
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic", userUid);
     stackManager_->StartAbility(musicAbilityRequest_);
     auto secondTopAbility = stackManager_->GetCurrentTopAbility();
     secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -1169,18 +1155,15 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_016, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_017, TestSize.Level1)
 {
     int sysUid = 1000;
-    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(sysUid))
-        .WillOnce(Return(sysUid));
-
-    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiMusic");
+    auto launcherAbilityRequest_ =
+        GenerateAbilityRequest("device", "MusicAbility", "launcher", "com.ix.hiMusic", sysUid);
     auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
     auto firstTopAbility = stackManager_->GetCurrentTopAbility();
     firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic");
+    auto musicAbilityRequest_ =
+        GenerateAbilityRequest("device", "MusicAbility2th", "launcher", "com.ix.hiMusic", sysUid);
     ref = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(ERR_OK, ref);
     auto secondTopAbility = stackManager_->GetCurrentTopAbility();
@@ -1222,13 +1205,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_017, TestSize.Level1)
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_018, TestSize.Level1)
 {
     int userUid = 10;
-    EXPECT_CALL(*bundleObject_, GetUidByBundleName(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(userUid))
-        .WillOnce(Return(userUid));
-
     // start a SINGLETON ability
-    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
+    auto musicAbilityRequest_ = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic", userUid);
     stackManager_->StartAbility(musicAbilityRequest_);
     auto secondTopAbility = stackManager_->GetCurrentTopAbility();
     secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);

@@ -30,7 +30,7 @@ bool LockScreenWhiteList::SetWhiteListInfo(const std::string &bundleName, bool i
         static_cast<int>(isAllow));
     nlohmann::json jsonFile;
     std::ifstream inFile;
-    inFile.open(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::in);
+    inFile.open(AmsWhiteList::WHITE_LIST_FILE_PATH, std::ios::in);
     if (!inFile.is_open()) {
         HILOG_INFO("no such file...");
         return false;
@@ -52,7 +52,7 @@ bool LockScreenWhiteList::SetWhiteListInfo(const std::string &bundleName, bool i
         inFile.close();
     }
 
-    std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
+    std::ofstream outFile(AmsWhiteList::WHITE_LIST_FILE_PATH, std::ios::out);
     bool isOpen = outFile.good();
     if (isOpen) {
         HILOG_INFO("open file succeed");
@@ -78,7 +78,7 @@ bool LockScreenWhiteList::GetWhiteListInfo(nlohmann::json &jsonFile)
 {
     HILOG_INFO("%{public}s", __func__);
     std::ifstream inFile;
-    inFile.open(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::in);
+    inFile.open(AmsWhiteList::WHITE_LIST_FILE_PATH, std::ios::in);
     if (!inFile.is_open()) {
         HILOG_INFO("read white list error ...");
         return false;
