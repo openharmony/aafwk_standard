@@ -440,7 +440,7 @@ napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info 
         callBackMode = true;
     }
 
-    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo{
+    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -573,7 +573,7 @@ napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info 
     }
 
     AsyncPreviousMissionInfosCallbackInfo *async_callback_info =
-        new (std::nothrow) AsyncPreviousMissionInfosCallbackInfo{
+        new (std::nothrow) AsyncPreviousMissionInfosCallbackInfo {
             .env = env,
             .asyncWork = nullptr,
             .deferred = nullptr,
@@ -704,7 +704,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info
         callBackMode = true;
     }
 
-    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo{
+    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -837,7 +837,7 @@ napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info in
         callBackMode = true;
     }
 
-    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo{
+    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -958,7 +958,7 @@ napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncCallbackInfo *async_callback_info = new (std::nothrow) AsyncCallbackInfo{
+    AsyncCallbackInfo *async_callback_info = new (std::nothrow) AsyncCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1076,7 +1076,7 @@ napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncCallbackInfo *async_callback_info = new (std::nothrow) AsyncCallbackInfo{
+    AsyncCallbackInfo *async_callback_info = new (std::nothrow) AsyncCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1201,7 +1201,7 @@ napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncRemoveMissionCallbackInfo *async_callback_info = new (std::nothrow) AsyncRemoveMissionCallbackInfo{
+    AsyncRemoveMissionCallbackInfo *async_callback_info = new (std::nothrow) AsyncRemoveMissionCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1338,7 +1338,7 @@ napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncRemoveMissionsCallbackInfo *async_callback_info = new (std::nothrow) AsyncRemoveMissionsCallbackInfo{
+    AsyncRemoveMissionsCallbackInfo *async_callback_info = new (std::nothrow) AsyncRemoveMissionsCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1457,7 +1457,7 @@ napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncClearMissionsCallbackInfo *async_callback_info = new (std::nothrow) AsyncClearMissionsCallbackInfo{
+    AsyncClearMissionsCallbackInfo *async_callback_info = new (std::nothrow) AsyncClearMissionsCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1581,7 +1581,7 @@ napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncMoveMissionToTopCallbackInfo *async_callback_info = new (std::nothrow) AsyncMoveMissionToTopCallbackInfo{
+    AsyncMoveMissionToTopCallbackInfo *async_callback_info = new (std::nothrow) AsyncMoveMissionToTopCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1703,7 +1703,7 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
         callBackMode = true;
     }
 
-    AsyncKillProcessCallbackInfo *async_callback_info = new (std::nothrow) AsyncKillProcessCallbackInfo{
+    AsyncKillProcessCallbackInfo *async_callback_info = new (std::nothrow) AsyncKillProcessCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1824,7 +1824,7 @@ napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
     }
 
     AsyncClearUpApplicationDataCallbackInfo *async_callback_info =
-        new (std::nothrow) AsyncClearUpApplicationDataCallbackInfo{
+        new (std::nothrow) AsyncClearUpApplicationDataCallbackInfo {
             .env = env,
             .asyncWork = nullptr,
             .deferred = nullptr,

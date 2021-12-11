@@ -342,7 +342,7 @@ static void InnerDelForm(napi_env env, AsyncDelFormCallbackInfo* const asyncCall
 }
 
 /**
- * @brief  The implementation of Node-API interface: deleteForm 
+ * @brief  The implementation of Node-API interface: deleteForm
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -573,7 +573,7 @@ napi_value ReleaseFormPromise(napi_env env, AsyncReleaseFormCallbackInfo *asyncC
 }
 
 /**
- * @brief  The implementation of Node-API interface: releaseForm 
+ * @brief  The implementation of Node-API interface: releaseForm
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -674,7 +674,7 @@ static void InnerRequestForm(napi_env env, AsyncRequestFormCallbackInfo* const a
 }
 
 /**
- * @brief  The implementation of Node-API interface: requestForm 
+ * @brief  The implementation of Node-API interface: requestForm
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -820,7 +820,7 @@ static void InnerSetFormNextRefreshTime(napi_env env, AsyncNextRefreshTimeFormCa
 }
 
 /**
- * @brief  The implementation of Node-API interface: setFormNextRefreshTime 
+ * @brief  The implementation of Node-API interface: setFormNextRefreshTime
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -894,13 +894,13 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo = 
+                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo =
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 InnerSetFormNextRefreshTime(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo = 
+                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo =
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
@@ -938,14 +938,14 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
             resourceName,
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
-                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo = 
+                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo =
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 InnerSetFormNextRefreshTime(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
-                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo = 
+                AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo =
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 napi_value result;
@@ -983,7 +983,7 @@ static void InnerUpdateForm(napi_env env, AsyncUpdateFormCallbackInfo* const asy
 }
 
 /**
- * @brief  The implementation of Node-API interface: updateForm 
+ * @brief  The implementation of Node-API interface: updateForm
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -1137,7 +1137,7 @@ static void InnerCastTempForm(napi_env env, AsyncCastTempFormCallbackInfo* const
 }
 
 /**
- * @brief  The implementation of Node-API interface: castTempForm 
+ * @brief  The implementation of Node-API interface: castTempForm
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -1283,7 +1283,7 @@ static void InnerNotifyVisibleForms(napi_env env, AsyncNotifyVisibleFormsCallbac
 }
 
 /**
- * @brief  The implementation of Node-API interface: notifyVisibleForms 
+ * @brief  The implementation of Node-API interface: notifyVisibleForms
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -1362,13 +1362,13 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyVisibleFormsCallbackInfo *)data;
 
                 InnerNotifyVisibleForms(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyVisibleFormsCallbackInfo *)data;
 
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
@@ -1407,7 +1407,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
 
-                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyVisibleFormsCallbackInfo *)data;
 
                 InnerNotifyVisibleForms(env, asyncCallbackInfo);
@@ -1415,7 +1415,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
 
-                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyVisibleFormsCallbackInfo *)data;
 
                 napi_value result;
@@ -1428,7 +1428,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
             &asyncCallbackInfo->asyncWork);
         napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
         return promise;
-    }    
+    }
 }
 
 /**
@@ -1453,7 +1453,7 @@ static void InnerNotifyInvisibleForms(napi_env env, AsyncNotifyInvisibleFormsCal
 }
 
 /**
- * @brief  The implementation of Node-API interface: notifyInvisibleForms 
+ * @brief  The implementation of Node-API interface: notifyInvisibleForms
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -1532,13 +1532,13 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyInvisibleFormsCallbackInfo *)data;
 
                 InnerNotifyInvisibleForms(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyInvisibleFormsCallbackInfo *)data;
 
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
@@ -1577,7 +1577,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
 
-                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyInvisibleFormsCallbackInfo *)data;
 
                 InnerNotifyInvisibleForms(env, asyncCallbackInfo);
@@ -1585,7 +1585,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
 
-                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo = 
+                AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyInvisibleFormsCallbackInfo *)data;
 
                 napi_value result;
@@ -1598,7 +1598,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
             &asyncCallbackInfo->asyncWork);
         napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
         return promise;
-    }    
+    }
 }
 
 /**
@@ -1623,7 +1623,7 @@ static void InnerEnableFormsUpdate(napi_env env, AsyncEnableUpdateFormCallbackIn
 }
 
 /**
- * @brief  The implementation of Node-API interface: enableFormsUpdate 
+ * @brief  The implementation of Node-API interface: enableFormsUpdate
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -1702,13 +1702,13 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncEnableUpdateFormCallbackInfo *)data;
 
                 InnerEnableFormsUpdate(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncEnableUpdateFormCallbackInfo *)data;
 
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
@@ -1746,7 +1746,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
             resourceName,
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
-                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncEnableUpdateFormCallbackInfo *)data;
 
                 InnerEnableFormsUpdate(env, asyncCallbackInfo);
@@ -1754,7 +1754,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
 
-                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncEnableUpdateFormCallbackInfo *)data;
 
                 napi_value result;
@@ -1767,7 +1767,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
             &asyncCallbackInfo->asyncWork);
         napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
         return promise;
-    }    
+    }
 }
 
 /**
@@ -1871,13 +1871,13 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncDisableUpdateFormCallbackInfo *)data;
 
                 InnerDisableFormsUpdate(env, asyncCallbackInfo);
             },
             [](napi_env env, napi_status status, void *data) {
-                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncDisableUpdateFormCallbackInfo *)data;
 
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
@@ -1916,7 +1916,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
 
-                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncDisableUpdateFormCallbackInfo *)data;
 
                 InnerDisableFormsUpdate(env, asyncCallbackInfo);
@@ -1924,7 +1924,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
 
-                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo = 
+                AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncDisableUpdateFormCallbackInfo *)data;
 
                 napi_value result;
@@ -1937,7 +1937,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
             &asyncCallbackInfo->asyncWork);
         napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
         return promise;
-    }    
+    }
 }
 
 /**
@@ -1957,7 +1957,7 @@ static void InnerCheckFMSReady(napi_env env, AsyncCheckFMSReadyCallbackInfo* con
 }
 
 /**
- * @brief  The implementation of Node-API interface: checkFMSReady 
+ * @brief  The implementation of Node-API interface: checkFMSReady
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -2007,7 +2007,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
 
-                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo = 
+                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo =
                 (AsyncCheckFMSReadyCallbackInfo *)data;
 
                 InnerCheckFMSReady(env, asyncCallbackInfo);
@@ -2015,7 +2015,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
 
-                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo = 
+                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo =
                 (AsyncCheckFMSReadyCallbackInfo *)data;
 
                 if (asyncCallbackInfo->callback != nullptr) {
@@ -2050,7 +2050,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             [](napi_env env, void *data) {
                 HILOG_INFO("%{public}s, promise runnning", __func__);
 
-                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo = 
+                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo =
                 (AsyncCheckFMSReadyCallbackInfo *)data;
 
                 InnerCheckFMSReady(env, asyncCallbackInfo);
@@ -2058,7 +2058,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
 
-                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo = 
+                AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo =
                 (AsyncCheckFMSReadyCallbackInfo *)data;
 
                 napi_value result;
@@ -2071,7 +2071,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             &asyncCallbackInfo->asyncWork);
         napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
         return promise;
-    } 
+    }
 }
 
 /**
@@ -2170,7 +2170,7 @@ auto NAPI_GetFormsInfoPromiseComplete = [](napi_env env, napi_status status, voi
 };
 
 /**
- * @brief  The implementation of Node-API interface: getAllFormsInfo 
+ * @brief  The implementation of Node-API interface: getAllFormsInfo
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[out] info An opaque datatype that is passed to a callback function
@@ -2261,7 +2261,7 @@ static void InnerGetFormsInfoByApp(napi_env env, AsyncGetFormsInfoCallbackInfo* 
     HILOG_DEBUG("%{public}s called.", __func__);
     OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
     bool ret = ability->GetFormsInfoByApp(
-        asyncCallbackInfo->bundleName, 
+        asyncCallbackInfo->bundleName,
         asyncCallbackInfo->formInfos);
     if (ret) {
         asyncCallbackInfo->result = 1;
@@ -2288,7 +2288,6 @@ static void InnerGetFormsInfoByModule(napi_env env, AsyncGetFormsInfoCallbackInf
         asyncCallbackInfo->bundleName,
         asyncCallbackInfo->moduleName,
         asyncCallbackInfo->formInfos);
-
     if (ret) {
         asyncCallbackInfo->result = 1;
     } else {

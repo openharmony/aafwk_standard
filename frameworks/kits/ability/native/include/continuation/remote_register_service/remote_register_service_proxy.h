@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class RemoteRegisterServiceProxy : public IRemoteProxy<IRemoteRegisterService> {
 public:
     explicit RemoteRegisterServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IRemoteRegisterService>(impl)

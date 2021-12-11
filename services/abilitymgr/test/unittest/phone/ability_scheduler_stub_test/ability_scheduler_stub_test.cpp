@@ -27,7 +27,7 @@ public:
     void SetUp();
     void TearDown();
     void WriteInterfaceToken(MessageParcel &data);
-    sptr<AbilitySchedulerStubMock> stub_{nullptr};
+    sptr<AbilitySchedulerStubMock> stub_ {nullptr};
 };
 
 void AbilitySchedulerStubTest::SetUpTestCase(void)

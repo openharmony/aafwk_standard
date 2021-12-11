@@ -112,7 +112,6 @@ bool AddDirectoryEntryToZip(zipFile zip_file, FilePath &path, struct tm *lastMod
     HILOG_INFO("%{public}s called", __func__);
     return OpenNewFileEntry(zip_file, path, true, lastModified, options) && CloseNewFileEntry(zip_file);
 }
-
 }  // namespace
 
 std::unique_ptr<ZipWriter> ZipWriter::CreateWithFd(PlatformFile zipFilefd, const FilePath &rootDir)
@@ -189,7 +188,6 @@ bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBAC
         rootDir = rootDir.substr(0, rootDir.size() - 1);
     }
     while (pendingEntries_.size() >= kMaxPendingEntriesCount || (force && !pendingEntries_.empty())) {
-
         size_t entry_count = std::min(pendingEntries_.size(), kMaxPendingEntriesCount);
         std::vector<FilePath> relativePaths;
         std::vector<FilePath> absolutePaths;
@@ -228,7 +226,6 @@ bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBAC
     CALLING_CALL_BACK(callback, ERROR_CODE_OK)
     return true;
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

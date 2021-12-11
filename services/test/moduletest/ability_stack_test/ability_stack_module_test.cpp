@@ -63,8 +63,8 @@ public:
     void makeScene(const std::string &abilityName, const std::string &bundleName, AbilityInfo &abilityInfo, Want &want);
 
 public:
-    std::shared_ptr<AbilityStackManager> stackManager_{nullptr};
-    inline static BundleMgrService *bundleObject_{nullptr};
+    std::shared_ptr<AbilityStackManager> stackManager_ {nullptr};
+    inline static BundleMgrService *bundleObject_ {nullptr};
     OHOS::sptr<MockAbilityScheduler> mockScheduler_ = nullptr;
 };
 

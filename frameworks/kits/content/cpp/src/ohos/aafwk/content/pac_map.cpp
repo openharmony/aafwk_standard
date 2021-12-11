@@ -1778,6 +1778,5 @@ sptr<IPacMap> PacMap::Parse(const std::string &str)
 
     return ret;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

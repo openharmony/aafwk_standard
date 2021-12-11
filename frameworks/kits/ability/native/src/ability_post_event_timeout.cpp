@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 const int64_t AbilityPostEventTimeout::defalutDelayTime = 5000;
 
 std::atomic<uint32_t> AbilityPostEventTimeout::allocationId_ = 0;
@@ -80,6 +79,5 @@ void AbilityPostEventTimeout::TimeOutProc()
         APP_LOGW("AbilityPostEventTimeout::TimeOutProc Exec Failed, The Event is %{public}s", task_.c_str());
     }
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

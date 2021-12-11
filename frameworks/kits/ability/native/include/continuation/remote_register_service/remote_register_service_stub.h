@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class RemoteRegisterServiceStub : public IRemoteStub<IRemoteRegisterService> {
 public:
     RemoteRegisterServiceStub();

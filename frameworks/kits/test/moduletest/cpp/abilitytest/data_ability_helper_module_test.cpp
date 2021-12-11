@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 using namespace testing::ext;
 REGISTER_AA(MockAbilityTest)
 /*
@@ -38,8 +37,8 @@ REGISTER_AA(MockAbilityTest)
  */
 class DataAbilityHelperTest : public testing::Test {
 public:
-    DataAbilityHelperTest(){};
-    virtual ~DataAbilityHelperTest(){};
+    DataAbilityHelperTest() {};
+    virtual ~DataAbilityHelperTest() {};
 
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -677,6 +676,5 @@ HWTEST_F(DataAbilityHelperTest, AaFwk_DataAbilityHelper_DenormalizeUri_Test_0200
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_Test_0200 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

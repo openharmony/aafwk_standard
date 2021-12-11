@@ -571,7 +571,6 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_005, TestSize.Leve
  */
 HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_006, TestSize.Level1)
 {
-
     if (startLancherFlag_) {
         command_->callback_ = false;
         command_->expectState_ = OHOS::AAFwk::AbilityState::ACTIVE;

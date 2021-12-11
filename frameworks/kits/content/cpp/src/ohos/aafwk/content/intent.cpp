@@ -37,7 +37,6 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
-
 const std::string Intent::ACTION_PLAY("action.system.play");
 
 const std::string Intent::ENTITY_HOME("entity.system.home");
@@ -899,6 +898,5 @@ Intent &Intent::SetStringArrayParam(const std::string &key, const std::vector<st
     parameters_.SetParam(key, ao);
     return *this;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

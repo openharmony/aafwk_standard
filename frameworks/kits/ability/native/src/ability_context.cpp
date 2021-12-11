@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
 
 /**
@@ -1347,6 +1346,5 @@ void AbilityContext::SetShowOnLockScreen(bool isAllow)
 {
     ContextContainer::SetShowOnLockScreen(isAllow);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

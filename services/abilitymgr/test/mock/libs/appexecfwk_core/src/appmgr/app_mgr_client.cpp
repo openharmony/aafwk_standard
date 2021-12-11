@@ -27,7 +27,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 AppMgrClient::AppMgrClient()
 {}
 
@@ -123,6 +122,5 @@ int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid,
 
 void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string &strConfig)
 {}
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

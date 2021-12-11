@@ -208,6 +208,5 @@ std::shared_ptr<EventHandler> DataObsMgrService::GetEventHandler()
 {
     return handler_;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

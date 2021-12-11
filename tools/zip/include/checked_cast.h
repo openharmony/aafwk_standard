@@ -145,7 +145,6 @@ struct checked_cast_impl<T, X, false> {
 #endif
     }
 };
-
 }  // namespace hidden
 
 template<typename T, typename X>

@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 namespace {
 const string EMPTY = "";
 const std::regex INTEGER_REGEX("^[-+]?([0-9]+)([.]([0-9]+))?$");
@@ -213,6 +212,5 @@ Uri DataUriUtils::UriUpateLastPath(const Uri &dataUri, const string &updateLastP
 
     return Uri(uriString);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

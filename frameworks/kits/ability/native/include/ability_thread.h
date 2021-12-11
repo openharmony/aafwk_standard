@@ -309,7 +309,6 @@ public:
      */
     bool HandleRegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver);
 
-
     /**
      * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
      *

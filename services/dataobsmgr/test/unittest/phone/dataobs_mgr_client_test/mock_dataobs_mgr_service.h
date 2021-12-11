@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class MockDataObsMgrService : public DataObsManagerStub {
 public:
     MockDataObsMgrService() = default;
@@ -105,7 +104,6 @@ private:
     std::shared_ptr<DataObsMgrInner> dataObsMgrInner_;
     const int taskMax_ = 50;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // MOCK_FOUNDATION_AAFWK_MOCK_DATAOBS_MGR_SERVICE_H

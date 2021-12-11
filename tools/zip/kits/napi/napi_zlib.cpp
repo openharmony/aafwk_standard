@@ -274,7 +274,7 @@ AsyncZipCallbackInfo *CreateZipAsyncCallbackInfo(napi_env env)
         HILOG_ERROR("%{public}s get_global=%{public}d err:%{public}s", __func__, ret, errorInfo->error_message);
     }
 
-    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo{
+    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo {
         .asyncWork = nullptr,
         .aceCallback = nullptr,
     };
@@ -314,7 +314,6 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info)
 
     ret = ZipFileWrap(env, info, asyncZipCallbackInfo);
     if (ret == nullptr) {
-
         if (g_zipAceCallbackInfo != nullptr) {
             g_zipAceCallbackInfo.reset();
             g_zipAceCallbackInfo = nullptr;
@@ -886,7 +885,6 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
         }
     }
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

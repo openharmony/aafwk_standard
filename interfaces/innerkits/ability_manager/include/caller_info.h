@@ -36,7 +36,6 @@ struct CallerInfo : public Parcelable {
     virtual bool Marshalling(Parcel &parcel) const override;
     static CallerInfo *Unmarshalling(Parcel &parcel);
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_INTERFACES_INNERKITS_CALLER_INFO_H

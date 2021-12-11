@@ -25,8 +25,8 @@ namespace AAFwk {
 using namespace OHOS::AppExecFwk;
 class MockAppMgrClient : public AppMgrClient {
 public:
-    MockAppMgrClient(){};
-    virtual ~MockAppMgrClient(){};
+    MockAppMgrClient() {};
+    virtual ~MockAppMgrClient() {};
 
     virtual AppMgrResultCode LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
         const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo)

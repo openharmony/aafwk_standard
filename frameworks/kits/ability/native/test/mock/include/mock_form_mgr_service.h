@@ -39,8 +39,8 @@ namespace AppExecFwk {
  */
 class MockFormMgrService : public IFormMgr {
 public:
-    MockFormMgrService(){};
-    virtual ~MockFormMgrService(){};
+    MockFormMgrService() {};
+    virtual ~MockFormMgrService() {};
 
     sptr<IRemoteObject> AsObject()
     {
@@ -50,12 +50,12 @@ public:
     /**
      * @brief Start envent for the form manager service.
      */
-    void OnStart(){}
+    void OnStart() {}
 
     /**
      * @brief Stop envent for the form manager service.
      */
-    void OnStop(){}
+    void OnStop() {}
 
     /**
      * @brief Add form with want, send want to form manager service.
@@ -106,7 +106,7 @@ public:
      */
     int UpdateForm(const int64_t formId, const std::string& bundleName, const FormProviderData& formBindingData)
     {
-        if (formId == 300L){
+        if (formId == 300L) {
            return -1;
        }
        return 0;
@@ -131,8 +131,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int NotifyWhetherVisibleForms(
-        const std::vector<int64_t> &formIds, 
-        const sptr<IRemoteObject> &callerToken, 
+        const std::vector<int64_t> &formIds,
+        const sptr<IRemoteObject> &callerToken,
         const int32_t formVisibleType)
     {
         if (formIds.size() == 1) {
@@ -197,7 +197,7 @@ public:
             return ERR_OK;
         } else {
             return ERR_INVALID_VALUE;
-        }  
+        }
     }
 
     /**
@@ -208,8 +208,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int LifecycleUpdate(
-        const std::vector<int64_t> &formIds, 
-        const sptr<IRemoteObject> &callerToken, 
+        const std::vector<int64_t> &formIds,
+        const sptr<IRemoteObject> &callerToken,
         const int32_t updateType)
     {
         if (formIds.size() == 0) {
@@ -230,7 +230,6 @@ public:
         return 0;
     }
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_SERVICES_MOCK_FORM_MGR_SERVICE_H

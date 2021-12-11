@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 AbilityScheduler::AbilityScheduler()
 {}
 
@@ -131,6 +130,5 @@ Uri AbilityScheduler::DenormalizeUri(const Uri &uri)
 
 // void AbilityScheduler::NotifyTopActiveAbilityChanged(bool flag)
 // {}
-
 }  // namespace AAFwk
 }  // namespace OHOS

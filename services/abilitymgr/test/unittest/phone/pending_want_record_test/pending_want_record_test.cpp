@@ -73,8 +73,8 @@ public:
     };
 
 public:
-    std::shared_ptr<PendingWantManager> pendingManager_{nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    std::shared_ptr<PendingWantManager> pendingManager_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 int PendingWantRecordTest::CancelReceiver::performReceiveCount = 0;

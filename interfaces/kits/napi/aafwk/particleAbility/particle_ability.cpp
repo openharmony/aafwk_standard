@@ -25,7 +25,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 /**
  * @brief Obtains the type of this application.
  *
@@ -208,6 +207,5 @@ napi_value ParticleAbilityInit(napi_env env, napi_value exports)
 
     return exports;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

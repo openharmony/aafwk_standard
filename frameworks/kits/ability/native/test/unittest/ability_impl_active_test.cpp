@@ -46,8 +46,8 @@ public:
 
 class MockAbilityimpl : public AbilityImpl {
 public:
-    MockAbilityimpl(){};
-    virtual ~MockAbilityimpl(){};
+    MockAbilityimpl() {};
+    virtual ~MockAbilityimpl() {};
 
     void Inactive()
     {
@@ -61,8 +61,8 @@ public:
 
 class MockAbilityClass : public Ability {
 public:
-    MockAbilityClass() : topFocus_(false), topFocusChange_(false), windowFocus_(false), windowFocusChange_(false){};
-    virtual ~MockAbilityClass(){};
+    MockAbilityClass() : topFocus_(false), topFocusChange_(false), windowFocus_(false), windowFocusChange_(false) {};
+    virtual ~MockAbilityClass() {};
 
     virtual void OnWindowFocusChanged(bool hasFocus)
     {
@@ -90,8 +90,8 @@ public:
     {
         return topFocusChange_;
     };
-    virtual void OnActive(){};
-    virtual void OnInactive(){};
+    virtual void OnActive() {};
+    virtual void OnInactive() {};
 
 private:
     bool topFocus_;
@@ -349,6 +349,5 @@ HWTEST_F(AbilityImplActiveTest, AaFwk_AbilityImpl_InActive_003, TestSize.Level1)
 
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_InActive_003 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

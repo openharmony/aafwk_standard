@@ -55,9 +55,9 @@ public:
     AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
         const std::string &appName, const std::string &bundleName);
 
-    std::shared_ptr<ConnectionRecord> connectionRecord_{nullptr};
-    OHOS::sptr<AbilityConnectCallbackMock> callback_{nullptr};
-    std::shared_ptr<AbilityRecord> service_{nullptr};
+    std::shared_ptr<ConnectionRecord> connectionRecord_ {nullptr};
+    OHOS::sptr<AbilityConnectCallbackMock> callback_ {nullptr};
+    std::shared_ptr<AbilityRecord> service_ {nullptr};
 };
 
 AbilityRequest ConnectionRecordTest::GenerateAbilityRequest(const std::string &deviceName,

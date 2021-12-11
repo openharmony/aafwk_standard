@@ -227,7 +227,6 @@ public:
     virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
-	
 
     /**
      * @brief notify this ability is top active ability.

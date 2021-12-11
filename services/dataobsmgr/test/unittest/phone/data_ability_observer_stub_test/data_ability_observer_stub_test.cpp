@@ -25,7 +25,6 @@ using namespace testing;
 
 namespace OHOS {
 namespace AAFwk {
-
 class DataAbilityObserverStubTest : public testing::Test {
 public:
     static void SetUpTestCase(void);

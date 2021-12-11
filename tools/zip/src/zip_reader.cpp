@@ -168,7 +168,6 @@ bool ZipReader::OpenCurrentEntryInZip()
         0,     // extraFieldBufferSize.
         NULL,  // szComment.
         0);    // commentBufferSize.
-
     if (result != UNZ_OK) {
         return false;
     }
@@ -290,7 +289,6 @@ void FilePathWriterDelegate::SetTimeModified(const struct tm *time)
     fclose(file_);
     file_ = nullptr;
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

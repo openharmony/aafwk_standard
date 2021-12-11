@@ -19,11 +19,10 @@
 #include "parcel_macro.h"
 
 namespace OHOS {
-namespace AppExecFwk {  
-
+namespace AppExecFwk {
 /**
- * @brief A constructor used to create a DataAbilityResult instance 
- * with the input parameter count specified. 
+ * @brief A constructor used to create a DataAbilityResult instance
+ * with the input parameter count specified.
  */
 DataAbilityResult::DataAbilityResult(int count) : uri_("")
 {
@@ -31,7 +30,7 @@ DataAbilityResult::DataAbilityResult(int count) : uri_("")
 }
 
 /**
- * @brief A constructor used to create a DataAbilityResult instance 
+ * @brief A constructor used to create a DataAbilityResult instance
  * with a Parcel object specified.
  */
 DataAbilityResult::DataAbilityResult(Parcel &parcel) : uri_(""), count_(0)
@@ -40,15 +39,15 @@ DataAbilityResult::DataAbilityResult(Parcel &parcel) : uri_(""), count_(0)
 }
 
 /**
- * @brief A constructor used to create a DataAbilityResult instance 
+ * @brief A constructor used to create a DataAbilityResult instance
  * with the input parameter uri specified
  */
 DataAbilityResult::DataAbilityResult(const Uri &uri) : uri_(uri.ToString()), count_(0)
 {}
 
 /**
- * @brief A constructor used to create a DataAbilityResult instance 
- * with input parameters uri, count, and failure specified. 
+ * @brief A constructor used to create a DataAbilityResult instance
+ * with input parameters uri, count, and failure specified.
  */
 DataAbilityResult::DataAbilityResult(const Uri &uri, int count) : uri_(uri.ToString())
 {
@@ -59,8 +58,8 @@ DataAbilityResult::~DataAbilityResult()
 {}
 
 /**
- * @brief Obtains the Uri object corresponding to the operation. 
- * @return Obtains the Uri object corresponding to the operation. 
+ * @brief Obtains the Uri object corresponding to the operation.
+ * @return Obtains the Uri object corresponding to the operation.
  */
 Uri DataAbilityResult::GetUri()
 {
@@ -68,7 +67,7 @@ Uri DataAbilityResult::GetUri()
 }
 
 /**
- * @brief Obtains the number of rows affected by the operation. 
+ * @brief Obtains the number of rows affected by the operation.
  * @return Returns the number of rows affected by the operation.
  */
 int DataAbilityResult::GetCount()
@@ -77,8 +76,8 @@ int DataAbilityResult::GetCount()
 }
 
 /**
- * @brief Creates a DataAbilityResult instance based on the given Parcel object. 
- * Used to transfer DataAbilityResult object using Parcel. 
+ * @brief Creates a DataAbilityResult instance based on the given Parcel object.
+ * Used to transfer DataAbilityResult object using Parcel.
  * @param parcel Indicates the Parcel object.
  * @return Returns the DataAbilityResult object.
  */
@@ -92,13 +91,13 @@ DataAbilityResult *DataAbilityResult::CreateFromParcel(Parcel &parcel)
 }
 
 /**
- * @brief Prints out a string containing the class object information. 
+ * @brief Prints out a string containing the class object information.
  * @return Returns object information.
  */
 std::string DataAbilityResult::ToString()
 {
     std::string stringBuilder = "DataAbilityResult(";
-    stringBuilder.append("uri=").append(uri_.ToString()).append(" ");   
+    stringBuilder.append("uri=").append(uri_.ToString()).append(" ");
     stringBuilder.append("count=").append(std::to_string(count_)).append(" ");
     stringBuilder.erase(stringBuilder.length() - 1, 1);
     stringBuilder.append(")");
@@ -106,7 +105,7 @@ std::string DataAbilityResult::ToString()
 }
 
 /**
- * @brief Marshals a DataAbilityResult object into a Parcel. 
+ * @brief Marshals a DataAbilityResult object into a Parcel.
  * @param parcel Indicates the Parcel object for marshalling.
  * @return Returns true if the marshalling is successful; returns false otherwise.
  */
@@ -114,9 +113,9 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
 {
     // uri_
     if (uri_.ToString().empty()) {
-        WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(Int32, parcel, VALUE_NULL);    
+        WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(Int32, parcel, VALUE_NULL);
     } else {
-        if (!parcel.WriteInt32(VALUE_OBJECT)) {   
+        if (!parcel.WriteInt32(VALUE_OBJECT)) {
             return false;
         }
         if (!parcel.WriteParcelable(&uri_)) {
@@ -125,7 +124,7 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
     }
 
     // count_
-    if (!parcel.WriteInt32(count_)) {  
+    if (!parcel.WriteInt32(count_)) {
         return false;
     }
     
@@ -133,17 +132,17 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
 }
 
 /**
- * @brief Unmarshals a DataAbilityResult object from a Parcel. 
+ * @brief Unmarshals a DataAbilityResult object from a Parcel.
  * @param parcel Indicates the Parcel object for unmarshalling.
  * @return Returns true if the unmarshalling is successful; returns false otherwise.
  */
 DataAbilityResult *DataAbilityResult::Unmarshalling(Parcel &parcel)
 {
     DataAbilityResult *dataAbilityResult = new (std::nothrow) DataAbilityResult(0);
-    if (dataAbilityResult != nullptr) {  
+    if (dataAbilityResult != nullptr) {
         if (!dataAbilityResult->ReadFromParcel(parcel)) {
             delete dataAbilityResult;
-            dataAbilityResult = nullptr;   
+            dataAbilityResult = nullptr;
         }
     }
 
@@ -153,12 +152,12 @@ DataAbilityResult *DataAbilityResult::Unmarshalling(Parcel &parcel)
 bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
 {
     // uri_
-    int32_t empty = VALUE_NULL;   
+    int32_t empty = VALUE_NULL;
     if (!parcel.ReadInt32(empty)) {
         return false;
     }
 
-    if (empty == VALUE_OBJECT) {  
+    if (empty == VALUE_OBJECT) {
         auto uri = parcel.ReadParcelable<Uri>();
         if (uri != nullptr) {
             uri_ = *uri;
@@ -170,12 +169,11 @@ bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
     }
     
     // count_
-    if (!parcel.ReadInt32(count_)) {    
+    if (!parcel.ReadInt32(count_)) {
         return false;
     }
 
     return true;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

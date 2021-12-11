@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 #define INSERT 20
 #define UPDATE 33
 #define OPENRAWFILE 122
@@ -127,9 +126,7 @@ public:
         GTEST_LOG_(INFO) << "MockAbilityTest::DenormalizeUri called";
         return uri;
     }
-
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // MOCK_ABILITY_TEST_H

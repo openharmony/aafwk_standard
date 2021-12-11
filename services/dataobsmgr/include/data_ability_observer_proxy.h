@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class DataAbilityObserverProxy : public IRemoteProxy<IDataAbilityObserver> {
 public:
     explicit DataAbilityObserverProxy(const sptr<IRemoteObject> &remote);
@@ -36,7 +35,6 @@ public:
 private:
     static inline BrokerDelegator<DataAbilityObserverProxy> delegator_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_DATA_ABILITY_OBSERVER_PROXY_H

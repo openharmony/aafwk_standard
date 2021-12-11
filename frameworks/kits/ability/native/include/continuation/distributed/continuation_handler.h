@@ -75,7 +75,6 @@ private:
     sptr<IRemoteObject> remotePrimaryStub_ = nullptr;
     sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_ = nullptr;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_AAFWK_STANDARD_FRAMEWORKS_KITS_ABILITY_NATIVE_INCLUDE_CONTINUATION_DISTRIBUTED_CONTINUATION_HANDLER_H

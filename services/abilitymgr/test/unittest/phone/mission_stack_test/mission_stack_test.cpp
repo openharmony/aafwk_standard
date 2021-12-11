@@ -37,7 +37,7 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<MissionStack> missionStack_{nullptr};
+    std::shared_ptr<MissionStack> missionStack_ {nullptr};
 };
 
 void MissionStackTest::SetUpTestCase(void)

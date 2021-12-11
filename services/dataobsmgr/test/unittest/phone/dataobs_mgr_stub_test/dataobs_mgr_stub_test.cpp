@@ -209,6 +209,5 @@ HWTEST_F(DataObsManagerStubTest, AaFwk_DataObsManagerStubTest_NotifyChange_0100,
     EXPECT_EQ(testVal2, retval2);
     GTEST_LOG_(INFO) << "AaFwk_DataObsManagerStubTest_NotifyChange_0100 end";
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

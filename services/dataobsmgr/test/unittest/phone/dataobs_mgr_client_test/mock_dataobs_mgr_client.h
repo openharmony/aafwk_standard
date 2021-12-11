@@ -63,7 +63,6 @@ ErrCode MockDataObsMgrClient::Connect()
     }
     return ERR_OK;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // MOCK_FOUNDATION_AAFWK_MOCK_DATAOBS_MGR_CLIENT_H

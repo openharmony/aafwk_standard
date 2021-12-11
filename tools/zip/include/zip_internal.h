@@ -65,7 +65,6 @@ zipFile OpenFdForZipping(PlatformFile zipFd, int appendFlag);
 
 bool ZipOpenNewFileInZip(
     zipFile zipFile, const std::string &strPath, const OPTIONS &options, const struct tm *lastModifiedTime);
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

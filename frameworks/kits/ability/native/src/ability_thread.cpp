@@ -1144,7 +1144,6 @@ bool AbilityThread::ScheduleNotifyChange(const Uri &uri)
 std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
 {
-
     APP_LOGI("AbilityThread::ExecuteBatch start");
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     if (abilityImpl_ == nullptr) {
@@ -1158,6 +1157,5 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
     APP_LOGI("AbilityThread::ExecuteBatch end");
     return results;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
