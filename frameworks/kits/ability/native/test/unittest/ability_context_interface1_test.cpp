@@ -717,6 +717,5 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_SetMissionInformation
 
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_SetMissionInformation_0100 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

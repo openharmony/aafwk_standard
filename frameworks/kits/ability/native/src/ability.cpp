@@ -81,7 +81,6 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         abilityWindow_ = std::make_shared<AbilityWindow>();
-
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->Init", __func__);
             abilityWindow_->Init(handler_, shared_from_this());
@@ -1508,7 +1507,6 @@ void Ability::HandleCreateAsContinuation(const Want &want)
     }
     bool success = continuationManager_->RestoreData(
         want.GetParams(), reversible, want.GetStringParam(ContinuationHandler::ORIGINAL_DEVICE_ID));
-
     if (success && reversible) {
         // Register this ability to receive reverse continuation callback.
         std::weak_ptr<IReverseContinuationSchedulerReplicaHandler> ReplicaHandler = continuationHandler_;
@@ -1683,7 +1681,6 @@ bool Ability::CastTempForm(const int64_t formId)
 
     APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
     int result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
-
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
         return false;
@@ -1925,7 +1922,6 @@ void Ability::ProcessFormUninstall(const int64_t formId)
         std::lock_guard<std::mutex> lock(formLock);
         // get callback iterator by formId
         std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator = appCallbacks_.find(formId);
-
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
             APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formId);
@@ -2084,7 +2080,7 @@ void Ability::CleanFormResource(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // compatible with int form id
-    int64_t cleanId{-1L};
+    int64_t cleanId {-1L};
     for (auto param : userReqParams_) {
         uint64_t unsignedFormId = static_cast<uint64_t>(formId);
         uint64_t unsignedParamFirst = static_cast<uint64_t>(param.first);
@@ -2169,7 +2165,6 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
         // get callback iterator by formId
         std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator =
             appCallbacks_.find(formJsInfo.formId);
-
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
             APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formJsInfo.formId);
@@ -2385,7 +2380,6 @@ void Ability::OnDeathReceived()
                 // get callback iterator by formId
                 std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator =
                     appCallbacks_.find(formId);
-
                 if (appCallbackIterator == appCallbacks_.end()) {
                     APP_LOGW("%{public}s error, lack of form callback for form, formId:%{public}" PRId64 ".",
                         __func__,

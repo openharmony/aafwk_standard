@@ -39,7 +39,6 @@ using testing::_;
 
 namespace OHOS {
 namespace AAFwk {
-
 namespace {
 const std::string NAME_BUNDLE_MGR_SERVICE = "BundleMgrService";
 }

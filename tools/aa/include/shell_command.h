@@ -61,7 +61,6 @@ protected:
 
     std::string resultReceiver_ = "";
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

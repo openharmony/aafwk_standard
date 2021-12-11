@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 OperationBuilder::OperationBuilder()
     : abilityName_(""), action_(""), bundleName_(""), deviceId_(""), flags_(0), uri_("")
 {
@@ -110,6 +109,5 @@ std::shared_ptr<Operation> OperationBuilder::build()
 
     return operation;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

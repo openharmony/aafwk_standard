@@ -27,8 +27,8 @@ namespace Global {
 namespace Resource {
 class ResourceManager2 : public ResourceManager {
 public:
-    ResourceManager2(){};
-    virtual ~ResourceManager2(){};
+    ResourceManager2() {};
+    virtual ~ResourceManager2() {};
 
     virtual bool AddResource(const char *path) = 0;
 

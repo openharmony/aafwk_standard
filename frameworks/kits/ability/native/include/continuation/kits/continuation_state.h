@@ -16,7 +16,6 @@
 #define FOUNDATION_APPEXECFWK_OHOS_CONTINUATION_STATE_H
 namespace OHOS {
 namespace AppExecFwk {
-
 /**
  * Enumerates the migration states of an {@link Ability} that has implemented {@link IAbilityContinuation}
  * and is in a reversible migration process that allows the ability to be migrated back.

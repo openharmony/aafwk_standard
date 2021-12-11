@@ -32,7 +32,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 void IntentParams::SetParam(const std::string &key, IInterface *value)
 {
     params_[key] = value;
@@ -159,7 +158,6 @@ bool IntentParams::WriteArrayToParcel(Parcel &parcel, IArray *ao) const
 bool IntentParams::Marshalling(Parcel &parcel) const
 {
     size_t size = params_.size();
-
     if (!parcel.WriteInt32(size)) {
         return false;
     }
@@ -470,6 +468,5 @@ IntentParams *IntentParams::Unmarshalling(Parcel &parcel)
     }
     return intentParams;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

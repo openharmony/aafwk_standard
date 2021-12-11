@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 const std::string ReverseContinuationSchedulerPrimaryStub::DESCRIPTOR(
     "ohos.abilityshell.ReverseContinuationSchedulerMaster");
 
@@ -95,6 +94,5 @@ int ReverseContinuationSchedulerPrimaryStub::ContinuationBackInner(MessageParcel
     APP_LOGI("%{public}s called end", __func__);
     return 0;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

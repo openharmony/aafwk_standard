@@ -28,7 +28,6 @@ namespace AAFwk {
  * StackInfo is used to save informations about stack.
  */
 struct StackInfo : public Parcelable {
-
     std::vector<MissionStackInfo> missionStackInfos;
 
     bool ReadFromParcel(Parcel &parcel);

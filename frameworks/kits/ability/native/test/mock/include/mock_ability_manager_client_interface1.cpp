@@ -317,13 +317,11 @@ void MockAbilityManagerClient::SetMockMoveMissionToEnd(bool flag)
 {
     moveMissionToEnd_ = flag;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
 
 namespace OHOS {
 namespace AppExecFwk {
-
 MockAbilityContextDeal::MockAbilityContextDeal()
 {
     hapModInfo_ = nullptr;
@@ -364,6 +362,5 @@ void MockAbilityContextTest::SetToken(const sptr<IRemoteObject> token)
 {
     token_ = token;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -677,7 +677,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
     // Test to AbilityThread interface
-    auto returnNormalizeUri = [&](const Uri &uri) { 
+    auto returnNormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -706,7 +706,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
     // Test to AbilityThread interface
-    auto returnNormalizeUri = [&](const Uri &uri) { 
+    auto returnNormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -735,7 +735,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
     // Test to AbilityThread interface
-    auto returnDenormalizeUri = [&](const Uri &uri) { 
+    auto returnDenormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -764,7 +764,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
     // Test to AbilityThread interface
-    auto returnDenormalizeUri = [&](const Uri &uri) { 
+    auto returnDenormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -776,6 +776,5 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
 
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0200 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

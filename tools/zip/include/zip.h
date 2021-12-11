@@ -26,7 +26,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 class WriterDelegate;
 // Abstraction for file access operation required by Zip().
 // Can be passed to the ZipParams for providing custom access to the files,

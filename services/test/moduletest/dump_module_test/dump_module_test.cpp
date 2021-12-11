@@ -233,8 +233,6 @@ void DumpModuleTest::StartAllAbilities()
     }
 }
 
-
-
 /*
  * Feature: Aafwk
  * Function: DumpState
@@ -538,7 +536,6 @@ HWTEST_F(DumpModuleTest, dump_module_test_007, TestSize.Level2)
  */
 HWTEST_F(DumpModuleTest, dump_module_test_008, TestSize.Level2)
 {
-
     std::string args("--mission");
     std::vector<std::string> dumpInfo;
     std::vector<std::string> abilityNames;
@@ -706,6 +703,5 @@ HWTEST_F(DumpModuleTest, dump_module_test_011, TestSize.Level2)
     stackMgr->DumpWaittingAbilityQueue(waitingQueueResult);
     EXPECT_NE(std::string::npos, waitingQueueResult.find("com.ix.hiRadio"));
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

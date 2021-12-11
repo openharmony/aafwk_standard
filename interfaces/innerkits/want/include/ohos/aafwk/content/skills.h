@@ -504,7 +504,6 @@ private:
      */
     std::string MatchEntities(const std::vector<std::string> &entities);
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

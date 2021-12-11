@@ -125,6 +125,5 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleUpdateConfiguration_0100
 
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_ScheduleUpdateConfiguration_0100 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -29,7 +29,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 class ContinuationScheduler : public ContinuationSchedulerStub {
-
 public:
     ContinuationScheduler(
         std::weak_ptr<IDistributeScheduleHandler> &callback, std::shared_ptr<EventHandler> &mainHandler);

@@ -21,7 +21,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 EXTERN_C_START
 /*
  * The module initialization.

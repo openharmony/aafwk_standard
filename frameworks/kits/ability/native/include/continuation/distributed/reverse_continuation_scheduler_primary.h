@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class ReverseContinuationSchedulerPrimary : public ReverseContinuationSchedulerPrimaryStub {
 public:
     ReverseContinuationSchedulerPrimary(
@@ -50,7 +49,6 @@ private:
     std::weak_ptr<IReverseContinuationSchedulerPrimaryHandler> continuationHandler_;
     const std::shared_ptr<AbilityHandler> mainHandler_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_REVERSE_CONTINUATION_SCHEDULER_PRIMARY_H */

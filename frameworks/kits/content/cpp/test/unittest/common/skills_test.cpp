@@ -293,7 +293,6 @@ HWTEST_F(SkillsBaseTest, AaFwk_Skills_Entities_0100, Function | MediumTest | Lev
  */
 HWTEST_F(SkillsBaseTest, AaFwk_Skills_GetEntities_0100, Function | MediumTest | Level1)
 {
-
     std::string entity = "12345667";
     base_->AddEntity(entity);
 
@@ -902,6 +901,5 @@ INSTANTIATE_TEST_CASE_P(SkillsParamsTestCaseP, SkillsParamsTest,
         testParamsType("", ""),
         testParamsType(std::string(LARGE_STR_LEN + 1, 'k'), std::string(LARGE_STR_LEN + 1, 'k')),
         testParamsType("#$%^&*(!@\":<>{},/", "#$%^&*(!@\":<>{},/")));
-
 }  // namespace AAFwk
 }  // namespace OHOS

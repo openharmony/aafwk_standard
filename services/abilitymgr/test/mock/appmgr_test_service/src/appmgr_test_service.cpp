@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 AppMgrEventHandler::AppMgrEventHandler(
     const std::shared_ptr<AppExecFwk::EventRunner> &runner, const std::shared_ptr<AbilityManagerService> &server)
     : AppExecFwk::EventHandler(runner), server_(server)
@@ -173,6 +172,5 @@ void AppManagerTestService::Start()
     eventLoop_->Run();
     return;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

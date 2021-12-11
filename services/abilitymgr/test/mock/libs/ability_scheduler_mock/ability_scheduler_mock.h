@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H
+#define SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H
+
 #pragma once
 #include "ability_scheduler_interface.h"
 #include <iremote_object.h>
@@ -143,3 +146,4 @@ public:
 };
 }  // namespace AAFwk
 }  // namespace OHOS
+#endif  // SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H

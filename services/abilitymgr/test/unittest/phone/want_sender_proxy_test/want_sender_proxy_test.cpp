@@ -33,8 +33,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<WantSenderProxy> proxy_{nullptr};
-    sptr<WantSenderStubMock> mock_{nullptr};
+    std::shared_ptr<WantSenderProxy> proxy_ {nullptr};
+    sptr<WantSenderStubMock> mock_ {nullptr};
 };
 
 void WantSenderProxyTest::SetUpTestCase(void)

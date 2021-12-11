@@ -69,7 +69,6 @@ napi_value UnwrapValuesBucket(std::shared_ptr<NativeRdb::ValuesBucket> &param, n
  */
 napi_value UnwrapDataAbilityPredicatesBackReferences(
     std::shared_ptr<DataAbilityOperationBuilder> &builder, napi_env env, napi_value args);
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_WANT_WRAPPER_H */

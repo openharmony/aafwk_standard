@@ -23,8 +23,8 @@ namespace OHOS {
 namespace AAFwk {
 class AbilityConnectCallback : public AbilityConnectionStub {
 public:
-    AbilityConnectCallback(){};
-    virtual ~AbilityConnectCallback(){};
+    AbilityConnectCallback() {};
+    virtual ~AbilityConnectCallback() {};
     virtual void OnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode) override;
     virtual void OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode) override;

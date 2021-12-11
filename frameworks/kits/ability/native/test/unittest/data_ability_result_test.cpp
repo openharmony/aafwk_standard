@@ -20,7 +20,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
-
 static const int COUNT_NULL = 0;
 static const int SET_COUNT = 1;
 static const Uri uri("scheme://authority/path1/path2/path3?id = 1&name = mingming&old#fragment");
@@ -197,7 +196,6 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0100, Funct
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_ToString0200, Function | MediumTest | Level1)
 {
-
     std::string search = "DataAbilityResult(";
     std::size_t pos = 0;
     std::size_t result = 0;
@@ -274,6 +272,5 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Parcelable_0200, Fu
         EXPECT_EQ(ResultIn_->GetCount(), ResultOut_->GetCount());
     }
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

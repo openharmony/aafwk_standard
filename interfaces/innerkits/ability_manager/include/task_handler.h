@@ -35,7 +35,6 @@ public:
      */
     void ProcessEvent(const InnerEvent::Pointer &event) override;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_TASK_HANDLER_H

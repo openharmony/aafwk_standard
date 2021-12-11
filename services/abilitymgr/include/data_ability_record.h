@@ -62,11 +62,11 @@ private:
     void OnSchedulerDied(const wptr<IRemoteObject> &remote);
 
 private:
-    std::condition_variable_any loadedCond_{};
-    AbilityRequest request_{};
-    AbilityRecordPtr ability_{};
-    sptr<IAbilityScheduler> scheduler_{};
-    std::list<ClientInfo> clients_{};
+    std::condition_variable_any loadedCond_ {};
+    AbilityRequest request_ {};
+    AbilityRecordPtr ability_ {};
+    sptr<IAbilityScheduler> scheduler_ {};
+    std::list<ClientInfo> clients_ {};
     sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_;  // caller binderDied Recipient
 };
 }  // namespace AAFwk

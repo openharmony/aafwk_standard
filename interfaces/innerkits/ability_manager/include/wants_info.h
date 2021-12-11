@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 struct WantsInfo : public Parcelable {
     Want want;
     std::string resolvedTypes;
@@ -32,7 +31,6 @@ struct WantsInfo : public Parcelable {
     virtual bool Marshalling(Parcel &parcel) const override;
     static WantsInfo *Unmarshalling(Parcel &parcel);
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_INTERFACES_INNERKITS_WANTS_INFO_H

@@ -382,7 +382,6 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
 
     if (resultData.HasParameter(OHOS_RESULT_PERMISSION_KEY) && resultData.HasParameter(OHOS_RESULT_PERMISSIONS_LIST) &&
         resultData.HasParameter(OHOS_RESULT_CALLER_BUNDLERNAME)) {
-
         if (resultCode > 0) {
             std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST);
             std::vector<std::string> grantYes = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_YES);
@@ -807,6 +806,5 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityImpl::ExecuteBatch(
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     return results;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

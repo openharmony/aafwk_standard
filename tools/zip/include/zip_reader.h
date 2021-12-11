@@ -29,7 +29,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 // A delegate interface used to stream out an entry; see
 // ZipReader::ExtractCurrentEntry.
 class WriterDelegate {
@@ -224,7 +223,6 @@ private:
 
     DISALLOW_COPY_AND_ASSIGN(FilePathWriterDelegate);
 };
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

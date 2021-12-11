@@ -43,8 +43,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int AcquireProviderFormInfo(
-        const int64_t formId, 
-        const Want &want, 
+        const int64_t formId,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
 
     /**
@@ -56,8 +56,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int NotifyFormDelete(
-        const int64_t formId, 
-        const Want &want, 
+        const int64_t formId,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
 
     /**
@@ -69,8 +69,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int NotifyFormsDelete(
-        const std::vector<int64_t> &formIds, 
-        const Want &want, 
+        const std::vector<int64_t> &formIds,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
     
     /**
@@ -82,13 +82,13 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int NotifyFormUpdate(
-        const int64_t formId, 
-        const Want &want, 
+        const int64_t formId,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
 
     /**
      * @brief Event notify when change the form visible.
-     * 
+     *
      * @param formIds The vector of form ids.
      * @param formVisibleType The form visible type, including FORM_VISIBLE and FORM_INVISIBLE.
      * @param want Indicates the structure containing form info.
@@ -107,8 +107,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int NotifyFormCastTempForm(
-        const int64_t formId, 
-        const Want &want, 
+        const int64_t formId,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
     /**
      * @brief Fire message event to form provider.
@@ -119,13 +119,13 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int FireFormEvent(
-        const int64_t formId, 
-        const std::string &message, 
-        const Want &want, 
+        const int64_t formId,
+        const std::string &message,
+        const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
     /**
      * @brief Set the owner ability of the form provider client.
-     * 
+     *
      * @param ability The owner ability of the form provider client.
      * @return none.
      */
@@ -133,7 +133,7 @@ public:
 
     /**
      * @brief Clear the owner ability of the form provider client.
-     * 
+     *
      * @param ability The owner ability of the form provider client.
      * @return none.
      */
@@ -143,8 +143,8 @@ private:
     std::shared_ptr<Ability> GetOwner();
     bool CheckIsSystemApp() const;
     int HandleAcquire(
-        const FormProviderInfo &formProviderInfo, 
-        const Want &newWant, 
+        const FormProviderInfo &formProviderInfo,
+        const Want &newWant,
         const sptr<IRemoteObject> &callerToken);
     int  HandleDisconnect(const Want &want, const sptr<IRemoteObject> &callerToken);
 
@@ -153,7 +153,6 @@ private:
     mutable std::mutex abilityMutex_;
     std::weak_ptr<Ability> owner_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_FORM_PROVIDER_CLIENT_H

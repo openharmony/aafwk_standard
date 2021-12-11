@@ -39,9 +39,9 @@ public:
 
     int code_ = 0;
 
-    virtual void Send(const int32_t resultCode){};
+    virtual void Send(const int32_t resultCode) {};
     virtual void PerformReceive(const Want &want, int resultCode, const std::string &data, const WantParams &extras,
-        bool serialized, bool sticky, int sendingUser){}
+        bool serialized, bool sticky, int sendingUser) {}
 };
 }  // namespace AAFwk
 }  // namespace OHOS

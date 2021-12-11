@@ -33,7 +33,6 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
-
 static void WaitUntilTaskFinished()
 {
     const uint32_t maxRetryCount = 1000;
@@ -62,11 +61,11 @@ public:
     void StartSystemUI();
 
 public:
-    std::shared_ptr<KernalSystemAppManager> kernalSystemMgr_{nullptr};
+    std::shared_ptr<KernalSystemAppManager> kernalSystemMgr_ {nullptr};
     int usrId_ = 10;
-    Want want_{};
-    AppExecFwk::AbilityInfo abilityInfo_{};
-    AppExecFwk::ApplicationInfo appInfo_{};
+    Want want_ {};
+    AppExecFwk::AbilityInfo abilityInfo_ {};
+    AppExecFwk::ApplicationInfo appInfo_ {};
 };
 
 void KernalSystemAppManagerTest::SetUpTestCase()
@@ -610,7 +609,6 @@ HWTEST_F(KernalSystemAppManagerTest, DispatchActive_002, TestSize.Level1)
     isRemove = kernalSystemMgr_->RemoveAbilityRecord(nullptr);
     EXPECT_FALSE(isRemove);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

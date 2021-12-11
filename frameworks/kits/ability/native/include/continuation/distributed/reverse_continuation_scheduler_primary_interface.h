@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class IReverseContinuationSchedulerPrimary : public IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.ReverseContinuationSchedulerPrimary");
@@ -45,7 +44,6 @@ public:
         CONTINUATION_BACK,
     };
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_REVERSE_CONTINUATION_SCHEDULER_PRIMARY_INTERFACE_H */

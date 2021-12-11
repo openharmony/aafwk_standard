@@ -49,7 +49,6 @@ public:
         COMMAND_DISCONNECT,
     };
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ICONNECT_CALLBACK_H

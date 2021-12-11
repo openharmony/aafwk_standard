@@ -35,7 +35,7 @@ const std::string FORM_SUPPLY_INFO = "com.form.supply.info.test";
 
 class FormProviderClientTest : public testing::Test {
 public:
-    FormProviderClientTest() 
+    FormProviderClientTest()
     {}
     ~FormProviderClientTest()
     {}
@@ -71,9 +71,9 @@ void FormProviderClientTest::SetUp(void)
     Permission::PermissionKit::AddDefPermissions(permList);
     std::vector<std::string> permnameList;
     permnameList.emplace_back(PERMISSION_NAME_REQUIRE_FORM);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME,
         permnameList, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME,
         PERMISSION_NAME_REQUIRE_FORM, 0);
 }
 
@@ -276,7 +276,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_EventNotify_0200, Func
     int32_t formVisibleType = Constants::FORM_INVISIBLE;
 
     EXPECT_EQ(ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY,
-    instance_->EventNotify(formEvents, formVisibleType, want, callerToken ));
+    instance_->EventNotify(formEvents, formVisibleType, want, callerToken));
 
     GTEST_LOG_(INFO) << "AaFwk_FormProviderClient_EventNotify_0200 end";
 }

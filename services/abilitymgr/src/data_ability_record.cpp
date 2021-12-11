@@ -79,7 +79,6 @@ int DataAbilityRecord::WaitForLoaded(std::mutex &mutex, const std::chrono::syste
     }
 
     auto ret = loadedCond_.wait_for(mutex, timeout, [this] { return ability_->GetAbilityState() == ACTIVE; });
-
     if (!ret) {
         return ERR_TIMED_OUT;
     }
