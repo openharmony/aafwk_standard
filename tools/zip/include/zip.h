@@ -16,10 +16,8 @@
 #define FOUNDATION_AAFWK_STANDARD_TOOLS_ZIP_H
 
 #include <vector>
-#include <functional>
 #include <iostream>
 #include <memory>
-#include <time.h>
 #include "zip_utils.h"
 #include "file_path.h"
 

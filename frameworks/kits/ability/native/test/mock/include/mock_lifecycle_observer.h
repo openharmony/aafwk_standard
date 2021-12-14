@@ -16,9 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_LIFECYCLE_OBSERVER_INTERFACE_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_LIFECYCLE_OBSERVER_INTERFACE_H
 
+#include <gtest/gtest.h>
 #include "want.h"
 #include "ability_lifecycle_observer_interface.h"
-#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace AppExecFwk {

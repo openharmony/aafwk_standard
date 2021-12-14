@@ -24,8 +24,8 @@
 #include "ability_manager_service.h"
 #undef private
 #undef protected
-#include "ability_manager_errors.h"
 #include "gtest/gtest.h"
+#include "ability_manager_errors.h"
 #include "mock_bundle_manager.h"
 #include "want.h"
 #include "sa_mgr_client.h"

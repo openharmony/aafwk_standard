@@ -147,9 +147,7 @@ public:
     // Returns true if there is at least one entry to read. This function is
     // used to scan entries with AdvanceToNextEntry(), like:
     //
-    // while (reader.HasMore()) {
     //   // Do something with the current file here.
-    //   reader.AdvanceToNextEntry();
     // }
     bool HasMore();
 

@@ -15,9 +15,6 @@
 
 #include "app_mgr_client.h"
 
-#include <cstdio>
-#include <string>
-#include <unistd.h>
 
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"

@@ -67,7 +67,6 @@ public:
      */
     int AddForm(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken, FormJsInfo &formInfo)
     {
-        // int64_t formId = want.GetLongParam(Constants::PARAM_FORM_IDENTITY_KEY, 0L);
         if (formId == 300L) {
             formInfo.formId = formId;
         }
@@ -106,10 +105,10 @@ public:
      */
     int UpdateForm(const int64_t formId, const std::string& bundleName, const FormProviderData& formBindingData)
     {
-        if (formId == 300L) {
-           return -1;
-       }
-       return 0;
+        if (formId == 300L){
+            return -1;
+        }
+        return 0;
     }
 
     /**

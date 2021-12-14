@@ -150,7 +150,8 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) = 0;
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+        const NativeRdb::DataAbilityPredicates &predicates) = 0;
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -214,7 +215,7 @@ public:
      *
      * @return Return true if success. otherwise return false.
      */
-	virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
+    virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
     /**
      * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.

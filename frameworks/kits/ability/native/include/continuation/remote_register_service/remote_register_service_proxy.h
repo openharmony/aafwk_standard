@@ -16,9 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_REMOTE_REGISTER_SERVICE_PROXY_H
 #define FOUNDATION_APPEXECFWK_OHOS_REMOTE_REGISTER_SERVICE_PROXY_H
 
-#include "remote_register_service_interface.h"
 #include <iremote_object.h>
 #include <map>
+#include "remote_register_service_interface.h"
 #include "message_parcel.h"
 #include "iremote_proxy.h"
 

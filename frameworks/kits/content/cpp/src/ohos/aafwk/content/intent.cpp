@@ -28,7 +28,6 @@
 #include "ohos/aafwk/base/zchar_wrapper.h"
 #include "string_ex.h"
 
-#include <climits>
 #include <securec.h>
 
 #include "parcel.h"

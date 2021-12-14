@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_DATA_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_DATA_ABILITY_H
 
-#include "ability.h"
 #include <gtest/gtest.h>
+#include "ability.h"
 
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
@@ -87,7 +87,8 @@ public:
         const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockDataAbility::Query called";
-        std::shared_ptr<NativeRdb::AbsSharedResultSet> set = std::make_shared<NativeRdb::AbsSharedResultSet>("QueryTest");
+        std::shared_ptr<NativeRdb::AbsSharedResultSet> set =
+        std::make_shared<NativeRdb::AbsSharedResultSet>("QueryTest");
         return set;
     }
 

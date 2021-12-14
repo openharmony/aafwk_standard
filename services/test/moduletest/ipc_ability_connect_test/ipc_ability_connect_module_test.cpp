@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "gtest/gtest.h"
 #include <unistd.h>
+#include "gtest/gtest.h"
 
 #include "mock_ability_connect_callback_stub.h"
 #include "ability_connect_callback_proxy.h"

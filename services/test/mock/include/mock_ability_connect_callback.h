@@ -16,8 +16,8 @@
 #ifndef MOCK_FOUNDATION_AAAFWK_INTERFACES_INNERKITS_ABILITY_CONNECT_CALLBACK_H
 #define MOCK_FOUNDATION_AAAFWK_INTERFACES_INNERKITS_ABILITY_CONNECT_CALLBACK_H
 
-#include "ability_connect_callback_interface.h"
 #include "gtest/gtest.h"
+#include "ability_connect_callback_interface.h"
 #include "gmock/gmock.h"
 
 namespace OHOS {

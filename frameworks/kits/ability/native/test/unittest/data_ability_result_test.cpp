@@ -115,7 +115,6 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult02
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0100, Function | MediumTest | Level1)
 {
-    // Uri uri("abc");
     DataAbilityResult test(uri, SET_COUNT);
     EXPECT_EQ(SET_COUNT, test.GetCount());
     EXPECT_EQ(uri.ToString(), test.GetUri().ToString());

@@ -14,11 +14,11 @@
  */
 
 #include <cstring>
-#include "napi_common_util.h"
 #include "napi_common_data.h"
 #include "napi_common_error.h"
 #include "hilog_wrapper.h"
 #include "securec.h"
+#include "napi_common_util.h"
 
 namespace OHOS {
 namespace AppExecFwk {
