@@ -17,7 +17,6 @@
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_POST_EVENT_TIMEOUT_H
 
 #include <memory>
-#include <atomic>
 #include <mutex>
 #include <string>
 

@@ -19,9 +19,7 @@
 #include <list>
 #include <string>
 #include <memory>
-#include <mutex>
 #include <condition_variable>
-#include <chrono>
 
 #include "ability_record.h"
 #include "data_ability_caller_recipient.h"

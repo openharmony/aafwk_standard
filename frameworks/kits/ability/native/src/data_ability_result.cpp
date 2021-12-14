@@ -14,8 +14,6 @@
  */
 
 #include "data_ability_result.h"
-#include <string>
-#include <memory>
 #include "parcel_macro.h"
 
 namespace OHOS {

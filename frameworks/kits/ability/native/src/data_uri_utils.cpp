@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 #include "data_uri_utils.h"
-#include <vector>
-#include <memory>
 #include <regex>
 #include "securec.h"
 

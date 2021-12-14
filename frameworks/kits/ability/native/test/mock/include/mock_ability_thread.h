@@ -16,10 +16,10 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_ABILITY_THREAD_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_ABILITY_THREAD_H
 
+#include <gtest/gtest.h>
 #include "ability.h"
 #include "ability_impl.h"
 #include "ability_thread.h"
-#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace AppExecFwk {

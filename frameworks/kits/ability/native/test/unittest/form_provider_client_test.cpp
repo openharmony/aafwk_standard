@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "appexecfwk_errors.h"
 #include <gtest/gtest.h>
+#include "appexecfwk_errors.h"
 #include "form_constants.h"
 #include "form_provider_client.h"
 #include "mock_form_supply_callback.h"

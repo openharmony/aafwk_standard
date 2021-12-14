@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
+#include "gtest/gtest.h"
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
-#include "gtest/gtest.h"
 #include "mock_ability_test.h"
 #include "mock_ability_manager_client.h"
 #include "mock_ability_thread_for_data_observer.h"

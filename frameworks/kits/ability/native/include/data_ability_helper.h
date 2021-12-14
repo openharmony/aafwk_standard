@@ -304,7 +304,7 @@ private:
     
     std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<AAFwk::IAbilityScheduler>> registerMap_;
     
-	std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
+    std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
 };
 
 class DataAbilityDeathRecipient : public IRemoteObject::DeathRecipient {

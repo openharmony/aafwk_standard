@@ -78,7 +78,8 @@ int AbilityScheduler::Insert(const Uri &uri, const NativeRdb::ValuesBucket &valu
     return -1;
 }
 
-int AbilityScheduler::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+int AbilityScheduler::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+    const NativeRdb::DataAbilityPredicates &predicates)
 {
     return -1;
 }

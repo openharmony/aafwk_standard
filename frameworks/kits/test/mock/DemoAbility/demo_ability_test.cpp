@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-#include "abs_shared_result_set.h"
-#include "data_ability_predicates.h"
-#include "values_bucket.h"
-#include "demo_ability_test.h"
 #include <future>
 #include <gtest/gtest.h>
 #include <iostream>
+#include "abs_shared_result_set.h"
+#include "data_ability_predicates.h"
+#include "values_bucket.h"
 #include "mock_lifecycle_observer.h"
+#include "demo_ability_test.h"
 
 using namespace std;
 const int openfileValue = 123;
@@ -163,7 +163,8 @@ int DemoAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return insertValue;
 }
 
-int DemoAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+int DemoAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+                        const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "DemoAbility::Update called";
     return updateValue;
@@ -198,7 +199,8 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DemoAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "DemoAbility::Query called";
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset = std::make_shared<NativeRdb::AbsSharedResultSet>("resultset");
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset =
+    std::make_shared<NativeRdb::AbsSharedResultSet>("resultset");
     return resultset;
 }
 

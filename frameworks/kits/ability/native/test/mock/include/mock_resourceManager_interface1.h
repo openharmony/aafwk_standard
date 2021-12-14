@@ -15,10 +15,10 @@
 #ifndef OHOS_MOCK_RESOURCE_MANAGER_RESOURCEMANAGER1_H
 #define OHOS_MOCK_RESOURCE_MANAGER_RESOURCEMANAGER1_H
 
-#include "res_config.h"
 #include <string>
 #include <vector>
 #include <map>
+#include "res_config.h"
 
 #include "resource_manager.h"
 

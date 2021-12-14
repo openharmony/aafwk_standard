@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 #include "napi_data_uri_utils.h"
-#include "data_uri_utils.h"
-#include "feature_ability_common.h"
-#include "uri.h"
 #include <cstring>
 #include <vector>
 #include <inttypes.h>
+#include "data_uri_utils.h"
+#include "feature_ability_common.h"
+#include "uri.h"
 #include "securec.h"
 #include "hilog_wrapper.h"
 

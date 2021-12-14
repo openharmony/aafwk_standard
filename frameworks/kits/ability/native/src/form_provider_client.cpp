@@ -15,7 +15,6 @@
 
 #include <cinttypes>
 
-#include "form_provider_client.h"
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
 #include "form_supply_proxy.h"
@@ -23,6 +22,7 @@
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
 #include "string_ex.h"
+#include "form_provider_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {

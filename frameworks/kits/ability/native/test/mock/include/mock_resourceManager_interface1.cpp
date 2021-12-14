@@ -18,10 +18,10 @@
 
 #include "mock_resourceManager_interface1.h"
 
-#include "res_config.h"
 #include <string>
 #include <vector>
 #include <map>
+#include "res_config.h"
 
 namespace OHOS {
 namespace Global {
@@ -265,7 +265,6 @@ public:
     std::map<int, std::vector<int>> IntArrayById_;
     std::map<int, uint32_t> ColorById_;
 
-    // static ResourceManagerTestInstance* instance;
     static std::shared_ptr<ResourceManagerTestInstance> instance;
 };
 

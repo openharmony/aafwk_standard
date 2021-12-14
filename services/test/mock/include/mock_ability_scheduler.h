@@ -41,7 +41,8 @@ public:
     MOCK_METHOD2(
         ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
-    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
+    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>
+        (const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
         std::vector<std::string> types;

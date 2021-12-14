@@ -21,7 +21,6 @@
 
 #include "ability_info.h"
 #include "application_info.h"
-// #include "app_mgr_constants.h"
 #include "iapp_state_callback.h"
 #include "running_process_info.h"
 

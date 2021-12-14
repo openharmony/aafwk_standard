@@ -14,7 +14,6 @@
  */
 
 #include "ability_thread.h"
-#include <functional>
 #include "ohos_application.h"
 #include "ability_loader.h"
 #include "ability_state.h"

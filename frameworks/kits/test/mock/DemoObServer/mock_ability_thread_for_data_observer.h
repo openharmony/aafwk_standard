@@ -21,13 +21,13 @@
 
 #include "gtest/gtest.h"
 
+#include <iostream>
 #include "mock_ability_test.h"
 #include "ohos_application.h"
 #include "ability_thread.h"
 #include "event_runner.h"
 #include "ability_info.h"
 #include "ability_local_record.h"
-#include <iostream> //
 namespace OHOS {
 namespace AppExecFwk {
 sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()

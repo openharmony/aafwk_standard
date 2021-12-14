@@ -15,8 +15,6 @@
 
 #include "appmgr_test_service.h"
 
-#include <string>
-#include <unistd.h>
 
 #include "ability_scheduler.h"
 #include "hilog_wrapper.h"

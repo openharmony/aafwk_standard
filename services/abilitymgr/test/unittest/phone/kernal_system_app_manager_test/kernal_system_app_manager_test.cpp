@@ -400,7 +400,6 @@ HWTEST_F(KernalSystemAppManagerTest, OnTimeOut_001, TestSize.Level1)
     };
     EXPECT_NE(info.end(), std::find_if(info.begin(), info.end(), isFindAbilityInfo));
 
-    // remove form vector;
     kernalSystemMgr_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecord->GetEventId());
 
     info.clear();

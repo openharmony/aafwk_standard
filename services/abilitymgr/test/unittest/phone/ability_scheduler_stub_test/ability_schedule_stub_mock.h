@@ -59,7 +59,8 @@ public:
         return -1;
     }
 
-    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) override
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+    const NativeRdb::DataAbilityPredicates &predicates) override
     {
         return -1;
     }

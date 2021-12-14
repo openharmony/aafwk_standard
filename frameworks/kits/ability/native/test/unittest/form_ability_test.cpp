@@ -26,7 +26,6 @@
 #include "form_mgr.h"
 #include "mock_form_mgr_service.h"
 #include "mock_page_ability.h"
-// #include "form_info.h"
 #include "mock_bundle_manager_form.h"
 
 namespace OHOS {

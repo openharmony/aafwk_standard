@@ -16,9 +16,9 @@
 #ifndef OHOS_AAFWK_IPCSINGLETON_H
 #define OHOS_AAFWK_IPCSINGLETON_H
 
-#include "nocopyable.h"
 #include <mutex>
 #include <memory>
+#include "nocopyable.h"
 
 namespace OHOS {
 namespace AppExecFwk {

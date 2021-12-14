@@ -411,7 +411,6 @@ napi_value UnwrapStringParam(std::string &str, napi_env env, napi_value argv)
     HILOG_INFO("%{public}s,called", __func__);
     // unwrap the param[0]
     napi_valuetype valueType = napi_valuetype::napi_undefined;
-    // NAPI_CALL(env, napi_typeof(env, argv, &valueType));
     napi_status rev = napi_typeof(env, argv, &valueType);
     if (rev != napi_ok) {
         return nullptr;
@@ -807,7 +806,6 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
     if (asyncCallbackInfo->isCallBack) {
         napi_value callback = 0;
         napi_value undefined = 0;
-        // callback(err, data)  errorInfo->error_code;
         result[PARAM0] = GetCallbackErrorValue(asyncCallbackInfo->env, NO_ERROR);
         // get callback
         napi_get_reference_value(asyncCallbackInfo->env, asyncCallbackInfo->callback, &callback);
