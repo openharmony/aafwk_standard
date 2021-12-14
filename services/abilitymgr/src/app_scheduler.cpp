@@ -204,5 +204,11 @@ void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo,
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->GetSystemMemoryAttr(memoryInfo, strConfig);
 }
+
+void AppScheduler::StartupResidentProcess()
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->StartupResidentProcess();
+}
 }  // namespace AAFwk
 }  // namespace OHOS

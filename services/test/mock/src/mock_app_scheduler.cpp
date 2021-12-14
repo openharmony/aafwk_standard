@@ -131,5 +131,10 @@ void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
 {
     HILOG_INFO("Test AppScheduler::OnAppStateChanged()");
 }
+
+void AppScheduler::StartupResidentProcess()
+{
+    HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
+}
 }  // namespace AAFwk
 }  // namespace OHOS
