@@ -141,5 +141,10 @@ void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo,
     memoryInfo.totalSysMem_ = testValue;
     memoryInfo.threshold_ = testValue;
 }
+
+void AppScheduler::StartupResidentProcess()
+{
+    HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
+}
 }  // namespace AAFwk
 }  // namespace OHOS

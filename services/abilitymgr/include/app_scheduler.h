@@ -195,6 +195,11 @@ public:
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig);
 
+    /**
+     * Start a resident process
+     */
+    void StartupResidentProcess();
+
 protected:
     /**
      * OnAbilityRequestDone, app manager service call this interface after ability request done.
