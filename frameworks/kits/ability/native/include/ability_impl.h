@@ -415,6 +415,7 @@ private:
     std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
     std::shared_ptr<ApplicationImpl> applactionImpl_;
     std::shared_ptr<ContextDeal> contextDeal_;
+    std::shared_ptr<Configuration> configuration_ = nullptr;
 
 private:
     /**

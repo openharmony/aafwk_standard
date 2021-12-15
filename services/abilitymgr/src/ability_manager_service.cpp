@@ -492,6 +492,8 @@ void AbilityManagerService::GetGlobalConfiguration()
     std::string direction = amsConfigResolver_->GetOrientation();
     HILOG_INFO("current global direction is : %{public}s", direction.c_str());
     GetConfiguration()->AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, direction);
+
+    DelayedSingleton<ConfigurationDistributor>::GetInstance()->InitConfiguration(*GetConfiguration());
 }
 
 std::shared_ptr<AppExecFwk::Configuration> AbilityManagerService::GetConfiguration()
@@ -896,21 +898,23 @@ int AbilityManagerService::AttachAbilityThread(
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     auto type = abilityInfo.type;
 
-    if (type != AppExecFwk::AbilityType::DATA) {
+    int returnCode = -1;
+    if (type == AppExecFwk::AbilityType::SERVICE) {
+        returnCode = connectManager_->AttachAbilityThreadLocked(scheduler, token);
+    } else if (type == AppExecFwk::AbilityType::DATA) {
+        returnCode = dataAbilityManager_->AttachAbilityThread(scheduler, token);
+    } else if (IsSystemUiApp(abilityInfo)) {
+        returnCode = systemAppManager_->AttachAbilityThread(scheduler, token);
+    } else {
+        returnCode =  currentStackManager_->AttachAbilityThread(scheduler, token);
+    }
+
+    HILOG_INFO("attach ability type [%{public}d] | returnCode [%{public}d]", type, returnCode);
+    if (SUCCEEDED(returnCode) && type != AppExecFwk::AbilityType::DATA) {
         DelayedSingleton<ConfigurationDistributor>::GetInstance()->Atach(abilityRecord);
     }
 
-    if (type == AppExecFwk::AbilityType::SERVICE) {
-        return connectManager_->AttachAbilityThreadLocked(scheduler, token);
-    }
-    if (type == AppExecFwk::AbilityType::DATA) {
-        return dataAbilityManager_->AttachAbilityThread(scheduler, token);
-    }
-    if (IsSystemUiApp(abilityInfo)) {
-        return systemAppManager_->AttachAbilityThread(scheduler, token);
-    }
-
-    return currentStackManager_->AttachAbilityThread(scheduler, token);
+    return returnCode;
 }
 
 void AbilityManagerService::DumpFuncInit()
@@ -1813,7 +1817,7 @@ void AbilityManagerService::StartSystemApplication()
         HILOG_INFO("start mms");
         StartingMmsAbility();
     }
-    
+
     // Location may change
     DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
 }
