@@ -125,7 +125,6 @@ private:
         UserObjectBaseLoader::GetInstance().RegisterUserObject(                              \
             #className, []()->UserObjectBase * { return new (std::nothrow)(className); });   \
     }
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_APPEXECFWK_USER_OBJECT_BASE_H

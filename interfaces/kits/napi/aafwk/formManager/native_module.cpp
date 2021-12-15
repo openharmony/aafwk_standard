@@ -56,7 +56,7 @@ static napi_value Init(napi_env env, napi_value exports)
 
 EXTERN_C_END
 
-// Define a Node-API module. 
+// Define a Node-API module.
 static napi_module _module = {
     .nm_version = 1,
     .nm_flags = 0,

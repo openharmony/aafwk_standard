@@ -62,6 +62,5 @@ HWTEST_F(DataAbilityObserverProxyTest, DataAbilityObserverProxy_OnChangeInner_00
         proxy->OnChange();
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

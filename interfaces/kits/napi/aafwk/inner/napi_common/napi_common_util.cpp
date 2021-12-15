@@ -14,15 +14,14 @@
  */
 
 #include <cstring>
-#include "napi_common_util.h"
 #include "napi_common_data.h"
 #include "napi_common_error.h"
 #include "hilog_wrapper.h"
 #include "securec.h"
+#include "napi_common_util.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-
 bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectType)
 {
     napi_valuetype valueType = napi_undefined;
@@ -1115,6 +1114,5 @@ std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
     memcpy_s(result.data(), result.size(), &data[offset], length);
     return result;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

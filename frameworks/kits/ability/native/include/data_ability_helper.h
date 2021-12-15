@@ -304,8 +304,7 @@ private:
     
     std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<AAFwk::IAbilityScheduler>> registerMap_;
     
-	std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
-
+    std::map<sptr<AAFwk::IDataAbilityObserver>, std::string> uriMap_;
 };
 
 class DataAbilityDeathRecipient : public IRemoteObject::DeathRecipient {
@@ -321,7 +320,6 @@ public:
 private:
     RemoteDiedHandler handler_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_DATA_ABILITY_HELPER_H

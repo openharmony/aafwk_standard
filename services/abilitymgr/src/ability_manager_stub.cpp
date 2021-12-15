@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 AbilityManagerStub::AbilityManagerStub()
 {
     FirstStepInit();

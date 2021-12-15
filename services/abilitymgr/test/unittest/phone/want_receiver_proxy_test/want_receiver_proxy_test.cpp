@@ -32,8 +32,8 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    std::shared_ptr<WantReceiverProxy> proxy_{nullptr};
-    sptr<WantReceiverStubMock> mock_{nullptr};
+    std::shared_ptr<WantReceiverProxy> proxy_ {nullptr};
+    sptr<WantReceiverStubMock> mock_ {nullptr};
 };
 
 void WantReceiverProxyTest::SetUpTestCase(void)

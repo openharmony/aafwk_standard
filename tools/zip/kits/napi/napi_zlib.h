@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 /**
  * @brief FlushType data initialization.
  *
@@ -153,7 +152,6 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info);
  *       };
  */
 napi_value NAPI_UnzipFile(napi_env env, napi_callback_info info);
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

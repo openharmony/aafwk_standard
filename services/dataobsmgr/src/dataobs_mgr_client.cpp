@@ -128,6 +128,5 @@ ErrCode DataObsMgrClient::Connect()
     HILOG_DEBUG("connect DataObsMgrService success");
     return ERR_OK;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

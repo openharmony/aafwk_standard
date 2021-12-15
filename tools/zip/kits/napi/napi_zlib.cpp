@@ -274,7 +274,7 @@ AsyncZipCallbackInfo *CreateZipAsyncCallbackInfo(napi_env env)
         HILOG_ERROR("%{public}s get_global=%{public}d err:%{public}s", __func__, ret, errorInfo->error_message);
     }
 
-    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo{
+    AsyncZipCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncZipCallbackInfo {
         .asyncWork = nullptr,
         .aceCallback = nullptr,
     };
@@ -314,7 +314,6 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info)
 
     ret = ZipFileWrap(env, info, asyncZipCallbackInfo);
     if (ret == nullptr) {
-
         if (g_zipAceCallbackInfo != nullptr) {
             g_zipAceCallbackInfo.reset();
             g_zipAceCallbackInfo = nullptr;
@@ -412,7 +411,6 @@ napi_value UnwrapStringParam(std::string &str, napi_env env, napi_value argv)
     HILOG_INFO("%{public}s,called", __func__);
     // unwrap the param[0]
     napi_valuetype valueType = napi_valuetype::napi_undefined;
-    // NAPI_CALL(env, napi_typeof(env, argv, &valueType));
     napi_status rev = napi_typeof(env, argv, &valueType);
     if (rev != napi_ok) {
         return nullptr;
@@ -808,7 +806,6 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
     if (asyncCallbackInfo->isCallBack) {
         napi_value callback = 0;
         napi_value undefined = 0;
-        // callback(err, data)  errorInfo->error_code;
         result[PARAM0] = GetCallbackErrorValue(asyncCallbackInfo->env, NO_ERROR);
         // get callback
         napi_get_reference_value(asyncCallbackInfo->env, asyncCallbackInfo->callback, &callback);
@@ -886,7 +883,6 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
         }
     }
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

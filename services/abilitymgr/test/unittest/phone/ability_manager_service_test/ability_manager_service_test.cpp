@@ -37,7 +37,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
-
 static void WaitUntilTaskFinished()
 {
     const uint32_t maxRetryCount = 1000;
@@ -96,9 +95,9 @@ public:
     static constexpr int TEST_WAIT_TIME = 100000;
 
 public:
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
-    AbilityRequest abilityRequest_{};
-    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
+    AbilityRequest abilityRequest_ {};
+    std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
 };
 
 int AbilityManagerServiceTest::StartAbility(const Want &want)
@@ -1178,7 +1177,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_027, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_028, TestSize.Level1)
 {
-
     Want want;
     ElementName element("device", "com.ix.hiMusic", "MusicAbility");
     want.SetElement(element);
@@ -1218,7 +1216,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_028, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
 {
-
     abilityMs_->currentStackManager_ = nullptr;
     auto result = abilityMs_->KillProcess("bundle");
     EXPECT_EQ(ERR_OK, result);
@@ -1234,7 +1231,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level1)
 {
-
     abilityMs_->currentStackManager_ = nullptr;
     auto result = abilityMs_->UninstallApp("bundle");
     EXPECT_EQ(ERR_NO_INIT, result);

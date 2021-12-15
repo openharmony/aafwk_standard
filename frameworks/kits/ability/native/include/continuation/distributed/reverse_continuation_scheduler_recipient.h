@@ -37,7 +37,6 @@ public:
 private:
     RemoteDiedHandler handler_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_AAFWK_STANDARD_FRAMEWORKS_KITS_ABILITY_NATIVE_INCLUDE_CONTINUATION_RECIPIENT_H

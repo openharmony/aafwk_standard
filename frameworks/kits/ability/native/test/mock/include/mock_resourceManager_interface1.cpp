@@ -18,18 +18,18 @@
 
 #include "mock_resourceManager_interface1.h"
 
-#include "res_config.h"
 #include <string>
 #include <vector>
 #include <map>
+#include "res_config.h"
 
 namespace OHOS {
 namespace Global {
 namespace Resource {
 class ResourceManagerTestInstance : public ResourceManager2 {
 public:
-    ResourceManagerTestInstance(){};
-    virtual ~ResourceManagerTestInstance(){};
+    ResourceManagerTestInstance() {};
+    virtual ~ResourceManagerTestInstance() {};
 
     bool AddResource(const char *path) override
     {
@@ -41,7 +41,7 @@ public:
         return ERROR;
     };
 
-    virtual void GetResConfig(ResConfig &resConfig){};
+    virtual void GetResConfig(ResConfig &resConfig) {};
 
     virtual RState GetStringById(uint32_t id, std::string &outValue)
     {
@@ -69,7 +69,7 @@ public:
     {
         return ERROR;
     };
-    void SetStringFormatById(std::string &inValue, uint32_t id, ...) override{};
+    void SetStringFormatById(std::string &inValue, uint32_t id, ...) override {};
 
     virtual RState GetStringFormatByName(std::string &outValue, const char *name, ...)
     {
@@ -142,7 +142,6 @@ public:
 
     virtual RState GetThemeById(uint32_t id, std::map<std::string, std::string> &outValue)
     {
-
         auto iter = ThemeById_.find(id);
         if (iter == ThemeById_.end()) {
             return ERROR;
@@ -266,7 +265,6 @@ public:
     std::map<int, std::vector<int>> IntArrayById_;
     std::map<int, uint32_t> ColorById_;
 
-    // static ResourceManagerTestInstance* instance;
     static std::shared_ptr<ResourceManagerTestInstance> instance;
 };
 
@@ -279,7 +277,6 @@ std::shared_ptr<ResourceManager2> CreateResourceManager2()
     }
     return ResourceManagerTestInstance::instance;
 }
-
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS

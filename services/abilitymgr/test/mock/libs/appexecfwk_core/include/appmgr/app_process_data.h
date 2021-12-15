@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 struct AppProcessData : public Parcelable {
     /**
      * @brief read this Sequenceable object from a Parcel.
@@ -45,7 +44,6 @@ struct AppProcessData : public Parcelable {
      * @param inParcel Indicates the Parcel object into which the Sequenceable object has been marshaled.
      */
     static AppProcessData *Unmarshalling(Parcel &parcel);
-
 
     std::string appName;
     std::string processName;

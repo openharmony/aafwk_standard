@@ -95,7 +95,6 @@ bool FilePathCheckValid(const std::string &str)
 {
     return std::regex_match(str, FILE_PATH_REGEX);
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

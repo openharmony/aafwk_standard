@@ -217,6 +217,5 @@ void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const 
     napi_create_int32(env, propValue, &prop);
     napi_set_named_property(env, obj, propName, prop);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

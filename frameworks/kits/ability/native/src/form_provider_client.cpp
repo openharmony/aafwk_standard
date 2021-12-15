@@ -15,7 +15,6 @@
 
 #include <cinttypes>
 
-#include "form_provider_client.h"
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
 #include "form_supply_proxy.h"
@@ -23,6 +22,7 @@
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
 #include "string_ex.h"
+#include "form_provider_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -37,8 +37,8 @@ using PermissionState = OHOS::Security::Permission::PermissionState;
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::AcquireProviderFormInfo(
-    const int64_t formId, 
-    const Want &want, 
+    const int64_t formId,
+    const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
@@ -129,8 +129,8 @@ int FormProviderClient::NotifyFormDelete(const int64_t formId, const Want &want,
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::NotifyFormsDelete(
-    const std::vector<int64_t> &formIds, 
-    const Want &want, 
+    const std::vector<int64_t> &formIds,
+    const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
@@ -180,9 +180,9 @@ int FormProviderClient::NotifyFormsDelete(
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::NotifyFormUpdate(
-    const int64_t formId, 
-    const Want &want, 
-    const sptr<IRemoteObject> &callerToken) 
+    const int64_t formId,
+    const Want &want,
+    const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
 
@@ -222,7 +222,7 @@ int FormProviderClient::NotifyFormUpdate(
 
 /**
  * @brief Event notify when change the form visible.
- * 
+ *
  * @param formIds The vector of form ids.
  * @param formVisibleType The form visible type, including FORM_VISIBLE and FORM_INVISIBLE.
  * @param want Indicates the structure containing form info.
@@ -230,7 +230,7 @@ int FormProviderClient::NotifyFormUpdate(
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::EventNotify(
-    const std::vector<int64_t> &formIds, 
+    const std::vector<int64_t> &formIds,
     const int32_t formVisibleType, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
@@ -283,8 +283,8 @@ int FormProviderClient::EventNotify(
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::NotifyFormCastTempForm(
-    const int64_t formId, 
-    const Want &want, 
+    const int64_t formId,
+    const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
@@ -329,9 +329,9 @@ int FormProviderClient::NotifyFormCastTempForm(
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormProviderClient::FireFormEvent(
-    const int64_t formId, 
-    const std::string &message, 
-    const Want &want, 
+    const int64_t formId,
+    const std::string &message,
+    const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
@@ -369,7 +369,7 @@ int FormProviderClient::FireFormEvent(
 }
 /**
  * @brief Set the owner ability of the form provider client.
- * 
+ *
  * @param ability The owner ability of the form provider client.
  */
 void FormProviderClient::SetOwner(const std::shared_ptr<Ability> ability)
@@ -386,7 +386,7 @@ void FormProviderClient::SetOwner(const std::shared_ptr<Ability> ability)
 
 /**
  * @brief Clear the owner ability of the form provider client.
- * 
+ *
  * @param ability The owner ability of the form provider client.
  */
 void FormProviderClient::ClearOwner(const std::shared_ptr<Ability> ability)
@@ -434,8 +434,8 @@ bool FormProviderClient::CheckIsSystemApp() const
 }
 
 int FormProviderClient::HandleAcquire(
-    const FormProviderInfo &formProviderInfo, 
-    const Want &newWant, 
+    const FormProviderInfo &formProviderInfo,
+    const Want &newWant,
     const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s start", __func__);

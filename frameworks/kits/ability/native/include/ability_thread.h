@@ -203,7 +203,8 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
+    int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+        const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -309,7 +310,6 @@ public:
      */
     bool HandleRegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver);
 
-
     /**
      * @brief Deregisters an observer used for DataObsMgr specified by the given Uri.
      *
@@ -355,7 +355,8 @@ public:
      */
     bool CheckObsPermission();
 
-    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 private:
     /**
      * @description: Create the abilityname.

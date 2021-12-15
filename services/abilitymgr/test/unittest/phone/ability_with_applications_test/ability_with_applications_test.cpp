@@ -24,8 +24,8 @@
 #include "ability_manager_service.h"
 #undef private
 #undef protected
-#include "ability_manager_errors.h"
 #include "gtest/gtest.h"
+#include "ability_manager_errors.h"
 #include "mock_bundle_manager.h"
 #include "want.h"
 #include "sa_mgr_client.h"
@@ -56,7 +56,7 @@ public:
     void OnStartabilityAms();
 public:
     static constexpr int TEST_WAIT_TIME = 100000;
-    std::shared_ptr<AbilityManagerService> abilityMs_{nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 void AbilityWithApplicationsTest::SetUpTestCase()

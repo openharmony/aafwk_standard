@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace MTUtil {
-
 using str_vec = std::vector<std::string>;
 using str_iter = std::vector<std::string>::iterator;
 using dump_info_map = std::unordered_map<std::string, std::string>;
@@ -66,7 +65,7 @@ public:
      * @return {str_iter}                     : iter pointing to string containing @args
      * @Introduction: Match the first @matchStr in @dumpInfo from @begin and return the iter.
      */
-    str_iter GetSpecific(const string &args, const str_vec &dumpInfo, const str_iter &begin);
+    str_iter GetSpecific(const string &matchStr, const str_vec &dumpInfo, const str_iter &begin);
 
     /**
      *
@@ -96,9 +95,8 @@ private:
     static std::shared_ptr<MTDumpUtil> instance_;
     std::unordered_map<string, regex> findRgx_;
 
-    inline bool MatchRegex(const regex &regex, const string &str, string &result);
+    inline bool MatchRegex(const regex &rgx, const string &text, string &result);
 };
-
 }  // namespace MTUtil
 }  // namespace OHOS
 #endif  // OHOS_MODULE_TEST_DUMP_UTIL_H

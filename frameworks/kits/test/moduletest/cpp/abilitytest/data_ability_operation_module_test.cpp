@@ -147,6 +147,5 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_DeleteBuilde
     
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_DeleteBuilder_0100";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

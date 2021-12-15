@@ -288,8 +288,8 @@ Uri DataAbilityImpl::NormalizeUri(const Uri &uri)
         APP_LOGE("DataAbilityImpl::NormalizeUri ability_ is nullptr");
         return urivalue;
     }
-    urivalue = ability_->NormalizeUri(uri); 
-    return urivalue;   
+    urivalue = ability_->NormalizeUri(uri);
+    return urivalue;
 }
 
 /**
@@ -311,8 +311,8 @@ Uri DataAbilityImpl::DenormalizeUri(const Uri &uri)
         APP_LOGE("DataAbilityImpl::DenormalizeUri ability_ is nullptr");
         return urivalue;
     }
-    urivalue = ability_->DenormalizeUri(uri); 
-    return urivalue;   
+    urivalue = ability_->DenormalizeUri(uri);
+    return urivalue;
 }
 
 std::vector<std::shared_ptr<DataAbilityResult>> DataAbilityImpl::ExecuteBatch(
@@ -330,6 +330,5 @@ std::vector<std::shared_ptr<DataAbilityResult>> DataAbilityImpl::ExecuteBatch(
     APP_LOGI("DataAbilityImpl::ExecuteBatch end, results size:%{public}zu", results.size());
     return results;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

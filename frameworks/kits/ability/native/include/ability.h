@@ -1422,7 +1422,6 @@ private:
      */
     bool ReAcquireForm(const int64_t formId, const Want &want);
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_H

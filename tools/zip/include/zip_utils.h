@@ -26,7 +26,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 using Runnable = OHOS::AppExecFwk::Runnable;
 using CALLBACK = std::function<void(int)>;
 

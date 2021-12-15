@@ -12,13 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "napi_data_ability_helper.h"
-#include "data_ability_observer_interface.h"
-#include "data_ability_helper.h"
-#include "uri.h"
 #include <cstring>
 #include <vector>
 #include <uv.h>
+#include "data_ability_observer_interface.h"
+#include "data_ability_helper.h"
+#include "uri.h"
 #include "securec.h"
 #include "hilog_wrapper.h"
 #include "napi_result_set.h"
@@ -29,6 +28,7 @@
 #include "napi_data_ability_operation.h"
 #include "../inner/napi_common/napi_common_ability.h"
 #include "message_parcel.h"
+#include "napi_data_ability_helper.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
@@ -467,7 +467,6 @@ napi_value NAPI_NotifyChange(napi_env env, napi_callback_info info)
  */
 napi_value NotifyChangeWrap(napi_env env, napi_callback_info info, DAHelperNotifyChangeCB *notifyChangeCB)
 {
-
     HILOG_INFO("%{public}s,called", __func__);
     size_t argcAsync = ARGS_TWO;
     const size_t argcPromise = ARGS_ONE;
@@ -1021,8 +1020,7 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
                 iter->observer->SetAssociatedObject(iter);
                 iter->observer->ChangeWorkInt();
                 HILOG_INFO("NAPI_UnRegister ReleaseJSCallback. 3 ---");
-            }
-            else {
+            } else {
                 iter->observer->ReleaseJSCallback();
                 delete iter;
                 iter = nullptr;
@@ -3380,6 +3378,5 @@ void GetDataAbilityResultForResult(
     }
     HILOG_INFO("%{public}s, NAPI_ExecuteBatch, getDataAbilityResultForResult end.", __func__);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

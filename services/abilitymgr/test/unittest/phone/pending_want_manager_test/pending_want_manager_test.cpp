@@ -123,7 +123,6 @@ void PendingWantManagerTest::TearDownTestCase()
 
 void PendingWantManagerTest::SetUp()
 {
-
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     abilityMs_->OnStart();
     WaitUntilTaskFinished();

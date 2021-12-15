@@ -48,7 +48,7 @@ public:
 
     int code_ = 0;
 
-    virtual void Send(SenderInfo &senderInfo){};
+    virtual void Send(SenderInfo &senderInfo) {};
 };
 }  // namespace AAFwk
 }  // namespace OHOS

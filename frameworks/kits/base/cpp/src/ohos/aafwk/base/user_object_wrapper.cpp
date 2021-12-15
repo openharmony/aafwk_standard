@@ -35,7 +35,7 @@ bool UserObject::Equals(IObject &other)
 
     UserObject *otherObj = static_cast<UserObject *>(IUserObject::Query(&other));
     if (otherObj == nullptr) {
-        return false;    
+        return false;   
     }
     if (value_->GetClassName() == otherObj->value_->GetClassName()) {
         return otherObj->value_->Equals(value_);
@@ -129,6 +129,5 @@ UserObjectBase *UserObjectBaseLoader::GetUserObjectByName(const std::string &cla
         return nullptr;
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

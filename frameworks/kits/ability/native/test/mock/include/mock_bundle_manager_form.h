@@ -183,7 +183,7 @@ public:
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success
      */
-    virtual bool GetShortcutInfos(const std::string &bundleName,std::vector<ShortcutInfo> &shortcut) override{
+    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override {
         return true;
     }
     /**
@@ -382,7 +382,7 @@ public:
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success
      */
-    virtual bool GetShortcutInfos(const std::string &bundleName,std::vector<ShortcutInfo> &shortcut) override{
+    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override {
         return true;
     }
     virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfo) override;
@@ -393,7 +393,7 @@ public:
         std::vector<FormInfo> &formInfo) override;
     virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {
-         return true;
+        return true;
     };
     virtual bool GetModuleUsageRecords(
         const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override
@@ -405,9 +405,7 @@ public:
     {
         return true;
     }
-
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

@@ -341,6 +341,5 @@ bool ContinuationHandler::ReverseContinueAbility()
     APP_LOGI("%{public}s called end", __func__);
     return requestSendSuccess;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

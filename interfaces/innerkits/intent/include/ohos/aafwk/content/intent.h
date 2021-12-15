@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class Intent final : public Parcelable {
 public:
     Intent();
@@ -135,7 +134,6 @@ private:
     static bool ParseUriInternal(const std::string &content, OHOS::AppExecFwk::ElementName &element, Intent &intent);
     bool ReadFromParcel(Parcel &parcel);
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

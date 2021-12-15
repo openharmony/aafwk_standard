@@ -59,7 +59,6 @@ bool ExtraParams::operator==(const ExtraParams &other) const
 {
     if (targetBundleName_ == other.targetBundleName_ && description_ == other.description_ &&
         jsonParams_ == other.jsonParams_) {
-
         if (devType_.size() != other.devType_.size()) {
             return false;
         } else if (devType_.size() > 0 && other.devType_.size() > 0 && devType_.size() == other.devType_.size()) {

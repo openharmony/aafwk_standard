@@ -41,7 +41,6 @@ enum {
      * to app info from BMS or DistributedMS.
      */
     ABILITY_FAILED_RESTORE_DATA,
-
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "ability_impl.h"
 #include <gtest/gtest.h>
+#include "ability_impl.h"
 #include "ability_local_record.h"
 #include "app_log_wrapper.h"
 
@@ -175,7 +175,8 @@ int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return 1;
 }
 
-int AbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+int AbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+    const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Update called";
     return 1;

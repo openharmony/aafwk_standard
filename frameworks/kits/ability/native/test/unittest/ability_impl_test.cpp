@@ -936,7 +936,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_GetCurrentState_001, TestSize.Level1
  */
 HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DoKeyDown_001, TestSize.Level1)
 {
-
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_DoKeyDown_001 start";
 
     int keyCode = 0;
@@ -975,7 +974,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DoKeyUp_001, TestSize.Level1)
  */
 HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DoTouchEvent_001, TestSize.Level1)
 {
-
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_DoTouchEvent_001 start";
     TouchEvent touchEvent;
 
@@ -993,7 +991,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_DoTouchEvent_001, TestSize.Level1)
  */
 HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_SendResult_001, TestSize.Level1)
 {
-
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_SendResult_001 start";
     std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
     std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
@@ -1421,6 +1418,5 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CheckAndRestore_001, TestSize.Level1
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndRestore_001 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

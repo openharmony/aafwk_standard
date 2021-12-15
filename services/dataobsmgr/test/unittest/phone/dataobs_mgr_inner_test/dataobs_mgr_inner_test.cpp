@@ -32,7 +32,6 @@ using ObsRecipientMapType = OHOS::AAFwk::DataObsMgrInner::ObsRecipientMapType;
 
 namespace OHOS {
 namespace AAFwk {
-
 class DataObsMgrInnerTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -170,6 +169,5 @@ HWTEST_F(DataObsMgrInnerTest, DataObsMgrInner_AddRemove_ObsDeathRecipient_0100, 
     it = dataObsMgrInner_->recipientMap_.find(observer);
     EXPECT_EQ(false, it != dataObsMgrInner_->recipientMap_.end());
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

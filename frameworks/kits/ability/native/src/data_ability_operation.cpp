@@ -348,7 +348,6 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
         }
         for (auto it = dataAbilityPredicatesBackReferences_.begin(); it != dataAbilityPredicatesBackReferences_.end();
              it++) {
-
             if (!out.WriteInt32(it->first)) {
                 APP_LOGE("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
                 return false;
@@ -410,7 +409,8 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
         return false;
     }
-    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s",
+        empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
     if (empty == VALUE_OBJECT) {
         valuesBucket_.reset(in.ReadParcelable<NativeRdb::ValuesBucket>());
     } else {
@@ -422,7 +422,8 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
         return false;
     }
-    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s",
+        empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
     if (empty == VALUE_OBJECT) {
         dataAbilityPredicates_.reset(in.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     } else {
@@ -434,7 +435,8 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         APP_LOGE("DataAbilityOperation::ReadFromParcel ReadInt32(empty) error");
         return false;
     }
-    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s", empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+    APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s",
+        empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
     if (empty == VALUE_OBJECT) {
         valuesBucketReferences_.reset(in.ReadParcelable<NativeRdb::ValuesBucket>());
     } else {
@@ -447,7 +449,8 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         return false;
     }
     if (referenceSize >= REFERENCE_THRESHOLD) {
-        APP_LOGI("DataAbilityOperation::ReadFromParcel referenceSize:%{public}d >= REFERENCE_THRESHOLD:%{public}d", referenceSize, REFERENCE_THRESHOLD);
+        APP_LOGI("DataAbilityOperation::ReadFromParcel referenceSize:%{public}d >= REFERENCE_THRESHOLD:%{public}d",
+            referenceSize, REFERENCE_THRESHOLD);
         return true;
     }
 

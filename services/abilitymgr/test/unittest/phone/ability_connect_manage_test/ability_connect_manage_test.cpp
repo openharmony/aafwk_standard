@@ -71,14 +71,14 @@ public:
     static constexpr int TEST_WAIT_TIME = 1000000;
 
 protected:
-    AbilityRequest abilityRequest_{};
-    AbilityRequest abilityRequest1_{};
-    std::shared_ptr<AbilityRecord> serviceRecord_{nullptr};
-    std::shared_ptr<AbilityRecord> serviceRecord1_{nullptr};
-    OHOS::sptr<Token> serviceToken_{nullptr};
-    OHOS::sptr<Token> serviceToken1_{nullptr};
-    OHOS::sptr<IAbilityConnection> callbackA_{nullptr};
-    OHOS::sptr<IAbilityConnection> callbackB_{nullptr};
+    AbilityRequest abilityRequest_ {};
+    AbilityRequest abilityRequest1_ {};
+    std::shared_ptr<AbilityRecord> serviceRecord_ {nullptr};
+    std::shared_ptr<AbilityRecord> serviceRecord1_ {nullptr};
+    OHOS::sptr<Token> serviceToken_ {nullptr};
+    OHOS::sptr<Token> serviceToken1_ {nullptr};
+    OHOS::sptr<IAbilityConnection> callbackA_ {nullptr};
+    OHOS::sptr<IAbilityConnection> callbackB_ {nullptr};
 
 private:
     std::shared_ptr<AbilityConnectManager> connectManager_;

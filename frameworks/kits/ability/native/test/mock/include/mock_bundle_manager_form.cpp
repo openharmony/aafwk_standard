@@ -52,8 +52,8 @@ bool BundleMgrProxy::GetFormsInfoByApp(const std::string &bundleName, std::vecto
     return true;
 }
 bool BundleMgrProxy::GetFormsInfoByModule(
-    const std::string &bundleName, 
-    const std::string &moduleName, 
+    const std::string &bundleName,
+    const std::string &moduleName,
     std::vector<FormInfo> &formInfo)
 {
     return true;
@@ -148,8 +148,8 @@ bool BundleMgrService::GetFormsInfoByApp(const std::string &bundleName, std::vec
     return true;
 }
 bool BundleMgrService::GetFormsInfoByModule(
-    const std::string &bundleName, 
-    const std::string &moduleName, 
+    const std::string &bundleName,
+    const std::string &moduleName,
     std::vector<FormInfo> &formInfo)
 {
     FormInfo form;

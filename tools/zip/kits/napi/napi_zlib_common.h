@@ -24,7 +24,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 #define NATIVE_C_BUFFER_SIZE 1024 /* Converted to C-style string buffer size */
 #define ARGS_MAX_COUNT 10
 #define ARGS_ASYNC_COUNT 1
@@ -83,7 +82,6 @@ bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectTyp
 std::string UnwrapStringFromJS(napi_env env, napi_value param, const std::string &defaultValue);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
 void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const int propValue);
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

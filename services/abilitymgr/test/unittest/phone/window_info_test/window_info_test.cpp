@@ -29,7 +29,7 @@ public:
     std::shared_ptr<WindowInfo> get() const;
 
 private:
-    std::shared_ptr<WindowInfo> windowInfo_{nullptr};
+    std::shared_ptr<WindowInfo> windowInfo_ {nullptr};
 };
 
 void WindowInfoTest::SetUpTestCase(void)

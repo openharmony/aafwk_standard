@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 ShellCommand::ShellCommand(int argc, char *argv[], std::string name)
 {
     opterr = 0;
@@ -112,7 +111,6 @@ std::string ShellCommand::GetMessageFromCode(const int32_t code) const
     std::string result = "";
     if (messageMap_.find(code) != messageMap_.end()) {
         std::string message = messageMap_.at(code);
-
         if (message.size() != 0) {
             result.append(message + "\n");
         }
@@ -122,6 +120,5 @@ std::string ShellCommand::GetMessageFromCode(const int32_t code) const
 
     return result;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
