@@ -426,7 +426,8 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Update_001, TestSize.Level1)
         NativeRdb::DataAbilityPredicates testPred;
         int testRet = 123;
 
-        auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb, const NativeRdb::DataAbilityPredicates &pred) {
+        auto mockHandler = [&](const Uri &uri, const NativeRdb::ValuesBucket &vb,
+            const NativeRdb::DataAbilityPredicates &pred) {
             testResult = true;
             sem.Post();
             return testRet;
@@ -504,7 +505,8 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, Query_001, TestSize.Level1)
         testColumns.emplace_back("col2");
         NativeRdb::DataAbilityPredicates testPred;
 
-        auto mockHandler = [&](const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &pred) {
+        auto mockHandler = [&](const Uri &uri, std::vector<std::string> &columns,
+            const NativeRdb::DataAbilityPredicates &pred) {
             testResult = (columns == testColumns);
             sem.Post();
             return std::make_shared<NativeRdb::AbsSharedResultSet>("DataAbilityTest");
@@ -541,7 +543,6 @@ HWTEST_F(IpcAbilitySchedulerModuleTest, ScheduleCommandAbility_001, TestSize.Lev
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilitySchedulerStub> stub(new MockAbilitySchedulerStub());
         sptr<AbilitySchedulerProxy> proxy(new AbilitySchedulerProxy(stub));
-        // sptr<IAbilityScheduler> proxy = iface_cast<IAbilityScheduler>(stub);
 
         Want::ClearWant(&stubState.want);
         auto stubHandler = [&](const Want &want, bool reStart, int startId) {

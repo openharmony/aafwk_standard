@@ -27,7 +27,6 @@ using namespace testing;
 
 namespace OHOS {
 namespace AAFwk {
-
 class DataObsMgrClientTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -124,6 +123,5 @@ HWTEST_F(DataObsMgrClientTest, DataObsMgrClient_NotifyChange_0100, TestSize.Leve
     testing::Mock::AllowLeak(DataObsMgrClient::GetInstance()->remoteObject_);
     GTEST_LOG_(INFO) << "DataObsMgrClientTest_DataObsMgrClient_NotifyChange_0100 end";
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

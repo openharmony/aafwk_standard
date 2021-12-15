@@ -46,7 +46,6 @@ enum {
     NO_OBS_FOR_URI,
     OBS_EXIST,
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_DATAOBS_MANAGER_ERRORS_H

@@ -60,6 +60,5 @@ bool MissionRecordInfo::Marshalling(Parcel &parcel) const
 
     return true;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

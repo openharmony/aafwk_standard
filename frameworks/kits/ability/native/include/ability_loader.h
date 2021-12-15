@@ -16,11 +16,11 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_LOADER_H
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_LOADER_H
 
-#include "ability.h"
-#include "ohos_application.h"
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include "ability.h"
+#include "ohos_application.h"
 
 namespace OHOS {
 namespace AppExecFwk {

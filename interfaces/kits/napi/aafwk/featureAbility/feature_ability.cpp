@@ -884,7 +884,6 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             }
             HILOG_INFO("CallOnAbilityResult, uv_queue_work end");
         });
-
     if (rev != 0) {
         if (onAbilityCB != nullptr) {
             delete onAbilityCB;
@@ -1725,7 +1724,5 @@ napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
     HILOG_INFO("%{public}s,called end", __func__);
     return ret;
 }
-
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

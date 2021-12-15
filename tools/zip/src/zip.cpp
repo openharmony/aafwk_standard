@@ -200,7 +200,6 @@ bool UnzipWithFilterAndWriters(const PlatformFile &srcFile, FilePath &destDir, W
                     CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
                     return false;
                 }
-
             } else {
                 std::unique_ptr<WriterDelegate> writer = writerFactory(destDir, entryPath);
                 if (!reader.ExtractCurrentEntry(writer.get(), std::numeric_limits<uint64_t>::max())) {
@@ -270,9 +269,9 @@ bool Unzip(const FilePath &srcFile, const FilePath &destDir, const OPTIONS &opti
         destDirTemp.Value().c_str());
 
     std::shared_ptr<Runnable> innerTask = std::make_shared<Runnable>([srcFile, destDir, options, callback]() {
-        UnzipParam unzipParam{
-            .callback = callback, 
-            .filterCB = ExcludeNoFilesFilter, 
+        UnzipParam unzipParam {
+            .callback = callback,
+            .filterCB = ExcludeNoFilesFilter,
             .logSkippedFiles = true
         };
         UnzipWithFilterCallback(srcFile, destDir, options, unzipParam);

@@ -3791,7 +3791,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Entity_0100, Function | MediumTest | Level1)
  */
 HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0100, Function | MediumTest | Level1)
 {
-
     std::vector<std::string> vector;
     std::string key = "system.want.test.key";
     std::string key2 = "system.want.test.key2";

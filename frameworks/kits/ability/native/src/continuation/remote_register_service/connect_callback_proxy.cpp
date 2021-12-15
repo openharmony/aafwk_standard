@@ -18,7 +18,6 @@
 #include "app_log_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
-
 /**
  * @brief Remote device sends connection request.
  * @param deviceId indicators id of connection device.

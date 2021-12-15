@@ -15,13 +15,13 @@
 #include <cstring>
 #include <uv.h>
 #include "securec.h"
-#include "napi_context.h"
 #include "hilog_wrapper.h"
 #include "ability_process.h"
 #include "feature_ability_common.h"
 #include "../inner/napi_common/napi_common_ability.h"
 #include "file_ex.h"
 #include "directory_ex.h"
+#include "napi_context.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
@@ -471,7 +471,6 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 work = nullptr;
             }
         });
-
     if (rev != 0) {
         if (onRequestPermissionCB != nullptr) {
             delete onRequestPermissionCB;

@@ -19,7 +19,6 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
-
 /**
  * @brief A parameterized constructor used to create a PatternsMatcher instance.
  *

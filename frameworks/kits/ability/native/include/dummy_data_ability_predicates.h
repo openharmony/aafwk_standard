@@ -29,7 +29,7 @@ public:
     DataAbilityPredicates() = default;
     DataAbilityPredicates(const std::string &testInf);
     ~DataAbilityPredicates() = default;
-    DataAbilityPredicates(const Parcel &parcel){};
+    DataAbilityPredicates(const Parcel &parcel) {};
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

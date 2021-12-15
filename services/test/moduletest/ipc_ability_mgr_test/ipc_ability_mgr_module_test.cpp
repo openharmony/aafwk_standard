@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "gtest/gtest.h"
 #include <unistd.h>
+#include "gtest/gtest.h"
 
 #include "mock_ability_mgr_service.h"
 #include "ability_manager_interface.h"

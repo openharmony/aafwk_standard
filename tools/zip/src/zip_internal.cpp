@@ -23,7 +23,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 struct tm GetTmDataFromTickts(int64_t sec)
 {
     time_t second = (time_t)sec;
@@ -308,7 +307,6 @@ bool ZipOpenNewFileInZip(
     }
     return true;
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

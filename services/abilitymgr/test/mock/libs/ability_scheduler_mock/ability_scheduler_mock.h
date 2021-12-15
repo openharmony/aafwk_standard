@@ -13,12 +13,15 @@
  * limitations under the License.
  */
 
+#ifndef SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H
+#define SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H
+
 #pragma once
-#include "ability_scheduler_interface.h"
 #include <iremote_object.h>
 #include <iremote_stub.h>
-#include "hilog_wrapper.h"
 #include <gmock/gmock.h>
+#include "ability_scheduler_interface.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -143,3 +146,4 @@ public:
 };
 }  // namespace AAFwk
 }  // namespace OHOS
+#endif  // SERVICES_ABILITYMGR_TEST_MOCK_LIBS_ABILITY_SCHEDULER_MOCK_ABILITY_SCHEDULER_MOCK_H

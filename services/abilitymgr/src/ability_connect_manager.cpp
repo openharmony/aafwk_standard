@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 AbilityConnectManager::AbilityConnectManager()
 {}
 

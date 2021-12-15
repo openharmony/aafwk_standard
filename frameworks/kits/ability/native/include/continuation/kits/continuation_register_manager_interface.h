@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 class IContinuationDeviceCallback;
 class RequestCallback;
 class IContinuationRegisterManager {

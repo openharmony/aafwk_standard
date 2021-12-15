@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
 class UserObject final : public Object, public IUserObject {
 public:
     inline UserObject(const std::shared_ptr<UserObjectBase> &value) : value_(value)

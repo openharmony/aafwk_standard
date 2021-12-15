@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 ReverseContinuationSchedulerPrimaryProxy::ReverseContinuationSchedulerPrimaryProxy(
     const sptr<IRemoteObject> &remoteObject)
     : IRemoteProxy<IReverseContinuationSchedulerPrimary>(remoteObject)
@@ -83,6 +82,5 @@ bool ReverseContinuationSchedulerPrimaryProxy::ContinuationBack(const AAFwk::Wan
     APP_LOGI("%{public}s called end", __func__);
     return true;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

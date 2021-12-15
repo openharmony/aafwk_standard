@@ -35,7 +35,6 @@ enum STACK_ID {
  * StackSetting contains default setting for mission stack.
  */
 struct StackSetting final : public Parcelable {
-
     int32_t userId = 0;  // stack 's user id ,default value is 0
     // multi window mode key , default in an undefined
     STACK_ID stackId = DEFAULT_MISSION_STACK_ID;

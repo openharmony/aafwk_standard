@@ -118,7 +118,6 @@ public:
 public:
     std::string powerState_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

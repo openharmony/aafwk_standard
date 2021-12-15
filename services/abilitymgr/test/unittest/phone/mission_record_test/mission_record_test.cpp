@@ -35,9 +35,9 @@ public:
     static AbilityRequest GenerateAbilityRequest(const std::string &deviceName, const std::string &abilityName,
         const std::string &appName, const std::string &bundleName);
 
-    Want want_{};
-    AbilityInfo abilityInfo_{};
-    ApplicationInfo appInfo_{};
+    Want want_ {};
+    AbilityInfo abilityInfo_ {};
+    ApplicationInfo appInfo_ {};
 };
 
 void MissionRecordTest::SetUpTestCase(void)
@@ -351,6 +351,5 @@ HWTEST_F(MissionRecordTest, stack_ActiveTimestamp_001, TestSize.Level1)
     activeTime = missionRecord->GetActiveTimestamp();
     EXPECT_TRUE(time < activeTime);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

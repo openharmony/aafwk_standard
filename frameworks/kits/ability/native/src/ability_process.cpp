@@ -14,8 +14,9 @@
  */
 
 #include "ability_process.h"
-#include "app_log_wrapper.h"
 #include <dlfcn.h>
+#include "app_log_wrapper.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 static void *g_handle = nullptr;

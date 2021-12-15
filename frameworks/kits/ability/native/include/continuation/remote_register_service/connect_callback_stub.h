@@ -43,7 +43,6 @@ private:
     using ConnectCallbackFunc = int (ConnectCallbackStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<int, ConnectCallbackFunc> memberFuncMap_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_CONNECT_CALLBACK_STUB_H

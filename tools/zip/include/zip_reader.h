@@ -29,7 +29,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 // A delegate interface used to stream out an entry; see
 // ZipReader::ExtractCurrentEntry.
 class WriterDelegate {
@@ -148,9 +147,7 @@ public:
     // Returns true if there is at least one entry to read. This function is
     // used to scan entries with AdvanceToNextEntry(), like:
     //
-    // while (reader.HasMore()) {
     //   // Do something with the current file here.
-    //   reader.AdvanceToNextEntry();
     // }
     bool HasMore();
 
@@ -224,7 +221,6 @@ private:
 
     DISALLOW_COPY_AND_ASSIGN(FilePathWriterDelegate);
 };
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

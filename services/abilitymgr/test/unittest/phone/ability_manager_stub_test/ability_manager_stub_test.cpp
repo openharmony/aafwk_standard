@@ -31,7 +31,7 @@ public:
     void SetUp();
     void TearDown();
     void WriteInterfaceToken(MessageParcel &data);
-    sptr<AbilityManagerStubImplMock> stub_{nullptr};
+    sptr<AbilityManagerStubImplMock> stub_ {nullptr};
 };
 
 void AbilityManagerStubTest::SetUpTestCase(void)

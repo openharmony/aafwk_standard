@@ -21,7 +21,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 #define F_OK 0
 
 namespace {
@@ -217,7 +216,7 @@ bool FilePath::CreateDirectory(const FilePath &fullPath)
         subpaths.push_back(path);
         lastPath = path;
     }
-    mode_t rootMode= 0777;
+    mode_t rootMode = 0777;
     // Iterate through the parents and create the missing ones.
     for (std::vector<FilePath>::reverse_iterator i = subpaths.rbegin(); i != subpaths.rend(); ++i) {
         if (DirectoryExists(*i)) {
@@ -236,7 +235,6 @@ bool FilePath::CreateDirectory(const FilePath &fullPath)
 // static
 bool FilePath::DirectoryExists(const FilePath &path)
 {
-
     struct stat fileInfo;
     if (stat(const_cast<FilePath &>(path).Value().c_str(), &fileInfo) == 0) {
         return S_ISDIR(fileInfo.st_mode);
@@ -345,7 +343,6 @@ bool FilePath::AppendRelativePath(const FilePath &child, FilePath *path)
     }
     return true;
 }
-
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

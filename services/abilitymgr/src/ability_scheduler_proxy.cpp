@@ -369,7 +369,8 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
  *
  * @return Returns the number of data records updated.
  */
-int AbilitySchedulerProxy::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+int AbilitySchedulerProxy::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+    const NativeRdb::DataAbilityPredicates &predicates)
 {
     int index = -1;
 

@@ -15,10 +15,10 @@
 #ifndef OHOS_MOCK_RESOURCE_MANAGER_RESOURCEMANAGER1_H
 #define OHOS_MOCK_RESOURCE_MANAGER_RESOURCEMANAGER1_H
 
-#include "res_config.h"
 #include <string>
 #include <vector>
 #include <map>
+#include "res_config.h"
 
 #include "resource_manager.h"
 
@@ -27,8 +27,8 @@ namespace Global {
 namespace Resource {
 class ResourceManager2 : public ResourceManager {
 public:
-    ResourceManager2(){};
-    virtual ~ResourceManager2(){};
+    ResourceManager2() {};
+    virtual ~ResourceManager2() {};
 
     virtual bool AddResource(const char *path) = 0;
 

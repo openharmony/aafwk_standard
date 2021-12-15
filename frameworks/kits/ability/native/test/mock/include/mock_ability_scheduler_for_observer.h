@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 // copy AbilityThread class
 class MockAbilitySchedulerStub : public AAFwk::AbilitySchedulerStub {
 public:
@@ -45,8 +44,8 @@ public:
     MOCK_METHOD2(Insert, int(const Uri &, const NativeRdb::ValuesBucket &));
     MOCK_METHOD3(Update, int(const Uri &, const NativeRdb::ValuesBucket &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD2(Delete, int(const Uri &, const NativeRdb::DataAbilityPredicates &));
-    MOCK_METHOD3(
-        Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
+    MOCK_METHOD3(Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(const Uri &, std::vector<std::string> &,
+        const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD1(GetType, std::string(const Uri &));
     MOCK_METHOD2(Reload, bool(const Uri &, const PacMap &));
     MOCK_METHOD2(BatchInsert, int(const Uri &, const std::vector<NativeRdb::ValuesBucket> &));
@@ -55,11 +54,13 @@ public:
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
-    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
+    MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri,
+        const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
-    MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operation));
+    MOCK_METHOD1(ExecuteBatch,
+        std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>
+        (const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operation));
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

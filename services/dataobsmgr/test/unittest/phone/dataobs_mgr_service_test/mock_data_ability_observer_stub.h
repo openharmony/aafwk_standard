@@ -29,7 +29,6 @@ public:
     virtual ~MockDataAbilityObserverStub() = default;
     MOCK_METHOD0(OnChange, void(void));
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif /* MOCK_DATA_ABILITY_OBSERVER_STUB_H */

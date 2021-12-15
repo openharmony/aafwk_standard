@@ -234,6 +234,5 @@ int MockAbilityManagerService::PowerOn()
 {
     return 0;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

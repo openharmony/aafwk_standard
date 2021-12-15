@@ -32,7 +32,6 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
-
 class AbilityRecordTest : public testing::TestWithParam<OHOS::AAFwk::AbilityState> {
 public:
     static void SetUpTestCase(void);
@@ -40,9 +39,9 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<AbilityRecord> abilityRecord_{nullptr};
-    std::shared_ptr<AbilityResult> abilityResult_{nullptr};
-    std::shared_ptr<AbilityRequest> abilityRequest_{nullptr};
+    std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
+    std::shared_ptr<AbilityResult> abilityResult_ {nullptr};
+    std::shared_ptr<AbilityRequest> abilityRequest_ {nullptr};
     static constexpr unsigned int CHANGE_CONFIG_LOCALE = 0x00000001;
 };
 

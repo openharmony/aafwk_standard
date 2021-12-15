@@ -27,7 +27,7 @@ namespace AppExecFwk {
 class ReverseContinuationSchedulerReplicaProxy : public IRemoteProxy<IReverseContinuationSchedulerReplica> {
 public:
     explicit ReverseContinuationSchedulerReplicaProxy(const sptr<IRemoteObject> &remoteObject);
-    virtual ~ReverseContinuationSchedulerReplicaProxy(){};
+    virtual ~ReverseContinuationSchedulerReplicaProxy() {};
 
     virtual void PassPrimary(const sptr<IRemoteObject> &primary) override;
 

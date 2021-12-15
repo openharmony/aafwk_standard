@@ -16,7 +16,6 @@
 #include "app_log_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
-
 std::mutex ContinuationScheduler::mutex_;
 ContinuationScheduler::ContinuationScheduler(
     std::weak_ptr<IDistributeScheduleHandler> &callback, std::shared_ptr<EventHandler> &mainHandler)
@@ -115,6 +114,5 @@ bool ContinuationScheduler::GetCallback(std::shared_ptr<IDistributeScheduleHandl
     APP_LOGI("%{public}s called end", __func__);
     return true;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -15,17 +15,12 @@
 
 #include "dataobs_mgr_service.h"
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <unistd.h>
 #include "string_ex.h"
 
 #include "dataobs_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
-// #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -208,6 +203,5 @@ std::shared_ptr<EventHandler> DataObsMgrService::GetEventHandler()
 {
     return handler_;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

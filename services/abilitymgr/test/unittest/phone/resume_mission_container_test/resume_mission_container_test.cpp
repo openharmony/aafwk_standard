@@ -51,7 +51,6 @@ void MissionRecordTest::TearDown(void)
  */
 HWTEST_F(MissionRecordTest, Save_01, TestSize.Level1)
 {
-
     auto eventLoop = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
     auto handler =
         std::make_shared<AbilityEventHandler>(eventLoop, OHOS::DelayedSingleton<AbilityManagerService>::GetInstance());
@@ -164,6 +163,5 @@ HWTEST_F(MissionRecordTest, IsResume_02, TestSize.Level1)
 
     EXPECT_EQ(false, resumeMissionContainer->IsResume(missionId));
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

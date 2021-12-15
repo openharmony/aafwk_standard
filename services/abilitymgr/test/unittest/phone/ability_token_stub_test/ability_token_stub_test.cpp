@@ -26,8 +26,8 @@ public:
     void SetUp();
     void TearDown();
 
-    OHOS::sptr<AbilityTokenStub> abilityTokenStub_{nullptr};
-    OHOS::sptr<AbilityTokenRecipient> abilityTokenRecipient_{nullptr};
+    OHOS::sptr<AbilityTokenStub> abilityTokenStub_ {nullptr};
+    OHOS::sptr<AbilityTokenRecipient> abilityTokenRecipient_ {nullptr};
 };
 
 void AbilityTokenStubTest::SetUpTestCase(void)

@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 MockAppMgrClient::MockAppMgrClient()
 {}
 MockAppMgrClient::~MockAppMgrClient()
@@ -39,6 +38,5 @@ AppMgrResultCode MockAppMgrClient::RegisterAppStateCallback(const sptr<IAppState
 {
     return AppMgrResultCode::RESULT_OK;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

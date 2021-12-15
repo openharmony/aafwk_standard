@@ -26,7 +26,6 @@
 namespace OHOS {
 namespace AAFwk {
 class PatternsMatcher : public Parcelable, public std::enable_shared_from_this<PatternsMatcher> {
-
 public:
     /**
      * @brief A parameterized constructor used to create a PatternsMatcher instance.
@@ -114,7 +113,6 @@ private:
 
     bool ReadFromParcel(Parcel &parcel);
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

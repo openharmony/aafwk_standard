@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-
 ReverseContinuationSchedulerPrimary::ReverseContinuationSchedulerPrimary(
     const std::weak_ptr<IReverseContinuationSchedulerPrimaryHandler> &continuationHandler,
     const std::shared_ptr<AbilityHandler> &mainHandler)
@@ -102,6 +101,5 @@ void ReverseContinuationSchedulerPrimary::HandlerContinuationBack(const AAFwk::W
     continuationHandler->ContinuationBack(want);
     APP_LOGI("%{public}s called end", __func__);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

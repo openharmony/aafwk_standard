@@ -322,7 +322,6 @@ Uri Want::GetLowerCaseScheme(const Uri &uri)
 {
     std::string strUri = const_cast<Uri &>(uri).ToString();
     std::string schemeStr = const_cast<Uri &>(uri).GetScheme();
-
     if (strUri.empty() || schemeStr.empty()) {
         return uri;
     }
@@ -909,7 +908,6 @@ Want &Want::SetParam(const std::string &key, const std::vector<float> &value)
 long Want::GetLongParam(const std::string &key, long defaultValue) const
 {
     auto value = parameters_.GetParam(key);
-
     if (ILong::Query(value) != nullptr) {
         return Long::Unbox(ILong::Query(value));
     } else if (IString::Query(value) != nullptr) {

@@ -17,7 +17,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 enum class DeviceConnectState {
-
     // Indicates that the device fails to be connected.
     FAILURE = -1,
 

@@ -18,7 +18,6 @@
 #include "app_log_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
-
 ContinuationSchedulerStub::ContinuationSchedulerStub()
 {
     requestFuncMap_[SCHEDULE_COMPLETE_CONTINUATION] =
@@ -71,6 +70,5 @@ int ContinuationSchedulerStub::OnRemoteRequest(
     APP_LOGI("%{public}s called end", __func__);
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

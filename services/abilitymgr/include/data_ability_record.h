@@ -19,9 +19,7 @@
 #include <list>
 #include <string>
 #include <memory>
-#include <mutex>
 #include <condition_variable>
-#include <chrono>
 
 #include "ability_record.h"
 #include "data_ability_caller_recipient.h"
@@ -62,11 +60,11 @@ private:
     void OnSchedulerDied(const wptr<IRemoteObject> &remote);
 
 private:
-    std::condition_variable_any loadedCond_{};
-    AbilityRequest request_{};
-    AbilityRecordPtr ability_{};
-    sptr<IAbilityScheduler> scheduler_{};
-    std::list<ClientInfo> clients_{};
+    std::condition_variable_any loadedCond_ {};
+    AbilityRequest request_ {};
+    AbilityRecordPtr ability_ {};
+    sptr<IAbilityScheduler> scheduler_ {};
+    std::list<ClientInfo> clients_ {};
     sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_;  // caller binderDied Recipient
 };
 }  // namespace AAFwk

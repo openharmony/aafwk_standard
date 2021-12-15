@@ -27,7 +27,6 @@
 using Ability = OHOS::AppExecFwk::Ability;
 namespace OHOS {
 namespace AppExecFwk {
-
 #define NATIVE_C_BUFFER_SIZE 1024 /* Converted to C-style string buffer size */
 #define ARGS_MAX_COUNT 10
 #define ARGS_ASYNC_COUNT 1
@@ -112,7 +111,6 @@ typedef struct __ComplexArrayData {
     std::vector<double> doubleList;
     std::vector<std::string> stringList;
 } ComplexArrayData;
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // OHOS_APPEXECFWK_NAPI_COMMON_DATA_H

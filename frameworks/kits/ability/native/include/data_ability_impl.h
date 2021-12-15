@@ -164,9 +164,10 @@ public:
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used
      * across devices, persisted, backed up, and restored. It can refer to the same item in the Data ability even if the
      * context has changed. If you implement URI normalization for a Data ability, you must also implement
-     * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to any
-     * method that is called on the Data ability must require normalization verification and denormalization. The default
-     * implementation of this method returns null, indicating that this Data ability does not support URI normalization.
+     * denormalizeUri(ohos.utils.net.Uri) to enable URI denormalization. After this feature is enabled, URIs passed to
+     * any method that is called on the Data ability must require normalization verification and denormalization. The
+     * default implementation of this method returns null, indicating that this Data ability does not support URI
+     * normalization.
      *
      * @param uri Indicates the Uri object to normalize.
      *
@@ -180,9 +181,9 @@ public:
      *
      * @param uri uri Indicates the Uri object to denormalize.
      *
-     * @return Returns the denormalized Uri object if the denormalization is successful; returns the original Uri passed to
-     * this method if there is nothing to do; returns null if the data identified by the original Uri cannot be found in the
-     * current environment.
+     * @return Returns the denormalized Uri object if the denormalization is successful; returns the original Uri passed
+     * to passed to this method if there is nothing to do; returns null if the data identified by the original Uri
+     * cannot be found in the current environment.
      */
     Uri DenormalizeUri(const Uri &uri);
 
