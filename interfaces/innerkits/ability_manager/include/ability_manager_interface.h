@@ -312,6 +312,15 @@ public:
     virtual int KillProcess(const std::string &bundleName) = 0;
 
     /**
+     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
+     * clear the application data.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @return
+     */
+    virtual int ClearUpApplicationData(const std::string &bundleName) = 0;
+
+    /**
      * Uninstall app
      *
      * @param bundleName.
@@ -650,6 +659,7 @@ public:
 
         GET_SYSTEM_MEMORY_ATTR,
 
+        CLEAR_UP_APPLICATION_DATA,
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
         DUMP_STATE = 2001,
