@@ -103,6 +103,7 @@ private:
     int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
+    int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
