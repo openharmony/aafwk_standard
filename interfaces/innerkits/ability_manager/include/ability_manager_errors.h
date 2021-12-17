@@ -314,6 +314,11 @@ enum {
      * Result(2097214) for start ability failed,this ability is not on the white list
      */
     START_ABILITY_NOT_ONTHE_WHITELIST,
+
+    /**
+     * Result(2097215) for clear the application data fail.
+     */
+    CLEAR_APPLICATION_DATA_FAIL,
 };
 
 enum {

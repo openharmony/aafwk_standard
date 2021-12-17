@@ -149,6 +149,11 @@ public:
         return 0;
     }
 
+    virtual int ClearUpApplicationData(const std::string &bundleName) override
+    {
+        return 0;
+    }
+
     sptr<IAbilityScheduler> abilityScheduler_ = nullptr;  // kit interface used to schedule ability life
     Want want_;
     bool startAbility = false;
