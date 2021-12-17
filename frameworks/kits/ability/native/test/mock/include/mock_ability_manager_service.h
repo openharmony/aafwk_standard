@@ -166,6 +166,11 @@ public:
         return 0;
     }
 
+    virtual int ClearUpApplicationData(const std::string &bundleName) override
+    {
+        return 0;
+    }
+
     enum class RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,

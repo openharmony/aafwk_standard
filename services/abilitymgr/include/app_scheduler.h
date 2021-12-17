@@ -171,6 +171,13 @@ public:
      */
     int KillApplicationByUid(const std::string &bundleName, const int uid);
 
+    /**
+     * clear the application data
+     *
+     * @param bundleName.
+     */
+    int ClearUpApplicationData(const std::string &bundleName);
+
     void AttachTimeOut(const sptr<IRemoteObject> &token);
 
     void PrepareTerminate(const sptr<IRemoteObject> &token);

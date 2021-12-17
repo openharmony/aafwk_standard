@@ -299,6 +299,15 @@ public:
     ErrCode KillProcess(const std::string &bundleName);
 
     /**
+     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
+     * clear the application data.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @return
+     */
+    ErrCode ClearUpApplicationData(const std::string &bundleName);
+
+    /**
      * @brief Checks whether this ability is the first ability in a mission.
      *
      * @return Returns true is first in Mission.

@@ -1461,6 +1461,16 @@ int AbilityManagerService::KillProcess(const std::string &bundleName)
     return ERR_OK;
 }
 
+int AbilityManagerService::ClearUpApplicationData(const std::string &bundleName)
+{
+    HILOG_DEBUG("ClearUpApplicationData, bundleName: %{public}s", bundleName.c_str());
+    int ret = DelayedSingleton<AppScheduler>::GetInstance()->ClearUpApplicationData(bundleName);
+    if (ret != ERR_OK) {
+        return CLEAR_APPLICATION_DATA_FAIL;
+    }
+    return ERR_OK;
+}
+
 int AbilityManagerService::UninstallApp(const std::string &bundleName, const int uid)
 {
     HILOG_DEBUG("Uninstall app, bundleName: %{public}s, uid: %{public}d", bundleName.c_str(), uid);
@@ -1817,7 +1827,7 @@ void AbilityManagerService::StartSystemApplication()
         HILOG_INFO("start mms");
         StartingMmsAbility();
     }
-
+    
     // Location may change
     DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
 }

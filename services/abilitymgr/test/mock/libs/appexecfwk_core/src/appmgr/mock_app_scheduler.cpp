@@ -146,5 +146,11 @@ void AppScheduler::StartupResidentProcess()
 {
     HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
 }
+
+int AppScheduler::ClearUpApplicationData(const std::string &bundleName)
+{
+    HILOG_INFO("Test AppScheduler::ClearUpApplicationData()");
+    return ERR_OK;
+}
 }  // namespace AAFwk
 }  // namespace OHOS
