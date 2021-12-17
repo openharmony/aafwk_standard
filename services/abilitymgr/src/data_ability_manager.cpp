@@ -66,13 +66,6 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
             HILOG_ERROR("Data ability manager acquire: invalid client token.");
             return nullptr;
         }
-        if (abilityRequest.abilityInfo.applicationInfo.uid ==
-            clientAbilityRecord->GetAbilityInfo().applicationInfo.uid &&
-            abilityRequest.abilityInfo.bundleName == clientAbilityRecord->GetAbilityInfo().bundleName &&
-            abilityRequest.abilityInfo.name == clientAbilityRecord->GetAbilityInfo().name) {
-            HILOG_ERROR("Data ability '%{public}s' cannot acquires itself.", dataAbilityName.c_str());
-            return nullptr;
-        }
         HILOG_INFO("Ability '%{public}s' acquiring data ability '%{public}s'...",
             clientAbilityRecord->GetAbilityInfo().name.c_str(),
             dataAbilityName.c_str());
