@@ -27,7 +27,6 @@ ohos_shared_library("abilitymanager") {
     "napi_ability_manager.cpp",
     "native_module.cpp",
   ]
-  ldflags = [ "-Wl,-rpath=/system/lib/module/multimedia/" ]
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
