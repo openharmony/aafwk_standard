@@ -97,7 +97,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     auto type = abilityInfo.type;
     if (abilityInfo.applicationInfo.isLauncherApp && type == AppExecFwk::AbilityType::PAGE && currentTopAbilityRecord &&
         AbilityUtil::IsSystemDialogAbility(
-        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+            currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
         HILOG_ERROR("Page ability is dialog type, cannot return to luncher.");
         return ERR_INVALID_VALUE;
     }
@@ -1591,7 +1591,6 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
                     preMissionId == currentMissionId) ||
                 ((preStackId == FLOATING_MISSION_STACK_ID) && (currentStackId == FLOATING_MISSION_STACK_ID) &&
                     !SupportSyncVisualByStackId(FLOATING_MISSION_STACK_ID) && preMissionId != currentMissionId));
-
         if (isBackground && preAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
                 (!AbilityUtil::IsSystemDialogAbility(
                     abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
@@ -3371,7 +3370,6 @@ SystemWindowMode AbilityStackManager::GetLatestSystemWindowMode()
 {
     bool isFloating = GetOrCreateMissionStack(FLOATING_MISSION_STACK_ID, false) != nullptr;
     bool isSplitScreen = IsExistSplitScreenStack();
-
     if (isFloating && isSplitScreen) {
         return SystemWindowMode::FLOATING_AND_SPLITSCREEN_WINDOW_MODE;
     } else if (isFloating) {

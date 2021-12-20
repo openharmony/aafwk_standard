@@ -25,7 +25,7 @@ using namespace OHOS;
 using namespace OHOS::AppExecFwk;
 
 #define PAC_MPA_TEST_INT 1000
-#define PAC_MAP_TEST_LONG -1000
+#define PAC_MAP_TEST_LONG (-1000)
 #define PAC_MAP_TEST_FLOAT 1.0f
 #define PAC_MAP_TEST_DOUBLE 3.1415926
 namespace {

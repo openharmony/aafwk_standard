@@ -1412,7 +1412,7 @@ napi_value ContinueAbilityWrap(napi_env env, napi_callback_info info, AsyncCallb
     NAPI_ASSERT(env,
         (valueType == napi_object || valueType == napi_function),
         "Wrong argument type. Object or function expected.");
-    if (0 == argc) {
+    if (argc == 0) {
         ret = ContinueAbilityPromise(env, args, asyncCallbackInfo, argc);
     } else if (PARA_SIZE_IS_ONE == argc) {
         if (valueType == napi_function) {
