@@ -685,7 +685,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_007, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 {
-
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
 

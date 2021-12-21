@@ -885,6 +885,5 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
     }
     return result;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

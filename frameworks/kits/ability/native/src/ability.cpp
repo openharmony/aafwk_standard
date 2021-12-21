@@ -2783,7 +2783,8 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutInt(key, val);
-            } break;
+                break;
+            }
             case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
                 double val = 0.0;
                 if (obj.GetDouble(val) != 0) {
@@ -2794,7 +2795,8 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutDouble(key, val);
-            } break;
+                break;
+            }
             case NativeRdb::ValueObjectType::TYPE_STRING: {
                 std::string val = "";
                 if (obj.GetString(val) != 0) {
@@ -2805,7 +2807,8 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.c_str());
                 retValueBucket.PutString(key, val);
-            } break;
+                break;
+            }
             case NativeRdb::ValueObjectType::TYPE_BLOB: {
                 std::vector<uint8_t> val;
                 if (obj.GetBlob(val) != 0) {
@@ -2816,7 +2819,8 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.size());
                 retValueBucket.PutBlob(key, val);
-            } break;
+                break;
+            }
             case NativeRdb::ValueObjectType::TYPE_BOOL: {
                 bool val = false;
                 if (obj.GetBool(val) != 0) {
@@ -2827,11 +2831,13 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val ? "true" : "false");
                 retValueBucket.PutBool(key, val);
-            } break;
+                break;
+            }
             default: {
                 APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
                 retValueBucket.PutNull(key);
-            } break;
+                break;
+            }
         }
     }
 

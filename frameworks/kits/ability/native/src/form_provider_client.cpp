@@ -151,7 +151,7 @@ int FormProviderClient::NotifyFormsDelete(
         }
 
         APP_LOGI("%{public}s come,formIds size=%{public}zu, abilityName:%{public}s",
-         __func__, formIds.size(), ownerAbility->GetAbilityName().c_str());
+            __func__, formIds.size(), ownerAbility->GetAbilityName().c_str());
         for (int64_t formId : formIds) {
             ownerAbility->OnDelete(formId);
         }

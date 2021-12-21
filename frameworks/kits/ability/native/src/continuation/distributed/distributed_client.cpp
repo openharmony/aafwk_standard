@@ -143,7 +143,7 @@ ErrCode DistributedClient::NotifyCompleteContinuation(
         }
     }
 
-    // TODO there need a params for reverseScheduler
+    // there need a params for reverseScheduler
     dmsProxy_->NotifyCompleteContinuation(devId, sessionId, isSuccess);
     return 0;
 }
