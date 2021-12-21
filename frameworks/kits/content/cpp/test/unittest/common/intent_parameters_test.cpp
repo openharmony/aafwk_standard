@@ -200,9 +200,9 @@ HWTEST_F(IntentParametersBoolArrayTest, AaFwk_Intent_Parameters_Bool_Array_001, 
 HWTEST_F(IntentParametersBoolArrayTest, AaFwk_Intent_Parameters_Bool_Array_002, TestSize.Level1)
 {
     std::string emptyStr("");
-    std::vector<bool> firstValue({true, false});
-    std::vector<bool> secondValue({true, true});
-    std::vector<bool> firstDefaultValue({false, true});
+    std::vector<bool> firstValue({ true, false });
+    std::vector<bool> secondValue({ true, true });
+    std::vector<bool> firstDefaultValue({ false, true });
     std::string keyStr("aa");
     intent_->SetBoolArrayParam(emptyStr, firstValue);
     intent_->SetBoolArrayParam(emptyStr, firstValue);
@@ -224,8 +224,8 @@ HWTEST_F(IntentParametersBoolArrayTest, AaFwk_Intent_Parameters_Bool_Array_002, 
 HWTEST_F(IntentParametersBoolArrayTest, AaFwk_Intent_Parameters_Bool_Array_003, TestSize.Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<bool> firstValue({true, false});
-    std::vector<bool> secondValue({true, true});
+    std::vector<bool> firstValue({ true, false });
+    std::vector<bool> secondValue({ true, true });
     std::string secondKey("aa");
     intent_->SetBoolArrayParam(firstKey, firstValue);
     intent_->SetBoolArrayParam(firstKey, firstValue);
@@ -438,9 +438,9 @@ HWTEST_F(IntentParametersByteArrayTest, AaFwk_Intent_Parameters_Byte_Array_001, 
 HWTEST_F(IntentParametersByteArrayTest, AaFwk_Intent_Parameters_Byte_Array_002, TestSize.Level1)
 {
     std::string emptyStr("");
-    std::vector<byte> firstValue({'a', '2'});
-    std::vector<byte> secondValue({'1', 'd'});
-    std::vector<byte> thirdValue({'t', '3'});
+    std::vector<byte> firstValue({ 'a', '2' });
+    std::vector<byte> secondValue({ '1', 'd' });
+    std::vector<byte> thirdValue({ 't', '3' });
     std::string keyStr("aa");
     intent_->SetByteArrayParam(emptyStr, firstValue);
     intent_->SetByteArrayParam(emptyStr, firstValue);
@@ -462,8 +462,8 @@ HWTEST_F(IntentParametersByteArrayTest, AaFwk_Intent_Parameters_Byte_Array_002, 
 HWTEST_F(IntentParametersByteArrayTest, AaFwk_Intent_Parameters_Byte_Array_003, TestSize.Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<byte> firstValue({'a', '2'});
-    std::vector<byte> secondValue({'w', '$'});
+    std::vector<byte> firstValue({ 'a', '2' });
+    std::vector<byte> secondValue({ 'w', '$' });
     std::vector<byte> defaultValue;
     std::string secondKey("aa");
     intent_->SetByteArrayParam(firstKey, firstValue);
@@ -678,9 +678,9 @@ HWTEST_F(IntentParametersCharArrayTest, AaFwk_Intent_Parameters_Char_Array_001, 
 HWTEST_F(IntentParametersCharArrayTest, AaFwk_Intent_Parameters_Char_Array_002, TestSize.Level1)
 {
     std::string emptyStr("");
-    std::vector<zchar> firstValue({U'中', U'文'});
-    std::vector<zchar> secondValue({U'字', U'符'});
-    std::vector<zchar> thirdValue({U'集', U'英'});
+    std::vector<zchar> firstValue({ U'中', U'文' });
+    std::vector<zchar> secondValue({ U'字', U'符' });
+    std::vector<zchar> thirdValue({ U'集', U'英' });
     std::string keyStr("aa");
     intent_->SetCharArrayParam(emptyStr, firstValue);
     intent_->SetCharArrayParam(emptyStr, firstValue);
@@ -702,8 +702,8 @@ HWTEST_F(IntentParametersCharArrayTest, AaFwk_Intent_Parameters_Char_Array_002, 
 HWTEST_F(IntentParametersCharArrayTest, AaFwk_Intent_Parameters_Char_Array_003, TestSize.Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<zchar> firstValue({U'中', U'文'});
-    std::vector<zchar> secondValue({U'字', U'符'});
+    std::vector<zchar> firstValue({ U'中', U'文' });
+    std::vector<zchar> secondValue({ U'字', U'符' });
     std::vector<zchar> defaultValue;
     std::string secondKey("aa");
     intent_->SetCharArrayParam(firstKey, firstValue);
@@ -920,9 +920,9 @@ HWTEST_F(IntentParametersShortArrayTest, AaFwk_Intent_Parameters_Short_Array_001
 HWTEST_F(IntentParametersShortArrayTest, AaFwk_Intent_Parameters_Short_Array_002, TestSize.Level1)
 {
     std::string emptyStr("");
-    std::vector<short> firstValue({1, 4, -9});
-    std::vector<short> secondValue({1, 8, -9});
-    std::vector<short> thirdValue({1, 4, 9});
+    std::vector<short> firstValue({ 1, 4, -9 });
+    std::vector<short> secondValue({ 1, 8, -9 });
+    std::vector<short> thirdValue({ 1, 4, 9 });
     std::string keyStr("aa");
     intent_->SetShortArrayParam(emptyStr, firstValue);
     intent_->SetShortArrayParam(emptyStr, firstValue);
@@ -944,9 +944,9 @@ HWTEST_F(IntentParametersShortArrayTest, AaFwk_Intent_Parameters_Short_Array_002
 HWTEST_F(IntentParametersShortArrayTest, AaFwk_Intent_Parameters_Short_Array_003, TestSize.Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<short> firstValue({-1, -2});
-    std::vector<short> secondValue({-1, -2, -1, -2, 0});
-    std::vector<short> thirdValue({-1, -2, 100});
+    std::vector<short> firstValue({ -1, -2 });
+    std::vector<short> secondValue({ -1, -2, -1, -2, 0 });
+    std::vector<short> thirdValue({ -1, -2, 100 });
     std::string secondKey("aa");
     intent_->SetShortArrayParam(firstKey, firstValue);
     intent_->SetShortArrayParam(firstKey, firstValue);
@@ -1162,9 +1162,9 @@ HWTEST_F(IntentParametersIntArrayTest, AaFwk_Intent_Parameters_Int_Array_001, Te
 HWTEST_F(IntentParametersIntArrayTest, AaFwk_Intent_Parameters_Int_Array_002, TestSize.Level1)
 {
     std::string emptyStr("");
-    std::vector<int> firstValue({1, 4, -9});
-    std::vector<int> secondValue({1, 8, -9});
-    std::vector<int> thirdValue({1, 4, 9});
+    std::vector<int> firstValue({ 1, 4, -9 });
+    std::vector<int> secondValue({ 1, 8, -9 });
+    std::vector<int> thirdValue({ 1, 4, 9 });
     std::string keyStr("aa");
     intent_->SetIntArrayParam(emptyStr, firstValue);
     intent_->SetIntArrayParam(emptyStr, firstValue);
@@ -1186,9 +1186,9 @@ HWTEST_F(IntentParametersIntArrayTest, AaFwk_Intent_Parameters_Int_Array_002, Te
 HWTEST_F(IntentParametersIntArrayTest, AaFwk_Intent_Parameters_Int_Array_003, TestSize.Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<int> firstValue({-1, -2});
-    std::vector<int> secondValue({-1, -2, -1, -2, 0});
-    std::vector<int> thirdValue({-1, -2, 100});
+    std::vector<int> firstValue({ -1, -2 });
+    std::vector<int> secondValue({ -1, -2, -1, -2, 0 });
+    std::vector<int> thirdValue({ -1, -2, 100 });
     std::string secondKey("aa");
     intent_->SetIntArrayParam(firstKey, firstValue);
     intent_->SetIntArrayParam(firstKey, firstValue);

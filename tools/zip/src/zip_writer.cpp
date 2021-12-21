@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "zip_writer.h"
-#include <stdio.h>
+#include <cstdio>
 #include "zip_internal.h"
 #include "hilog_wrapper.h"
 #include "directory_ex.h"
