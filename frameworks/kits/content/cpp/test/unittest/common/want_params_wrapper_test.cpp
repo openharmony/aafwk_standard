@@ -150,7 +150,7 @@ HWTEST_F(WantParamWrapperBaseTest, Want_Param_Wrapper_0500, Function | MediumTes
  */
 HWTEST_F(WantParamWrapperBaseTest, Want_Param_Wrapper_0600, Function | MediumTest | Level1)
 {
-    auto wantParamsPtr = WantParamWrapper::Box({});
+    auto wantParamsPtr = WantParamWrapper::Box({ });
 
     EXPECT_NE(wantParamsPtr, nullptr);
 
