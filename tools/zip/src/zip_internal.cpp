@@ -14,7 +14,7 @@
  */
 #include "zip_internal.h"
 #include <unistd.h>
-#include <stddef.h>
+#include <cstddef>
 #include <algorithm>
 #include "zip_utils.h"
 #include "securec.h"
@@ -51,7 +51,7 @@ struct tm GetTmDataFromTickts(int64_t sec)
 void *FdOpenFileFunc(void *opaque, const char *filename, int mode)
 {
     FILE *file = NULL;
-    const char *mode_fopen = NULL;
+    const char *mode_fopen = nullptr;
     uint32_t modeInner = static_cast<uint32_t>(mode);
     if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
         mode_fopen = "rb";
@@ -60,7 +60,7 @@ void *FdOpenFileFunc(void *opaque, const char *filename, int mode)
     else if (modeInner & ZLIB_FILEFUNC_MODE_CREATE)
         mode_fopen = "wb";
 
-    if ((filename != NULL) && (mode_fopen != NULL)) {
+    if ((filename != nullptr) && (mode_fopen != nullptr)) {
         int fd = dup(*static_cast<int *>(opaque));
         if (fd != -1)
             file = fdopen(fd, mode_fopen);
@@ -111,11 +111,11 @@ void *OpenZipBuffer(void *opaque, const char *, int mode)
     uint32_t modeInner = static_cast<uint32_t>(mode);
     if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) != ZLIB_FILEFUNC_MODE_READ) {
         HILOG_INFO("%{public}s called, mode is not ZLIB_FILEFUNC_MODE_READ.", __func__);
-        return NULL;
+        return nullptr;
     }
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
     if (!buffer || !buffer->data || !buffer->length) {
-        return NULL;
+        return nullptr;
     }
     buffer->offset = 0;
     return opaque;

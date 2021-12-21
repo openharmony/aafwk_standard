@@ -14,10 +14,10 @@
  */
 
 #include "zip_reader.h"
-#include <stdio.h>
+#include <cstdio>
 #include <utility>
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
 #include "zip_utils.h"
 #include "string_ex.h"
 #include "checked_cast.h"

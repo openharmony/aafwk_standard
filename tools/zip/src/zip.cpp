@@ -16,7 +16,7 @@
 #include <list>
 #include <string>
 #include <vector>
-#include <stdio.h>
+#include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
 #include "file_path.h"
