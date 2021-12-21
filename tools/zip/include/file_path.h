@@ -19,7 +19,6 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-
 #define FILE_PATH_LITERAL(x) x
 #define PRFilePath "s"
 

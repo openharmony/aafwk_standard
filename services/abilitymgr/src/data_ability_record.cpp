@@ -430,7 +430,7 @@ int DataAbilityRecord::KillBoundClientProcesses()
     }
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        if (it->tryBind && false == it->isSystem) {
+        if (it->tryBind && it->isSystem == false) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             HILOG_INFO("Killing bound client '%{public}s|%{public}s|%{public}d' of data ability "
@@ -480,7 +480,7 @@ void DataAbilityRecord::Dump() const
     int i = 0;
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        if (false == it->isSystem) {
+        if (it->isSystem == false) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             HILOG_INFO("  %{public}2d '%{public}s|%{public}s' - tryBind: %{public}s",
@@ -510,7 +510,7 @@ void DataAbilityRecord::Dump(std::vector<std::string> &info) const
     info.emplace_back("    Clients: " + std::to_string(clients_.size()));
 
     for (auto &&client : clients_) {
-        if (false == client.isSystem) {
+        if (client.isSystem == false) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(client.client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             info.emplace_back("     > " + clientAbilityRecord->GetAbilityInfo().bundleName + "/" +

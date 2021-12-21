@@ -435,7 +435,6 @@ void BundleMgrService::PushHiDataAbility()
     info1.deviceId = "deviceId";
     info1.visible = true;
 
-
     BundleInfo bundleInfo;
     bundleInfo.name = COM_IX_HIDATA;
     bundleInfo.uid = info.applicationInfo.uid;

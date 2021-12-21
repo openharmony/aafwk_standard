@@ -94,7 +94,7 @@ CLASS(ObjectTestClass, 5afc4756 - 8f3c - 4d80 - a88b - 54521890beca)
 {
 public:
     ObjectTestClass(
-        /* [in] */ int type)
+        int type /* [in] */)
         : type_(type)
     {
         gDestructorCalled_ = false;

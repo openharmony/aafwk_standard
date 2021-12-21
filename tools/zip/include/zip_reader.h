@@ -146,7 +146,6 @@ public:
 
     // Returns true if there is at least one entry to read. This function is
     // used to scan entries with AdvanceToNextEntry(), like:
-    //
     //   // Do something with the current file here.
     // }
     bool HasMore();
@@ -158,7 +157,6 @@ public:
     // updates the the current entry state (i.e. CurrentEntryInfo() is
     // updated). This function should be called before operations over the
     // current entry like ExtractCurrentEntryToFile().
-    //
     // Note that there is no CloseCurrentEntryInZip(). The the current entry
     // state is reset automatically as needed.
     bool OpenCurrentEntryInZip();
@@ -204,7 +202,6 @@ public:
     ~FilePathWriterDelegate() override;
 
     // WriterDelegate methods:
-
     // Creates the output file and any necessary intermediate directories.
     bool PrepareOutput() override;
 

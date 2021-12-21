@@ -2111,7 +2111,7 @@ HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0400, Function 
 {
     std::string firstKey("%1uH3");
     std::vector<zchar> firstValue({U'中', U'文'});
-    std::vector<zchar> secondValue({U'字', U'符'});
+    std::vector<zchar> secondValue({ U'字', U'符' });
     std::vector<zchar> defaultValue;
     std::string secondKey("aa");
     want_->SetParam(firstKey, firstValue);

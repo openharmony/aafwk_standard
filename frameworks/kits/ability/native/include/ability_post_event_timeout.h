@@ -38,7 +38,6 @@ private:
     // default delaytime is 5000ms
     static const int64_t defalutDelayTime;
 
-
 private:
     std::string task_;
     std::shared_ptr<AbilityHandler> handler_;
