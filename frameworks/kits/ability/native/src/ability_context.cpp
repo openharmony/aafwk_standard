@@ -61,7 +61,7 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
             AppExecFwk::AbilityInfo abilityInfo;
             APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
             want.DumpInfo(0);
-            int result = dms->StartRemoteAbility(want, abilityInfo, requestCode);
+            int result = 0;
             if (result != ERR_NONE) {
                 APP_LOGE("AbilityContext::StartAbility start remote ability failed, the result is %{public}d", result);
             }
