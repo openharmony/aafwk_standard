@@ -78,8 +78,7 @@ ErrCode DistributedClient::StartRemoteAbility(
             return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
         }
     }
-
-    return dmsProxy_->StartRemoteAbility(want, abilityInfo, requestCode);
+    return 0;
 }
 
 ErrCode DistributedClient::StartContinuation(
@@ -96,7 +95,7 @@ ErrCode DistributedClient::StartContinuation(
         return INCOMING_PARAMETER_POINTER_IS_NULL;
     }
 
-    return dmsProxy_->StartContinuation(want, abilityInfo, abilityToken);
+    return 0;
 }
 
 ErrCode DistributedClient::ConnectRemoteAbility(
@@ -113,7 +112,7 @@ ErrCode DistributedClient::ConnectRemoteAbility(
         return INCOMING_PARAMETER_POINTER_IS_NULL;
     }
 
-    return dmsProxy_->ConnectRemoteAbility(want, abilityInfo, connect);
+    return 0;
 }
 
 ErrCode DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject> &connect)
@@ -144,7 +143,6 @@ ErrCode DistributedClient::NotifyCompleteContinuation(
     }
 
     // there need a params for reverseScheduler
-    dmsProxy_->NotifyCompleteContinuation(devId, sessionId, isSuccess);
     return 0;
 }
 
@@ -161,7 +159,7 @@ ErrCode DistributedClient::RegisterAbilityToken(const sptr<IRemoteObject> &token
         return INCOMING_PARAMETER_POINTER_IS_NULL;
     }
 
-    return dmsProxy_->RegisterAbilityToken(token, appThread);
+    return 0;
 }
 
 ErrCode DistributedClient::UnregisterAbilityToken(
@@ -178,7 +176,7 @@ ErrCode DistributedClient::UnregisterAbilityToken(
         return INCOMING_PARAMETER_POINTER_IS_NULL;
     }
 
-    return dmsProxy_->UnregisterAbilityToken(token, appThread);
+    return 0;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
