@@ -43,7 +43,7 @@ ohos_shared_library("abilitymanager") {
     "//foundation/appexecfwk/standard/services/appmgr:libams",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image",
+    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//utils/native/base:utils",
   ]
 
