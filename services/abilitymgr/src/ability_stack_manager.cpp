@@ -1045,28 +1045,41 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
 
-    for (auto &stack : missionStackList_) {
-        std::vector<MissionRecordInfo> missions;
-        stack->GetAllMissionInfo(missions);
-        for (auto &missionInfo : missions) {
-            auto mission = stack->GetMissionRecordById(missionInfo.id);
-            if (!mission) {
-                HILOG_ERROR("Mission is nullptr.");
+    if (info.state == AppState::TERMINATED || info.state == AppState::END) {
+        for (auto &ability : terminateAbilityRecordList_) {
+            if (!ability) {
                 continue;
             }
-            std::vector<AbilityRecordInfo> abilitys;
-            mission->GetAllAbilityInfo(abilitys);
-            for (auto &abilityInfo : abilitys) {
-                auto ability = mission->GetAbilityRecordById(abilityInfo.id);
-                if (!ability) {
-                    HILOG_ERROR("Ability is nullptr.");
+            if (ability->GetApplicationInfo().name == info.appName &&
+                (info.processName == ability->GetAbilityInfo().process ||
+                info.processName == ability->GetApplicationInfo().bundleName)) {
+                ability->SetAppState(info.state);
+            }
+        }
+    } else {
+        for (auto &stack : missionStackList_) {
+            std::vector<MissionRecordInfo> missions;
+            stack->GetAllMissionInfo(missions);
+            for (auto &missionInfo : missions) {
+                auto mission = stack->GetMissionRecordById(missionInfo.id);
+                if (!mission) {
+                    HILOG_ERROR("Mission is nullptr.");
                     continue;
                 }
+                std::vector<AbilityRecordInfo> abilitys;
+                mission->GetAllAbilityInfo(abilitys);
+                for (auto &abilityInfo : abilitys) {
+                    auto ability = mission->GetAbilityRecordById(abilityInfo.id);
+                    if (!ability) {
+                        HILOG_ERROR("Ability is nullptr.");
+                        continue;
+                    }
 
-                if (ability->GetApplicationInfo().name == info.appName &&
-                    (info.processName == ability->GetAbilityInfo().process ||
-                    info.processName == ability->GetApplicationInfo().bundleName)) {
-                    ability->SetAppState(info.state);
+                    if (ability->GetApplicationInfo().name == info.appName &&
+                        (info.processName == ability->GetAbilityInfo().process ||
+                        info.processName == ability->GetApplicationInfo().bundleName)) {
+                        ability->SetAppState(info.state);
+                    }
                 }
             }
         }
@@ -2121,7 +2134,7 @@ void AbilityStackManager::OnAbilityDiedByLauncher(std::shared_ptr<AbilityRecord>
         }
     }
 
-    DelayedStartLauncher();
+    BackToLauncher();
 }
 
 void AbilityStackManager::DelayedStartLauncher()
@@ -2229,7 +2242,7 @@ void AbilityStackManager::OnAbilityDiedByDefault(std::shared_ptr<AbilityRecord> 
 
     if (isFullStackActiveDied) {
         HILOG_INFO("full stack active ability died, back to launcher.");
-        DelayedStartLauncher();
+        BackToLauncher();
     }
 }
 
@@ -2243,8 +2256,7 @@ void AbilityStackManager::BackToLauncher()
     auto fullScreenStack = GetTopFullScreenStack();
     CHECK_POINTER(fullScreenStack);
     auto currentTopAbility = fullScreenStack->GetTopAbilityRecord();
-    if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE) ||
-        currentTopAbility->IsAbilityState(AbilityState::ACTIVATING))) {
+    if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE))) {
         HILOG_WARN("Current top ability is active, no need to start launcher.");
         return;
     }
@@ -2402,7 +2414,7 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             ActiveTopAbility(abilityRecord);
             break;
         case AbilityManagerService::ACTIVE_TIMEOUT_MSG:
-            DelayedStartLauncher();
+            HandleActiveTimeout(abilityRecord);
             break;
         case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
             CompleteInactive(abilityRecord);
@@ -2410,6 +2422,31 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         default:
             break;
     }
+}
+
+void AbilityStackManager::HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability)
+{
+    HILOG_DEBUG("Handle active timeout");
+    CHECK_POINTER(ability);
+    DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
+
+    if (ability->IsLauncherRoot()) {
+        HILOG_INFO("Launcher root load timeout, restart.");
+        BackToLauncher();
+        return;
+    }
+
+    auto missionRecord = ability->GetMissionRecord();
+    CHECK_POINTER(missionRecord);
+    auto stack = missionRecord->GetMissionStack();
+    CHECK_POINTER(stack);
+    missionRecord->RemoveAbilityRecord(ability);
+    if (missionRecord->IsEmpty()) {
+        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
+        JudgingIsRemoveMultiScreenStack(stack);
+    }
+
+    BackToLauncher();
 }
 
 int AbilityStackManager::MoveMissionToFloatingStack(const MissionOption &missionOption)
@@ -2880,7 +2917,7 @@ void AbilityStackManager::ActiveTopAbility(const std::shared_ptr<AbilityRecord> 
 
     if (abilityRecord->IsLauncherRoot()) {
         HILOG_INFO("Launcher root load timeout, restart.");
-        DelayedStartLauncher();
+        BackToLauncher();
         return;
     }
 

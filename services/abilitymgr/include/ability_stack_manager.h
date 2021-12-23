@@ -665,6 +665,7 @@ private:
     void UpdateFocusAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord, bool isNotify = false);
     void CheckMissionRecordIsResume(const std::shared_ptr<MissionRecord> &mission);
     int ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage);
+    void HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability);
 
 private:
     static constexpr int MIN_MISSION_STACK_ID = LAUNCHER_MISSION_STACK_ID;
