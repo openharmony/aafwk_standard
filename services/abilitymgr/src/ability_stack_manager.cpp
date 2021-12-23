@@ -2402,8 +2402,10 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             ActiveTopAbility(abilityRecord);
             break;
         case AbilityManagerService::ACTIVE_TIMEOUT_MSG:
-        case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
             DelayedStartLauncher();
+            break;
+        case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
+            CompleteInactive(abilityRecord);
             break;
         default:
             break;
