@@ -167,8 +167,8 @@ public:
     // Indicates a smart speaker.
     static constexpr char DEVICETYPE_SMART_SPEAKER[] = "00A";
 
-    // Indicates a desktop computer.
-    static constexpr char DEVICETYPE_DESKTOP_PC[] = "00B";
+    // Indicates a desktop pad.
+    static constexpr char DEVICETYPE_DESKTOP_PAD[] = "00B";
 
     // Indicates a laptop.
     static constexpr char DEVICETYPE_LAPTOP[] = "00C";
