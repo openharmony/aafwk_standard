@@ -293,13 +293,7 @@ FilePath FilePath::Append(FilePath &component)
 }
 
 // If IsParent(child) holds, appends to path (if non-NULL) the
-// relative path to child and returns true.  For example, if parent
-// holds "/Users/johndoe/Library/Application Support", child holds
-// "/Users/johndoe/Library/Application Support/Google/Chrome/Default", and
-// *path holds "/Users/johndoe/Library/Caches", then after
-// parent.AppendRelativePath(child, path) is called *path will hold
-// "/Users/johndoe/Library/Caches/Google/Chrome/Default".  Otherwise,
-// returns false.
+// relative path to child and returns true.
 bool FilePath::AppendRelativePath(const FilePath &child, FilePath *path)
 {
     FilePath childPath = child;
