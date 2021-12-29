@@ -28,6 +28,7 @@ const std::string HOME_APP("home_application");
 const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_LAUNCHER {"startup_launcher"};
+const std::string STARTUP_SETTINGS_DATA {"startup_settings_data"};
 const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
 const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
@@ -54,6 +55,11 @@ public:
      * return false : ams do not start launcher
      */
     bool GetStartLauncherState() const;
+    /**
+     * return true : ams can start settings data
+     * return false : ams do not start settings data
+     */
+    bool GetStartSettingsDataState() const;
     /**
      * return true : ams can start system ui status bar
      * return false : ams do not start system ui status bar
@@ -111,6 +117,7 @@ private:
 private:
     bool nonConfigFile_ {false};
     bool canStartLauncher_ {false};
+    bool canStartSettingsData_ {false};
     bool canStartUiStatusBar_ {false};
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
