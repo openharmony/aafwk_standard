@@ -634,7 +634,7 @@ private:
      * starting settings data ability.
      *
      */
-    void StartSettingsDataAbility();
+    void StartingSettingsDataAbility();
     /**
      * starting phone service ability.
      *
