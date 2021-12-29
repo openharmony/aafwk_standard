@@ -1782,7 +1782,7 @@ void AbilityManagerService::NotifyBmsAbilityLifeStatus(
 {
     auto bundleManager = GetBundleManager();
     CHECK_POINTER(bundleManager);
-    bundleManager->NotifyActivityLifeStatus(bundleName, abilityName, launchTime, uid);
+    bundleManager->NotifyAbilityLifeStatus(bundleName, abilityName, launchTime, uid);
 }
 
 void AbilityManagerService::StartSystemApplication()
