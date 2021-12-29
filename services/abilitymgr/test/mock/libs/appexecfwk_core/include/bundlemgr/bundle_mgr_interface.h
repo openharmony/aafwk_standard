@@ -450,9 +450,9 @@ public:
      */
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
     /**
-     * @brief Notify a specified ability for ability.
-     * @param bundleName Indicates the bundle name of the ability to ability.
-     * @param abilityName Indicates the name of the ability to ability.
+     * @brief Notify ability life status.
+     * @param bundleName Notify ability bundle name.
+     * @param abilityName Notify ability name.
      * @param launchTime Indicates the ability launchTime.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
