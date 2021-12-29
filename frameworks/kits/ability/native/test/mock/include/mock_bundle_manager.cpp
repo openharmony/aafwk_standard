@@ -253,7 +253,7 @@ sptr<IBundleInstaller> BundleMgrProxy::GetBundleInstaller()
 {
     return nullptr;
 }
-bool BundleMgrProxy::NotifyActivityLifeStatus(
+bool BundleMgrProxy::NotifyAbilityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;
@@ -506,7 +506,7 @@ sptr<IBundleInstaller> BundleMgrService::GetBundleInstaller()
 {
     return nullptr;
 }
-bool BundleMgrService::NotifyActivityLifeStatus(
+bool BundleMgrService::NotifyAbilityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;
