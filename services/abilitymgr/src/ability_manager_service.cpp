@@ -1261,8 +1261,6 @@ void AbilityManagerService::StartingLauncherAbility()
         usleep(REPOLL_TIME_MICRO_SECONDS);
     }
 
-    HILOG_INFO("waiting boot animation for 5 seconds.");
-    usleep(REPOLL_TIME_MICRO_SECONDS * WAITING_BOOT_ANIMATION_TIMER);
     HILOG_INFO("Start Home Launcher Ability.");
     /* start launch ability */
     (void)StartAbility(want, DEFAULT_INVAL_VALUE);
@@ -1794,6 +1792,7 @@ void AbilityManagerService::StartSystemApplication()
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartingLauncherAbility();
+        StartingSettingsDataAbility();
         StartingSystemUiAbility(SatrtUiMode::STARTUIBOTH);
         return;
     }
@@ -1801,6 +1800,11 @@ void AbilityManagerService::StartSystemApplication()
     if (amsConfigResolver_->GetStartLauncherState()) {
         HILOG_INFO("start launcher");
         StartingLauncherAbility();
+    }
+
+    if (amsConfigResolver_->GetStartSettingsDataState()) {
+        HILOG_INFO("start settings data");
+        StartingSettingsDataAbility();
     }
 
     if (amsConfigResolver_->GetStatusBarState()) {
@@ -2281,6 +2285,22 @@ int AbilityManagerService::GetMissionSaveTime() const
     }
 
     return amsConfigResolver_->GetMissionSaveTime();
+}
+
+void AbilityManagerService::StartingSettingsDataAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+        return;
+    }
+
+    /* query if setiings data ability has installed */
+    AppExecFwk::AbilityInfo abilityInfo;
+    /* First stage, hardcoding for the first launcher App */
+    Want want;
+    want.SetElementName(AbilityConfig::SETTINGS_DATA_BUNDLE_NAME, AbilityConfig::SETTINGS_DATA_ABILITY_NAME);
+    (void)StartAbility(want, DEFAULT_INVAL_VALUE);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
