@@ -96,7 +96,7 @@ public:
     virtual bool GetModuleUsageRecords(
         const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override;
     virtual sptr<IBundleInstaller> GetBundleInstaller() override;
-    virtual bool NotifyActivityLifeStatus(
+    virtual bool NotifyAbilityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
 };
 
@@ -171,7 +171,7 @@ public:
     virtual bool GetModuleUsageRecords(
         const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override;
     virtual sptr<IBundleInstaller> GetBundleInstaller() override;
-    virtual bool NotifyActivityLifeStatus(
+    virtual bool NotifyAbilityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
 };
 }  // namespace AppExecFwk
