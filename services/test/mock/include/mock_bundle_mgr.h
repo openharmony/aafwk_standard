@@ -143,7 +143,7 @@ public:
     bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
-    bool NotifyActivityLifeStatus(const std::string &bundleName,
+    bool NotifyAbilityLifeStatus(const std::string &bundleName,
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
 

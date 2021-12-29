@@ -67,10 +67,10 @@ bool BundleMgrProxy::GetApplicationInfo(
     return true;
 }
 
-bool BundleMgrProxy::NotifyActivityLifeStatus(
+bool BundleMgrProxy::NotifyAbilityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
-    GTEST_LOG_(INFO) << "BundleMgrProxy::NotifyActivityLifeStatus()";
+    GTEST_LOG_(INFO) << "BundleMgrProxy::NotifyAbilityLifeStatus()";
     return true;
 }
 
@@ -310,10 +310,10 @@ int BundleMgrService::GetUidByBundleName(const std::string &bundleName, const in
     return 1000;
 }
 
-bool BundleMgrService::NotifyActivityLifeStatus(
+bool BundleMgrService::NotifyAbilityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
-    GTEST_LOG_(INFO) << "BundleMgrService::NotifyActivityLifeStatus()";
+    GTEST_LOG_(INFO) << "BundleMgrService::NotifyAbilityLifeStatus()";
     return true;
 }
 }  // namespace AppExecFwk
