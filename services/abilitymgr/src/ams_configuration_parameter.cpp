@@ -32,6 +32,11 @@ bool AmsConfigurationParameter::GetStartLauncherState() const
     return canStartLauncher_;
 }
 
+bool AmsConfigurationParameter::GetStartSettingsDataState() const
+{
+    return canStartSettingsData_;
+}
+
 bool AmsConfigurationParameter::GetStatusBarState() const
 {
     return canStartUiStatusBar_;
@@ -123,6 +128,7 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
     int ret = -1;
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
         canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
+        canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
         canStartUiNavigationBar_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
