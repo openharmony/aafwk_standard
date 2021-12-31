@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_DATA_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_DATA_ABILITY_H
 
-#include <gtest/gtest.h>
 #include "ability.h"
+#include <gtest/gtest.h>
 
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"

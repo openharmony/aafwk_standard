@@ -84,10 +84,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoKeyDown_0100, Function | M
 
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    int keyCode = 1;
-    KeyEvent keyEvent;
-    bool ret = pageAbilityImpl_->DoKeyDown(keyCode, keyEvent);
-    EXPECT_EQ(ret, false);
+    auto keyEvent = MMI::KeyEvent::Create();
+    pageAbilityImpl_->DoKeyDown(keyEvent);
     sleep(1);
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoKeyDown_0100 end";
 }
@@ -119,10 +117,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoKeyDown_0200, Function | M
 
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    int keyCode = 1;
-    KeyEvent keyEvent;
-    bool ret = pageAbilityImpl_->DoKeyDown(keyCode, keyEvent);
-    EXPECT_EQ(ret, true);
+    auto keyEvent = MMI::KeyEvent::Create();
+    pageAbilityImpl_->DoKeyDown(keyEvent);
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoKeyDown_0200 end";
 }
 
@@ -153,10 +149,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoKeyUp_0100, Function | Med
 
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    int keyCode = 1;
-    KeyEvent keyEvent;
-    bool ret = pageAbilityImpl_->DoKeyUp(keyCode, keyEvent);
-    EXPECT_EQ(ret, false);
+    auto keyEvent = MMI::KeyEvent::Create();
+    pageAbilityImpl_->DoKeyUp(keyEvent);
 
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoKeyUp_0100 end";
 }
@@ -188,10 +182,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoKeyUp_0200, Function | Med
     ability->AttachBaseContext(contextDeal);
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    int keyCode = 1;
-    KeyEvent keyEvent;
-    bool ret = pageAbilityImpl_->DoKeyUp(keyCode, keyEvent);
-    EXPECT_EQ(ret, true);
+    auto keyEvent = MMI::KeyEvent::Create();
+    pageAbilityImpl_->DoKeyUp(keyEvent);
 
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoKeyUp_0200 end";
 }
@@ -223,9 +215,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoTouchEvent_0100, Function 
     ability->AttachBaseContext(contextDeal);
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    TouchEvent touchEvent;
-    bool ret = pageAbilityImpl_->DoTouchEvent(touchEvent);
-    EXPECT_EQ(ret, false);
+    auto pointerEvent = MMI::PointerEvent::Create();
+    pageAbilityImpl_->DoPointerEvent(pointerEvent);
 
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoTouchEvent_0100 end";
 }
@@ -257,9 +248,8 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_DoTouchEvent_0200, Function 
     ability->AttachBaseContext(contextDeal);
     pageAbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
 
-    TouchEvent touchEvent;
-    bool ret = pageAbilityImpl_->DoTouchEvent(touchEvent);
-    EXPECT_EQ(ret, true);
+    auto pointerEvent = MMI::PointerEvent::Create();
+    pageAbilityImpl_->DoPointerEvent(pointerEvent);
 
     GTEST_LOG_(INFO) << "AaFwk_PageAbilityImpl_DoTouchEvent_0200 end";
 }

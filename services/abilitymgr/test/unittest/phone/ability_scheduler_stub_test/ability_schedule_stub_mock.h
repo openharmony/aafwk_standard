@@ -130,6 +130,8 @@ public:
     {
         return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     }
+    virtual void NotifyContinuationResult(const int32_t result) override
+    {}
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -18,9 +18,10 @@
 
 #include <string>
 
-#include "parcel.h"
 #include "ability_start_setting.h"
 #include "caller_info.h"
+#include "launch_param.h"
+#include "parcel.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -33,7 +34,11 @@ enum AbilityLifeCycleState {
     ABILITY_STATE_INACTIVE,
     ABILITY_STATE_ACTIVE,
     ABILITY_STATE_BACKGROUND,
-    ABILITY_STATE_SUSPENDED
+    ABILITY_STATE_SUSPENDED,
+    ABILITY_STATE_STARTED_NEW,
+    ABILITY_STATE_FOREGROUND_NEW,
+    ABILITY_STATE_BACKGROUND_NEW,
+    ABILITY_STATE_STOPED_NEW
 };
 
 /**
@@ -47,6 +52,7 @@ struct LifeCycleStateInfo : public Parcelable {
     int stackId = -1;
     CallerInfo caller;
     std::shared_ptr<AbilityStartSetting> setting = nullptr;
+    LaunchParam launchParam;
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

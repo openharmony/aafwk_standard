@@ -14,10 +14,10 @@
  */
 
 #include "zip_reader.h"
-#include <cstdio>
+#include <stdio.h>
 #include <utility>
 #include <unistd.h>
-#include <ctime>
+#include <time.h>
 #include "zip_utils.h"
 #include "string_ex.h"
 #include "checked_cast.h"
@@ -29,7 +29,8 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
-// The implementation assumes that file names in zip files
+
+// TODO(satorux): The implementation assumes that file names in zip files
 // are encoded in UTF-8. This is true for zip files created by Zip()
 // function in zip.h, but not true for user-supplied random zip files.
 ZipReader::EntryInfo::EntryInfo(const std::string &fileNameInZip, const unz_file_info &rawFileInfo)

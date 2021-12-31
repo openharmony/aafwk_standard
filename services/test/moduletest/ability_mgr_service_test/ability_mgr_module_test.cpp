@@ -243,7 +243,7 @@ ApplicationInfo AbilityMgrModuleTest::CreateAppInfo(const std::string &appName, 
 Want AbilityMgrModuleTest::CreateWant(const std::string &abilityName, const std::string &bundleName)
 {
     ElementName element;
-    element.SetDeviceID("deviceId");
+    element.SetDeviceID("");
     element.SetAbilityName(abilityName);
     element.SetBundleName(bundleName);
     Want want;
@@ -685,6 +685,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_007, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_008, TestSize.Level1)
 {
+
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
 
@@ -851,7 +852,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
     record2->SetScheduler(scheduler);
     EXPECT_CALL(*stub1, OnAbilityDisconnectDone(_, _)).Times(2);
     abilityMgrServ_->DisconnectAbility(callback1);
-    usleep(100);
+    usleep(1000);
 
     EXPECT_CALL(*scheduler, ScheduleDisconnectAbility(_)).Times(2);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(2);
@@ -1320,7 +1321,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
     EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
-    abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
+    abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), stub);
     EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
 
     EXPECT_CALL(*scheduler, ScheduleDisconnectAbility(_)).Times(1);
@@ -3295,5 +3296,95 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }
+
+/**
+ * @tc.name: ability_mgr_service_test_028
+ * @tc.desc: test MinimizeAbility
+ * @tc.type: FUNC
+ * @tc.require: AR000GJUND
+ */
+HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_028, TestSize.Level1)
+{
+    std::string abilityName = "MusicAbility";
+    std::string appName = "test_app";
+    std::string bundleName = "com.ix.hiMusic";
+
+    AbilityRequest abilityRequest;
+    abilityRequest.want = CreateWant("");
+    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "1", appName, bundleName);
+    abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
+    abilityRequest.targetVersion = 7;
+
+    std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVE);
+
+    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "2", appName, bundleName);
+    abilityRequest.targetVersion = 8;
+    std::shared_ptr<AbilityRecord> abilityRecord2 = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    abilityRecord2->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
+    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
+    EXPECT_TRUE(scheduler);
+    EXPECT_CALL(*scheduler, AsObject()).Times(2);
+    abilityRecord2->SetScheduler(scheduler);
+
+    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
+    std::shared_ptr<MissionRecord> mission = std::make_shared<MissionRecord>(bundleName);
+    mission->AddAbilityRecordToTop(abilityRecord);
+    mission->AddAbilityRecordToTop(abilityRecord2);
+    abilityRecord2->SetMissionRecord(mission);
+
+    auto stackManager_ = abilityMgrServ_->GetStackManager();
+    std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
+    curMissionStack->AddMissionRecordToTop(mission);
+
+    int result = abilityMgrServ_->MinimizeAbility(abilityRecord2->GetToken());
+    EXPECT_EQ(OHOS::AAFwk::AbilityState::BACKGROUNDING_NEW, abilityRecord2->GetAbilityState());
+    EXPECT_EQ(OHOS::ERR_OK, result);
+}
+
+/**
+ * @tc.name: ability_mgr_service_test_029
+ * @tc.desc: test CompleteBackgroundNew
+ * @tc.type: FUNC
+ * @tc.require: AR000GJUND
+ */
+HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_029, TestSize.Level1)
+{
+    std::string abilityName = "MusicAbility";
+    std::string appName = "test_app";
+    std::string bundleName = "com.ix.hiMusic";
+
+    AbilityRequest abilityRequest;
+    abilityRequest.want = CreateWant("");
+    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "1", appName, bundleName);
+    abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
+    abilityRequest.targetVersion = 7;
+
+    std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVE);
+
+    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "2", appName, bundleName);
+    abilityRequest.targetVersion = 8;
+    std::shared_ptr<AbilityRecord> abilityRecord2 = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    abilityRecord2->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
+    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
+    EXPECT_TRUE(scheduler);
+    EXPECT_CALL(*scheduler, AsObject()).Times(2);
+    abilityRecord2->SetScheduler(scheduler);
+
+    std::shared_ptr<MissionRecord> mission = std::make_shared<MissionRecord>(bundleName);
+    mission->AddAbilityRecordToTop(abilityRecord);
+    mission->AddAbilityRecordToTop(abilityRecord2);
+    abilityRecord2->SetMissionRecord(mission);
+
+    auto stackManager_ = abilityMgrServ_->GetStackManager();
+    std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
+    curMissionStack->AddMissionRecordToTop(mission);
+
+    abilityRecord2->SetAbilityState(OHOS::AAFwk::AbilityState::BACKGROUNDING_NEW);
+    stackManager_->CompleteBackgroundNew(abilityRecord2);
+    EXPECT_EQ(OHOS::AAFwk::AbilityState::BACKGROUND_NEW, abilityRecord2->GetAbilityState());
+}
+
 }  // namespace AAFwk
 }  // namespace OHOS

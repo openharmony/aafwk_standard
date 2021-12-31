@@ -29,7 +29,7 @@ namespace AAFwk {
  */
 class IAbilityConnection : public OHOS::IRemoteBroker {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.AbilityConnection");
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.abilityshell.DistributedConnection");
 
     /**
      * OnAbilityConnectDone, AbilityMs notify caller ability the result of connect.
@@ -51,7 +51,7 @@ public:
 
     enum {
         // ipc id for OnAbilityConnectDone
-        ON_ABILITY_CONNECT_DONE = 0,
+        ON_ABILITY_CONNECT_DONE = 1,
 
         // ipc id for OnAbilityDisConnectDone
         ON_ABILITY_DISCONNECT_DONE

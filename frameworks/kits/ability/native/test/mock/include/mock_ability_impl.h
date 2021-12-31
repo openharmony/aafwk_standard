@@ -16,9 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_INHERITANCE_IMPL_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_INHERITANCE_IMPL_H
 
-#include <gtest/gtest.h>
 #include "ability.h"
 #include "ability_impl.h"
+#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace AppExecFwk {

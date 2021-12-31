@@ -100,6 +100,14 @@ public:
     int TerminateAbility(const std::shared_ptr<AbilityRecord> &caller, int requestCode);
 
     /**
+     * MinimizeAbility, minimize the special ability.
+     *
+     * @param token, ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int MinimizeAbility(const sptr<IRemoteObject> &token);
+
+    /**
      * get ability stack manager's user id.
      *
      * @return Returns userId.
@@ -485,6 +493,14 @@ private:
     int TerminateAbilityLocked(std::list<TerminatingAbility> &terminateLists);
 
     /**
+     * MinimizeAbilityLocked.
+     *
+     * @param abilityRecord, target ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord);
+
+    /**
      * Remove the specified mission from the stack by mission id.
      *
      * @param missionId, target mission id.
@@ -747,6 +763,13 @@ private:
     void BackAbilityRecordMoveToBackGround(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void MoveMissionStackToFullStackTop(const std::shared_ptr<MissionStack> &stack);
     void RemoveMultiAppSelectorAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
+	
+    void CompleteInactiveByNewVersion(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    int DispatchForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
+    void CompleteForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord);
+	
+    int DispatchBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
+    void CompleteBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
 private:
     static constexpr int MIN_MISSION_STACK_ID = LAUNCHER_MISSION_STACK_ID;

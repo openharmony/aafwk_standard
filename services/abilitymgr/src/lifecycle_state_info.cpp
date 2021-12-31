@@ -38,6 +38,11 @@ bool LifeCycleStateInfo::ReadFromParcel(Parcel &parcel)
     } else {
         setting = nullptr;
     }
+    std::unique_ptr<LaunchParam> launchInfo(parcel.ReadParcelable<LaunchParam>());
+    if (launchInfo == nullptr) {
+        return false;
+    }
+    launchParam = *launchInfo;
     return true;
 }
 
@@ -79,6 +84,10 @@ bool LifeCycleStateInfo::Marshalling(Parcel &parcel) const
     }
     // write setting
     if (!parcel.WriteParcelable(setting.get())) {
+        return false;
+    }
+    // write launch param
+    if (!parcel.WriteParcelable(&launchParam)) {
         return false;
     }
     return true;

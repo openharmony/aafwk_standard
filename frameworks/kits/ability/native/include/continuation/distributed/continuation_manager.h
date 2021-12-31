@@ -19,7 +19,6 @@
 #include <memory>
 #include <mutex>
 #include "continuation_state.h"
-#include "continuation_scheduler.h"
 #include "ability_info.h"
 #include "event_handler.h"
 #include "iremote_object.h"
@@ -63,7 +62,7 @@ public:
 
     bool NotifyRemoteTerminated();
 
-    bool UnregisterAbilityTokenIfNeed();
+    void ChangeProcessStateToInit();
 
 private:
     enum ProgressState { INITIAL, WAITING_SCHEDULE, IN_PROGRESS };
@@ -82,14 +81,6 @@ private:
 
     bool CheckAbilityToken();
 
-    bool UnregisterAbilityToken(const sptr<IRemoteObject> &token);
-
-    bool RegisterAbilityTokenIfNeed(const sptr<IRemoteObject> &token);
-
-    bool RegisterAbilityToken(const sptr<IRemoteObject> &token);
-
-    void InitDistSchedulerHost();
-
     void CheckDmsInterfaceResult(int result, const std::string &interfaceName);
 
     bool DoScheduleStartContinuation();
@@ -100,19 +91,16 @@ private:
 
     bool DoRestoreFromRemote(const WantParams &restoreData);
 
-    sptr<ContinuationScheduler> distSchedulerHost_ = nullptr;
     sptr<IRemoteObject> continueToken_ = nullptr;
     std::weak_ptr<Ability> ability_;
     std::weak_ptr<AbilityInfo> abilityInfo_;
     ProgressState progressState_ = ProgressState::INITIAL;
     bool reversible_ = false;
-    bool tokenRegistered_ = false;
     ContinuationState continuationState_ = ContinuationState::LOCAL_RUNNING;
     std::string originalDeviceId_;
     std::weak_ptr<ContinuationHandler> continuationHandler_;
     std::shared_ptr<EventHandler> mainHandler_ = nullptr;
     std::mutex lock_;
-    std::mutex lockForRegist_;
 
     static const int TIMEOUT_MS_WAIT_DMS_SCHEDULE_START_CONTINUATION;
     static const int TIMEOUT_MS_WAIT_DMS_NOTIFY_CONTINUATION_COMPLETE;

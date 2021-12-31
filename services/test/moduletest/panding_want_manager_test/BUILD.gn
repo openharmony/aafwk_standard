@@ -26,6 +26,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
+    "//foundation/graphic/standard/interfaces/innerkits/wmclient",
     "//third_party/jsoncpp/include",
   ]
 
@@ -46,6 +47,7 @@ ohos_moduletest("PandingWantMgrTest") {
   }
 
   deps = [
+    "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
@@ -67,11 +69,13 @@ ohos_moduletest("PandingWantMgrTest") {
   external_deps = [
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "bytrace_standard:bytrace_core",
   ]
 }
 

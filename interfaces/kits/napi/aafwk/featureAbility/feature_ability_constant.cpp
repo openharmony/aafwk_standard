@@ -13,10 +13,12 @@
  * limitations under the License.
  */
 #include "feature_ability_constant.h"
+
 #include <cstring>
 #include <vector>
-#include "securec.h"
+
 #include "hilog_wrapper.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace AppExecFwk {

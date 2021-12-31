@@ -156,6 +156,7 @@ bool Zip(const FilePath &srcDir, const FilePath &destFile, const OPTIONS &option
 // destFile = /ziptest/hapunzipdir/single
 // options is default value.
 bool Unzip(const FilePath &zipFile, const FilePath &destDir, const OPTIONS &options, CALLBACK callback);
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

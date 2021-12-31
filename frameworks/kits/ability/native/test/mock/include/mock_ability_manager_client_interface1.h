@@ -124,5 +124,6 @@ private:
     bool moveMissionToEnd_;
 };
 };  // namespace AAFwk
+
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_H

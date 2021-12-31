@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 #include "continuation_register_manager.h"
+
 #include "app_log_wrapper.h"
-#include "continuation_register_manager_proxy.h"
 #include "continuation_device_callback_interface.h"
+#include "continuation_register_manager_proxy.h"
 #include "extra_params.h"
 #include "request_callback.h"
 

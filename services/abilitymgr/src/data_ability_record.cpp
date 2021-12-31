@@ -16,9 +16,10 @@
 #include "data_ability_record.h"
 
 #include <algorithm>
-#include "hilog_wrapper.h"
+
 #include "ability_util.h"
 #include "app_scheduler.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -430,7 +431,7 @@ int DataAbilityRecord::KillBoundClientProcesses()
     }
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        if (it->tryBind && it->isSystem == false) {
+        if (it->tryBind && false == it->isSystem) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             HILOG_INFO("Killing bound client '%{public}s|%{public}s|%{public}d' of data ability "
@@ -480,7 +481,7 @@ void DataAbilityRecord::Dump() const
     int i = 0;
 
     for (auto it = clients_.begin(); it != clients_.end(); ++it) {
-        if (it->isSystem == false) {
+        if (false == it->isSystem) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(it->client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             HILOG_INFO("  %{public}2d '%{public}s|%{public}s' - tryBind: %{public}s",
@@ -510,7 +511,7 @@ void DataAbilityRecord::Dump(std::vector<std::string> &info) const
     info.emplace_back("    Clients: " + std::to_string(clients_.size()));
 
     for (auto &&client : clients_) {
-        if (client.isSystem == false) {
+        if (false == client.isSystem) {
             auto clientAbilityRecord = Token::GetAbilityRecordByToken(client.client);
             CHECK_POINTER_CONTINUE(clientAbilityRecord);
             info.emplace_back("     > " + clientAbilityRecord->GetAbilityInfo().bundleName + "/" +

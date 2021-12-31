@@ -31,126 +31,34 @@ AbilityWindow::~AbilityWindow()
  *
  * @param handler The EventHandler of the Ability the AbilityWindow belong.
  */
-void AbilityWindow::Init(std::shared_ptr<AbilityHandler> &handler, std::shared_ptr<Ability> ability)
+void AbilityWindow::Init(std::shared_ptr<AbilityHandler>& handler, std::shared_ptr<Ability> ability)
 {
     APP_LOGI("%{public}s begin.", __func__);
     handler_ = handler;
     ability_ = std::weak_ptr<IAbilityEvent>(ability);
-
-    auto wmi = WindowManager::GetInstance();
-    if (wmi == nullptr) {
-        APP_LOGE("AbilityWindow::Init WindowManager::GetInstance() is nullptr.");
-        return;
-    }
-
-    auto wret = wmi->Init();
-    if (wret != WM_OK) {
-        APP_LOGE("AbilityWindow::Init WindowManager::Init() return %d", wret);
-        return;
-    }
+    windowScene_ = std::make_shared<Rosen::WindowScene>();
     APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
- * @brief Sets the window config for the host ability to create window.
+ * @brief Sets the window option for the host ability to create window.
  *
- * @param config Indicates window config.
+ * @param windowOption Indicates window option.
  */
-bool AbilityWindow::SetWindowConfig(const sptr<WindowOption> &config)
+bool AbilityWindow::SetWindowType(Rosen::WindowType winType)
 {
     APP_LOGI("%{public}s begin.", __func__);
-
-    APP_LOGI("config width = %{public}d, height = %{public}d.", config->GetWidth(), config->GetHeight());
-    APP_LOGI("config pos_x = %{public}d, pos_y = %{public}d, type = %{public}d.",
-        config->GetX(),
-        config->GetY(),
-        config->GetWindowType());
-
-    auto wmi = WindowManager::GetInstance();
-    if (wmi == nullptr) {
-        APP_LOGE("AbilityWindow::Init WindowManager::GetInstance() is nullptr.");
-        return false;
-    }
-
-    APP_LOGI("%{public}s begin wms->CreateWindow.", __func__);
-    auto retvalCreate = wmi->CreateWindow(windowNew_, config);
-    APP_LOGI("%{public}s end wms->CreateWindow.", __func__);
-    if (retvalCreate != WM_OK) {
-        APP_LOGE("AbilityWindow::SetWindowConfig WindowManager::CreateWindow() return %d", retvalCreate);
-        return false;
-    }
-
-    if (windowNew_ == nullptr) {
-        APP_LOGE("AbilityWindow::SetWindowConfig the window is nullptr.");
-        return false;
-    }
-
-    auto callback = [abilityWindow = this](KeyEvent event) -> bool { return abilityWindow->OnKeyEvent(event); };
-    APP_LOGI("%{public}s begin windowNew_->RegistOnKeyCb.", __func__);
-    auto retvalKeyboardKey = windowNew_->OnKey(callback);
-    APP_LOGI("%{public}s end windowNew_->RegistOnKeyCb.", __func__);
-    if (retvalKeyboardKey != WM_OK) {
-        APP_LOGE("AbilityWindow::SetWindowConfig WindowManager::OnKey() return %d", retvalKeyboardKey);
+    sptr<Rosen::IWindowLifeCycle> windowLifecycle = nullptr;
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = nullptr;
+    windowScene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext, windowLifecycle);
+    auto window = windowScene_->GetMainWindow();
+    auto ret = window->SetWindowType(winType);
+    if (ret != OHOS::Rosen::WMError::WM_OK) {
+        APP_LOGE("Set window type error, errcode = %{public}d", ret);
         return false;
     }
 
     isWindowAttached = true;
-    APP_LOGI("%{public}s end.", __func__);
-
-    return true;
-}
-
-/**
- * @brief Called when the KeyEvent sent.
- *
- * @param KeyEvent the key event.
- *
- * @return Returns true if the listener has processed the event; returns false otherwise.
- *
- */
-bool AbilityWindow::OnKeyEvent(KeyEvent event)
-{
-    APP_LOGI("%{public}s begin.", __func__);
-
-    bool ret = false;
-    std::shared_ptr<IAbilityEvent> ability = nullptr;
-    ability = ability_.lock();
-    if (ability == nullptr) {
-        APP_LOGE("AbilityWindow::OnKeyEvent ability is nullptr.");
-        return ret;
-    }
-    switch (event.GetKeyCode()) {
-        case OHOS::KeyEventEnum::KEY_BACK:
-            APP_LOGI("AbilityWindow::OnKeyEvent Back key pressed.");
-            if (!event.IsKeyDown()) {
-                ret = OnBackPressed(ability);
-            }
-            break;
-        default:
-            APP_LOGI("AbilityWindow::OnKeyEvent the key event is %{public}d.", event.GetKeyCode());
-            break;
-    }
-    APP_LOGI("%{public}s end.", __func__);
-    return ret;
-}
-
-/**
- * @brief Called back when the Back key is pressed.
- *
- * @param ability The ability receive the event.
- *
- * @return Returns true if the listener has processed the event; returns false otherwise.
- *
- */
-bool AbilityWindow::OnBackPressed(std::shared_ptr<IAbilityEvent> &ability)
-{
-    APP_LOGI("%{public}s begin.", __func__);
-    if (handler_ == nullptr) {
-        APP_LOGE("AbilityWindow::OnBackPressed handler_ is nullptr.");
-        return false;
-    }
-    auto task = [abilityRun = ability]() { abilityRun->OnBackPressed(); };
-    handler_->PostTask(task);
     APP_LOGI("%{public}s end.", __func__);
     return true;
 }
@@ -167,10 +75,10 @@ void AbilityWindow::OnPostAbilityStart()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
-        windowNew_->Hide();
-        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
+    if (windowScene_) {
+        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
+        windowScene_->GoBackground();
+        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
     APP_LOGI("%{public}s end.", __func__);
@@ -188,14 +96,14 @@ void AbilityWindow::OnPostAbilityActive()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        APP_LOGI("%{public}s begin windowNew_->SwitchTop.", __func__);
-        windowNew_->SwitchTop();
-        APP_LOGI("%{public}s end windowNew_->SwitchTop.", __func__);
+    if (windowScene_) {
+        APP_LOGI("%{public}s begin windowScene_->RequestFocus.", __func__);
+        windowScene_->RequestFocus();
+        APP_LOGI("%{public}s end windowScene_->RequestFocus.", __func__);
 
-        APP_LOGI("%{public}s begin windowNew_->Show.", __func__);
-        windowNew_->Show();
-        APP_LOGI("%{public}s end windowNew_->Show.", __func__);
+        APP_LOGI("%{public}s begin windowScene_->GoForeground.", __func__);
+        windowScene_->GoForeground();
+        APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
     }
 
     APP_LOGI("AbilityWindow::OnPostAbilityActive end.");
@@ -213,10 +121,10 @@ void AbilityWindow::OnPostAbilityInactive()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
-        windowNew_->Hide();
-        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
+    if (windowScene_) {
+        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
+        windowScene_->GoBackground();
+        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
     APP_LOGI("AbilityWindow::OnPostAbilityInactive end.");
@@ -234,10 +142,10 @@ void AbilityWindow::OnPostAbilityBackground()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        APP_LOGI("%{public}s begin windowNew_->Hide.", __func__);
-        windowNew_->Hide();
-        APP_LOGI("%{public}s end windowNew_->Hide.", __func__);
+    if (windowScene_) {
+        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
+        windowScene_->GoBackground();
+        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
     APP_LOGI("AbilityWindow::OnPostAbilityBackground end.");
@@ -255,10 +163,10 @@ void AbilityWindow::OnPostAbilityForeground()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        APP_LOGI("%{public}s begin windowNew_->Show.", __func__);
-        windowNew_->Show();
-        APP_LOGI("%{public}s end windowNew_->Show.", __func__);
+    if (windowScene_) {
+        APP_LOGI("%{public}s begin windowScene_->GoForeground.", __func__);
+        windowScene_->GoForeground();
+        APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
     }
 
     APP_LOGI("AbilityWindow::OnPostAbilityForeground end.");
@@ -276,13 +184,10 @@ void AbilityWindow::OnPostAbilityStop()
         return;
     }
 
-    if (windowNew_ != nullptr) {
-        int32_t windowID = windowNew_->GetID();
-        APP_LOGI("AbilityWindow::widow::DestroyWindow called windowID=%{public}d begin.", windowID);
-        windowNew_->Destroy();
-        APP_LOGI("AbilityWindow::widow::DestroyWindow called windowID=%{public}d end.", windowID);
-        windowNew_ = nullptr;
-        APP_LOGI("AbilityWindow::widow:: windowNew_ release end.");
+    if (windowScene_) {
+        windowScene_->~WindowScene();
+        windowScene_ = nullptr;
+        APP_LOGI("AbilityWindow::widow:: windowScene_ release end.");
     }
 
     isWindowAttached = false;
@@ -294,16 +199,12 @@ void AbilityWindow::OnPostAbilityStop()
  *
  * @return Returns a Window object pointer.
  */
-const sptr<Window> AbilityWindow::GetWindow()
+const sptr<Rosen::Window> AbilityWindow::GetWindow()
 {
     if (!isWindowAttached) {
         APP_LOGE("AbilityWindow::GetWindow window not attached.");
     }
-
-    if (windowNew_ == nullptr) {
-        APP_LOGE("AbilityWindow::GetWindow the window is nullptr.");
-    }
-    return windowNew_;
+    return windowScene_ ? windowScene_->GetMainWindow() : nullptr;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

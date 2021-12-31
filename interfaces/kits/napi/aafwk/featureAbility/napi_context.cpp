@@ -12,16 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "napi_context.h"
+
 #include <cstring>
 #include <uv.h>
-#include "securec.h"
-#include "hilog_wrapper.h"
-#include "ability_process.h"
-#include "feature_ability_common.h"
+
 #include "../inner/napi_common/napi_common_ability.h"
-#include "file_ex.h"
+#include "ability_process.h"
 #include "directory_ex.h"
-#include "napi_context.h"
+#include "feature_ability_common.h"
+#include "file_ex.h"
+#include "hilog_wrapper.h"
+#include "securec.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;

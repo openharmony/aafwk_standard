@@ -14,9 +14,9 @@
  */
 #ifndef OHOS_AAFWK_WANT_PARAMS_WRAPPER_H
 #define OHOS_AAFWK_WANT_PARAMS_WRAPPER_H
-#include "ohos/aafwk/content/want_params.h"
 #include "ohos/aafwk/base/base_def.h"
 #include "ohos/aafwk/base/base_object.h"
+#include "ohos/aafwk/content/want_params.h"
 namespace OHOS {
 namespace AAFwk {
 class WantParams;

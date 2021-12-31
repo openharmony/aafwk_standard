@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 #include "ability_thread.h"
 #include "ability_context.h"
+#include "ability_loader.h"
 #include "ability_manager_client.h"
 #include "context_deal.h"
 #include "mock_serviceability_manager_service.h"
@@ -30,6 +31,9 @@ using namespace OHOS::AppExecFwk;
 using namespace OHOS;
 using namespace AAFwk;
 
+namespace {
+const std::string ACE_SERVICE_ABILITY_NAME = "AceServiceAbility";
+}
 class AbilityContextTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -52,6 +56,9 @@ void AbilityContextTest::SetUpTestCase(void)
     }
 
     sysMgr->RegisterSystemAbility(OHOS::ABILITY_MGR_SERVICE_ID, abilityObject);
+
+    AbilityLoader::GetInstance().RegisterAbility(
+        ACE_SERVICE_ABILITY_NAME, []()->Ability *{ return new (std::nothrow) Ability; });
 }
 
 void AbilityContextTest::TearDownTestCase(void)
@@ -81,7 +88,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_ConnectAbility_0100, Function
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetAbilityInfo(abilityInfo);
@@ -108,7 +115,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_DisconnectAbility_0100, Funct
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetAbilityInfo(abilityInfo);
@@ -136,7 +143,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StartAbility_0100, Function |
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
     Want want;
     context_->StartAbility(want, -1);
     usleep(AbilityContextTest::TEST_WAIT_TIME);
@@ -158,7 +165,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_TerminateAbility_0100, Functi
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
     Want want;
     context_->StartAbility(want, -1);
     usleep(AbilityContextTest::TEST_WAIT_TIME);
@@ -186,7 +193,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_TerminateAbility_0200, Functi
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetAbilityInfo(abilityInfo);
@@ -211,7 +218,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StopService_0100, Function | 
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetAbilityInfo(abilityInfo);
@@ -241,7 +248,7 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StopService_0200, Function | 
     abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetAbilityInfo(abilityInfo);
     context_->AttachBaseContext(deal);

@@ -14,15 +14,16 @@
  */
 
 #include "data_ability_helper.h"
-#include "ability_thread.h"
+
 #include "ability_scheduler_interface.h"
-#include "app_log_wrapper.h"
+#include "ability_thread.h"
 #include "abs_shared_result_set.h"
-#include "data_ability_predicates.h"
-#include "values_bucket.h"
-#include "data_ability_result.h"
-#include "data_ability_operation.h"
+#include "app_log_wrapper.h"
 #include "data_ability_observer_interface.h"
+#include "data_ability_operation.h"
+#include "data_ability_predicates.h"
+#include "data_ability_result.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -601,7 +602,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityHelper::Query(
     APP_LOGI("DataAbilityHelper::Query start.");
     std::lock_guard<std::mutex> guard(lock_);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset = nullptr;
-	
+
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return resultset;

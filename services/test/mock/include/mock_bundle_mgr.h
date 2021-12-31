@@ -136,6 +136,7 @@ public:
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+    bool QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {
         return true;
@@ -143,7 +144,7 @@ public:
     bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
-    bool NotifyAbilityLifeStatus(const std::string &bundleName,
+    bool NotifyActivityLifeStatus(const std::string &bundleName,
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
 

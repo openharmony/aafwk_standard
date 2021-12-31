@@ -490,6 +490,7 @@ void Skills::RemoveSchemeSpecificPart(const std::string &schemeSpecificPart)
     auto it = std::find_if(schemeSpecificParts_.begin(),
         schemeSpecificParts_.end(),
         [&schemeSpecificPart](const PatternsMatcher pm) { return pm.GetPattern() == schemeSpecificPart; });
+
     if (it != schemeSpecificParts_.end()) {
         schemeSpecificParts_.erase(it);
     }

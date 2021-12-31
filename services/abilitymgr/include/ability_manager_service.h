@@ -30,6 +30,8 @@
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
 #include "data_ability_manager.h"
+#include "distributed_sched_interface.h"
+#include "distributed_sched_proxy.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
 #include "kernal_system_app_manager.h"
@@ -125,6 +127,14 @@ public:
     virtual int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override;
 
     /**
+     * MinimizeAbility, minimize the special ability.
+     *
+     * @param token, ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token) override;
+
+    /**
      * ConnectAbility, connect session with service ability.
      *
      * @param want, Special want for service type's ability.
@@ -134,6 +144,24 @@ public:
      */
     virtual int ConnectAbility(
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
+
+    /**
+     * StartContinuation, continue ability to remote.
+     *
+     * @param want, Indicates the ability to start.
+     * @param abilityToken, Caller ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override;
+
+    /**
+     * NotifyContinuationResult, notify continue result to ability.
+     *
+     * @param abilityToken, Caller ability token.
+     * @param result, continuation result.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
 
     virtual int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
 
@@ -554,6 +582,8 @@ public:
     void HandleLoadTimeOut(int64_t eventId);
     void HandleActiveTimeOut(int64_t eventId);
     void HandleInactiveTimeOut(int64_t eventId);
+    void HandleForegroundNewTimeOut(int64_t eventId);
+    void HandleBackgroundNewTimeOut(int64_t eventId);
 
     void RestartAbility(const sptr<IRemoteObject> &token);
     void NotifyBmsAbilityLifeStatus(
@@ -574,13 +604,15 @@ public:
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
 
     int GetMissionSaveTime() const;
-    
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;
     static constexpr uint32_t INACTIVE_TIMEOUT_MSG = 2;
     static constexpr uint32_t BACKGROUND_TIMEOUT_MSG = 3;
     static constexpr uint32_t TERMINATE_TIMEOUT_MSG = 4;
+    static constexpr uint32_t FOREGROUNDNEW_TIMEOUT_MSG = 5;
+    static constexpr uint32_t BACKGROUNDNEW_TIMEOUT_MSG = 6;
 
     static constexpr uint32_t LOAD_TIMEOUT = 3000;            // ms
     static constexpr uint32_t ACTIVE_TIMEOUT = 5000;          // ms
@@ -593,6 +625,8 @@ public:
     static constexpr uint32_t SYSTEM_UI_TIMEOUT = 5000;       // ms
     static constexpr uint32_t RESTART_TIMEOUT = 5000;         // ms
     static constexpr uint32_t RESTART_ABILITY_TIMEOUT = 500;  // ms
+    static constexpr uint32_t FOREGROUNDNEW_TIMEOUT = 5000;   // ms
+    static constexpr uint32_t BACKGROUNDNEW_TIMEOUT = 3000;   // ms
 
     static constexpr uint32_t MIN_DUMP_ARGUMENT_NUM = 2;
     static constexpr uint32_t MAX_WAIT_SYSTEM_UI_NUM = 600;
@@ -630,11 +664,7 @@ private:
      *
      */
     void StartingLauncherAbility();
-    /**
-     * starting settings data ability.
-     *
-     */
-    void StartingSettingsDataAbility();
+
     /**
      * starting phone service ability.
      *
@@ -692,9 +722,20 @@ private:
      */
     void GetGlobalConfiguration();
 
+    sptr<DistributedSchedule::IDistributedSched> GetDmsProxy();
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
+    int StartRemoteAbility(const Want &want, int requestCode);
+    int ConnectLocalAbility(
+        const Want &want, const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken, int requestUid, int callerUid);
+    int DisconnectLocalAbility(const sptr<IAbilityConnection> &connect);
+    int ConnectRemoteAbility(const Want &want, const sptr<IRemoteObject> &connect);
+    int DisconnectRemoteAbility(const sptr<IRemoteObject> &connect);
     int PreLoadAppDataAbilities(const std::string &bundleName, const int uid);
 
+    bool CheckIfOperateRemote(const Want &want);
+    bool GetLocalDeviceId(std::string& localDeviceId);
+    std::string AnonymizeDeviceId(const std::string& deviceId);
     bool VerificationToken(const sptr<IRemoteObject> &token);
     void RequestPermission(const Want *resultWant);
 
