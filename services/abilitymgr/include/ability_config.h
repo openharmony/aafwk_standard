@@ -43,9 +43,12 @@ const std::string MISSION_NAME_MARK_HEAD = "#";
 const std::string MISSION_NAME_SEPARATOR = ":";
 
 const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WINDOW";
-
+ 
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
+
+const std::string SETTINGS_DATA_ABILITY_NAME = "com.ohos.settingsdata.DataAbility";
+const std::string SETTINGS_DATA_BUNDLE_NAME = "com.ohos.settingsdata";
 
 const std::string APPLICATION_SELECTOR_BUNDLE_NAME = "com.ohos.selector";
 const std::string APPLICATION_SELECTOR_ABILITY_NAME = "com.ohos.selector.MainAbility";
@@ -69,5 +72,5 @@ const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS
-
+ 
 #endif  // OHOS_AAFWK_ABILITY_CONFIG_H
