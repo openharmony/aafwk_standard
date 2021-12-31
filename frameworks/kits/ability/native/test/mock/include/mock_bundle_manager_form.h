@@ -151,7 +151,7 @@ public:
     {
         return true;
     }
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) override
     {
         return true;
     }
@@ -183,8 +183,7 @@ public:
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success
      */
-    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override
-    {
+    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override {
         return true;
     }
     /**
@@ -265,6 +264,10 @@ public:
     };
     virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override
+    {
+        return true;
+    };
+    virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {
         return true;
     };
@@ -383,8 +386,7 @@ public:
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success
      */
-    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override
-    {
+    virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcut) override {
         return true;
     }
     virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfo) override;
@@ -402,7 +404,7 @@ public:
     {
         return true;
     }
-    virtual bool NotifyAbilityLifeStatus(
+    virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) override
     {
         return true;

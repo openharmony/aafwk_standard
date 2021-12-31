@@ -14,9 +14,10 @@
  */
 
 #include "resume_mission_container.h"
-#include "hilog_wrapper.h"
-#include "ability_util.h"
+
 #include "ability_manager_service.h"
+#include "ability_util.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {

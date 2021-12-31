@@ -163,6 +163,15 @@ public:
      * and this Service ability will be destroyed; returns false otherwise.
      */
     ErrCode TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId);
+
+    /**
+     * MinimizeAbility, minimize the special ability.
+     *
+     * @param token, ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MinimizeAbility(const sptr<IRemoteObject> &token);
+
     /**
      * ConnectAbility, connect session with service ability.
      *
@@ -456,6 +465,22 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo);
+	
+    /**
+     * start continuation.
+     * @param want, used to start a ability.
+     * @param abilityToken, ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken);
+
+    /**
+     * notify continuation result.
+     * @param abilityToken, ability token.
+     * @param result, continuation result.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result);
 
 private:
     static std::mutex mutex_;

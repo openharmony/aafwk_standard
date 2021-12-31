@@ -165,7 +165,7 @@ bool BundleMgrProxy::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName)
+bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName, const int userId)
 {
     return true;
 }
@@ -253,7 +253,7 @@ sptr<IBundleInstaller> BundleMgrProxy::GetBundleInstaller()
 {
     return nullptr;
 }
-bool BundleMgrProxy::NotifyAbilityLifeStatus(
+bool BundleMgrProxy::NotifyActivityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;
@@ -418,7 +418,7 @@ bool BundleMgrService::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName)
+bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName, const int userId)
 {
     return true;
 }
@@ -506,7 +506,7 @@ sptr<IBundleInstaller> BundleMgrService::GetBundleInstaller()
 {
     return nullptr;
 }
-bool BundleMgrService::NotifyAbilityLifeStatus(
+bool BundleMgrService::NotifyActivityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
 {
     return true;

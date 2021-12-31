@@ -35,6 +35,7 @@ public:
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD2(StartAbility, int(const Want &, int));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &, int, const Want *));
+    MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &);
     MOCK_METHOD3(ConnectAbility, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
 
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &));
@@ -97,6 +98,8 @@ public:
     MOCK_METHOD1(TerminateAbilityTest, void(int id));
     MOCK_METHOD1(MoveMissionToEnd, int(int id));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
+    MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
 };
 }  // namespace AAFwk
 }  // namespace OHOS

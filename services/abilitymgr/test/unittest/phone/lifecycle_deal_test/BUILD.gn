@@ -56,6 +56,7 @@ ohos_unittest("lifecycle_deal_test") {
   ]
 
   external_deps = [
+    "appexecfwk_standard:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

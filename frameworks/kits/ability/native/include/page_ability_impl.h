@@ -45,7 +45,7 @@ public:
      * @param targetState The life cycle state to switch to.
      *
      */
-    void HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
+    void HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState) override;
 
     /**
      * @brief Handling the life cycle switching of PageAbility in switch.
@@ -60,25 +60,23 @@ public:
 
     /**
      * @brief Execution the KeyDown callback of the ability
-     * @param keyCode Indicates the code of the key pressed.
      * @param keyEvent Indicates the key-down event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event is
      * not handled and should be passed to other handlers.
      *
      */
-    bool DoKeyDown(int keyCode, const KeyEvent &keyEvent);
+    void DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent) override;
 
     /**
      * @brief Execution the KeyUp callback of the ability
-     * @param keyCode Indicates the code of the key released.
      * @param keyEvent Indicates the key-up event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event is
      * not handled and should be passed to other handlers.
      *
      */
-    bool DoKeyUp(int keyCode, const KeyEvent &keyEvent);
+    void DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent) override;
 
     /**
      * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
@@ -88,7 +86,7 @@ public:
      * @return Returns true if the event is handled; returns false otherwise.
      *
      */
-    bool DoTouchEvent(const TouchEvent &touchEvent);
+    void DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent) override;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

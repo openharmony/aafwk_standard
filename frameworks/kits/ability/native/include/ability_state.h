@@ -79,6 +79,14 @@ typedef enum {
     STATE_ACTIVATING,
     STATE_MOVING_BACKGROUND,
     STATE_TERMINATING,
+
+    /**
+     * State for ability (api > 7).
+     */
+    STATE_FOREGROUND_NEW,
+    STATE_BACKGROUND_NEW,
+    STATE_FOREGROUNDING_NEW,
+    STATE_BACKGROUNDING_NEW,
 } State;
 #ifdef __cplusplus
 #if __cplusplus

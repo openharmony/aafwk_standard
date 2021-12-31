@@ -290,7 +290,7 @@ public:
 
     bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
 
-    virtual bool NotifyAbilityLifeStatus(const std::string &bundleName,
+    virtual bool NotifyActivityLifeStatus(const std::string &bundleName,
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
@@ -375,7 +375,7 @@ public:
     int GetUidByBundleName(const std::string &bundleName, const int userId) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
     bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
-    virtual bool NotifyAbilityLifeStatus(const std::string &bundleName,
+    virtual bool NotifyActivityLifeStatus(const std::string &bundleName,
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;

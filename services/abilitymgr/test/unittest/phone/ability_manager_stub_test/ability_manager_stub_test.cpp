@@ -18,6 +18,7 @@
 #include "ability_manager_stub_impl_mock.h"
 #include "ability_scheduler.h"
 #include "mock_ability_connect_callback.h"
+#include "mock_ability_token.h"
 
 using namespace testing::ext;
 using namespace testing;
@@ -445,6 +446,122 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level1)
     EXPECT_EQ(recentList[0].topAbility.GetAbilityName(), "topAbility");
     EXPECT_EQ(recentList[0].topAbility.GetBundleName(), "topBundle");
     EXPECT_EQ(recentList[0].topAbility.GetDeviceID(), "topDevice");
+
+    EXPECT_EQ(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerStub_018
+ * @tc.desc: test OnRemoteRequest from StartContinuation
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_018, TestSize.Level0)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    Want want;
+    sptr<IRemoteObject> abilityToken = new (std::nothrow) AppExecFwk::MockAbilityToken();
+    int callerUid = 0;
+    WriteInterfaceToken(data);
+    data.WriteParcelable(&want);
+    data.WriteParcelable(abilityToken);
+    data.WriteInt32(callerUid);
+    int res = stub_->OnRemoteRequest(IAbilityManager::START_CONTINUATION, data, reply, option);
+
+    EXPECT_EQ(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerStub_019
+ * @tc.desc: test OnRemoteRequest from StartContinuation when abilityToken is null
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_019, TestSize.Level0)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    Want want;
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int callerUid = 0;
+    WriteInterfaceToken(data);
+    data.WriteParcelable(&want);
+    data.WriteParcelable(abilityToken);
+    data.WriteInt32(callerUid);
+    int res = stub_->OnRemoteRequest(IAbilityManager::START_CONTINUATION, data, reply, option);
+
+    EXPECT_NE(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerStub_020
+ * @tc.desc: test OnRemoteRequest from StartContinuation when want is null
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_020, TestSize.Level0)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+
+    sptr<IRemoteObject> abilityToken = new (std::nothrow) AppExecFwk::MockAbilityToken();
+    int callerUid = 0;
+    WriteInterfaceToken(data);
+    data.WriteParcelable(nullptr);
+    data.WriteParcelable(abilityToken);
+    data.WriteInt32(callerUid);
+    int res = stub_->OnRemoteRequest(IAbilityManager::START_CONTINUATION, data, reply, option);
+
+    EXPECT_NE(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerStub_021
+ * @tc.desc: test OnRemoteRequest from NotifyContinuationResult when abilityToken is null
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_021, TestSize.Level0)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int32_t result = 0;
+    WriteInterfaceToken(data);
+    data.WriteParcelable(abilityToken);
+    data.WriteInt32(result);
+    int res = stub_->OnRemoteRequest(IAbilityManager::NOTIFY_CONTINUATION_RESULT, data, reply, option);
+
+    EXPECT_NE(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerStub_022
+ * @tc.desc: test OnRemoteRequest from NotifyContinuationResult
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_022, TestSize.Level0)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    sptr<IRemoteObject> abilityToken = new (std::nothrow) AppExecFwk::MockAbilityToken();
+    int32_t result = 0;
+    WriteInterfaceToken(data);
+    data.WriteParcelable(abilityToken);
+    data.WriteInt32(result);
+    int res = stub_->OnRemoteRequest(IAbilityManager::NOTIFY_CONTINUATION_RESULT, data, reply, option);
 
     EXPECT_EQ(res, NO_ERROR);
 }

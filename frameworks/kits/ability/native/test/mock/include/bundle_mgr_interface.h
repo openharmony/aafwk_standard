@@ -191,7 +191,7 @@ public:
     virtual bool IsSafeMode() = 0;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) = 0;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool UnregisterBundleStatusCallback() = 0;
@@ -216,7 +216,7 @@ public:
     virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos) = 0;
     virtual bool GetModuleUsageRecords(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
-    virtual bool NotifyAbilityLifeStatus(
+    virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
 
     enum class Message {
@@ -272,7 +272,7 @@ public:
         GET_MODULE_USAGE_RECORD,
         GET_SHORTCUT_INFO,
         GET_BUNDLE_INSTALLER,
-        NOTIFY_ABILITY_LIFE_STATUS,
+        NOTIFY_ACTIVITY_LIFE_STATUS,
     };
 };
 }  // namespace AppExecFwk

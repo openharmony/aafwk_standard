@@ -14,15 +14,14 @@
  */
 
 #include "ability_context.h"
-#include "ability_distributed_connection.h"
+
 #include "ability_manager_client.h"
-#include "distributed_client.h"
 #include "app_log_wrapper.h"
-#include "resource_manager.h"
 #include "bundle_constants.h"
 #include "iservice_registry.h"
-#include "system_ability_definition.h"
+#include "resource_manager.h"
 #include "sys_mgr_client.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -53,29 +52,11 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
         return;
     }
 
-    if (CheckIfOperateRemote(want)) {
-        APP_LOGI("%{public}s. Start calling GetDistributedSchedServiceProxy.", __func__);
-        std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> dms = GetDistributedSchedServiceProxy();
-        APP_LOGI("%{public}s. End calling GetDistributedSchedServiceProxy.", __func__);
-        if (dms != nullptr) {
-            AppExecFwk::AbilityInfo abilityInfo;
-            APP_LOGI("AbilityContext::StartAbility. try to StartRemoteAbility");
-            want.DumpInfo(0);
-            int result = 0;
-            if (result != ERR_NONE) {
-                APP_LOGE("AbilityContext::StartAbility start remote ability failed, the result is %{public}d", result);
-            }
-        } else {
-            APP_LOGE("AbilityContext::StartAbility failed. It wants to start a remote ability, but failed to get dms.");
-            return;
-        }
-    } else {
-        APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
-        ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
-        APP_LOGI("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
-        if (err != ERR_OK) {
-            APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
-        }
+    APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
+    APP_LOGI("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
     }
     APP_LOGI("%{public}s end.", __func__);
 }
@@ -249,24 +230,7 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
         return false;
     }
 
-    ErrCode ret = ERR_OK;
-    if (want.GetOperation().GetDeviceId() == "") {
-        APP_LOGI("%{public}s begin ams->ConnectAbilityLocal", __func__);
-        ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
-    } else {
-        APP_LOGI("%{public}s begin ams->ConnectAbilityRemote", __func__);
-        auto pos = abilityConnectionMap_.find(conn);
-        if (pos != abilityConnectionMap_.end()) {
-            APP_LOGI("%{public}s begin ams->ConnectAbilityHasDistributedConnection", __func__);
-            return false;
-        } else {
-            APP_LOGI("%{public}s begin ams->ConnectAbilitySetDistributedConnection", __func__);
-            sptr<AbilityDistributedConnection> distributedConnection = new AbilityDistributedConnection(conn);
-            abilityConnectionMap_.emplace(conn, distributedConnection);
-            ret = DistributedClient::GetInstance()->ConnectRemoteAbility(want, *abilityInfo, distributedConnection);
-        }
-    }
-
+    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
     APP_LOGI("%{public}s end ConnectAbility, ret=%{public}d", __func__, ret);
     bool value = ((ret == ERR_OK) ? true : false);
     if (!value) {
@@ -291,17 +255,7 @@ void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &co
         return;
     }
 
-    ErrCode ret = ERR_OK;
-    auto pos = abilityConnectionMap_.find(conn);
-    if (pos != abilityConnectionMap_.end()) {
-        APP_LOGI("%{public}s begin ams->DisconnectAbilityRemote", __func__);
-        ret = DistributedClient::GetInstance()->DisconnectRemoteAbility(pos->second);
-        abilityConnectionMap_.erase(conn);
-    } else {
-        APP_LOGI("%{public}s begin ams->DisconnectAbilityLocal", __func__);
-        ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
-    }
-
+    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
     APP_LOGI("%{public}s end ams->DisconnectAbility, ret=%{public}d", __func__, ret);
     if (ret != ERR_OK) {
         APP_LOGE("AbilityContext::DisconnectAbility error");
@@ -1199,42 +1153,6 @@ bool AbilityContext::IsFirstInMission()
     APP_LOGI("%{public}s end.", __func__);
 
     return (errval == ERR_OK) ? true : false;
-}
-
-/**
- * @brief Check whether it wants to operate a remote ability
- *
- * @param want Indicates the Want containing information about the ability to start.
- *
- * @return return true if it wamts to operate a remote ability, ohterwise return false.
- */
-bool AbilityContext::CheckIfOperateRemote(const Want &want)
-{
-    if (want.GetElement().GetDeviceID() != "") {
-        return true;
-    }
-    return false;
-}
-
-/**
- * @brief Obtains a distributedSchedService.
- *
- * @return Returns an IDistributedSched proxy.
- */
-std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> AbilityContext::GetDistributedSchedServiceProxy()
-{
-    APP_LOGI("%{public}s begin.", __func__);
-    auto remoteObject = OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
-    if (remoteObject == nullptr) {
-        APP_LOGE("failed to get dms service");
-        return nullptr;
-    }
-
-    APP_LOGI("get dms proxy success.");
-    std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> proxy = nullptr;
-    proxy = std::make_shared<OHOS::DistributedSchedule::DistributedSchedProxy>(remoteObject);
-    APP_LOGI("%{public}s end.", __func__);
-    return proxy;
 }
 
 /**

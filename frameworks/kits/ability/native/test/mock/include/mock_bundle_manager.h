@@ -70,7 +70,7 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;
@@ -96,7 +96,7 @@ public:
     virtual bool GetModuleUsageRecords(
         const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override;
     virtual sptr<IBundleInstaller> GetBundleInstaller() override;
-    virtual bool NotifyAbilityLifeStatus(
+    virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
 };
 
@@ -145,7 +145,7 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;
@@ -171,7 +171,7 @@ public:
     virtual bool GetModuleUsageRecords(
         const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) override;
     virtual sptr<IBundleInstaller> GetBundleInstaller() override;
-    virtual bool NotifyAbilityLifeStatus(
+    virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
 };
 }  // namespace AppExecFwk

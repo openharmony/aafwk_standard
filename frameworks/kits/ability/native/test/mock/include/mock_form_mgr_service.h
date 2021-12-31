@@ -105,7 +105,7 @@ public:
      */
     int UpdateForm(const int64_t formId, const std::string& bundleName, const FormProviderData& formBindingData)
     {
-        if (formId == 300L) {
+        if (formId == 300L){
             return -1;
         }
         return 0;

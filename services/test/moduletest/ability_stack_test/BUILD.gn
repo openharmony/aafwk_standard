@@ -23,6 +23,7 @@ ohos_moduletest("ability_stack_module_test") {
     "${services_path}/test/mock/include",
     "//third_party/jsoncpp/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "//foundation/graphic/standard/interfaces/innerkits/wmclient",
   ]
 
   sources = [ "ability_stack_module_test.cpp" ]
@@ -45,6 +46,7 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/kernal_system_app_manager.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/launch_param.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_deal.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_description_info.cpp",
@@ -83,6 +85,7 @@ ohos_moduletest("ability_stack_module_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
@@ -104,10 +107,12 @@ ohos_moduletest("ability_stack_module_test") {
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
+    "dsoftbus_standard:softbus_client",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "bytrace_standard:bytrace_core",
   ]
 }
 

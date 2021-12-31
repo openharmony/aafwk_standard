@@ -16,10 +16,12 @@
 #ifndef OHOS_ABILITY_WINDOW_H
 #define OHOS_ABILITY_WINDOW_H
 
-#include "window_manager.h"
-
 #include <map>
+
 #include "nocopyable.h"
+#include "window.h"
+#include "window_option.h"
+#include "window_scene.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -43,27 +45,7 @@ public:
      *
      * @param config Indicates window config.
      */
-    bool SetWindowConfig(const sptr<WindowOption> &config);
-
-    /**
-     * @brief Called when the KeyEvent sent.
-     *
-     * @param KeyEvent the key event.
-     *
-     * @return Returns true if the listener has processed the event; returns false otherwise.
-     *
-     */
-    bool OnKeyEvent(KeyEvent event);
-
-    /**
-     * @brief Called back when the Back key is pressed.
-     *
-     * @param ability The ability receive the event.
-     *
-     * @return Returns true if the listener has processed the event; returns false otherwise.
-     *
-     */
-    bool OnBackPressed(std::shared_ptr<IAbilityEvent> &ability);
+    bool SetWindowType(Rosen::WindowType winType);
 
     /**
      * @brief Called when this ability is started.
@@ -106,12 +88,12 @@ public:
      *
      * @return Returns a Window object pointer.
      */
-    const sptr<Window> GetWindow();
+    const sptr<Rosen::Window> GetWindow();
 
 private:
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::weak_ptr<IAbilityEvent> ability_;
-    sptr<Window> windowNew_;
+    std::shared_ptr<Rosen::WindowScene> windowScene_;
     bool isWindowAttached = false;
 };
 }  // namespace AppExecFwk

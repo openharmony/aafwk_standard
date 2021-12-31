@@ -15,9 +15,9 @@
 
 #ifndef OHOS_APPEXECFWK_NAPI_COMMON_ABILITY_H
 #define OHOS_APPEXECFWK_NAPI_COMMON_ABILITY_H
-#include "feature_ability_common.h"
-#include "ability_info.h"
 #include "ability_connect_callback_stub.h"
+#include "ability_info.h"
+#include "feature_ability_common.h"
 
 namespace OHOS {
 namespace AppExecFwk {

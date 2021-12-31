@@ -14,9 +14,9 @@
  */
 
 #include "napi_common_want.h"
-#include "napi_common_util.h"
+
 #include "hilog_wrapper.h"
-#include "ohos/aafwk/content/want_params_wrapper.h"
+#include "napi_common_util.h"
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
@@ -27,6 +27,7 @@
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "ohos/aafwk/content/want_params_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

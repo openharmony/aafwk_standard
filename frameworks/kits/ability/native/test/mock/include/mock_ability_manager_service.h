@@ -45,6 +45,10 @@ public:
     }
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
+    int MinimizeAbility(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
     int ConnectAbility(
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
     int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
@@ -118,6 +122,8 @@ public:
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
+    MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
     int RemoveMission(int id) override;
 
     int RemoveStack(int id) override;

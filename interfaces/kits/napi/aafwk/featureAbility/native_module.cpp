@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#include <pthread.h>
 #include <cstdio>
 #include <cstring>
+#include <pthread.h>
 #include <unistd.h>
 
 #include "feature_ability.h"
 #include "feature_ability_constant.h"
+#include "napi/native_api.h"
+#include "napi/native_node_api.h"
 #include "napi_context.h"
 #include "napi_data_ability_helper.h"
 #include "napi_data_ability_operation.h"
-#include "napi/native_api.h"
-#include "napi/native_node_api.h"
 namespace OHOS {
 namespace AppExecFwk {
 EXTERN_C_START

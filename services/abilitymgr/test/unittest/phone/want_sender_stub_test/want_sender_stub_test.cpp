@@ -29,7 +29,7 @@ public:
     void SetUp();
     void TearDown();
     void WriteInterfaceToken(MessageParcel &data);
-    sptr<WantSenderStubImplMock> stub_ { nullptr };
+    sptr<WantSenderStubImplMock> stub_{nullptr};
 };
 
 void WantSenderStubTest::SetUpTestCase(void)

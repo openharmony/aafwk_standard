@@ -19,56 +19,77 @@
 #include <thread>
 
 #include "ability_loader.h"
+#include "ability_post_event_timeout.h"
+#include "ability_runtime/js_ability.h"
+#include "abs_shared_result_set.h"
 #include "app_log_wrapper.h"
-#include "display_type.h"
-#include "form_provider_client.h"
-#include "if_system_ability_manager.h"
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
-#include "task_handler_client.h"
-#include "ohos_application.h"
+#include "bytrace.h"
+#include "context_impl.h"
 #include "continuation_manager.h"
 #include "continuation_register_manager.h"
 #include "continuation_register_manager_proxy.h"
+#include "data_ability_operation.h"
+#include "data_ability_predicates.h"
+#include "data_ability_result.h"
+#include "data_uri_utils.h"
+#include "display_type.h"
+#include "form_host_client.h"
+#include "form_mgr.h"
+#include "form_provider_client.h"
+#include "if_system_ability_manager.h"
+#include "ipc_skeleton.h"
+#include "iservice_registry.h"
+#include "key_event.h"
+#include "ohos_application.h"
+#include "permission/permission.h"
+#include "permission/permission_kit.h"
 #include "reverse_continuation_scheduler_primary.h"
 #include "reverse_continuation_scheduler_replica.h"
 #include "reverse_continuation_scheduler_replica_handler_interface.h"
+#include "runtime.h"
 #include "string_wrapper.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
-#include "abs_shared_result_set.h"
-#include "data_ability_predicates.h"
-#include "values_bucket.h"
-#include "ability_post_event_timeout.h"
-#include "data_ability_result.h"
-#include "data_ability_operation.h"
-#include "data_uri_utils.h"
-#include "key_event.h"
+#include "system_ability_definition.h"
+#include "task_handler_client.h"
 #include "touch_event.h"
-#include "form_host_client.h"
-#include "form_mgr.h"
-#include "ipc_skeleton.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 using PermissionKit = OHOS::Security::Permission::PermissionKit;
 using PermissionState = OHOS::Security::Permission::PermissionState;
 
-REGISTER_AA(Ability)
+// REGISTER_AA(Ability)
 const std::string Ability::SYSTEM_UI("com.ohos.systemui");
 const std::string Ability::STATUS_BAR("com.ohos.systemui.statusbar.MainAbility");
 const std::string Ability::NAVIGATION_BAR("com.ohos.systemui.navigationbar.MainAbility");
+const std::string Ability::KEYGUARD("com.ohos.screenlock");
 const std::string DEVICE_MANAGER_BUNDLE_NAME = "com.ohos.devicemanagerui";
 const std::string DEVICE_MANAGER_NAME = "com.ohos.devicemanagerui.MainAbility";
 const std::string Ability::DMS_SESSION_ID("sessionId");
 const std::string Ability::DMS_ORIGIN_DEVICE_ID("deviceId");
 const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
+const int TARGET_VERSION_THRESHOLDS = 8;
 
 static std::mutex formLock;
 
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
+
+Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
+{
+    if (!runtime) {
+        return new Ability;
+    }
+
+    switch (runtime->GetLanguage()) {
+        case AbilityRuntime::Runtime::Language::JS:
+            return AbilityRuntime::JsAbility::Create(runtime);
+
+        default:
+            return new Ability();
+    }
+}
 
 void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<OHOSApplication> &application,
     std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token)
@@ -80,11 +101,14 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
 
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
-        abilityWindow_ = std::make_shared<AbilityWindow>();
-        if (abilityWindow_ != nullptr) {
-            APP_LOGI("%{public}s begin abilityWindow_->Init", __func__);
-            abilityWindow_->Init(handler_, shared_from_this());
-            APP_LOGI("%{public}s end abilityWindow_->Init", __func__);
+        if (targetVersion_ < TARGET_VERSION_THRESHOLDS) {
+            abilityWindow_ = std::make_shared<AbilityWindow>();
+
+            if (abilityWindow_ != nullptr) {
+                APP_LOGI("%{public}s begin abilityWindow_->Init", __func__);
+                abilityWindow_->Init(handler_, shared_from_this());
+                APP_LOGI("%{public}s end abilityWindow_->Init", __func__);
+            }
         }
         continuationManager_ = std::make_shared<ContinuationManager>();
         std::weak_ptr<Ability> ability = shared_from_this();
@@ -116,6 +140,11 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     APP_LOGI("%{public}s end.", __func__);
 }
 
+void Ability::AttachAbilityContext(const std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
+{
+    abilityContext_ = abilityContext;
+}
+
 /**
  * @brief Obtains a resource manager.
  *
@@ -133,6 +162,7 @@ std::shared_ptr<Global::Resource::ResourceManager> Ability::GetResourceManager()
  */
 void Ability::OnStart(const Want &want)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::OnStart falied abilityInfo_ is nullptr.");
@@ -140,53 +170,43 @@ void Ability::OnStart(const Want &want)
     }
 
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        sptr<WindowOption> config = WindowOption::Get();
-
-        OHOS::WindowType winType = OHOS::WindowType::WINDOW_TYPE_NORMAL;
+        Rosen::WindowType winType = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
         if (abilityInfo_->bundleName == SYSTEM_UI) {
             if (abilityInfo_->name == STATUS_BAR) {
-                winType = OHOS::WindowType::WINDOW_TYPE_STATUS_BAR;
+                winType = Rosen::WindowType::WINDOW_TYPE_STATUS_BAR;
             }
             if (abilityInfo_->name == NAVIGATION_BAR) {
-                winType = OHOS::WindowType::WINDOW_TYPE_NAVI_BAR;
+                winType = Rosen::WindowType::WINDOW_TYPE_NAVIGATION_BAR;
             }
         }
         if (abilityInfo_->bundleName == OHOS_REQUEST_PERMISSION_BUNDLENAME &&
             abilityInfo_->name == OHOS_REQUEST_PERMISSION_ABILITY_NAME) {
-            winType = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
+            winType = Rosen::WindowType::WINDOW_TYPE_SYSTEM_ALARM_WINDOW;
+        }
+
+        if (abilityInfo_->bundleName == KEYGUARD) {
+            winType = Rosen::WindowType::WINDOW_TYPE_DRAGGING_EFFECT;
         }
 
         if (abilityInfo_->bundleName == DEVICE_MANAGER_BUNDLE_NAME && abilityInfo_->name == DEVICE_MANAGER_NAME) {
-            winType = OHOS::WindowType::WINDOW_TYPE_ALARM_SCREEN;
+            winType = Rosen::WindowType::WINDOW_TYPE_SYSTEM_ALARM_WINDOW;
         }
 
-        config->SetWindowType(winType);
         APP_LOGI("Ability::OnStart bundleName:%{public}s abilityName:%{public}s: set config.type = %{public}d",
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
             winType);
-        if (setting_ != nullptr) {
-            auto windowMode = static_cast<AbilityWindowConfiguration>(
-                std::atoi(setting_->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
-            APP_LOGI("%{public}s windowMode : %{public}d", __func__, windowMode);
-            if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING) {
-                APP_LOGI("%{public}s begin SetWindowMode : WINDOW_MODE_FREE.", __func__);
-                config->SetWindowType(WINDOW_TYPE_FLOAT);
-                APP_LOGI("%{public}s end SetWindowMode : WINDOW_MODE_FREE.", __func__);
-            }
-        } else {
-            APP_LOGI("Ability::OnStart setting_ == nullptr.");
-        }
-        SetUIContent(config);
+        SetWindowType(winType);
 
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStart.", __func__);
             abilityWindow_->OnPostAbilityStart();
-            if (abilityWindow_->GetWindow()) {
-                auto windowId = abilityWindow_->GetWindow()->GetID();
-                APP_LOGI("Ability::OnStart: add window info  = %{public}d", windowId);
-                OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
-            }
+            // TODO::GetID is not exist
+//            if (abilityWindow_->GetWindow()) {
+//                auto windowId = abilityWindow_->GetWindow()->GetID();
+//                APP_LOGI("Ability::OnStart: add window info  = %{public}d", windowId);
+//                OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
+//            }
             APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
         }
     }
@@ -196,7 +216,11 @@ void Ability::OnStart(const Want &want)
         APP_LOGE("Ability::OnStart error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
+    if (targetVersion_ < TARGET_VERSION_THRESHOLDS) {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
+    } else {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::STARTED_NEW);
+    }
 
     if (lifecycle_ == nullptr) {
         APP_LOGE("Ability::OnStart error. lifecycle_ == nullptr.");
@@ -214,13 +238,12 @@ void Ability::OnStart(const Want &want)
  */
 void Ability::OnStop()
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
-    if (continuationManager_ != nullptr) {
-        continuationManager_->UnregisterAbilityTokenIfNeed();
-    } else {
-        APP_LOGE("%{public}s continuationManager_ is nullptr.", __func__);
+    if (scene_ != nullptr) {
+        scene_ = nullptr;
+        onSceneDestroyed();
     }
-
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStop.", __func__);
         abilityWindow_->OnPostAbilityStop();
@@ -250,6 +273,7 @@ void Ability::OnStop()
  */
 void Ability::OnActive()
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityWindow_ != nullptr) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityActive.", __func__);
@@ -279,6 +303,7 @@ void Ability::OnActive()
  */
 void Ability::OnInactive()
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityInactive.", __func__);
@@ -301,6 +326,28 @@ void Ability::OnInactive()
 }
 
 /**
+ * @brief Called after instantiating WindowScene.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnSceneCreated()
+{
+    APP_LOGI("%{public}s called.", __func__);
+}
+
+/**
+ * @brief Called after ability stoped.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::onSceneDestroyed()
+{
+    APP_LOGI("%{public}s called.", __func__);
+}
+
+/**
  * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
  *
  *
@@ -309,24 +356,37 @@ void Ability::OnInactive()
  */
 void Ability::OnForeground(const Want &want)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
-    if (abilityWindow_ != nullptr) {
-        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
-        abilityWindow_->OnPostAbilityForeground();
-        APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
+    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+        if (scene_ == nullptr) {
+            if ((abilityContext_ == nullptr) || (sceneListener_ == nullptr)) {
+                APP_LOGE("Ability::OnForeground error. abilityContext_ or sceneListener_ is nullptr!");
+                return;
+            }
+            scene_ = std::make_shared<Rosen::WindowScene>();
+            if (scene_ == nullptr) {
+                APP_LOGE("%{public}s error. failed to create WindowScene instance!", __func__);
+                return;
+            }
+            Rosen::WMError ret = scene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext_, sceneListener_);
+            if (ret != Rosen::WMError::WM_OK) {
+                APP_LOGE("%{public}s error. failed to init window scene!", __func__);
+                return;
+            }
+            OnSceneCreated();
+        }
+        APP_LOGI("%{public}s begin scene_->GoForeground.", __func__);
+        scene_->GoForeground();
+        APP_LOGI("%{public}s end scene_->GoForeground.", __func__);
+    } else {
+        if (abilityWindow_ != nullptr) {
+            APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
+            abilityWindow_->OnPostAbilityForeground();
+            APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
+        }
     }
-
-    if (abilityLifecycleExecutor_ == nullptr) {
-        APP_LOGE("Ability::OnForeground error. abilityLifecycleExecutor_ == nullptr.");
-        return;
-    }
-    abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
-
-    if (lifecycle_ == nullptr) {
-        APP_LOGE("Ability::OnForeground error. lifecycle_ == nullptr.");
-        return;
-    }
-    lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_FOREGROUND, want);
+    DispatchLifecycleOnForeground(want);
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -339,18 +399,36 @@ void Ability::OnForeground(const Want &want)
  */
 void Ability::OnBackground()
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
-    if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityBackground.", __func__);
-        abilityWindow_->OnPostAbilityBackground();
-        APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityBackground.", __func__);
+    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
+        APP_LOGI("%{public}s begin OnPostAbilityBackground.", __func__);
+        if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+            if (scene_ == nullptr) {
+                APP_LOGE("Ability::OnBackground error. scene_ == nullptr.");
+                return;
+            }
+            scene_->GoBackground();
+        } else {
+            if (abilityWindow_ == nullptr) {
+                APP_LOGE("Ability::OnBackground error. abilityWindow_ == nullptr.");
+                return;
+            }
+            abilityWindow_->OnPostAbilityBackground();
+        }
+        APP_LOGI("%{public}s end OnPostAbilityBackground.", __func__);
     }
 
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnBackground error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
+
+    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW);
+    } else {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
+    }
 
     if (lifecycle_ == nullptr) {
         APP_LOGE("Ability::OnBackground error. lifecycle_ == nullptr.");
@@ -370,6 +448,7 @@ void Ability::OnBackground()
  */
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnConnect error. abilityLifecycleExecutor_ == nullptr.");
@@ -393,7 +472,9 @@ sptr<IRemoteObject> Ability::OnConnect(const Want &want)
  *
  */
 void Ability::OnDisconnect(const Want &want)
-{}
+{
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+}
 
 /**
  * Start other ability for result.
@@ -470,17 +551,14 @@ void Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSet
  * key-down event of the component returns true. The default implementation of this callback does nothing
  * and returns false.
  *
- * @param keyCode Indicates the code of the key pressed.
  * @param keyEvent Indicates the key-down event.
  *
  * @return Returns true if this event is handled and will not be passed further; returns false if this event
  * is not handled and should be passed to other handlers.
  */
-bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
+void Ability::OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
     APP_LOGI("Ability::OnKeyDown called");
-    APP_LOGI("Ability::OnKeyDown keyCode: %{public}d.", keyCode);
-    return false;
 }
 
 /**
@@ -489,25 +567,19 @@ bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
  * key-up event of the component returns true. The default implementation of this callback does nothing and
  * returns false.
  *
- * @param keyCode Indicates the code of the key released.
  * @param keyEvent Indicates the key-up event.
  *
  * @return Returns true if this event is handled and will not be passed further; returns false if this event
  * is not handled and should be passed to other handlers.
  */
-bool Ability::OnKeyUp(int keyCode, const KeyEvent &keyEvent)
+void Ability::OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
     APP_LOGI("Ability::OnKeyUp called");
-    APP_LOGI("Ability::OnKeyUp keyCode: %{public}d.", keyCode);
-    switch (keyCode) {
-        case OHOS::KeyEventEnum::KEY_BACK:
-            APP_LOGI("Ability::OnKey Back key pressed.");
-            OnBackPressed();
-            return true;
-        default:
-            break;
+    auto code = keyEvent->GetKeyCode();
+    if (code == MMI::KeyEvent::KEYCODE_BACK) {
+        APP_LOGI("Ability::OnKey Back key pressed.");
+        OnBackPressed();
     }
-    return false;
 }
 
 /**
@@ -518,13 +590,9 @@ bool Ability::OnKeyUp(int keyCode, const KeyEvent &keyEvent)
  *
  * @return Returns true if the event is handled; returns false otherwise.
  */
-bool Ability::OnTouchEvent(const TouchEvent &touchEvent)
+void Ability::OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
 {
     APP_LOGI("Ability::OnTouchEvent called");
-    APP_LOGI("Ability::OnTouchEvent action: %{public}d phase: %{public}d",
-        const_cast<TouchEvent &>(touchEvent).GetAction(),
-        const_cast<TouchEvent &>(touchEvent).GetPhase());
-    return false;
 }
 
 /**
@@ -567,19 +635,19 @@ void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int
 {}
 
 /**
- * @brief Inflates UI controls by using WindowConfig.
+ * @brief Inflates UI controls by using WindowOption.
  *
- * @param config Indicates the window config defined by the user.
+ * @param windowOption Indicates the window option defined by the user.
  */
-void Ability::SetUIContent(const sptr<WindowOption> &config)
+void Ability::SetWindowType(Rosen::WindowType winType)
 {
     if (abilityWindow_ == nullptr) {
-        APP_LOGE("Ability::SetUIContent abilityWindow_ is nullptr");
+        APP_LOGE("Ability::SetWindowType abilityWindow_ is nullptr");
         return;
     }
 
     APP_LOGI("%{public}s beign abilityWindow_->SetWindowConfig.", __func__);
-    abilityWindow_->SetWindowConfig(config);
+    abilityWindow_->SetWindowType(winType);
     APP_LOGI("%{public}s end abilityWindow_->SetWindowConfig.", __func__);
 }
 
@@ -588,7 +656,7 @@ void Ability::SetUIContent(const sptr<WindowOption> &config)
  *
  * @return Returns a IWindowsManager object pointer.
  */
-const sptr<Window> Ability::GetWindow()
+const sptr<Rosen::Window> Ability::GetWindow()
 {
     if (abilityWindow_ != nullptr) {
         return abilityWindow_->GetWindow();
@@ -596,6 +664,16 @@ const sptr<Window> Ability::GetWindow()
         APP_LOGI("%{public}s abilityWindow_ is nullptr.", __func__);
         return nullptr;
     }
+}
+
+/**
+ * @brief get the scene belong to the ability.
+ *
+ * @return Returns a WindowScene object pointer.
+ */
+std::shared_ptr<Rosen::WindowScene> Ability::GetScene()
+{
+    return scene_;
 }
 
 /**
@@ -625,6 +703,25 @@ bool Ability::HasWindowFocus()
     }
 
     return false;
+}
+
+/**
+ * @description: Obtains api version based on ability.
+ * @return api version.
+ */
+int Ability::GetTargetVersion()
+{
+    return targetVersion_;
+}
+
+/**
+ * @description: Set api version in an ability.
+ * @param targetVersion api version
+ * @return None.
+ */
+void Ability::SetTargetVersion(int32_t targetVersion)
+{
+    targetVersion_ = targetVersion;
 }
 
 /**
@@ -941,6 +1038,7 @@ void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
  */
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin restart=%{public}s,startId=%{public}d.", __func__, restart ? "true" : "false", startId);
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnCommand error. abilityLifecycleExecutor_ == nullptr.");
@@ -1473,7 +1571,10 @@ bool Ability::OnRestoreData(WantParams &restoreData)
  * @return None.
  */
 void Ability::OnCompleteContinuation(int result)
-{}
+{
+    APP_LOGI("Ability::OnCompleteContinuation change continuation state to initial");
+    continuationManager_->ChangeProcessStateToInit();
+}
 
 /**
  * @brief Used to notify the local Ability that the remote Ability has been destroyed.
@@ -1482,6 +1583,25 @@ void Ability::OnCompleteContinuation(int result)
  */
 void Ability::OnRemoteTerminated()
 {}
+
+void Ability::DispatchLifecycleOnForeground(const Want &want)
+{
+    if (abilityLifecycleExecutor_ == nullptr) {
+        APP_LOGE("Ability::OnForeground error. abilityLifecycleExecutor_ == nullptr.");
+        return;
+    }
+    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::FOREGROUND_NEW);
+    } else {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
+    }
+    if (lifecycle_ == nullptr) {
+        APP_LOGE("Ability::OnForeground error. lifecycle_ == nullptr.");
+        return;
+    }
+    lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_FOREGROUND, want);
+}
+
 bool Ability::VerifySupportForContinuation()
 {
     if (continuationManager_ == nullptr) {
@@ -2593,6 +2713,27 @@ void Ability::SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> settin
     setting_ = setting;
 }
 
+/**
+ * @brief Set the launch param.
+ *
+ * @param launchParam the launch param.
+ */
+void Ability::SetLaunchParam(const AAFwk::LaunchParam &launchParam)
+{
+    APP_LOGI("%{public}s called.", __func__);
+    launchParam_ = launchParam;
+}
+
+const AAFwk::LaunchParam& Ability::GetLaunchParam() const
+{
+    return launchParam_;
+}
+
+void Ability::SetSceneListener(sptr<Rosen::IWindowLifeCycle> listener)
+{
+    sceneListener_ = listener;
+}
+
 std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
 {
@@ -2783,8 +2924,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutInt(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
                 double val = 0.0;
                 if (obj.GetDouble(val) != 0) {
@@ -2795,8 +2935,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutDouble(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_STRING: {
                 std::string val = "";
                 if (obj.GetString(val) != 0) {
@@ -2807,8 +2946,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.c_str());
                 retValueBucket.PutString(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_BLOB: {
                 std::vector<uint8_t> val;
                 if (obj.GetBlob(val) != 0) {
@@ -2819,8 +2957,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.size());
                 retValueBucket.PutBlob(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_BOOL: {
                 bool val = false;
                 if (obj.GetBool(val) != 0) {
@@ -2831,13 +2968,11 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val ? "true" : "false");
                 retValueBucket.PutBool(key, val);
-                break;
-            }
+            } break;
             default: {
                 APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
                 retValueBucket.PutNull(key);
-                break;
-            }
+            } break;
         }
     }
 

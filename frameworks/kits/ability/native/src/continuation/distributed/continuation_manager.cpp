@@ -14,15 +14,15 @@
  */
 
 #include "continuation_manager.h"
+
 #include "ability.h"
 #include "ability_continuation_interface.h"
-#include "continuation_handler.h"
 #include "app_log_wrapper.h"
-#include "want.h"
-#include "continuation_scheduler.h"
+#include "continuation_handler.h"
 #include "distributed_client.h"
-#include "string_ex.h"
 #include "operation_builder.h"
+#include "string_ex.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -181,7 +181,6 @@ void ContinuationManager::NotifyCompleteContinuation(
     const std::string &originDeviceId, int sessionId, bool success, const sptr<IRemoteObject> &reverseScheduler)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    InitDistSchedulerHost();
     DistributedClient::GetInstance()->NotifyCompleteContinuation(
         Str8ToStr16(originDeviceId), sessionId, success, reverseScheduler);
     APP_LOGI("%{public}s called end", __func__);
@@ -278,11 +277,6 @@ bool ContinuationManager::HandleContinueAbility(bool reversible, const std::stri
         return false;
     }
 
-    if (!RegisterAbilityTokenIfNeed(continueToken_)) {
-        APP_LOGE("ContinuationManager::HandleContinueAbility failed. RegisterAbilityTokenIfNeed failed");
-        return false;
-    }
-
     sptr<IRemoteObject> continueToken = continueToken_;
     std::shared_ptr<ContinuationHandler> continuationHandler = continuationHandler_.lock();
     if (continuationHandler == nullptr) {
@@ -291,9 +285,11 @@ bool ContinuationManager::HandleContinueAbility(bool reversible, const std::stri
     }
     continuationHandler->SetReversible(reversible);
 
+    InitMainHandlerIfNeed();
     auto task = [continuationHandler, continueToken, deviceId]() {
         continuationHandler->HandleStartContinuation(continueToken, deviceId);
     };
+
     if (!mainHandler_->PostTask(task)) {
         APP_LOGE("ContinuationManager::HandleContinueAbility failed.PostTask failed");
         return false;
@@ -316,6 +312,12 @@ void ContinuationManager::ChangeProcessState(const ProgressState &newState)
         newState);
 
     progressState_ = newState;
+}
+
+
+void ContinuationManager::ChangeProcessStateToInit()
+{
+    ChangeProcessState(ProgressState::INITIAL);
 }
 
 void ContinuationManager::RestoreStateWhenTimeout(long timeoutInMs, const ProgressState &preState)
@@ -358,109 +360,6 @@ bool ContinuationManager::CheckAbilityToken()
     }
     APP_LOGI("%{public}s called success", __func__);
     return true;
-}
-
-bool ContinuationManager::UnregisterAbilityTokenIfNeed()
-{
-    APP_LOGI("%{public}s called begin", __func__);
-
-    if (continueToken_ == nullptr) {
-        APP_LOGE("%{public}s called failed continueToken_ is nullptr", __func__);
-        return false;
-    }
-
-    if (!tokenRegistered_) {
-        APP_LOGI("%{public}s called no need to :Unregister", __func__);
-        return true;
-    }
-
-    std::lock_guard<std::mutex> lock_l(lockForRegist_);
-
-    if (!tokenRegistered_) {
-        APP_LOGI("%{public}s called no need to :Unregister", __func__);
-        return true;
-    }
-
-    bool unregisterSuccess = UnregisterAbilityToken(continueToken_);
-    if (unregisterSuccess) {
-        tokenRegistered_ = false;
-    }
-
-    APP_LOGI("%{public}s called end", __func__);
-    return unregisterSuccess;
-}
-
-bool ContinuationManager::UnregisterAbilityToken(const sptr<IRemoteObject> &token)
-{
-    APP_LOGI("%{public}s called begin", __func__);
-    int result = -1;
-
-    if (distSchedulerHost_ == nullptr) {
-        APP_LOGE("%{public}s called failed. distSchedulerHost_ is nullptr", __func__);
-        return false;
-    }
-
-    result = DistributedClient::GetInstance()->UnregisterAbilityToken(token, distSchedulerHost_);
-    if (result != -1) {
-        std::string interfaceName = "unregisterAbilityToken";
-        CheckDmsInterfaceResult(result, interfaceName);
-    }
-
-    APP_LOGI("%{public}s called end", __func__);
-    return (result == NO_ERROR);
-}
-
-bool ContinuationManager::RegisterAbilityTokenIfNeed(const sptr<IRemoteObject> &token)
-{
-    APP_LOGI("%{public}s called begin", __func__);
-    if (tokenRegistered_) {
-        return true;
-    }
-
-    std::lock_guard<std::mutex> lock_l(lockForRegist_);
-
-    if (tokenRegistered_) {
-        return true;
-    }
-
-    bool registerSuccess = RegisterAbilityToken(token);
-    if (registerSuccess) {
-        tokenRegistered_ = true;
-    }
-    APP_LOGI("%{public}s called end", __func__);
-    return registerSuccess;
-}
-
-bool ContinuationManager::RegisterAbilityToken(const sptr<IRemoteObject> &token)
-{
-    APP_LOGI("%{public}s called begin", __func__);
-    int result = -1;
-
-    InitDistSchedulerHost();
-
-    result = DistributedClient::GetInstance()->RegisterAbilityToken(token, distSchedulerHost_);
-    if (result != -1) {
-        std::string interfaceName = "registerAbilityToken";
-        CheckDmsInterfaceResult(result, interfaceName);
-    }
-    APP_LOGI("%{public}s called end", __func__);
-    return (result == NO_ERROR);
-}
-
-void ContinuationManager::InitDistSchedulerHost()
-{
-    APP_LOGI("%{public}s called begin", __func__);
-    if (distSchedulerHost_ == nullptr) {
-        InitMainHandlerIfNeed();
-        std::weak_ptr<IDistributeScheduleHandler> continuationHandler = continuationHandler_;
-        distSchedulerHost_ =
-            sptr<ContinuationScheduler>(new (std::nothrow) ContinuationScheduler(continuationHandler, mainHandler_));
-        if (distSchedulerHost_ == nullptr) {
-            APP_LOGE("AbilityThread::AbilityThreadMain failed,thread  is nullptr");
-            return;
-        }
-    }
-    APP_LOGI("%{public}s called end", __func__);
 }
 
 void ContinuationManager::CheckDmsInterfaceResult(int result, const std::string &interfaceName)

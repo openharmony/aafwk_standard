@@ -16,11 +16,12 @@
 #ifndef OHOS_APPEXECFWK_NAPI_COMMON_WANT_H
 #define OHOS_APPEXECFWK_NAPI_COMMON_WANT_H
 
-#include <vector>
 #include <map>
 #include <string>
-#include "want.h"
+#include <vector>
+
 #include "napi_common_data.h"
+#include "want.h"
 #include "want_params.h"
 
 namespace OHOS {

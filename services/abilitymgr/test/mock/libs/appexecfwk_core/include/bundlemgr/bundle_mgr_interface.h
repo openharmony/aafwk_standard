@@ -296,7 +296,7 @@ public:
      * @param bundleName Indicates the bundle name of the application whose data is to be cleared.
      * @return Returns true if the data cleared successfully; returns false otherwise.
      */
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
     /**
      * @brief Register the specific bundle status callback.
      * @param bundleStatusCallback Indicates the callback to be invoked for returning the bundle status changed result.
@@ -450,13 +450,13 @@ public:
      */
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
     /**
-     * @brief Notify a specified ability for ability.
-     * @param bundleName Indicates the bundle name of the ability to ability.
-     * @param abilityName Indicates the name of the ability to ability.
+     * @brief Notify a specified ability for activity.
+     * @param bundleName Indicates the bundle name of the ability to activity.
+     * @param abilityName Indicates the name of the ability to activity.
      * @param launchTime Indicates the ability launchTime.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    virtual bool NotifyAbilityLifeStatus(
+    virtual bool NotifyActivityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) = 0;
     /**
      * @brief Remove cloned bundle.
@@ -532,7 +532,7 @@ public:
         GET_SHORTCUT_INFO,
         GET_ALL_COMMON_EVENT_INFO,
         GET_BUNDLE_INSTALLER,
-        NOTIFY_ABILITY_LIFE_STATUS,
+        NOTIFY_ACTIVITY_LIFE_STATUS,
         REMOVE_CLONED_BUNDLE,
         BUNDLE_CLONE,
         CHECK_BUNDLE_NAME_IN_ALLOWLIST

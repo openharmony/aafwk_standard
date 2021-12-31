@@ -53,6 +53,7 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/image_info.cpp",
+    "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
     "${services_path}/abilitymgr/src/mission_description_info.cpp",
     "${services_path}/abilitymgr/src/mission_option.cpp",
@@ -78,6 +79,7 @@ ohos_shared_library("ability_manager") {
   ]
 
   deps = [
+    "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -99,6 +101,7 @@ ohos_shared_library("ability_manager") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "bytrace_standard:bytrace_core",
   ]
 
   subsystem_name = "aafwk"

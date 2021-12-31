@@ -84,7 +84,7 @@ HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0100, Function | 
                           STRING_PAGE_ABILITY_BUNDLE_NAME + " -D";
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_START_ABILITY_OK + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_OK + "\n");
 
     // uninstall the bundle
     ToolSystemTest::UninstallBundle(STRING_PAGE_ABILITY_BUNDLE_NAME);
@@ -108,7 +108,7 @@ HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0200, Function | 
                           STRING_SERVICE_ABILITY_BUNDLE_NAME;
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_START_ABILITY_OK + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_OK + "\n");
 
     // uninstall the bundle
     ToolSystemTest::UninstallBundle(STRING_SERVICE_ABILITY_BUNDLE_NAME);
@@ -126,7 +126,7 @@ HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0300, Function | 
                           STRING_PAGE_ABILITY_BUNDLE_NAME_INVALID;
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_START_ABILITY_NG + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_NG + "\n");
 }
 
 /**
@@ -141,5 +141,48 @@ HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0400, Function | 
                           STRING_SERVICE_ABILITY_BUNDLE_NAME_INVALID;
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_START_ABILITY_NG + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_NG + "\n");
+}
+
+/**
+ * @tc.number: Aa_Command_Start_SystemTest_0500
+ * @tc.name: ExecCommand
+ * @tc.desc: Verify the "aa start -d <device-id> -a <ability-name> -b <bundle-name> -D" command.
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1HD
+ */
+HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0500, Function | MediumTest | Level1)
+{
+    // uninstall the bundle
+    ToolSystemTest::UninstallBundle(STRING_PAGE_ABILITY_BUNDLE_NAME);
+
+    // install the bundle
+    ToolSystemTest::InstallBundle(STRING_PAGE_ABILITY_BUNDLE_PATH, true);
+
+    // start the page ability
+    std::string command = "aa start -d " + STRING_DEVICE_NAME + " -a " + STRING_PAGE_ABILITY_NAME + " -b " +
+                          STRING_PAGE_ABILITY_BUNDLE_NAME + " -D";
+    std::string commandResult = ToolSystemTest::ExecuteCommand(command);
+
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_OK + "\n");
+
+    // uninstall the bundle
+    ToolSystemTest::UninstallBundle(STRING_PAGE_ABILITY_BUNDLE_NAME);
+}
+
+/**
+ * @tc.number: Aa_Command_Start_SystemTest_0600
+ * @tc.name: ExecCommand
+ * @tc.desc: Verify the "aa start -d <device-id> -a <ability-name> -b <bundle-name> -D" command.
+ * @tc.type: FUNC
+ * @tc.require: AR000GJUN4
+ */
+HWTEST_F(AaCommandStartSystemTest, Aa_Command_Start_SystemTest_0600, Function | MediumTest | Level1)
+{
+    // start the invalid page ability
+    std::string command = "aa start -d " + STRING_DEVICE_NAME + " -a " + STRING_PAGE_ABILITY_NAME_INVALID + " -b " +
+                          STRING_PAGE_ABILITY_BUNDLE_NAME_INVALID + " -D";
+    std::string commandResult = ToolSystemTest::ExecuteCommand(command);
+
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_NG + "\n");
 }

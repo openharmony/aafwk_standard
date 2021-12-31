@@ -16,7 +16,7 @@
 #include <algorithm>
 namespace OHOS {
 namespace AAFwk {
-#define WANT_PARAM_WRAPPER_TWO 2
+constexpr int32_t WANT_PARAM_WRAPPER_TWO = 2;
 IINTERFACE_IMPL_1(WantParamWrapper, Object, IWantParams);
 const InterfaceID g_IID_IWantParams = {
     0xa75b9db6, 0x9813, 0x4371, 0x8848, {0xd, 0x2, 0x9, 0x6, 0x6, 0xc, 0xe, 0x6, 0xe, 0xc, 0x6, 0x8}
@@ -119,7 +119,7 @@ sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
                         break;
                     }
                 }
-                wantPaqrams.SetParam(key, WantParamWrapper::Parse(str.substr(strnum, num - strnum)));
+                wantPaqrams.SetParam(key, WantParamWrapper::Parse(str.substr(strnum, num - strnum + 1)));
                 key = "";
                 typeId = 0;
                 strnum = num + 1;

@@ -111,13 +111,27 @@ public:
      */
     void SetAbilityThread(const sptr<AbilityThread> &abilityThread);
 
+    /**
+    * @description: Obtains api version based on ability record.
+    * @return api version.
+    */
+    int GetTargetVersion();
+
+    /**
+    * @description: Set api version in an ability record.
+    * @param targetVersion api version
+    * @return None.
+    */
+    void SetTargetVersion(int targetVersion);
+
 private:
-    std::shared_ptr<AbilityInfo> abilityInfo_;
+    std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
     sptr<IRemoteObject> token_;
-    std::shared_ptr<EventRunner> runner_;
-    std::shared_ptr<EventHandler> handler_;
-    std::shared_ptr<AbilityImpl> abilityImpl_;  // store abilityImpl
+    std::shared_ptr<EventRunner> runner_ = nullptr;
+    std::shared_ptr<EventHandler> handler_ = nullptr;
+    std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;  // store abilityImpl
     sptr<AbilityThread> abilityThread_;
+    int targetVersion_ = 0;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

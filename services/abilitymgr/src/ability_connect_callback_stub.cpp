@@ -50,7 +50,7 @@ void AbilityConnectionProxy::OnAbilityConnectDone(
         return;
     }
 
-    if (!data.WriteParcelable(remoteObject)) {
+    if (!data.WriteRemoteObject(remoteObject)) {
         HILOG_ERROR("Connect done remote object error.");
         return;
     }
@@ -112,7 +112,11 @@ int AbilityConnectionStub::OnRemoteRequest(
                 HILOG_ERROR("callback stub receive element is nullptr");
                 return ERR_INVALID_VALUE;
             }
-            auto remoteObject = data.ReadParcelable<IRemoteObject>();
+            auto remoteObject = data.ReadRemoteObject();
+            if (remoteObject == nullptr) {
+                HILOG_ERROR("callback stub receive remoteObject is nullptr");
+                return ERR_INVALID_VALUE;
+            }
             auto resultCode = data.ReadInt32();
             OnAbilityConnectDone(*element, remoteObject, resultCode);
             delete element;

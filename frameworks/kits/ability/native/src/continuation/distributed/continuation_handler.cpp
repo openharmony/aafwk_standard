@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 #include "continuation_handler.h"
-#include "element_name.h"
-#include "distributed_client.h"
+
+#include "ability_manager_client.h"
 #include "app_log_wrapper.h"
+#include "distributed_client.h"
+#include "element_name.h"
 
 using OHOS::AAFwk::WantParams;
 namespace OHOS {
@@ -70,7 +72,7 @@ bool ContinuationHandler::HandleStartContinuation(const sptr<IRemoteObject> &tok
     Want want = SetWantParams(wantParams);
     want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
 
-    int result = DistributedClient::GetInstance()->StartContinuation(want, *abilityInfo_, token);
+    int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token);
     if (result != 0) {
         APP_LOGE("distClient_.startContinuation failed.");
         return false;

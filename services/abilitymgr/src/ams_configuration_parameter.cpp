@@ -19,7 +19,7 @@
 namespace OHOS {
 namespace AAFwk {
 using json = nlohmann::json;
-static const int experienceMemThreshold = 20;
+static const int EXPERIENCE_MEM_THRESHOLD = 20;
 
 void AmsConfigurationParameter::Parse()
 {
@@ -30,11 +30,6 @@ void AmsConfigurationParameter::Parse()
 bool AmsConfigurationParameter::GetStartLauncherState() const
 {
     return canStartLauncher_;
-}
-
-bool AmsConfigurationParameter::GetStartSettingsDataState() const
-{
-    return canStartSettingsData_;
 }
 
 bool AmsConfigurationParameter::GetStatusBarState() const
@@ -128,7 +123,6 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
     int ret = -1;
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
         canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
-        canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
         canStartUiNavigationBar_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
@@ -180,7 +174,7 @@ int AmsConfigurationParameter::GetMemThreshold(const std::string &key)
     auto threshold = memThreshold_.find(key);
     if (threshold == memThreshold_.end()) {
         HILOG_ERROR("%{public}s, threshold[%{public}s] find failed", __func__, key.c_str());
-        return experienceMemThreshold;
+        return EXPERIENCE_MEM_THRESHOLD;
     }
 
     return std::stoi(threshold->second);
