@@ -630,7 +630,11 @@ private:
      *
      */
     void StartingLauncherAbility();
-
+    /**
+     * starting settings data ability.
+     *
+     */
+    void StartingSettingsDataAbility();
     /**
      * starting phone service ability.
      *
