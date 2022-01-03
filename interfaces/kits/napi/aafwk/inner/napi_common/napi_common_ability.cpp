@@ -23,8 +23,8 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-napi_value g_classContext;
-napi_value g_dataAbilityHelper;
+napi_value thread_local g_classContext;
+napi_value thread_local g_dataAbilityHelper;
 using NAPICreateJsRemoteObject = napi_value (*)(napi_env env, const sptr<IRemoteObject> target);
 
 napi_value *GetGlobalClassContext(void)
