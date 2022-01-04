@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 #include "zip_writer.h"
-#include <cstdio>
-#include "zip_internal.h"
-#include "hilog_wrapper.h"
-#include "directory_ex.h"
+
+#include <stdio.h>
+
 #include "contrib/minizip/zip.h"
+#include "directory_ex.h"
+#include "hilog_wrapper.h"
+#include "zip_internal.h"
 
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
 namespace {
 // Numbers of pending entries that trigger writting them to the ZIP file.
-constexpr size_t kMaxPendingEntriesCount = 50;
+constexpr size_t g_MaxPendingEntriesCount = 50;
 const std::string SEPARATOR = "/";
 
 #define CALLING_CALL_BACK(callback, result) \
@@ -179,7 +181,7 @@ bool ZipWriter::Close(const OPTIONS &options, CALLBACK callback)
 
 bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBACK callback)
 {
-    if (pendingEntries_.size() < kMaxPendingEntriesCount && !force) {
+    if (pendingEntries_.size() < g_MaxPendingEntriesCount && !force) {
         return true;
     }
 
@@ -187,8 +189,9 @@ bool ZipWriter::FlushEntriesIfNeeded(bool force, const OPTIONS &options, CALLBAC
     if (EndsWith(rootDir_.Value(), SEPARATOR)) {
         rootDir = rootDir.substr(0, rootDir.size() - 1);
     }
-    while (pendingEntries_.size() >= kMaxPendingEntriesCount || (force && !pendingEntries_.empty())) {
-        size_t entry_count = std::min(pendingEntries_.size(), kMaxPendingEntriesCount);
+    while (pendingEntries_.size() >= g_MaxPendingEntriesCount || (force && !pendingEntries_.empty())) {
+
+        size_t entry_count = std::min(pendingEntries_.size(), g_MaxPendingEntriesCount);
         std::vector<FilePath> relativePaths;
         std::vector<FilePath> absolutePaths;
 

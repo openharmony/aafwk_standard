@@ -43,6 +43,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
     "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/kernal_system_app_manager.cpp",
+    "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
     "${services_path}/abilitymgr/src/lock_mission_container.cpp",
@@ -106,6 +107,7 @@ ohos_source_set("abilityms_test_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
@@ -117,8 +119,10 @@ ohos_source_set("abilityms_test_source") {
   ]
 
   external_deps = [
+    "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",

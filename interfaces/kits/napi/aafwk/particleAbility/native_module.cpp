@@ -13,15 +13,16 @@
  * limitations under the License.
  */
 
-#include <pthread.h>
 #include <cstdio>
 #include <cstring>
+#include <pthread.h>
 #include <unistd.h>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "particle_ability.h"
 #include "napi_context.h"
 #include "napi_data_ability_helper.h"
+#include "particle_ability.h"
 namespace OHOS {
 namespace AppExecFwk {
 EXTERN_C_START
@@ -40,13 +41,15 @@ EXTERN_C_END
 /*
  * The module definition.
  */
-static napi_module _module = {.nm_version = 1,
+static napi_module _module = {
+    .nm_version = 1,
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = ParticleInit,
     .nm_modname = "ability.particleAbility",
     .nm_priv = ((void *)0),
-    .reserved = {0}};
+    .reserved = {0}
+};
 
 /*
  * The module registration.

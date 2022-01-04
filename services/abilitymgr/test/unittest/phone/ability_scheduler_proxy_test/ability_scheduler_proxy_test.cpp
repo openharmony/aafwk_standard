@@ -277,5 +277,22 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_012, TestS
 
     EXPECT_EQ(IAbilityScheduler::SCHEDULE_ABILITY_COMMAND, mock_->code_);
 }
+
+/**
+ * @tc.name: ability_scheduler_proxy_operating_013
+ * @tc.desc: test NotifyContinuationResult
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IJ
+ */
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_013, TestSize.Level0)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilitySchedulerMock::InvokeSendRequest));
+    int32_t result = 0;
+    abilitySchedulerProxy_->NotifyContinuationResult(result);
+
+    EXPECT_EQ(IAbilityScheduler::NOTIFY_CONTINUATION_RESULT, mock_->code_);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

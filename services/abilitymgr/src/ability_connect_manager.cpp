@@ -17,11 +17,12 @@
 
 #include <algorithm>
 
-#include "ability_util.h"
-#include "hilog_wrapper.h"
+#include "ability_connect_callback_stub.h"
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
-#include "ability_connect_callback_stub.h"
+#include "ability_util.h"
+#include "bytrace.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -33,6 +34,7 @@ AbilityConnectManager::~AbilityConnectManager()
 
 int AbilityConnectManager::StartAbility(const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     return StartAbilityLocked(abilityRequest);
 }
@@ -92,6 +94,7 @@ int AbilityConnectManager::TerminateAbilityResult(const sptr<IRemoteObject> &tok
 
 int AbilityConnectManager::StartAbilityLocked(const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Start ability locked, ability_name: %{public}s", abilityRequest.want.GetElement().GetURI().c_str());
 
     std::shared_ptr<AbilityRecord> targetService;
@@ -122,6 +125,7 @@ int AbilityConnectManager::StartAbilityLocked(const AbilityRequest &abilityReque
 
 int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &token)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Terminate ability locked.");
     auto abilityRecord = GetServiceRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
@@ -148,6 +152,7 @@ int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &tok
 
 int AbilityConnectManager::TerminateAbilityResultLocked(const sptr<IRemoteObject> &token, int startId)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Terminate ability result locked, startId: %{public}d", startId);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
@@ -164,6 +169,7 @@ int AbilityConnectManager::TerminateAbilityResultLocked(const sptr<IRemoteObject
 
 int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Stop service ability locked.");
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
@@ -194,6 +200,7 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
 void AbilityConnectManager::GetOrCreateServiceRecord(const AbilityRequest &abilityRequest,
     const bool isCreatedByConnect, std::shared_ptr<AbilityRecord> &targetService, bool &isLoadedAbility)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
     std::string key = std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + "/" + element.GetURI();
@@ -227,6 +234,7 @@ void AbilityConnectManager::GetConnectRecordListFromMap(
 int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityRequest,
     const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("%{public}s, ability_name:%{public}s", __func__, abilityRequest.want.GetElement().GetURI().c_str());
     std::lock_guard<std::recursive_mutex> guard(Lock_);
 
@@ -283,6 +291,7 @@ int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityReq
 
 int AbilityConnectManager::DisconnectAbilityLocked(const sptr<IAbilityConnection> &connect)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Disconnect ability locked.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
 
@@ -327,6 +336,7 @@ int AbilityConnectManager::DisconnectAbilityLocked(const sptr<IAbilityConnection
 int AbilityConnectManager::AttachAbilityThreadLocked(
     const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilityRecord = GetServiceRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
@@ -346,6 +356,7 @@ int AbilityConnectManager::AttachAbilityThreadLocked(
 
 void AbilityConnectManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilitState = DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(state);
     auto abilityRecord = GetServiceRecordByToken(token);
@@ -376,6 +387,7 @@ void AbilityConnectManager::OnAppStateChanged(const AppInfo &info)
 
 int AbilityConnectManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilityRecord = GetServiceRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
@@ -402,6 +414,7 @@ int AbilityConnectManager::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
     const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &remoteObject)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
@@ -429,6 +442,7 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
 
 int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemoteObject> &token)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto abilityRecord = GetServiceRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, CONNECTION_NOT_EXIST);
@@ -462,6 +476,7 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
 
 int AbilityConnectManager::ScheduleCommandAbilityDoneLocked(const sptr<IRemoteObject> &token)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
@@ -538,6 +553,7 @@ void AbilityConnectManager::RemoveAll()
 
 void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     CHECK_POINTER(abilityRecord);
 
     PostTimeOutTask(abilityRecord, AbilityManagerService::LOAD_TIMEOUT_MSG);
@@ -679,6 +695,7 @@ int AbilityConnectManager::DispatchTerminate(const std::shared_ptr<AbilityRecord
 
 void AbilityConnectManager::ConnectAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     CHECK_POINTER(abilityRecord);
     PostTimeOutTask(abilityRecord, AbilityConnectManager::CONNECT_TIMEOUT_MSG);
     abilityRecord->ConnectAbility();
@@ -686,6 +703,7 @@ void AbilityConnectManager::ConnectAbility(const std::shared_ptr<AbilityRecord> 
 
 void AbilityConnectManager::CommandAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     if (eventHandler_ != nullptr) {
         // first connect ability, There is at most one connect record.
         int recordId = abilityRecord->GetRecordId();
@@ -703,6 +721,7 @@ void AbilityConnectManager::CommandAbility(const std::shared_ptr<AbilityRecord> 
 
 void AbilityConnectManager::TerminateDone(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     if (!abilityRecord->IsAbilityState(AbilityState::TERMINATING)) {
         std::string expect = AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING);
         std::string actual = AbilityRecord::ConvertAbilityState(abilityRecord->GetAbilityState());
@@ -822,7 +841,8 @@ void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &
 {
     HILOG_INFO("On ability died.");
     CHECK_POINTER(abilityRecord);
-    if (abilityRecord->GetAbilityInfo().type != AbilityType::SERVICE) {
+    if (abilityRecord->GetAbilityInfo().type != AbilityType::SERVICE &&
+        abilityRecord->GetAbilityInfo().type != AbilityType::EXTENSION) {
         HILOG_DEBUG("Ability type is not service.");
         return;
     }

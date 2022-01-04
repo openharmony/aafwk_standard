@@ -28,22 +28,19 @@ public:
     MockServiceAbility() = default;
     virtual ~MockServiceAbility() = default;
 
-    bool OnKeyDown(int keyCode, const KeyEvent &keyEvent)
+    void OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
     {
         GTEST_LOG_(INFO) << "MockServiceAbility::OnKeyDown called";
-        return true;
     }
 
-    bool OnKeyUp(int keyCode, const KeyEvent &keyEvent)
+    void OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
     {
         GTEST_LOG_(INFO) << "MockServiceAbility::OnKeyUp called";
-        return true;
     }
 
-    bool OnTouchEvent(const TouchEvent &touchEvent)
+    void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
     {
         GTEST_LOG_(INFO) << "MockServiceAbility::OnTouchEvent called";
-        return true;
     }
 
     void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData)

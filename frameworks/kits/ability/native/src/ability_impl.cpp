@@ -14,20 +14,22 @@
  */
 
 #include "ability_impl.h"
+
 #include "app_log_wrapper.h"
+#include "bytrace.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
-#include "ability_keyevent.h"
-#include "ability_touchevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+const int TARGET_VERSION_THRESHOLDS = 8;
+
 void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &record,
     std::shared_ptr<Ability> &ability, std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token,
     std::shared_ptr<ContextDeal> &contextDeal)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("AbilityImpl::init begin");
-
     if ((token == nullptr) || (application == nullptr) || (handler == nullptr) || (record == nullptr) ||
         ability == nullptr || contextDeal == nullptr) {
         APP_LOGE("AbilityImpl::init failed, token is nullptr, application is nullptr, handler is nullptr, record is "
@@ -39,15 +41,10 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     record->SetAbilityImpl(shared_from_this());
     ability_ = ability;
     ability_->Init(record->GetAbilityInfo(), application, handler, token);
+    ability_->SetSceneListener(sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_)));
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_ = application;
     contextDeal_ = contextDeal;
-
-    // Multimodal Events
-    abilityKeyEventHandle_ = sptr<AbilityKeyEventHandle>(new (std::nothrow) AbilityKeyEventHandle(shared_from_this()));
-    abilityTouchEventHandle_ =
-        sptr<AbilityTouchEventHandle>(new (std::nothrow) AbilityTouchEventHandle(shared_from_this()));
-
     APP_LOGI("AbilityImpl::init end");
 }
 
@@ -71,16 +68,24 @@ void AbilityImpl::Start(const Want &want)
 
     APP_LOGI("AbilityImpl::Start");
     ability_->OnStart(want);
-    if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
-        lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_STARTED_NEW;
     } else {
-        lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
+        if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
+            lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
+        } else {
+            lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
+        }
     }
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
 
     // Multimodal Events Register
-    MMIRegister();
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetTargetVersion() < TARGET_VERSION_THRESHOLDS)) {
+        WindowEventRegister();
+    }
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -99,11 +104,14 @@ void AbilityImpl::Stop()
 
     APP_LOGI("AbilityImpl::Stop");
     ability_->OnStop();
-    lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_STOPED_NEW;
+    } else {
+        lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
+    }
     abilityLifecycleCallbacks_->OnAbilityStop(ability_);
 
-    // Multimodal Events UnRegister
-    MMIUnRegister();
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -159,6 +167,28 @@ void AbilityImpl::Inactive()
     APP_LOGI("%{public}s end.", __func__);
 }
 
+void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
+{
+    PacMap restoreData;
+    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
+        AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW, restoreData);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
+{
+    PacMap restoreData;
+    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
+        AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW, restoreData);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
+{
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterUnFocused()
+{
+}
+
 /**
  * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
  * that it belongs to of the lifecycle status.
@@ -175,7 +205,12 @@ void AbilityImpl::Foreground(const Want &want)
 
     APP_LOGI("AbilityImpl::Foreground");
     ability_->OnForeground(want);
-    lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_FOREGROUND_NEW;
+    } else {
+        lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
+    }
     abilityLifecycleCallbacks_->OnAbilityForeground(ability_);
     APP_LOGI("%{public}s end.", __func__);
 }
@@ -196,7 +231,12 @@ void AbilityImpl::Background()
     APP_LOGI("AbilityImpl::Background");
     ability_->OnLeaveForeground();
     ability_->OnBackground();
-    lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND_NEW;
+    } else {
+        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
+    }
     abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
     APP_LOGI("%{public}s end.", __func__);
 }
@@ -319,32 +359,28 @@ int AbilityImpl::GetCurrentState()
 
 /**
  * @brief Execution the KeyDown callback of the ability
- * @param keyCode Indicates the code of the key pressed.
  * @param keyEvent Indicates the key-down event.
  *
  * @return Returns true if this event is handled and will not be passed further; returns false if this event is
  * not handled and should be passed to other handlers.
  *
  */
-bool AbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
+void AbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
     APP_LOGI("AbilityImpl::DoKeyDown called");
-    return false;
 }
 
 /**
  * @brief Execution the KeyUp callback of the ability
- * @param keyCode Indicates the code of the key released.
  * @param keyEvent Indicates the key-up event.
  *
  * @return Returns true if this event is handled and will not be passed further; returns false if this event is
  * not handled and should be passed to other handlers.
  *
  */
-bool AbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
+void AbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
     APP_LOGI("AbilityImpl::DoKeyUp called");
-    return false;
 }
 
 /**
@@ -355,10 +391,9 @@ bool AbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
  * @return Returns true if the event is handled; returns false otherwise.
  *
  */
-bool AbilityImpl::DoTouchEvent(const TouchEvent &touchEvent)
+void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
 {
-    APP_LOGI("AbilityImpl::DoTouchEvent called");
-    return false;
+    APP_LOGI("AbilityImpl::DoPointerEvent called");
 }
 
 /**
@@ -382,6 +417,7 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
 
     if (resultData.HasParameter(OHOS_RESULT_PERMISSION_KEY) && resultData.HasParameter(OHOS_RESULT_PERMISSIONS_LIST) &&
         resultData.HasParameter(OHOS_RESULT_CALLER_BUNDLERNAME)) {
+
         if (resultCode > 0) {
             std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST);
             std::vector<std::string> grantYes = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_YES);
@@ -740,57 +776,38 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
     ability_->OnConfigurationUpdated(config);
     APP_LOGI("%{public}s end.", __func__);
 }
-/**
- * @brief Multimodal Events Register.
- */
-void AbilityImpl::MMIRegister()
+void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
 {
-    APP_LOGI("%{public}s called.", __func__);
-    int32_t ret = 0;
-    int32_t windowID = 0;
-    if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
-        if (ability_->GetWindow() != nullptr) {
-            windowID = ability_->GetWindow()->GetID();
-        }
+    int32_t code = keyEvent->GetKeyAction();
+    if (code == MMI::KeyEvent::KEY_ACTION_DOWN) {
+        abilityImpl_->DoKeyDown(keyEvent);
+        APP_LOGI("AbilityImpl::OnKeyDown keyAction: %{public}d.", code);
+    } else if (code == MMI::KeyEvent::KEY_ACTION_UP) {
+        abilityImpl_->DoKeyUp(keyEvent);
+        APP_LOGI("AbilityImpl::DoKeyUp keyAction: %{public}d.", code);
     }
+}
 
-    // register keyEvent
-    ret = MMIEventHdl.RegisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
-    APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
-    APP_LOGI("MMIRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
-    APP_LOGI("MMIRegister :RegisterkeyEventHandler ret:%{public}d", ret);
-
-    // register touchEvent
-    ret = MMIEventHdl.RegisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
-    APP_LOGI("MMIRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
-    APP_LOGI("MMIRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
-    APP_LOGI("MMIRegister :RegistertouchEventHandler ret:%{public}d", ret);
+void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
+{
+    APP_LOGI("AbilityImpl::DoPointerEvent called.");
+    abilityImpl_->DoPointerEvent(pointerEvent);
 }
 
 /**
- * @brief Multimodal Events UnRegister.
+ * @brief Multimodal Events Register.
  */
-void AbilityImpl::MMIUnRegister()
+void AbilityImpl::WindowEventRegister()
 {
     APP_LOGI("%{public}s called.", __func__);
-    int32_t ret = 0;
-    int32_t windowID = 0;
-    if (ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) {
-        if (ability_->GetWindow() != nullptr) {
-            windowID = ability_->GetWindow()->GetID();
+    if (ability_->GetTargetVersion() < TARGET_VERSION_THRESHOLDS) {
+        auto window = ability_->GetWindow();
+        if (window) {
+            std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =
+                std::make_shared<AbilityImpl::InputEventConsumerImpl>(shared_from_this());
+            window->AddInputEventListener(inputEventListener);
         }
     }
-    // unregister keyEvent
-    ret = MMIEventHdl.UnregisterStandardizedEventHandle(token_, windowID, abilityKeyEventHandle_);
-    APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
-    APP_LOGI("MMIUnRegister :keyEventHandler:%{public}p", abilityKeyEventHandle_.GetRefPtr());
-    APP_LOGI("MMIUnRegister :UnRegisterkeyEventHandler ret:%{public}d", ret);
-
-    // unregister touchEvent
-    ret = MMIEventHdl.UnregisterStandardizedEventHandle(token_, windowID, abilityTouchEventHandle_);
-    APP_LOGI("MMIUnRegister :token:%{public}p windowID:%{public}d", token_.GetRefPtr(), windowID);
-    APP_LOGI("MMIUnRegister :touchEventHandler:%{public}p", abilityTouchEventHandle_.GetRefPtr());
-    APP_LOGI("MMIUnRegister :UnRegistertouchEventHandler ret:%{public}d", ret);
 }
 
 /**
@@ -814,6 +831,15 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityImpl::ExecuteBatch(
     APP_LOGI("AbilityImpl::ExecuteBatch");
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     return results;
+}
+
+void AbilityImpl::NotifyContinuationResult(const int32_t result)
+{
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::NotifyContinuationResult ability_ is nullptr");
+        return;
+    }
+    ability_->OnCompleteContinuation(result);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

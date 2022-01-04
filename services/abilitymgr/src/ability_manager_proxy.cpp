@@ -512,6 +512,28 @@ int AbilityManagerProxy::TerminateAbilityResult(const sptr<IRemoteObject> &token
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::MinimizeAbility(const sptr<IRemoteObject> &token)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    error = Remote()->SendRequest(IAbilityManager::MINIMIZE_ABILITY, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     int error;
@@ -1481,6 +1503,56 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
     }
 
     memoryInfo = *remoteRetsult;
+}
+
+int AbilityManagerProxy::StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("want write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(abilityToken)) {
+        HILOG_ERROR("abilityToken write failed.");
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::START_CONTINUATION, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(abilityToken)) {
+        HILOG_ERROR("abilityToken write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(result)) {
+        HILOG_ERROR("result write failed.");
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::NOTIFY_CONTINUATION_RESULT, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

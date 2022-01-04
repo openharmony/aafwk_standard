@@ -100,7 +100,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest:///com.example.myapplication5.DataAbilityTest");
@@ -165,7 +165,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_GetFileTypes_0100, Function | Me
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
@@ -234,7 +234,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_OpenFile_0100, Function | Medium
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
@@ -294,7 +294,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Insert_0100, Function | MediumTe
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");
@@ -350,7 +350,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Update_0100, Function | MediumTe
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             std::shared_ptr<MockDataAbility> mockdataability = std::make_shared<MockDataAbility>();
 
             Uri uri("dataabilitytest://com.example.myapplication5.DataAbilityTest");

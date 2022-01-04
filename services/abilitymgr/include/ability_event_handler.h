@@ -45,6 +45,8 @@ private:
     void ProcessLoadTimeOut(int64_t eventId);
     void ProcessActiveTimeOut(int64_t eventId);
     void ProcessInactiveTimeOut(int64_t eventId);
+    void ProcessForegroundNewTimeOut(int64_t eventId);
+    void ProcessBackgroundNewTimeOut(int64_t eventId);
 
 private:
     std::weak_ptr<AbilityManagerService> server_;

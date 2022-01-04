@@ -68,69 +68,6 @@ ErrCode DistributedClient::Connect()
     return ERR_OK;
 }
 
-ErrCode DistributedClient::StartRemoteAbility(
-    const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, int32_t requestCode)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    return 0;
-}
-
-ErrCode DistributedClient::StartContinuation(
-    const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, const sptr<IRemoteObject> &abilityToken)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    if (abilityToken == nullptr) {
-        return INCOMING_PARAMETER_POINTER_IS_NULL;
-    }
-
-    return 0;
-}
-
-ErrCode DistributedClient::ConnectRemoteAbility(
-    const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, const sptr<IRemoteObject> &connect)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    if (connect == nullptr) {
-        return INCOMING_PARAMETER_POINTER_IS_NULL;
-    }
-
-    return 0;
-}
-
-ErrCode DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject> &connect)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    if (connect == nullptr) {
-        return INCOMING_PARAMETER_POINTER_IS_NULL;
-    }
-
-    return dmsProxy_->DisconnectRemoteAbility(connect);
-}
-
 ErrCode DistributedClient::NotifyCompleteContinuation(
     const std::u16string &devId, int32_t sessionId, bool isSuccess, const sptr<IRemoteObject> &reverseScheduler)
 {
@@ -143,39 +80,7 @@ ErrCode DistributedClient::NotifyCompleteContinuation(
     }
 
     // there need a params for reverseScheduler
-    return 0;
-}
-
-ErrCode DistributedClient::RegisterAbilityToken(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &appThread)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    if (token == nullptr || appThread == nullptr) {
-        return INCOMING_PARAMETER_POINTER_IS_NULL;
-    }
-
-    return 0;
-}
-
-ErrCode DistributedClient::UnregisterAbilityToken(
-    const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &appThread)
-{
-    APP_LOGI("%{public}s called", __func__);
-    if (remoteObject_ == nullptr) {
-        ErrCode err = Connect();
-        if (err != ERR_OK) {
-            return DISTRIBUTED_ABILITY_SERVICE_NOT_CONNECTED;
-        }
-    }
-    if (token == nullptr || appThread == nullptr) {
-        return INCOMING_PARAMETER_POINTER_IS_NULL;
-    }
-
+    dmsProxy_->NotifyCompleteContinuation(devId, sessionId, isSuccess);
     return 0;
 }
 }  // namespace AppExecFwk

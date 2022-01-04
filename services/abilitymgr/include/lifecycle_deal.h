@@ -54,6 +54,9 @@ public:
     void SaveAbilityState();
     void RestoreAbilityState(const PacMap &inState);
     void UpdateConfiguration(const AppExecFwk::Configuration &config);
+    void ForegroundNew(const Want &want, LifeCycleStateInfo &stateInfo);
+    void BackgroundNew(const Want &want, LifeCycleStateInfo &stateInfo);
+    void NotifyContinuationResult(const int32_t result);
 
 private:
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life

@@ -31,6 +31,7 @@ public:
     static void UninstallBundle(const std::string &bundleName, const bool checkResult = false);
     static void StartAbility(const std::string &device, const std::string &abilityName, const std::string &bundleName,
         const bool checkResult = false);
+    static bool IsSubSequence(std::string str, std::string subStr);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

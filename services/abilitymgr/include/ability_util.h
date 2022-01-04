@@ -22,7 +22,7 @@
 #include "ipc_skeleton.h"
 #include "sa_mgr_client.h"
 #include "bundlemgr/bundle_mgr_interface.h"
-#include "system_ability_definition.h"
+#include "utils/system/safwk/native/include/system_ability_definition.h"
 #include "ability_manager_errors.h"
 
 namespace OHOS {
@@ -192,6 +192,14 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
     }
     HILOG_DEBUG("%{public}s end", __func__);
     return ERR_OK;
+}
+
+inline bool IsSystemUiApp(const AppExecFwk::AbilityInfo &info)
+{
+    if (info.bundleName != AbilityConfig::SYSTEM_UI_BUNDLE_NAME) {
+        return false;
+    }
+    return (info.name == AbilityConfig::SYSTEM_UI_NAVIGATION_BAR || info.name == AbilityConfig::SYSTEM_UI_STATUS_BAR);
 }
 }  // namespace AbilityUtil
 }  // namespace AAFwk

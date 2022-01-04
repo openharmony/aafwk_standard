@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_PAGE_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_PAGE_ABILITY_H
 
-#include <gtest/gtest.h>
 #include "ability.h"
+#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -30,22 +30,19 @@ public:
 
     enum Event { ON_ACTIVE = 0, ON_BACKGROUND, ON_FOREGROUND, ON_INACTIVE, ON_START, ON_STOP, UNDEFINED };
 
-    bool OnKeyDown(int keyCode, const KeyEvent &keyEvent)
+    void OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::OnKeyDown called";
-        return true;
     }
 
-    bool OnKeyUp(int keyCode, const KeyEvent &keyEvent)
+    void OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::OnKeyUp called";
-        return true;
     }
 
-    bool OnTouchEvent(const TouchEvent &touchEvent)
+    void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
     {
         GTEST_LOG_(INFO) << "MockPageAbility::OnTouchEvent called";
-        return true;
     }
 
     void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData)

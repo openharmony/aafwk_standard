@@ -15,10 +15,10 @@
 
 #ifndef OHOS_APPEXECFWK_NAPI_CONTEXT_H
 #define OHOS_APPEXECFWK_NAPI_CONTEXT_H
+#include "../inner/napi_common/napi_common.h"
+#include "ability.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
-#include "ability.h"
-#include "../inner/napi_common/napi_common.h"
 
 using Ability = OHOS::AppExecFwk::Ability;
 #define MODE 0771

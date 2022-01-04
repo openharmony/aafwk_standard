@@ -14,8 +14,9 @@
  */
 
 #include "data_ability_impl.h"
-#include "app_log_wrapper.h"
+
 #include "abs_shared_result_set.h"
+#include "app_log_wrapper.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
 

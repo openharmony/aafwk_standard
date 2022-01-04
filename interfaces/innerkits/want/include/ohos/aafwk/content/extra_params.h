@@ -14,8 +14,8 @@
  */
 #ifndef FOUNDATION_APPEXECFWK_OHOS_EXTRA_PARAMS_H
 #define FOUNDATION_APPEXECFWK_OHOS_EXTRA_PARAMS_H
-#include <string>
 #include "parcel.h"
+#include <string>
 
 using string = std::string;
 

@@ -39,16 +39,8 @@ public:
     virtual ~DistributedClient();
     static std::shared_ptr<DistributedClient> GetInstance();
     ErrCode Connect();
-    ErrCode StartRemoteAbility(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, int32_t requestCode);
-    ErrCode StartContinuation(
-        const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, const sptr<IRemoteObject> &abilityToken);
-    ErrCode ConnectRemoteAbility(
-        const Want &want, const AppExecFwk::AbilityInfo &abilityInfo, const sptr<IRemoteObject> &connect);
-    ErrCode DisconnectRemoteAbility(const sptr<IRemoteObject> &connect);
     ErrCode NotifyCompleteContinuation(
         const std::u16string &devId, int32_t sessionId, bool isSuccess, const sptr<IRemoteObject> &reverseScheduler);
-    ErrCode RegisterAbilityToken(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &appThread);
-    ErrCode UnregisterAbilityToken(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &appThread);
 
 private:
     static std::mutex mutex_;

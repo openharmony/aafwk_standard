@@ -14,18 +14,18 @@
  */
 
 #include "ability_scheduler_stub.h"
-#include "abs_shared_result_set.h"
-#include "data_ability_predicates.h"
-#include "values_bucket.h"
 
+#include "abs_shared_result_set.h"
+#include "data_ability_observer_interface.h"
+#include "data_ability_operation.h"
+#include "data_ability_predicates.h"
+#include "data_ability_result.h"
 #include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "ishared_result_set.h"
 #include "pac_map.h"
+#include "values_bucket.h"
 #include "want.h"
-#include "data_ability_observer_interface.h"
-#include "data_ability_result.h"
-#include "data_ability_operation.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -57,6 +57,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_UPDATE_CONFIGURATION] = &AbilitySchedulerStub::UpdateConfigurationInner;
     requestFuncMap_[SCHEDULE_EXECUTEBATCH] = &AbilitySchedulerStub::ExecuteBatchInner;
     requestFuncMap_[TOP_ACTIVE_ABILITY_CHANGED] = &AbilitySchedulerStub::TopActiveAbilityChangedInner;
+    requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilitySchedulerStub::NotifyContinuationResultInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -146,6 +147,7 @@ int AbilitySchedulerStub::CommandAbilityInner(MessageParcel &data, MessageParcel
     }
     bool reStart = data.ReadBool();
     int startId = data.ReadInt32();
+    HILOG_INFO("ReadInt32, startId:%{public}d", startId);
     ScheduleCommandAbility(*want, reStart, startId);
     return NO_ERROR;
 }
@@ -552,6 +554,13 @@ int AbilitySchedulerStub::ExecuteBatchInner(MessageParcel &data, MessageParcel &
         }
     }
     HILOG_INFO("AbilitySchedulerStub::ExecuteBatchInner end");
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t result = data.ReadInt32();
+    NotifyContinuationResult(result);
     return NO_ERROR;
 }
 

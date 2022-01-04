@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 #include "particle_ability.h"
+
 #include <cstring>
-#include <vector>
 #include <uv.h>
-#include "securec.h"
-#include "hilog_wrapper.h"
+#include <vector>
+
 #include "../inner/napi_common/napi_common_ability.h"
+#include "hilog_wrapper.h"
+#include "securec.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;

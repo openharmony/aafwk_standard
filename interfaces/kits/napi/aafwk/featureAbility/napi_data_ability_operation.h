@@ -15,8 +15,8 @@
 #ifndef OHOS_APPEXECFWK_DATA_ABILITY_OPERATION_H
 #define OHOS_APPEXECFWK_DATA_ABILITY_OPERATION_H
 
-#include "feature_ability_common.h"
 #include "data_ability_operation.h"
+#include "feature_ability_common.h"
 
 namespace OHOS {
 namespace NativeRdb {

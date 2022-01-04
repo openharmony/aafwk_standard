@@ -16,9 +16,10 @@
 #include "data_ability_record.h"
 
 #include <algorithm>
-#include "hilog_wrapper.h"
+
 #include "ability_util.h"
 #include "app_scheduler.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
