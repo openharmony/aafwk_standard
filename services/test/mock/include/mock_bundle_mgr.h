@@ -101,10 +101,12 @@ public:
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
-    MOCK_METHOD3(DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, std::string &result));
+    MOCK_METHOD4(
+        DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
     MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
+    MOCK_METHOD0(GetBundleUserMgr, sptr<IBundleUserMgr>());
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
@@ -133,8 +135,10 @@ public:
     MOCK_METHOD3(GetBundleGidsByUid, bool(const std::string &bundleName, const int &uid, std::vector<int> &gids));
 
     bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override;
-    bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-    bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override;
+    bool GetBundleInfo(
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
+    bool GetBundleInfos(
+        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override;
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {

@@ -63,7 +63,8 @@ public:
         return true;
     }
 
-    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override
+    virtual bool GetBundleInfos(
+        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override
     {
         return true;
     }
@@ -168,7 +169,8 @@ public:
     {
         return true;
     }
-    virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) override
+    virtual bool DumpInfos(
+        const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override
     {
         return true;
     }
@@ -176,6 +178,10 @@ public:
     {
         return nullptr;
     }
+    virtual sptr<IBundleUserMgr> GetBundleUserMgr() override
+    {
+        return nullptr;
+    };
 
     /**
 	 *  @brief Obtains information about the shortcuts of the application.
@@ -214,7 +220,8 @@ public:
         return true;
     }
 
-    virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
+    virtual bool GetBundleInfo(
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
     virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfo) override;
     virtual bool GetFormsInfoByApp(const std::string &bundleName, std::vector<FormInfo> &formInfo) override;
     virtual bool GetFormsInfoByModule(
@@ -263,8 +270,10 @@ public:
     {
         return true;
     };
-    virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override
+    virtual bool GetBundleInfo(
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
+    virtual bool GetBundleInfos(
+        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override
     {
         return true;
     };
@@ -352,11 +361,16 @@ public:
     {
         return true;
     };
-    virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) override
+    virtual bool DumpInfos(
+        const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override
     {
         return true;
     };
     virtual sptr<IBundleInstaller> GetBundleInstaller() override
+    {
+        return nullptr;
+    };
+    virtual sptr<IBundleUserMgr> GetBundleUserMgr() override
     {
         return nullptr;
     };
