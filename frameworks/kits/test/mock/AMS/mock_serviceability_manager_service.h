@@ -38,6 +38,10 @@ public:
     int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1) override;
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
+    int MinimizeAbility(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
     int ConnectAbility(
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
     int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
@@ -90,6 +94,8 @@ public:
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
+    MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
     int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) override;

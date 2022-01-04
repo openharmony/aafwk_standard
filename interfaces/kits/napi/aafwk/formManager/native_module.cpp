@@ -12,13 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "napi/native_api.h"
+
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "napi_form_manager.h"
-#include "napi/native_api.h"
+
 #include "napi/native_node_api.h"
+#include "napi_form_manager.h"
 
 EXTERN_C_START
 

@@ -100,7 +100,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0100, Function | M
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
@@ -124,7 +124,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0200, Function | M
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
@@ -140,7 +140,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0300, Function | M
 
     std::shared_ptr<AbilityLocalRecord> abilityRecord = nullptr;
 
-    AbilityThread::AbilityThreadMain(application, abilityRecord);
+    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
     usleep(AbilityBaseTest::TEST_WAIT_TIME);
 }
 
@@ -161,7 +161,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0400, Function | M
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
@@ -184,7 +184,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0500, Function | M
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
@@ -225,7 +225,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Start_Test_0600, Function | M
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -259,7 +259,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_Lifecycle_Test_0100, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -290,7 +290,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Lifecycle_Test_0200, Function
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -322,7 +322,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Lifecycle_Test_0300, Function
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -357,7 +357,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Lifecycle_Test_0400, Function
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -391,7 +391,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Lifecycle_Test_0500, Function
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -427,7 +427,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_AbilityFwk_Lifecycle_Test_0600, Function
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -464,7 +464,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_ForResult_Test_0100, Fu
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -476,20 +476,8 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_TerminateAbility_ForResult_Test_0100, Fu
         usleep(AbilityBaseTest::TEST_WAIT_TIME);
     }
 }
-class AceAbilityTest final : public Ability {
-public:
-    AceAbilityTest() {}
-    virtual ~AceAbilityTest() {}
 
-    void OnBackPressed() override
-    {
-        Ability::OnBackPressed();
-        onBackPressed_ = true;
-    }
 
-public:
-    bool onBackPressed_ = false;
-};
 
 /**
  * @tc.number: AaFwk_Ability_OnBackPressed_Test_0100
@@ -497,15 +485,6 @@ public:
  * @tc.desc: 1. AceAbilityTest object creation
  *           2. Call Ability's OnBackPressed function
  */
-HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackPressed_Test_0100, Function | MediumTest | Level1)
-{
-    std::unique_ptr<AceAbilityTest> ability = std::make_unique<AceAbilityTest>();
-    if (ability == nullptr) {
-        return;
-    }
-    ability->OnBackPressed();
-    EXPECT_TRUE(ability->onBackPressed_);
-}
 /*
  * Parameters:
  * Action
@@ -566,7 +545,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0100, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_001 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -603,7 +582,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0200, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_002 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -640,7 +619,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0300, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_0300 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -677,7 +656,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0400, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_0400 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -714,7 +693,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0500, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_005 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -746,7 +725,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0600, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_006 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -778,7 +757,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0700, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_007 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -810,7 +789,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_Ability_Terminate_test_0800, Function | Med
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_Ability_Terminate_test_008 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -842,7 +821,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_WMS_window_test_0100, Function | MediumTest
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_WMS_window_test_001 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -875,7 +854,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_WMS_window_test_0200, Function | MediumTest
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
         GTEST_LOG_(INFO) << "AaFwk_WMS_window_test_002 AbilityThreadMain";
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         Want want;
         MockAbilityManagerService *mockAMS = iface_cast<MockAbilityManagerService>(abilityObject_);
@@ -912,7 +891,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Launch_0100, Function | MediumT
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -945,7 +924,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0100, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -978,7 +957,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0200, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -1011,7 +990,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0300, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -1044,7 +1023,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0400, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
@@ -1077,7 +1056,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0500, Function | MediumTe
         std::shared_ptr<AbilityLocalRecord> abilityRecord =
             std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
-        AbilityThread::AbilityThreadMain(application, abilityRecord);
+        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
 
         sptr<IRemoteObject> remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);

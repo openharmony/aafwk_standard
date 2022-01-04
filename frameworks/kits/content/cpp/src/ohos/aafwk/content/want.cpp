@@ -14,13 +14,13 @@
  */
 
 #include "want.h"
+
+#include <algorithm>
+#include <climits>
 #include <cstdlib>
 #include <regex>
-#include <climits>
 #include <securec.h>
-#include <algorithm>
-#include "string_ex.h"
-#include "parcel_macro.h"
+
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/base_object.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
@@ -33,6 +33,8 @@
 #include "ohos/aafwk/base/double_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "parcel_macro.h"
+#include "string_ex.h"
 #include "want_params_wrapper.h"
 
 using namespace OHOS::AppExecFwk;

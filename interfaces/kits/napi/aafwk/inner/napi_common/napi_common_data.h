@@ -16,13 +16,14 @@
 #ifndef OHOS_APPEXECFWK_NAPI_COMMON_DATA_H
 #define OHOS_APPEXECFWK_NAPI_COMMON_DATA_H
 
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
+
+#include "ability.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "pac_map.h"
-#include "ability.h"
 
 using Ability = OHOS::AppExecFwk::Ability;
 namespace OHOS {

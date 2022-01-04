@@ -24,6 +24,7 @@ ohos_unittest("ability_manager_service_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
   ]
 
   sources = [
@@ -55,6 +56,7 @@ ohos_unittest("ability_manager_service_test") {
   ]
 
   external_deps = [
+    "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

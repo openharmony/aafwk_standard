@@ -74,7 +74,7 @@ HWTEST_F(DataAbilityImplTest, AaFwk_DataAbilityImplTest_GetType_001, Function | 
     std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
     sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
     std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-    std::shared_ptr<Ability> ability = std::make_shared<MockDataAbility>();;
+    std::shared_ptr<Ability> ability = std::make_shared<MockDataAbility>();
     std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
     dataabilityimpl->Init(application, record, ability, handler, token, contextDeal);
     Uri uri("\nullptr");

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include "ability_impl.h"
+#include <gtest/gtest.h>
 #include "ability_local_record.h"
 #include "app_log_wrapper.h"
 
@@ -132,20 +132,11 @@ int AbilityImpl::GetCurrentState()
     return lifecycleState_;
 }
 
-bool AbilityImpl::DoKeyDown(int keyCode, const KeyEvent &keyEvent)
-{
-    return false;
-}
+void AbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent) {}
 
-bool AbilityImpl::DoKeyUp(int keyCode, const KeyEvent &keyEvent)
-{
-    return false;
-}
+void AbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent) {}
 
-bool AbilityImpl::DoTouchEvent(const TouchEvent &touchEvent)
-{
-    return false;
-}
+void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent) {}
 
 void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &resultData)
 {

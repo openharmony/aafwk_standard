@@ -48,7 +48,8 @@ ohos_shared_library("napi_common") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-    "samgr_standard:samgr_proxy",
+
+    #"samgr_standard:samgr_proxy",
   ]
 
   subsystem_name = "aafwk"

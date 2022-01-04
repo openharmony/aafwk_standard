@@ -15,8 +15,8 @@
 
 #ifndef OHOS_APPEXECFWK_NAPI_DATA_ABILITY_HELPER_H
 #define OHOS_APPEXECFWK_NAPI_DATA_ABILITY_HELPER_H
-#include "feature_ability_common.h"
 #include "data_ability_observer_stub.h"
+#include "feature_ability_common.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -28,7 +28,7 @@ public:
     void ReleaseJSCallback();
 
     void SetAssociatedObject(DAHelperOnOffCB* object);
-    DAHelperOnOffCB* GetAssociatedObject(void);
+    const DAHelperOnOffCB* GetAssociatedObject(void);
 
     void ChangeWorkPre();
     void ChangeWorkRun();

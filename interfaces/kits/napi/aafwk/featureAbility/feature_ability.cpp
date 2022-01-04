@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 #include "feature_ability.h"
+
 #include <cstring>
-#include <vector>
 #include <uv.h>
-#include "securec.h"
+#include <vector>
+
+#include "../inner/napi_common/napi_common_ability.h"
 #include "ability_process.h"
+#include "element_name.h"
 #include "hilog_wrapper.h"
 #include "napi_context.h"
-#include "element_name.h"
 #include "napi_data_ability_helper.h"
-#include "../inner/napi_common/napi_common_ability.h"
+#include "securec.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
@@ -1409,10 +1411,11 @@ napi_value ContinueAbilityWrap(napi_env env, napi_callback_info info, AsyncCallb
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     NAPI_CALL(env, napi_typeof(env, args[0], &valueType));
-    NAPI_ASSERT(env,
-        (valueType == napi_object || valueType == napi_function),
-        "Wrong argument type. Object or function expected.");
-    if (argc == 0) {
+    if (valueType != napi_object && valueType != napi_function) {
+        HILOG_ERROR("%{public}s, Wrong argument type. Object or function expected.", __func__);
+        return nullptr;
+    }
+    if (0 == argc) {
         ret = ContinueAbilityPromise(env, args, asyncCallbackInfo, argc);
     } else if (PARA_SIZE_IS_ONE == argc) {
         if (valueType == napi_function) {
@@ -1421,6 +1424,12 @@ napi_value ContinueAbilityWrap(napi_env env, napi_callback_info info, AsyncCallb
             ret = ContinueAbilityPromise(env, args, asyncCallbackInfo, argc);
         }
     } else if (PARA_SIZE_IS_TWO == argc) {
+        napi_valuetype value = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, args[1], &value));
+        if (value != napi_function) {
+            HILOG_ERROR("%{public}s, Wrong argument type. function expected.", __func__);
+            return nullptr;
+        }
         ret = ContinueAbilityAsync(env, args, asyncCallbackInfo, argc);
     } else {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
@@ -1443,7 +1452,10 @@ napi_value ContinueAbilityAsync(napi_env env, napi_value *args, AsyncCallbackInf
         // args[0] : ContinueAbilityOptions
         napi_valuetype valueTypeOptions = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, args[0], &valueTypeOptions));
-        NAPI_ASSERT(env, valueTypeOptions == napi_object, "Wrong argument type. Object expected.");
+        if (valueTypeOptions != napi_object) {
+            HILOG_ERROR("%{public}s, Wrong argument type. Object expected.", __func__);
+            return nullptr;
+        }
         if (GetContinueAbilityOptionsInfoCommon(env, args[0], asyncCallbackInfo->optionInfo) == nullptr) {
             HILOG_ERROR("%{public}s, GetContinueAbilityOptionsInfoCommonFail", __func__);
             return nullptr;
@@ -1519,7 +1531,10 @@ napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackI
         // args[0] : ContinueAbilityOptions
         napi_valuetype valueTypeOptions = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, args[0], &valueTypeOptions));
-        NAPI_ASSERT(env, valueTypeOptions == napi_object, "Wrong argument type. Object expected.");
+        if (valueTypeOptions != napi_object) {
+            HILOG_ERROR("%{public}s, Wrong argument type. Object expected.", __func__);
+            return nullptr;
+        }
         if (GetContinueAbilityOptionsInfoCommon(env, args[0], asyncCallbackInfo->optionInfo) == nullptr) {
             return nullptr;
         }
@@ -1534,9 +1549,7 @@ napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackI
     asyncCallbackInfo->deferred = deferred;
 
     napi_create_async_work(
-        env,
-        nullptr,
-        resourceName,
+        env, nullptr, resourceName,
         [](napi_env env, void *data) {
             HILOG_INFO("NAPI_ContinueAbility, worker pool thread execute.");
             AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
@@ -1557,8 +1570,7 @@ napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackI
             delete asyncCallbackInfo;
             HILOG_INFO("NAPI_ContinueAbilityForResult,  main event thread complete end.");
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
+        (void *)asyncCallbackInfo, &asyncCallbackInfo->asyncWork);
     napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
     HILOG_INFO("%{public}s, promise end.", __func__);
     return promise;

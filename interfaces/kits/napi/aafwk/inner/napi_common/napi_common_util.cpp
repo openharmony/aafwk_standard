@@ -12,13 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "napi_common_util.h"
 
 #include <cstring>
+
+#include "hilog_wrapper.h"
 #include "napi_common_data.h"
 #include "napi_common_error.h"
-#include "hilog_wrapper.h"
 #include "securec.h"
-#include "napi_common_util.h"
 
 namespace OHOS {
 namespace AppExecFwk {

@@ -14,8 +14,9 @@
  */
 
 #include "mission_stack.h"
-#include "hilog_wrapper.h"
+
 #include "ability_util.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {

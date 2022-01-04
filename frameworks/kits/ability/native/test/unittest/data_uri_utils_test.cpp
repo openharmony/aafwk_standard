@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include "data_uri_utils.h"
+#include <gtest/gtest.h>
 #include "uri.h"
 
 namespace OHOS {
