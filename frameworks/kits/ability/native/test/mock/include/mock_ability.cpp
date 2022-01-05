@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include "ability.h"
+#include <gtest/gtest.h>
 #include "ability_loader.h"
 #include "app_log_wrapper.h"
 #include "iservice_registry.h"

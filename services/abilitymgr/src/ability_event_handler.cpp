@@ -15,9 +15,9 @@
 
 #include "ability_event_handler.h"
 
-#include "hilog_wrapper.h"
-#include "ability_util.h"
 #include "ability_manager_service.h"
+#include "ability_util.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -47,6 +47,14 @@ void AbilityEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
             ProcessInactiveTimeOut(event->GetParam());
             break;
         }
+        case AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG: {
+            ProcessForegroundNewTimeOut(event->GetParam());
+            break;
+        }
+        case AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG: {
+            ProcessBackgroundNewTimeOut(event->GetParam());
+            break;
+        }
         default: {
             HILOG_WARN("Unsupported timeout message.");
             break;
@@ -69,12 +77,29 @@ void AbilityEventHandler::ProcessActiveTimeOut(int64_t eventId)
     CHECK_POINTER(server);
     server->HandleActiveTimeOut(eventId);
 }
+
 void AbilityEventHandler::ProcessInactiveTimeOut(int64_t eventId)
 {
     HILOG_INFO("Inactive timeout.");
     auto server = server_.lock();
     CHECK_POINTER(server);
     server->HandleInactiveTimeOut(eventId);
+}
+
+void AbilityEventHandler::ProcessForegroundNewTimeOut(int64_t eventId)
+{
+    HILOG_INFO("ForegroundNew timeout.");
+    auto server = server_.lock();
+    CHECK_POINTER(server);
+    server->HandleForegroundNewTimeOut(eventId);
+}
+
+void AbilityEventHandler::ProcessBackgroundNewTimeOut(int64_t eventId)
+{
+    HILOG_INFO("BackgroundNew timeout.");
+    auto server = server_.lock();
+    CHECK_POINTER(server);
+    server->HandleBackgroundNewTimeOut(eventId);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -29,11 +29,7 @@
 #include "dummy_values_bucket.h"
 #include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
-#include "key_event.h"
-#include "touch_event.h"
-#include "ability_keyevent.h"
-#include "ability_touchevent.h"
-
+#include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/i_input_event_consumer.h"
 namespace OHOS {
 namespace AppExecFwk {
 class Ability;
@@ -105,25 +101,23 @@ public:
 
     /**
      * @brief Execution the KeyDown callback of the ability
-     * @param keyCode Indicates the code of the key pressed.
      * @param keyEvent Indicates the key-down event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event is
      * not handled and should be passed to other handlers.
      *
      */
-    virtual bool DoKeyDown(int keyCode, const KeyEvent &keyEvent);
+    virtual void DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
 
     /**
      * @brief Execution the KeyUp callback of the ability
-     * @param keyCode Indicates the code of the key released.
      * @param keyEvent Indicates the key-up event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event is
      * not handled and should be passed to other handlers.
      *
      */
-    virtual bool DoKeyUp(int keyCode, const KeyEvent &keyEvent);
+    virtual void DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
 
     /**
      * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
@@ -133,7 +127,7 @@ public:
      * @return Returns true if the event is handled; returns false otherwise.
      *
      */
-    virtual bool DoTouchEvent(const TouchEvent &touchEvent);
+    virtual void DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
 
     /**
      * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -214,8 +208,7 @@ public:
      *
      * @return Returns the number of data records updated.
      */
-    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
-        const NativeRdb::DataAbilityPredicates &predicates);
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
      * @brief Deletes one or more data records from the database.
@@ -327,6 +320,15 @@ public:
     virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 
+    /**
+     * @brief Notify continuation result to ability.
+     *
+     * @param result Continuaton result.
+     *
+     * @return
+     */
+    virtual void NotifyContinuationResult(const int32_t result);
+
 protected:
     /**
      * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
@@ -405,6 +407,27 @@ protected:
     std::shared_ptr<Ability> ability_;
 
 private:
+class WindowLifeCycleImpl : public Rosen::IWindowLifeCycle {
+public:
+    WindowLifeCycleImpl(const sptr<IRemoteObject>& token) : token_(token) {}
+    virtual ~WindowLifeCycleImpl() {}
+    void AfterForeground() override;
+    void AfterBackground() override;
+    void AfterFocused() override;
+    void AfterUnFocused() override;
+private:
+    sptr<IRemoteObject> token_ = nullptr;
+};
+
+class InputEventConsumerImpl : public MMI::IInputEventConsumer {
+public:
+    explicit InputEventConsumerImpl(const std::shared_ptr<AbilityImpl>& abilityImpl) : abilityImpl_(abilityImpl) {}
+    void OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const override;
+    void OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const override;
+    void OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const override {}
+private:
+    std::shared_ptr<AbilityImpl> abilityImpl_;
+};
     typedef enum {
         START,
         INACTIVE,
@@ -423,15 +446,8 @@ private:
     /**
      * @brief Multimodal Events Register.
      */
-    void MMIRegister();
+    void WindowEventRegister();
 
-    /**
-     * @brief Multimodal Events UnRegister.
-     */
-    void MMIUnRegister();
-
-    sptr<AbilityKeyEventHandle> abilityKeyEventHandle_ = nullptr;
-    sptr<AbilityTouchEventHandle> abilityTouchEventHandle_ = nullptr;
     bool hasSaveData_ = false;
     bool needSaveDate_ = false;
     PacMap restoreData_;

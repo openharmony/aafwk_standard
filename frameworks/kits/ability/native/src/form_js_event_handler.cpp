@@ -16,9 +16,9 @@
 #include "app_log_wrapper.h"
 #include "form_constants.h"
 #include "form_host_client.h"
+#include "form_js_event_handler.h"
 #include "form_mgr.h"
 #include "ipc_skeleton.h"
-#include "form_js_event_handler.h"
 
 namespace OHOS {
 namespace AppExecFwk {

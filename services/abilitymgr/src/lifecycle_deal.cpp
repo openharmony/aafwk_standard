@@ -14,9 +14,10 @@
  */
 
 #include "lifecycle_deal.h"
-#include "hilog_wrapper.h"
-#include "ability_util.h"
+
 #include "ability_record.h"
+#include "ability_util.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -83,7 +84,7 @@ void LifecycleDeal::Terminate(const Want &want, LifeCycleStateInfo &stateInfo)
 
 void LifecycleDeal::CommandAbility(const Want &want, bool reStart, int startId)
 {
-    HILOG_INFO("Command ability.");
+    HILOG_INFO("Command ability. startId:%{public}d", startId);
     CHECK_POINTER(abilityScheduler_);
     abilityScheduler_->ScheduleCommandAbility(want, reStart, startId);
 }
@@ -107,6 +108,37 @@ void LifecycleDeal::UpdateConfiguration(const AppExecFwk::Configuration &config)
     HILOG_INFO("%{public}s, %{public}d", __func__, __LINE__);
     CHECK_POINTER(abilityScheduler_);
     abilityScheduler_->ScheduleUpdateConfiguration(config);
+}
+
+void LifecycleDeal::ForegroundNew(const Want &want, LifeCycleStateInfo &stateInfo)
+{
+    HILOG_INFO("ForegroundNew.");
+    CHECK_POINTER(abilityScheduler_);
+    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
+        stateInfo.caller.deviceId.c_str(),
+        stateInfo.caller.bundleName.c_str(),
+        stateInfo.caller.abilityName.c_str());
+    stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW;
+    abilityScheduler_->ScheduleAbilityTransaction(want, stateInfo);
+}
+
+void LifecycleDeal::BackgroundNew(const Want &want, LifeCycleStateInfo &stateInfo)
+{
+    HILOG_INFO("Go background.");
+    CHECK_POINTER(abilityScheduler_);
+    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
+        stateInfo.caller.deviceId.c_str(),
+        stateInfo.caller.bundleName.c_str(),
+        stateInfo.caller.abilityName.c_str());
+    stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW;
+    abilityScheduler_->ScheduleAbilityTransaction(want, stateInfo);
+}
+
+void LifecycleDeal::NotifyContinuationResult(const int32_t result)
+{
+    HILOG_INFO("NotifyContinuationResult.");
+    CHECK_POINTER(abilityScheduler_);
+    abilityScheduler_->NotifyContinuationResult(result);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

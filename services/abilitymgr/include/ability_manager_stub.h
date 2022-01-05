@@ -41,6 +41,7 @@ private:
     void SecondStepInit();
     int TerminateAbilityInner(MessageParcel &data, MessageParcel &reply);
     int TerminateAbilityByCallerInner(MessageParcel &data, MessageParcel &reply);
+    int MinimizeAbilityInner(MessageParcel &data, MessageParcel &reply);
     int AttachAbilityThreadInner(MessageParcel &data, MessageParcel &reply);
     int AbilityTransitionDoneInner(MessageParcel &data, MessageParcel &reply);
     int ScheduleConnectAbilityDoneInner(MessageParcel &data, MessageParcel &reply);
@@ -104,6 +105,8 @@ private:
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
     int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
+    int StartContinuationInner(MessageParcel &data, MessageParcel &reply);
+    int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

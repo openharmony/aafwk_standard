@@ -34,6 +34,7 @@ using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::AppExecFwk;
 using OHOS::Parcel;
+const int TARGET_VERSION_THRESHOLDS = 8;
 
 class AbilityBaseTest : public testing::Test {
 public:
@@ -674,6 +675,37 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnForeground_0200, Function | MediumTest
 }
 
 /**
+ * @tc.number: AaFwk_Ability_OnForeground_0300
+ * @tc.name: OnForeground
+ * @tc.desc: Test the OnForeground exception.
+ */
+HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnForeground_0300, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OnForeground_0300 start";
+
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    AbilityType type = AbilityType::PAGE;
+    abilityInfo->type = type;
+    std::shared_ptr<OHOSApplication> application = nullptr;
+    std::shared_ptr<AbilityHandler> handler = nullptr;
+    sptr<IRemoteObject> token = nullptr;
+    ability_->Init(abilityInfo, application, handler, token);
+    ability_->SetTargetVersion(TARGET_VERSION_THRESHOLDS);
+    Want want;
+    ability_->OnForeground(want);
+
+    AbilityLifecycleExecutor::LifecycleState state = ability_->GetState();
+    std::shared_ptr<LifeCycle> lifeCycle = ability_->GetLifecycle();
+    LifeCycle::Event lifeCycleState = lifeCycle->GetLifecycleState();
+
+    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::FOREGROUND_NEW, state);
+    EXPECT_EQ(LifeCycle::Event::ON_FOREGROUND, lifeCycleState);
+
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OnForeground_0300 end";
+}
+
+
+/**
  * @tc.number: AaFwk_Ability_OnBackground_0100
  * @tc.name: OnBackground
  * @tc.desc: Test whether onbackground is called normally and verify whether the members are correct.
@@ -720,6 +752,35 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0200, Function | MediumTest
     EXPECT_EQ(nullptr, lifeCycle);
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackground_0200 end";
+}
+
+/**
+ * @tc.number: AaFwk_Ability_OnBackground_0300
+ * @tc.name: OnBackground
+ * @tc.desc: Test the OnBackground exception.
+ */
+HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0300, Function | MediumTest | Level3)
+{
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackground_0300 start";
+
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    AbilityType type = AbilityType::PAGE;
+    abilityInfo->type = type;
+    std::shared_ptr<OHOSApplication> application = nullptr;
+    std::shared_ptr<AbilityHandler> handler = nullptr;
+    sptr<IRemoteObject> token = nullptr;
+    ability_->Init(abilityInfo, application, handler, token);
+    ability_->SetTargetVersion(TARGET_VERSION_THRESHOLDS);
+    ability_->OnBackground();
+
+    AbilityLifecycleExecutor::LifecycleState state = ability_->GetState();
+    std::shared_ptr<LifeCycle> lifeCycle = ability_->GetLifecycle();
+    LifeCycle::Event lifeCycleState = lifeCycle->GetLifecycleState();
+
+    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW, state);
+    EXPECT_EQ(LifeCycle::Event::ON_BACKGROUND, lifeCycleState);
+
+    GTEST_LOG_(INFO) << "AaFwk_Ability_OBackground_0300 end";
 }
 
 /**

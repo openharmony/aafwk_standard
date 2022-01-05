@@ -19,28 +19,32 @@
 #include <functional>
 #include <string>
 #include <unistd.h>
-#include "iremote_object.h"
+
 #include "ability_context.h"
+#include "ability_continuation_interface.h"
 #include "ability_event_interface.h"
+#include "ability_lifecycle_executor.h"
+#include "ability_lifecycle_interface.h"
+#include "ability_window.h"
+#include "configuration.h"
 #include "context.h"
-#include "want.h"
-#include "dummy_component_container.h"
-#include "pac_map.h"
-#include "dummy_notification_request.h"
+#include "continuation_handler.h"
 #include "continuation_state.h"
 #include "dummy_ability_package.h"
-#include "configuration.h"
-#include "continuation_handler.h"
-#include "ability_window.h"
-#include "ability_lifecycle_interface.h"
-#include "ability_lifecycle_executor.h"
-#include "ability_continuation_interface.h"
-
+#include "dummy_component_container.h"
+#include "dummy_notification_request.h"
 #include "form_callback_interface.h"
 #include "form_constants.h"
 #include "form_death_callback.h"
-#include "form_provider_info.h"
 #include "form_info.h"
+#include "form_provider_info.h"
+#include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/key_event.h"
+#include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/pointer_event.h"
+#include "iremote_object.h"
+#include "pac_map.h"
+#include "want.h"
+#include "window_scene.h"
+#include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;
 
@@ -50,8 +54,10 @@ class AbsSharedResultSet;
 class DataAbilityPredicates;
 class ValuesBucket;
 }  // namespace NativeRdb
+namespace AbilityRuntime {
+class Runtime;
+}
 class KeyEvent;
-class TouchEvent;
 namespace AppExecFwk {
 class DataAbilityResult;
 class DataAbilityOperation;
@@ -71,9 +77,22 @@ class Ability : public IAbilityEvent,
                 public std::enable_shared_from_this<Ability> {
 public:
     friend class PageAbilityImpl;
+    friend class NewAbilityImpl;
+
+    static Ability* Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime);
 
     Ability() = default;
     virtual ~Ability() = default;
+
+    /**
+     * @brief Obtains the AbilityContext object of the ability.
+     *
+     * @return Returns the AbilityContext object of the ability.
+     */
+    inline std::shared_ptr<AbilityRuntime::AbilityContext> GetAbilityContext()
+    {
+        return abilityContext_;
+    }
 
     /**
      * @brief Destroys ability.
@@ -185,6 +204,8 @@ public:
         const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
         const sptr<IRemoteObject> &token);
 
+    void AttachAbilityContext(const std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext);
+
     /**
      * @brief Called when this ability is started. You must override this function if you want to perform some
      *        initialization operations during ability startup.
@@ -221,6 +242,22 @@ public:
     virtual void OnInactive();
 
     /**
+     * @brief Called after instantiating WindowScene.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnSceneCreated();
+
+    /**
+     * @brief Called after ability stoped.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void onSceneDestroyed();
+
+    /**
      * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
      *
      *
@@ -244,13 +281,12 @@ public:
      * key-down event of the component returns true. The default implementation of this callback does nothing
      * and returns false.
      *
-     * @param keyCode Indicates the code of the key pressed.
      * @param keyEvent Indicates the key-down event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event
      * is not handled and should be passed to other handlers.
      */
-    virtual bool OnKeyDown(int keyCode, const KeyEvent &keyEvent);
+    virtual void OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
 
     /**
      * @brief Called when a key is released. When any component in the Ability gains focus, the key-up event for
@@ -258,13 +294,12 @@ public:
      * key-up event of the component returns true. The default implementation of this callback does nothing and
      * returns false.
      *
-     * @param keyCode Indicates the code of the key released.
      * @param keyEvent Indicates the key-up event.
      *
      * @return Returns true if this event is handled and will not be passed further; returns false if this event
      * is not handled and should be passed to other handlers.
      */
-    virtual bool OnKeyUp(int keyCode, const KeyEvent &keyEvent);
+    virtual void OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
 
     /**
      * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
@@ -274,7 +309,7 @@ public:
      *
      * @return Returns true if the event is handled; returns false otherwise.
      */
-    virtual bool OnTouchEvent(const TouchEvent &touchEvent);
+    virtual void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
 
     /**
      * @brief Called when this Service ability is connected for the first time.
@@ -330,18 +365,25 @@ public:
     virtual void OnTopActiveAbilityChanged(bool topActive);
 
     /**
-     * @brief Inflates UI controls by using WindowConfig.
+     * @brief Inflates UI controls by using windowOption.
      *
-     * @param config Indicates the window config defined by the user.
+     * @param windowOption Indicates the window option defined by the user.
      */
-    virtual void SetUIContent(const sptr<WindowOption> &config);
+    virtual void SetWindowType(Rosen::WindowType winType);
 
     /**
      * @brief Get the window belong to the ability.
      *
      * @return Returns a Window object pointer.
      */
-    virtual const sptr<Window> GetWindow();
+    virtual const sptr<Rosen::Window> GetWindow();
+
+    /**
+     * @brief get the scene belong to the ability.
+     *
+     * @return Returns a WindowScene object pointer.
+     */
+    std::shared_ptr<Rosen::WindowScene> GetScene();
 
     /**
      * @brief Checks whether the main window of this ability has window focus.
@@ -349,6 +391,19 @@ public:
      * @return Returns true if this ability currently has window focus; returns false otherwise.
      */
     bool HasWindowFocus();
+
+    /**
+    * @description: Obtains api version based on ability.
+    * @return api version.
+    */
+    int GetTargetVersion();
+
+    /**
+    * @description: Set api version in an ability.
+    * @param targetVersion api version
+    * @return None.
+    */
+    void SetTargetVersion(int targetVersion);
 
     /**
      * @brief Called when a key is lone pressed.
@@ -1237,7 +1292,7 @@ public:
      */
     void ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
         std::vector<std::shared_ptr<DataAbilityResult>> &results, int index);
-		
+
     /**
      * @brief Save user data of local Ability generated at runtime.
      *
@@ -1269,12 +1324,22 @@ public:
      */
     virtual void OnRemoteTerminated() override;
 
+    /**
+     * @brief Set WindowScene listener
+     *
+     * @param listener WindowScene listener
+     * @return None.
+     */
+    void SetSceneListener(sptr<Rosen::IWindowLifeCycle> listener);
+
 protected:
     /**
      * @brief Acquire a form provider remote object.
      * @return Returns form provider remote object.
      */
     sptr<IRemoteObject> GetFormRemoteObject();
+
+    const AAFwk::LaunchParam& GetLaunchParam() const;
 
 private:
     std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
@@ -1290,6 +1355,8 @@ private:
     bool CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultSet> &queryResult,
         std::shared_ptr<NativeRdb::ValuesBucket> &&valuesBucket);
 
+    void DispatchLifecycleOnForeground(const Want &want);
+
     friend class AbilityImpl;
     bool VerifySupportForContinuation();
     void HandleCreateAsContinuation(const Want &want);
@@ -1300,12 +1367,19 @@ private:
      */
     void SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> setting);
 
+    /**
+     * @brief Set the launch param.
+     *
+     * @param launchParam the launch param.
+     */
+    void SetLaunchParam(const AAFwk::LaunchParam &launchParam);
+
 private:
     std::shared_ptr<ContinuationHandler> continuationHandler_ = nullptr;
     std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
     std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
-    std::shared_ptr<Context> context_ = nullptr;
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::shared_ptr<LifeCycle> lifecycle_ = nullptr;
     std::shared_ptr<AbilityLifecycleExecutor> abilityLifecycleExecutor_ = nullptr;
@@ -1315,11 +1389,16 @@ private:
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
     std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
+    sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
+    std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
+    LaunchParam launchParam_;
     bool bWindowFocus_ = false;
+    int targetVersion_ = 0;
 
     static const std::string SYSTEM_UI;
     static const std::string STATUS_BAR;
     static const std::string NAVIGATION_BAR;
+    static const std::string KEYGUARD;
     sptr<IRemoteObject> providerRemoteObject_ = nullptr;
     // Keep consistent with DMS defines. Used to callback to DMS.
     static const std::string DMS_SESSION_ID;

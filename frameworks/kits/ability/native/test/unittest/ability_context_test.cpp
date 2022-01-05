@@ -24,6 +24,8 @@
 #include "iservice_registry.h"
 #include "mock_bundle_manager.h"
 #include "mock_ability_manager_service.h"
+#include "napi_common_ability.h"
+#include "ohos_application.h"
 #include "system_ability_definition.h"
 #include "sys_mgr_client.h"
 #include "sa_mgr_client.h"
@@ -500,6 +502,41 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_ConnectAbility_0200, Function 
 }
 
 /**
+ * @tc.name: AaFwk_AbilityContext_ConnectAbility_0300
+ * @tc.desc: Test the attachbasecontext call to verify that the return value of connectability is true.
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8I8
+ */
+HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_ConnectAbility_0300, Function | MediumTest | Level1)
+{
+    std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+
+    abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
+    deal->SetAbilityInfo(abilityInfo);
+    context_->AttachBaseContext(deal);
+
+    Want want;
+    OHOS::sptr<AAFwk::IAbilityConnection> callback = new NAPIAbilityConnection();
+    bool ret = context_->ConnectAbility(want, callback);
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: AaFwk_AbilityContext_ConnectAbility_0400
+ * @tc.desc: Test the attachbasecontext call to verify that the return value of connectability is false.
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8I8
+ */
+HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_ConnectAbility_0400, Function | MediumTest | Level3)
+{
+    Want want;
+    OHOS::sptr<AAFwk::IAbilityConnection> callback = new NAPIAbilityConnection();
+    bool ret = context_->ConnectAbility(want, callback);
+    EXPECT_FALSE(ret);
+}
+
+/**
  * @tc.number: AaFwk_AbilityContext_DisconnectAbility_0100
  * @tc.name: DisconnectAbility
  * @tc.desc: Test whether the disconnectability is called normally.
@@ -513,6 +550,24 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_DisconnectAbility_0100, Functi
     deal->SetAbilityInfo(abilityInfo);
     context_->AttachBaseContext(deal);
     context_->DisconnectAbility(nullptr);
+}
+
+/**
+ * @tc.name: AaFwk_AbilityContext_DisconnectAbility_0200
+ * @tc.desc: Test whether the disconnectability is called normally.
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8I8
+ */
+HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_DisconnectAbility_0200, Function | MediumTest | Level1)
+{
+    std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+
+    abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
+    deal->SetAbilityInfo(abilityInfo);
+    context_->AttachBaseContext(deal);
+    OHOS::sptr<AAFwk::IAbilityConnection> callback = new NAPIAbilityConnection();
+    context_->DisconnectAbility(callback);
 }
 
 /**

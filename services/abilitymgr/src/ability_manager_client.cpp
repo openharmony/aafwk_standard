@@ -15,12 +15,12 @@
 
 #include "ability_manager_client.h"
 
-#include "string_ex.h"
 #include "ability_manager_interface.h"
 #include "hilog_wrapper.h"
+#include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
-#include "if_system_ability_manager.h"
+#include "string_ex.h"
 #include "system_ability_definition.h"
 #include "shared_memory.h"
 
@@ -155,6 +155,13 @@ ErrCode AbilityManagerClient::TerminateAbilityResult(const sptr<IRemoteObject> &
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->TerminateAbilityResult(token, startId);
+}
+
+ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->MinimizeAbility(token);
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
@@ -617,6 +624,27 @@ void AbilityManagerClient::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &mem
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     abms->GetSystemMemoryAttr(memoryInfo);
     return;
+}
+
+ErrCode AbilityManagerClient::StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    int result = abms->StartContinuation(want, abilityToken);
+    if (result != ERR_OK) {
+        HILOG_ERROR("StartContinuation failed, notify caller");
+        NotifyContinuationResult(abilityToken, result);
+    }
+    return result;
+}
+
+ErrCode AbilityManagerClient::NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->NotifyContinuationResult(abilityToken, result);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -13,13 +13,15 @@
  * limitations under the License.
  */
 #include "napi_data_ability_operation.h"
+
 #include <cstring>
 #include <map>
+
+#include "data_ability_predicates.h"
 #include "hilog_wrapper.h"
 #include "napi_common_want.h"
-#include "data_ability_predicates.h"
-#include "values_bucket.h"
 #include "napi_data_ability_helper.h"
+#include "values_bucket.h"
 
 namespace OHOS {
 namespace AppExecFwk {

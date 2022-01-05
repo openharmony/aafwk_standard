@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
 #include "data_ability_impl.h"
+#include <gtest/gtest.h>
 #include "app_log_wrapper.h"
 
 const int returnValueOpenfile = 11;

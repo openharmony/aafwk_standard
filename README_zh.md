@@ -296,13 +296,13 @@ featureAbility.terminateSelf().then((void) => {		    console.info("=============
 
 **aa start**
 
-| 命令                                                      | 描述                     |
-| --------------------------------------------------------- | ------------------------ |
-| aa start [-d <device>] -a <ability-name> -b <bundle-name> | 启动ability，设备ID 可空 |
+| 命令                                                           | 描述                      |
+| -------------------------------------------------------------- | ------------------------ |
+| aa start [-d <device>] -a <ability-name> -b <bundle-name> [-D] | 启动ability，设备ID 可空  |
 
 ```
 示例：
-aa start -d 12345 -a com.ohos.app.MainAbility -b com.ohos.app
+aa start -d 12345 -a com.ohos.app.MainAbility -b com.ohos.app -D
 ```
 
 **aa dump**
@@ -311,10 +311,21 @@ aa start -d 12345 -a com.ohos.app.MainAbility -b com.ohos.app
 | ---------- | --------------------- |
 | aa dump -a | 打印栈中的Ability信息 |
 
+**aa force-stop**
+
+| 命令                                                           | 描述                      |
+| -------------------------------------------------------------- | ------------------------ |
+| aa force-stop <bundle-name>                                    | 强制停止application       |
+
+```
+示例：
+aa force-stop com.ohos.app
+```
+
 ## 相关仓
 元能力子系统
 
-appexecfwk_standard 
+appexecfwk_standard
 
 **aafwk_standard**
 

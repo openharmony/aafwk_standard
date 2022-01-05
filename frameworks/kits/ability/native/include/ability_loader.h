@@ -16,14 +16,17 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_LOADER_H
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_LOADER_H
 
+#include "ability.h"
+#include "context.h"
+#include "extension.h"
+#include "ohos_application.h"
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include "ability.h"
-#include "ohos_application.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+using CreateExtension = std::function<AbilityRuntime::Extension *(void)>;
 using CreateAblity = std::function<Ability *(void)>;
 #ifdef ABILITY_WINDOW_SUPPORT
 using CreateSlice = std::function<AbilitySlice *(void)>;
@@ -54,6 +57,14 @@ public:
     void RegisterAbility(const std::string &abilityName, const CreateAblity &createFunc);
 
     /**
+     * @brief Register Extension Info
+     *
+     * @param abilityName Extension classname
+     * @param createFunc  Constructor address
+     */
+    void RegisterExtension(const std::string &abilityName, const CreateExtension &createFunc);
+
+    /**
      * @brief Get Ability address
      *
      * @param abilityName ability classname
@@ -61,6 +72,15 @@ public:
      * @return return Ability address
      */
     Ability *GetAbilityByName(const std::string &abilityName);
+
+    /**
+     * @brief Get Extension address
+     *
+     * @param abilityName Extension classname
+     *
+     * @return return Ability address
+     */
+    AbilityRuntime::Extension *GetExtensionByName(const std::string &abilityName);
 
 #ifdef ABILITY_WINDOW_SUPPORT
     void RegisterAbilitySlice(const std::string &sliceName, const CreateSlice &createFunc);
@@ -75,6 +95,7 @@ private:
     AbilityLoader &operator=(AbilityLoader &&) = delete;
 
     std::unordered_map<std::string, CreateAblity> abilities_;
+    std::unordered_map<std::string, CreateExtension> extensions_;
 };
 /**
  * @brief Registers the class name of an {@link Ability} child class.
@@ -89,6 +110,21 @@ private:
     {                                                                                \
         AbilityLoader::GetInstance().RegisterAbility(                                \
             #className, []()->Ability * { return new (std::nothrow) className; });   \
+    }
+
+/**
+ * @brief Registers the class name of an {@link Extension} child class.
+ *
+ * After implementing your own {@link Extension} class, you should call this function so that the extension management
+ * framework can create <b>Extension</b> instances when loading your <b>Extension</b> class.
+ *
+ * @param className Indicates the {@link Extension} class name to register.
+ */
+#define REGISTER_EX(className)                                                       \
+    __attribute__((constructor)) void RegisterEX##className()                        \
+    {                                                                                \
+        AbilityLoader::GetInstance().RegisterExtension(                              \
+            #className, []()->AbilityRuntime::Extension * { return new (std::nothrow) className; }); \
     }
 
 /**

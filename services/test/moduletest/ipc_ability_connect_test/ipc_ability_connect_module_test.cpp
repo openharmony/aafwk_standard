@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include <unistd.h>
 #include "gtest/gtest.h"
+#include <unistd.h>
 
 #include "mock_ability_connect_callback_stub.h"
 #include "ability_connect_callback_proxy.h"
@@ -68,11 +68,10 @@ HWTEST_F(IpcAbilityConnectModuleTest, AbilityConnectCallBack_IPC_001, TestSize.L
         sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(mockAbilityConnectStub));
 
         AppExecFwk::ElementName element;
-        sptr<IRemoteObject> remoteObject;
         EXPECT_CALL(*mockAbilityConnectStub, OnAbilityConnectDone(_, _, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityConnectStub.GetRefPtr(), &MockAbilityConnectCallbackStub::PostVoid));
-        callback->OnAbilityConnectDone(element, remoteObject, 0);
+        callback->OnAbilityConnectDone(element, mockAbilityConnectStub, 0);
 
         mockAbilityConnectStub->Wait();
     }

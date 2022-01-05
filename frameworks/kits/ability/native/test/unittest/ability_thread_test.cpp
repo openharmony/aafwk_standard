@@ -97,7 +97,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleSaveAbilityState_0100, F
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             abilitythread->ScheduleSaveAbilityState();
 
@@ -146,7 +146,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleRestoreAbilityState_0100
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             PacMap state;
 
             abilitythread->ScheduleRestoreAbilityState(state);
@@ -195,7 +195,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Attach_3_Param_0100, Function | 
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
             sleep(1);
         }
     }
@@ -223,7 +223,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Attach_3_Param_0200, Function | 
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             sleep(1);
         }
@@ -251,7 +251,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Attach_2_Param_0100, Function | 
             std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-            abilitythread->Attach(application, abilityRecord);
+            abilitythread->Attach(application, abilityRecord, nullptr);
 
             sleep(1);
         }
@@ -281,7 +281,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Attach_2_Param_0200, Function | 
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
 
-            abilitythread->Attach(application, abilityRecord);
+            abilitythread->Attach(application, abilityRecord, nullptr);
 
             sleep(1);
         }
@@ -311,7 +311,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleAbilityTransaction_0100,
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             Want want;
             LifeCycleStateInfo lifeCycleStateInfo;
@@ -375,7 +375,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleConnectAbility_0100, Fun
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             Want want;
             abilitythread->ScheduleConnectAbility(want);
@@ -426,7 +426,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleDisconnectAbility_0100, 
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             Want want;
             abilitythread->ScheduleDisconnectAbility(want);
@@ -480,7 +480,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_ScheduleCommandAbility_0100, Fun
             std::shared_ptr<AbilityLocalRecord> abilityRecord =
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             Want want;
             bool restart = true;
@@ -538,7 +538,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_SendResult_0100, Function | Medi
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
             std::shared_ptr<AbilityImpl> abilityimpl = std::make_shared<AbilityImpl>();
-            abilitythread->Attach(application, abilityRecord, mainRunner);
+            abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
             int requestCode = 0;
             int resultCode = 0;
@@ -595,7 +595,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_AbilityThreadMain_0100, Function
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
 
-            abilitythread->AbilityThreadMain(application, abilityRecord, mainRunner);
+            abilitythread->AbilityThreadMain(application, abilityRecord, mainRunner, nullptr);
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_AbilityThreadMain_0100 end";
@@ -623,7 +623,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_AbilityThreadMain_0200, Function
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
 
-            abilitythread->AbilityThreadMain(application, abilityRecord, mainRunner);
+            abilitythread->AbilityThreadMain(application, abilityRecord, mainRunner, nullptr);
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_AbilityThreadMain_0200 end";
@@ -651,7 +651,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_AbilityThreadMain_0300, Function
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
 
-            abilitythread->AbilityThreadMain(application, abilityRecord);
+            abilitythread->AbilityThreadMain(application, abilityRecord, nullptr);
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_AbilityThreadMain_0300 end";
@@ -679,7 +679,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_AbilityThreadMain_0400, Function
                 std::make_shared<AbilityLocalRecord>(abilityInfo, token);
             std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
 
-            abilitythread->AbilityThreadMain(application, abilityRecord);
+            abilitythread->AbilityThreadMain(application, abilityRecord, nullptr);
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_AbilityThreadMain_0400 end";

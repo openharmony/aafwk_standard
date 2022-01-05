@@ -15,20 +15,21 @@
 
 #include "ability_stack_manager.h"
 
-#include <singleton.h>
 #include <map>
 #include <fstream>
+#include <singleton.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include "hilog_wrapper.h"
-#include "ability_util.h"
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
+#include "ability_util.h"
 #include "app_scheduler.h"
+#include "bytrace.h"
 #include "common_event.h"
 #include "common_event_manager.h"
+#include "hilog_wrapper.h"
 #include "shared_memory.h"
 
 namespace OHOS {
@@ -38,7 +39,8 @@ const std::map<SystemWindowMode, std::string> AbilityStackManager::windowModeToS
     {SystemWindowMode::DEFAULT_WINDOW_MODE, "default window mode"},
     {SystemWindowMode::SPLITSCREEN_WINDOW_MODE, "split screen window mode"},
     {SystemWindowMode::FLOATING_WINDOW_MODE, "floating window mode"},
-    {SystemWindowMode::FLOATING_AND_SPLITSCREEN_WINDOW_MODE, "floating and split screen window mode"}};
+    {SystemWindowMode::FLOATING_AND_SPLITSCREEN_WINDOW_MODE, "floating and split screen window mode"}
+};
 AbilityStackManager::AbilityStackManager(int userId) : userId_(userId)
 {}
 
@@ -118,7 +120,8 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     if (currentTopAbilityRecord != nullptr && !IsLockScreenState()) {
         std::string element = currentTopAbilityRecord->GetWant().GetElement().GetURI();
         HILOG_DEBUG("current top: %{public}s", element.c_str());
-        if (currentTopAbilityRecord->GetAbilityState() != ACTIVE) {
+        auto targetState = currentTopAbilityRecord->IsNewVersion() ? FOREGROUND_NEW : ACTIVE;
+        if (currentTopAbilityRecord->GetAbilityState() != targetState) {
             HILOG_INFO("Top ability is not active, so enqueue ability for waiting.");
             EnqueueWaittingAbility(abilityRequest);
             return START_ABILITY_WAITING;
@@ -131,6 +134,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 int AbilityStackManager::StartAbilityLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     // lock screen state
     if (IsLockScreenState()) {
         HILOG_DEBUG("Start ability with white list ...");
@@ -185,6 +189,7 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
         MoveMissionStackToTop(lastMissionStack_);
         return ERR_INVALID_VALUE;
     }
+    targetAbilityRecord->SetLaunchReason(LaunchReason::LAUNCHREASON_START_ABILITY);
     targetAbilityRecord->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
     MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
 
@@ -212,6 +217,7 @@ int AbilityStackManager::StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> la
     std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
     bool isTopSplitScreen)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(currentTopAbility, ERR_INVALID_VALUE);
     enum ChangeType { T_ACTIVE = 0, T_CHANGE, T_DEFAULT } changeType;
@@ -341,6 +347,7 @@ int AbilityStackManager::GetTargetChangeType(bool isMissionChanged, bool isStack
 int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_DEBUG("Start ability as special locked.");
 
     CHECK_POINTER_AND_RETURN(currentTopAbility, INNER_ERR);
@@ -366,6 +373,7 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     CHECK_POINTER_AND_RETURN(targetAbilityRecord, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(targetMissionRecord, ERR_INVALID_VALUE);
 
+    targetAbilityRecord->SetLaunchReason(LaunchReason::LAUNCHREASON_START_ABILITY);
     targetAbilityRecord->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
 
     std::list<MissionOption> missionOptions;
@@ -392,10 +400,10 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     // 3. first create mission record or stack is not changed,
     // just load target ability and inactive the current top ability.
     if ((!IsSplitScreenStack(targetStack->GetMissionStackId()) &&
-            (targetMissionRecord->GetMissionStack() == nullptr ||
-                targetMissionRecord->GetMissionStack()->GetMissionStackId() == targetStack->GetMissionStackId())) ||
+        (targetMissionRecord->GetMissionStack() == nullptr ||
+        targetMissionRecord->GetMissionStack()->GetMissionStackId() == targetStack->GetMissionStackId())) ||
         (IsSplitScreenStack(targetStack->GetMissionStackId()) &&
-            targetStack->GetMissionRecordById(targetMissionRecord->GetMissionRecordId()))) {
+        targetStack->GetMissionRecordById(targetMissionRecord->GetMissionRecordId()))) {
         MoveMissionStackToTop(targetStack);
         MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
         HILOG_DEBUG("First create mission record ,missionId:%{public}d", targetMissionRecord->GetMissionRecordId());
@@ -433,6 +441,7 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
 int AbilityStackManager::StartAbilityByAllowListLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_DEBUG("Start ability as allow list locked.");
     // 1. lockscreen stack is target mission stack
     std::shared_ptr<MissionStack> targetStack = GetTargetMissionStack(abilityRequest);
@@ -488,6 +497,7 @@ void AbilityStackManager::SortPreMission(
 void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
     std::shared_ptr<AbilityRecord> &targetAbilityRecord, std::shared_ptr<MissionRecord> &targetMissionRecord)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("Move mission and ability.");
     CHECK_POINTER(targetAbilityRecord);
     CHECK_POINTER(targetMissionRecord);
@@ -665,13 +675,11 @@ int AbilityStackManager::TerminateAbilityLocked(std::list<TerminatingAbility> &t
         if (unit.resultWant != nullptr) {
             ability->SaveResultToCallers(unit.resultCode, unit.resultWant);
         }
-        if (ability->IsAbilityState(AbilityState::INITIAL)) {
+        if (ability->IsAbilityState(AbilityState::INITIAL) ||
+            ability->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+            ability->IsAbilityState(AbilityState::FOREGROUNDING_NEW) ||
+            ability->IsActiveState()) {
             // ability on initial, remove AbilityRecord out of stack.
-            RemoveTerminatingAbility(ability, lastActiveAbility);
-            continue;
-        }
-        // common case, ability terminate at active and at top position
-        if (ability->IsActiveState()) {
             RemoveTerminatingAbility(ability, lastActiveAbility);
             ability->Inactivate();
             continue;
@@ -702,6 +710,33 @@ int AbilityStackManager::TerminateAbilityLocked(std::list<TerminatingAbility> &t
         }
     }
 
+    return ERR_OK;
+}
+
+int AbilityStackManager::MinimizeAbility(const sptr<IRemoteObject> &token)
+{
+    HILOG_INFO("Terminate ability.");
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    // check if ability is in stack to avoid user create fake token.
+    CHECK_POINTER_AND_RETURN_LOG(
+        GetAbilityRecordByToken(token), INNER_ERR, "Ability is not in stack.");
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    return MinimizeAbilityLocked(abilityRecord);
+}
+
+int AbilityStackManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_INFO("%{public}s, called", __func__);
+
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) &&
+        !abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+        HILOG_WARN("Ability state is invalid.");
+        return ERR_OK;
+    }
+
+    MoveToBackgroundTask(abilityRecord);
     return ERR_OK;
 }
 
@@ -865,7 +900,9 @@ void AbilityStackManager::RemoveTerminatingAbility(
     auto currentStack = missionRecord->GetMissionStack();
     CHECK_POINTER(currentStack);
 
-    auto isActive = abilityRecord->IsActiveState();
+    auto isActive = (abilityRecord->IsActiveState() ||
+                     abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+                     abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW));
 
     DelayedSingleton<AppScheduler>::GetInstance()->PrepareTerminate(abilityRecord->GetToken());
     terminateAbilityRecordList_.push_back(abilityRecord);
@@ -1298,6 +1335,12 @@ int AbilityStackManager::DispatchState(const std::shared_ptr<AbilityRecord> &abi
         case AbilityState::INITIAL: {
             return DispatchTerminate(abilityRecord, state);
         }
+        case AbilityState::FOREGROUND_NEW: {
+            return DispatchForegroundNew(abilityRecord, state);
+        }
+        case AbilityState::BACKGROUND_NEW: {
+            return DispatchBackgroundNew(abilityRecord, state);
+        }
         default: {
             HILOG_WARN("Don't support transiting state: %d", state);
             return ERR_INVALID_VALUE;
@@ -1333,7 +1376,7 @@ int AbilityStackManager::DispatchInactive(const std::shared_ptr<AbilityRecord> &
     CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    if (!abilityRecord->IsAbilityState(AbilityState::INACTIVATING)) {
+    if (!abilityRecord->IsAbilityState(AbilityState::INACTIVATING) && !abilityRecord->IsNewVersion()) {
         HILOG_ERROR("Ability transition life state error. expect %{public}d, actual %{public}d callback %{public}d",
             AbilityState::INACTIVATING,
             abilityRecord->GetAbilityState(),
@@ -1578,7 +1621,7 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
     auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
     // 1. preAbility must be inactive when start ability.
     // move preAbility to background only if it was inactive.
-    if (preAbilityRecord) {
+    if (preAbilityRecord && !preAbilityRecord->IsNewVersion()) {
         auto preStackId = preAbilityRecord->GetMissionStackId();
         auto currentStackId = abilityRecord->GetMissionStackId();
         auto preMissionId = preAbilityRecord->GetMissionRecordId();
@@ -1636,13 +1679,22 @@ void AbilityStackManager::MoveToBackgroundTask(const std::shared_ptr<AbilityReco
     auto self(shared_from_this());
     auto task = [abilityRecord, self]() {
         HILOG_WARN("Stack manager move to background timeout.");
-        self->CompleteBackground(abilityRecord);
+        if (abilityRecord->IsNewVersion()) {
+            self->CompleteBackgroundNew(abilityRecord);
+        } else {
+            self->CompleteBackground(abilityRecord);
+        }
     };
     abilityRecord->MoveToBackground(task);
 }
 
 void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    if (abilityRecord->IsNewVersion()) {
+        CompleteInactiveByNewVersion(abilityRecord);
+        return;
+    }
+
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     CHECK_POINTER(abilityRecord);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
@@ -1986,7 +2038,7 @@ void AbilityStackManager::StartWaittingAbility()
     auto topAbility = GetCurrentTopAbility();
     CHECK_POINTER(topAbility);
 
-    if (!topAbility->IsAbilityState(ACTIVE)) {
+    if (!(topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(FOREGROUND_NEW))) {
         HILOG_INFO("Top ability is not active, must return for start waiting again.");
         return;
     }
@@ -2049,7 +2101,7 @@ void AbilityStackManager::GetRecordBySplitScreenMode(const AbilityRequest &abili
     } else {
         CheckMissionRecordIsResume(missionRecord);
         if ((abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETOP &&
-                missionRecord->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name)) ||
+            missionRecord->IsTopAbilityRecordByName(abilityRequest.abilityInfo.name)) ||
             abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON ||
             !IsSplitScreenStack(missionRecord->GetMissionRecordId())) {
             targetAbilityRecord = missionRecord->GetTopAbilityRecord();
@@ -2327,13 +2379,17 @@ void AbilityStackManager::RestartAbility(const std::shared_ptr<AbilityRecord> ab
     CHECK_POINTER(abilityRecord);
     abilityRecord->SetRestarting(true);
     if (abilityRecord->IsAbilityState(AbilityState::ACTIVE) ||
-        abilityRecord->IsAbilityState(AbilityState::ACTIVATING)) {
+        abilityRecord->IsAbilityState(AbilityState::ACTIVATING) ||
+        abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+        abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
         abilityRecord->Inactivate();
     } else if (abilityRecord->IsAbilityState(AbilityState::INACTIVE) ||
                abilityRecord->IsAbilityState(AbilityState::INACTIVATING)) {
         MoveToBackgroundTask(abilityRecord);
     } else if (abilityRecord->IsAbilityState(AbilityState::BACKGROUND) ||
-               abilityRecord->IsAbilityState(AbilityState::MOVING_BACKGROUND)) {
+               abilityRecord->IsAbilityState(AbilityState::MOVING_BACKGROUND) ||
+               abilityRecord->IsAbilityState(AbilityState::BACKGROUND_NEW) ||
+               abilityRecord->IsAbilityState(AbilityState::BACKGROUNDING_NEW)) {
         auto self(shared_from_this());
         auto timeoutTask = [abilityRecord, self]() {
             HILOG_WARN("disconnect ability terminate timeout.");
@@ -2536,7 +2592,7 @@ int AbilityStackManager::MoveMissionToEndLocked(int missionId)
     auto currentStack = currentMission->GetMissionStack();
     CHECK_POINTER_AND_RETURN(currentStack, MOVE_MISSION_FAILED);
     if (IsSplitScreenStack(requestStack->GetMissionStackId()) ||
-            IsSplitScreenStack(currentStack->GetMissionStackId())) {
+        IsSplitScreenStack(currentStack->GetMissionStackId())) {
         requestStack->MoveMissionRecordToBottom(requestMission);
         requestAbility->SetToEnd(true);
         auto fullScreenStack = GetTopFullScreenStack();
@@ -2673,7 +2729,9 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
     }
 
     if (abilityRecord->IsAbilityState(AbilityState::ACTIVATING) ||
-        abilityRecord->IsAbilityState(AbilityState::INITIAL) || abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
+        abilityRecord->IsAbilityState(AbilityState::INITIAL) ||
+        abilityRecord->IsAbilityState(AbilityState::ACTIVE) ||
+        abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
         auto preAbility = abilityRecord->GetPreAbilityRecord();
         if (preAbility && preAbility->IsAbilityState(AbilityState::INACTIVE)) {
             MoveToBackgroundTask(preAbility);
@@ -2695,10 +2753,13 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
     CHECK_POINTER(stack);
     auto isFloatingFocusDied =
         ((topAbility == GetCurrentTopAbility()) && stack->IsEqualStackId(FLOATING_MISSION_STACK_ID) &&
-            (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING)));
+         (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING) ||
+          topAbility->IsAbilityState(FOREGROUND_NEW) || topAbility->IsAbilityState(FOREGROUNDING_NEW)));
 
-    auto isFullStackActiveDied = (IsFullScreenStack(stack->GetMissionStackId()) &&
-                                  (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING)));
+    auto isFullStackActiveDied =
+        (IsFullScreenStack(stack->GetMissionStackId()) &&
+         (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING) ||
+          topAbility->IsAbilityState(FOREGROUND_NEW) || topAbility->IsAbilityState(FOREGROUNDING_NEW)));
 
     auto isSplitScreenActiveDied = (IsSplitScreenStack(stack->GetMissionStackId()) &&
                                     (topAbility->IsAbilityState(ACTIVE) || topAbility->IsAbilityState(ACTIVATING)));
@@ -2982,6 +3043,7 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             DelayedStartLauncher();
             break;
         case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
+        case AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG:
             CompleteInactive(abilityRecord);
             break;
         default:
@@ -3329,9 +3391,9 @@ int AbilityStackManager::DispatchLifecycle(const std::shared_ptr<AbilityRecord> 
         IsFullScreenStack(lastTopAbility->GetMissionStackId()) &&
         (!lastMissionStack->IsTopMissionRecord(lastMission) || lastMissionStack != topFullStack);
     bool isNotTopInMultiWin = (!IsFullScreenStack(lastTopAbility->GetMissionStackId()) &&
-                                !SupportSyncVisualByStackId(lastTopAbility->GetMissionStackId()) &&
-                                !lastMissionStack->IsTopMissionRecord(lastMission)) ||
-                                (lastMission->GetMissionRecordId() == (currentTopAbility->GetMissionRecordId()));
+                              !SupportSyncVisualByStackId(lastTopAbility->GetMissionStackId()) &&
+                              !lastMissionStack->IsTopMissionRecord(lastMission)) ||
+                                  (lastMission->GetMissionRecordId() == (currentTopAbility->GetMissionRecordId()));
 
     auto activeFun = [](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability->IsAbilityState(AbilityState::ACTIVE) || ability->IsAbilityState(AbilityState::ACTIVATING)) {
@@ -3342,7 +3404,6 @@ int AbilityStackManager::DispatchLifecycle(const std::shared_ptr<AbilityRecord> 
     };
 
     if (lastTopAbility == currentTopAbility) {
-        ;
     } else if (isTopSplitScreen) {
         // top split screen , all mission is active , other is background
         if (IsSplitScreenStack(lastTopAbility->GetMissionStackId()) && checkFun(lastTopAbility) &&
@@ -3429,7 +3490,7 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::list<MissionOption
         }
         if (IsExistSplitScreenStack() && !InFrontOfFullScreenStack() &&
             (it.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-                it.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY)) {
+            it.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY)) {
             HILOG_ERROR("split screen stack is exist, but not at the top, replacing misiion or creating a new split "
                         "stack is not supported.");
             return MOVE_MISSION_TO_STACK_MOVING_DENIED;
@@ -3459,8 +3520,8 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::shared_ptr<Ability
     if (currentTopAbility &&
         (AbilityUtil::IsSystemDialogAbility(
             currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name) ||
-            AbilityUtil::IsMultiApplicationSelectorAbility(
-                currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name))) {
+        AbilityUtil::IsMultiApplicationSelectorAbility(
+            currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name))) {
         HILOG_ERROR("Top page ability is dialog type, cannot return to launcher.");
         return START_ABILITY_SETTING_FAILED;
     }
@@ -4862,6 +4923,227 @@ void AbilityStackManager::RemoveMultiAppSelectorAbility(const std::shared_ptr<Ab
         }
     }
     return;
+}
+
+void AbilityStackManager::CompleteInactiveByNewVersion(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    if (!abilityRecord->IsNewVersion()) {
+        return;
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+
+    // 1. it may be inactive callback of terminate ability.
+    if (abilityRecord->IsTerminating()) {
+        abilityRecord->SendResultToCallers();
+        if (abilityRecord->IsForceTerminate()) {
+            HILOG_WARN("Ability is forced to terminate.");
+            MoveToBackgroundTask(abilityRecord);
+            return;
+        }
+        auto nextActiveAbility = abilityRecord->GetNextAbilityRecord();
+        CHECK_POINTER_LOG(nextActiveAbility, "No top ability! Jump to launcher.");
+        if (nextActiveAbility->IsAbilityState(ACTIVE) ||
+            nextActiveAbility->IsAbilityState(FOREGROUND_NEW) ||
+            nextActiveAbility->IsAbilityState(FOREGROUNDING_NEW)) {
+            MoveToBackgroundTask(abilityRecord);
+            UpdateFocusAbilityRecord(nextActiveAbility, true);
+            return;
+        }
+        // need to specify the back ability as the current ability
+        nextActiveAbility->SetBackAbilityRecord(abilityRecord);
+        // top ability.has been pushed into stack, but haven't load.
+        // so we need load it first
+        nextActiveAbility->ProcessActivate();
+        return;
+    }
+
+    std::string element = abilityRecord->GetWant().GetElement().GetURI();
+    HILOG_INFO("ability: %{public}s", element.c_str());
+
+    auto nextAbilityRecord = abilityRecord->GetNextAbilityRecord();
+    CHECK_POINTER_LOG(nextAbilityRecord, "Failed to get next ability record.");
+
+    std::string nextElement = nextAbilityRecord->GetWant().GetElement().GetURI();
+    HILOG_DEBUG("Next ability record: %{public}s", nextElement.c_str());
+    nextAbilityRecord->ProcessActivate();
+}
+
+int AbilityStackManager::DispatchForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state)
+{
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+        HILOG_ERROR("Ability transition life state error. expect %{public}d, actual %{public}d callback %{public}d",
+            AbilityState::FOREGROUNDING_NEW,
+            abilityRecord->GetAbilityState(),
+            state);
+        return ERR_INVALID_VALUE;
+    }
+
+    handler->RemoveEvent(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, abilityRecord->GetEventId());
+    auto self(shared_from_this());
+    auto task = [self, abilityRecord]() { self->CompleteForegroundNew(abilityRecord); };
+    handler->PostTask(task);
+
+    return ERR_OK;
+}
+
+void AbilityStackManager::CompleteForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+
+    CHECK_POINTER(abilityRecord);
+    std::string element = abilityRecord->GetWant().GetElement().GetURI();
+    HILOG_INFO("ability: %{public}s", element.c_str());
+
+    abilityRecord->SetAbilityState(AbilityState::FOREGROUND_NEW);
+
+    DelayedSingleton<AbilityManagerService>::GetInstance()->NotifyBmsAbilityLifeStatus(
+        abilityRecord->GetAbilityInfo().bundleName,
+        abilityRecord->GetAbilityInfo().name,
+        AbilityUtil::UTCTimeSeconds(),
+        abilityRecord->GetAbilityInfo().applicationInfo.uid);
+#if BINDER_IPC_32BIT
+    HILOG_INFO("notify bms ability life status, bundle name:%{public}s, ability name:%{public}s, time:%{public}lld",
+        abilityRecord->GetAbilityInfo().bundleName.c_str(),
+        abilityRecord->GetAbilityInfo().name.c_str(),
+        AbilityUtil::UTCTimeSeconds());
+#else
+    HILOG_INFO("notify bms ability life status, bundle name:%{public}s, ability name:%{public}s, time:%{public}ld",
+        abilityRecord->GetAbilityInfo().bundleName.c_str(),
+        abilityRecord->GetAbilityInfo().name.c_str(),
+        AbilityUtil::UTCTimeSeconds());
+#endif
+
+    auto self(shared_from_this());
+    auto startWaittingAbilityTask = [self]() { self->StartWaittingAbility(); };
+
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER_LOG(handler, "Fail to get AbilityEventHandler.");
+
+    /* PostTask to trigger start Ability from waiting queue */
+    handler->PostTask(startWaittingAbilityTask, "startWaittingAbility");
+
+    auto preAbilityRecord = abilityRecord->GetPreAbilityRecord();
+    // 1. preAbility must be inactive when start ability.
+    // move preAbility to background only if it was inactive.
+    if (preAbilityRecord && !preAbilityRecord->IsNewVersion()) {
+        auto preStackId = preAbilityRecord->GetMissionStackId();
+        auto currentStackId = abilityRecord->GetMissionStackId();
+        auto preMissionId = preAbilityRecord->GetMissionRecordId();
+        auto currentMissionId = abilityRecord->GetMissionRecordId();
+        auto isBackground =
+            (!IsTopInMission(preAbilityRecord)) || preAbilityRecord->IsToEnd() ||
+            ((IsFullScreenStack(preStackId) && IsFullScreenStack(currentStackId)) ||
+                ((preStackId == FLOATING_MISSION_STACK_ID) && (currentStackId == FLOATING_MISSION_STACK_ID) &&
+                    preMissionId == currentMissionId) ||
+                ((preStackId == FLOATING_MISSION_STACK_ID) && (currentStackId == FLOATING_MISSION_STACK_ID) &&
+                    !SupportSyncVisualByStackId(FLOATING_MISSION_STACK_ID) && preMissionId != currentMissionId));
+
+        if (isBackground && preAbilityRecord->IsAbilityState(AbilityState::INACTIVE) &&
+            !AbilityUtil::IsSystemDialogAbility(
+            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name)) {
+            std::string preElement = preAbilityRecord->GetWant().GetElement().GetURI();
+            HILOG_INFO("Pre ability record: %{public}s", preElement.c_str());
+            // preAbility was inactive ,resume new want flag to false
+            MoveToBackgroundTask(preAbilityRecord);
+            // Flag completed move to end.
+            if (preAbilityRecord->IsToEnd()) {
+                preAbilityRecord->SetToEnd(false);
+            }
+        }
+    }
+
+    // 2. nextAbility was in terminate list when terminate ability.
+    // should move to background and then terminate.
+    std::shared_ptr<AbilityRecord> nextAbilityRecord = abilityRecord->GetNextAbilityRecord();
+    if (nextAbilityRecord != nullptr &&
+        nextAbilityRecord->IsTerminating() &&
+        (nextAbilityRecord->IsAbilityState(AbilityState::INACTIVE) ||
+        nextAbilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW))) {
+        std::string nextElement = nextAbilityRecord->GetWant().GetElement().GetURI();
+        HILOG_INFO("Next ability record : %{public}s", nextElement.c_str());
+        MoveToBackgroundTask(nextAbilityRecord);
+    }
+
+    // 3. when the mission ends and returns to launcher directly, the next and back are inconsistent.
+    // should move back ability to background and then terminate.
+    std::shared_ptr<AbilityRecord> backAbilityRecord = abilityRecord->GetBackAbilityRecord();
+    if (backAbilityRecord != nullptr &&
+        backAbilityRecord->IsTerminating() &&
+        (backAbilityRecord->IsAbilityState(AbilityState::INACTIVE) ||
+        backAbilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW)) &&
+        (nextAbilityRecord == nullptr || nextAbilityRecord->GetRecordId() != backAbilityRecord->GetRecordId())) {
+        std::string backElement = backAbilityRecord->GetWant().GetElement().GetURI();
+        HILOG_INFO("Back ability record: %{public}s", backElement.c_str());
+        MoveToBackgroundTask(backAbilityRecord);
+    }
+}
+
+int AbilityStackManager::DispatchBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state)
+{
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    if (!abilityRecord->IsAbilityState(AbilityState::BACKGROUNDING_NEW)) {
+        HILOG_ERROR("Ability transition life state error. expect %{public}d, actual %{public}d callback %{public}d",
+            AbilityState::BACKGROUNDING_NEW,
+            abilityRecord->GetAbilityState(),
+            state);
+        return ERR_INVALID_VALUE;
+    }
+
+    // remove background timeout task.
+    handler->RemoveTask(std::to_string(abilityRecord->GetEventId()));
+    auto self(shared_from_this());
+    auto task = [self, abilityRecord]() { self->CompleteBackgroundNew(abilityRecord); };
+    handler->PostTask(task);
+
+    return ERR_OK;
+}
+
+void AbilityStackManager::CompleteBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    std::string element = abilityRecord->GetWant().GetElement().GetURI();
+    sptr<Token> token = abilityRecord->GetToken();
+    HILOG_INFO("ability: %{public}s", element.c_str());
+
+    auto abilityState = abilityRecord->GetAbilityState();
+    if (abilityState != AbilityState::BACKGROUNDING_NEW) {
+        HILOG_ERROR("Ability state is %{public}d, it can't complete background.", abilityState);
+        return;
+    }
+
+    abilityRecord->SetAbilityState(AbilityState::BACKGROUND_NEW);
+
+    // send application state to AppMS.
+    // notify AppMS to update application state.
+    DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(token);
+    // Abilities ahead of the one started with SingleTask mode were put in terminate list, we need to terminate
+    // them.
+    auto self(shared_from_this());
+    for (auto terminateAbility : terminateAbilityRecordList_) {
+        if (terminateAbility->IsAbilityState(AbilityState::BACKGROUND_NEW)) {
+            auto timeoutTask = [terminateAbility, self]() {
+                HILOG_WARN("Disconnect ability terminate timeout.");
+                self->CompleteTerminate(terminateAbility);
+            };
+            terminateAbility->Terminate(timeoutTask);
+        }
+    }
+
+    if (abilityRecord->IsRestarting() && abilityRecord->IsAbilityState(AbilityState::BACKGROUND_NEW)) {
+        auto timeoutTask = [abilityRecord, self]() {
+            HILOG_WARN("disconnect ability terminate timeout.");
+            self->CompleteTerminate(abilityRecord);
+        };
+        abilityRecord->Terminate(timeoutTask);
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS

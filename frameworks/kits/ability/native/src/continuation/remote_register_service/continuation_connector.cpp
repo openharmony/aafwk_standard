@@ -14,9 +14,10 @@
  */
 
 #include "continuation_connector.h"
+
 #include "app_log_wrapper.h"
-#include "remote_register_service_proxy.h"
 #include "continuation_device_callback_proxy.h"
+#include "remote_register_service_proxy.h"
 
 namespace OHOS {
 namespace AppExecFwk {

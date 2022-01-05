@@ -47,6 +47,7 @@ class ConnectionRecord;
 
 const std::string ABILITY_TOKEN_NAME = "AbilityToken";
 const std::string LINE_SEPARATOR = "\n";
+constexpr int32_t API_VERSION_7 = 7;
 
 /**
  * @class Token
@@ -135,6 +136,12 @@ struct AbilityRequest {
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
     sptr<IAbilityConnection> connect = nullptr;
     sptr<IRemoteObject> multiApplicationToken = nullptr;
+    int32_t targetVersion = 0;
+
+    bool IsNewVersion() const
+    {
+        return targetVersion > API_VERSION_7;
+    }
     void Dump(std::vector<std::string> &state)
     {
         std::string dumpInfo = "      want [" + want.ToUri() + "]";
@@ -155,7 +162,7 @@ struct AbilityRequest {
 class AbilityRecord : public ConfigurationHolder, public std::enable_shared_from_this<AbilityRecord> {
 public:
     AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
-        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1);
+        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1, int32_t apiVersion = 1);
 
     virtual ~AbilityRecord();
 
@@ -387,7 +394,7 @@ public:
      * active the ability.
      *
      */
-    void Activate();
+    virtual void Activate();
 
     /**
      * process request of activing the ability.
@@ -417,13 +424,13 @@ public:
      * inactive the ability.
      *
      */
-    void Inactivate();
+    virtual void Inactivate();
 
     /**
      * move the ability to back ground.
      *
      */
-    void MoveToBackground(const Closure &task);
+    virtual void MoveToBackground(const Closure &task);
 
     /**
      * terminate the ability.
@@ -700,10 +707,16 @@ public:
     void SetPowerStateLockScreen(const bool isPower);
     bool GetPowerStateLockScreen() const;
 
+    bool IsNewVersion();
+    void SetLaunchReason(const LaunchReason &reason);
+    void SetLastExitReason(const LastExitReason &reason);
+
+    void NotifyContinuationResult(const int32_t result);
+
     void UpdateConfiguration(const AppExecFwk::Configuration &config) override;
 
     int GetId() override;
-private:
+
     /**
      * get the type of ability.
      *
@@ -775,8 +788,24 @@ private:
     bool isLockScreenRoot_ = false;
     bool isPowerStateLockScreen_ = false;
     AppState appState_ = AppState::BEGIN;
+
+    int32_t targetVersion_ = 0; // > 7 new version, <= 7 old version.
     std::shared_ptr<AbilityRequest> abilityRequestPtr_ = {};
     // the abilityRequest that the multi application selector will start
+};
+class AbilityRecordNew : public AbilityRecord {
+public:
+    AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
+        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1, int32_t apiVersion = 1);
+
+    ~AbilityRecordNew();
+
+    void Activate() override;
+    void Inactivate() override;
+    void MoveToBackground(const Closure &task) override;
+
+    void ForegroundNew();
+    void BackgroundNew(const Closure &task);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -26,6 +26,9 @@ class AbsSharedResultSet;
 class DataAbilityPredicates;
 class ValuesBucket;
 }  // namespace NativeRdb
+namespace AppExecFwk {
+class Configuration;
+}  // namespace AppExecFwk
 namespace AAFwk {
 /**
  * @class AbilitySchedulerProxy
@@ -277,6 +280,15 @@ public:
      */
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override;
+
+    /**
+     * NotifyContinuationResult, call NotifyContinuationResult() through proxy project,
+     * Notify continuation result to ability.
+     *
+     * @param The continuation result.
+     * @return
+     */
+    void NotifyContinuationResult(const int32_t result) override;
 
 private:
     bool WriteInterfaceToken(MessageParcel &data);

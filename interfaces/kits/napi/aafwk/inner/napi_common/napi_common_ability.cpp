@@ -14,12 +14,14 @@
  */
 
 #include "napi_common_ability.h"
-#include <uv.h>
+
 #include <dlfcn.h>
-#include "napi_common_util.h"
-#include "securec.h"
+#include <uv.h>
+
 #include "hilog_wrapper.h"
+#include "napi_common_util.h"
 #include "napi_remote_object.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -179,7 +181,10 @@ napi_value GetContinueAbilityOptionsReversible(
     if (hasProperty) {
         napi_get_named_property(env, value, "reversible", &result);
         NAPI_CALL(env, napi_typeof(env, result, &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_boolean, "Wrong argument type. Bool expected.");
+        if (valuetype != napi_boolean) {
+            HILOG_ERROR("%{public}s, Wrong argument type. Bool expected.", __func__);
+            return nullptr;
+        }
         napi_get_value_bool(env, result, &reversible);
         info.reversible = reversible;
     }
@@ -201,7 +206,10 @@ napi_value GetContinueAbilityOptionsDeviceID(
     if (hasProperty) {
         napi_get_named_property(env, value, "deviceId", &result);
         NAPI_CALL(env, napi_typeof(env, result, &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
+        if (valuetype != napi_string) {
+            HILOG_ERROR("%{public}s, Wrong argument type. String expected.", __func__);
+            return nullptr;
+        }
         NAPI_CALL(env, napi_get_value_string_utf8(env, result, str, STR_MAX_SIZE - 1, &strLen));
         info.deviceId = str;
     }

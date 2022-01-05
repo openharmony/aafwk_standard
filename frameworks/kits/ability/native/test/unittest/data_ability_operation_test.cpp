@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
 #include "data_ability_operation.h"
 #include "data_ability_operation_builder.h"
+#include <gtest/gtest.h>
 #include "parcel.h"
 
 namespace OHOS {

@@ -24,6 +24,7 @@
 #include "ability_connect_callback_interface.h"
 #include "ability_scheduler_interface.h"
 #include "ability_start_setting.h"
+#include "foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/configuration.h"
 #include "mission_snapshot.h"
 #include "ability_mission_info.h"
 #include "mission_option.h"
@@ -36,7 +37,6 @@
 #include "want_sender_interface.h"
 #include "want_receiver_interface.h"
 #include "system_memory_attr.h"
-#include "configuration.h"
 #include "system_memory_attr.h"
 
 
@@ -114,6 +114,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) = 0;
+
+    /**
+     * MinimizeAbility, minimize the special ability.
+     *
+     * @param token, the token of the ability to minimize.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token) = 0;
 
     /**
      * ConnectAbility, connect session with service ability.
@@ -495,6 +503,10 @@ public:
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) = 0;
 
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) = 0;
+
+    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -608,6 +620,9 @@ public:
         // ipc id for update configuration (37)
         UPDATE_CONFIGURATION,
 
+        // ipc id for minimize ability (38)
+        MINIMIZE_ABILITY,
+
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
         START_ABILITY = 1001,
@@ -660,6 +675,11 @@ public:
         GET_SYSTEM_MEMORY_ATTR,
 
         CLEAR_UP_APPLICATION_DATA,
+        // ipc id for continue ability(1101)
+        START_CONTINUATION = 1101,
+
+        NOTIFY_CONTINUATION_RESULT = 1102,
+
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
         DUMP_STATE = 2001,

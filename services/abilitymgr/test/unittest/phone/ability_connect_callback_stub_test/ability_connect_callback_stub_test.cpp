@@ -92,12 +92,11 @@ HWTEST_F(AbilityConnectCallBackStubTest, AbilityConnectionCallBack_IPC_002, Test
     MessageOption option;
 
     auto element = std::make_shared<AppExecFwk::ElementName>("bundlename", "appname", "abilityname");
-    sptr<IRemoteObject> remoteObject;
     int32_t reqCode = 10;
 
     WriteInterfaceToken(data);
     data.WriteParcelable(element.get());
-    data.WriteParcelable(remoteObject);
+    data.WriteRemoteObject(mockAbilityConnectStub);
     data.WriteInt32(reqCode);
 
     EXPECT_CALL(*mockAbilityConnectStub, OnAbilityConnectDone(_, _, _)).Times(1);

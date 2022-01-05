@@ -13,12 +13,13 @@
  * limitations under the License.
  */
 #include "continuation_register_manager_proxy.h"
+
 #include "app_log_wrapper.h"
-#include "continuation_device_callback_interface.h"
-#include "request_callback.h"
-#include "continuation_request.h"
 #include "context.h"
 #include "continuation_connector.h"
+#include "continuation_device_callback_interface.h"
+#include "continuation_request.h"
+#include "request_callback.h"
 
 namespace OHOS {
 namespace AppExecFwk {

@@ -165,7 +165,7 @@ bool BundleMgrProxy::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName)
+bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName, const int userId)
 {
     return true;
 }
@@ -418,7 +418,7 @@ bool BundleMgrService::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName)
+bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName, const int userId)
 {
     return true;
 }

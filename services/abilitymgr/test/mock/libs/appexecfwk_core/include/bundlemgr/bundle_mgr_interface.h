@@ -296,7 +296,7 @@ public:
      * @param bundleName Indicates the bundle name of the application whose data is to be cleared.
      * @return Returns true if the data cleared successfully; returns false otherwise.
      */
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
     /**
      * @brief Register the specific bundle status callback.
      * @param bundleStatusCallback Indicates the callback to be invoked for returning the bundle status changed result.

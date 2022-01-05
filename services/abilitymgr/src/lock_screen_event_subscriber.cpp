@@ -14,9 +14,10 @@
  */
 
 #include "lock_screen_event_subscriber.h"
+
 #include "ability_config.h"
-#include "hilog_wrapper.h"
 #include "ability_manager_service.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
