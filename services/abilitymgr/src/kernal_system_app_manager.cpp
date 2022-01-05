@@ -14,11 +14,13 @@
  */
 
 #include "kernal_system_app_manager.h"
-#include "hilog_wrapper.h"
-#include "ability_util.h"
+
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
+#include "ability_util.h"
 #include "app_scheduler.h"
+#include "bytrace.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -30,6 +32,7 @@ KernalSystemAppManager::~KernalSystemAppManager()
 
 int KernalSystemAppManager::StartAbility(const AbilityRequest &abilityRequest)
 {
+    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     HILOG_INFO("start kernal systerm ability.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     if (!waittingAbilityQueue_.empty()) {

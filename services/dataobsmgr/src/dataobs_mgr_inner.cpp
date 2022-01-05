@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 #include "dataobs_mgr_inner.h"
+
+#include "data_ability_observer_stub.h"
 #include "dataobs_mgr_errors.h"
 #include "hilog_wrapper.h"
-#include "data_ability_observer_stub.h"
 
 namespace OHOS {
 namespace AAFwk {

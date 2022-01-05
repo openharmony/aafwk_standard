@@ -98,6 +98,14 @@ public:
     virtual int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override;
 
     /**
+     * MinimizeAbility, minimize the special ability.
+     *
+     * @param token, ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token) override;
+
+    /**
      * ConnectAbility, connect session with service ability.
      *
      * @param want, Special want for service type's ability.
@@ -479,6 +487,10 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override;
+
+    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
 
 private:
     template<typename T>

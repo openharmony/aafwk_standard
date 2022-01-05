@@ -57,7 +57,7 @@ sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(info, token);
     std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(info->name);
 
-    abilitythread->Attach(application, abilityRecord, mainRunner);
+    abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
 
     return abilitythread;
 }

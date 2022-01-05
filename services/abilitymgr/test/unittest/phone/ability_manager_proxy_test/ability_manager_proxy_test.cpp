@@ -579,6 +579,80 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_027, TestSize.Level1)
     EXPECT_EQ(res, NO_ERROR);
 }
 
+/**
+ * @tc.name: AbilityManagerProxy_028
+ * @tc.desc: test StartContinuation send request succeeded
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_028, TestSize.Level0)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    Want want;
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int res = proxy_->StartContinuation(want, abilityToken);
+    EXPECT_EQ(res, NO_ERROR);
+    EXPECT_EQ(IAbilityManager::START_CONTINUATION, mock_->code_);
+}
+
+/**
+ * @tc.name: AbilityManagerProxy_029
+ * @tc.desc: test StartContinuation send request failed
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IL
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_029, TestSize.Level0)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeErrorSendRequest));
+    const Want want;
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int res = proxy_->StartContinuation(want, abilityToken);
+
+    EXPECT_EQ(IAbilityManager::START_CONTINUATION, mock_->code_);
+    EXPECT_NE(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: AbilityManagerProxy_030
+ * @tc.desc: test NotifyContinuationResult send request succeeded
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IH
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_030, TestSize.Level0)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int32_t result = 0;
+    int res = proxy_->NotifyContinuationResult(abilityToken, result);
+    EXPECT_EQ(res, NO_ERROR);
+    EXPECT_EQ(IAbilityManager::NOTIFY_CONTINUATION_RESULT, mock_->code_);
+}
+
+/**
+ * @tc.name: AbilityManagerProxy_031
+ * @tc.desc: test NotifyContinuationResult send request failed
+ * @tc.type: FUNC
+ * @tc.require: AR000GI8IH
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_031, TestSize.Level0)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeErrorSendRequest));
+    sptr<IRemoteObject> abilityToken = nullptr;
+    int32_t result = 0;
+    int res = proxy_->NotifyContinuationResult(abilityToken, result);
+
+    EXPECT_EQ(IAbilityManager::NOTIFY_CONTINUATION_RESULT, mock_->code_);
+    EXPECT_NE(res, NO_ERROR);
+}
+
 /*
  * Feature: AbilityManagerService
  * Function: AcquireDataAbility

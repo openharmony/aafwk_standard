@@ -16,8 +16,8 @@
 #ifndef OHOS_AAFWK_WANT_SENDER_PROXY_H
 #define OHOS_AAFWK_WANT_SENDER_PROXY_H
 
-#include <iremote_proxy.h>
 #include "want_sender_interface.h"
+#include <iremote_proxy.h>
 
 namespace OHOS {
 namespace AAFwk {

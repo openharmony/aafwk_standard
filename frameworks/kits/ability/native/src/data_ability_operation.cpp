@@ -14,9 +14,10 @@
  */
 
 #include "data_ability_operation.h"
+
 #include "app_log_wrapper.h"
-#include "hilog_wrapper.h"
 #include "data_ability_predicates.h"
+#include "hilog_wrapper.h"
 #include "values_bucket.h"
 
 namespace OHOS {
@@ -436,7 +437,7 @@ bool DataAbilityOperation::ReadFromParcel(Parcel &in)
         return false;
     }
     APP_LOGD("DataAbilityOperation::ReadFromParcel empty is %{public}s",
-        empty == VALUE_OBJECT ? "VALUE_OBJECT" : "VALUE_NULL");
+        (empty == VALUE_OBJECT) ? "VALUE_OBJECT" : "VALUE_NULL");
     if (empty == VALUE_OBJECT) {
         valuesBucketReferences_.reset(in.ReadParcelable<NativeRdb::ValuesBucket>());
     } else {

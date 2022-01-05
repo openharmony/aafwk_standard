@@ -13,11 +13,14 @@
  * limitations under the License.
  */
 #include "connect_callback_proxy.h"
+
+#include "app_log_wrapper.h"
 #include "extra_params.h"
 #include "string_ex.h"
-#include "app_log_wrapper.h"
+
 namespace OHOS {
 namespace AppExecFwk {
+
 /**
  * @brief Remote device sends connection request.
  * @param deviceId indicators id of connection device.

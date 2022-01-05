@@ -46,6 +46,7 @@ public:
         StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant));
+    MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &token));
     MOCK_METHOD3(ConnectAbility,
         int(const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &connect));
@@ -116,6 +117,8 @@ public:
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
+    MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
+    MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
 public:
     std::string powerState_;
 };

@@ -70,7 +70,7 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;
@@ -145,7 +145,7 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;

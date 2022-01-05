@@ -23,6 +23,7 @@ ohos_unittest("ability_manager_stub_test") {
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/utils/native/include/",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
   ]
 
   sources = [

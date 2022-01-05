@@ -15,12 +15,17 @@ import("//build/ohos.gni")
 
 group("napi_packages") {
   deps = [
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability:ability_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:abilitymanager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_context:abilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataUriUtils:datauriutils",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/extensioncontext:extensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager:formmanager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/particleAbility:particleability",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/service_extension_context:serviceextensioncontext_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/serviceextension:serviceextension_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
   ]
 }

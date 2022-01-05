@@ -26,10 +26,11 @@ const std::string TOOL_NAME = "aa";
 
 const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "These are common aa commands list:\n"
-                             "  help                 list available commands\n"
-                             "  start                start ability with options\n"
-                             "  stop-service         stop service with options\n"
-                             "  dump                 dump the ability stack info\n";
+                             "  help                        list available commands\n"
+                             "  start                       start ability with options\n"
+                             "  stop-service                stop service with options\n"
+                             "  dump                        dump the ability stack info\n"
+                             "  force-stop <bundle-name>    force stop the application with bundle name\n";
 
 const std::string HELP_MSG_SCREEN =
     "usage: aa screen <options>\n"
@@ -93,6 +94,8 @@ private:
     ErrCode RunAsStartAbility();
     ErrCode RunAsStopService();
     ErrCode RunAsDumpCommand();
+    ErrCode RunAsForceStop();
+
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
 };

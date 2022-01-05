@@ -80,7 +80,7 @@ HWTEST_F(AaCommandStopServiceSystemTest, Aa_Command_StopService_SystemTest_0100,
                           STRING_SERVICE_ABILITY_BUNDLE_NAME;
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_STOP_SERVICE_ABILITY_OK + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_STOP_SERVICE_ABILITY_OK + "\n");
 
     // uninstall the bundle
     ToolSystemTest::UninstallBundle(STRING_SERVICE_ABILITY_BUNDLE_NAME);
@@ -98,5 +98,5 @@ HWTEST_F(AaCommandStopServiceSystemTest, Aa_Command_StopService_SystemTest_0200,
                           " -b " + STRING_SERVICE_ABILITY_BUNDLE_NAME_INVALID;
     std::string commandResult = ToolSystemTest::ExecuteCommand(command);
 
-    EXPECT_EQ(commandResult, STRING_STOP_SERVICE_ABILITY_NG + "\n");
+    EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_STOP_SERVICE_ABILITY_NG + "\n");
 }

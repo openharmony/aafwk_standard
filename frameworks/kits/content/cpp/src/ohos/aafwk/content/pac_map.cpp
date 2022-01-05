@@ -14,30 +14,30 @@
  */
 
 #include "pac_map.h"
-#include <memory>
-#include <regex>
-#include <json/json.h>
-#include <string>
-#include <iostream>
-#include <sstream>
+
 #include <cstdlib>
 #include <iomanip>
-#include "parcel_macro.h"
-#include "string_ex.h"
+#include <iostream>
+#include <json/json.h>
+#include <memory>
+#include <regex>
+#include <sstream>
+#include <string>
+
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
-#include "ohos/aafwk/base/zchar_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
-#include "ohos/aafwk/base/short_wrapper.h"
+#include "ohos/aafwk/base/double_wrapper.h"
+#include "ohos/aafwk/base/float_wrapper.h"
 #include "ohos/aafwk/base/int_wrapper.h"
 #include "ohos/aafwk/base/long_wrapper.h"
-
-#include "ohos/aafwk/base/float_wrapper.h"
-#include "ohos/aafwk/base/double_wrapper.h"
+#include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
-#include "ohos/aafwk/base/zchar_wrapper.h"
 #include "ohos/aafwk/base/user_object_base.h"
 #include "ohos/aafwk/base/user_object_wrapper.h"
+#include "ohos/aafwk/base/zchar_wrapper.h"
+#include "parcel_macro.h"
+#include "string_ex.h"
 
 using IUserObject = OHOS::AAFwk::IUserObject;
 using InterfaceID = OHOS::AAFwk::InterfaceID;
@@ -1778,5 +1778,6 @@ sptr<IPacMap> PacMap::Parse(const std::string &str)
 
     return ret;
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

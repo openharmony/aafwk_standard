@@ -14,10 +14,12 @@
  */
 
 #include "napi_form_manager.h"
+
 #include <cinttypes>
 #include <regex>
 #include <uv.h>
 #include <vector>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
@@ -107,9 +109,9 @@ static bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value
                 return true;
             }
             // Means 0x7FFFFFFFFFFFFFFF remove the first number:(2^63 - 1 - 9 * 10 ^ 19)
-            int SubValue = std::stoll(strInfo.substr(ZERO_VALUE + 1, INT_64_LENGTH - 1));
-            if (strLength == INT_64_LENGTH && SubValue <= INT_64_MAX_VALUE - BASE_NUMBER *
-            pow(DECIMAL_VALUE, INT_64_LENGTH - 1)) {
+            int subValue = std::stoll(strInfo.substr(ZERO_VALUE + 1, INT_64_LENGTH - 1));
+            if (strLength == INT_64_LENGTH && subValue <= INT_64_MAX_VALUE - BASE_NUMBER *
+                pow(DECIMAL_VALUE, INT_64_LENGTH - 1)) {
                 int64Value = std::stoll(strInfo);
                 return true;
             }

@@ -41,6 +41,7 @@ void AbilityManagerStub::FirstStepInit()
 {
     requestFuncMap_[TERMINATE_ABILITY] = &AbilityManagerStub::TerminateAbilityInner;
     requestFuncMap_[TERMINATE_ABILITY_BY_CALLER] = &AbilityManagerStub::TerminateAbilityByCallerInner;
+    requestFuncMap_[MINIMIZE_ABILITY] = &AbilityManagerStub::MinimizeAbilityInner;
     requestFuncMap_[ATTACH_ABILITY_THREAD] = &AbilityManagerStub::AttachAbilityThreadInner;
     requestFuncMap_[ABILITY_TRANSITION_DONE] = &AbilityManagerStub::AbilityTransitionDoneInner;
     requestFuncMap_[CONNECT_ABILITY_DONE] = &AbilityManagerStub::ScheduleConnectAbilityDoneInner;
@@ -66,6 +67,8 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[STOP_SERVICE_ABILITY] = &AbilityManagerStub::StopServiceAbilityInner;
     requestFuncMap_[DUMP_STATE] = &AbilityManagerStub::DumpStateInner;
     requestFuncMap_[START_ABILITY_FOR_SETTINGS] = &AbilityManagerStub::StartAbilityForSettingsInner;
+    requestFuncMap_[START_CONTINUATION] = &AbilityManagerStub::StartContinuationInner;
+    requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilityManagerStub::NotifyContinuationResultInner;
     requestFuncMap_[MOVE_MISSION_TO_FLOATING_STACK] = &AbilityManagerStub::MoveMissionToFloatingStackInner;
     requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
@@ -144,6 +147,14 @@ int AbilityManagerStub::TerminateAbilityByCallerInner(MessageParcel &data, Messa
     auto callerToken = data.ReadParcelable<IRemoteObject>();
     int requestCode = data.ReadInt32();
     int32_t result = TerminateAbilityByCaller(callerToken, requestCode);
+    reply.WriteInt32(result);
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::MinimizeAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto token = data.ReadParcelable<IRemoteObject>();
+    int32_t result = MinimizeAbility(token);
     reply.WriteInt32(result);
     return NO_ERROR;
 }
@@ -690,7 +701,7 @@ int AbilityManagerStub::GetWantSenderInner(MessageParcel &data, MessageParcel &r
     }
     sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
     sptr<IWantSender> wantSender = GetWantSender(*wantSenderInfo, callerToken);
-    if (!reply.WriteParcelable((wantSender == nullptr ? nullptr : wantSender->AsObject()))) {
+    if (!reply.WriteParcelable(((wantSender == nullptr) ? nullptr : wantSender->AsObject()))) {
         HILOG_ERROR("failed to reply wantSender instance to client, for write parcel error");
         return ERR_INVALID_VALUE;
     }
@@ -875,6 +886,38 @@ int AbilityManagerStub::GetSystemMemoryAttrInner(MessageParcel &data, MessagePar
     GetSystemMemoryAttr(memoryInfo);
     reply.WriteParcelable(&memoryInfo);
     return NO_ERROR;
+}
+
+int AbilityManagerStub::StartContinuationInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (want == nullptr) {
+        HILOG_ERROR("DistributedSchedStub: StartContinuationInner want readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+
+    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
+    if (abilityToken == nullptr) {
+        HILOG_ERROR("DistributedSchedStub: StartContinuationInner abilityToken readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t result = StartContinuation(*want, abilityToken);
+    HILOG_INFO("DistributedSchedStub: StartContinuationInner result = %{public}d", result);
+    return result;
+}
+
+int AbilityManagerStub::NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
+    if (abilityToken == nullptr) {
+        HILOG_ERROR("DistributedSchedStub: NotifyContinuationResultInner abilityToken readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int continuationResult = data.ReadInt32();
+
+    int32_t result = NotifyContinuationResult(abilityToken, continuationResult);
+    HILOG_INFO("DistributedSchedStub: StartContinuationInner result = %{public}d", result);
+    return result;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -1,0 +1,73 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+
+config("runtime_config") {
+  visibility = [ ":*" ]
+
+  defines = [
+    "AMS_LOG_TAG = \"Runtime\"",
+    "LOG_DOMAIN = 0xD002200",
+  ]
+
+  if (target_cpu == "arm64") {
+    defines += [ "_ARM64_" ]
+  }
+
+  include_dirs = [
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
+  ]
+}
+
+config("runtime_public_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "include" ]
+}
+
+ohos_shared_library("runtime") {
+  sources = [
+    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_data_struct_converter.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_runtime.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_runtime_utils.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/runtime/native/runtime.cpp",
+  ]
+
+  configs = [
+    ":runtime_config",
+    "//ark/js_runtime:ark_jsruntime_public_config",
+    "//foundation/aafwk/standard/services/common:common_config",
+  ]
+
+  public_configs = [ ":runtime_public_config" ]
+
+  deps = [
+    "//ark/js_runtime:libark_jsruntime",
+    "//foundation/ace/napi:ace_napi",
+    "//foundation/ace/napi:ace_napi_ark",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "aafwk_standard:want",
+    "appexecfwk_standard:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "aafwk_standard"
+}

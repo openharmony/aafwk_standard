@@ -28,6 +28,10 @@ public:
         INACTIVE,
         INITIAL,
         UNINITIALIZED,
+        STARTED_NEW,
+        FOREGROUND_NEW,
+        BACKGROUND_NEW,
+        STOPED_NEW
     };
 
     /**

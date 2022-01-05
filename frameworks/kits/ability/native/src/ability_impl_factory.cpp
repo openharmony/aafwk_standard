@@ -16,11 +16,13 @@
 #include "ability_impl_factory.h"
 #include "app_log_wrapper.h"
 #include "data_ability_impl.h"
+#include "new_ability_impl.h"
 #include "page_ability_impl.h"
 #include "service_ability_impl.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+const int TARGET_VERSION_THRESHOLDS = 8;
 /**
  *
  * default constructor
@@ -44,7 +46,8 @@ AbilityImplFactory::~AbilityImplFactory()
  *
  * @return AbilityImpl object
  */
-std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info)
+std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info,
+                                                                       int targetVersion)
 {
     if (info == nullptr) {
         APP_LOGE("AbilityImplFactory::MakeAbilityImplObject is error nullptr == info ");
@@ -52,11 +55,15 @@ std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std
     }
 
     std::shared_ptr<AbilityImpl> abilityImpl = nullptr;
-    APP_LOGI("AbilityImplFactory::MakeAbilityImplObject type:%{public}d", info->type);
-
+    APP_LOGI("AbilityImplFactory::MakeAbilityImplObject type:%{public}d, targetVersion:%{public}d", info->type,
+        targetVersion);
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
-            abilityImpl = std::make_shared<PageAbilityImpl>();
+            if (targetVersion >= TARGET_VERSION_THRESHOLDS) {
+                abilityImpl = std::make_shared<NewAbilityImpl>();
+            } else {
+                abilityImpl = std::make_shared<PageAbilityImpl>();
+            }
             break;
         case AppExecFwk::AbilityType::SERVICE:
             abilityImpl = std::make_shared<ServiceAbilityImpl>();

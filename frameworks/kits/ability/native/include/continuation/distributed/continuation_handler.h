@@ -20,7 +20,6 @@
 
 #include "distribute_schedule_handler_interface.h"
 #include "continuation_manager.h"
-#include "distributed_client.h"
 #include "reverse_continuation_scheduler_primary_proxy.h"
 #include "reverse_continuation_scheduler_replica_proxy.h"
 #include "reverse_continuation_scheduler_primary_stub.h"

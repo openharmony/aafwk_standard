@@ -13,11 +13,13 @@
  * limitations under the License.
  */
 #include "want_constant.h"
+
 #include <cstring>
-#include <vector>
 #include <uv.h>
-#include "securec.h"
+#include <vector>
+
 #include "hilog_wrapper.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace AppExecFwk {

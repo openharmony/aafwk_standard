@@ -37,6 +37,18 @@ void AbilityLoader::RegisterAbility(const std::string &abilityName, const Create
 }
 
 /**
+ * @brief Register Extension Info
+ *
+ * @param abilityName Extension classname
+ * @param createFunc  Constructor address
+ */
+void AbilityLoader::RegisterExtension(const std::string &abilityName, const CreateExtension &createFunc)
+{
+    extensions_.emplace(abilityName, createFunc);
+    APP_LOGD("AbilityLoader::RegisterExtension:%{public}s", abilityName.c_str());
+}
+
+/**
  * @brief Get Ability address
  *
  * @param abilityName ability classname
@@ -50,6 +62,24 @@ Ability *AbilityLoader::GetAbilityByName(const std::string &abilityName)
         return it->second();
     } else {
         APP_LOGE("AbilityLoader::GetAbilityByName failed:%{public}s", abilityName.c_str());
+    }
+    return nullptr;
+}
+
+/**
+ * @brief Get Extension address
+ *
+ * @param abilityName Extension classname
+ *
+ * @return return Extension address
+ */
+AbilityRuntime::Extension *AbilityLoader::GetExtensionByName(const std::string &abilityName)
+{
+    auto it = extensions_.find(abilityName);
+    if (it != extensions_.end()) {
+        return it->second();
+    } else {
+        APP_LOGE("AbilityLoader::GetExtensionByName failed:%{public}s", abilityName.c_str());
     }
     return nullptr;
 }

@@ -33,13 +33,11 @@ std::string ToolSystemTest::ExecuteCommand(const std::string &command)
 
     if (file != nullptr) {
         char commandResult[1024] = {0};
-
-        fgets(commandResult, sizeof(commandResult), file);
-
+        while ((fgets(commandResult, sizeof(commandResult), file)) != nullptr) {
+            result.append(commandResult);
+        }
         pclose(file);
         file = nullptr;
-
-        result.append(commandResult);
     }
 
     return result;
@@ -52,7 +50,7 @@ void ToolSystemTest::InstallBundle(const std::string &bundlePath, const bool che
     std::string commandResult = ExecuteCommand(command);
 
     if (checkResult) {
-        EXPECT_EQ(commandResult, STRING_INSTALL_BUNDLE_OK + "\n");
+        EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_INSTALL_BUNDLE_OK + "\n");
     }
 }
 
@@ -63,7 +61,7 @@ void ToolSystemTest::UninstallBundle(const std::string &bundleName, const bool c
     std::string commandResult = ExecuteCommand(command);
 
     if (checkResult) {
-        EXPECT_EQ(commandResult, STRING_UNINSTALL_BUNDLE_OK + "\n");
+        EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_UNINSTALL_BUNDLE_OK + "\n");
     }
 }
 
@@ -75,6 +73,11 @@ void ToolSystemTest::StartAbility(
     std::string commandResult = ExecuteCommand(command);
 
     if (checkResult) {
-        EXPECT_EQ(commandResult, STRING_START_ABILITY_OK + "\n");
+        EXPECT_PRED2(ToolSystemTest::IsSubSequence, commandResult, STRING_START_ABILITY_OK + "\n");
     }
+}
+
+bool ToolSystemTest::IsSubSequence(std::string str, std::string subStr)
+{
+    return str.find(subStr) != std::string::npos;
 }

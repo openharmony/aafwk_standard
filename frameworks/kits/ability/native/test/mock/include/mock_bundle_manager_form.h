@@ -151,7 +151,7 @@ public:
     {
         return true;
     }
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) override
     {
         return true;
     }
@@ -265,6 +265,10 @@ public:
     };
     virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override
+    {
+        return true;
+    };
+    virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override
     {
         return true;
     };
