@@ -54,7 +54,7 @@ void LifecycleDealTest::SetUp()
  * EnvConditions:NA
  * CaseDescription: Verify activate operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_001, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_001, TestSize.Level0)
 {
     LifeCycleStateInfo val;
     EXPECT_CALL(*abilityScheduler_, ScheduleAbilityTransaction(::testing::_, ::testing::_))
@@ -86,7 +86,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_001, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify Inactivate operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_002, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_002, TestSize.Level0)
 {
     LifeCycleStateInfo val;
     EXPECT_CALL(*abilityScheduler_, ScheduleAbilityTransaction(::testing::_, ::testing::_))
@@ -118,7 +118,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_002, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify MoveToBackground operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_003, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_003, TestSize.Level0)
 {
     LifeCycleStateInfo val;
     EXPECT_CALL(*abilityScheduler_, ScheduleAbilityTransaction(::testing::_, ::testing::_))
@@ -150,7 +150,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_003, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify ConnectAbility operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_004, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_004, TestSize.Level0)
 {
     EXPECT_CALL(*abilityScheduler_, ScheduleConnectAbility(::testing::_)).Times(1);
     const Want want;
@@ -167,7 +167,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_004, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify DisconnectAbility operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_005, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_005, TestSize.Level0)
 {
     EXPECT_CALL(*abilityScheduler_, ScheduleDisconnectAbility(::testing::_)).Times(1);
 
@@ -185,7 +185,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_005, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify Terminate operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_006, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_006, TestSize.Level0)
 {
     EXPECT_CALL(*abilityScheduler_, ScheduleAbilityTransaction(::testing::_, ::testing::_)).Times(1);
 
@@ -210,7 +210,7 @@ HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_006, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify CommandAbility operation and call mock once
  */
-HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_007, TestSize.Level1)
+HWTEST_F(LifecycleDealTest, LifecycleDeal_oprator_007, TestSize.Level0)
 {
     EXPECT_CALL(*abilityScheduler_, ScheduleCommandAbility(::testing::_, ::testing::_, ::testing::_)).Times(1);
     const Want want;

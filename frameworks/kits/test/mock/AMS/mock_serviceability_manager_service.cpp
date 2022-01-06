@@ -158,7 +158,7 @@ int MockServiceAbilityManagerService::TerminateAbilityByCaller(const sptr<IRemot
     return 0;
 }
 
-int MockServiceAbilityManagerService::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
+int MockServiceAbilityManagerService::StopServiceAbility(const Want &want)
 {
     GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StopServiceAbility";
     if (abilityScheduler_ != nullptr) {
@@ -192,8 +192,7 @@ bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject
     return true;
 }
 
-int MockServiceAbilityManagerService::CompelVerifyPermission(const std::string &permission,
-    int pid, int uid, std::string &message)
+int MockServiceAbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
     return 0;
 }
@@ -206,5 +205,6 @@ int MockServiceAbilityManagerService::PowerOn()
 {
     return 0;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

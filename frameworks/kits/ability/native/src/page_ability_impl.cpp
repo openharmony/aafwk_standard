@@ -50,7 +50,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         Inactive();
     }
 
-    if (targetState.state == AAFwk::ABILITY_STATE_BACKGROUND) {
+    if (targetState.state == AAFwk::ABILITY_STATE_BACKGROUND_NEW) {
         CheckAndSave();
     }
 
@@ -85,14 +85,8 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
             Stop();
             break;
         }
-        case AAFwk::ABILITY_STATE_INACTIVE: {
-            if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
-                Foreground(want);
-            }
-            break;
-        }
-        case AAFwk::ABILITY_STATE_ACTIVE: {
-            if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
+        case AAFwk::ABILITY_STATE_FOREGROUND_NEW: {
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW) {
                 Foreground(want);
             }
             if (targetState.isNewWant) {
@@ -103,10 +97,11 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
             Active();
             break;
         }
-        case AAFwk::ABILITY_STATE_BACKGROUND: {
-            if (lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) {
-                Background();
+        case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {
+            if (lifecycleState_ != AAFwk::ABILITY_STATE_INACTIVE) {
+                Inactive();
             }
+            Background();
             break;
         }
         default: {

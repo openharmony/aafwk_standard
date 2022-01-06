@@ -19,6 +19,7 @@
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
+
 #define FILE_PATH_LITERAL(x) x
 #define PRFilePath "s"
 
@@ -74,6 +75,7 @@ private:
     std::string path_;
 
     void StripTrailingSeparatorsInternal();
+    int FindDriveLetter(const std::string &path);
     bool AreAllSeparators(const std::string &input);
 };
 }  // namespace LIBZIP

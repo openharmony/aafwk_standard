@@ -21,6 +21,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 const std::int32_t STR_MAX_SIZE = 128;
 
 napi_value *GetGlobalClassContext(void);

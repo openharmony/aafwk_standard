@@ -216,8 +216,7 @@ std::shared_ptr<RawFileDescriptor> Ability::OpenRawFile(const Uri &uri, const st
     return nullptr;
 }
 
-int Ability::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
-    const NativeRdb::DataAbilityPredicates &predicates)
+int Ability::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock Ability::Update called";
     return 1;

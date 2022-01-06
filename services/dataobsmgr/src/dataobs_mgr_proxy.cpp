@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 bool DataObsManagerProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(DataObsManagerProxy::GetDescriptor())) {
@@ -119,5 +120,6 @@ int DataObsManagerProxy::NotifyChange(const Uri &uri)
     }
     return reply.ReadInt32();
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

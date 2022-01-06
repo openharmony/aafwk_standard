@@ -56,8 +56,6 @@ public:
 
     static sptr<IWantParams> Parse(const std::string &str);
 
-    static WantParams ParseWantParams(const std::string &str);
-
     static constexpr char SIGNATURE = 'W';
 
 private:

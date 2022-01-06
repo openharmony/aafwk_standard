@@ -158,5 +158,6 @@ size_t MTDumpUtil::GetBindingsByUri(const string &uri, const str_vec &dumpInfo, 
         [&result](auto &&it) { result.push_back(it); });
     return ret;
 }
+
 }  // namespace MTUtil
 }  // namespace OHOS

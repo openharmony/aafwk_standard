@@ -317,8 +317,7 @@ public:
      */
     std::shared_ptr<AbilityPostEventTimeout> CreatePostEventTimeouter(std::string taskstr);
 
-    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
-        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 
     /**
      * @brief Notify continuation result to ability.
@@ -328,6 +327,10 @@ public:
      * @return
      */
     virtual void NotifyContinuationResult(const int32_t result);
+
+    int GetCompatibleVersion();
+
+    void AfterUnFocused();
 
 protected:
     /**
@@ -400,16 +403,18 @@ protected:
      */
     bool CheckAndSave();
 
-    PacMap & GetRestoreData();
+    PacMap &GetRestoreData();
 
     int lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     sptr<IRemoteObject> token_;
     std::shared_ptr<Ability> ability_;
+    std::shared_ptr<AbilityHandler> handler_;
 
 private:
 class WindowLifeCycleImpl : public Rosen::IWindowLifeCycle {
 public:
-    WindowLifeCycleImpl(const sptr<IRemoteObject>& token) : token_(token) {}
+    WindowLifeCycleImpl(const sptr<IRemoteObject>& token, const std::shared_ptr<AbilityImpl>& owner)
+        : token_(token) , owner_(owner) {}
     virtual ~WindowLifeCycleImpl() {}
     void AfterForeground() override;
     void AfterBackground() override;
@@ -417,6 +422,7 @@ public:
     void AfterUnFocused() override;
 private:
     sptr<IRemoteObject> token_ = nullptr;
+    std::weak_ptr<AbilityImpl> owner_;
 };
 
 class InputEventConsumerImpl : public MMI::IInputEventConsumer {
@@ -440,7 +446,6 @@ private:
     std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
     std::shared_ptr<ApplicationImpl> applactionImpl_;
     std::shared_ptr<ContextDeal> contextDeal_;
-    std::shared_ptr<Configuration> configuration_ = nullptr;
 
 private:
     /**

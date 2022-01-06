@@ -122,6 +122,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0100, Function | MediumTes
  */
 HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_Query_0200, Function | MediumTest | Level1)
 {
+
     GTEST_LOG_(INFO) << "AaFwk_AbilityThread_Query_0200 start";
     AbilityThread *abilitythread = new AbilityThread();
 

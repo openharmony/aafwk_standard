@@ -34,7 +34,9 @@ ohos_shared_library("ability_context_native") {
   public_configs = [ ":ability_context_public_config" ]
 
   sources = [
+    "${SO_DIR}/src/ability_connection.cpp",
     "${SO_DIR}/src/ability_context_impl.cpp",
+    "${SO_DIR}/src/connection_manager.cpp",
     "${SO_DIR}/src/js_extension_context.cpp",
   ]
 
@@ -43,6 +45,7 @@ ohos_shared_library("ability_context_native") {
     "${INNERKITS_DIR}/ability_manager:ability_manager",
     "${INNERKITS_DIR}/want:want",
     "//foundation/ace/napi:ace_napi",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
   ]
 
   external_deps = [

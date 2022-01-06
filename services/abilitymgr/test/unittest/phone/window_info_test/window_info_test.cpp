@@ -57,7 +57,7 @@ std::shared_ptr<WindowInfo> WindowInfoTest::get() const
  * EnvConditions:NA
  * CaseDescription: Verify member variable values
  */
-HWTEST_F(WindowInfoTest, AAFWK_Window_Info, TestSize.Level1)
+HWTEST_F(WindowInfoTest, AAFWK_Window_Info, TestSize.Level0)
 {
     EXPECT_EQ((int)get()->windowToken_, 1);
     EXPECT_FALSE(get()->isVisible_);

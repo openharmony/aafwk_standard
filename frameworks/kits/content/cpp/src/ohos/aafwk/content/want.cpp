@@ -35,7 +35,6 @@
 #include "ohos/aafwk/base/zchar_wrapper.h"
 #include "parcel_macro.h"
 #include "string_ex.h"
-#include "want_params_wrapper.h"
 
 using namespace OHOS::AppExecFwk;
 using OHOS::AppExecFwk::ElementName;
@@ -324,6 +323,7 @@ Uri Want::GetLowerCaseScheme(const Uri &uri)
 {
     std::string strUri = const_cast<Uri &>(uri).ToString();
     std::string schemeStr = const_cast<Uri &>(uri).GetScheme();
+
     if (strUri.empty() || schemeStr.empty()) {
         return uri;
     }
@@ -910,6 +910,7 @@ Want &Want::SetParam(const std::string &key, const std::vector<float> &value)
 long Want::GetLongParam(const std::string &key, long defaultValue) const
 {
     auto value = parameters_.GetParam(key);
+
     if (ILong::Query(value) != nullptr) {
         return Long::Unbox(ILong::Query(value));
     } else if (IString::Query(value) != nullptr) {
@@ -1381,7 +1382,7 @@ void Want::ToUriStringInner(std::string &uriString) const
     }
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
-        char buf[HEX_STRING_BUF_LEN]{0};
+        char buf[HEX_STRING_BUF_LEN] {0};
         std::size_t len = snprintf_s(buf, HEX_STRING_BUF_LEN, HEX_STRING_BUF_LEN - 1, "0x%08x", operation_.GetFlags());
         if (len == HEX_STRING_LEN) {
             std::string flag = buf;
@@ -1934,98 +1935,5 @@ void Want::DumpInfo(int level) const
     APP_LOGI("==================Want::DumpInfo level: %{public}d end=============", level);
 }
 
-nlohmann::json Want::ToJson() const
-{
-    WantParamWrapper wrapper(parameters_);
-    std::string parametersString = wrapper.ToString();
-
-    nlohmann::json entitiesJson;
-    std::vector<std::string> entities = GetEntities();
-    for (auto entity : entities) {
-        entitiesJson.emplace_back(entity);
-    }
-
-    nlohmann::json wantJson = nlohmann::json {
-        {"deviceId", operation_.GetDeviceId()},
-        {"bundleName", operation_.GetBundleName()},
-        {"abilityName", operation_.GetAbilityName()},
-        {"uri", GetUriString()},
-        {"type", GetType()},
-        {"flags", GetFlags()},
-        {"action", GetAction()},
-        {"parameters", parametersString},
-        {"entities", entitiesJson},
-    };
-
-    return wantJson;
-}
-
-bool Want::ReadFromJson(nlohmann::json &wantJson)
-{
-    const auto &jsonObjectEnd = wantJson.end();
-    if ((wantJson.find("deviceId") == jsonObjectEnd)
-        || (wantJson.find("bundleName") == jsonObjectEnd)
-        || (wantJson.find("abilityName") == jsonObjectEnd)
-        || (wantJson.find("uri") == jsonObjectEnd)
-        || (wantJson.find("type") == jsonObjectEnd)
-        || (wantJson.find("flags") == jsonObjectEnd)
-        || (wantJson.find("action") == jsonObjectEnd)
-        || (wantJson.find("parameters") == jsonObjectEnd)
-        || (wantJson.find("entities") == jsonObjectEnd)) {
-        APP_LOGE("Incomplete wantJson");
-        return false;
-    }
-
-    std::string deviceId = wantJson.at("deviceId").get<std::string>();
-    std::string bundleName = wantJson.at("bundleName").get<std::string>();
-    std::string abilityName = wantJson.at("abilityName").get<std::string>();
-    SetElementName(deviceId, bundleName, abilityName);
-
-    std::string uri = wantJson.at("uri").get<std::string>();
-    SetUri(uri);
-
-    std::string type = wantJson.at("type").get<std::string>();
-    SetType(type);
-
-    unsigned int flags = wantJson.at("flags").get<unsigned int>();
-    SetFlags(flags);
-
-    std::string action = wantJson.at("action").get<std::string>();
-    SetAction(action);
-
-    std::string parametersString = wantJson.at("parameters").get<std::string>();
-    WantParams parameters = WantParamWrapper::ParseWantParams(parametersString);
-    SetParams(parameters);
-
-    std::vector<std::string> entities;
-    wantJson.at("entities").get_to<std::vector<std::string>>(entities);
-    for (size_t i = 0; i < entities.size(); i++) {
-        AddEntity(entities[i]);
-    }
-
-    return true;
-}
-
-std::string Want::ToString() const
-{
-    return ToJson().dump();
-}
-
-Want *Want::FromString(std::string &string)
-{
-    if (string.empty()) {
-        APP_LOGE("Invalid string.");
-        return nullptr;
-    }
-
-    nlohmann::json wantJson = nlohmann::json::parse(string);
-
-    Want *want = new (std::nothrow) Want();
-    if (want != nullptr && !want->ReadFromJson(wantJson)) {
-        delete want;
-        want = nullptr;
-    }
-    return want;
-}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -109,7 +109,7 @@ std::shared_ptr<MissionRecord> getSecondMissionRecord()
  * EnvConditions: NA
  * CaseDescription: Results after verifying removeAll
  */
-HWTEST_F(MissionStackTest, MS_oprator_01, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_01, TestSize.Level0)
 {
     missionStack_->AddMissionRecordToTop(getFirstMissionRecord());
     missionStack_->RemoveAll();
@@ -124,7 +124,7 @@ HWTEST_F(MissionStackTest, MS_oprator_01, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the top ability record is the same as the added record
  */
-HWTEST_F(MissionStackTest, MS_oprator_002, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_002, TestSize.Level0)
 {
     std::shared_ptr<MissionRecord> nullMissionRecord = nullptr;
     missionStack_->AddMissionRecordToTop(nullMissionRecord);
@@ -153,7 +153,7 @@ HWTEST_F(MissionStackTest, MS_oprator_002, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the top mission record is not empty
  */
-HWTEST_F(MissionStackTest, MS_oprator_003, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_003, TestSize.Level0)
 {
     missionStack_->AddMissionRecordToTop(getFirstMissionRecord());
     missionStack_->AddMissionRecordToTop(getSecondMissionRecord());
@@ -169,7 +169,7 @@ HWTEST_F(MissionStackTest, MS_oprator_003, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the top mission record is the same as the added record
  */
-HWTEST_F(MissionStackTest, MS_oprator_004, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_004, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->GetTopMissionRecord(), nullptr);
 
@@ -194,7 +194,7 @@ HWTEST_F(MissionStackTest, MS_oprator_004, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the mission stack id is not 0
  */
-HWTEST_F(MissionStackTest, MS_oprator_005, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_005, TestSize.Level0)
 {
     missionStack_->AddMissionRecordToTop(getFirstMissionRecord());
     EXPECT_NE(missionStack_->GetMissionStackId(), 0);
@@ -208,7 +208,7 @@ HWTEST_F(MissionStackTest, MS_oprator_005, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the get target mission record is equal to the one added
  */
-HWTEST_F(MissionStackTest, MS_oprator_006, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_006, TestSize.Level0)
 {
     EXPECT_EQ(nullptr, missionStack_->GetTargetMissionRecord("FirstApp"));
 
@@ -234,7 +234,7 @@ HWTEST_F(MissionStackTest, MS_oprator_006, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the value of get mission stack ID and get mission stack user ID
  */
-HWTEST_F(MissionStackTest, MS_oprator_007, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_007, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->GetMissionStackId(), 1);
     EXPECT_EQ(missionStack_->GetMissionStackUserId(), 2);
@@ -248,7 +248,7 @@ HWTEST_F(MissionStackTest, MS_oprator_007, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the value of get mission record count
  */
-HWTEST_F(MissionStackTest, MS_oprator_008, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_008, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->GetMissionRecordCount(), 0);
     missionStack_->AddMissionRecordToTop(getSecondMissionRecord());
@@ -263,7 +263,7 @@ HWTEST_F(MissionStackTest, MS_oprator_008, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the get top mission record is equal to the one added
  */
-HWTEST_F(MissionStackTest, MS_oprator_009, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_009, TestSize.Level0)
 {
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
@@ -291,7 +291,7 @@ HWTEST_F(MissionStackTest, MS_oprator_009, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify Dump and DumpStackList results
  */
-HWTEST_F(MissionStackTest, MS_oprator_010, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_010, TestSize.Level0)
 {
     std::vector<std::string> info;
     std::vector<std::string> listInfo;
@@ -329,7 +329,7 @@ HWTEST_F(MissionStackTest, MS_oprator_010, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the get mission record by ID value is empty
  */
-HWTEST_F(MissionStackTest, MS_oprator_011, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_011, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->GetMissionRecordById(0), nullptr);
 
@@ -355,7 +355,7 @@ HWTEST_F(MissionStackTest, MS_oprator_011, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the get mission record by ID value
  */
-HWTEST_F(MissionStackTest, MS_oprator_012, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_012, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->GetMissionRecordById(0), nullptr);
 
@@ -381,7 +381,7 @@ HWTEST_F(MissionStackTest, MS_oprator_012, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the values of get ability record by token are equal
  */
-HWTEST_F(MissionStackTest, MS_oprator_013, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_013, TestSize.Level0)
 {
     OHOS::sptr<Token> token = nullptr;
     EXPECT_EQ(missionStack_->GetAbilityRecordByToken(token), nullptr);
@@ -409,7 +409,7 @@ HWTEST_F(MissionStackTest, MS_oprator_013, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that remove ability record by token is successful
  */
-HWTEST_F(MissionStackTest, MS_oprator_014, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_014, TestSize.Level0)
 {
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
@@ -436,7 +436,7 @@ HWTEST_F(MissionStackTest, MS_oprator_014, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that remove mission record is successful
  */
-HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level1)
+HWTEST_F(MissionStackTest, MS_oprator_015, TestSize.Level0)
 {
     EXPECT_EQ(missionStack_->RemoveMissionRecord(100), false);
 

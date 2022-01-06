@@ -166,6 +166,7 @@ void AbilityDumpTest::TearDownTestCase()
 
 void AbilityDumpTest::SetUp()
 {
+
     g_abilityMs = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     g_appTestService = OHOS::DelayedSingleton<AppManagerTestService>::GetInstance();
     OnStartAms();

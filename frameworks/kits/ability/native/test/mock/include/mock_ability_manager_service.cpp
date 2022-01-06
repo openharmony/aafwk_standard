@@ -38,23 +38,23 @@ int MockAbilityManagerService::StartAbility(const Want &want, int requestCode)
     AbilityLifeCycleState state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     switch (requestCode) {
         // Test code, representing the life cycle: Ability_ STATE_ INITIAL
-        case static_cast<int>(RequestCode::E_STATE_INITIAL):
+        case RequestCode::E_STATE_INITIAL:
             state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
             break;
         // Test code, representing the life cycle: ABILITY_STATE_INACTIVE
-        case static_cast<int>(RequestCode::E_STATE_INACTIVE):
+        case RequestCode::E_STATE_INACTIVE:
             state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
             break;
         // Test code, representing the life cycle: ABILITY_STATE_ACTIVE
-        case static_cast<int>(RequestCode::E_STATE_ACTIVE):
+        case RequestCode::E_STATE_ACTIVE:
             state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
             break;
         // Test code, representing the life cycle: ABILITY_STATE_BACKGROUND
-        case static_cast<int>(RequestCode::E_STATE_BACKGROUND):
+        case RequestCode::E_STATE_BACKGROUND:
             state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND;
             break;
         // Test code, representing the life cycle: ABILITY_STATE_SUSPENDED
-        case static_cast<int>(RequestCode::E_STATE_SUSPENDED):
+        case RequestCode::E_STATE_SUSPENDED:
             state = AbilityLifeCycleState::ABILITY_STATE_SUSPENDED;
             break;
         default:
@@ -143,7 +143,7 @@ int MockAbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> 
     return ERR_OK;
 }
 
-int MockAbilityManagerService::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
+int MockAbilityManagerService::StopServiceAbility(const Want &want)
 {
     GTEST_LOG_(INFO) << "MockAbilityManagerService::StopServiceAbility";
     return ERR_OK;
@@ -169,7 +169,7 @@ int MockAbilityManagerService::KillProcess(const std::string &bundleName)
     return 0;
 }
 
-int MockAbilityManagerService::UninstallApp(const std::string &bundleName, const int uid)
+int MockAbilityManagerService::UninstallApp(const std::string &bundleName)
 {
     return 0;
 }
@@ -184,8 +184,7 @@ bool MockAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &toke
     return true;
 }
 
-int MockAbilityManagerService::CompelVerifyPermission(const std::string &permission,
-    int pid, int uid, std::string &message)
+int MockAbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
     return 0;
 }
@@ -198,5 +197,6 @@ int MockAbilityManagerService::PowerOn()
 {
     return 0;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

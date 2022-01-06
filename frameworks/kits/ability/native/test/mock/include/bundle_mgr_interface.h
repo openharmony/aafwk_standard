@@ -191,11 +191,12 @@ public:
     virtual bool IsSafeMode() = 0;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) = 0;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool UnregisterBundleStatusCallback() = 0;
-    virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) = 0;
+    virtual bool DumpInfos(
+        const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) = 0;
     virtual bool IsApplicationEnabled(const std::string &bundleName) = 0;
     virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) = 0;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) = 0;

@@ -18,10 +18,10 @@
 
 #include "mock_resourceManager_interface1.h"
 
+#include "res_config.h"
 #include <string>
 #include <vector>
 #include <map>
-#include "res_config.h"
 
 namespace OHOS {
 namespace Global {
@@ -142,6 +142,7 @@ public:
 
     virtual RState GetThemeById(uint32_t id, std::map<std::string, std::string> &outValue)
     {
+
         auto iter = ThemeById_.find(id);
         if (iter == ThemeById_.end()) {
             return ERROR;
@@ -277,6 +278,7 @@ std::shared_ptr<ResourceManager2> CreateResourceManager2()
     }
     return ResourceManagerTestInstance::instance;
 }
+
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS

@@ -25,7 +25,7 @@
 #include "ability_scheduler_interface.h"
 #include "ability_start_setting.h"
 #include "foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/configuration.h"
-#include "mission_snapshot.h"
+#include "mission_snapshot_info.h"
 #include "ability_mission_info.h"
 #include "mission_option.h"
 #include "stack_info.h"
@@ -38,7 +38,9 @@
 #include "want_receiver_interface.h"
 #include "system_memory_attr.h"
 #include "system_memory_attr.h"
-
+#include "mission_listener_interface.h"
+#include "mission_info.h"
+#include "start_options.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -73,18 +75,6 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) = 0;
 
     /**
-     * StartAbility with want, send want to ability manager service.
-     *
-     * @param want, the want of the ability to start.
-     * @param callerToken, caller ability token.
-     * @param requestCode, Ability request code.
-     * @param requestUid, Ability request uid.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
-        int requestCode, int requestUid) = 0;
-
-    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -94,6 +84,18 @@ public:
      */
     virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
         const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) = 0;
+
+    /**
+     * Starts a new ability with specific start options.
+     *
+     * @param want, the want of the ability to start.
+     * @param startOptions Indicates the options used to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode the resultCode of the ability to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) { return 0; }
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -241,10 +243,9 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
-     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr) = 0;
+    virtual int StopServiceAbility(const Want &want) = 0;
 
     /**
      * Obtains information about ability stack that are running on the device.
@@ -275,7 +276,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) = 0;
+    virtual int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) = 0;
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -320,22 +321,12 @@ public:
     virtual int KillProcess(const std::string &bundleName) = 0;
 
     /**
-     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
-     * clear the application data.
-     *
-     * @param bundleName, bundle name in Application record.
-     * @return
-     */
-    virtual int ClearUpApplicationData(const std::string &bundleName) = 0;
-
-    /**
      * Uninstall app
      *
      * @param bundleName.
-     * @param uid, UninstallApp uid.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName, const int uid = DEFAULT_INVAL_VALUE) = 0;
+    virtual int UninstallApp(const std::string &bundleName) = 0;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -488,7 +479,6 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
 
-    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) = 0;
     /**
      * set lock screen white list
      *
@@ -506,6 +496,26 @@ public:
     virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) = 0;
 
     virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) = 0;
+
+    virtual int LockMissionForCleanup(int32_t missionId) = 0;
+
+    virtual int UnlockMissionForCleanup(int32_t missionId) = 0;
+
+    virtual int RegisterMissionListener(const sptr<IMissionListener> &listener) = 0;
+
+    virtual int UnRegisterMissionListener(const sptr<IMissionListener> &listener) = 0;
+
+    virtual int GetMissionInfos(const std::string& deviceId, int32_t numMax,
+        std::vector<MissionInfo> &missionInfos) = 0;
+
+    virtual int GetMissionInfo(const std::string& deviceId, int32_t missionId,
+        MissionInfo &missionInfo) = 0;
+
+    virtual int CleanMission(int32_t missionId) = 0;
+
+    virtual int CleanAllMissions() = 0;
+
+    virtual int MoveMissionToFront(int32_t missionId) = 0;
 
     enum {
         // ipc id 1-1000 for kit
@@ -623,6 +633,36 @@ public:
         // ipc id for minimize ability (38)
         MINIMIZE_ABILITY,
 
+         // ipc id for lock mission for cleanup operation (39)
+        LOCK_MISSION_FOR_CLEANUP,
+
+        // ipc id for unlock mission for cleanup operation (40)
+        UNLOCK_MISSION_FOR_CLEANUP,
+
+        // ipc id for register mission listener (41)
+        REGISTER_MISSION_LISTENER,
+
+        // ipc id for unregister mission listener (42)
+        UNREGISTER_MISSION_LISTENER,
+
+         // ipc id for get mission infos (43)
+        GET_MISSION_INFOS,
+
+        // ipc id for get mission info by id (44)
+        GET_MISSION_INFO_BY_ID,
+
+        // ipc id for clean mission (45)
+        CLEAN_MISSION,
+
+        // ipc id for clean all missions (46)
+        CLEAN_ALL_MISSIONS,
+
+        // ipc id for move mission to front (47)
+        MOVE_MISSION_TO_FRONT,
+
+        // ipc id for get mission snap shot (48)
+        GET_MISSION_SNAPSHOT_BY_ID,
+
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
         START_ABILITY = 1001,
@@ -661,20 +701,15 @@ public:
 
         GET_PENDING_REQUEST_WANT,
 
-        START_ABILITY_AND_REQUESTUID,
-
-        GET_PENDING_WANT_SENDER_INFO,
-
         SET_SHOW_ON_LOCK_SCREEN,
 
-        // ipc id for starting ability by settings(1006)
+        // ipc id for starting ability by settings(1018)
         START_ABILITY_FOR_SETTINGS,
-
-        GET_ABILITY_MISSION_SNAPSHOT,
 
         GET_SYSTEM_MEMORY_ATTR,
 
-        CLEAR_UP_APPLICATION_DATA,
+        START_ABILITY_FOR_OPTIONS,
+
         // ipc id for continue ability(1101)
         START_CONTINUATION = 1101,
 

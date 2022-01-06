@@ -22,8 +22,8 @@ class AbilityContext extends Context {
         this.currentHapModuleInfo = obj.currentHapModuleInfo
     }
 
-    startAbility(want, callback) {
-        return this.__context_impl__.startAbility(want, callback)
+    startAbility(want, options, callback) {
+        return this.__context_impl__.startAbility(want, options, callback)
     }
 
     startAbilityForResult(want, callback) {
@@ -44,6 +44,14 @@ class AbilityContext extends Context {
 
     terminateSelfWithResult(abilityResult, callback) {
         return this.__context_impl__.terminateSelfWithResult(abilityResult, callback)
+    }
+
+    requestPermissionsFromUser(permissions, requestCode, resultCallback) {
+        return this.__context_impl__.requestPermissionsFromUser(permissions, requestCode, resultCallback)
+    }
+
+    restoreWindowStage(contentStorage) {
+        return this.__context_impl__.restoreWindowStage(contentStorage)
     }
 }
 

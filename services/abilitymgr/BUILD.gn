@@ -25,8 +25,9 @@ group("abilityms_target") {
 
 group("unittest") {
   testonly = true
+  deps = []
 
-  deps = [ "test:unittest" ]
+  #deps = [ "test:unittest" ]
 }
 
 config("abilityms_config") {
@@ -47,15 +48,13 @@ config("abilityms_config") {
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/graphic/standard/interfaces/innerkits",
-    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
-    "//foundation/graphic/standard/interfaces/innerkits/wmservice",
     "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
+    "//base/hiviewdfx/hiview/adapter/utility/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -68,10 +67,13 @@ ohos_shared_library("abilityms") {
   sources += [ "${services_path}/abilitymgr/src/sa_mgr_client.cpp" ]
 
   configs = [ ":abilityms_config" ]
+
   deps = [
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
+    "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
+    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
@@ -96,10 +98,7 @@ ohos_shared_library("abilityms") {
     "ipc:ipc_core",
   ]
 
-  public_deps = [
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
-    "//foundation/graphic/standard:libwmservice",
-  ]
+  public_deps = [ "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr" ]
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"

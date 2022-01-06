@@ -24,7 +24,7 @@ namespace OHOS {
 namespace AppExecFwk {
 class FormJsEventHandler : public EventHandler {
 public:
-    FormJsEventHandler(const std::shared_ptr<EventRunner> &runner,
+    FormJsEventHandler(const std::shared_ptr<EventRunner> &runner, 
         const std::shared_ptr<Ability>& ability, const FormJsInfo& formJsInfo);
     ~FormJsEventHandler() = default;
 

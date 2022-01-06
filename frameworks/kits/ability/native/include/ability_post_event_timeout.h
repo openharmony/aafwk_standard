@@ -17,11 +17,13 @@
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_POST_EVENT_TIMEOUT_H
 
 #include <memory>
+#include <atomic>
 #include <mutex>
 #include <string>
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class AbilityHandler;
 class AbilityPostEventTimeout : public std::enable_shared_from_this<AbilityPostEventTimeout> {
 public:
@@ -38,7 +40,6 @@ private:
     // default delaytime is 5000ms
     static const int64_t defalutDelayTime;
 
-private:
     std::string task_;
     std::shared_ptr<AbilityHandler> handler_;
     std::mutex mtx_;
@@ -46,6 +47,7 @@ private:
 
     static std::atomic<uint32_t> allocationId_;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_POST_EVENT_TIMEOUT_H

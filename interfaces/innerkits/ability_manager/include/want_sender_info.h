@@ -25,6 +25,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 struct WantSenderInfo : public Parcelable {
     int32_t type;
     std::string bundleName;

@@ -41,17 +41,22 @@ public:
 
     std::string GetBundleCodePath() const override;
     ErrCode StartAbility(const AAFwk::Want &want, int requestCode) override;
+    ErrCode StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions, int requestCode) override;
     ErrCode StartAbilityForResult(const AAFwk::Want &want, int requestCode, RuntimeTask &&task) override;
     ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) override;
     void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) override;
-    bool ConnectAbility(const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &conn) override;
-    void DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn) override;
+    bool ConnectAbility(const AAFwk::Want &want,
+                        const std::shared_ptr<AbilityConnectCallback> &connectCallback) override;
+    void DisconnectAbility(const AAFwk::Want &want,
+                           const std::shared_ptr<AbilityConnectCallback> &connectCallback) override;
     std::shared_ptr<AppExecFwk::HapModuleInfo> GetHapModuleInfo() const override;
     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const override;
     void MinimizeAbility() override;
 
     ErrCode TerminateSelf() override;
     sptr<IRemoteObject> GetAbilityToken() override;
+    void RequestPermissionsFromUser(const std::vector<std::string> &permissions, int requestCode) override;
+    ErrCode RestoreWindowStage(void* contentStorage) override;
 
     void SetStageContext(const std::shared_ptr<AbilityRuntime::Context> &stageContext);
 
@@ -72,11 +77,22 @@ public:
         token_ = token;
     }
 
+    /**
+     * @brief Get ContentStorage.
+     *
+     * @return Returns the ContentStorage.
+     */
+    void* GetContentStorage() override
+    {
+        return contentStorage_;
+    }
+
 private:
     sptr<IRemoteObject> token_;
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
     std::shared_ptr<AbilityRuntime::Context> stageContext_ = nullptr;
     std::map<int, RuntimeTask> resultCallbacks_;
+    void* contentStorage_ = nullptr;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

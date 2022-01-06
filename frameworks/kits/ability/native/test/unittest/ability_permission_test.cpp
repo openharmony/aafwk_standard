@@ -48,7 +48,9 @@ void AbilityPermissionTest::SetUpTestCase(void)
 {
     OHOS::sptr<OHOS::IRemoteObject> bundleObject = new (std::nothrow) BundleMgrService();
     OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) AAFwk::MockAbilityManagerService();
+
     auto sysMgr = OHOS::DelayedSingleton<SysMrgClient>::GetInstance();
+
     if (sysMgr == NULL) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;

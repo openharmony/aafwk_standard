@@ -47,28 +47,12 @@ const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WIN
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 
-const std::string SETTINGS_DATA_ABILITY_NAME = "com.ohos.settingsdata.DataAbility";
-const std::string SETTINGS_DATA_BUNDLE_NAME = "com.ohos.settingsdata";
-
-const std::string APPLICATION_SELECTOR_BUNDLE_NAME = "com.ohos.selector";
-const std::string APPLICATION_SELECTOR_ABILITY_NAME = "com.ohos.selector.MainAbility";
-const std::string APPLICATION_SELECTOR_CALLER_ABILITY_RECORD_ID = "OHOS_CALLER_ABILITY_RECORD_ID";
-const std::string APPLICATION_SELECTOR_REQUEST_UID_LIST = "OHOS_REQUEST_UID_LIST";
-const std::string APPLICATION_SELECTOR_ABILITY_LABLE_LIST = "OHOS_ABILITY_LABLE_LIST";
-const std::string APPLICATION_SELECTOR_ABILITY_ICON_PATH_LIST = "OHOS_ABILITY_ICON_PATH_LIST";
-const std::string APPLICATION_SELECTOR_RESULT_UID = "OHOS_RESULT_PERMISSION_UID";
-const std::string APPLICATION_SELECTOR_ABILITY_ISCLONED_LIST = "OHOS_ABILITY_ISCLONED_LIST";
-
 const std::string PHONE_SERVICE_BUNDLE_NAME = "com.ohos.callui";
 const std::string PHONE_SERVICE_ABILITY_NAME = "com.ohos.callui.ServiceAbility";
-
 const std::string LOCK_SCREEN_EVENT_NAME = "lock_screen";
 
-const std::string CONTACTS_ABILITY_NAME = "com.ohos.contacts.ServiceAbility";
-const std::string CONTACTS_BUNDLE_NAME = "com.ohos.contacts";
-
-const std::string MMS_ABILITY_NAME = "com.ohos.mms.ServiceAbility";
-const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
+const std::string SETTINGS_DATA_ABILITY_NAME = "com.ohos.settingsdata.DataAbility";
+const std::string SETTINGS_DATA_BUNDLE_NAME = "com.ohos.settingsdata";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

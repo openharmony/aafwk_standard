@@ -13,10 +13,8 @@
  * limitations under the License.
  */
 
-// #include "ohos/zidl_test_service_proxy.h"----> #include "zidl_test_service_proxy.h"
 #include "zidl_test_service_proxy.h"
 
-// namespace ohos {---> namespace OHOS {
 namespace OHOS {
 ErrCode ZidlTestServiceProxy::TestIntTransaction(
     /* [in] */ int _data,
@@ -26,17 +24,10 @@ ErrCode ZidlTestServiceProxy::TestIntTransaction(
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    // uint32_t def = 5;
-    // uint32_t rApiVersion = 6;
-    // uint32_t apiVersion = system::GetUintParameter("hw_sc.build.os.apiversion", def);
-    // if (apiVersion >= rApiVersion) {
-    //     data.UpdateDataVersion(remote);
-    // }
     data.WriteInt32(_data);
 
     int32_t st = Remote()->SendRequest(COMMAND_TEST_INT_TRANSACTION, data, reply, option);
     if (st != ERR_NONE) {
-        // HILOG_WARN("TestIntTransaction failed, error code is %d", st);
         return st;
     }
 
@@ -56,17 +47,10 @@ ErrCode ZidlTestServiceProxy::TestStringTransaction(
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    // uint32_t def = 5;
-    // uint32_t rApiVersion = 6;
-    // uint32_t apiVersion = system::GetUintParameter("hw_sc.build.os.apiversion", def);
-    // if (apiVersion >= rApiVersion) {
-    //     data.UpdateDataVersion(remote);
-    // }
     data.WriteString16(Str8ToStr16(_data));
 
     int32_t st = Remote()->SendRequest(COMMAND_TEST_STRING_TRANSACTION, data, reply, option);
     if (st != ERR_NONE) {
-        // HILOG_WARN("TestStringTransaction failed, error code is %d", st);
         return st;
     }
 
@@ -77,4 +61,4 @@ ErrCode ZidlTestServiceProxy::TestStringTransaction(
 
     return ERR_OK;
 }
-} // OHOS
+} // namespace OHOS

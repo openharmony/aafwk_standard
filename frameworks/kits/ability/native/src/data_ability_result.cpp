@@ -14,10 +14,15 @@
  */
 
 #include "data_ability_result.h"
+
+#include <memory>
+#include <string>
+
 #include "parcel_macro.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+
 /**
  * @brief A constructor used to create a DataAbilityResult instance
  * with the input parameter count specified.
@@ -125,7 +130,7 @@ bool DataAbilityResult::Marshalling(Parcel &parcel) const
     if (!parcel.WriteInt32(count_)) {
         return false;
     }
-    
+
     return true;
 }
 
@@ -165,7 +170,7 @@ bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
             return false;
         }
     }
-    
+
     // count_
     if (!parcel.ReadInt32(count_)) {
         return false;
@@ -173,5 +178,6 @@ bool DataAbilityResult::ReadFromParcel(Parcel &parcel)
 
     return true;
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

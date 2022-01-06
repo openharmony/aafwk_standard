@@ -17,29 +17,24 @@
 #define OHOS_AAFWK_INTERFACES_INNERKITS_MISSION_SNAPSHOT_H
 
 #include <string>
-#include "image_info.h"
-#include "parcel.h"
+
 #include "element_name.h"
-#include "foundation/multimedia/image_standard/interfaces/innerkits/include/pixel_map.h"
+#include "parcel.h"
+#include "pixel_map.h"
 
 namespace OHOS {
 namespace AAFwk {
 /**
- * @struct MissionPixelMap
- * MissionPixelMap is used to save informations about mission sanpshot.
+ * @struct MissionSnapshotInfo
+ * MissionSnapshotInfo is used to save informations about mission sanpshot.
  */
-struct MissionPixelMap : public Parcelable {
-    AppExecFwk::ElementName topAbility;
-    AAFwk::ImageInfo imageInfo;
+struct MissionSnapshot : public Parcelable {
+    AppExecFwk::ElementName ability;
+    Media::PixelMap snapshot;
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
-    static MissionPixelMap *Unmarshalling(Parcel &parcel);
-};
-
-struct MissionSnapshot {
-    AppExecFwk::ElementName topAbility;
-    std::shared_ptr<Media::PixelMap> snapshot;
+    static MissionSnapshot *Unmarshalling(Parcel &parcel);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

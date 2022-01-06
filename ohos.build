@@ -1,79 +1,79 @@
 {
   "parts": {
-  	"aafwk_standard": {
+    "aafwk_standard": {
       "module_list": [
-		"//foundation/aafwk/standard/services:services_target",
+        "//foundation/aafwk/standard/services:services_target",
         "//foundation/aafwk/standard/tools:tools_target",
-		"//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
-		"//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-		"//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
+        "//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
+        "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+        "//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
         "//foundation/aafwk/standard/interfaces/kits/napi:napi_packages",
         "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
         "//foundation/aafwk/standard/zidl/test/native:zidl_client_test",
         "//foundation/aafwk/standard/zidl/test/native:zidl_server_test"
       ],
       "inner_kits": [
-		{
-		  "header": {
-			"header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
-			"header_files": [
-				"ohos/aafwk/base/array_wrapper.h",
-				"ohos/aafwk/base/base_def.h",
-				"ohos/aafwk/base/base_interfaces.h",
-				"ohos/aafwk/base/base_object.h",
-				"ohos/aafwk/base/base_types.h",
-				"ohos/aafwk/base/bool_wrapper.h",
-				"ohos/aafwk/base/byte_wrapper.h",
-				"ohos/aafwk/base/double_wrapper.h",
-				"ohos/aafwk/base/float_wrapper.h",
-				"ohos/aafwk/base/int_wrapper.h",
-				"ohos/aafwk/base/light_refbase.h",
-				"ohos/aafwk/base/long_wrapper.h",
-				"ohos/aafwk/base/short_wrapper.h",
-				"ohos/aafwk/base/string_wrapper.h"
-			  ]
-		    },
-			"name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
-		},
-		{
-		  "header": {
-			"header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
-			"header_files": [
-			  "ohos/aafwk/content/want.h",
-			  "ohos/aafwk/content/skills.h",
-			  "ohos/aafwk/content/want_params.h",
-			  "ohos/aafwk/content/match_type.h",
-			  "ohos/aafwk/content/operation.h",
-			  "ohos/aafwk/content/patterns_matcher.h",
-			  "ohos/aafwk/content/pac_map.h"
-			]
-		  },
-		  "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
-		},
-		{
-			"header": {
-				"header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
-				"header_files": [
-					"ohos/aafwk/content/intent.h",
-					"ohos/aafwk/content/intent_filter.h",
-					"ohos/aafwk/content/intent_params.h"
-				]
-			},
-			"name": "//foundation/aafwk/standard/interfaces/innerkits/intent:intent"
-		},
-		{
-		  "header": {
-			"header_base": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-			"header_files": [
-			  "ability_connect_callback_interface.h",
-			  "ability_connect_callback_stub.h",
-			  "ability_manager_client.h",
-			  "ability_manager_errors.h",
-			  "ability_manager_interface.h",
-			  "ability_scheduler_interface.h"
-			]
-		  },
-		  "name": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager"
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
+            "header_files": [
+              "ohos/aafwk/base/array_wrapper.h",
+              "ohos/aafwk/base/base_def.h",
+              "ohos/aafwk/base/base_interfaces.h",
+              "ohos/aafwk/base/base_object.h",
+              "ohos/aafwk/base/base_types.h",
+              "ohos/aafwk/base/bool_wrapper.h",
+              "ohos/aafwk/base/byte_wrapper.h",
+              "ohos/aafwk/base/double_wrapper.h",
+              "ohos/aafwk/base/float_wrapper.h",
+              "ohos/aafwk/base/int_wrapper.h",
+              "ohos/aafwk/base/light_refbase.h",
+              "ohos/aafwk/base/long_wrapper.h",
+              "ohos/aafwk/base/short_wrapper.h",
+              "ohos/aafwk/base/string_wrapper.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
+            "header_files": [
+              "ohos/aafwk/content/want.h",
+              "ohos/aafwk/content/skills.h",
+              "ohos/aafwk/content/want_params.h",
+              "ohos/aafwk/content/match_type.h",
+              "ohos/aafwk/content/operation.h",
+              "ohos/aafwk/content/patterns_matcher.h",
+              "ohos/aafwk/content/pac_map.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
+            "header_files": [
+              "ohos/aafwk/content/intent.h",
+              "ohos/aafwk/content/intent_filter.h",
+              "ohos/aafwk/content/intent_params.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/intent:intent"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+            "header_files": [
+              "ability_connect_callback_interface.h",
+              "ability_connect_callback_stub.h",
+              "ability_manager_client.h",
+              "ability_manager_errors.h",
+              "ability_manager_interface.h",
+              "ability_scheduler_interface.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager"
         },
         {
           "header": {
@@ -84,27 +84,18 @@
           },
           "name": "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native"
         },
-		{
-		  "header": {
-			"header_base": "//foundation/aafwk/standard/interfaces/innerkits/runtime/include/",
-			"header_files": [
-			  "js_runtime.h",
-			  "runtime.h"
-			]
-		  },
-		  "name": "//foundation/aafwk/standard/interfaces/innerkits/runtime:runtime"
-		}
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/runtime/include/",
+            "header_files": [
+              "js_runtime.h",
+              "runtime.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/runtime:runtime"
+        }
       ],
       "test_list": [
-		"//foundation/aafwk/standard/frameworks/kits/content/cpp/test:unittest",
-		"//foundation/aafwk/standard/frameworks/kits/ability/native/test:unittest",
-		"//foundation/aafwk/standard/frameworks/kits/test:moduletest",
-		"//foundation/aafwk/standard/services/test:moduletest",
-		"//foundation/aafwk/standard/services:unittest",
-		"//foundation/aafwk/standard/tools/test:systemtest",
-		"//foundation/aafwk/standard/tools/test:moduletest",
-		"//foundation/aafwk/standard/tools/test:unittest",
-		"//foundation/aafwk/standard/tools/zip/test:unittest"
       ]
     }
   },

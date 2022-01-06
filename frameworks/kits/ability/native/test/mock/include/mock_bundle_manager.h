@@ -70,11 +70,12 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;
-    virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) override;
+    virtual bool DumpInfos(
+        const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;
@@ -145,11 +146,12 @@ public:
     virtual bool IsSafeMode() override;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) override;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId) override;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName) override;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) override;
     virtual bool UnregisterBundleStatusCallback() override;
-    virtual bool DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result) override;
+    virtual bool DumpInfos(
+        const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool SetApplicationEnabled(const std::string &bundleName, bool isEnable) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;

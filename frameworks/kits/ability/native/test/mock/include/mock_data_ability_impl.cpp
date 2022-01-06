@@ -54,8 +54,7 @@ int DataAbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value
     return returnValueInsert;
 }
 
-int DataAbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
-    const NativeRdb::DataAbilityPredicates &predicates)
+int DataAbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Update called";
     return returnValueUpdate;
@@ -71,8 +70,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
     const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock DataAbilityImpl::Query called";
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet =
-    std::make_shared<NativeRdb::AbsSharedResultSet>(std::string("Test"));
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = std::make_shared<NativeRdb::AbsSharedResultSet>(std::string("Test"));
     return resultSet;
 }
 

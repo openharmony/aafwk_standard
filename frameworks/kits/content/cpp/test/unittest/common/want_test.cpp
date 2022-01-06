@@ -81,7 +81,7 @@ public:
     static const std::string URI_STRING_END;
 };
 
-template <typename T>
+template<typename T>
 bool CompareArrayData(const std::vector<T> &arr1, const std::vector<T> &arr2)
 {
     if (arr1.size() != arr2.size()) {
@@ -567,12 +567,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
 
 void WantBaseTest::CompareWant(const std::shared_ptr<Want> &want1, const std::shared_ptr<Want> &want2) const
 {
-    Operation opt1 = want1->GetOperation();
-    Operation opt2 = want2->GetOperation();
-    EXPECT_EQ(opt1.GetDeviceId(), opt2.GetDeviceId());
-    EXPECT_EQ(opt1.GetBundleName(), opt2.GetBundleName());
-    EXPECT_EQ(opt1.GetAbilityName(), opt2.GetAbilityName());
-
     EXPECT_EQ(want1->GetAction(), want2->GetAction());
     EXPECT_EQ(want1->GetFlags(), want2->GetFlags());
     EXPECT_EQ(want1->GetType(), want2->GetType());
@@ -2089,9 +2083,9 @@ HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0200, Function 
 HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0300, Function | MediumTest | Level1)
 {
     std::string emptyStr("ff");
-    std::vector<zchar> firstValue({ U'中', U'文' });
-    std::vector<zchar> secondValue({ U'字', U'符' });
-    std::vector<zchar> thirdValue({ U'集', U'英' });
+    std::vector<zchar> firstValue({U'中', U'文'});
+    std::vector<zchar> secondValue({U'字', U'符'});
+    std::vector<zchar> thirdValue({U'集', U'英'});
     std::string keyStr("aa");
     want_->SetParam(emptyStr, firstValue);
     want_->SetParam(emptyStr, firstValue);
@@ -2110,8 +2104,8 @@ HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0300, Function 
 HWTEST_F(WantCharArrayParamTest, AaFwk_Want_Parameters_CharArray_0400, Function | MediumTest | Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<zchar> firstValue({ U'中', U'文' });
-    std::vector<zchar> secondValue({ U'字', U'符' });
+    std::vector<zchar> firstValue({U'中', U'文'});
+    std::vector<zchar> secondValue({U'字', U'符'});
     std::vector<zchar> defaultValue;
     std::string secondKey("aa");
     want_->SetParam(firstKey, firstValue);
@@ -2634,9 +2628,9 @@ HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0200, Function | MediumT
 HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0300, Function | MediumTest | Level1)
 {
     std::string emptyStr("hh");
-    std::vector<short> firstValue({ 1, 4, -9 });
-    std::vector<short> secondValue({ 1, 8, -9 });
-    std::vector<short> thirdValue({ 1, 4, 9 });
+    std::vector<short> firstValue({1, 4, -9});
+    std::vector<short> secondValue({1, 8, -9});
+    std::vector<short> thirdValue({1, 4, 9});
     std::string keyStr("aa");
     want_->SetParam(emptyStr, firstValue);
     want_->SetParam(emptyStr, firstValue);
@@ -2655,9 +2649,9 @@ HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0300, Function | MediumT
 HWTEST_F(WantShortArrayParamTest, AaFwk_Want_ShortArray_0400, Function | MediumTest | Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<short> firstValue({ -1, -2 });
-    std::vector<short> secondValue({ -1, -2, -1, -2, 0 });
-    std::vector<short> thirdValue({ -1, -2, 100 });
+    std::vector<short> firstValue({-1, -2});
+    std::vector<short> secondValue({-1, -2, -1, -2, 0});
+    std::vector<short> thirdValue({-1, -2, 100});
     std::string secondKey("aa");
     want_->SetParam(firstKey, firstValue);
     want_->SetParam(firstKey, firstValue);
@@ -3276,9 +3270,9 @@ HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0200, Function | Medium
 HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0300, Function | MediumTest | Level1)
 {
     std::string emptyStr("cc");
-    std::vector<int> firstValue({ 1, 4, -9 });
-    std::vector<int> secondValue({ 1, 8, -9 });
-    std::vector<int> thirdValue({ 1, 4, 9 });
+    std::vector<int> firstValue({1, 4, -9});
+    std::vector<int> secondValue({1, 8, -9});
+    std::vector<int> thirdValue({1, 4, 9});
     std::string keyStr("aa");
     want_->SetParam(emptyStr, firstValue);
     want_->SetParam(emptyStr, firstValue);
@@ -3297,9 +3291,9 @@ HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0300, Function | Medium
 HWTEST_F(WantIntArrayParamTest, AaFwk_Want_IntArrayParam_0400, Function | MediumTest | Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<int> firstValue({ -1, -2 });
-    std::vector<int> secondValue({ -1, -2, -1, -2, 0 });
-    std::vector<int> thirdValue({ -1, -2, 100 });
+    std::vector<int> firstValue({-1, -2});
+    std::vector<int> secondValue({-1, -2, -1, -2, 0});
+    std::vector<int> thirdValue({-1, -2, 100});
     std::string secondKey("aa");
     want_->SetParam(firstKey, firstValue);
     want_->SetParam(firstKey, firstValue);
@@ -3601,9 +3595,9 @@ HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0200, Function | MediumTes
 HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0300, Function | MediumTest | Level1)
 {
     std::string emptyStr("gg");
-    std::vector<byte> firstValue({ 'a', '2' });
-    std::vector<byte> secondValue({ '1', 'd' });
-    std::vector<byte> thirdValue({ 't', '3' });
+    std::vector<byte> firstValue({'a', '2'});
+    std::vector<byte> secondValue({'1', 'd'});
+    std::vector<byte> thirdValue({'t', '3'});
     std::string keyStr("aa");
     want_->SetParam(emptyStr, firstValue);
     want_->SetParam(emptyStr, firstValue);
@@ -3622,8 +3616,8 @@ HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0300, Function | MediumTes
 HWTEST_F(WantByteArrayParamTest, AaFwk_Want_ByteArray_0400, Function | MediumTest | Level1)
 {
     std::string firstKey("%1uH3");
-    std::vector<byte> firstValue({ 'a', '2' });
-    std::vector<byte> secondValue({ 'w', '$' });
+    std::vector<byte> firstValue({'a', '2'});
+    std::vector<byte> secondValue({'w', '$'});
     std::vector<byte> defaultValue;
     std::string secondKey("aa");
     want_->SetParam(firstKey, firstValue);
@@ -3791,6 +3785,7 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Entity_0100, Function | MediumTest | Level1)
  */
 HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0100, Function | MediumTest | Level1)
 {
+
     std::vector<std::string> vector;
     std::string key = "system.want.test.key";
     std::string key2 = "system.want.test.key2";
@@ -3823,54 +3818,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0200, Function | MediumTest | Lev
     }
     std::shared_ptr<Want> p2(newWant);
     CompareWant(p1, p2);
-}
-/**
- * @tc.number: AaFwk_Want_ToString_0100
- * @tc.name:    ToString and FromString
- * @tc.desc: Verify FromString()
- */
-HWTEST_F(WantBaseTest, AaFwk_Want_ToString_0100, Function | MediumTest | Level1)
-{
-    std::string deviceId = "deviceId";
-    std::string bundleName = "bundleName";
-    std::string abilityName ="abilityName";
-    std::string uri = "url";
-    std::string type = "type";
-    unsigned int flags = 1;
-    std::string action = "action";
-    WantParams parameters;
-    std::vector<std::string> entities = {"entity.system.entity1", "entity.system.entity2"};
-
-    std::string keyBool = "key_bool";
-    bool valueBool = true;
-    parameters.SetParam(keyBool, Boolean::Box(valueBool));
-
-    std::string keyStr = "key_string";
-    std::string valueString = "123";
-    parameters.SetParam(keyStr, String::Box(valueString));
-
-    std::string keyInt = "key_int";
-    int valueInt = 111;
-    parameters.SetParam(keyStr, Integer::Box(valueInt));
-
-    std::shared_ptr<Want> want1 = std::make_shared<Want>();
-    if (want1 == nullptr) {
-        return;
-    }
-    want1->SetElementName(deviceId, bundleName, abilityName);
-    want1->SetUri(uri);
-    want1->SetType(type);
-    want1->SetFlags(flags);
-    want1->SetAction(action);
-    for (auto entity : entities) {
-        want1->AddEntity(entity);
-    }
-
-    std::string jsonString = want1->ToString();
-    std::shared_ptr<Want> want2(Want::FromString(jsonString));
-    EXPECT_NE(want2, nullptr);
-
-    CompareWant(want1, want2);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

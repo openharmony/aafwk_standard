@@ -42,6 +42,7 @@ constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
 constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
 constexpr static char ACE_FORM_ABILITY_NAME[] = "AceFormAbility";
 constexpr static char BASE_SERVICE_EXTENSION[] = "ServiceExtension";
+constexpr static char FORM_EXTENSION[] = "FormExtension";
 constexpr int TARGET_VERSION_THRESHOLDS = 8;
 
 /**
@@ -84,7 +85,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
 
     if (abilityInfo->isNativeAbility == false) {
         if (abilityInfo->type == AbilityType::PAGE) {
-            if (abilityRecord->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS) {
+            if (abilityRecord->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS) {
                 abilityName = ABILITY_NAME;
             } else {
                 abilityName = ACE_ABILITY_NAME;
@@ -99,6 +100,9 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
             abilityName = ACE_DATA_ABILITY_NAME;
         } else if (abilityInfo->type == AbilityType::EXTENSION) {
             abilityName = BASE_SERVICE_EXTENSION;
+            if (abilityInfo->formEnabled == true) {
+                abilityName = FORM_EXTENSION;
+            }
             APP_LOGI("CreateAbilityName extension type, abilityName:%{public}s", abilityName.c_str());
         } else {
             abilityName = abilityInfo->name;
@@ -183,7 +187,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
         APP_LOGE("AbilityThread::ability attach failed,load ability failed");
         return;
     }
-    ability->SetTargetVersion(abilityRecord->GetTargetVersion());
+    ability->SetCompatibleVersion(abilityRecord->GetCompatibleVersion());
 
     APP_LOGI("AbilityThread::new ability success.");
     currentAbility_.reset(ability);
@@ -202,7 +206,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     // 3.new abilityImpl
     abilityImpl_ =
         DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo(),
-                                                                                   abilityRecord->GetTargetVersion());
+            abilityRecord->GetCompatibleVersion());
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::ability abilityImpl_ == nullptr");
         return;
@@ -370,7 +374,7 @@ void AbilityThread::Attach(
         APP_LOGE("AbilityThread::ability attach failed,load ability failed");
         return;
     }
-    ability->SetTargetVersion(abilityRecord->GetTargetVersion());
+    ability->SetCompatibleVersion(abilityRecord->GetCompatibleVersion());
 
     APP_LOGI("AbilityThread::new ability success.");
     currentAbility_.reset(ability);
@@ -389,7 +393,7 @@ void AbilityThread::Attach(
     // 3.new abilityImpl
     abilityImpl_ =
         DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo(),
-                                                                                   abilityRecord->GetTargetVersion());
+            abilityRecord->GetCompatibleVersion());
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::ability abilityImpl_ == nullptr");
         return;
@@ -854,6 +858,7 @@ void AbilityThread::SendResult(int requestCode, int resultCode, const Want &want
         APP_LOGE("AbilityThread::SendResult PostTask error");
     }
     APP_LOGI("AbilityThread::SendResult end");
+
 }
 
 /**
@@ -1452,6 +1457,7 @@ bool AbilityThread::ScheduleNotifyChange(const Uri &uri)
 std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
 {
+
     APP_LOGI("AbilityThread::ExecuteBatch start");
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     if (abilityImpl_ == nullptr) {

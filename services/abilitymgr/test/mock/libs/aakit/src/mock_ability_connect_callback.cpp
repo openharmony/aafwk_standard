@@ -18,6 +18,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 int AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 int AbilityConnectCallback::onAbilityDisconnectDoneCount = 0;
 
@@ -34,5 +35,6 @@ void AbilityConnectCallback::OnAbilityDisconnectDone(
     HILOG_DEBUG("mock AbilityConnectCallback::OnAbilityDisConnectDone");
     onAbilityDisconnectDoneCount++;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

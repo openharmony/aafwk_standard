@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 AbilityManagerStub::AbilityManagerStub()
 {
     FirstStepInit();
@@ -73,6 +74,7 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
     requestFuncMap_[MINIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MinimizeMultiWindowInner;
+    requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
 }
 
 void AbilityManagerStub::SecondStepInit()
@@ -98,14 +100,20 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[REGISTER_CANCEL_LISTENER] = &AbilityManagerStub::RegisterCancelListenerInner;
     requestFuncMap_[UNREGISTER_CANCEL_LISTENER] = &AbilityManagerStub::UnregisterCancelListenerInner;
     requestFuncMap_[GET_PENDING_REQUEST_WANT] = &AbilityManagerStub::GetPendingRequestWantInner;
-    requestFuncMap_[GET_PENDING_WANT_SENDER_INFO] = &AbilityManagerStub::GetPendingRequestWantInner;
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
-    requestFuncMap_[START_ABILITY_AND_REQUESTUID] = &AbilityManagerStub::StartAbilityAddRequestUidInner;
     requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
-    requestFuncMap_[CLEAR_UP_APPLICATION_DATA] = &AbilityManagerStub::ClearUpApplicationDataInner;
+    requestFuncMap_[LOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::LockMissionForCleanupInner;
+    requestFuncMap_[UNLOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::UnlockMissionForCleanupInner;
+    requestFuncMap_[REGISTER_MISSION_LISTENER] = &AbilityManagerStub::RegisterMissionListenerInner;
+    requestFuncMap_[UNREGISTER_MISSION_LISTENER] = &AbilityManagerStub::UnRegisterMissionListenerInner;
+    requestFuncMap_[GET_MISSION_INFOS] = &AbilityManagerStub::GetMissionInfosInner;
+    requestFuncMap_[GET_MISSION_INFO_BY_ID] = &AbilityManagerStub::GetMissionInfoInner;
+    requestFuncMap_[CLEAN_MISSION] = &AbilityManagerStub::CleanMissionInner;
+    requestFuncMap_[CLEAN_ALL_MISSIONS] = &AbilityManagerStub::CleanAllMissionsInner;
+    requestFuncMap_[MOVE_MISSION_TO_FRONT] = &AbilityManagerStub::MoveMissionToFrontInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -281,10 +289,10 @@ int AbilityManagerStub::ScheduleCommandAbilityDoneInner(MessageParcel &data, Mes
 
 int AbilityManagerStub::GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply)
 {
-    MissionPixelMap missionPixelMap;
+    MissionSnapshotInfo snapshot;
     int32_t missionId = data.ReadInt32();
-    int32_t result = GetMissionSnapshot(missionId, missionPixelMap);
-    if (!reply.WriteParcelable(&missionPixelMap)) {
+    int32_t result = GetMissionSnapshot(missionId, snapshot);
+    if (!reply.WriteParcelable(&snapshot)) {
         HILOG_ERROR("GetMissionSnapshot error");
         return ERR_INVALID_VALUE;
     }
@@ -355,22 +363,10 @@ int AbilityManagerStub::KillProcessInner(MessageParcel &data, MessageParcel &rep
     return NO_ERROR;
 }
 
-int AbilityManagerStub::ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply)
-{
-    std::string bundleName = Str16ToStr8(data.ReadString16());
-    int result = ClearUpApplicationData(bundleName);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("ClearUpApplicationData error");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::UninstallAppInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string bundleName = Str16ToStr8(data.ReadString16());
-    int uid = data.ReadInt32();
-    int result = UninstallApp(bundleName, uid);
+    int result = UninstallApp(bundleName);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("remove stack error");
         return ERR_INVALID_VALUE;
@@ -407,22 +403,6 @@ int AbilityManagerStub::StartAbilityAddCallerInner(MessageParcel &data, MessageP
     return NO_ERROR;
 }
 
-int AbilityManagerStub::StartAbilityAddRequestUidInner(MessageParcel &data, MessageParcel &reply)
-{
-    Want *want = data.ReadParcelable<Want>();
-    if (want == nullptr) {
-        HILOG_ERROR("want is nullptr");
-        return ERR_INVALID_VALUE;
-    }
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
-    int32_t requestCode = data.ReadInt32();
-    int32_t requestUid = data.ReadInt32();
-    int32_t result = StartAbility(*want, callerToken, requestCode, requestUid);
-    reply.WriteInt32(result);
-    delete want;
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::ConnectAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
     Want *want = data.ReadParcelable<Want>();
@@ -454,8 +434,7 @@ int AbilityManagerStub::StopServiceAbilityInner(MessageParcel &data, MessageParc
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto token = data.ReadParcelable<IRemoteObject>();
-    int32_t result = StopServiceAbility(*want, token);
+    int32_t result = StopServiceAbility(*want);
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;
@@ -497,6 +476,28 @@ int AbilityManagerStub::StartAbilityForSettingsInner(MessageParcel &data, Messag
     reply.WriteInt32(result);
     delete want;
     delete abilityStartSetting;
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StartAbilityForOptionsInner(MessageParcel &data, MessageParcel &reply)
+{
+    Want *want = data.ReadParcelable<Want>();
+    if (want == nullptr) {
+        HILOG_ERROR("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    StartOptions *startOptions = data.ReadParcelable<StartOptions>();
+    if (startOptions == nullptr) {
+        HILOG_ERROR("startOptions is nullptr");
+        delete want;
+        return ERR_INVALID_VALUE;
+    }
+    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    int requestCode = data.ReadInt32();
+    int32_t result = StartAbility(*want, *startOptions, callerToken, requestCode);
+    reply.WriteInt32(result);
+    delete want;
+    delete startOptions;
     return NO_ERROR;
 }
 
@@ -851,24 +852,6 @@ int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageP
     return NO_ERROR;
 }
 
-int AbilityManagerStub::GetWantSenderInfoInner(MessageParcel &data, MessageParcel &reply)
-{
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
-    if (wantSender == nullptr) {
-        HILOG_ERROR("wantSender is nullptr");
-        return ERR_INVALID_VALUE;
-    }
-
-    std::shared_ptr<WantSenderInfo> info(data.ReadParcelable<WantSenderInfo>());
-    int32_t result = GetWantSenderInfo(wantSender, info);
-    if (result != NO_ERROR) {
-        HILOG_ERROR("GetWantSenderInfo is failed");
-        return ERR_INVALID_VALUE;
-    }
-    reply.WriteParcelable(info.get());
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply)
 {
     auto isAllow = data.ReadBool();
@@ -918,6 +901,122 @@ int AbilityManagerStub::NotifyContinuationResultInner(MessageParcel &data, Messa
     int32_t result = NotifyContinuationResult(abilityToken, continuationResult);
     HILOG_INFO("DistributedSchedStub: StartContinuationInner result = %{public}d", result);
     return result;
+}
+
+int AbilityManagerStub::LockMissionForCleanupInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t id = data.ReadInt32();
+    int result = LockMissionForCleanup(id);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("AbilityManagerStub: lock mission failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::UnlockMissionForCleanupInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t id = data.ReadInt32();
+    int result = UnlockMissionForCleanup(id);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("AbilityManagerStub: unlock mission failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::RegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadParcelable<IRemoteObject>());
+    if (listener == nullptr) {
+        HILOG_ERROR("stub register mission listener, listener is nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    int32_t result = RegisterMissionListener(listener);
+    reply.WriteInt32(result);
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::UnRegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadParcelable<IRemoteObject>());
+    if (listener == nullptr) {
+        HILOG_ERROR("stub unregister mission listener, listener is nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    int32_t result = UnRegisterMissionListener(listener);
+    reply.WriteInt32(result);
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetMissionInfosInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = Str16ToStr8(data.ReadString16());
+    int numMax = data.ReadInt32();
+    std::vector<MissionInfo> missionInfos;
+    int32_t result = GetMissionInfos(deviceId, numMax, missionInfos);
+    reply.WriteInt32(missionInfos.size());
+    for (auto &it : missionInfos) {
+        if (!reply.WriteParcelable(&it)) {
+            return ERR_INVALID_VALUE;
+        }
+    }
+    if (!reply.WriteInt32(result)) {
+        return ERR_INVALID_VALUE;
+    }
+    return result;
+}
+
+int AbilityManagerStub::GetMissionInfoInner(MessageParcel &data, MessageParcel &reply)
+{
+    MissionInfo info;
+    std::string deviceId = Str16ToStr8(data.ReadString16());
+    int32_t missionId = data.ReadInt32();
+    int result = GetMissionInfo(deviceId, missionId, info);
+    if (!reply.WriteParcelable(&info)) {
+        HILOG_ERROR("GetMissionInfo error");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("GetMissionInfo result error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::CleanMissionInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t missionId = data.ReadInt32();
+    int result = CleanMission(missionId);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("CleanMission failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::CleanAllMissionsInner(MessageParcel &data, MessageParcel &reply)
+{
+    int result = CleanAllMissions();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("CleanAllMissions failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t missionId = data.ReadInt32();
+    int result = MoveMissionToFront(missionId);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("MoveMissionToFront failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

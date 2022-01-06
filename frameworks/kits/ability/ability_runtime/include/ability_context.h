@@ -18,8 +18,10 @@
 
 #include "foundation/appexecfwk/standard/kits/appkit/native/ability_runtime/context/context.h"
 
-#include "ability_connect_callback_interface.h"
+#include "ability_connect_callback.h"
 #include "ability_info.h"
+#include "native_engine/native_value.h"
+#include "start_options.h"
 #include "want.h"
 
 namespace OHOS {
@@ -43,9 +45,28 @@ public:
      */
     virtual ErrCode StartAbility(const AAFwk::Want &want, int requestCode) = 0;
 
+    /**
+     * @brief Starts a new ability.
+     * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
+     * to start a specific ability. The system locates the target ability from installed abilities based on the value
+     * of the want parameter and the value of the start options and then starts it. You can specify the ability to
+     * start using the two parameters.
+     *
+     * @param want Indicates the Want containing application side information about the target ability to start.
+     * @param startOptions Indicates the StartOptions containing service side information about the target ability to
+     * start.
+     * @param requestCode Indicates the request code returned after the ability using the AbilityInfo.AbilityType.PAGE
+     * template is started. You can define the request code to identify the results returned by abilities. The value
+     * ranges from 0 to 65535. This parameter takes effect only on abilities using the AbilityInfo.AbilityType.PAGE
+     * template.
+     */
+    virtual ErrCode StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions, int requestCode) = 0;
+
     virtual ErrCode StartAbilityForResult(const AAFwk::Want &Want, int requestCode, RuntimeTask &&task) = 0;
 
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
+
+    virtual ErrCode RestoreWindowStage(void* contentStorage) = 0;
 
     virtual void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) = 0;
 
@@ -56,7 +77,8 @@ public:
      * @param conn Indicates the callback object when the target ability is connected.
      * @return True means success and false means failure
      */
-    virtual bool ConnectAbility(const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &conn) = 0;
+    virtual bool ConnectAbility(const AAFwk::Want &want,
+                                const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
      * @brief Disconnects the current ability from an ability
@@ -64,7 +86,8 @@ public:
      * @param conn Indicates the IAbilityConnection callback object passed by connectAbility after the connection
      * is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
      */
-    virtual void DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn) = 0;
+    virtual void DisconnectAbility(const AAFwk::Want &want,
+                                   const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
      * @brief get ability info of the current ability
@@ -87,6 +110,24 @@ public:
      * @return Returns the token.
      */
     virtual sptr<IRemoteObject> GetAbilityToken() = 0;
+
+    /**
+     * @brief Requests certain permissions from the system.
+     * This method is called for permission request. This is an asynchronous method. When it is executed,
+     * the Ability.onRequestPermissionsFromUserResult(int, String[], int[]) method will be called back.
+     *
+     * @param permissions Indicates the list of permissions to be requested. This parameter cannot be null.
+     * @param requestCode Indicates the request code to be passed to the Ability.onRequestPermissionsFromUserResult(int,
+     * String[], int[]) callback method. This code cannot be a negative number.
+     */
+    virtual void RequestPermissionsFromUser(const std::vector<std::string> &permissions, int requestCode) = 0;
+
+    /**
+     * @brief Get ContentStorage.
+     *
+     * @return Returns the ContentStorage.
+     */
+    virtual void* GetContentStorage() = 0;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

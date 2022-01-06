@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 #define INSERT 20
 #define UPDATE 33
 #define OPENRAWFILE 122
@@ -111,8 +112,7 @@ public:
         const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {
         GTEST_LOG_(INFO) << "MockDataAbility::Query called";
-        std::shared_ptr<NativeRdb::AbsSharedResultSet> set =
-        std::make_shared<NativeRdb::AbsSharedResultSet>("QueryTest");
+        std::shared_ptr<NativeRdb::AbsSharedResultSet> set = std::make_shared<NativeRdb::AbsSharedResultSet>("QueryTest");
         return set;
     }
 
@@ -127,7 +127,9 @@ public:
         GTEST_LOG_(INFO) << "MockAbilityTest::DenormalizeUri called";
         return uri;
     }
+
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // MOCK_ABILITY_TEST_H

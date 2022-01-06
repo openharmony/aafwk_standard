@@ -22,6 +22,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class ReverseContinuationSchedulerPrimaryProxy : public IRemoteProxy<IReverseContinuationSchedulerPrimary> {
 public:
     ReverseContinuationSchedulerPrimaryProxy(const sptr<IRemoteObject> &remoteObject);
@@ -40,6 +41,7 @@ public:
      */
     bool ContinuationBack(const AAFwk::Want &want) override;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_REVERSE_CONTINUATION_SCHEDULER_PRIMARY_PROXY_H */

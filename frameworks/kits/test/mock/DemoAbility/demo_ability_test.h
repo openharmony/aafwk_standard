@@ -42,8 +42,7 @@ protected:
     virtual int OpenFile(const Uri &uri, const std::string &mode);
     virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
     virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
-    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
-                        const NativeRdb::DataAbilityPredicates &predicates);
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates);
     virtual int OpenRawFile(const Uri &uri, const std::string &mode);
     virtual bool Reload(const Uri &uri, const PacMap &extras);
     virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);

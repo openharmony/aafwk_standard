@@ -81,7 +81,7 @@ AbilityRequest AppSchedulerTest::GenerateAbilityRequest(const std::string &devic
  * EnvConditions:NA
  * CaseDescription: Appstatecallback is nullptr causes init to fail
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_001, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_001, TestSize.Level0)
 {
     std::shared_ptr<AppStateCallbackMock> appStateMock;
     EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock));
@@ -95,7 +95,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_001, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify init success
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_002, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_002, TestSize.Level0)
 {
     EXPECT_EQ(true, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
 }
@@ -108,7 +108,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_002, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify the normal process of loadability
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_003, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_003, TestSize.Level0)
 {
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
@@ -139,7 +139,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_003, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify the fail process of loadability
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_004, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_004, TestSize.Level0)
 {
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
@@ -170,7 +170,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_004, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is nullptr causes init to fail
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_005, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_005, TestSize.Level0)
 {
     EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
 }
@@ -183,7 +183,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_005, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is nullptr causes TerminateAbility to fail
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_006, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_006, TestSize.Level0)
 {
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
@@ -204,7 +204,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_006, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is not nullptr causes TerminateAbility to success
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_007, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_007, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
 
@@ -227,7 +227,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_007, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is null causes movetoforground to be invalid
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_008, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_008, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
 
@@ -250,7 +250,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_008, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify the normal process of movetoforground
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_009, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_009, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
   
@@ -273,7 +273,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_009, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is null causes OnAbilityRequestDone to be invalid
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_010, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_010, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
 
@@ -296,7 +296,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_010, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is not nullptr causes onabilityrequestdone invoke
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_011, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_011, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
     std::string deviceName = "device";
@@ -320,7 +320,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_011, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify ConvertToAppAbilityState result
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_012, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_012, TestSize.Level0)
 {
     EXPECT_EQ(AppAbilityState::ABILITY_STATE_FOREGROUND,
         DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(
@@ -343,7 +343,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_012, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify ConvertToAppAbilityState result
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_013, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_013, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
     EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
@@ -357,7 +357,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_013, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is not nullptr causes AbilityBehaviorAnalysis to success
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_014, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_014, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
 
@@ -400,7 +400,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_014, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is nullptr causes AbilityBehaviorAnalysis to fail
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_015, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_015, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
 
@@ -427,7 +427,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_015, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is not nullptr causes KillProcessByAbilityToken to success
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_016, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_016, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
 
@@ -450,7 +450,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_016, TestSize.Level1)
  * EnvConditions:NA
  * CaseDescription: Verify appmgrclient_ Is nullptr causes KillProcessByAbilityToken to fail
  */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_017, TestSize.Level1)
+HWTEST_F(AppSchedulerTest, AppScheduler_oprator_017, TestSize.Level0)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
 

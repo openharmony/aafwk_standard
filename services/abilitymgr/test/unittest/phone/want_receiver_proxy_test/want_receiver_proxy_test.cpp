@@ -56,7 +56,7 @@ void WantReceiverProxyTest::SetUp()
  * EnvConditions: NA
  * CaseDescription: Verify that the return value of Send is normal
  */
-HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_001, TestSize.Level1)
+HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_001, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -75,7 +75,7 @@ HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the return value of PerformReceive is normal
  */
-HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_002, TestSize.Level1)
+HWTEST_F(WantReceiverProxyTest, WantReceiverProxyTest_002, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)

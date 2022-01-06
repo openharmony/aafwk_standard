@@ -72,7 +72,7 @@ public:
         const std::vector<int64_t> &formIds,
         const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
-    
+
     /**
      * @brief Notify provider when the form need update.
      *
@@ -139,20 +139,21 @@ public:
      */
     void ClearOwner(const std::shared_ptr<Ability> ability);
 
+protected:
+    bool CheckIsSystemApp() const;
+    int HandleDisconnect(const Want &want, const sptr<IRemoteObject> &callerToken);
+    int HandleAcquire(const FormProviderInfo &formProviderInfo, const Want &newWant,
+        const sptr<IRemoteObject> &callerToken);
+
 private:
     std::shared_ptr<Ability> GetOwner();
-    bool CheckIsSystemApp() const;
-    int HandleAcquire(
-        const FormProviderInfo &formProviderInfo,
-        const Want &newWant,
-        const sptr<IRemoteObject> &callerToken);
-    int  HandleDisconnect(const Want &want, const sptr<IRemoteObject> &callerToken);
 
 private:
     DISALLOW_COPY_AND_MOVE(FormProviderClient);
     mutable std::mutex abilityMutex_;
     std::weak_ptr<Ability> owner_;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_FORM_PROVIDER_CLIENT_H

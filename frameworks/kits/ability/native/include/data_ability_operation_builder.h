@@ -53,8 +53,7 @@ public:
      * operated by default.
      * @return Returns an object containing the given filter criteria.
      */
-    std::shared_ptr<DataAbilityOperationBuilder> WithPredicates(std::shared_ptr<NativeRdb::DataAbilityPredicates>
-    &predicates);
+    std::shared_ptr<DataAbilityOperationBuilder> WithPredicates(std::shared_ptr<NativeRdb::DataAbilityPredicates> &predicates);
     /**
      * @brief Sets the expected number of rows to update ,delete or assert query.
      * @param count Indicates the expected number of rows to update or delete.
@@ -77,8 +76,7 @@ public:
      * replace the specified value. This parameter cannot be null.
      * @return Returns a DataAbilityOperationBuilder object containing the given backReferences parameter.
      */
-    std::shared_ptr<DataAbilityOperationBuilder> WithValueBackReferences(std::shared_ptr<NativeRdb::ValuesBucket>
-    &backReferences);
+    std::shared_ptr<DataAbilityOperationBuilder> WithValueBackReferences(std::shared_ptr<NativeRdb::ValuesBucket> &backReferences);
     /**
      * @brief Sets an interrupt flag bit for a batch operation, which can be insert, update, delete, or assert.
      * @param interrupted Specifies whether a batch operation can be interrupted. The value true indicates that the

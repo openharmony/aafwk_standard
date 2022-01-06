@@ -14,11 +14,12 @@
  */
 #ifndef OHOS_AAFwk_LIBZIP_COMMON_H
 #define OHOS_AAFwk_LIBZIP_COMMON_H
-#include <string>
 #include <memory>
-#include "napi/native_node_api.h"
-#include "napi/native_common.h"
+#include <string>
+
 #include "napi/native_api.h"
+#include "napi/native_common.h"
+#include "napi/native_node_api.h"
 #include "zip_utils.h"
 
 namespace OHOS {
@@ -82,6 +83,7 @@ bool IsTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expectTyp
 std::string UnwrapStringFromJS(napi_env env, napi_value param, const std::string &defaultValue);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
 void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const int propValue);
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

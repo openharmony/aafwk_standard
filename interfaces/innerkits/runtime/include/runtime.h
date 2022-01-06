@@ -21,6 +21,9 @@
 #include <string>
 
 namespace OHOS {
+namespace AppExecFwk {
+class EventRunner;
+} // namespace AppExecFwk
 namespace AbilityRuntime {
 class Runtime {
 public:
@@ -31,6 +34,7 @@ public:
     struct Options {
         Language lang = Language::JS;
         std::string codePath;
+        std::shared_ptr<AppExecFwk::EventRunner> eventRunner;
     };
 
     static std::unique_ptr<Runtime> Create(const Options& options);

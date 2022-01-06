@@ -16,6 +16,7 @@
 #define FOUNDATION_APPEXECFWK_OHOS_PROGRESS_STATE_H
 namespace OHOS {
 namespace AppExecFwk {
+
 enum class ProgressState {
     INITIAL = 0,
     WAITING_SCHEDULE = 1,

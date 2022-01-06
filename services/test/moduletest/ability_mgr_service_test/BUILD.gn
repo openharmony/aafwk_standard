@@ -23,7 +23,6 @@ ohos_moduletest("ability_mgr_module_test") {
     "${services_path}/test/mock/include",
     "//third_party/jsoncpp/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
-    "//foundation/graphic/standard/interfaces/innerkits/wmclient",
   ]
 
   sources = [ "ability_mgr_module_test.cpp" ]
@@ -41,10 +40,12 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_stack_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_token_stub.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/caller_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/connection_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_record.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/image_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/kernal_system_app_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/launch_param.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_deal.cpp",
@@ -53,7 +54,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_option.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/pending_want_key.cpp",
@@ -68,7 +69,6 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_app_mgr_client.cpp",
-    "//foundation/aafwk/standard/services/test/mock/src/mock_app_scheduler.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
   ]
 
@@ -117,6 +117,7 @@ ohos_moduletest("ability_mgr_module_test") {
 
 group("moduletest") {
   testonly = true
+  deps = []
 
-  deps = [ ":ability_mgr_module_test" ]
+  #deps = [ ":ability_mgr_module_test" ]
 }

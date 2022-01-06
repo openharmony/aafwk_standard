@@ -24,6 +24,7 @@
 #include "abs_shared_result_set.h"
 #include "app_log_wrapper.h"
 #include "bytrace.h"
+#include "connection_manager.h"
 #include "context_impl.h"
 #include "continuation_manager.h"
 #include "continuation_register_manager.h"
@@ -70,6 +71,12 @@ const std::string Ability::DMS_ORIGIN_DEVICE_ID("deviceId");
 const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const int TARGET_VERSION_THRESHOLDS = 8;
+const std::map<int32_t, Rosen::WindowMode> Ability::convertWindowModeMap_ = {
+    {AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN, Rosen::WindowMode::WINDOW_MODE_FULLSCREEN},
+    //{AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY, Rosen::WindowMode::WINDOW_MODE_SPLIT_PRIMARY},
+    //{AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY, Rosen::WindowMode::WINDOW_MODE_SPLIT_SECONDARY},
+    {AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING, Rosen::WindowMode::WINDOW_MODE_FLOATING}
+};
 
 static std::mutex formLock;
 
@@ -101,7 +108,7 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
 
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
-        if (targetVersion_ < TARGET_VERSION_THRESHOLDS) {
+        if (compatibleVersion_ < TARGET_VERSION_THRESHOLDS) {
             abilityWindow_ = std::make_shared<AbilityWindow>();
 
             if (abilityWindow_ != nullptr) {
@@ -196,17 +203,11 @@ void Ability::OnStart(const Want &want)
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
             winType);
-        SetWindowType(winType);
+        InitWindow(winType);
 
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStart.", __func__);
             abilityWindow_->OnPostAbilityStart();
-            // TODO::GetID is not exist
-//            if (abilityWindow_->GetWindow()) {
-//                auto windowId = abilityWindow_->GetWindow()->GetID();
-//                APP_LOGI("Ability::OnStart: add window info  = %{public}d", windowId);
-//                OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
-//            }
             APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
         }
     }
@@ -216,7 +217,7 @@ void Ability::OnStart(const Want &want)
         APP_LOGE("Ability::OnStart error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    if (targetVersion_ < TARGET_VERSION_THRESHOLDS) {
+    if (compatibleVersion_ < TARGET_VERSION_THRESHOLDS) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::STARTED_NEW);
@@ -260,6 +261,11 @@ void Ability::OnStop()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_STOP);
+
+    bool ret = AbilityRuntime::ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
+    if (ret) {
+        APP_LOGI("The service connection is not disconnected.");
+    }
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -337,6 +343,17 @@ void Ability::OnSceneCreated()
 }
 
 /**
+ * @brief Called after restore WindowScene.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnSceneRestored()
+{
+    APP_LOGI("%{public}s called.", __func__);
+}
+
+/**
  * @brief Called after ability stoped.
  *
  *
@@ -358,36 +375,42 @@ void Ability::OnForeground(const Want &want)
 {
     BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     APP_LOGI("%{public}s begin.", __func__);
-    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
-        if (scene_ == nullptr) {
-            if ((abilityContext_ == nullptr) || (sceneListener_ == nullptr)) {
-                APP_LOGE("Ability::OnForeground error. abilityContext_ or sceneListener_ is nullptr!");
-                return;
-            }
-            scene_ = std::make_shared<Rosen::WindowScene>();
-            if (scene_ == nullptr) {
-                APP_LOGE("%{public}s error. failed to create WindowScene instance!", __func__);
-                return;
-            }
-            Rosen::WMError ret = scene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext_, sceneListener_);
-            if (ret != Rosen::WMError::WM_OK) {
-                APP_LOGE("%{public}s error. failed to init window scene!", __func__);
-                return;
-            }
-            OnSceneCreated();
-        }
-        APP_LOGI("%{public}s begin scene_->GoForeground.", __func__);
-        scene_->GoForeground();
-        APP_LOGI("%{public}s end scene_->GoForeground.", __func__);
-    } else {
-        if (abilityWindow_ != nullptr) {
-            APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
-            abilityWindow_->OnPostAbilityForeground();
-            APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
-        }
-    }
+    DoOnForeground(want);
     DispatchLifecycleOnForeground(want);
     APP_LOGI("%{public}s end.", __func__);
+}
+
+bool Ability::IsRestoredInContinuation() const
+{
+    if (abilityContext_ == nullptr) {
+        APP_LOGE("abilityContext_ is null");
+        return false;
+    }
+    if (launchParam_.launchReason == LaunchReason::LAUNCHREASON_CONTINUATION
+        && abilityInfo_->launchMode == LaunchMode::STANDARD
+        && abilityContext_->GetContentStorage() != nullptr) {
+        APP_LOGI("Is Restored In Continuation");
+        return true;
+    }
+    APP_LOGI("not Restored In Continuation");
+    return false;
+}
+
+void Ability::NotityContinuationResult(const Want& want, bool success)
+{
+    std::weak_ptr<IReverseContinuationSchedulerReplicaHandler> ReplicaHandler = continuationHandler_;
+    reverseContinuationSchedulerReplica_ = sptr<ReverseContinuationSchedulerReplica>(
+        new (std::nothrow) ReverseContinuationSchedulerReplica(handler_, ReplicaHandler));
+
+    if (reverseContinuationSchedulerReplica_ == nullptr) {
+        APP_LOGE("Ability::NotityContinuationComplete failed, create reverseContinuationSchedulerReplica failed");
+        return;
+    }
+    int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
+    std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
+    APP_LOGI("Ability::NotityContinuationComplete DeviceId: %{public}s", originDeviceId.c_str());
+    continuationManager_->NotifyCompleteContinuation(
+        originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
 
 /**
@@ -403,7 +426,7 @@ void Ability::OnBackground()
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin OnPostAbilityBackground.", __func__);
-        if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+        if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
             if (scene_ == nullptr) {
                 APP_LOGE("Ability::OnBackground error. scene_ == nullptr.");
                 return;
@@ -424,7 +447,7 @@ void Ability::OnBackground()
         return;
     }
 
-    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+    if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
@@ -639,16 +662,16 @@ void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int
  *
  * @param windowOption Indicates the window option defined by the user.
  */
-void Ability::SetWindowType(Rosen::WindowType winType)
+void Ability::InitWindow(Rosen::WindowType winType)
 {
     if (abilityWindow_ == nullptr) {
-        APP_LOGE("Ability::SetWindowType abilityWindow_ is nullptr");
+        APP_LOGE("Ability::InitWindow abilityWindow_ is nullptr");
         return;
     }
 
-    APP_LOGI("%{public}s beign abilityWindow_->SetWindowConfig.", __func__);
-    abilityWindow_->SetWindowType(winType);
-    APP_LOGI("%{public}s end abilityWindow_->SetWindowConfig.", __func__);
+    APP_LOGI("%{public}s beign abilityWindow_->InitWindow.", __func__);
+    abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_);
+    APP_LOGI("%{public}s end abilityWindow_->InitWindow.", __func__);
 }
 
 /**
@@ -709,19 +732,19 @@ bool Ability::HasWindowFocus()
  * @description: Obtains api version based on ability.
  * @return api version.
  */
-int Ability::GetTargetVersion()
+int Ability::GetCompatibleVersion()
 {
-    return targetVersion_;
+    return compatibleVersion_;
 }
 
 /**
  * @description: Set api version in an ability.
- * @param targetVersion api version
+ * @param compatibleVersion api version
  * @return None.
  */
-void Ability::SetTargetVersion(int32_t targetVersion)
+void Ability::SetCompatibleVersion(int32_t compatibleVersion)
 {
-    targetVersion_ = targetVersion;
+    compatibleVersion_ = compatibleVersion;
 }
 
 /**
@@ -1590,7 +1613,7 @@ void Ability::DispatchLifecycleOnForeground(const Want &want)
         APP_LOGE("Ability::OnForeground error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    if (targetVersion_ >= TARGET_VERSION_THRESHOLDS) {
+    if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::FOREGROUND_NEW);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
@@ -1627,6 +1650,7 @@ void Ability::HandleCreateAsContinuation(const Want &want)
     }
     bool success = continuationManager_->RestoreData(
         want.GetParams(), reversible, want.GetStringParam(ContinuationHandler::ORIGINAL_DEVICE_ID));
+
     if (success && reversible) {
         // Register this ability to receive reverse continuation callback.
         std::weak_ptr<IReverseContinuationSchedulerReplicaHandler> ReplicaHandler = continuationHandler_;
@@ -1801,6 +1825,7 @@ bool Ability::CastTempForm(const int64_t formId)
 
     APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
     int result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
+
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
         return false;
@@ -2042,6 +2067,7 @@ void Ability::ProcessFormUninstall(const int64_t formId)
         std::lock_guard<std::mutex> lock(formLock);
         // get callback iterator by formId
         std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator = appCallbacks_.find(formId);
+
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
             APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formId);
@@ -2285,6 +2311,7 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
         // get callback iterator by formId
         std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator =
             appCallbacks_.find(formJsInfo.formId);
+
         // call the callback function when you need to be notified
         if (appCallbackIterator == appCallbacks_.end()) {
             APP_LOGE("%{public}s failed, callback not find, formId: %{public}" PRId64 ".", __func__, formJsInfo.formId);
@@ -2500,6 +2527,7 @@ void Ability::OnDeathReceived()
                 // get callback iterator by formId
                 std::map<int64_t, std::shared_ptr<FormCallback>>::iterator appCallbackIterator =
                     appCallbacks_.find(formId);
+
                 if (appCallbackIterator == appCallbacks_.end()) {
                     APP_LOGW("%{public}s error, lack of form callback for form, formId:%{public}" PRId64 ".",
                         __func__,
@@ -2729,7 +2757,7 @@ const AAFwk::LaunchParam& Ability::GetLaunchParam() const
     return launchParam_;
 }
 
-void Ability::SetSceneListener(sptr<Rosen::IWindowLifeCycle> listener)
+void Ability::SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener)
 {
     sceneListener_ = listener;
 }
@@ -2924,8 +2952,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutInt(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
                 double val = 0.0;
                 if (obj.GetDouble(val) != 0) {
@@ -2936,8 +2963,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val);
                 retValueBucket.PutDouble(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_STRING: {
                 std::string val = "";
                 if (obj.GetString(val) != 0) {
@@ -2948,8 +2974,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.c_str());
                 retValueBucket.PutString(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_BLOB: {
                 std::vector<uint8_t> val;
                 if (obj.GetBlob(val) != 0) {
@@ -2960,8 +2985,7 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val.size());
                 retValueBucket.PutBlob(key, val);
-                break;
-            }
+            } break;
             case NativeRdb::ValueObjectType::TYPE_BOOL: {
                 bool val = false;
                 if (obj.GetBool(val) != 0) {
@@ -2972,13 +2996,11 @@ std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
                     key.c_str(),
                     val ? "true" : "false");
                 retValueBucket.PutBool(key, val);
-                break;
-            }
+            } break;
             default: {
                 APP_LOGI("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
                 retValueBucket.PutNull(key);
-                break;
-            }
+            } break;
         }
     }
 
@@ -3071,6 +3093,34 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
     }
 
     return true;
+}
+
+sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
+{
+    APP_LOGI("%{public}s start", __func__);
+    sptr<Rosen::WindowOption> option = new Rosen::WindowOption();
+    if (option == nullptr) {
+        APP_LOGE("Ability::GetWindowOption option is null.");
+        return nullptr;
+    }
+    auto windowMode = want.GetIntParam(StartOptions::STRING_WINDOW_MODE,
+        AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
+    auto iter = convertWindowModeMap_.find(windowMode);
+    if (iter != convertWindowModeMap_.end()) {
+        option->SetWindowMode(iter->second);
+        APP_LOGI("Ability::GetWindowOption window mode is %{public}d.", iter->second);
+    }
+    APP_LOGI("%{public}s end", __func__);
+    return option;
+}
+
+void Ability::DoOnForeground(const Want& want)
+{
+    if (abilityWindow_ != nullptr) {
+        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
+        abilityWindow_->OnPostAbilityForeground();
+        APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
+    }
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

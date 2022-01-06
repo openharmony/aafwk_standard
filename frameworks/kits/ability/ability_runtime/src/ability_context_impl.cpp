@@ -16,6 +16,7 @@
 #include "ability_context_impl.h"
 
 #include "ability_manager_client.h"
+#include "connection_manager.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -63,6 +64,15 @@ ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCod
     return err;
 }
 
+ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions,
+    int requestCode)
+{
+    HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling ams->StartAbility.");
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, requestCode);
+    HILOG_INFO("AbilityContextImpl::StartAbility. End calling ams->StartAbility. ret=%{public}d", err);
+    return err;
+}
+
 ErrCode AbilityContextImpl::StartAbilityForResult(const AAFwk::Want &want, int requestCode, RuntimeTask &&task)
 {
     HILOG_DEBUG("%{public}s. Start calling ams->StartAbilityForResult.", __func__);
@@ -89,19 +99,26 @@ void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const 
     HILOG_INFO("%{public}s. End calling ams->OnAbilityResult.", __func__);
 }
 
-bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &conn)
+bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
+                                        const std::shared_ptr<AbilityConnectCallback> &connectCallback)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
-    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, conn, token_);
+    ErrCode ret =
+        ConnectionManager::GetInstance().ConnectAbility(token_, want, connectCallback);
     HILOG_INFO("AbilityContextImpl::ConnectAbility ErrorCode = %{public}d", ret);
     return ret == ERR_OK;
 }
 
-void AbilityContextImpl::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
+void AbilityContextImpl::DisconnectAbility(const AAFwk::Want &want,
+                                           const std::shared_ptr<AbilityConnectCallback> &connectCallback)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
-    ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
-    HILOG_INFO("%{public}s end ams->DisconnectAbility, ret=%{public}d", __func__, ret);
+    ErrCode ret =
+        ConnectionManager::GetInstance().DisconnectAbility(token_, want.GetElement(), connectCallback);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s end ams->DisconnectAbility error, ret=%{public}d", __func__, ret);
+    }
+    HILOG_INFO("%{public}s end ams->DisconnectAbility", __func__);
 }
 
 std::string AbilityContextImpl::GetBundleName() const
@@ -174,6 +191,19 @@ ErrCode AbilityContextImpl::TerminateSelf()
 sptr<IRemoteObject> AbilityContextImpl::GetAbilityToken()
 {
     return token_;
+}
+
+void AbilityContextImpl::RequestPermissionsFromUser(const std::vector<std::string> &permissions, int requestCode)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+}
+
+ErrCode AbilityContextImpl::RestoreWindowStage(void* contentStorage)
+{
+    HILOG_INFO("%{public}s begin. contentStorage = %{public}p", __func__, contentStorage);
+    ErrCode err = ERR_OK;
+    contentStorage_ = contentStorage;
+    return err;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS
