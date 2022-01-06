@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 class OperationBuilder;
 
 class Operation : public Parcelable {

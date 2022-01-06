@@ -25,6 +25,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
 
 /**
@@ -283,7 +284,7 @@ bool AbilityContext::StopAbility(const AAFwk::Want &want)
     }
 
     APP_LOGI("%{public}s begin ams->StopServiceAbility", __func__);
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want, token_);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want);
     APP_LOGI("%{public}s end ams->StopServiceAbility, ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         APP_LOGE("AbilityContext::StopAbility is failed %{public}d", err);
@@ -1264,5 +1265,6 @@ void AbilityContext::SetShowOnLockScreen(bool isAllow)
 {
     ContextContainer::SetShowOnLockScreen(isAllow);
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

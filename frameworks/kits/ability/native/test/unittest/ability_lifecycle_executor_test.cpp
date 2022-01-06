@@ -55,7 +55,7 @@ void AbilityLifecycleExecutorTest::TearDown(void)
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_GetState_0100
  * @tc.name: GetState
- * @tc.desc: Verify that the return value of getstate is UNINITIALIZED.
+ * @tc.desc: Verify that the return value of getstate is UNINITIALIZED. 
  */
 HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_GetState_0100, Function | MediumTest | Level1)
 {
@@ -71,11 +71,10 @@ HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_GetState_0
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0100
  * @tc.name: DispatchLifecycleState
- * @tc.desc: Test whether attachbasecontext is called normally,
- *           and verify whether the return value of getdatabasedir is ACTIVE.
+ * @tc.desc: Test whether attachbasecontext is called normally, 
+ *           and verify whether the return value of getdatabasedir is ACTIVE. 
  */
-HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0100,
-        Function | MediumTest | Level1)
+HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0100 start";
 
@@ -91,11 +90,10 @@ HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLi
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0200
  * @tc.name: DispatchLifecycleState
- * @tc.desc: Test whether attachbasecontext is called normally,
- *           and verify whether the return value of getdatabasedir is BACKGROUND.
+ * @tc.desc: Test whether attachbasecontext is called normally, 
+ *           and verify whether the return value of getdatabasedir is BACKGROUND. 
  */
-HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0200,
-        Function | MediumTest | Level1)
+HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0200 start";
 
@@ -111,11 +109,10 @@ HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLi
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0300
  * @tc.name: DispatchLifecycleState
- * @tc.desc: Test whether attachbasecontext is called normally,
- *           and verify whether the return value of getdatabasedir is INACTIVE.
+ * @tc.desc: Test whether attachbasecontext is called normally, 
+ *           and verify whether the return value of getdatabasedir is INACTIVE. 
  */
-HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0300,
-        Function | MediumTest | Level1)
+HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0300, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0300 start";
 
@@ -131,11 +128,10 @@ HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLi
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0400
  * @tc.name: DispatchLifecycleState
- * @tc.desc: Test whether attachbasecontext is called normally,
- *           and verify whether the return value of getdatabasedir is INITIAL.
+ * @tc.desc: Test whether attachbasecontext is called normally, 
+ *           and verify whether the return value of getdatabasedir is INITIAL. 
  */
-HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0400,
-        Function | MediumTest | Level1)
+HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0400, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0400 start";
 
@@ -151,11 +147,10 @@ HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLi
 /**
  * @tc.number: AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0500
  * @tc.name: DispatchLifecycleState
- * @tc.desc: Test whether attachbasecontext is called normally,
- *           and verify whether the return value of getdatabasedir is UNINITIALIZED.
+ * @tc.desc: Test whether attachbasecontext is called normally, 
+ *           and verify whether the return value of getdatabasedir is UNINITIALIZED. 
  */
-HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0500,
-        Function | MediumTest | Level1)
+HWTEST_F(AbilityLifecycleExecutorTest, AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0500, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityLifecycleExecutor_DispatchLifecycleState_0500 start";
 

@@ -107,5 +107,6 @@ int DataObsManagerStub::NotifyChangeInner(MessageParcel &data, MessageParcel &re
     }
     return NO_ERROR;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

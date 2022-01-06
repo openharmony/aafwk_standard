@@ -46,6 +46,9 @@ int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo)
 {
     HILOG_INFO("Test AppScheduler::LoadAbility()");
+    if (applicationInfo.bundleName.find("com.ix.First.Test") != std::string::npos) {
+        return INNER_ERR;
+    }
     return ERR_OK;
 }
 
@@ -107,12 +110,6 @@ int AppScheduler::KillApplication(const std::string &bundleName)
     return ERR_OK;
 }
 
-int AppScheduler::KillApplicationByUid(const std::string &bundleName, const int uid)
-{
-    HILOG_INFO("Test AppScheduler::KillApplicationByUid()");
-    return ERR_OK;
-}
-
 void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("Test AppScheduler::AttachTimeOut()");
@@ -142,15 +139,14 @@ void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo,
     memoryInfo.threshold_ = testValue;
 }
 
-void AppScheduler::StartupResidentProcess()
+void AppScheduler::UpdateAbilityState(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state)
 {
-    HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
+    HILOG_INFO("Test AppScheduler::UpdateAbilityState()");
 }
 
-int AppScheduler::ClearUpApplicationData(const std::string &bundleName)
+void AppScheduler::UpdateExtensionState(const sptr<IRemoteObject> &token, const AppExecFwk::ExtensionState state)
 {
-    HILOG_INFO("Test AppScheduler::ClearUpApplicationData()");
-    return ERR_OK;
+    HILOG_INFO("Test AppScheduler::UpdateExtensionState()");
 }
 }  // namespace AAFwk
 }  // namespace OHOS

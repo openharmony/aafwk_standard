@@ -33,6 +33,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
+
 static void WaitUntilTaskFinished()
 {
     const uint32_t maxRetryCount = 1000;
@@ -400,6 +401,7 @@ HWTEST_F(KernalSystemAppManagerTest, OnTimeOut_001, TestSize.Level1)
     };
     EXPECT_NE(info.end(), std::find_if(info.begin(), info.end(), isFindAbilityInfo));
 
+    // remove form vector
     kernalSystemMgr_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecord->GetEventId());
 
     info.clear();
@@ -434,7 +436,7 @@ HWTEST_F(KernalSystemAppManagerTest, DequeueWaittingAbility_001, TestSize.Level1
     request.appInfo.name = "syetemUi";
     request.appInfo.bundleName = AbilityConfig::SYSTEM_UI_BUNDLE_NAME;
 
-    // push in waiting queue;
+    // push in waiting queue
     kernalSystemMgr_->StartAbility(request);
     EXPECT_EQ(static_cast<int>(kernalSystemMgr_->waittingAbilityQueue_.size()), 1);
 
@@ -608,6 +610,7 @@ HWTEST_F(KernalSystemAppManagerTest, DispatchActive_002, TestSize.Level1)
     isRemove = kernalSystemMgr_->RemoveAbilityRecord(nullptr);
     EXPECT_FALSE(isRemove);
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS
 

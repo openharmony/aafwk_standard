@@ -111,18 +111,6 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
-     * StartAbility with want, send want to ability manager service.
-     *
-     * @param want Ability want.
-     * @param callerToken, caller ability token.
-     * @param requestCode Ability request code.
-     * @param requestUid Ability request uid.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
-        int requestCode, int requestUid);
-
-    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -131,6 +119,18 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
+
+    /**
+     * Starts a new ability with specific start options.
+     *
+     * @param want, the want of the ability to start.
+     * @param startOptions Indicates the options used to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode the resultCode of the ability to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbility(const Want &want, const StartOptions &startOptions,
         const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
@@ -238,10 +238,9 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
-     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    ErrCode StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr);
+    ErrCode StopServiceAbility(const Want &want);
 
     /**
      * Get the list of the missions that the user has recently launched,
@@ -263,7 +262,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot);
+    ErrCode GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot);
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -306,15 +305,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode KillProcess(const std::string &bundleName);
-
-    /**
-     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
-     * clear the application data.
-     *
-     * @param bundleName, bundle name in Application record.
-     * @return
-     */
-    ErrCode ClearUpApplicationData(const std::string &bundleName);
 
     /**
      * @brief Checks whether this ability is the first ability in a mission.
@@ -392,8 +382,6 @@ public:
 
     ErrCode GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want);
 
-    ErrCode GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info);
-
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
      * @param missionOption, target mission option
@@ -465,7 +453,7 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo);
-	
+
     /**
      * start continuation.
      * @param want, used to start a ability.
@@ -481,6 +469,81 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result);
+
+    /**
+     * @brief Lock specified mission.
+     * @param missionId The id of target mission.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode LockMissionForCleanup(int32_t missionId);
+
+    /**
+     * @brief Unlock specified mission.
+     * @param missionId The id of target mission.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode UnlockMissionForCleanup(int32_t missionId);
+
+    /**
+     * @brief Register mission listener to ams.
+     * @param listener The handler of listener.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RegisterMissionListener(const sptr<IMissionListener> &listener);
+
+    /**
+     * @brief UnRegister mission listener from ams.
+     * @param listener The handler of listener.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode UnRegisterMissionListener(const sptr<IMissionListener> &listener);
+
+    /**
+     * @brief Get mission infos from ams.
+     * @param deviceId local or remote deviceid.
+     * @param numMax max number of missions.
+     * @param missionInfos mission info result.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetMissionInfos(const std::string& deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos);
+
+    /**
+     * @brief Get mission info by id.
+     * @param deviceId local or remote deviceid.
+     * @param missionId Id of target mission.
+     * @param missionInfo mision info of target mission.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetMissionInfo(const std::string& deviceId, int32_t missionId, MissionInfo &missionInfo);
+
+    /**
+     * @brief Clean mission by id.
+     * @param missionId Id of target mission.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode CleanMission(int32_t missionId);
+
+    /**
+     * @brief Clean all missions in system.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode CleanAllMissions();
+
+    /**
+     * @brief Move a mission to front.
+     * @param missionId Id of target mission.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode MoveMissionToFront(int32_t missionId);
 
 private:
     static std::mutex mutex_;

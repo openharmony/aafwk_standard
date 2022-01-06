@@ -23,12 +23,14 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 bool EventHandler::SendEvent(InnerEvent::Pointer &event, int64_t delayTime, Priority priority)
 {
     auto callback = event->GetTaskCallback();
     callback();
     return true;
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

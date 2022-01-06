@@ -22,13 +22,13 @@
 
 #include "native_engine/impl/ark/ark_native_engine.h"
 
+#include "event_handler.h"
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
 namespace {
-constexpr size_t MAX_BUF_SIZE = 128;
 constexpr int64_t DEFAULT_GC_POOL_SIZE = 0x10000000; // 256MB
 #if defined(_ARM64_)
 constexpr char ARK_DEBUGGER_LIB_PATH[] = "/system/lib64/libark_debugger.z.so";
@@ -84,6 +84,39 @@ private:
     bool isDebugMode_ = true;
 };
 
+std::string GetLogContent(NativeCallbackInfo& info)
+{
+    std::string content;
+
+    for (size_t i = 0; i < info.argc; i++) {
+        NativeValue* value = info.argv[i];
+        if (value->TypeOf() != NATIVE_STRING) {
+            value = value->ToString();
+        }
+
+        NativeString* str = ConvertNativeValueTo<NativeString>(value);
+        if (str == nullptr) {
+            continue;
+        }
+
+        size_t bufferLen = str->GetLength();
+        auto buffer = std::make_unique<char[]>(bufferLen + 1);
+        if (buffer == nullptr) {
+            break;
+        }
+
+        size_t strLen = 0;
+        str->GetCString(buffer.get(), bufferLen + 1, &strLen);
+        if (!content.empty()) {
+            content.append(" ");
+        }
+        content.append(buffer.get());
+    }
+
+    return content;
+}
+
+template<LogLevel LEVEL>
 NativeValue* ConsoleLog(NativeEngine* engine, NativeCallbackInfo* info)
 {
     if (engine == nullptr || info == nullptr) {
@@ -91,24 +124,70 @@ NativeValue* ConsoleLog(NativeEngine* engine, NativeCallbackInfo* info)
         return nullptr;
     }
 
-    if (info->argc != 1) {
-        HILOG_WARN("console.log() MUST have only one parameter");
-        return engine->CreateUndefined();
-    }
+    std::string content = GetLogContent(*info);
+    HiLogPrint(LOG_APP, LEVEL, AMS_LOG_DOMAIN, "JsApp", "%{public}s", content.c_str());
 
-    NativeString* str = ConvertNativeValueTo<NativeString>(info->argv[0]);
-    if (str == nullptr) {
-        HILOG_ERROR("Faild to convert parameter to string");
-        return engine->CreateUndefined();
-    }
-
-    char buf[MAX_BUF_SIZE];
-    size_t len = 0;
-    str->GetCString(buf, sizeof(buf) - 1, &len);
-    buf[len] = '\0';
-
-    HILOG_INFO("console.log: %{public}s\n", buf);
     return engine->CreateUndefined();
+}
+
+void InitConsoleLogModule(NativeEngine& engine, NativeObject& globalObject)
+{
+    NativeValue* consoleValue = engine.CreateObject();
+    NativeObject* consoleObj = ConvertNativeValueTo<NativeObject>(consoleValue);
+    if (consoleObj == nullptr) {
+        HILOG_ERROR("Failed to create console object");
+        return;
+    }
+
+    BindNativeFunction(engine, *consoleObj, "log", ConsoleLog<LOG_INFO>);
+    BindNativeFunction(engine, *consoleObj, "debug", ConsoleLog<LOG_DEBUG>);
+    BindNativeFunction(engine, *consoleObj, "info", ConsoleLog<LOG_INFO>);
+    BindNativeFunction(engine, *consoleObj, "warn", ConsoleLog<LOG_WARN>);
+    BindNativeFunction(engine, *consoleObj, "error", ConsoleLog<LOG_ERROR>);
+    BindNativeFunction(engine, *consoleObj, "fatal", ConsoleLog<LOG_FATAL>);
+
+    globalObject.SetProperty("console", consoleValue);
+}
+
+NativeValue* SetTimeout(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    if (engine == nullptr || info == nullptr) {
+        HILOG_ERROR("Set timeout failed with engine or callback info is nullptr.");
+        return nullptr;
+    }
+
+    JsRuntime& jsRuntime = *reinterpret_cast<JsRuntime*>(engine->GetJsEngine());
+    return jsRuntime.SetCallbackTimer(*engine, *info, false);
+}
+
+NativeValue* SetInterval(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    if (engine == nullptr || info == nullptr) {
+        HILOG_ERROR("Set interval failed with engine or callback info is nullptr.");
+        return nullptr;
+    }
+
+    JsRuntime& jsRuntime = *reinterpret_cast<JsRuntime*>(engine->GetJsEngine());
+    return jsRuntime.SetCallbackTimer(*engine, *info, true);
+}
+
+NativeValue* ClearTimeoutOrInterval(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    if (engine == nullptr || info == nullptr) {
+        HILOG_ERROR("Clear timer failed with engine or callback info is nullptr.");
+        return nullptr;
+    }
+
+    JsRuntime& jsRuntime = *reinterpret_cast<JsRuntime*>(engine->GetJsEngine());
+    return jsRuntime.ClearCallbackTimer(*engine, *info);
+}
+
+void InitTimerModule(NativeEngine& engine, NativeObject& globalObject)
+{
+    BindNativeFunction(engine, globalObject, "setTimeout", SetTimeout);
+    BindNativeFunction(engine, globalObject, "setInterval", SetInterval);
+    BindNativeFunction(engine, globalObject, "clearTimeout", ClearTimeoutOrInterval);
+    BindNativeFunction(engine, globalObject, "clearInterval", ClearTimeoutOrInterval);
 }
 
 bool MakeFilePath(const std::string& codePath, const std::string& modulePath, std::string& fileName)
@@ -117,8 +196,29 @@ bool MakeFilePath(const std::string& codePath, const std::string& modulePath, st
     path.append("/").append(modulePath);
 
     char resolvedPath[PATH_MAX];
+    if (realpath(path.c_str(), resolvedPath) != nullptr) {
+        fileName = resolvedPath;
+        return true;
+    }
+
+    auto start = path.find_last_of('/');
+    auto end = path.find_last_of('.');
+    if (end == std::string::npos || end == 0) {
+        HILOG_ERROR("No secondary file path");
+        return false;
+    }
+
+    auto pos = path.find_last_of('.', end - 1);
+    if (pos == std::string::npos) {
+        HILOG_ERROR("No secondary file path");
+        return false;
+    }
+
+    path.erase(start + 1, pos - start);
+    HILOG_INFO("Try using secondary file path: %{public}s", path.c_str());
+
     if (realpath(path.c_str(), resolvedPath) == nullptr) {
-        HILOG_ERROR("Failed to call realpath, errno = %d", errno);
+        HILOG_ERROR("Failed to call realpath, errno = %{public}d", errno);
         return false;
     }
 
@@ -138,23 +238,30 @@ std::unique_ptr<Runtime> JsRuntime::Create(const Runtime::Options& options)
 
 bool JsRuntime::Initialize(const Options& options)
 {
+    // Create event handler for runtime
+    eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(options.eventRunner);
+    idleTask_ = [this]() {
+        nativeEngine_->Loop(LOOP_NOWAIT);
+        eventHandler_->PostIdleTask(idleTask_);
+    };
+    eventHandler_->PostIdleTask(idleTask_);
+
     HandleScope handleScope(*this);
-
-    NativeValue* consoleValue = nativeEngine_->CreateObject();
-    NativeObject* consoleObj = ConvertNativeValueTo<NativeObject>(consoleValue);
-    if (consoleObj == nullptr) {
-        HILOG_ERROR("Failed to create console object");
-        return false;
-    }
-
-    BindNativeFunction(*nativeEngine_, *consoleObj, "log", ConsoleLog);
 
     NativeObject* globalObj = ConvertNativeValueTo<NativeObject>(nativeEngine_->GetGlobal());
     if (globalObj == nullptr) {
         HILOG_ERROR("Failed to get global object");
         return false;
     }
-    globalObj->SetProperty("console", consoleValue);
+
+    InitConsoleLogModule(*nativeEngine_, *globalObj);
+    InitTimerModule(*nativeEngine_, *globalObj);
+
+    // Simple hook function 'isSystemplugin'
+    BindNativeFunction(*nativeEngine_, *globalObj, "isSystemplugin",
+        [](NativeEngine* engine, NativeCallbackInfo* info) -> NativeValue* {
+            return engine->CreateUndefined();
+        });
 
     methodRequireNapiRef_.reset(nativeEngine_->CreateReference(globalObj->GetProperty("requireNapi"), 1));
     if (!methodRequireNapiRef_) {
@@ -168,28 +275,54 @@ bool JsRuntime::Initialize(const Options& options)
 
 void JsRuntime::Deinitialize()
 {
+    for (auto it = modules_.begin(); it != modules_.end(); it = modules_.erase(it)) {
+        delete it->second;
+        it->second = nullptr;
+    }
+
     methodRequireNapiRef_.reset();
     nativeEngine_.reset();
-    modules_.clear();
 }
 
 std::unique_ptr<NativeReference> JsRuntime::LoadModule(const std::string& moduleName, const std::string& modulePath)
 {
     HILOG_INFO("JsRuntime::LoadModule(%{public}s, %{public}s)", moduleName.c_str(), modulePath.c_str());
 
-    if (!LoadModuleFile(moduleName, modulePath)) {
-        HILOG_ERROR("Failed to load module file: %{public}s", modulePath.c_str());
-        return std::unique_ptr<NativeReference>();
-    }
-
     HandleScope handleScope(*this);
 
-    NativeValue* argv[] = {
-        nativeEngine_->CreateString(moduleName.c_str(), moduleName.length()),
-        nativeEngine_->CreateBoolean(true),
-    };
-    NativeValue* classValue =
-        nativeEngine_->CallFunction(nativeEngine_->GetGlobal(), methodRequireNapiRef_->Get(), argv, ArraySize(argv));
+    NativeValue* classValue = nullptr;
+
+    auto it = modules_.find(modulePath);
+    if (it != modules_.end()) {
+        classValue = it->second->Get();
+    } else {
+        std::vector<uint8_t> content;
+        if (!LoadModuleFile(moduleName, modulePath, content)) {
+            HILOG_ERROR("Failed to load module file: %{public}s", modulePath.c_str());
+            return std::unique_ptr<NativeReference>();
+        }
+
+        NativeObject* globalObj = ConvertNativeValueTo<NativeObject>(nativeEngine_->GetGlobal());
+        NativeValue* exports = nativeEngine_->CreateObject();
+        globalObj->SetProperty("exports", exports);
+
+        nativeEngine_->RunBufferScript(content);
+
+        NativeObject* exportsObj = ConvertNativeValueTo<NativeObject>(globalObj->GetProperty("exports"));
+        if (exportsObj == nullptr) {
+            HILOG_ERROR("Failed to get exports objcect: %{public}s", modulePath.c_str());
+            return std::unique_ptr<NativeReference>();
+        }
+
+        classValue = exportsObj->GetProperty("default");
+        if (classValue == nullptr) {
+            HILOG_ERROR("Failed to get default objcect: %{public}s", modulePath.c_str());
+            return std::unique_ptr<NativeReference>();
+        }
+
+        modules_.emplace(modulePath, nativeEngine_->CreateReference(classValue, 1));
+    }
+
     NativeValue* instanceValue = nativeEngine_->CreateInstance(classValue, nullptr, 0);
     if (instanceValue == nullptr) {
         HILOG_ERROR("Failed to create object instance");
@@ -218,17 +351,9 @@ std::unique_ptr<NativeReference> JsRuntime::LoadSystemModule(
     return std::unique_ptr<NativeReference>(nativeEngine_->CreateReference(instanceValue, 1));
 }
 
-bool JsRuntime::LoadModuleFile(const std::string& moduleName, const std::string& modulePath)
+bool JsRuntime::LoadModuleFile(
+    const std::string& moduleName, const std::string& modulePath, std::vector<uint8_t>& content)
 {
-    NativeModuleManager* moduleMgr = nativeEngine_->GetModuleManager();
-    if (moduleMgr == nullptr) {
-        HILOG_ERROR("NativeModuleManager is NULL");
-        return false;
-    }
-    if (moduleMgr->LoadNativeModule(moduleName.c_str(), nullptr, true, false, isArkEngine_) != nullptr) {
-        return true;
-    }
-
     std::string fileName;
     if (!MakeFilePath(codePath_, modulePath, fileName)) {
         HILOG_ERROR("Failed to make module file path: %{private}s", modulePath.c_str());
@@ -244,39 +369,104 @@ bool JsRuntime::LoadModuleFile(const std::string& moduleName, const std::string&
     }
 
     size_t fileLength = stream.tellg();
-    std::unique_ptr<char[]> buf(new(std::nothrow) char[fileLength]);
-    if (!buf) {
-        HILOG_ERROR("Not enough memory");
-        return false;
-    }
+    content.resize(fileLength);
 
     stream.seekg(0, std::ios_base::beg);
-    stream.read(buf.get(), fileLength);
-
-    modules_.emplace_back();
-    auto& moduleFileInfo = modules_.back();
-    moduleFileInfo.moduleName = moduleName;
-    moduleFileInfo.fileName = fileName;
-    moduleFileInfo.fileLength = fileLength;
-    moduleFileInfo.fileData = std::move(buf);
-
-    NativeModule newModuleInfo = {
-        .name = moduleFileInfo.moduleName.c_str(),
-        .fileName = moduleFileInfo.fileName.c_str(),
-    };
-
-    moduleMgr->Register(&newModuleInfo);
-
-    // Register will not copy field 'jsCode' and 'jsCodeLen'
-    NativeModule* moduleInfo = moduleMgr->LoadNativeModule(moduleName.c_str(), nullptr, true, false, isArkEngine_);
-    if (moduleInfo == nullptr) {
-        HILOG_ERROR("moduleInfo is nullptr");
-        return false;
-    }
-    moduleInfo->jsCode = moduleFileInfo.fileData.get();
-    moduleInfo->jsCodeLen = fileLength;
-
+    stream.read(reinterpret_cast<char*>(content.data()), fileLength);
     return true;
+}
+
+class TimerTask final {
+public:
+    TimerTask(
+        JsRuntime& jsRuntime, std::shared_ptr<NativeReference> jsFunction, const std::string &name, int64_t interval)
+        : jsRuntime_(jsRuntime), jsFunction_(jsFunction), name_(name), interval_(interval)
+    {}
+
+    ~TimerTask() = default;
+
+    void operator()()
+    {
+        if (interval_ > 0) {
+            jsRuntime_.PostTask(*this, name_, interval_);
+        }
+
+        // call js function
+        HandleScope handleScope(jsRuntime_);
+
+        std::vector<NativeValue*> args_;
+        args_.reserve(jsArgs_.size());
+        for (auto arg : jsArgs_) {
+            args_.emplace_back(arg->Get());
+        }
+
+        NativeEngine& engine = jsRuntime_.GetNativeEngine();
+        engine.CallFunction(engine.CreateUndefined(), jsFunction_->Get(), args_.data(), args_.size());
+    }
+
+    void PushArgs(std::shared_ptr<NativeReference> ref)
+    {
+        jsArgs_.emplace_back(ref);
+    }
+
+private:
+    JsRuntime& jsRuntime_;
+    std::shared_ptr<NativeReference> jsFunction_;
+    std::vector<std::shared_ptr<NativeReference>> jsArgs_;
+    std::string name_;
+    int64_t interval_ = 0;
+};
+
+void JsRuntime::PostTask(const TimerTask& task, const std::string& name, int64_t delayTime)
+{
+    eventHandler_->PostTask(task, name, delayTime);
+}
+
+void JsRuntime::RemoveTask(const std::string& name)
+{
+    eventHandler_->RemoveTask(name);
+}
+
+NativeValue* JsRuntime::SetCallbackTimer(NativeEngine& engine, NativeCallbackInfo& info, bool isInterval)
+{
+    // parameter check, must have at least 2 params
+    if (info.argc < 2 || info.argv[0]->TypeOf() != NATIVE_FUNCTION || info.argv[1]->TypeOf() != NATIVE_NUMBER) {
+        HILOG_ERROR("Set callback timer failed with invalid parameter.");
+        return engine.CreateUndefined();
+    }
+
+    // parse parameter
+    std::shared_ptr<NativeReference> jsFunction(engine.CreateReference(info.argv[0], 1));
+    int64_t delayTime = *ConvertNativeValueTo<NativeNumber>(info.argv[1]);
+    uint32_t callbackId = callbackId_++;
+    std::string name = "JsRuntimeTimer_";
+    name.append(std::to_string(callbackId));
+
+    // create timer task
+    TimerTask task(*this, jsFunction, name, isInterval ? delayTime : 0);
+    for (size_t index = 2; index < info.argc; ++index) {
+        task.PushArgs(std::shared_ptr<NativeReference>(engine.CreateReference(info.argv[index], 1)));
+    }
+
+    JsRuntime::PostTask(task, name, delayTime);
+    return engine.CreateNumber(callbackId);
+}
+
+NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    // parameter check, must have at least 1 param
+    if (info.argc < 1 || info.argv[0]->TypeOf() != NATIVE_NUMBER) {
+        HILOG_ERROR("Clear callback timer failed with invalid parameter.");
+        return engine.CreateUndefined();
+    }
+
+    uint32_t callbackId = *ConvertNativeValueTo<NativeNumber>(info.argv[0]);
+    std::string name = "JsRuntimeTimer_";
+    name.append(std::to_string(callbackId));
+
+    // event should be cancelable before executed
+    JsRuntime::RemoveTask(name);
+    return engine.CreateUndefined();
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

@@ -85,7 +85,7 @@ std::shared_ptr<AbilityRecord> Token::GetAbilityRecord() const
 AbilityRecord::AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
     const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode, int32_t apiVersion)
     : want_(want), abilityInfo_(abilityInfo), applicationInfo_(applicationInfo),
-    requestCode_(requestCode), targetVersion_(apiVersion)
+    requestCode_(requestCode), compatibleVersion_(apiVersion)
 {
     recordId_ = abilityRecordId++;
 }
@@ -105,10 +105,10 @@ std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityR
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
     if (abilityRequest.IsNewVersion() && abilityRequest.abilityInfo.type == AbilityType::PAGE) {
         abilityRecord = std::make_shared<AbilityRecordNew>(abilityRequest.want, abilityRequest.abilityInfo,
-            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.targetVersion);
+            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.compatibleVersion);
     } else {
         abilityRecord = std::make_shared<AbilityRecord>(abilityRequest.want, abilityRequest.abilityInfo,
-            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.targetVersion);
+            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.compatibleVersion);
     }
     CHECK_POINTER_AND_RETURN(abilityRecord, nullptr);
     if (!abilityRecord->Init()) {
@@ -161,6 +161,74 @@ int AbilityRecord::LoadAbility()
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token_, callerToken_, abilityInfo_, applicationInfo_);
+}
+
+void AbilityRecord::ForegroundAbility()
+{
+    HILOG_INFO("ForegroundAbility.");
+    CHECK_POINTER(lifecycleDeal_);
+
+    SendEvent(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, AbilityManagerService::FOREGROUNDNEW_TIMEOUT);
+
+    // schedule active after updating AbilityState and sending timeout message to avoid ability async callback
+    // earlier than above actions.
+    currentState_ = AbilityState::FOREGROUNDING_NEW;
+    lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
+
+    // update ability state to appMgr service when restart
+    if (IsNewWant()) {
+        sptr<Token> preToken = nullptr;
+        if (GetPreAbilityRecord()) {
+            preToken = GetPreAbilityRecord()->GetToken();
+        }
+        DelayedSingleton<AppScheduler>::GetInstance()->AbilityBehaviorAnalysis(token_, preToken, 1, 1, 1);
+    }
+}
+
+void AbilityRecord::ProcessForegroundAbility()
+{
+    std::string element = GetWant().GetElement().GetURI();
+    HILOG_DEBUG("ability record: %{public}s", element.c_str());
+
+    if (isReady_) {
+        if (IsAbilityState(AbilityState::BACKGROUND_NEW)) {
+            // background to activte state
+            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+        } else {
+            HILOG_DEBUG("Activate %{public}s", element.c_str());
+            ForegroundAbility();
+        }
+    } else {
+        LoadAbility();
+    }
+}
+
+void AbilityRecord::BackgroundAbility(const Closure &task)
+{
+    HILOG_INFO("Move to backgroundNew.");
+    CHECK_POINTER(lifecycleDeal_);
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler == nullptr || task == nullptr) {
+        // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
+        // so don't return here.
+        HILOG_ERROR("handler is nullptr or task is nullptr.");
+    } else {
+        g_abilityRecordEventId_++;
+        eventId_ = g_abilityRecordEventId_;
+        // eventId_ is a unique id of the task.
+        handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
+    }
+
+    if (!IsTerminating() || IsRestarting()) {
+        // schedule save ability state before moving to background.
+        SaveAbilityState();
+    }
+
+    // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
+    // earlier than above actions.
+    currentState_ = AbilityState::BACKGROUNDING_NEW;
+    lifecycleDeal_->BackgroundNew(want_, lifeCycleStateInfo_);
 }
 
 int AbilityRecord::TerminateAbility()
@@ -950,6 +1018,7 @@ void AbilityRecord::SetLauncherRoot()
 {
     isLauncherRoot_ = true;
 }
+
 bool AbilityRecord::IsLauncherRoot() const
 {
     return isLauncherRoot_;
@@ -963,7 +1032,8 @@ bool AbilityRecord::IsAbilityState(const AbilityState &state) const
 bool AbilityRecord::IsActiveState() const
 {
     return (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING) ||
-            IsAbilityState(AbilityState::INITIAL));
+            IsAbilityState(AbilityState::INITIAL) || IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+            IsAbilityState(AbilityState::FOREGROUNDING_NEW));
 }
 
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
@@ -1102,26 +1172,6 @@ bool AbilityRecord::IsMovingBackground() const
     return isMovingBackground_;
 }
 
-void AbilityRecord::SetWillSatrtAbilityRequest(const std::shared_ptr<AbilityRequest> &abilityRequestPtr)
-{
-    abilityRequestPtr_ = abilityRequestPtr;
-}
-
-std::shared_ptr<AbilityRequest> AbilityRecord::GetWillSatrtAbilityRequest() const
-{
-    return abilityRequestPtr_;
-}
-
-void AbilityRecord::SetMoveSplitScreenStack(bool isMoveSplitScreenStack)
-{
-    isMoveSplitScreenStack_ = isMoveSplitScreenStack;
-}
-
-bool AbilityRecord::IsMoveSplitScreenStack() const
-{
-    return isMoveSplitScreenStack_;
-}
-
 void AbilityRecord::SetLockScreenRoot()
 {
     isLockScreenRoot_ = true;
@@ -1144,7 +1194,7 @@ bool AbilityRecord::GetPowerStateLockScreen() const
 
 bool AbilityRecord::IsNewVersion()
 {
-    return targetVersion_ > API_VERSION_7;
+    return compatibleVersion_ > API_VERSION_7;
 }
 
 void AbilityRecord::SetLaunchReason(const LaunchReason &reason)
@@ -1163,6 +1213,35 @@ void AbilityRecord::NotifyContinuationResult(const int32_t result)
     CHECK_POINTER(lifecycleDeal_);
 
     lifecycleDeal_->NotifyContinuationResult(result);
+}
+
+std::shared_ptr<MissionList> AbilityRecord::GetOwnedMissionList() const
+{
+    return missionList_.lock();
+}
+
+void AbilityRecord::SetMissionList(const std::shared_ptr<MissionList> &missionList)
+{
+    missionList_ = missionList;
+}
+
+void AbilityRecord::SetMission(const std::shared_ptr<Mission> &mission)
+{
+    if (mission) {
+        missionId_ = mission->GetMissionId();
+        HILOG_INFO("SetMission come, missionId is %{public}d.", missionId_);
+    }
+    mission_ = mission;
+}
+
+std::shared_ptr<Mission> AbilityRecord::GetMission() const
+{
+    return mission_.lock();
+}
+
+int32_t AbilityRecord::GetMissionId() const
+{
+    return missionId_;
 }
 
 AbilityRecordNew::AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,

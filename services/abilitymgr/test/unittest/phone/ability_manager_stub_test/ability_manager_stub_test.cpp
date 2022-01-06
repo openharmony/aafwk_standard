@@ -60,7 +60,7 @@ void AbilityManagerStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: code is START_ABILITY
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_001, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_001, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -89,7 +89,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_001, TestSize.Level1)
  * EnvConditions: code is TERMINATE_ABILITY
  * CaseDescription: Verify that on remote request is normal and abnormal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_002, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_002, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -114,7 +114,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_002, TestSize.Level1)
  * EnvConditions: code is CONNECT_ABILITY
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_004, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_004, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -141,7 +141,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_004, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: OnRemoteRequest IAbilityManager::CONNECT_ABILITY
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_005, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_005, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -168,7 +168,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_005, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: OnRemoteRequest IAbilityManager::CONNECT_ABILITY
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_006, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_006, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -193,7 +193,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_006, TestSize.Level1)
  * EnvConditions: code is DISCONNECT_ABILITY
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_007, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_007, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -215,7 +215,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_007, TestSize.Level1)
  * EnvConditions: code is ATTACH_ABILITY_THREAD
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_008, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_008, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -239,7 +239,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_008, TestSize.Level1)
  * EnvConditions: code is ABILITY_TRANSITION_DONE
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -265,7 +265,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level1)
  * EnvConditions: code is CONNECT_ABILITY_DONE
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_010, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_010, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -289,7 +289,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_010, TestSize.Level1)
  * EnvConditions: code is DISCONNECT_ABILITY_DONE
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_011, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_011, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -311,7 +311,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_011, TestSize.Level1)
  * EnvConditions: code is ADD_WINDOW_INFO
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_012, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_012, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -334,7 +334,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_012, TestSize.Level1)
  * EnvConditions: code is DUMP_STATE
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_013, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_013, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -357,7 +357,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_013, TestSize.Level1)
  * EnvConditions: code is LIST_STACK_INFO
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_014, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_014, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -376,7 +376,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_014, TestSize.Level1)
  * EnvConditions: code is TERMINATE_ABILITY_RESULT
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_015, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_015, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -395,7 +395,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_015, TestSize.Level1)
  * EnvConditions: code is default
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_016, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_016, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -414,7 +414,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_016, TestSize.Level1)
  * EnvConditions: code is GET_RECENT_MISSION
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level1)
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;

@@ -18,8 +18,9 @@
 
 #include <memory>
 
+#include "ability_connect_callback.h"
 #include "service_extension_context.h"
-#include "ability_connect_callback_stub.h"
+#include "event_handler.h"
 
 class NativeEngine;
 class NativeValue;
@@ -29,14 +30,17 @@ namespace OHOS {
 namespace AbilityRuntime {
 NativeValue* CreateJsServiceExtensionContext(NativeEngine& engine, std::shared_ptr<ServiceExtensionContext> context);
 
-class JSServiceExtensionConnection : public AAFwk::AbilityConnectionStub {
+class JSServiceExtensionConnection : public AbilityConnectCallback {
 public:
     void OnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode) override;
     void OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode) override;
+    void HandleOnAbilityConnectDone(
+        const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode);
+    void HandleOnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode);
     void SetNativeEngine(NativeEngine* engine);
     void SetJsConnectionObject(NativeValue* jsConnectionObject);
-    void CallJsFailed();
+    void CallJsFailed(int32_t errorCode);
 private:
     NativeEngine* engine_ = nullptr;
     std::unique_ptr<NativeReference> jsConnectionObject_ = nullptr;
@@ -57,8 +61,9 @@ struct key_compare {
     }
 };
 
-static std::map<ConnecttionKey, sptr<JSServiceExtensionConnection>, key_compare> connects_;
+static std::map<ConnecttionKey, std::shared_ptr<JSServiceExtensionConnection>, key_compare> connects_;
 static int64_t serialNumber_ = 0;
+static std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;
 }  // namespace AbilityRuntime
 }  // namespace OHOS
 #endif  // ABILITY_RUNTIME_JS_SERVICE_EXTENSION_CONTEXT_H

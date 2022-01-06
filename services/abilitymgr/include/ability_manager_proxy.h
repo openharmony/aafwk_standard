@@ -55,18 +55,6 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
-     * StartAbility with want, send want to ability manager service.
-     *
-     * @param want, the want of the ability to start.
-     * @param callerToken, caller ability token.
-     * @param requestCode, Ability request code.
-     * @param requestUid, Ability request uid.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
-        int requestCode, int requestUid = DEFAULT_INVAL_VALUE) override;
-
-    /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
@@ -75,6 +63,18 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+
+    /**
+     * Starts a new ability with specific start options.
+     *
+     * @param want, the want of the ability to start.
+     * @param startOptions Indicates the options used to start.
+     * @param callerToken, caller ability token.
+     * @param requestCode the resultCode of the ability to start.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
         const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
@@ -224,10 +224,9 @@ public:
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
-     * @param callerToken, specifies the caller ability token.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken = nullptr) override;
+    virtual int StopServiceAbility(const Want &want) override;
 
     /**
      * Obtains information about ability stack that are running on the device.
@@ -258,7 +257,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
+    virtual int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -303,22 +302,12 @@ public:
     virtual int KillProcess(const std::string &bundleName) override;
 
     /**
-     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
-     * clear the application data.
-     *
-     * @param bundleName, bundle name in Application record.
-     * @return
-     */
-    virtual int ClearUpApplicationData(const std::string &bundleName) override;
-
-    /**
      * Uninstall app
      *
      * @param bundleName.
-     * @param uid, UninstallApp uid.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName, const int uid) override;
+    virtual int UninstallApp(const std::string &bundleName) override;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -473,7 +462,6 @@ public:
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
-    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
     /**
      * set lock screen white list
      *
@@ -491,6 +479,26 @@ public:
     virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override;
 
     virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
+
+    virtual int LockMissionForCleanup(int32_t missionId) override;
+
+    virtual int UnlockMissionForCleanup(int32_t missionId) override;
+
+    virtual int RegisterMissionListener(const sptr<IMissionListener> &listener) override;
+
+    virtual int UnRegisterMissionListener(const sptr<IMissionListener> &listener) override;
+
+    virtual int GetMissionInfos(const std::string& deviceId, int32_t numMax,
+        std::vector<MissionInfo> &missionInfos) override;
+
+    virtual int GetMissionInfo(const std::string& deviceId, int32_t missionId,
+        MissionInfo &missionInfos) override;
+
+    virtual int CleanMission(int32_t missionId) override;
+
+    virtual int CleanAllMissions() override;
+
+    virtual int MoveMissionToFront(int32_t missionId) override;
 
 private:
     template<typename T>

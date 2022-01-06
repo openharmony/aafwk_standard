@@ -20,6 +20,7 @@
 #include "iremote_object.h"
 
 namespace OHOS {
+
 #define REGISTER_SYSTEM_ABILITY_BY_ID(a, b, c)
 #define REGISTER_SYSTEM_ABILITY(abilityClassName, abilityId, runOnCreate)
 #define DECLEAR_SYSTEM_ABILITY(className)
@@ -67,5 +68,6 @@ protected:
         HiviewDFX::HiLog::Debug(LABEL, "Mock SystemAbility Destructor called");
     }
 };
+
 }  // namespace OHOS
 #endif  // FOUNDATION_AAFWK_SERVICES_TEST_MOCK_SYSTEM_ABILITY_H

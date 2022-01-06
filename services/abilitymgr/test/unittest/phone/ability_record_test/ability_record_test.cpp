@@ -32,6 +32,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
+
 class AbilityRecordTest : public testing::TestWithParam<OHOS::AAFwk::AbilityState> {
 public:
     static void SetUpTestCase(void);
@@ -286,7 +287,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsLauncherAbility, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: AddConnectRecordToList UT.
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Level1)
+HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Level0)
 {
     // test1 for input param is null
     abilityRecord_->AddConnectRecordToList(nullptr);
@@ -742,28 +743,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetAbilityState_001, TestSize.Level1
     abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     state = abilityRecord_->GetAbilityState();
     EXPECT_EQ(state, OHOS::AAFwk::AbilityState::ACTIVE);
-}
-
-/*
- * Feature: AbilityRecord
- * Function: SetWillSatrtAbilityRequest, GetWillSatrtAbilityRequest
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_WillSatrtAbilityRequest_001, TestSize.Level1)
-{
-    auto record = abilityRecord_->GetWillSatrtAbilityRequest();
-    EXPECT_FALSE(record);
-
-    auto abilityRequest = std::make_shared<AbilityRequest>();
-    EXPECT_TRUE(abilityRequest);
-
-    abilityRecord_->SetWillSatrtAbilityRequest(abilityRequest);
-
-    record = abilityRecord_->GetWillSatrtAbilityRequest();
-    EXPECT_TRUE(record);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

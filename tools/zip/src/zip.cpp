@@ -13,19 +13,21 @@
  * limitations under the License.
  */
 #include "zip.h"
-#include <list>
-#include <string>
-#include <vector>
-#include <cstdio>
+
 #include <fcntl.h>
+#include <list>
+#include <stdio.h>
+#include <string>
 #include <unistd.h>
+#include <vector>
+
+#include "directory_ex.h"
 #include "file_path.h"
-#include "zip_internal.h"
+#include "hilog_wrapper.h"
 #include "runnable.h"
+#include "zip_internal.h"
 #include "zip_reader.h"
 #include "zip_writer.h"
-#include "directory_ex.h"
-#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -200,6 +202,7 @@ bool UnzipWithFilterAndWriters(const PlatformFile &srcFile, FilePath &destDir, W
                     CALLING_CALL_BACK(unzipParam.callback, ERROR_CODE_ERRNO)
                     return false;
                 }
+
             } else {
                 std::unique_ptr<WriterDelegate> writer = writerFactory(destDir, entryPath);
                 if (!reader.ExtractCurrentEntry(writer.get(), std::numeric_limits<uint64_t>::max())) {

@@ -34,8 +34,7 @@ class ExtensionContext;
  * @brief The ExtensionBase class for all extensions.
  */
 template<class C = ExtensionContext>
-class ExtensionBase : public Extension,
-                      public std::enable_shared_from_this<ExtensionBase<C>> {
+class ExtensionBase : public Extension {
 public:
     ExtensionBase() = default;
     virtual ~ExtensionBase() = default;

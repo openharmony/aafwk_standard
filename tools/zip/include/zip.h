@@ -16,14 +16,17 @@
 #define FOUNDATION_AAFWK_STANDARD_TOOLS_ZIP_H
 
 #include <vector>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <time.h>
 #include "zip_utils.h"
 #include "file_path.h"
 
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
+
 class WriterDelegate;
 // Abstraction for file access operation required by Zip().
 // Can be passed to the ZipParams for providing custom access to the files,
@@ -156,6 +159,7 @@ bool Zip(const FilePath &srcDir, const FilePath &destFile, const OPTIONS &option
 // destFile = /ziptest/hapunzipdir/single
 // options is default value.
 bool Unzip(const FilePath &zipFile, const FilePath &destDir, const OPTIONS &options, CALLBACK callback);
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -93,5 +93,6 @@ void MissionOption::GetProperty(const std::string &key, std::string &value)
     }
     value = properties_[key];
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

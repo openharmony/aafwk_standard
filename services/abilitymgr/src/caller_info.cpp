@@ -21,6 +21,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 bool CallerInfo::ReadFromParcel(Parcel &parcel)
 {
     requestCode = parcel.ReadInt32();
@@ -60,5 +61,6 @@ bool CallerInfo::Marshalling(Parcel &parcel) const
     }
     return true;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

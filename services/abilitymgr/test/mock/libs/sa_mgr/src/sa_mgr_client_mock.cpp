@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 SaMgrClient::SaMgrClient()
 {}
 
@@ -41,5 +42,6 @@ void SaMgrClient::RegisterSystemAbility(const int32_t systemAbilityId, sptr<IRem
     HILOG_INFO("Test RegisterSystemAbility id : %{public}d", systemAbilityId);
     servicesMap_[systemAbilityId] = broker;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -29,7 +29,7 @@ public:
     void SetUp();
     void TearDown();
     void WriteInterfaceToken(MessageParcel &data);
-    sptr<WantSenderStubImplMock> stub_ { nullptr };
+    sptr<WantSenderStubImplMock> stub_ {nullptr};
 };
 
 void WantSenderStubTest::SetUpTestCase(void)
@@ -57,7 +57,7 @@ void WantSenderStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: The code which not exist
  * CaseDescription: Verify that on remote request is abnormal
  */
-HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_001, TestSize.Level1)
+HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_001, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -77,7 +77,7 @@ HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_001, TestSize.Le
  * EnvConditions: Description abnormal
  * CaseDescription: Verify that on remote request is abnormal
  */
-HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_002, TestSize.Level1)
+HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_002, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -96,7 +96,7 @@ HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_002, TestSize.Le
  * EnvConditions: Code is WANT_SENDER_SEND
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_003, TestSize.Level1)
+HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_003, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -119,7 +119,7 @@ HWTEST_F(WantSenderStubTest, WantSenderStubTest_OnRemoteRequest_003, TestSize.Le
  * EnvConditions: Invalid parameter
  * CaseDescription: Verify the function SendInner request is abnormal.
  */
-HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_001, TestSize.Level1)
+HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_001, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -137,7 +137,7 @@ HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_001, TestSize.Level1)
  * EnvConditions: Valid parameter
  * CaseDescription: Verify the function SendInner request is normal.
  */
-HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_002, TestSize.Level1)
+HWTEST_F(WantSenderStubTest, WantSenderStubTest_SendInner_002, TestSize.Level0)
 {
     MessageParcel data;
     MessageParcel reply;

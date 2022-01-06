@@ -32,6 +32,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 void IntentParams::SetParam(const std::string &key, IInterface *value)
 {
     params_[key] = value;
@@ -56,7 +57,7 @@ bool IntentParams::HasParam(const std::string &key) const
     return params_.count(key) > 0;
 }
 
-template <typename T1, typename T2, typename T3>
+template<typename T1, typename T2, typename T3>
 static void FillArray(IArray *ao, std::vector<T1> &array)
 {
     auto func = [&](IInterface *object) { array.push_back(T2::Unbox(T3::Query(object))); };
@@ -158,6 +159,7 @@ bool IntentParams::WriteArrayToParcel(Parcel &parcel, IArray *ao) const
 bool IntentParams::Marshalling(Parcel &parcel) const
 {
     size_t size = params_.size();
+
     if (!parcel.WriteInt32(size)) {
         return false;
     }
@@ -253,7 +255,7 @@ bool IntentParams::Marshalling(Parcel &parcel) const
     return true;
 }
 
-template <typename T1, typename T2>
+template<typename T1, typename T2>
 static void SetArray(const InterfaceID &id, const std::vector<T1> &value, sptr<IArray> &ao)
 {
     typename std::vector<T1>::size_type size = value.size();
@@ -468,5 +470,6 @@ IntentParams *IntentParams::Unmarshalling(Parcel &parcel)
     }
     return intentParams;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

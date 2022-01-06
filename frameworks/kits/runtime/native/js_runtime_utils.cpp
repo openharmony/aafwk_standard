@@ -104,12 +104,12 @@ HandleScope::~HandleScope()
     scopeManager_ = nullptr;
 }
 
-HandleScope& HandleScope::Escape(NativeValue* value)
+NativeValue* HandleScope::Escape(NativeValue* value)
 {
     if (nativeScope_ != nullptr) {
         scopeManager_->Escape(nativeScope_, value);
     }
-    return *this;
+    return value;
 }
 
 // Async Task

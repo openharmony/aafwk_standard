@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-interface ohos.IZidlTestService {
+interface OHOS.IZidlTestService {
     int TestIntTransaction([in] int data);
     void TestStringTransaction([in] String data);
 }

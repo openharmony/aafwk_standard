@@ -30,6 +30,7 @@ namespace AppExecFwk {
  * @return The return value from Init is treated as the exports object for the module.
  */
 napi_value ParticleAbilityInit(napi_env env, napi_value exports);
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_PARTICLE_ABILITY_H */

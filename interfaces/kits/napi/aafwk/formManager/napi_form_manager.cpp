@@ -129,7 +129,7 @@ static bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value
 
             // Means 0x8000000000000000 remove the first number:-(2^63 - 9 * 10 ^ 19)
             if (std::stoll(strInfo.substr(ZERO_VALUE + 2, INT_64_LENGTH - 1)) <=
-            (INT_64_MAX_VALUE - BASE_NUMBER * pow(DECIMAL_VALUE, INT_64_LENGTH) + 1)) {
+                (INT_64_MAX_VALUE - BASE_NUMBER * pow(DECIMAL_VALUE, INT_64_LENGTH) + 1)) {
                 int64Value = std::stoll(strInfo);
                 return true;
             }
@@ -255,7 +255,7 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     napi_create_string_utf8(env, formInfo.formConfigAbility.c_str(), NAPI_AUTO_LENGTH, &formConfigAbility);
     HILOG_DEBUG("%{public}s, formConfigAbility=%{public}s.", __func__, formInfo.formConfigAbility.c_str());
     napi_set_named_property(env, result, "formConfigAbility", formConfigAbility);
- 
+
     // updateDuration
     napi_value updateDuration;
     napi_create_int32(env, formInfo.updateDuration, &updateDuration);
@@ -620,6 +620,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
         .isReleaseCache = false,
         .result = 0,
     };
+
     if (argc == ARGS_SIZE_ONE) { // release promise, one argv
         return ReleaseFormPromise(env, asyncCallbackInfo);
     } else if (argc == ARGS_SIZE_THREE) { // release callback, three argv
@@ -1998,7 +1999,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
         NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
         NAPI_ASSERT(env, valueType == napi_function, "The arguments[0] type of checkFMSReady is incorrect,\
         expected type is function.");
-        
+
         napi_create_reference(env, argv[0], REF_COUNT, &asyncCallbackInfo->callback);
         napi_value resourceName;
         napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
@@ -2214,7 +2215,7 @@ napi_value NAPI_GetAllFormsInfo(napi_env env, napi_callback_info info)
         NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
         NAPI_ASSERT(env, valueType == napi_function, "The arguments[0] type of getAllFormsInfo is incorrect,\
         expected type is function.");
-        
+
         napi_create_reference(env, argv[0], REF_COUNT, &asyncCallbackInfo->callback);
         napi_value resourceName;
         napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
@@ -2290,6 +2291,7 @@ static void InnerGetFormsInfoByModule(napi_env env, AsyncGetFormsInfoCallbackInf
         asyncCallbackInfo->bundleName,
         asyncCallbackInfo->moduleName,
         asyncCallbackInfo->formInfos);
+
     if (ret) {
         asyncCallbackInfo->result = 1;
     } else {

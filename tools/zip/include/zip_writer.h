@@ -49,7 +49,7 @@ private:
     ZipWriter(zipFile zip_file, const FilePath &rootDir);
 
     // Writes the pending entries to the ZIP file if there are at least
-    // |kMaxPendingEntriesCount| of them. If |force| is true, all pending entries
+    // |g_MaxPendingEntriesCount| of them. If |force| is true, all pending entries
     // are written regardless of how many there are.
     // Returns false if writing an entry fails, true if no entry was written or
     // there was no error writing entries.

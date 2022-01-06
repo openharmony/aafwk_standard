@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 class IDataAbilityObserver : public OHOS::IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.DataAbilityObserver");
@@ -35,6 +36,7 @@ public:
      */
     virtual void OnChange() = 0;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_DATA_ABILITY_OBSERVER_INTERFACE_H

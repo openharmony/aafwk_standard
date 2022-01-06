@@ -13,10 +13,14 @@
  * limitations under the License.
  */
 #include "ohos/aafwk/content/want_params_wrapper.h"
+
 #include <algorithm>
+
 namespace OHOS {
 namespace AAFwk {
+
 constexpr int32_t WANT_PARAM_WRAPPER_TWO = 2;
+
 IINTERFACE_IMPL_1(WantParamWrapper, Object, IWantParams);
 const InterfaceID g_IID_IWantParams = {
     0xa75b9db6, 0x9813, 0x4371, 0x8848, {0xd, 0x2, 0x9, 0x6, 0x6, 0xc, 0xe, 0x6, 0xe, 0xc, 0x6, 0x8}
@@ -98,7 +102,6 @@ bool WantParamWrapper::ValidateStr(const std::string &str)
     }
     return true;
 }
-
 sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
 {
     WantParams wantPaqrams;
@@ -148,75 +151,6 @@ sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
     }
     sptr<IWantParams> iwantParams = new WantParamWrapper(wantPaqrams);
     return iwantParams;
-}
-
-unsigned int FindObjectEndSymbol(const std::string &str, const unsigned int &strnum)
-{
-    unsigned int num = 0;
-    int count = 0;
-    for (num = strnum; num < str.size(); num++) {
-        if (str[num] == '{') {
-            count++;
-        } else if (str[num] == '}') {
-            count--;
-        }
-        if (count == 0) {
-            break;
-        }
-    }
-
-    return num;
-}
-
-bool ProcessCommon(
-    const std::string &str, std::string &key, int &typeId, unsigned int &strnum, WantParams &wantPaqrams)
-{
-    if (key == "") {
-        strnum++;
-        key = str.substr(strnum, str.find('"', strnum) - strnum);
-        strnum = str.find('"', strnum);
-    } else if (typeId == 0) {
-        strnum++;
-        typeId = atoi(str.substr(strnum, str.find('"', strnum) - strnum).c_str());
-        if (errno == ERANGE) {
-            return false;
-        }
-        strnum = str.find('"', strnum);
-    } else {
-        strnum++;
-        wantPaqrams.SetParam(key,
-            WantParams::GetInterfaceByType(typeId, str.substr(strnum, str.find('"', strnum) - strnum)));
-        strnum = str.find('"', strnum);
-        typeId = 0;
-        key = "";
-    }
-
-    return true;
-}
-
-WantParams WantParamWrapper::ParseWantParams(const std::string &str)
-{
-    WantParams wantPaqrams;
-    std::string key = "";
-    int typeId = 0;
-    if (!ValidateStr(str)) {
-        return wantPaqrams;
-    }
-    for (unsigned int strnum = 0; strnum < str.size(); strnum++) {
-        if (str[strnum] == '{' && key != "" && typeId == WantParams::VALUE_TYPE_WANTPARAMS) {
-            unsigned int num = FindObjectEndSymbol(str, strnum);
-            wantPaqrams.SetParam(key, WantParamWrapper::Parse(str.substr(strnum, num - strnum)));
-            key = "";
-            typeId = 0;
-            strnum = num + 1;
-        } else if (str[strnum] == '"') {
-            bool ret = ProcessCommon(str, key, typeId, strnum, wantPaqrams);
-            if (!ret) {
-                return wantPaqrams;
-            }
-        }
-    }
-    return wantPaqrams;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

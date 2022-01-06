@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class ReverseContinuationSchedulerPrimaryStub : public IRemoteStub<IReverseContinuationSchedulerPrimary> {
 public:
     ReverseContinuationSchedulerPrimaryStub();
@@ -48,6 +49,7 @@ private:
     using RequestFuncType = int (ReverseContinuationSchedulerPrimaryStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_REVERSE_CONTINUATION_SCHEDULER_PRIMARY_STUB_H */

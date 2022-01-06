@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 std::mutex DataObsMgrInner::innerMutex_;
 
 DataObsMgrInner::DataObsMgrInner()
@@ -260,5 +261,6 @@ bool DataObsMgrInner::ObsExistInMap(const sptr<IDataAbilityObserver> &dataObserv
     }
     return false;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

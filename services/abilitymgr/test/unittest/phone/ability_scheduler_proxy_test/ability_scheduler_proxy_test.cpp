@@ -58,7 +58,7 @@ void AbilitySchedulerProxyTest::SetUp(void)
  * EnvConditions:NA
  * CaseDescription: verify AbilitySchedulerProxy is create success
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_001, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_001, TestSize.Level0)
 {
     EXPECT_NE(abilitySchedulerProxy_, nullptr);
 }
@@ -71,7 +71,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_001, TestS
  * EnvConditions:NA
  * CaseDescription: verify AbilitySchedulerRecipient is create success
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_002, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_002, TestSize.Level0)
 {
     EXPECT_NE(abilitySchedulerRecipient_, nullptr);
 }
@@ -84,7 +84,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_002, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleAbilityTransaction Normal case
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_003, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_003, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -105,7 +105,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_003, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleAbilityTransaction Return value exception
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_004, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_004, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -126,7 +126,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_004, TestS
  * EnvConditions: NA
  * CaseDescription: verify SendResult Normal case
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_005, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_005, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -146,7 +146,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_005, TestS
  * EnvConditions: NA
  * CaseDescription: verify SendResult Return value exception
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_006, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_006, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -166,7 +166,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_006, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleConnectAbility Normal case
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_007, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_007, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -186,7 +186,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_007, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleConnectAbility Return value exception
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_008, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_008, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -206,7 +206,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_008, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleDisconnectAbility Normal case
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_009, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_009, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -226,7 +226,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_009, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleDisconnectAbility Return value exception
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_010, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_010, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -246,7 +246,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_010, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleCommandAbility Normal case
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_011, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_011, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -266,7 +266,7 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_011, TestS
  * EnvConditions: NA
  * CaseDescription: verify ScheduleCommandAbility Return value exception
  */
-HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_012, TestSize.Level1)
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_012, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)

@@ -30,7 +30,6 @@ public:
     MOCK_METHOD1(TerminateAbility, AppMgrResultCode(const sptr<IRemoteObject> &));
     MOCK_METHOD2(UpdateAbilityState, AppMgrResultCode(const sptr<IRemoteObject> &token, const AbilityState state));
     MOCK_METHOD1(KillApplication, AppMgrResultCode(const std::string &));
-    MOCK_METHOD2(KillApplicationByUid, AppMgrResultCode(const std::string &, const int uid));
     MOCK_METHOD1(KillProcessByAbilityToken, AppMgrResultCode(const sptr<IRemoteObject> &token));
     MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD1(AbilityAttachTimeOut, void(const sptr<IRemoteObject> &token));

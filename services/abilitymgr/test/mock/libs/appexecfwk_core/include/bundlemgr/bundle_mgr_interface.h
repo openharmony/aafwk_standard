@@ -19,7 +19,6 @@
 #include "ability_info.h"
 #include "form_info.h"
 #include "shortcut_info.h"
-#include "common_event_info.h"
 #include "module_usage_record.h"
 #include "application_info.h"
 #include "bundle_info.h"
@@ -75,7 +74,7 @@ public:
      * @return Returns true if the BundleInfo is successfully obtained; returns false otherwise.
      */
     virtual bool GetBundleInfo(
-        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) = 0;
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId = 0) = 0;
     /**
      * @brief Obtains BundleInfo of all bundles available in the system.
      * @param flag Indicates the flag used to specify information contained in the BundleInfo that will be returned.
@@ -84,7 +83,7 @@ public:
      * @return Returns true if the BundleInfos is successfully obtained; returns false otherwise.
      */
     virtual bool GetBundleInfos(
-        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) = 0;
+        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId = 0) = 0;
     /**
      * @brief Obtains the application UID based on the given bundle name and user ID.
      * @param bundleName Indicates the bundle name of the application.
@@ -128,14 +127,6 @@ public:
      */
     virtual bool GetBundleGids(const std::string &bundleName, std::vector<int> &gids) = 0;
     /**
-     * @brief Obtains an array of all group IDs associated with the given bundle name and UID.
-     * @param bundleName Indicates the bundle name.
-     * @param uid Indicates the uid.
-     * @param gids Indicates the group IDs associated with the specified bundle.
-     * @return Returns true if the gids is successfully obtained; returns false otherwise.
-     */
-    virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) = 0;
-    /**
      * @brief Obtains the type of a specified application based on the given bundle name.
      * @param bundleName Indicates the bundle name.
      * @return Returns "system" if the bundle is a system application; returns "third-party" otherwise.
@@ -161,7 +152,7 @@ public:
      * @return Returns true if the AbilityInfo is successfully obtained; returns false otherwise.
      */
     virtual bool QueryAbilityInfo(const Want &want, AbilityInfo &abilityInfo) = 0;
-    /**
+     /**
      * @brief Query the AbilityInfo of list by the given Want.
      * @param want Indicates the information of the ability.
      * @param abilityInfos Indicates the obtained AbilityInfos object.
@@ -169,26 +160,13 @@ public:
      */
     virtual bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) = 0;
     /**
-     * @brief Query the AbilityInfo of list for clone by the given Want.
-     * @param want Indicates the information of the ability.
-     * @param abilityInfos Indicates the obtained AbilityInfos object.
-     * @return Returns true if the AbilityInfos is successfully obtained; returns false otherwise.
-     */
-    virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) = 0;
-    /**
      * @brief Query the AbilityInfo by ability.uri in config.json.
      * @param abilityUri Indicates the uri of the ability.
      * @param abilityInfo Indicates the obtained AbilityInfo object.
      * @return Returns true if the AbilityInfo is successfully obtained; returns false otherwise.
      */
+    virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) = 0;
     virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) = 0;
-    /**
-     * @brief Query the AbilityInfo by ability.uri in config.json.
-     * @param abilityUri Indicates the uri of the ability.
-     * @param abilityInfos Indicates the obtained AbilityInfos object.
-     * @return Returns true if the AbilityInfo is successfully obtained; returns false otherwise.
-     */
-    virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) = 0;
     /**
      * @brief Obtains the BundleInfo of all keep-alive applications in the system.
      * @param bundleInfos Indicates all of the obtained BundleInfo objects.
@@ -242,15 +220,6 @@ public:
      */
     virtual int CheckPermission(const std::string &bundleName, const std::string &permission) = 0;
     /**
-     * @brief Checks whether a specified bundle has been granted a specific permission.
-     * @param bundleName Indicates the name of the bundle to check.
-     * @param permission Indicates the permission to check.
-     * @param userId Indicates the user id.
-     * @return Returns 0 if the bundle has the permission; returns -1 otherwise.
-     */
-    virtual int CheckPermissionByUid(const std::string &bundleName,
-        const std::string &permission, const int userId) = 0;
-    /**
      * @brief Obtains detailed information about a specified permission.
      * @param permissionName Indicates the name of the ohos permission.
      * @param permissionDef Indicates the object containing detailed information about the given ohos permission.
@@ -301,7 +270,7 @@ public:
      * @param bundleName Indicates the bundle name of the application whose data is to be cleared.
      * @return Returns true if the data cleared successfully; returns false otherwise.
      */
-    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
     /**
      * @brief Register the specific bundle status callback.
      * @param bundleStatusCallback Indicates the callback to be invoked for returning the bundle status changed result.
@@ -438,13 +407,6 @@ public:
      */
     virtual bool GetShortcutInfos(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos) = 0;
     /**
-     * @brief Obtains the CommonEventInfo objects provided by a event key on the device.
-     * @param eventKey Indicates the event of the subscribe.
-     * @param commonEventInfos List of CommonEventInfo objects if obtained.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
-    virtual bool GetAllCommonEventInfo(const std::string &eventKey, std::vector<CommonEventInfo> &commonEventInfos) = 0;
-    /**
      * @brief Get module usage record list in descending order of lastLaunchTime.
      * @param maxNum the return size of the records, must be in range of 1 to 1000.
      * @param moduleUsageRecords List of ModuleUsageRecord objects if obtained.
@@ -469,26 +431,8 @@ public:
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
     virtual bool NotifyAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) = 0;
-    /**
-     * @brief Remove cloned bundle.
-     * @param bundleName Indicates the bundle name of remove cloned bundle.
-     * @param uid Indicates the uid of remove cloned bundle.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
-    virtual bool RemoveClonedBundle(const std::string &bundleName, const int32_t uid) = 0;
-    /**
-     * @brief create bundle clone.
-     * @param bundleName Indicates the bundle name of create bundle clone.
-     * @return Returns true if this function is successfully called; returns false otherwise.
-     */
-    virtual bool BundleClone(const std::string &bundleName) = 0;
-     /**
-     * @brief Determine whether the application is in the allow list.
-     * @param bundleName Indicates the bundle Names.
-     * @return Returns true if bundle name in the allow list successfully; returns false otherwise.
-     */
-    virtual bool CheckBundleNameInAllowList(const std::string &bundleName) = 0;
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
+
     enum class Message {
         GET_APPLICATION_INFO,
         GET_APPLICATION_INFOS,
@@ -505,9 +449,7 @@ public:
         GET_BUNDLE_INFOS_BY_METADATA,
         QUERY_ABILITY_INFO,
         QUERY_ABILITY_INFOS,
-        QUERY_ABILITY_INFOS_FOR_CLONE,
         QUERY_ABILITY_INFO_BY_URI,
-        QUERY_ABILITY_INFOS_BY_URI,
         QUERY_KEEPALIVE_BUNDLE_INFOS,
         GET_ABILITY_LABEL,
         GET_BUNDLE_ARCHIVE_INFO,
@@ -540,14 +482,11 @@ public:
         GET_ALL_FORMS_INFO,
         GET_FORMS_INFO_BY_APP,
         GET_FORMS_INFO_BY_MODULE,
-        GET_MODULE_USAGE_RECORD,
+		GET_MODULE_USAGE_RECORD,
         GET_SHORTCUT_INFO,
         GET_ALL_COMMON_EVENT_INFO,
         GET_BUNDLE_INSTALLER,
         NOTIFY_ABILITY_LIFE_STATUS,
-        REMOVE_CLONED_BUNDLE,
-        BUNDLE_CLONE,
-        CHECK_BUNDLE_NAME_IN_ALLOWLIST
     };
 };
 }  // namespace AppExecFwk

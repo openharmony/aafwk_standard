@@ -111,6 +111,7 @@ HWTEST_F(ZipTest, AAFwk_LIBZIP_unzip_single_0200, Function | MediumTest | Level1
     Unzip(FilePath(src), FilePath(dest), options, UnzipCallBack);
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 }
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

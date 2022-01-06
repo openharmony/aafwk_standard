@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 #include "napi_zlib_common.h"
-#include "securec.h"
+
 #include "hilog_wrapper.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace AAFwk {
