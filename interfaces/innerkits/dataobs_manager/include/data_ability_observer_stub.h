@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 class DataAbilityObserverStub : public IRemoteStub<IDataAbilityObserver> {
 public:
     DataAbilityObserverStub();
@@ -64,6 +65,7 @@ public:
 private:
     RemoteDiedHandler handler_;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_DATA_ABILITY_OBSERVER_STUB_H

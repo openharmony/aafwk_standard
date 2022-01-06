@@ -19,6 +19,7 @@ using namespace OHOS;
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
+
 const int LENGTH_FOR_FINDMINETYPE = 3;
 /**
  * @brief Default constructor used to create a Skills instance.
@@ -298,6 +299,7 @@ void Skills::AddPath(const PatternsMatcher &patternsMatcher)
     auto hasPath = std::find_if(paths_.begin(), paths_.end(), [&patternsMatcher](const PatternsMatcher pm) {
         return (pm.GetPattern() == patternsMatcher.GetPattern()) && (pm.GetType() == patternsMatcher.GetType());
     });
+
     if (hasPath == paths_.end()) {
         paths_.emplace_back(patternsMatcher);
     }
@@ -336,6 +338,7 @@ void Skills::RemovePath(const std::string &path)
 {
     auto hasPath = std::find_if(
         paths_.begin(), paths_.end(), [&path](const PatternsMatcher pm) { return pm.GetPattern() == path; });
+
     if (hasPath != paths_.end()) {
         paths_.erase(hasPath);
     }
@@ -351,6 +354,7 @@ void Skills::RemovePath(const PatternsMatcher &patternsMatcher)
     auto hasPath = std::find_if(paths_.begin(), paths_.end(), [&patternsMatcher](const PatternsMatcher pm) {
         return (pm.GetPattern() == patternsMatcher.GetPattern()) && (pm.GetType() == patternsMatcher.GetType());
     });
+
     if (hasPath != paths_.end()) {
         paths_.erase(hasPath);
     }
@@ -462,6 +466,7 @@ void Skills::AddSchemeSpecificPart(const std::string &schemeSpecificPart)
         schemeSpecificParts_.begin(), schemeSpecificParts_.end(), [&patternsMatcher](const PatternsMatcher pm) {
             return (pm.GetPattern() == patternsMatcher.GetPattern()) && (pm.GetType() == patternsMatcher.GetType());
         });
+
     if (it == schemeSpecificParts_.end()) {
         schemeSpecificParts_.emplace_back(patternsMatcher);
     }
@@ -490,6 +495,7 @@ void Skills::RemoveSchemeSpecificPart(const std::string &schemeSpecificPart)
     auto it = std::find_if(schemeSpecificParts_.begin(),
         schemeSpecificParts_.end(),
         [&schemeSpecificPart](const PatternsMatcher pm) { return pm.GetPattern() == schemeSpecificPart; });
+
     if (it != schemeSpecificParts_.end()) {
         schemeSpecificParts_.erase(it);
     }
@@ -597,6 +603,7 @@ void Skills::RemoveType(const std::string &type)
 {
     auto it = std::find_if(
         types_.begin(), types_.end(), [&type](const PatternsMatcher pm) { return pm.GetPattern() == type; });
+
     if (it != types_.end()) {
         types_.erase(it);
     }
@@ -612,6 +619,7 @@ void Skills::RemoveType(const PatternsMatcher &patternsMatcher)
     auto it = std::find_if(types_.begin(), types_.end(), [&patternsMatcher](const PatternsMatcher pm) {
         return (pm.GetPattern() == patternsMatcher.GetPattern()) && (pm.GetType() == patternsMatcher.GetType());
     });
+
     if (it != types_.end()) {
         types_.erase(it);
     }
@@ -1053,5 +1061,6 @@ bool Skills::ReadFromParcel(Parcel &parcel)
 
     return true;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

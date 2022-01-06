@@ -207,6 +207,7 @@ INTERFACE(IUserObject, 4edb325d - 8532 - 4af7 - b42e - 82f4f29dfdea)
 
     virtual ErrCode GetValue(std::shared_ptr<UserObjectBase> & value) = 0; /* [out] */
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_BASE_IINTERFACE_H

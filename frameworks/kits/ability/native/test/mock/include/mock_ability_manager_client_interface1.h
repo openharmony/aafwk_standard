@@ -31,6 +31,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class IAbilityMock : public OHOS::IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.AbilityMock");
@@ -71,11 +72,13 @@ public:
 
     size_t startAbilityRunCount_;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 
 namespace OHOS {
 namespace AAFwk {
+
 class MockAbilityManagerClient : public AbilityManagerClient {
 public:
     MockAbilityManagerClient();
@@ -123,6 +126,9 @@ private:
     int missionId_;
     bool moveMissionToEnd_;
 };
+
 };  // namespace AAFwk
+
 }  // namespace OHOS
+
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_H

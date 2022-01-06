@@ -25,7 +25,6 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${EVENT_DIR}/interfaces/innerkits/native/include",
     "//third_party/jsoncpp/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
-    "//foundation/graphic/standard/interfaces/innerkits/wmclient",
   ]
 
   sources = [
@@ -47,6 +46,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/connection_record.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
+    "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/kernal_system_app_manager.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
@@ -54,7 +54,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/mission_description_info.cpp",
     "${services_path}/abilitymgr/src/mission_record.cpp",
     "${services_path}/abilitymgr/src/mission_record_info.cpp",
-    "${services_path}/abilitymgr/src/mission_snapshot.cpp",
+    "${services_path}/abilitymgr/src/mission_snapshot_info.cpp",
     "${services_path}/abilitymgr/src/mission_stack.cpp",
     "${services_path}/abilitymgr/src/mission_stack_info.cpp",
     "${services_path}/abilitymgr/src/pending_want_key.cpp",
@@ -119,6 +119,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
 
 group("moduletest") {
   testonly = true
+  deps = []
 
-  deps = [ ":AbilityRecordModuleTest" ]
+  #deps = [ ":AbilityRecordModuleTest" ]
 }

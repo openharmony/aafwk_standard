@@ -22,6 +22,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class MockConfigurationHolder : public AAFwk::ConfigurationHolder {
 public:
     MockConfigurationHolder()
@@ -44,6 +45,7 @@ public:
         return nullptr;
     }
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 

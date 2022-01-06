@@ -175,7 +175,7 @@ bool LifecycleTest::StartLauncherAbility()
         topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     }
 
-    ElementName element("device", "com.ix.hiworld", "LauncherAbility");
+    ElementName element("device", "com.ix.hiWord", "LauncherAbility");
     Want want;
     want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
     want.SetElement(element);
@@ -571,6 +571,7 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_005, TestSize.Leve
  */
 HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_006, TestSize.Level1)
 {
+
     if (startLancherFlag_) {
         command_->callback_ = false;
         command_->expectState_ = OHOS::AAFwk::AbilityState::ACTIVE;

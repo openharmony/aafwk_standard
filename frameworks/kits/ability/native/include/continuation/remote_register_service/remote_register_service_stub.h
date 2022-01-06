@@ -16,14 +16,15 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_REMOTE_REGISTER_SERVICE_STUB_H
 #define FOUNDATION_APPEXECFWK_OHOS_REMOTE_REGISTER_SERVICE_STUB_H
 
+#include "remote_register_service_interface.h"
 #include <iremote_object.h>
 #include <iremote_stub.h>
 #include <map>
-#include "remote_register_service_interface.h"
 #include "message_parcel.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class RemoteRegisterServiceStub : public IRemoteStub<IRemoteRegisterService> {
 public:
     RemoteRegisterServiceStub();

@@ -100,6 +100,21 @@ void AppScheduler::MoveToBackground(const sptr<IRemoteObject> &token)
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
 }
 
+void AppScheduler::UpdateAbilityState(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state)
+{
+    HILOG_DEBUG("UpdateAbilityState.");
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->UpdateAbilityState(token, state);
+}
+
+void AppScheduler::UpdateExtensionState(const sptr<IRemoteObject> &token, const AppExecFwk::ExtensionState state)
+{
+    HILOG_DEBUG("UpdateExtensionState.");
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->UpdateExtensionState(token, state);
+}
+
+
 void AppScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const int32_t visibility, const int32_t perceptibility, const int32_t connectionState)
 {
@@ -158,29 +173,6 @@ int AppScheduler::KillApplication(const std::string &bundleName)
     return ERR_OK;
 }
 
-int AppScheduler::KillApplicationByUid(const std::string &bundleName, const int uid)
-{
-    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
-    int ret = (int)appMgrClient_->KillApplicationByUid(bundleName, uid);
-    if (ret != ERR_OK) {
-        HILOG_ERROR("Fail to kill application by uid.");
-        return INNER_ERR;
-    }
-
-    return ERR_OK;
-}
-
-int AppScheduler::ClearUpApplicationData(const std::string &bundleName)
-{
-    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
-    int ret = (int)appMgrClient_->ClearUpApplicationData(bundleName);
-    if (ret != ERR_OK) {
-        HILOG_ERROR("Fail to clear application data.");
-        return INNER_ERR;
-    }
-    return ERR_OK;
-}
-
 void AppScheduler::AttachTimeOut(const sptr<IRemoteObject> &token)
 {
     CHECK_POINTER(appMgrClient_);
@@ -222,12 +214,6 @@ void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo,
 {
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->GetSystemMemoryAttr(memoryInfo, strConfig);
-}
-
-void AppScheduler::StartupResidentProcess()
-{
-    CHECK_POINTER(appMgrClient_);
-    appMgrClient_->StartupResidentProcess();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

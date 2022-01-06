@@ -18,14 +18,15 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 #define NAPI_ERR_NO_ERROR 0
-#define NAPI_ERR_NO_PERMISSION (-100)
-#define NAPI_ERR_INNER_DATA (-101)            // Internal data error, data allocation fail
-#define NAPI_ERR_ACE_ABILITY (-102)           // Failed to acquire ability object
-#define NAPI_ERR_LONG_CALLBACK (-103)         // Failed to acquire long callack object
-#define NAPI_ERR_PARAM_INVALID (-104)         // Parameter is invalid
-#define NAPI_ERR_ABILITY_TYPE_INVALID (-105)  // Type of ability is invalid
-#define NAPI_ERR_ABILITY_CALL_INVALID (-106)  // Call the ability interface, the return value is wrong
+#define NAPI_ERR_NO_PERMISSION -100
+#define NAPI_ERR_INNER_DATA -101            // Internal data error, data allocation fail
+#define NAPI_ERR_ACE_ABILITY -102           // Failed to acquire ability object
+#define NAPI_ERR_LONG_CALLBACK -103         // Failed to acquire long callack object
+#define NAPI_ERR_PARAM_INVALID -104         // Parameter is invalid
+#define NAPI_ERR_ABILITY_TYPE_INVALID -105  // Type of ability is invalid
+#define NAPI_ERR_ABILITY_CALL_INVALID -106  // Call the ability interface, the return value is wrong
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // OHOS_APPEXECFWK_NAPI_COMMON_ERROR_H

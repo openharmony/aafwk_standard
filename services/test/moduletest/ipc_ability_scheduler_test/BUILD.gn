@@ -69,6 +69,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
 
 group("moduletest") {
   testonly = true
+  deps = []
 
-  deps = [ ":IpcAbilitySchedulerModuleTest" ]
+  #deps = [ ":IpcAbilitySchedulerModuleTest" ]
 }

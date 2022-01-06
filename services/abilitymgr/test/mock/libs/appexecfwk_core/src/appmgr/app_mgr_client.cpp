@@ -15,6 +15,9 @@
 
 #include "app_mgr_client.h"
 
+#include <cstdio>
+#include <string>
+#include <unistd.h>
 
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
@@ -24,6 +27,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 AppMgrClient::AppMgrClient()
 {}
 
@@ -73,11 +77,6 @@ AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
     return AppMgrResultCode::RESULT_OK;
 }
 
-AppMgrResultCode AppMgrClient::KillApplicationByUid(const std::string &bundleName, const int uid)
-{
-    return AppMgrResultCode::RESULT_OK;
-}
-
 AppMgrResultCode AppMgrClient::ClearUpApplicationData(const std::string &bundleName)
 {
     return AppMgrResultCode::RESULT_OK;
@@ -119,5 +118,6 @@ int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid,
 
 void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string &strConfig)
 {}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

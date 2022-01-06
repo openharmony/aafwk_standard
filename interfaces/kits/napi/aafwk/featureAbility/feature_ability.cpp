@@ -886,6 +886,7 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             }
             HILOG_INFO("CallOnAbilityResult, uv_queue_work end");
         });
+
     if (rev != 0) {
         if (onAbilityCB != nullptr) {
             delete onAbilityCB;

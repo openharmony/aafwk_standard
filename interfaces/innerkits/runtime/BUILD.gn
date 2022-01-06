@@ -65,6 +65,7 @@ ohos_shared_library("runtime") {
   external_deps = [
     "aafwk_standard:want",
     "appexecfwk_standard:appexecfwk_base",
+    "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]
 

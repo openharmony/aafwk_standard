@@ -59,7 +59,7 @@ void AbilityManagerProxyTest::SetUp()
  * EnvConditions: NA
  * CaseDescription: Verify the normal process of startability
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_001, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_001, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -79,7 +79,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the return value of startability is abnormal
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_002, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_002, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -99,7 +99,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_002, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal process of TerminateAbility
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_003, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_003, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -120,7 +120,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_003, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify that the return value of TerminateAbility is abnormal
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_004, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_004, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -141,7 +141,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_004, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of connectability
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_005, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_005, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -166,7 +166,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_005, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of connectability
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_006, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_006, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -188,7 +188,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_006, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of disconnectAbility
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_007, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_007, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -208,7 +208,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_007, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of disconnectAbility
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_008, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_008, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -228,7 +228,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_008, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of attachAbilityThread
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_009, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_009, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -249,7 +249,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_009, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of attachAbilityThread
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_010, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_010, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -274,7 +274,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_010, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of abilityTransitionDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0011, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0011, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -295,7 +295,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0011, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of abilityTransitionDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_012, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_012, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -316,7 +316,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_012, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of scheduleConnectAbilityDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0013, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0013, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -337,7 +337,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0013, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of scheduleConnectAbilityDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_014, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_014, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -358,7 +358,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_014, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of scheduleDisconnectAbilityDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0015, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0015, TestSize.Level0)
 {
     sptr<IRemoteObject> token = nullptr;
     auto res = proxy_->ScheduleDisconnectAbilityDone(token);
@@ -373,7 +373,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0015, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of addWindowInfo
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0016, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0016, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -392,7 +392,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0016, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of dumpState
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0017, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0017, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -412,7 +412,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0017, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of terminateAbilityResult
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0018, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0018, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -432,7 +432,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0018, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of terminateAbilityResult
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_019, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_019, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -452,7 +452,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_019, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of getAllStackInfo
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0020, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0020, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -471,7 +471,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0020, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of getRecentMissions
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0021, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0021, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -493,7 +493,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0021, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of RemoveMission
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0023, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0023, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -511,7 +511,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0023, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of RemoveStack
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0024, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0024, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -529,7 +529,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0024, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal conditions of MoveMissionToTop
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0025, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0025, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -547,7 +547,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0025, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the abnormal conditions of ScheduleCommandAbilityDone
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_026, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_026, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -567,7 +567,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_026, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify the normal process of StopServiceAbility
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_027, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_027, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)
@@ -661,7 +661,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_031, TestSize.Level0)
  * EnvConditions: NA
  * CaseDescription: Verify the function AcquireDataAbility normal flow.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_001, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_001, TestSize.Level0)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
     AbilityRequest abilityRequest;
@@ -682,7 +682,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_001, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function AcquireDataAbility callerToken is nullptr.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_002, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_002, TestSize.Level0)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
 
@@ -698,7 +698,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_002, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function AcquireDataAbility SendRequest return error.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_003, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_003, TestSize.Level0)
 {
     OHOS::Uri dataAbilityUri("dataability:///data.bundle.DataAbility");
     AbilityRequest abilityRequest;
@@ -719,7 +719,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_AcquireDataAbility_003, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function ReleaseDataAbility normal flow.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_001, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_001, TestSize.Level0)
 {
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     AbilityRequest abilityRequest;
@@ -740,7 +740,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_001, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function ReleaseDataAbility dataAbilityScheduler is nullptr.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_002, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_002, TestSize.Level0)
 {
     AbilityRequest abilityRequest;
     abilityRequest.appInfo.bundleName = "data.client.bundle";
@@ -760,7 +760,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_002, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function ReleaseDataAbility callerToken is nullptr.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_003, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_003, TestSize.Level0)
 {
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
 
@@ -776,7 +776,7 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_003, Te
  * EnvConditions: NA
  * CaseDescription: Verify the function ReleaseDataAbility SendRequest error.
  */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_004, TestSize.Level1)
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_004, TestSize.Level0)
 {
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     AbilityRequest abilityRequest;

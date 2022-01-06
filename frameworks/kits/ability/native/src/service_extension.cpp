@@ -16,6 +16,7 @@
 #include "service_extension.h"
 
 #include "ability_loader.h"
+#include "connection_manager.h"
 #include "extension_base.cpp"
 #include "hilog_wrapper.h"
 #include "js_service_extension.h"
@@ -63,6 +64,15 @@ std::shared_ptr<ServiceExtensionContext> ServiceExtension::CreateAndInitContext(
     }
     context->SetAbilityInfo(record->GetAbilityInfo());
     return context;
+}
+
+void ServiceExtension::OnStop()
+{
+    Extension::OnStop();
+    bool ret = ConnectionManager::GetInstance().DisconnectCaller(GetContext()->GetToken());
+    if (ret) {
+        HILOG_INFO("The service connection is not disconnected.");
+    }
 }
 }
 }

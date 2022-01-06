@@ -52,16 +52,6 @@ bool AmsConfigurationParameter::GetPhoneServiceState() const
     return canStartPhoneService_;
 }
 
-bool AmsConfigurationParameter::GetStartContactsState() const
-{
-    return canStartContacts;
-}
-
-bool AmsConfigurationParameter::GetStartMmsState() const
-{
-    return canStartMms;
-}
-
 bool AmsConfigurationParameter::NonConfigFile() const
 {
     return nonConfigFile_;
@@ -128,14 +118,12 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
     int ret = -1;
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
         canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
-        canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
+        canStartSettingsData_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
         canStartUiNavigationBar_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
         canStartPhoneService_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
-        canStartContacts = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_CONTACTS).get<bool>();
-        canStartMms = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_MMS).get<bool>();
         missionSaveTime_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
         HILOG_INFO("get ams service config succes!");
         ret = 0;
@@ -185,5 +173,6 @@ int AmsConfigurationParameter::GetMemThreshold(const std::string &key)
 
     return std::stoi(threshold->second);
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

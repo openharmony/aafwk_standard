@@ -51,10 +51,11 @@ inline NativeValue* CreateJsValue(NativeEngine& engine, const T& value)
     } else if constexpr (std::is_enum_v<ValueType>) {
         return engine.CreateNumber(static_cast<std::make_signed_t<ValueType>>(value));
     }
+    return nullptr;
 }
 
 template<class T>
-inline bool ConvertFormJsValue(NativeEngine& engine, NativeValue* jsValue, T& value)
+inline bool ConvertFromJsValue(NativeEngine& engine, NativeValue* jsValue, T& value)
 {
     if (jsValue == nullptr) {
         return false;
@@ -126,7 +127,7 @@ public:
     explicit HandleScope(NativeEngine& engine);
     ~HandleScope();
 
-    HandleScope& Escape(NativeValue* value);
+    NativeValue* Escape(NativeValue* value);
 
     HandleScope(const HandleScope&) = delete;
     HandleScope(HandleScope&&) = delete;

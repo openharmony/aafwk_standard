@@ -15,18 +15,21 @@ import("//build/test.gni")
 
 group("systemtest") {
   testonly = true
+  deps = []
 
-  deps = [ "systemtest/aa:systemtest" ]
+  #deps = [ "systemtest/aa:systemtest" ]
 }
 
 group("moduletest") {
   testonly = true
+  deps = []
 
-  deps = [ "moduletest/aa:moduletest" ]
+  #deps = [ "moduletest/aa:moduletest" ]
 }
 
 group("unittest") {
   testonly = true
+  deps = []
 
-  deps = [ "unittest/aa:unittest" ]
+  #deps = [ "unittest/aa:unittest" ]
 }

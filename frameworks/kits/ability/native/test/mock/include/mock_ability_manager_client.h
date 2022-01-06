@@ -73,8 +73,7 @@ public:
     {
         return INSERTNUM;
     };
-    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
-        const NativeRdb::DataAbilityPredicates &predicates)
+    virtual int Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
     {
         return UPDATENUM;
     };
@@ -126,7 +125,7 @@ public:
     {
         return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     };
-    virtual void NotifyContinuationResult(const int32_t result){};
+    virtual void NotifyContinuationResult(const int32_t result) {};
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

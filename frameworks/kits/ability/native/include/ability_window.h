@@ -22,6 +22,7 @@
 #include "window.h"
 #include "window_option.h"
 #include "window_scene.h"
+#include "../../ability_runtime/include/ability_context.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -43,9 +44,14 @@ public:
     /**
      * @brief Sets the window config for the host ability to create window.
      *
-     * @param config Indicates window config.
+     * @param winType Indicates window config.
+     * @param abilityContext Indicates runtime ability context.
+     * @param listener Indicates window lifecycle listener.
+     * @return true if init window success.
      */
-    bool SetWindowType(Rosen::WindowType winType);
+    bool InitWindow(Rosen::WindowType winType,
+        std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext,
+        sptr<Rosen::IWindowLifeCycle> &listener);
 
     /**
      * @brief Called when this ability is started.
@@ -95,6 +101,7 @@ private:
     std::weak_ptr<IAbilityEvent> ability_;
     std::shared_ptr<Rosen::WindowScene> windowScene_;
     bool isWindowAttached = false;
+    Rosen::WindowType winType_ = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

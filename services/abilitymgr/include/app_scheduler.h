@@ -20,6 +20,7 @@
 #include <unordered_set>
 
 #include "ability_info.h"
+// #include "app_process_data.h"
 #include "appmgr/app_mgr_client.h"
 #include "appmgr/app_state_callback_host.h"
 #include "application_info.h"
@@ -78,6 +79,7 @@ public:
  * AppScheduler , access app manager service.
  */
 class AppScheduler : virtual RefBase, public AppExecFwk::AppStateCallbackHost {
+
     DECLARE_DELAYED_SINGLETON(AppScheduler)
 public:
     /**
@@ -122,6 +124,23 @@ public:
     void MoveToBackground(const sptr<IRemoteObject> &token);
 
     /**
+     * Update ability state.
+     *
+     * @param token, the token of ability.
+     * @param state, ability state.
+     */
+    void UpdateAbilityState(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state);
+
+    /**
+     * UpdateExtensionState, call UpdateExtensionState() through the proxy object, update the extension status.
+     *
+     * @param token, the unique identification to update the extension.
+     * @param state, extension status that needs to be updated.
+     * @return
+     */
+    void UpdateExtensionState(const sptr<IRemoteObject> &token, const AppExecFwk::ExtensionState state);
+
+    /**
      * AbilityBehaviorAnalysis, ability behavior analysis assistant process optimization.
      *
      * @param token, the unique identification to start the ability.
@@ -163,21 +182,6 @@ public:
      */
     int KillApplication(const std::string &bundleName);
 
-    /**
-     * kill the application
-     *
-     * @param bundleName.
-     * @param uid.
-     */
-    int KillApplicationByUid(const std::string &bundleName, const int uid);
-
-    /**
-     * clear the application data
-     *
-     * @param bundleName.
-     */
-    int ClearUpApplicationData(const std::string &bundleName);
-
     void AttachTimeOut(const sptr<IRemoteObject> &token);
 
     void PrepareTerminate(const sptr<IRemoteObject> &token);
@@ -199,11 +203,6 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig);
-
-    /**
-     * Start a resident process
-     */
-    void StartupResidentProcess();
 
 protected:
     /**

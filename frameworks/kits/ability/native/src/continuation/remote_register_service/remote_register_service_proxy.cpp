@@ -17,6 +17,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 /**
  * register to controlcenter continuation register service.
  *

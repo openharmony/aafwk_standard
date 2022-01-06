@@ -57,7 +57,7 @@ void WantSenderProxyTest::SetUp()
  * EnvConditions: NA
  * CaseDescription: Verify that the return value of Send is normal
  */
-HWTEST_F(WantSenderProxyTest, WantSenderProxyTest_001, TestSize.Level1)
+HWTEST_F(WantSenderProxyTest, WantSenderProxyTest_001, TestSize.Level0)
 {
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
         .Times(1)

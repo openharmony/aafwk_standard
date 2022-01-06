@@ -39,10 +39,6 @@ public:
     {
         return 0;
     }
-    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int requestUid) override
-    {
-        return 0;
-    }
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
     int MinimizeAbility(const sptr<IRemoteObject> &token) override
@@ -65,7 +61,7 @@ public:
     void DumpState(const std::string &args, std::vector<std::string> &info) override;
 
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
-    int StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken) override;
+    int StopServiceAbility(const Want &want) override;
     int PowerOff() override;
     int PowerOn() override;
 
@@ -121,9 +117,20 @@ public:
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
-    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
     MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
+
+    MOCK_METHOD1(LockMissionForCleanup, int(int32_t missionId));
+    MOCK_METHOD1(UnlockMissionForCleanup, int(int32_t missionId));
+    MOCK_METHOD1(RegisterMissionListener, int(const sptr<IMissionListener> &listener));
+    MOCK_METHOD1(UnRegisterMissionListener, int(const sptr<IMissionListener> &listener));
+    MOCK_METHOD3(
+        GetMissionInfos, int(const std::string& deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos));
+    MOCK_METHOD3(GetMissionInfo, int(const std::string& deviceId, int32_t missionId, MissionInfo &missionInfo));
+    MOCK_METHOD1(CleanMission, int(int32_t missionId));
+    MOCK_METHOD0(CleanAllMissions, int());
+    MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+
     int RemoveMission(int id) override;
 
     int RemoveStack(int id) override;
@@ -145,7 +152,7 @@ public:
         return 0;
     }
 
-    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
+    int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
     {
         return 0;
     }
@@ -154,7 +161,7 @@ public:
 
     int KillProcess(const std::string &bundleName) override;
 
-    int UninstallApp(const std::string &bundleName, const int uid) override;
+    int UninstallApp(const std::string &bundleName) override;
 
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override
     {
@@ -172,12 +179,7 @@ public:
         return 0;
     }
 
-    virtual int ClearUpApplicationData(const std::string &bundleName) override
-    {
-        return 0;
-    }
-
-    enum class RequestCode {
+    enum RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,
         E_STATE_ACTIVE,

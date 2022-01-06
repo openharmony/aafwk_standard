@@ -22,6 +22,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 AppStateCallbackHost::AppStateCallbackHost()
 {}
 
@@ -53,5 +54,6 @@ int32_t AppStateCallbackHost::HandleOnAbilityRequestDone(MessageParcel &data, Me
 {
     return NO_ERROR;
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

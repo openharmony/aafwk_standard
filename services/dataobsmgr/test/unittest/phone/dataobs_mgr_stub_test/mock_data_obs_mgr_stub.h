@@ -33,6 +33,7 @@ int IPCObjectStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessagePa
 
 namespace OHOS {
 namespace AAFwk {
+
 class MockDataObsMgrStub : public DataObsManagerStub {
 public:
     MOCK_METHOD2(RegisterObserver, int(const Uri &, const sptr<IDataAbilityObserver> &));
@@ -46,6 +47,7 @@ public:
     virtual ~MockDataAbilityObserverStub() = default;
     MOCK_METHOD0(OnChange, void(void));
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif /* MOCK_DATA_OBS_MGR_STUB_H */

@@ -21,6 +21,7 @@ class Ability {
     onWindowStageDestroy() {}
     onForeground(want) {}
     onBackground() {}
+    onWindowStageRestore(windowStage) {}
 }
 
 export default Ability

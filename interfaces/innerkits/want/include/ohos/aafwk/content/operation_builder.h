@@ -81,6 +81,7 @@ private:
     unsigned int flags_ = 0;
     Uri uri_;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 

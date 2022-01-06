@@ -45,6 +45,7 @@ public:
 private:
     void RemoteRequest(MessageParcel &data, int commandDisconnect);
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ICONNECT_CALLBACK_H

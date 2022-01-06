@@ -24,6 +24,7 @@ using Ability = OHOS::AppExecFwk::Ability;
 #define MODE 0771
 namespace OHOS {
 namespace AppExecFwk {
+
 struct CallAbilityPermissionParam {
     std::vector<std::string> permission_list;
     int requestCode = 0;

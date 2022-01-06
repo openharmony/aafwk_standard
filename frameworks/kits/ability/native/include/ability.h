@@ -43,7 +43,9 @@
 #include "iremote_object.h"
 #include "pac_map.h"
 #include "want.h"
+#include "window_option.h"
 #include "window_scene.h"
+#include "wm_common.h"
 #include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;
@@ -258,6 +260,14 @@ public:
     virtual void onSceneDestroyed();
 
     /**
+     * @brief Called after ability restored.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnSceneRestored();
+
+    /**
      * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
      *
      *
@@ -369,7 +379,7 @@ public:
      *
      * @param windowOption Indicates the window option defined by the user.
      */
-    virtual void SetWindowType(Rosen::WindowType winType);
+    virtual void InitWindow(Rosen::WindowType winType);
 
     /**
      * @brief Get the window belong to the ability.
@@ -396,14 +406,14 @@ public:
     * @description: Obtains api version based on ability.
     * @return api version.
     */
-    int GetTargetVersion();
+    int GetCompatibleVersion();
 
     /**
     * @description: Set api version in an ability.
-    * @param targetVersion api version
+    * @param compatibleVersion api version
     * @return None.
     */
-    void SetTargetVersion(int targetVersion);
+    void SetCompatibleVersion(int compatibleVersion);
 
     /**
      * @brief Called when a key is lone pressed.
@@ -1330,7 +1340,7 @@ public:
      * @param listener WindowScene listener
      * @return None.
      */
-    void SetSceneListener(sptr<Rosen::IWindowLifeCycle> listener);
+    void SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener);
 
 protected:
     /**
@@ -1339,7 +1349,44 @@ protected:
      */
     sptr<IRemoteObject> GetFormRemoteObject();
 
+    /**
+     * @brief Acquire the launch parameter.
+     * @return launch parameter.
+     */
     const AAFwk::LaunchParam& GetLaunchParam() const;
+
+    /**
+     * @brief process when foreground executed.
+     *
+     * You can override this function to implement your own processing logic
+     */
+    virtual void DoOnForeground(const Want& want);
+
+    /**
+     * @brief Acquire the window option.
+     * @return window option.
+     */
+    sptr<Rosen::WindowOption> GetWindowOption(const Want &want);
+
+    /**
+     * @brief judge where invoke resoreWindowStage in continuation
+     * @return true if invoked resoreWindowStage in continuation.
+     */
+    bool IsRestoredInContinuation() const;
+
+    /**
+     * @brief Notify continuation
+     *
+     * @param want the want param.
+     * @param success whether continuation success.
+     */
+    void NotityContinuationResult(const Want& want, bool success);
+
+protected:
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
+    std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
+    sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
+    LaunchParam launchParam_;
 
 private:
     std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
@@ -1379,7 +1426,6 @@ private:
     std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
     std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
-    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::shared_ptr<LifeCycle> lifecycle_ = nullptr;
     std::shared_ptr<AbilityLifecycleExecutor> abilityLifecycleExecutor_ = nullptr;
@@ -1389,11 +1435,8 @@ private:
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
     std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
-    sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
-    std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
-    LaunchParam launchParam_;
     bool bWindowFocus_ = false;
-    int targetVersion_ = 0;
+    int compatibleVersion_ = 0;
 
     static const std::string SYSTEM_UI;
     static const std::string STATUS_BAR;
@@ -1423,6 +1466,7 @@ private:
     static const int32_t RELEASE_FORM = 8;
     static const int32_t RELEASE_CACHED_FORM = 9;
     static const int64_t MIN_NEXT_TIME = 5;
+    static const std::map<int32_t, Rosen::WindowMode> convertWindowModeMap_;
 
 private:
     /**
@@ -1501,6 +1545,7 @@ private:
      */
     bool ReAcquireForm(const int64_t formId, const Want &want);
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_H

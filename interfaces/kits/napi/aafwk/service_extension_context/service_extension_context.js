@@ -20,9 +20,9 @@ class ServiceExtensionContext extends ExtensionContext {
         super(obj);
     }
 
-    startAbility(want, callback) {
+    startAbility(want, options, callback) {
         console.log("startAbility");
-        return this.__context_impl__.startAbility(want, callback);
+        return this.__context_impl__.startAbility(want, options, callback);
     }
 
     connectAbility(want, options) {

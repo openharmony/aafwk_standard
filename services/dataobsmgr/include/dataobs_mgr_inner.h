@@ -68,6 +68,7 @@ private:
     ObsMapType obsmap_;
     ObsRecipientMapType recipientMap_;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_DATAOBS_MANAGER_INNER_H

@@ -49,6 +49,7 @@ private:
 
     std::shared_ptr<OHOS::DistributedSchedule::DistributedSchedProxy> dmsProxy_;
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif

@@ -150,7 +150,7 @@ ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
+ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
     return ERR_OK;
 }
@@ -161,7 +161,7 @@ ErrCode AbilityManagerClient::GetRecentMissions(
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
+ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
 {
     return ERR_OK;
 }
@@ -317,11 +317,13 @@ void MockAbilityManagerClient::SetMockMoveMissionToEnd(bool flag)
 {
     moveMissionToEnd_ = flag;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS
 
 namespace OHOS {
 namespace AppExecFwk {
+
 MockAbilityContextDeal::MockAbilityContextDeal()
 {
     hapModInfo_ = nullptr;
@@ -362,5 +364,6 @@ void MockAbilityContextTest::SetToken(const sptr<IRemoteObject> token)
 {
     token_ = token;
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

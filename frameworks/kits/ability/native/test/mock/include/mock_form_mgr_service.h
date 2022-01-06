@@ -130,8 +130,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int NotifyWhetherVisibleForms(
-        const std::vector<int64_t> &formIds,
-        const sptr<IRemoteObject> &callerToken,
+        const std::vector<int64_t> &formIds, 
+        const sptr<IRemoteObject> &callerToken, 
         const int32_t formVisibleType)
     {
         if (formIds.size() == 1) {
@@ -196,7 +196,7 @@ public:
             return ERR_OK;
         } else {
             return ERR_INVALID_VALUE;
-        }
+        }  
     }
 
     /**
@@ -207,8 +207,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int LifecycleUpdate(
-        const std::vector<int64_t> &formIds,
-        const sptr<IRemoteObject> &callerToken,
+        const std::vector<int64_t> &formIds, 
+        const sptr<IRemoteObject> &callerToken, 
         const int32_t updateType)
     {
         if (formIds.size() == 0) {
@@ -229,6 +229,7 @@ public:
         return 0;
     }
 };
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_SERVICES_MOCK_FORM_MGR_SERVICE_H

@@ -79,9 +79,11 @@ bool operator!=(const ApplicationInfo &a, const ApplicationInfo &b)
 {
     return !(a == b);
 }
+
 }  // namespace OHOS::AppExecFwk
 
 namespace OHOS::AAFwk {
+
 bool operator==(const Want &a, const Want &b)
 {
     if (&a != &b) {
@@ -95,6 +97,7 @@ bool operator!=(const Want &a, const Want &b)
 {
     return !(a == b);
 }
+
 }  // namespace OHOS::AAFwk
 
 namespace OHOS {
@@ -706,5 +709,6 @@ HWTEST_F(AbilityRecordModuleTest, Dump_001, TestSize.Level2)
     abilityRecord->Dump(info);
     EXPECT_FALSE(info.empty());
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

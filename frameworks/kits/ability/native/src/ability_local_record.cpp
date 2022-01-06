@@ -137,19 +137,19 @@ void AbilityLocalRecord::SetAbilityThread(const sptr<AbilityThread> &abilityThre
  * @description: Obtains api version based on ability record.
  * @return api version.
  */
-int AbilityLocalRecord::GetTargetVersion()
+int AbilityLocalRecord::GetCompatibleVersion()
 {
-    return targetVersion_;
+    return compatibleVersion_;
 }
 
 /**
  * @description: Set api version in an ability record.
- * @param targetVersion api version
+ * @param compatibleVersion api version
  * @return None.
  */
-void AbilityLocalRecord::SetTargetVersion(int32_t targetVersion)
+void AbilityLocalRecord::SetCompatibleVersion(int32_t compatibleVersion)
 {
-    targetVersion_ = targetVersion;
+    compatibleVersion_ = compatibleVersion;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

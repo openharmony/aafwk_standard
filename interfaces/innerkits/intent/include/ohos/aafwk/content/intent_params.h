@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 class IntentParams final : public Parcelable {
 public:
     void SetParam(const std::string &key, IInterface *value);
@@ -72,6 +73,7 @@ private:
        no need explicit initialization in the construct function */
     std::map<std::string, sptr<IInterface>> params_;
 };
+
 }  // namespace AAFwk
 }  // namespace OHOS
 

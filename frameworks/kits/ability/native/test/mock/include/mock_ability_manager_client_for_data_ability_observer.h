@@ -28,6 +28,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class MockAbilitySchedulerTools {
 public:
     MockAbilitySchedulerTools():mockStatus(false) {};
@@ -94,11 +95,13 @@ private:
 };
 
 std::shared_ptr<MockAbilitySchedulerTools> MockAbilitySchedulerTools::instance_ = nullptr;
+
 }  // namespace AppExecFwk
 }  // namespace OHOS
 
 namespace OHOS {
 namespace AAFwk {
+
 sptr<AAFwk::IAbilityScheduler> AAFwk::AbilityManagerClient::AcquireDataAbility(
     const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken)
 {
@@ -110,6 +113,7 @@ ErrCode AbilityManagerClient::ReleaseDataAbility(
 {
     return ERR_OK;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_MOCK_ABILITY_MANAGER_CLIENT_FOR_DATA_ABILITY_OBSERVER_STUB_H */

@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef FOUNDATION_AAFWK_SERVICES_ABILITYMGR_INCLUDE_TASK_DATA_PERSISTENCE_MGR_H
+#define FOUNDATION_AAFWK_SERVICES_ABILITYMGR_INCLUDE_TASK_DATA_PERSISTENCE_MGR_H
+
+#include <memory>
+#include <unordered_map>
+
+#include "singleton.h"
+#include "ability_event_handler.h"
+#include "mission_data_storage.h"
+
+namespace OHOS {
+namespace AAFwk {
+const std::string THREAD_NAME = "TaskDataStorage";
+const std::string SAVE_MISSION_INFO = "SaveMissionInfo";
+const std::string DELETE_MISSION_INFO = "DeleteMissionInfo";
+
+class TaskDataPersistenceMgr : public std::enable_shared_from_this<TaskDataPersistenceMgr> {
+    DECLARE_DELAYED_SINGLETON(TaskDataPersistenceMgr)
+public:
+    /**
+     * @brief initialization of task data persistence manager.
+     * @param user id Indicates the missionInfo object of user to operate.
+     * @return Returns true if init successfully, returns false otherwise.
+     */
+    bool Init(int userId);
+
+    /**
+     * @brief Boot query persistent storage.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    bool LoadAllMissionInfo(std::list<InnerMissionInfo> &missionInfoList);
+
+    /**
+     * @brief Save the mission data.
+     * @param missionInfo Indicates the missionInfo object to be save.
+     * @return Returns true if the data is successfully saved; returns false otherwise.
+     */
+    bool SaveMissionInfo(const InnerMissionInfo &missionInfo);
+
+    /**
+     * @brief Delete the mission data corresponding to the mission Id.
+     * @param missionId Indicates this mission id.
+     * @return Returns true if the data is successfully deleted; returns false otherwise.
+     */
+    bool DeleteMissionInfo(int missionId);
+
+private:
+    std::unordered_map<int, std::shared_ptr<MissionDataStorage>> missionDataStorageMgr_;
+    std::shared_ptr<MissionDataStorage> currentMissionDataStorage_;
+    std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
+    std::shared_ptr<AppExecFwk::EventHandler> handler_;
+};
+}  // namespace AAFwk
+}  // namespace OHOS
+#endif  // FOUNDATION_AAFWK_SERVICES_ABILITYMGR_INCLUDE_TASK_DATA_PERSISTENCE_MGR_H

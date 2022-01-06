@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 class Intent;
 class IntentFilter final : public Parcelable {
 public:
@@ -58,6 +59,7 @@ private:
     std::string entity_;
     std::vector<std::string> actions_;
 };
+
 } // namespace AAFwk
 } // namespace OHOS
 

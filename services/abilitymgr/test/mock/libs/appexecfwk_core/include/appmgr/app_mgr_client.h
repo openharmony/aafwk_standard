@@ -21,6 +21,7 @@
 
 #include "ability_info.h"
 #include "application_info.h"
+// #include "app_mgr_constants.h"
 #include "iapp_state_callback.h"
 #include "running_process_info.h"
 
@@ -113,14 +114,6 @@ public:
      * @return ERR_OK, return back success, others fail.
      */
     virtual AppMgrResultCode KillApplication(const std::string &bundleName);
-
-    /**
-     * kill the application
-     *
-     * @param bundleName.
-     * @param uid.
-     */
-    virtual AppMgrResultCode KillApplicationByUid(const std::string &bundleName, const int uid);
 
     /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
