@@ -22,7 +22,7 @@ group("unittest") {
   testonly = true
 
   deps = [
-    "abilitymgr:unittest",
-    "dataobsmgr:unittest",
+    #"abilitymgr:unittest",
+    #"dataobsmgr:unittest",
   ]
 }

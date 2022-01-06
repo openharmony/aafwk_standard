@@ -67,6 +67,7 @@ private:
     int StopServiceAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DumpStateInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForSettingsInner(MessageParcel &data, MessageParcel &reply);
+    int StartAbilityForOptionsInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFloatingStackInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToSplitScreenStackInner(MessageParcel &data, MessageParcel &reply);
     int ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -99,14 +100,22 @@ private:
     int UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply);
 
     int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
-    int StartAbilityAddRequestUidInner(MessageParcel &data, MessageParcel &reply);
-    int GetWantSenderInfoInner(MessageParcel &data, MessageParcel &reply);
     int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
-    int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
+
     int StartContinuationInner(MessageParcel &data, MessageParcel &reply);
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
+
+    int LockMissionForCleanupInner(MessageParcel &data, MessageParcel &reply);
+    int UnlockMissionForCleanupInner(MessageParcel &data, MessageParcel &reply);
+    int RegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply);
+    int UnRegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply);
+    int GetMissionInfosInner(MessageParcel &data, MessageParcel &reply);
+    int GetMissionInfoInner(MessageParcel &data, MessageParcel &reply);
+    int CleanMissionInner(MessageParcel &data, MessageParcel &reply);
+    int CleanAllMissionsInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToFrontInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

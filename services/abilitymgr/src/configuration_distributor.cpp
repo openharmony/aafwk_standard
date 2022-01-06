@@ -37,13 +37,9 @@ void ConfigurationDistributor::Atach(const std::weak_ptr<ConfigurationHolder> &o
         HILOG_INFO("Atach ob is null");
         return;
     }
-    auto ability = ob.lock();
-    int id = ability->GetId();
+    int id = ob.lock()->GetId();
     HILOG_INFO("Atach ob id[%{public}d]", id);
     observerList_.emplace_back(ob);
-
-    // Init ability thread configurtion object
-    ability->UpdateConfiguration(config_);
 }
 
 void ConfigurationDistributor::Detach(const std::weak_ptr<ConfigurationHolder> &ob)
@@ -80,12 +76,6 @@ void ConfigurationDistributor::UpdateConfiguration(const AppExecFwk::Configurati
         }
     }
     HILOG_INFO("notify done");
-}
-
-void ConfigurationDistributor::InitConfiguration(const AppExecFwk::Configuration &newConfig)
-{
-    std::lock_guard<std::mutex> lock(configLock_);
-    config_ = newConfig;
 }
 } // namespace AAFwk
 } // namespace OHOS

@@ -46,14 +46,21 @@ public:
 
     void OnSceneCreated() override;
     void onSceneDestroyed() override;
+    void OnSceneRestored() override;
 
     void OnForeground(const Want &want) override;
     void OnBackground() override;
 
     void OnAbilityResult(int requestCode, int resultCode, const Want &resultData) override;
+    void OnRequestPermissionsFromUserResult(
+        int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
+
+protected:
+    void DoOnForeground(const Want& want) override;
 
 private:
     void CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
+    std::unique_ptr<NativeReference> CreateAppWindowStage();
 
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsAbilityObj_;

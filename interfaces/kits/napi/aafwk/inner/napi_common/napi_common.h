@@ -20,4 +20,5 @@
 #include "napi_common_error.h"
 #include "napi_common_util.h"
 #include "napi_common_want.h"
+#include "napi_common_start_options.h"
 #endif  // OHOS_APPEXECFWK_NAPI_COMMON_H

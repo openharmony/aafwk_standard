@@ -22,7 +22,6 @@
 #include <memory>
 #include <vector>
 
-#include "ability_connect_callback_interface.h"
 #include "ability_info.h"
 #include "ability_start_setting.h"
 #include "ability_token_stub.h"
@@ -35,7 +34,6 @@
 #include "lifecycle_state_info.h"
 #include "want.h"
 #include "window_info.h"
-#include "uri.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -44,6 +42,8 @@ using Closure = std::function<void()>;
 class AbilityRecord;
 class MissionRecord;
 class ConnectionRecord;
+class Mission;
+class MissionList;
 
 const std::string ABILITY_TOKEN_NAME = "AbilityToken";
 const std::string LINE_SEPARATOR = "\n";
@@ -113,35 +113,30 @@ private:
  * @class AbilityRequest
  * Wrap parameters of starting ability.
  */
-enum AbilityCallType {
-    INVALID_TYPE = 0,
-    START_ABILITY_TYPE,
-    START_ABILITY_SETTING_TYPE,
-    CONNECT_ABILITY_TYPE,
-    ACQUIRE_DATA_ABILITY_TYPE,
-    STOP_SERVICE_ABILITY_TYPE,
-};
 struct AbilityRequest {
     Want want;
     AppExecFwk::AbilityInfo abilityInfo;
     AppExecFwk::ApplicationInfo appInfo;
     int requestCode = -1;
     bool restart = false;
-    int requestUid = -1;
-    int callerUid = -1;
-    bool tryBind = false;
-    std::shared_ptr<OHOS::Uri> uri = nullptr;
-    AbilityCallType callType = AbilityCallType::INVALID_TYPE;
-    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IRemoteObject> callerToken;
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
-    sptr<IAbilityConnection> connect = nullptr;
-    sptr<IRemoteObject> multiApplicationToken = nullptr;
-    int32_t targetVersion = 0;
+    int32_t compatibleVersion = 0;
 
     bool IsNewVersion() const
     {
-        return targetVersion > API_VERSION_7;
+        return compatibleVersion > API_VERSION_7;
     }
+
+    bool IsContinuation() const
+    {
+        auto flags = want.GetFlags();
+        if ((flags & Want::FLAG_ABILITY_CONTINUATION) == Want::FLAG_ABILITY_CONTINUATION) {
+            return true;
+        }
+        return false;
+    }
+
     void Dump(std::vector<std::string> &state)
     {
         std::string dumpInfo = "      want [" + want.ToUri() + "]";
@@ -187,6 +182,25 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int LoadAbility();
+
+    /**
+     * foreground the ability.
+     *
+     */
+    void ForegroundAbility();
+
+    /**
+     * process request of foregrounding the ability.
+     *
+     */
+    void ProcessForegroundAbility();
+
+    /**
+     * move the ability to back ground.
+     *
+     * @param task timeout task.
+     */
+    void BackgroundAbility(const Closure &task);
 
     /**
      * terminate ability.
@@ -697,10 +711,6 @@ public:
     bool GetLockScreenState() const;
     void SetMovingBackgroundFlag(bool isMoving);
     bool IsMovingBackground() const;
-    void SetWillSatrtAbilityRequest(const std::shared_ptr<AbilityRequest> &abilityRequestPtr);
-    std::shared_ptr<AbilityRequest> GetWillSatrtAbilityRequest() const;
-    void SetMoveSplitScreenStack(bool isMoveSplitScreenStack);
-    bool IsMoveSplitScreenStack() const;
 
     void SetLockScreenRoot();
     bool IsLockScreenRoot() const;
@@ -712,6 +722,12 @@ public:
     void SetLastExitReason(const LastExitReason &reason);
 
     void NotifyContinuationResult(const int32_t result);
+    std::shared_ptr<MissionList> GetOwnedMissionList() const;
+
+    void SetMission(const std::shared_ptr<Mission> &mission);
+    void SetMissionList(const std::shared_ptr<MissionList> &missionList);
+    std::shared_ptr<Mission> GetMission() const;
+    int32_t GetMissionId() const;
 
     void UpdateConfiguration(const AppExecFwk::Configuration &config) override;
 
@@ -784,15 +800,16 @@ public:
     bool isRestarting_ = false;     // is restarting ?
     bool isInMovingState_ = false;  // whether complete multi window moving state.
     bool isMovingBackground_ = false;
-    bool isMoveSplitScreenStack_ = false;
     bool isLockScreenRoot_ = false;
     bool isPowerStateLockScreen_ = false;
     AppState appState_ = AppState::BEGIN;
 
-    int32_t targetVersion_ = 0; // > 7 new version, <= 7 old version.
-    std::shared_ptr<AbilityRequest> abilityRequestPtr_ = {};
-    // the abilityRequest that the multi application selector will start
+    int32_t compatibleVersion_ = 0; // > 7 new version, <= 7 old version.
+    std::weak_ptr<MissionList> missionList_;
+    std::weak_ptr<Mission> mission_;
+    int32_t missionId_ = -1;
 };
+
 class AbilityRecordNew : public AbilityRecord {
 public:
     AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,

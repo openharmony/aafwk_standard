@@ -40,8 +40,10 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     token_ = record->GetToken();
     record->SetAbilityImpl(shared_from_this());
     ability_ = ability;
+    handler_ = handler;
+    ability_->SetSceneListener(
+        sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
     ability_->Init(record->GetAbilityInfo(), application, handler, token);
-    ability_->SetSceneListener(sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_)));
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_ = application;
     contextDeal_ = contextDeal;
@@ -69,7 +71,7 @@ void AbilityImpl::Start(const Want &want)
     APP_LOGI("AbilityImpl::Start");
     ability_->OnStart(want);
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STARTED_NEW;
     } else {
         if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
@@ -83,7 +85,7 @@ void AbilityImpl::Start(const Want &want)
 
     // Multimodal Events Register
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetTargetVersion() < TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS)) {
         WindowEventRegister();
     }
     APP_LOGI("%{public}s end.", __func__);
@@ -105,7 +107,7 @@ void AbilityImpl::Stop()
     APP_LOGI("AbilityImpl::Stop");
     ability_->OnStop();
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STOPED_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
@@ -167,8 +169,47 @@ void AbilityImpl::Inactive()
     APP_LOGI("%{public}s end.", __func__);
 }
 
+int AbilityImpl::GetCompatibleVersion()
+{
+    if (ability_) {
+        return ability_->GetCompatibleVersion();
+    }
+
+    return -1;
+}
+
+void AbilityImpl::AfterUnFocused()
+{
+    APP_LOGI("%{public}s begin.", __func__);
+    if (!ability_ || !contextDeal_ || !handler_) {
+        return;
+    }
+
+    if (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS) {
+        APP_LOGI("new version ability, do nothing when after unfocused.");
+        return;
+    }
+
+    APP_LOGI("old version ability, window after unfocused.");
+    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
+        auto info = contextDeal->GetLifeCycleStateInfo();
+        info.state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
+        Want want(*(ability->GetWant()));
+        abilityImpl->HandleAbilityTransaction(want, info);
+    };
+    handler_->PostTask(task);
+    APP_LOGI("%{public}s end.", __func__);
+}
+
 void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 {
+    APP_LOGI("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner && owner->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
+        return;
+    }
+
+    APP_LOGI("new version ability, window after foreground.");
     PacMap restoreData;
     AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
         AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW, restoreData);
@@ -176,6 +217,13 @@ void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
 {
+    APP_LOGI("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner && owner->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
+        return;
+    }
+
+    APP_LOGI("new version ability, window after background.");
     PacMap restoreData;
     AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
         AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW, restoreData);
@@ -183,10 +231,17 @@ void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
 {
+    APP_LOGI("%{public}s.", __func__);
 }
 
 void AbilityImpl::WindowLifeCycleImpl::AfterUnFocused()
 {
+    APP_LOGI("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner) {
+        owner->AfterUnFocused();
+    }
+    APP_LOGI("%{public}s end.", __func__);
 }
 
 /**
@@ -206,7 +261,7 @@ void AbilityImpl::Foreground(const Want &want)
     APP_LOGI("AbilityImpl::Foreground");
     ability_->OnForeground(want);
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_FOREGROUND_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
@@ -232,7 +287,7 @@ void AbilityImpl::Background()
     ability_->OnLeaveForeground();
     ability_->OnBackground();
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetTargetVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
@@ -698,7 +753,7 @@ bool AbilityImpl::CheckAndSave()
     return true;
 }
 
-PacMap & AbilityImpl::GetRestoreData()
+PacMap &AbilityImpl::GetRestoreData()
 {
     return restoreData_;
 }
@@ -760,22 +815,14 @@ Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("%{public}s begin.", __func__);
-
-    // Update for the first time
-    if (!configuration_) {
-        configuration_ = std::make_shared<Configuration>(config);
-        APP_LOGI("AbilityImpl::Init the configuration");
-        return;
-    }
-
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
-        return;
     }
 
     ability_->OnConfigurationUpdated(config);
     APP_LOGI("%{public}s end.", __func__);
 }
+
 void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
 {
     int32_t code = keyEvent->GetKeyAction();
@@ -800,7 +847,7 @@ void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::Poin
 void AbilityImpl::WindowEventRegister()
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (ability_->GetTargetVersion() < TARGET_VERSION_THRESHOLDS) {
+    if (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
         auto window = ability_->GetWindow();
         if (window) {
             std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =

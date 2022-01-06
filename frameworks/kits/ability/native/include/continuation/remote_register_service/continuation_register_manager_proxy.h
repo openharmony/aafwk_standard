@@ -22,6 +22,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 class ContinuationConnector;
 class Context;
 class IContinuationDeviceCallback;

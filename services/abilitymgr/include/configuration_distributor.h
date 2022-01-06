@@ -30,11 +30,9 @@ public:
     void Atach(const std::weak_ptr<ConfigurationHolder> &ob);
     void Detach(const std::weak_ptr<ConfigurationHolder> &ob);
     void UpdateConfiguration(const AppExecFwk::Configuration &newConfig);
-    void InitConfiguration(const AppExecFwk::Configuration &);
 private:
     std::list<std::weak_ptr<ConfigurationHolder>> observerList_;
     std::mutex configLock_;
-    AppExecFwk::Configuration config_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

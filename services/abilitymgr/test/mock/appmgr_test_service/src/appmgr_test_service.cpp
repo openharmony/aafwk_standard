@@ -15,12 +15,15 @@
 
 #include "appmgr_test_service.h"
 
+#include <string>
+#include <unistd.h>
 
 #include "ability_scheduler.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
+
 AppMgrEventHandler::AppMgrEventHandler(
     const std::shared_ptr<AppExecFwk::EventRunner> &runner, const std::shared_ptr<AbilityManagerService> &server)
     : AppExecFwk::EventHandler(runner), server_(server)
@@ -170,5 +173,6 @@ void AppManagerTestService::Start()
     eventLoop_->Run();
     return;
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

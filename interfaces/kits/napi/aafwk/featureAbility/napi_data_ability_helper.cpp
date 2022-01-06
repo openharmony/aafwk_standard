@@ -470,6 +470,7 @@ napi_value NAPI_NotifyChange(napi_env env, napi_callback_info info)
  */
 napi_value NotifyChangeWrap(napi_env env, napi_callback_info info, DAHelperNotifyChangeCB *notifyChangeCB)
 {
+
     HILOG_INFO("%{public}s,called", __func__);
     size_t argcAsync = ARGS_TWO;
     const size_t argcPromise = ARGS_ONE;
@@ -3381,5 +3382,6 @@ void GetDataAbilityResultForResult(
     }
     HILOG_INFO("%{public}s, NAPI_ExecuteBatch, getDataAbilityResultForResult end.", __func__);
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

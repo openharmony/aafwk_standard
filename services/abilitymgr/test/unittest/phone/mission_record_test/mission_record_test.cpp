@@ -351,5 +351,6 @@ HWTEST_F(MissionRecordTest, stack_ActiveTimestamp_001, TestSize.Level1)
     activeTime = missionRecord->GetActiveTimestamp();
     EXPECT_TRUE(time < activeTime);
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

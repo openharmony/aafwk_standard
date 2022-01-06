@@ -85,7 +85,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_ConnectAbility_0100, Function
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -112,7 +111,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_DisconnectAbility_0100, Funct
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -140,7 +138,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StartAbility_0100, Function |
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -162,7 +159,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_TerminateAbility_0100, Functi
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -190,7 +186,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_TerminateAbility_0200, Functi
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -215,7 +210,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StopService_0100, Function | 
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
@@ -245,7 +239,6 @@ HWTEST_F(AbilityContextTest, AaFwk_Ability_Context_StopService_0200, Function | 
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
     abilityInfo->name = "DemoAbility";
-    abilityInfo->isNativeAbility = true;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
 
     AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);

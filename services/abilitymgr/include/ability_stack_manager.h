@@ -26,7 +26,6 @@
 #include "ability_record.h"
 #include "application_info.h"
 #include "mission_record.h"
-#include "mission_snapshot.h"
 #include "mission_stack.h"
 #include "mission_index_info.h"
 #include "mission_option.h"
@@ -38,7 +37,6 @@
 #include "stack_info.h"
 #include "power_storage.h"
 #include "want.h"
-#include "screenshot_handler.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -84,11 +82,9 @@ public:
      * @param token, the token of service type's ability to terminate.
      * @param resultCode, the result code of service type's ability to terminate.
      * @param resultWant, the result want for service type's ability to terminate.
-     * @param abilityRequestPtr, passed in when the application selector starts selecting ability
      * @return Returns ERR_OK on success, others on failure.
      */
-    int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant,
-        const std::shared_ptr<AbilityRequest> &abilityRequestPtr = nullptr);
+    int TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant);
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -356,9 +352,8 @@ public:
      * Uninstall app
      *
      * @param bundleName.
-     * @param uid.
      */
-    void UninstallApp(const std::string &bundleName, const int uid);
+    void UninstallApp(const std::string &bundleName);
 
     void OnTimeOut(uint32_t msgId, int64_t eventId);
     bool IsFirstInMission(const sptr<IRemoteObject> &token);
@@ -436,8 +431,12 @@ public:
 
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
-    int GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap);
-
+    /**
+     * set lock screen white list
+     *
+     * @param isAllow whether to allow startup on lock screen.
+     * @return Returns ERR_OK on success, others on failure.
+     */
     int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
     void UpdateLockScreenState(bool isLockScreen);
 private:
@@ -615,9 +614,8 @@ private:
      * Add uninstall tags to ability
      *
      * @param bundleName
-     * @param userId
      */
-    void AddUninstallTags(const std::string &bundleName, const int uid);
+    void AddUninstallTags(const std::string &bundleName);
 
     /**
      * Get target record by start mode.
@@ -675,8 +673,7 @@ private:
     SystemWindowMode GetLatestSystemWindowMode();
     int JudgingTargetStackId(AbilityWindowConfiguration config) const;
     int StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> lastTopAbility,
-        std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
-        bool isTopSplitScreen = false);
+        std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility);
 
     void ActiveTopAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
@@ -756,18 +753,12 @@ private:
 
     std::string ConvertWindowModeState(const SystemWindowMode &mode);
 
-    void MultiApplicationSelectorStartTargetAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
-    void MultiAppSelectorStartTargetAbilityFail(const std::shared_ptr<AbilityRecord> &topAbilityRecord,
-        const std::shared_ptr<AbilityRecord> &abilityRecord);
     void ProcessInactivateInMoving(const std::shared_ptr<AbilityRecord> &abilityRecord);
-    void BackAbilityRecordMoveToBackGround(const std::shared_ptr<AbilityRecord> &abilityRecord);
-    void MoveMissionStackToFullStackTop(const std::shared_ptr<MissionStack> &stack);
-    void RemoveMultiAppSelectorAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
-	
+
     void CompleteInactiveByNewVersion(const std::shared_ptr<AbilityRecord> &abilityRecord);
     int DispatchForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
     void CompleteForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord);
-	
+
     int DispatchBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord, int state);
     void CompleteBackgroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
@@ -799,7 +790,6 @@ private:
     std::map<int, std::weak_ptr<AbilityRecord>> focusAbilityRecordMap_;  // abilities has been focused ,
                                                                          // key : display id, value: focused ability
     std::shared_ptr<ResumeMissionContainer> resumeMissionContainer_;
-    std::shared_ptr<ScreenshotHandler> screenshotHandler_;
     static int64_t splitScreenStackId;
     const static std::map<SystemWindowMode, std::string> windowModeToStrMap_;
     std::shared_ptr<LockScreenEventSubscriber> subscriber_ = nullptr;

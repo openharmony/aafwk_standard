@@ -31,7 +31,7 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
-template <typename F>
+template<typename F>
 static void WaitUntilTaskCalled(const F &f, const std::shared_ptr<EventHandler> &handler, std::atomic<bool> &taskCalled)
 {
     const uint32_t maxRetryCount = 1000;
@@ -166,8 +166,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_001, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     WaitUntilTaskDone(handler);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
     EXPECT_EQ(static_cast<int>(ConnectManager()->GetServiceMap().size()), 1);
@@ -209,8 +208,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_002, TestSize.Level1)
     auto result1 = ConnectManager()->TerminateAbility(nullToken);
     EXPECT_EQ(OHOS::ERR_INVALID_VALUE, result1);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -237,8 +235,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_003, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     WaitUntilTaskDone(handler);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -269,8 +266,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_004, TestSize.Level1)
     auto result1 = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result1);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -299,8 +295,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_005, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     WaitUntilTaskDone(handler);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -332,8 +327,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_006, TestSize.Level1)
     EXPECT_EQ(OHOS::ERR_OK, result);
     WaitUntilTaskDone(handler);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -364,8 +358,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_007, TestSize.Level1)
     auto result1 = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     EXPECT_EQ(0, result1);
 
-    auto elementName =  std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
+    auto elementName = abilityRequest_.want.GetElement().GetURI();
     auto service = ConnectManager()->GetServiceRecordByElementName(elementName);
     EXPECT_NE(service, nullptr);
 
@@ -393,8 +386,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_008, TestSize.Level1)
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
 
     auto elementName = abilityRequest_.want.GetElement();
-    auto elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    auto elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     connectRecordList = abilityRecord->GetConnectRecordList();
@@ -449,8 +441,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_010, TestSize.Level1)
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     connectRecordList = abilityRecord->GetConnectRecordList();
@@ -472,8 +463,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_011, TestSize.Level1)
 
     int result = ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -515,8 +505,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_012, TestSize.Level1)
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     connectRecordList = abilityRecord->GetConnectRecordList();
@@ -549,16 +538,14 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_013, TestSize.Level1)
     EXPECT_EQ(2, static_cast<int>(connectRecordList.size()));
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     connectRecordList = abilityRecord->GetConnectRecordList();
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
 
     auto elementNameB = abilityRequest_.want.GetElement();
-    std::string elementNameUriB = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementNameB.GetURI();
+    std::string elementNameUriB = elementNameB.GetURI();
     abilityRecord = serviceMap.at(elementNameUriB);
     connectRecordList = abilityRecord->GetConnectRecordList();
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
@@ -594,8 +581,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_014, TestSize.Level1)
     EXPECT_EQ(1, static_cast<int>(connectRecordList.size()));
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     connectRecordList = abilityRecord->GetConnectRecordList();
@@ -645,8 +631,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_017, TestSize.Level1)
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callback, nullptr);
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -982,8 +967,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_018, TestSize.Level1)
 
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1026,8 +1010,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_019, TestSize.Level1)
 
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1066,8 +1049,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_020, TestSize.Level1)
 
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1114,8 +1096,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_021, TestSize.Level1)
 
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1140,8 +1121,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_022, TestSize.Level1)
 {
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1166,8 +1146,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_023, TestSize.Level1)
 {
     ConnectManager()->ConnectAbilityLocked(abilityRequest_, callbackA_, nullptr);
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1223,8 +1202,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_024, TestSize.Level1)
     }
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1235,8 +1213,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_024, TestSize.Level1)
     EXPECT_EQ(static_cast<int>(list.size()), 0);
 
     auto elementName1 = abilityRequest1_.want.GetElement();
-    std::string elementNameUri1 = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName1.GetURI();
+    std::string elementNameUri1 = elementName1.GetURI();
     serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord1 = serviceMap.at(elementNameUri1);
     auto token1 = abilityRecord1->GetToken();
@@ -1268,8 +1245,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_025, TestSize.Level1)
     EXPECT_EQ(0, result3);
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1305,8 +1281,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_026, TestSize.Level1)
     EXPECT_EQ(0, result3);
 
     auto elementName = abilityRequest_.want.GetElement();
-    std::string elementNameUri = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        elementName.GetURI();
+    std::string elementNameUri = elementName.GetURI();
     auto serviceMap = ConnectManager()->GetServiceMap();
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
@@ -1402,66 +1377,6 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_029, TestSize.Level1)
     for (auto &it : connectRecordList) {
         EXPECT_EQ(it->GetAbilityConnectCallback(), nullptr);
     }
-}
-
-/*
- * Feature: AbilityConnectManager
- * Function: StopServiceAbility
- * SubFunction: NA
- * FunctionPoints: StartAbility and StopServiceAbility
- * EnvConditions:NA
- * CaseDescription: Stop the application with uid
- */
-HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_030, TestSize.Level1)
-{
-    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
-    ConnectManager()->SetEventHandler(handler);
-
-    abilityRequest_.abilityInfo.applicationInfo.uid = 15;
-    auto result = ConnectManager()->StartAbility(abilityRequest_);
-    EXPECT_EQ(OHOS::ERR_OK, result);
-    WaitUntilTaskDone(handler);
-
-    auto key = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
-
-    auto service = ConnectManager()->GetServiceRecordByElementName(key);
-    EXPECT_TRUE(service);
-
-    service->SetTerminatingState();
-    auto result1 = ConnectManager()->StopServiceAbility(abilityRequest_);
-    WaitUntilTaskDone(handler);
-    EXPECT_EQ(OHOS::ERR_OK, result1);
-    EXPECT_NE(service->GetAbilityState(), TERMINATING);
-}
-
-/*
- * Feature: AbilityConnectManager
- * Function: RemoveServiceAbility
- * SubFunction: NA
- * FunctionPoints: StartAbility and StopServiceAbility
- * EnvConditions:NA
- * CaseDescription: Remove service ability by uid
- */
-HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_031, TestSize.Level1)
-{
-    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
-    ConnectManager()->SetEventHandler(handler);
-
-    abilityRequest_.abilityInfo.applicationInfo.uid = 15;
-    auto result = ConnectManager()->StartAbility(abilityRequest_);
-    EXPECT_EQ(OHOS::ERR_OK, result);
-    WaitUntilTaskDone(handler);
-
-    auto key = std::to_string(abilityRequest_.abilityInfo.applicationInfo.uid) + "/" +
-        abilityRequest_.want.GetElement().GetURI();
-    auto serviceRecord = ConnectManager()->GetServiceRecordByElementName(key);
-    EXPECT_TRUE(serviceRecord);
-
-    ConnectManager()->RemoveServiceAbility(serviceRecord);
-
-    serviceRecord = ConnectManager()->GetServiceRecordByElementName(key);
-    EXPECT_FALSE(serviceRecord);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

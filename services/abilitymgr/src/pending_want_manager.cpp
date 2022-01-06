@@ -219,7 +219,7 @@ int32_t PendingWantManager::PendingWantStartAbility(
 {
     HILOG_INFO("%{public}s:begin.", __func__);
     return DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
-        want, callerToken, requestCode, -1, callerUid);
+        want, callerToken, requestCode, callerUid);
 }
 
 int32_t PendingWantManager::PendingWantStartAbilitys(const std::vector<WantsInfo> wantsInfo,
@@ -231,7 +231,7 @@ int32_t PendingWantManager::PendingWantStartAbilitys(const std::vector<WantsInfo
     for (const auto &item : wantsInfo) {
         const auto &want = item.want;
         result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
-            want, callerToken, requestCode, -1, callerUid);
+            want, callerToken, requestCode, callerUid);
         if (result != ERR_OK && result != START_ABILITY_WAITING) {
             HILOG_ERROR("%{public}s:result != ERR_OK && result != START_ABILITY_WAITING.", __func__);
             return result;
@@ -420,33 +420,6 @@ int32_t PendingWantManager::GetPendingRequestWant(const sptr<IWantSender> &targe
         return ERR_INVALID_VALUE;
     }
     want.reset(new (std::nothrow) Want(record->GetKey()->GetRequestWant()));
-    HILOG_ERROR("%{public}s:want is ok.", __func__);
-    return NO_ERROR;
-}
-
-int32_t PendingWantManager::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
-{
-    HILOG_INFO("%{public}s:begin.", __func__);
-    if (target == nullptr) {
-        HILOG_ERROR("%{public}s:target is nullptr.", __func__);
-        return ERR_INVALID_VALUE;
-    }
-    if (info == nullptr) {
-        HILOG_ERROR("%{public}s:info is nullptr.", __func__);
-        return ERR_INVALID_VALUE;
-    }
-    sptr<PendingWantRecord> targetRecord = iface_cast<PendingWantRecord>(target->AsObject());
-    auto record = GetPendingWantRecordByCode(targetRecord->GetKey()->GetCode());
-    if (record == nullptr) {
-        HILOG_ERROR("%{public}s:record is nullptr.", __func__);
-        return ERR_INVALID_VALUE;
-    }
-    WantSenderInfo wantSenderInfo;
-    wantSenderInfo.requestCode = record->GetKey()->GetRequestCode();
-    wantSenderInfo.type = record->GetKey()->GetType();
-    wantSenderInfo.flags = record->GetKey()->GetFlags();
-    wantSenderInfo.allWants = record->GetKey()->GetAllWantsInfos();
-    info.reset(new (std::nothrow) WantSenderInfo(wantSenderInfo));
     HILOG_ERROR("%{public}s:want is ok.", __func__);
     return NO_ERROR;
 }

@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 bool BundleMgrProxy::GetApplicationInfo(
     const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
 {
@@ -165,7 +166,7 @@ bool BundleMgrProxy::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName, const int userId)
+bool BundleMgrProxy::CleanBundleDataFiles(const std::string &bundleName)
 {
     return true;
 }
@@ -181,7 +182,8 @@ bool BundleMgrProxy::UnregisterBundleStatusCallback()
 {
     return true;
 }
-bool BundleMgrProxy::DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result)
+bool BundleMgrProxy::DumpInfos(
+    const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result)
 {
     return true;
 }
@@ -418,7 +420,7 @@ bool BundleMgrService::CleanBundleCacheFiles(
 {
     return true;
 }
-bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName, const int userId)
+bool BundleMgrService::CleanBundleDataFiles(const std::string &bundleName)
 {
     return true;
 }
@@ -434,7 +436,8 @@ bool BundleMgrService::UnregisterBundleStatusCallback()
 {
     return true;
 }
-bool BundleMgrService::DumpInfos(const DumpFlag flag, const std::string &bundleName, std::string &result)
+bool BundleMgrService::DumpInfos(
+    const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result)
 {
     return true;
 }

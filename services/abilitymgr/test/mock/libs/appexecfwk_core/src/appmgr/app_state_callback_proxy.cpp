@@ -21,6 +21,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 AppStateCallbackProxy::AppStateCallbackProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IAppStateCallback>(impl)
 {}
 
@@ -34,5 +35,6 @@ void AppStateCallbackProxy::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
 
 void AppStateCallbackProxy::OnAppStateChanged(const AppProcessData &appProcessData)
 {}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

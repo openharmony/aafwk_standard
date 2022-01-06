@@ -63,7 +63,7 @@ void MockAbilityManagerStub::DumpState(const std::string &args, std::vector<std:
     }
 }
 
-int MockAbilityManagerStub::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
+int MockAbilityManagerStub::StopServiceAbility(const Want &want)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
 

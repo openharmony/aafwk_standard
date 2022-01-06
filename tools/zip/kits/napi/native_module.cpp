@@ -15,12 +15,14 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "napi_zlib.h"
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
+
 EXTERN_C_START
 /*
  * The module initialization.

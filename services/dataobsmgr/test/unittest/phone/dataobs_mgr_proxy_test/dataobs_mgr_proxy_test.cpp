@@ -123,5 +123,6 @@ HWTEST_F(DataObsMgrServiceTest, AaFwk_DataObsMgrServiceTest_NotifyChange_0100, T
 
     GTEST_LOG_(INFO) << "AaFwk_DataObsMgrServiceTest_NotifyChange_0100 end";
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS

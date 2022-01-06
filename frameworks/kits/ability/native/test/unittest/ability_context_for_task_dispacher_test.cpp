@@ -216,5 +216,6 @@ HWTEST_F(AbilityContextForTaskDispatcherTest, AaFwk_AbilityContext_GetGlobalTask
     EXPECT_TRUE((nullptr == abilitycontext->GetGlobalTaskDispatcher(high)));
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_GetGlobalTaskDispatcher_0200 end";
 }
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

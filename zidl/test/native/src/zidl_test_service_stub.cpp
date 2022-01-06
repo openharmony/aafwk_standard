@@ -15,7 +15,6 @@
 
 #include "zidl_test_service_stub.h"
 
-// namespace ohos {---> namespace OHOS {
 namespace OHOS {
 int ZidlTestServiceStub::OnRemoteRequest(
     /* [in] */ uint32_t code,
@@ -46,4 +45,4 @@ int ZidlTestServiceStub::OnRemoteRequest(
 
     return ERR_TRANSACTION_FAILED;
 }
-} // OHOS
+} // namespace OHOS

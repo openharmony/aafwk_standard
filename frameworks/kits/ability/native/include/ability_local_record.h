@@ -115,14 +115,14 @@ public:
     * @description: Obtains api version based on ability record.
     * @return api version.
     */
-    int GetTargetVersion();
+    int GetCompatibleVersion();
 
     /**
     * @description: Set api version in an ability record.
-    * @param targetVersion api version
+    * @param compatibleVersion api version
     * @return None.
     */
-    void SetTargetVersion(int targetVersion);
+    void SetCompatibleVersion(int compatibleVersion);
 
 private:
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
@@ -131,7 +131,7 @@ private:
     std::shared_ptr<EventHandler> handler_ = nullptr;
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;  // store abilityImpl
     sptr<AbilityThread> abilityThread_;
-    int targetVersion_ = 0;
+    int compatibleVersion_ = 0;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

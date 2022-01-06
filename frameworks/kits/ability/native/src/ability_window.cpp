@@ -41,22 +41,36 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler>& handler, std::shared_p
 }
 
 /**
- * @brief Sets the window option for the host ability to create window.
+ * @brief Sets the window config for the host ability to create window.
  *
- * @param windowOption Indicates window option.
+ * @param winType Indicates window config.
+ * @param abilityContext Indicates runtime ability context.
+ * @param listener Indicates window lifecycle listener.
+ * @return true if init window success.
  */
-bool AbilityWindow::SetWindowType(Rosen::WindowType winType)
+bool AbilityWindow::InitWindow(Rosen::WindowType winType,
+    std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext,
+    sptr<Rosen::IWindowLifeCycle> &listener)
 {
     APP_LOGI("%{public}s begin.", __func__);
-    sptr<Rosen::IWindowLifeCycle> windowLifecycle = nullptr;
-    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = nullptr;
-    windowScene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext, windowLifecycle);
+    auto ret = windowScene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext, listener);
+    if (ret != OHOS::Rosen::WMError::WM_OK) {
+        APP_LOGE("%{public}s error. failed to init window scene!", __func__);
+        return false;
+    }
+
     auto window = windowScene_->GetMainWindow();
-    auto ret = window->SetWindowType(winType);
+    if (!window) {
+        APP_LOGI("%{public}s window is nullptr.", __func__);
+        return false;
+    }
+
+    ret = window->SetWindowType(winType);
     if (ret != OHOS::Rosen::WMError::WM_OK) {
         APP_LOGE("Set window type error, errcode = %{public}d", ret);
         return false;
     }
+    winType_ = winType;
 
     isWindowAttached = true;
     APP_LOGI("%{public}s end.", __func__);
@@ -97,13 +111,15 @@ void AbilityWindow::OnPostAbilityActive()
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->RequestFocus.", __func__);
-        windowScene_->RequestFocus();
-        APP_LOGI("%{public}s end windowScene_->RequestFocus.", __func__);
-
         APP_LOGI("%{public}s begin windowScene_->GoForeground.", __func__);
         windowScene_->GoForeground();
         APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
+
+        APP_LOGI("%{public}s begin windowScene_->RequestFocus.", __func__);
+        if (!(winType_ >= Rosen::WindowType::SYSTEM_WINDOW_BASE && winType_ < Rosen::WindowType::SYSTEM_WINDOW_END)) {
+            windowScene_->RequestFocus();
+        }
+        APP_LOGI("%{public}s end windowScene_->RequestFocus.", __func__);
     }
 
     APP_LOGI("AbilityWindow::OnPostAbilityActive end.");
@@ -120,13 +136,6 @@ void AbilityWindow::OnPostAbilityInactive()
         APP_LOGE("AbilityWindow::OnPostAbilityInactive window not attached.");
         return;
     }
-
-    if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
-        windowScene_->GoBackground();
-        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
-    }
-
     APP_LOGI("AbilityWindow::OnPostAbilityInactive end.");
 }
 
@@ -185,7 +194,6 @@ void AbilityWindow::OnPostAbilityStop()
     }
 
     if (windowScene_) {
-        windowScene_->~WindowScene();
         windowScene_ = nullptr;
         APP_LOGI("AbilityWindow::widow:: windowScene_ release end.");
     }

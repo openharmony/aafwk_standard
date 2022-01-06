@@ -190,14 +190,14 @@ ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
     return abms->GetAllStackInfo(stackInfo);
 }
 
-ErrCode AbilityManagerClient::StopServiceAbility(const Want &want, const sptr<IRemoteObject> &callerToken)
+ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
     if (remoteObject_ == nullptr) {
         remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StopServiceAbility(want, callerToken);
+    return abms->StopServiceAbility(want);
 }
 
 sptr<IAbilityScheduler> AbilityManagerClient::AcquireDataAbility(

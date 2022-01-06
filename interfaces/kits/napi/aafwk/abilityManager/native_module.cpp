@@ -14,8 +14,8 @@
  */
 
 #include <pthread.h>
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "napi_ability_manager.h"
@@ -52,7 +52,6 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("moveMissionToTop", NAPI_MoveMissionToTop),
         DECLARE_NAPI_FUNCTION("killProcessesByBundleName", NAPI_KillProcessesByBundleName),
         DECLARE_NAPI_FUNCTION("clearUpApplicationData", NAPI_ClearUpApplicationData),
-        DECLARE_NAPI_FUNCTION("getAbilityMissionSnapshot", NAPI_GetAbilityMissionSnapshot),
         DECLARE_NAPI_PROPERTY("WeightReasonCode", nWeightReasonCode),
         DECLARE_NAPI_FUNCTION("getSystemMemoryAttr", NAPI_GetSystemMemoryAttr),
     };

@@ -104,7 +104,7 @@ void JsServiceExtension::OnStart(const AAFwk::Want &want)
 
 void JsServiceExtension::OnStop()
 {
-    Extension::OnStop();
+    ServiceExtension::OnStop();
     HILOG_INFO("JsServiceExtension OnStop begin.");
     CallObjectMethod("onDestroy");
     HILOG_INFO("%{public}s end.", __func__);
@@ -138,6 +138,9 @@ sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
     }
     HILOG_INFO("JsServiceExtension::CallFunction onConnect, success");
     NativeValue* remoteNative = nativeEngine->CallFunction(value, method, argv, ARGC_ONE);
+    if (remoteNative == nullptr) {
+        HILOG_ERROR("remoteNative nullptr.");
+    }
     auto remoteObj = NAPI_ohos_rpc_getNativeRemoteObject(
         reinterpret_cast<napi_env>(nativeEngine), reinterpret_cast<napi_value>(remoteNative));
     if (remoteObj == nullptr) {

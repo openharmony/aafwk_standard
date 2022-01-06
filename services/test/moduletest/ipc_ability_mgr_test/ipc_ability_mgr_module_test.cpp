@@ -427,7 +427,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_013, TestSize.Level1)
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
         const Want want;
 
-        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_, _))
+        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
         abilityMgrClient->StopServiceAbility(want);
@@ -480,11 +480,11 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_015, TestSize.Level1)
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
 
-        MissionPixelMap missionPixelMap;
+        MissionSnapshotInfo snapshot;
         EXPECT_CALL(*mockAbilityMgr, GetMissionSnapshot(_, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->GetMissionSnapshot(1, missionPixelMap);
+        abilityMgrClient->GetMissionSnapshot(1, snapshot);
         mockAbilityMgr->Wait();
     }
 

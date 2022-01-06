@@ -18,6 +18,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 DataAbilityObserverStub::DataAbilityObserverStub()
 {
     requestFuncMap_[DATA_ABILITY_OBSERVER_CHANGE] = &DataAbilityObserverStub::OnChangeInner;

@@ -16,11 +16,9 @@
 #ifndef OHOS_ZIDLTESTSERVICEPROXY_H
 #define OHOS_ZIDLTESTSERVICEPROXY_H
 
-// #include "ohos/izidl_test_service.h"---->#include "izidl_test_service.h"
 #include "izidl_test_service.h"
 #include <iremote_proxy.h>
 
-// namespace ohos {---> namespace OHOS {
 namespace OHOS {
 class ZidlTestServiceProxy : public IRemoteProxy<IZidlTestService> {
 public:
@@ -45,6 +43,6 @@ private:
 
     static inline BrokerDelegator<ZidlTestServiceProxy> delegator_;
 };
-} // OHOS
+} // namespace OHOS
 #endif // OHOS_ZIDLTESTSERVICEPROXY_H
 

@@ -13,16 +13,19 @@
  * limitations under the License.
  */
 #include "zip_internal.h"
-#include <unistd.h>
-#include <cstddef>
+
 #include <algorithm>
-#include "zip_utils.h"
-#include "securec.h"
+#include <stddef.h>
+#include <unistd.h>
+
 #include "hilog_wrapper.h"
+#include "securec.h"
+#include "zip_utils.h"
 
 namespace OHOS {
 namespace AAFwk {
 namespace LIBZIP {
+
 struct tm GetTmDataFromTickts(int64_t sec)
 {
     time_t second = (time_t)sec;
@@ -51,7 +54,7 @@ struct tm GetTmDataFromTickts(int64_t sec)
 void *FdOpenFileFunc(void *opaque, const char *filename, int mode)
 {
     FILE *file = NULL;
-    const char *mode_fopen = nullptr;
+    const char *mode_fopen = NULL;
     uint32_t modeInner = static_cast<uint32_t>(mode);
     if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
         mode_fopen = "rb";
@@ -60,7 +63,7 @@ void *FdOpenFileFunc(void *opaque, const char *filename, int mode)
     else if (modeInner & ZLIB_FILEFUNC_MODE_CREATE)
         mode_fopen = "wb";
 
-    if ((filename != nullptr) && (mode_fopen != nullptr)) {
+    if ((filename != NULL) && (mode_fopen != NULL)) {
         int fd = dup(*static_cast<int *>(opaque));
         if (fd != -1)
             file = fdopen(fd, mode_fopen);
@@ -111,11 +114,11 @@ void *OpenZipBuffer(void *opaque, const char *, int mode)
     uint32_t modeInner = static_cast<uint32_t>(mode);
     if ((modeInner & ZLIB_FILEFUNC_MODE_READWRITEFILTER) != ZLIB_FILEFUNC_MODE_READ) {
         HILOG_INFO("%{public}s called, mode is not ZLIB_FILEFUNC_MODE_READ.", __func__);
-        return nullptr;
+        return NULL;
     }
     ZipBuffer *buffer = static_cast<ZipBuffer *>(opaque);
     if (!buffer || !buffer->data || !buffer->length) {
-        return nullptr;
+        return NULL;
     }
     buffer->offset = 0;
     return opaque;
@@ -307,6 +310,7 @@ bool ZipOpenNewFileInZip(
     }
     return true;
 }
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -17,6 +17,7 @@
 #define OHOS_AAFWK_LIFECYCLE_DEAL_H
 
 #include <memory>
+#include <shared_mutex>
 
 #include "ability_scheduler_interface.h"
 #include "want.h"
@@ -59,7 +60,9 @@ public:
     void NotifyContinuationResult(const int32_t result);
 
 private:
+    sptr<IAbilityScheduler> GetScheduler();
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life
+    std::shared_mutex schedulerMutex_;
 
     DISALLOW_COPY_AND_MOVE(LifecycleDeal);
 };

@@ -68,45 +68,6 @@ HWTEST_F(ConfigurationTest, AddItem_001, TestSize.Level1)
 
 /*
  * Feature: Configuration
- * Function: AddItem
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions:NA
- * CaseDescription: Update Configuration
- */
-HWTEST_F(ConfigurationTest, AddItem_002, TestSize.Level1)
-{
-    AppExecFwk::Configuration config;
-    std::string val {"中文"};
-    EXPECT_EQ(0, config.GetItemSize());
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-    EXPECT_EQ(1, config.GetItemSize());
-
-    // replace
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-    EXPECT_EQ(1, config.GetItemSize());
-}
-
-/*
- * Feature: Configuration
- * Function: AddItem
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions:NA
- * CaseDescription: Update Configuration
- */
-HWTEST_F(ConfigurationTest, AddItem_003, TestSize.Level1)
-{
-    AppExecFwk::Configuration config;
-    std::string val {"中文"};
-    std::string key {"test_key"};
-    EXPECT_EQ(0, config.GetItemSize());
-    auto ref = config.AddItem(key, val);
-    EXPECT_FALSE(ref);
-}
-
-/*
- * Feature: Configuration
  * Function: GetItem
  * SubFunction: NA
  * FunctionPoints: NA
@@ -135,50 +96,6 @@ HWTEST_F(ConfigurationTest, GetItem_001, TestSize.Level1)
     EXPECT_EQ(item, non);
 }
 
-/*
- * Feature: Configuration
- * Function: GetItem
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions:NA
- * CaseDescription: Process Configuration Change
- */
-HWTEST_F(ConfigurationTest, GetItem_002, TestSize.Level1)
-{
-    AppExecFwk::Configuration config;
-    std::string val {"中文"};
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-
-    auto item = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_EQ(item, val);
-
-    // replace
-    std::string english {"英文"};
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, english);
-    item = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_EQ(item, english);
-
-    int displayId2 = 1002;
-    std::string non {""};
-    item = config.GetItem(displayId2, GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_EQ(item, non);
-}
-
-/*
- * Feature: Configuration
- * Function: GetItem
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions:NA
- * CaseDescription: Process Configuration Change
- */
-HWTEST_F(ConfigurationTest, GetItem_003, TestSize.Level1)
-{
-    AppExecFwk::Configuration config;
-    std::string non {""};
-    auto item = config.GetItem("test_kay");
-    EXPECT_EQ(item, non);
-}
 /*
  * Feature: Configuration
  * Function: RemoveItem
@@ -210,38 +127,6 @@ HWTEST_F(ConfigurationTest, RemoveItem_001, TestSize.Level1)
 
     int displayId2 = 1002;
     canRemove = config.RemoveItem(displayId2, GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_FALSE(canRemove);
-}
-
-/*
- * Feature: Configuration
- * Function: RemoveItem
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions:NA
- * CaseDescription: Process Configuration Change
- */
-HWTEST_F(ConfigurationTest, RemoveItem_002, TestSize.Level1)
-{
-    AppExecFwk::Configuration config;
-    std::string val {"中文"};
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-
-    auto item = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_EQ(item, val);
-
-    // remove it
-    bool canRemove = config.RemoveItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_TRUE(canRemove);
-
-    std::string non {""};
-    item = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    EXPECT_EQ(item, non);
-
-    canRemove = config.RemoveItem(non);
-    EXPECT_FALSE(canRemove);
-
-    canRemove = config.RemoveItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
     EXPECT_FALSE(canRemove);
 }
 

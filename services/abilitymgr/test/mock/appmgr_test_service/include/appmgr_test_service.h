@@ -16,10 +16,10 @@
 #ifndef OHOS_AAFWK_APPMGR_TEST_SERVICE_H
 #define OHOS_AAFWK_APPMGR_TEST_SERVICE_H
 
-#include <map>
 #include "ability_manager_service.h"
 #include "event_handler.h"
 #include "event_runner.h"
+#include <map>
 
 namespace OHOS {
 namespace AAFwk {

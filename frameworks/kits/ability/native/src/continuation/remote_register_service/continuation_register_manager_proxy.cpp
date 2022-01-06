@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 ContinuationRequestRegister::ContinuationRequestRegister(const std::string &bundleName, const ExtraParams &parameter,
     const std::shared_ptr<IContinuationDeviceCallback> &deviceCallback)
 {

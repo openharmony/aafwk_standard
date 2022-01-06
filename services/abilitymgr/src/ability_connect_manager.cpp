@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 AbilityConnectManager::AbilityConnectManager()
 {}
 
@@ -173,8 +174,7 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
     HILOG_INFO("Stop service ability locked.");
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
-    std::string key = std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + "/" + element.GetURI();
-    auto abilityRecord = GetServiceRecordByElementName(key);
+    auto abilityRecord = GetServiceRecordByElementName(element.GetURI());
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     if (abilityRecord->IsTerminating()) {
@@ -203,14 +203,13 @@ void AbilityConnectManager::GetOrCreateServiceRecord(const AbilityRequest &abili
     BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
     AppExecFwk::ElementName element(
         abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
-    std::string key = std::to_string(abilityRequest.abilityInfo.applicationInfo.uid) + "/" + element.GetURI();
-    auto serviceMapIter = serviceMap_.find(key);
+    auto serviceMapIter = serviceMap_.find(element.GetURI());
     if (serviceMapIter == serviceMap_.end()) {
         targetService = AbilityRecord::CreateAbilityRecord(abilityRequest);
         if (isCreatedByConnect && targetService != nullptr) {
             targetService->SetCreateByConnectMode();
         }
-        serviceMap_.emplace(key, targetService);
+        serviceMap_.emplace(element.GetURI(), targetService);
         isLoadedAbility = false;
     } else {
         targetService = serviceMapIter->second;
@@ -377,7 +376,6 @@ void AbilityConnectManager::OnAppStateChanged(const AppInfo &info)
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     std::for_each(serviceMap_.begin(), serviceMap_.end(), [&info](ServiceMapType::reference service) {
         if (service.second && service.second->GetApplicationInfo().name == info.appName &&
-            service.second->GetAbilityInfo().applicationInfo.uid == info.uid &&
             (info.processName == service.second->GetAbilityInfo().process ||
             info.processName == service.second->GetApplicationInfo().bundleName)) {
             service.second->SetAppState(info.state);
@@ -399,9 +397,13 @@ int AbilityConnectManager::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 
     switch (state) {
         case AbilityState::INACTIVE: {
+            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
+                AppExecFwk::ExtensionState::EXTENSION_STATE_CREATE);
             return DispatchInactive(abilityRecord, state);
         }
         case AbilityState::INITIAL: {
+            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
+                AppExecFwk::ExtensionState::EXTENSION_STATE_TERMINATED);
             return DispatchTerminate(abilityRecord);
         }
         default: {
@@ -430,6 +432,9 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
         return INVALID_CONNECTION_STATE;
     }
 
+    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
+        AppExecFwk::ExtensionState::EXTENSION_STATE_CONNECTED);
+
     abilityRecord->SetConnRemoteObject(remoteObject);
     // There may be multiple callers waiting for the connection result
     auto connectRecordList = abilityRecord->GetConnectRecordList();
@@ -454,6 +459,9 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
         HILOG_ERROR("The service ability state is not active ,state：%{public}d", abilityRecord->GetAbilityState());
         return INVALID_CONNECTION_STATE;
     }
+
+    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
+        AppExecFwk::ExtensionState::EXTENSION_STATE_DISCONNECTED);
 
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("disconnect ability done with service %{public}s", element.c_str());
@@ -770,8 +778,7 @@ void AbilityConnectManager::RemoveServiceAbility(const std::shared_ptr<AbilityRe
 {
     CHECK_POINTER(abilityRecord);
     const AppExecFwk::AbilityInfo &abilityInfo = abilityRecord->GetAbilityInfo();
-    std::string element = std::to_string(abilityInfo.applicationInfo.uid) + "/" + abilityInfo.deviceId + "/" +
-    abilityInfo.bundleName + "/" + abilityInfo.name;
+    std::string element = abilityInfo.deviceId + "/" + abilityInfo.bundleName + "/" + abilityInfo.name;
     HILOG_INFO("Remove service(%{public}s) from map.", element.c_str());
     auto it = serviceMap_.find(element);
     if (it != serviceMap_.end()) {
@@ -865,28 +872,6 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
     }
 
     if (abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME) {
-        AbilityRequest requestInfo;
-        requestInfo.want = abilityRecord->GetWant();
-        requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
-        requestInfo.appInfo = abilityRecord->GetApplicationInfo();
-
-        RemoveServiceAbility(abilityRecord);
-        StartAbilityLocked(requestInfo);
-        return;
-    }
-
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME) {
-        AbilityRequest requestInfo;
-        requestInfo.want = abilityRecord->GetWant();
-        requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
-        requestInfo.appInfo = abilityRecord->GetApplicationInfo();
-
-        RemoveServiceAbility(abilityRecord);
-        StartAbilityLocked(requestInfo);
-        return;
-    }
-
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME) {
         AbilityRequest requestInfo;
         requestInfo.want = abilityRecord->GetWant();
         requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();

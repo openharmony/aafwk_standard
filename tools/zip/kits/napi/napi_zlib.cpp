@@ -13,14 +13,16 @@
  * limitations under the License.
  */
 #include "napi_zlib.h"
+
 #include <cstring>
-#include <vector>
 #include <uv.h>
-#include "hilog_wrapper.h"
-#include "napi/native_node_api.h"
-#include "napi/native_common.h"
-#include "napi_zlib_common.h"
+#include <vector>
+
 #include "file_path.h"
+#include "hilog_wrapper.h"
+#include "napi/native_common.h"
+#include "napi/native_node_api.h"
+#include "napi_zlib_common.h"
 #include "zip.h"
 #include "zip_utils.h"
 
@@ -314,6 +316,7 @@ napi_value NAPI_ZipFile(napi_env env, napi_callback_info info)
 
     ret = ZipFileWrap(env, info, asyncZipCallbackInfo);
     if (ret == nullptr) {
+
         if (g_zipAceCallbackInfo != nullptr) {
             g_zipAceCallbackInfo.reset();
             g_zipAceCallbackInfo = nullptr;
@@ -806,6 +809,7 @@ void ZipAndUnzipFileAsyncCallBackInnerJsThread(uv_work_t *work)
     if (asyncCallbackInfo->isCallBack) {
         napi_value callback = 0;
         napi_value undefined = 0;
+        // callback(err, data)  errorInfo->error_code
         result[PARAM0] = GetCallbackErrorValue(asyncCallbackInfo->env, NO_ERROR);
         // get callback
         napi_get_reference_value(asyncCallbackInfo->env, asyncCallbackInfo->callback, &callback);
@@ -883,6 +887,7 @@ void ZipAndUnzipFileAsyncCallBack(std::shared_ptr<ZlibCallbackInfo> &zipAceCallb
         }
     }
 }
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

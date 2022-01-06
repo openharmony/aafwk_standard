@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 #include "zip_utils.h"
-#include <pthread.h>
+
 #include <memory>
+#include <pthread.h>
 #include <regex>
+
+#include "parallel_task_dispatcher.h"
 #include "runnable.h"
 #include "task_dispatcher_context.h"
-#include "parallel_task_dispatcher.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -95,6 +97,7 @@ bool FilePathCheckValid(const std::string &str)
 {
     return std::regex_match(str, FILE_PATH_REGEX);
 }
+
 }  // namespace LIBZIP
 }  // namespace AAFwk
 }  // namespace OHOS

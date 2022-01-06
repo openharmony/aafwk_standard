@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+
 IntentFilter::IntentFilter()
 {}
 
@@ -131,5 +132,6 @@ bool IntentFilter::Match(const Intent &intent) const
 {
     return MatchAction(intent.GetAction()) && MatchEntity(intent.GetEntity());
 }
+
 }  // namespace AAFwk
 }  // namespace OHOS
