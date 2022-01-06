@@ -32,13 +32,15 @@ int BundleMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessagePa
     return 0;
 }
 
-bool BundleMgrService::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
+bool BundleMgrService::GetBundleInfo(
+    const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId)
 {
     bundleInfo.uid = 0;
     return true;
 }
 
-bool BundleMgrService::GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos)
+bool BundleMgrService::GetBundleInfos(
+    const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId)
 {
     bundleInfos = bundleInfos_;
     return true;

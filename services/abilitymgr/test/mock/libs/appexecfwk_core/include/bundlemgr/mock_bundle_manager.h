@@ -288,14 +288,16 @@ public:
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
 
-    bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
+    bool GetBundleInfo(
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
 
     virtual bool NotifyAbilityLifeStatus(const std::string &bundleName,
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
-    MOCK_METHOD2(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos));
+    MOCK_METHOD3(
+        GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId));
     MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
@@ -326,10 +328,12 @@ public:
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
-    MOCK_METHOD3(DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, std::string &result));
+    MOCK_METHOD4(
+        DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
     MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
+    MOCK_METHOD0(GetBundleUserMgr, sptr<IBundleUserMgr>());
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &bundleNames));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
@@ -371,7 +375,8 @@ public:
     bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
-    bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
+    bool GetBundleInfo(
+        const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
     int GetUidByBundleName(const std::string &bundleName, const int userId) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
     bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
@@ -379,7 +384,8 @@ public:
         const std::string &abilityName, const int64_t launchTime, const int uid) override;
     bool QueryAbilityInfos(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
-    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override;
+    virtual bool GetBundleInfos(
+        const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override;
     virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override;
     virtual bool CheckBundleNameInAllowList(const std::string &bundleName);
     MOCK_METHOD2(QueryWantAbility, int(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos));
@@ -415,6 +421,7 @@ public:
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &));
     MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
+    MOCK_METHOD0(GetBundleUserMgr, sptr<IBundleUserMgr>());
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &bundleNames));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
@@ -436,7 +443,8 @@ public:
     MOCK_METHOD2(GetAllCommonEventInfo, bool(const std::string &eventKey,
         std::vector<CommonEventInfo> &commonEventInfos));
     MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
-    MOCK_METHOD3(DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, std::string &result));
+    MOCK_METHOD4(
+        DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
     MOCK_METHOD2(RemoveClonedBundle, bool(const std::string &bundleName, const int32_t uid));
     MOCK_METHOD1(BundleClone, bool(const std::string &bundleName));

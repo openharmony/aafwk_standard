@@ -46,7 +46,8 @@ bool BundleMgrProxy::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abil
     return true;
 }
 
-bool BundleMgrProxy::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
+bool BundleMgrProxy::GetBundleInfo(
+    const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId)
 {
     return true;
 }
@@ -102,12 +103,14 @@ BundleMgrService::~BundleMgrService()
     GTEST_LOG_(INFO) << "~BundleMgrService()";
 }
 
-bool BundleMgrService::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
+bool BundleMgrService::GetBundleInfo(
+    const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId)
 {
     return true;
 }
 
-bool BundleMgrService::GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos)
+bool BundleMgrService::GetBundleInfos(
+    const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId)
 {
     BundleInfo worldInfo;
     worldInfo.name = COM_IX_HIWORLD;
