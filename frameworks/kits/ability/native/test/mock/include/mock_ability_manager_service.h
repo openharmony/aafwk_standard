@@ -196,6 +196,16 @@ public:
         return 0;
     }
 
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override
+    {
+        return 0;
+    }
+
+    virtual int StopSyncRemoteMissions(const std::string& devId) override
+    {
+        return 0;
+    }
+
     enum RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,

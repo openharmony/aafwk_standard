@@ -583,6 +583,10 @@ public:
 
     virtual int MoveMissionToFront(int32_t missionId) override;
 
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override;
+
+    virtual int StopSyncRemoteMissions(const std::string& devId) override;
+
     /**
      * Get system memory information.
      * @param SystemMemoryAttr, memory information.
@@ -783,6 +787,10 @@ private:
     void RequestPermission(const Want *resultWant);
 
     bool CheckIsRemote(const std::string& deviceId);
+    int GetRemoteMissionInfos(const std::string& deviceId, int32_t numMax,
+        std::vector<MissionInfo> &missionInfos);
+    int GetRemoteMissionInfo(const std::string& deviceId, int32_t missionId,
+        MissionInfo &missionInfo);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackListInner(const std::string &args, std::vector<std::string> &info);

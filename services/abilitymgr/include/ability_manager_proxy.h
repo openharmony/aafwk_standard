@@ -490,6 +490,10 @@ public:
 
     virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
 
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override;
+
+    virtual int StopSyncRemoteMissions(const std::string& devId) override;
+
     virtual int LockMissionForCleanup(int32_t missionId) override;
 
     virtual int UnlockMissionForCleanup(int32_t missionId) override;
