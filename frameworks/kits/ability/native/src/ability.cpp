@@ -208,6 +208,11 @@ void Ability::OnStart(const Want &want)
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStart.", __func__);
             abilityWindow_->OnPostAbilityStart();
+            if (abilityWindow_->GetWindow()) {
+                auto windowId = abilityWindow_->GetWindow()->GetWindowId();
+                APP_LOGI("Ability::OnStart: add window info  = %{public}d", windowId);
+                OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
+            }
             APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
         }
     }

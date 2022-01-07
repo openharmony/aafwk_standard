@@ -24,6 +24,8 @@
 #include "mock_app_mgr_client.h"
 #include "mock_app_scheduler.h"
 #include "ability_manager_service.h"
+#include "mock_window_manager.h"
+#include "screenshot_handler.h"
 #undef private
 #undef protected
 #include <thread>
@@ -260,6 +262,55 @@ ApplicationInfo AbilityStackModuleTest::CreateAppInfo(const std::string &appName
     appInfo.bundleName = bundleName;
 
     return appInfo;
+}
+
+/*
+ * Feature: AaFwk
+ * Function:GetMissionSnapshot
+ * SubFunction: Get Mission Snapshot
+ * FunctionPoints:
+ * EnvConditions: NA
+ * CaseDescription: Get Mission Snapshot
+ */
+HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, TestSize.Level1)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    stackManager_->Init();
+
+    WindowManagerServiceMock *mockWindowManager = new WindowManagerServiceMock();
+    // set mock
+    stackManager_->screenshotHandler_->windowMS_ = mockWindowManager;
+    sptr<PromiseWMSImageInfo> promise = new PromiseWMSImageInfo();
+    auto infos = [promise](int32_t id) -> sptr<PromiseWMSImageInfo> {
+        return promise;
+    };
+    EXPECT_CALL(*mockWindowManager, ShotWindow)
+        .Times(AtLeast(1))
+        .WillOnce(Invoke(infos));
+
+    auto launcherAbilityRequest_ = GenerateAbilityRequest("device", "LauncherAbility", "launcher", "com.ix.hiworld");
+    auto ref = stackManager_->StartAbility(launcherAbilityRequest_);
+    EXPECT_EQ(ERR_OK, ref);
+    EXPECT_TRUE(stackManager_->missionStackList_.size() != 0);
+
+    int32_t missionId = 0;
+    MissionPixelMap missionPixelMap;
+    std::thread([promise]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        WMSImageInfo imageInfo;
+        imageInfo.width = 2;
+        imageInfo.height = 3;
+        imageInfo.format = 10;
+        promise->Resolve(imageInfo);
+    }).detach();
+    auto ret = stackManager_->GetMissionSnapshot(missionId,missionPixelMap);
+
+    EXPECT_TRUE(missionPixelMap.topAbility.abilityName_ == "LauncherAbility");
+    EXPECT_TRUE(missionPixelMap.topAbility.bundleName_ == "com.ix.hiworld");
+    EXPECT_TRUE(missionPixelMap.imageInfo.width == 2);
+    EXPECT_TRUE(missionPixelMap.imageInfo.height== 3);
+    EXPECT_TRUE(missionPixelMap.imageInfo.format == 10);
+    EXPECT_TRUE(ERR_OK == ret);
 }
 
 /*

@@ -13,30 +13,33 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
-#define OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
+#ifndef OHOS_AAFWK_SCREEN_SHOT_HANDLER_H
+#define OHOS_AAFWK_SCREEN_SHOT_HANDLER_H
 
+#include <map>
+#include <memory>
+#include <mutex>
 #include <string>
-
-#include "parcel.h"
+#include "nocopyable.h"
+#include "screenshot_response.h"
+#include "window_manager_service_client.h"
 
 namespace OHOS {
 namespace AAFwk {
-/**
- * @struct ImageInfo
- * ImageInfo is used to save informations about sanpshot.
- */
-struct ImageInfo : public Parcelable {
-    uint32_t width;
-    uint32_t height;
-    uint32_t format;
-    uint32_t size;
-    int32_t shmKey;
+class ScreenshotHandler {
+public:
+    ScreenshotHandler();
+    virtual ~ScreenshotHandler() = default;
 
-    bool ReadFromParcel(Parcel &parcel);
-    virtual bool Marshalling(Parcel &parcel) const override;
-    static ImageInfo *Unmarshalling(Parcel &parcel);
+    void StartScreenshot(int32_t missionId, int32_t winId);
+    WMImageInfo GetImageInfo(int32_t missionId);
+    void RemoveImageInfo(int32_t missionId);
+
+private:
+    std::map<int32_t, WMImageInfo> screenShot_;
+    sptr<IWindowManagerService> windowMS_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
-#endif  // OHOS_AAFWK_INTERFACES_INNERKITS_IMAGE_INFO_H
+
+#endif  // OHOS_AAFWK_SCREEN_SHOT_HANDLER_H

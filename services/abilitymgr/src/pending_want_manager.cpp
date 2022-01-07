@@ -424,6 +424,33 @@ int32_t PendingWantManager::GetPendingRequestWant(const sptr<IWantSender> &targe
     return NO_ERROR;
 }
 
+int32_t PendingWantManager::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
+{
+    HILOG_INFO("%{public}s:begin.", __func__);
+    if (target == nullptr) {
+        HILOG_ERROR("%{public}s:target is nullptr.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+    if (info == nullptr) {
+        HILOG_ERROR("%{public}s:info is nullptr.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+    sptr<PendingWantRecord> targetRecord = iface_cast<PendingWantRecord>(target->AsObject());
+    auto record = GetPendingWantRecordByCode(targetRecord->GetKey()->GetCode());
+    if (record == nullptr) {
+        HILOG_ERROR("%{public}s:record is nullptr.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+    WantSenderInfo wantSenderInfo;
+    wantSenderInfo.requestCode = record->GetKey()->GetRequestCode();
+    wantSenderInfo.type = record->GetKey()->GetType();
+    wantSenderInfo.flags = record->GetKey()->GetFlags();
+    wantSenderInfo.allWants = record->GetKey()->GetAllWantsInfos();
+    info.reset(new (std::nothrow) WantSenderInfo(wantSenderInfo));
+    HILOG_ERROR("%{public}s:want is ok.", __func__);
+    return NO_ERROR;
+}
+
 void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
 {
     HILOG_INFO("ClearPendingWantRecord, bundleName: %{public}s", bundleName.c_str());

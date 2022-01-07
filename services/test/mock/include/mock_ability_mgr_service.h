@@ -46,7 +46,7 @@ public:
     MOCK_METHOD1(StopServiceAbility, int(const Want &));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<AbilityMissionInfo> &));
-    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionSnapshotInfo &));
+    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
     MOCK_METHOD1(RemoveMission, int(int));
     MOCK_METHOD1(RemoveStack, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
@@ -103,6 +103,8 @@ public:
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
 
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    
     void Wait()
     {
         sem_.Wait();

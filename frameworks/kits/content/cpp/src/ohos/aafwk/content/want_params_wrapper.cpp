@@ -102,6 +102,7 @@ bool WantParamWrapper::ValidateStr(const std::string &str)
     }
     return true;
 }
+
 sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
 {
     WantParams wantPaqrams;
@@ -151,6 +152,57 @@ sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
     }
     sptr<IWantParams> iwantParams = new WantParamWrapper(wantPaqrams);
     return iwantParams;
+}
+
+WantParams WantParamWrapper::ParseWantParams(const std::string &str)
+{
+    WantParams wantPaqrams;
+    std::string key = "";
+    int typeId = 0;
+    if (!ValidateStr(str)) {
+        return wantPaqrams;
+    }
+    for (unsigned int strnum = 0; strnum < str.size(); strnum++) {
+        if (str[strnum] == '{' && key != "" && typeId == WantParams::VALUE_TYPE_WANTPARAMS) {
+            unsigned int num;
+            int count = 0;
+            for (num = strnum; num < str.size(); num++) {
+                if (str[num] == '{') {
+                    count++;
+                } else if (str[num] == '}') {
+                    count--;
+                }
+                if (count == 0) {
+                    break;
+                }
+            }
+            wantPaqrams.SetParam(key, WantParamWrapper::Parse(str.substr(strnum, num - strnum)));
+            key = "";
+            typeId = 0;
+            strnum = num + 1;
+        } else if (str[strnum] == '"') {
+            if (key == "") {
+                strnum++;
+                key = str.substr(strnum, str.find('"', strnum) - strnum);
+                strnum = str.find('"', strnum);
+            } else if (typeId == 0) {
+                strnum++;
+                typeId = atoi(str.substr(strnum, str.find('"', strnum) - strnum).c_str());
+                if (errno == ERANGE) {
+                    return wantPaqrams;
+                }
+                strnum = str.find('"', strnum);
+            } else {
+                strnum++;
+                wantPaqrams.SetParam(key,
+                    WantParams::GetInterfaceByType(typeId, str.substr(strnum, str.find('"', strnum) - strnum)));
+                strnum = str.find('"', strnum);
+                typeId = 0;
+                key = "";
+            }
+        }
+    }
+    return wantPaqrams;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

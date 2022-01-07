@@ -567,6 +567,12 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
 
 void WantBaseTest::CompareWant(const std::shared_ptr<Want> &want1, const std::shared_ptr<Want> &want2) const
 {
+    Operation opt1 = want1->GetOperation();
+    Operation opt2 = want2->GetOperation();
+    EXPECT_EQ(opt1.GetDeviceId(), opt2.GetDeviceId());
+    EXPECT_EQ(opt1.GetBundleName(), opt2.GetBundleName());
+    EXPECT_EQ(opt1.GetAbilityName(), opt2.GetAbilityName());
+
     EXPECT_EQ(want1->GetAction(), want2->GetAction());
     EXPECT_EQ(want1->GetFlags(), want2->GetFlags());
     EXPECT_EQ(want1->GetType(), want2->GetType());
@@ -3818,6 +3824,57 @@ HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0200, Function | MediumTest | Lev
     }
     std::shared_ptr<Want> p2(newWant);
     CompareWant(p1, p2);
+}
+/**
+ * @tc.number: AaFwk_Want_ToString_0100
+ * @tc.name:    ToString and FromString
+ * @tc.desc: Verify FromString()
+ */
+HWTEST_F(WantBaseTest, AaFwk_Want_ToString_0100, Function | MediumTest | Level1)
+{
+    std::string deviceId = "deviceId";
+    std::string bundleName = "bundleName";
+    std::string abilityName ="abilityName";
+    std::string uri = "url";
+    std::string type = "type";
+    unsigned int flags = 1;
+    std::string action = "action";
+    WantParams parameters;
+    std::vector<std::string> entities = {"entity.system.entity1", "entity.system.entity2"};
+
+    std::string keyBool = "key_bool";
+    bool valueBool = true;
+    parameters.SetParam(keyBool, Boolean::Box(valueBool));
+
+    std::string keyStr = "key_string";
+    std::string valueString = "123";
+    parameters.SetParam(keyStr, String::Box(valueString));
+
+    std::string keyInt = "key_int";
+    int valueInt = 111;
+    parameters.SetParam(keyStr, Integer::Box(valueInt));
+
+    std::shared_ptr<Want> want1 = std::make_shared<Want>();
+    if (want1 == nullptr) {
+        return;
+    }
+    want1->SetElementName(deviceId, bundleName, abilityName);
+    want1->SetUri(uri);
+    want1->SetType(type);
+    want1->SetFlags(flags);
+    want1->SetAction(action);
+    for (auto entity : entities) {
+        want1->AddEntity(entity);
+    }
+
+    std::string jsonString = want1->ToString();
+    Want *newWant = Want::FromString(jsonString);
+    if (newWant == nullptr) {
+        return;
+    }
+    std::shared_ptr<Want> want2(newWant);
+
+    CompareWant(want1, want2);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
