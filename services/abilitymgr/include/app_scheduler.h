@@ -182,6 +182,13 @@ public:
      */
     int KillApplication(const std::string &bundleName);
 
+    /**
+     * clear the application data
+     *
+     * @param bundleName.
+     */
+    int ClearUpApplicationData(const std::string &bundleName);
+
     void AttachTimeOut(const sptr<IRemoteObject> &token);
 
     void PrepareTerminate(const sptr<IRemoteObject> &token);
@@ -203,6 +210,11 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig);
+
+    /**
+     * Start a resident process
+     */
+    void StartupResidentProcess();
 
 protected:
     /**

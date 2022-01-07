@@ -101,6 +101,7 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+    MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
 
     void Wait()
     {

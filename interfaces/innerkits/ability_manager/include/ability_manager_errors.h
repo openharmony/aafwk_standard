@@ -324,6 +324,11 @@ enum {
      * Result(2097216) for KillProcess: keep alive process can not be killed
      */
     KILL_PROCESS_KEEP_ALIVE,
+
+    /**
+     * Result(2097217) for clear the application data fail.
+     */
+    CLEAR_APPLICATION_DATA_FAIL,
 };
 
 enum {

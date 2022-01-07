@@ -103,6 +103,7 @@ private:
     int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
+    int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
 
     int StartContinuationInner(MessageParcel &data, MessageParcel &reply);
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
