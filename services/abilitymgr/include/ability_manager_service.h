@@ -326,7 +326,7 @@ public:
      * @param missionId the id of the mission to retrieve the sAutoapshots
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
+    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
     /**
      * Ask that the mission associated with a given mission ID be moved to the
@@ -552,6 +552,8 @@ public:
         const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver) override;
 
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
+
+    virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
 
     /**
      * set lock screen white list

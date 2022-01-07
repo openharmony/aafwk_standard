@@ -287,7 +287,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsLauncherAbility, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: AddConnectRecordToList UT.
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Level0)
+HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_AddConnectRecordToList, TestSize.Level1)
 {
     // test1 for input param is null
     abilityRecord_->AddConnectRecordToList(nullptr);

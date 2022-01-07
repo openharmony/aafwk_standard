@@ -71,7 +71,7 @@ public:
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD3(
         GetRecentMissions, int(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList));
-    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t missionId, MissionSnapshotInfo &snapshot));
+    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t missionId, MissionPixelMap &missionPixelMap));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(RemoveMission, int(int id));
     MOCK_METHOD1(RemoveStack, int(int id));
@@ -129,6 +129,7 @@ public:
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
 
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 public:
     std::string powerState_;
 };

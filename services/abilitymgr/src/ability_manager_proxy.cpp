@@ -15,6 +15,10 @@
 
 #include "ability_manager_proxy.h"
 
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
 #include "errors.h"
 #include "string_ex.h"
 
@@ -634,7 +638,7 @@ int AbilityManagerProxy::GetRecentMissions(
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     int error;
     MessageParcel data;
@@ -653,12 +657,12 @@ int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionSnap
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
     }
-    std::unique_ptr<MissionSnapshotInfo> info(reply.ReadParcelable<MissionSnapshotInfo>());
+    std::unique_ptr<MissionPixelMap> info(reply.ReadParcelable<MissionPixelMap>());
     if (!info) {
         HILOG_ERROR("readParcelableInfo failed.");
         return ERR_UNKNOWN_OBJECT;
     }
-    snapshot = *info;
+    missionPixelMap = *info;
     return reply.ReadInt32();
 }
 
@@ -1412,6 +1416,37 @@ int AbilityManagerProxy::GetPendingRequestWant(const sptr<IWantSender> &target, 
         return INNER_ERR;
     }
     want = std::move(wantInfo);
+
+    return NO_ERROR;
+}
+
+int AbilityManagerProxy::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (target == nullptr || !data.WriteParcelable(target->AsObject())) {
+        HILOG_ERROR("target write failed.");
+        return INNER_ERR;
+    }
+    if (info == nullptr || !data.WriteParcelable(info.get())) {
+        HILOG_ERROR("info write failed.");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::GET_PENDING_WANT_SENDER_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    std::unique_ptr<WantSenderInfo> wantSenderInfo(reply.ReadParcelable<WantSenderInfo>());
+    if (!wantSenderInfo) {
+        HILOG_ERROR("readParcelable Info failed");
+        return INNER_ERR;
+    }
+    info = std::move(wantSenderInfo);
 
     return NO_ERROR;
 }

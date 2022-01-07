@@ -18,6 +18,7 @@ ohos_shared_library("abilitymanager") {
     "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
     "//foundation/aafwk/standard/services/common/include",
+    "//foundation/multimedia/image_standard/interfaces/kits/js/common/include/",
     "//utils/system/safwk/native/include",
     "./",
   ]
@@ -26,6 +27,7 @@ ohos_shared_library("abilitymanager") {
     "napi_ability_manager.cpp",
     "native_module.cpp",
   ]
+  ldflags = [ "-Wl,-rpath=/system/lib/module/multimedia/" ]
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",

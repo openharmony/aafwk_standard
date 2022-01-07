@@ -57,7 +57,7 @@ void WantReceiverStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: The code which not exist
  * CaseDescription: Verify that on remote request is abnormal
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_001, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_001, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -77,7 +77,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_001, TestSiz
  * EnvConditions: Description abnormal
  * CaseDescription: Verify that on remote request is abnormal
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_002, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_002, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -96,7 +96,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_002, TestSiz
  * EnvConditions: Code is WANT_SENDER_SEND
  * CaseDescription: Verify that on remote request is normal
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_003, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_003, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -119,7 +119,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_OnRemoteRequest_003, TestSiz
  * EnvConditions: Valid parameter
  * CaseDescription: Verify the function SendInner request is normal.
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_SendInner_001, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_SendInner_001, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -140,7 +140,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_SendInner_001, TestSize.Leve
  * EnvConditions: Invalid parameter
  * CaseDescription: Verify the function PerformReceiveInner request is abnormal.
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_001, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_001, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -158,7 +158,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_001, Tes
  * EnvConditions: Invalid parameter
  * CaseDescription: Verify the function PerformReceiveInner request is abnormal.
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_002, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_002, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -179,7 +179,7 @@ HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_002, Tes
  * EnvConditions: Valid parameter
  * CaseDescription: Verify the function PerformReceiveInner request is normal.
  */
-HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_003, TestSize.Level0)
+HWTEST_F(WantReceiverStubTest, WantReceiverStubTest_PerformReceiveInner_003, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
