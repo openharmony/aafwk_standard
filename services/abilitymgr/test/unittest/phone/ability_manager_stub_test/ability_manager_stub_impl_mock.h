@@ -304,6 +304,11 @@ public:
     {
         return 0;
     }
+
+    virtual int ClearUpApplicationData(const std::string &bundleName) override
+    {
+        return 0;
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

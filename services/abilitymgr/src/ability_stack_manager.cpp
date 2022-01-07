@@ -2770,8 +2770,7 @@ void AbilityStackManager::BackToLauncher()
     auto fullScreenStack = GetTopFullScreenStackIncludeSplitScreen();
     CHECK_POINTER(fullScreenStack);
     auto currentTopAbility = fullScreenStack->GetTopAbilityRecord();
-    if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE) ||
-        currentTopAbility->IsAbilityState(AbilityState::ACTIVATING))) {
+    if (currentTopAbility && (currentTopAbility->IsAbilityState(AbilityState::ACTIVE))) {
         HILOG_WARN("Current top ability is active, no need to start launcher.");
         return;
     }
@@ -2938,7 +2937,7 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             ActiveTopAbility(abilityRecord);
             break;
         case AbilityManagerService::ACTIVE_TIMEOUT_MSG:
-            DelayedStartLauncher();
+            HandleActiveTimeout(abilityRecord);
             break;
         case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
         case AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG:
@@ -2947,6 +2946,31 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         default:
             break;
     }
+}
+
+void AbilityStackManager::HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability)
+{
+    HILOG_DEBUG("Handle active timeout");
+    CHECK_POINTER(ability);
+    DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
+
+    if (ability->IsLauncherRoot()) {
+        HILOG_INFO("Launcher root load timeout, restart.");
+        BackToLauncher();
+        return;
+    }
+
+    auto missionRecord = ability->GetMissionRecord();
+    CHECK_POINTER(missionRecord);
+    auto stack = missionRecord->GetMissionStack();
+    CHECK_POINTER(stack);
+    missionRecord->RemoveAbilityRecord(ability);
+    if (missionRecord->IsEmpty()) {
+        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
+        JudgingIsRemoveMultiScreenStack(stack);
+    }
+
+    BackToLauncher();
 }
 
 int AbilityStackManager::MoveMissionToFloatingStack(const MissionOption &missionOption)
@@ -3620,7 +3644,7 @@ void AbilityStackManager::ActiveTopAbility(const std::shared_ptr<AbilityRecord> 
 
     if (abilityRecord->IsLauncherRoot()) {
         HILOG_INFO("Launcher root load timeout, restart.");
-        DelayedStartLauncher();
+        BackToLauncher();
         return;
     }
     if (abilityRecord->IsLockScreenRoot()) {

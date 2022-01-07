@@ -18,6 +18,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include "ability_manager_client.h"
 #include "ability_manager_interface.h"
 #include "app_mgr_interface.h"
 #include "hilog_wrapper.h"
@@ -1694,7 +1695,8 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
 auto NAPI_ClearUpApplicationDataAsyncExecuteCallback = [](napi_env env, void *data) {
     HILOG_INFO("clearUpApplicationData called(CallBack Mode)...");
     AsyncClearUpApplicationDataCallbackInfo *async_callback_info = (AsyncClearUpApplicationDataCallbackInfo *)data;
-    async_callback_info->result = GetAppManagerInstance()->ClearUpApplicationData(async_callback_info->bundleName);
+    async_callback_info->result = AAFwk::AbilityManagerClient::GetInstance()->
+        ClearUpApplicationData(async_callback_info->bundleName);
 };
 
 auto NAPI_ClearUpApplicationDataAsyncCompleteCallback = [](napi_env env, napi_status status, void *data) {
