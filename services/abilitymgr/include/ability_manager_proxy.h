@@ -510,6 +510,10 @@ public:
 
     virtual int MoveMissionToFront(int32_t missionId) override;
 
+    virtual int StartUser(int userId) override;
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
+
 private:
     template<typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);

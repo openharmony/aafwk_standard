@@ -41,6 +41,7 @@
 #include "mission_listener_interface.h"
 #include "mission_info.h"
 #include "start_options.h"
+#include "stop_user_callback.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -527,6 +528,10 @@ public:
 
     virtual int MoveMissionToFront(int32_t missionId) = 0;
 
+    virtual int StartUser(int userId) = 0;
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -672,6 +677,12 @@ public:
 
         // ipc id for get mission snap shot (48)
         GET_MISSION_SNAPSHOT_BY_ID,
+
+        // ipc id for move mission to front (49)
+        START_USER,
+
+        // ipc id for move mission to front (50)
+        STOP_USER,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
