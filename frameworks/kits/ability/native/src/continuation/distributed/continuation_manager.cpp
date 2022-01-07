@@ -17,6 +17,7 @@
 
 #include "ability.h"
 #include "ability_continuation_interface.h"
+#include "ability_manager_client.h"
 #include "app_log_wrapper.h"
 #include "continuation_handler.h"
 #include "distributed_client.h"
@@ -26,8 +27,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int ContinuationManager::TIMEOUT_MS_WAIT_DMS_SCHEDULE_START_CONTINUATION = 5000;
-const int ContinuationManager::TIMEOUT_MS_WAIT_DMS_NOTIFY_CONTINUATION_COMPLETE = 6000;
+const int ContinuationManager::TIMEOUT_MS_WAIT_DMS_NOTIFY_CONTINUATION_COMPLETE = 25000;
 const int ContinuationManager::TIMEOUT_MS_WAIT_REMOTE_NOTIFY_BACK = 6000;
 
 ContinuationManager::ContinuationManager()
@@ -79,6 +79,58 @@ std::string ContinuationManager::GetOriginalDeviceId()
     return originalDeviceId_;
 }
 
+void ContinuationManager::ContinueAbilityWithStack(const std::string &deviceId)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+    if (CheckContinuationIllegal()) {
+        APP_LOGE("ContinueAbilityWithStack failed. Ability not available to continueAbility.");
+        return;
+    }
+
+    HandleContinueAbilityWithStack(deviceId);
+    APP_LOGI("%{public}s called end", __func__);
+}
+
+bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &deviceId)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+
+    if (!CheckAbilityToken()) {
+        APP_LOGE("HandleContinueAbilityWithStack checkAbilityToken failed");
+        return false;
+    }
+
+    sptr<IRemoteObject> continueToken = continueToken_;
+    std::shared_ptr<ContinuationHandler> continuationHandler = continuationHandler_.lock();
+    if (continuationHandler == nullptr) {
+        APP_LOGE("HandleContinueAbilityWithStack continuationHandler is nullptr");
+        return false;
+    }
+
+    InitMainHandlerIfNeed();
+    auto task = [continuationHandler, continueToken, deviceId]() {
+        continuationHandler->HandleStartContinuationWithStack(continueToken, deviceId);
+    };
+    if (!mainHandler_->PostTask(task)) {
+        APP_LOGE("HandleContinueAbilityWithStack postTask failed");
+        return false;
+    }
+
+    APP_LOGI("%{public}s called end", __func__);
+    return true;
+}
+
+bool ContinuationManager::OnContinue(WantParams &wantParams)
+{
+    std::shared_ptr<Ability> ability = nullptr;
+    ability = ability_.lock();
+    if (ability == nullptr) {
+        APP_LOGE("ContinuationManager::CheckContinuationIllegal failed. ability is nullptr");
+        return false;
+    }
+    return true;
+}
+
 void ContinuationManager::ContinueAbility(bool reversible, const std::string &deviceId)
 {
     APP_LOGI("%{public}s called begin", __func__);
@@ -102,8 +154,6 @@ void ContinuationManager::ContinueAbility(bool reversible, const std::string &de
     if (HandleContinueAbility(reversible, deviceId)) {
         reversible_ = reversible;
         ChangeProcessState(ProgressState::WAITING_SCHEDULE);
-        // Wait state change timeout. Restore state
-        RestoreStateWhenTimeout(TIMEOUT_MS_WAIT_DMS_SCHEDULE_START_CONTINUATION, ProgressState::WAITING_SCHEDULE);
     }
     APP_LOGI("%{public}s called end", __func__);
 }
@@ -181,8 +231,8 @@ void ContinuationManager::NotifyCompleteContinuation(
     const std::string &originDeviceId, int sessionId, bool success, const sptr<IRemoteObject> &reverseScheduler)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    DistributedClient::GetInstance()->NotifyCompleteContinuation(
-        Str8ToStr16(originDeviceId), sessionId, success, reverseScheduler);
+    AAFwk::AbilityManagerClient::GetInstance()->NotifyCompleteContinuation(
+        originDeviceId, sessionId, success);
     APP_LOGI("%{public}s called end", __func__);
 }
 
@@ -317,6 +367,10 @@ void ContinuationManager::ChangeProcessState(const ProgressState &newState)
 
 void ContinuationManager::ChangeProcessStateToInit()
 {
+    if (mainHandler_ != nullptr) {
+        mainHandler_->RemoveTask("Restore_State_When_Timeout");
+        APP_LOGI("Restore_State_When_Timeout task removed");
+    }
     ChangeProcessState(ProgressState::INITIAL);
 }
 

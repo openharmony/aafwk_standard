@@ -486,9 +486,16 @@ public:
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
 
-    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override;
+    virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
+        int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) override;
 
-    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
+    virtual int ContinueAbility(const std::string &deviceId, int32_t missionId) override;
+
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status) override;
+
+    virtual void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess) override;
+
+    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) override;
 
     virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override;
 

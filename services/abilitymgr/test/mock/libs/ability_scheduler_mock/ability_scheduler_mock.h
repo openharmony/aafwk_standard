@@ -42,6 +42,7 @@ public:
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD1(NotifyContinuationResult, void(const int32_t result));
+    MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {

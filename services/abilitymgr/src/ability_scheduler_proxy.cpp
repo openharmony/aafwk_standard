@@ -933,7 +933,27 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
     return results;
 }
 
-void AbilitySchedulerProxy::NotifyContinuationResult(const int32_t result)
+void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("ContinueAbility fail to write token");
+        return;
+    }
+    if (!data.WriteString(deviceId)) {
+        HILOG_ERROR("ContinueAbility fail to write deviceId");
+        return;
+    }
+
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::CONTINUE_ABILITY, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("ContinueAbility fail to SendRequest. err: %d", err);
+    }
+}
+
+void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
 {
     MessageParcel data;
     MessageParcel reply;

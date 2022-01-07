@@ -1271,6 +1271,15 @@ public:
      * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
      * ability slices must implement the IAbilityContinuation interface.
      *
+     * @param deviceId Indicates the ID of the target device where this ability will be migrated to.
+     *
+     */
+    virtual void ContinueAbilityWithStack(const std::string &deviceId) final;
+
+    /**
+     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
+     * ability slices must implement the IAbilityContinuation interface.
+     *
      * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
      * is null, this method has the same effect as continueAbility().
      *

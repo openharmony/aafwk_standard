@@ -1154,6 +1154,16 @@ void AbilityThread::NotifyTopActiveAbilityChanged(bool flag)
     return;
 }
 
+void AbilityThread::ContinueAbility(const std::string& deviceId)
+{
+    APP_LOGI("ContinueAbility, deviceId:%{public}s", deviceId.c_str());
+    if (abilityImpl_ == nullptr) {
+        APP_LOGE("AbilityThread::ContinueAbility abilityImpl_ is nullptr");
+        return;
+    }
+    abilityImpl_->ContinueAbility(deviceId);
+}
+
 void AbilityThread::NotifyContinuationResult(const int32_t result)
 {
     APP_LOGI("NotifyContinuationResult, result:%{public}d", result);

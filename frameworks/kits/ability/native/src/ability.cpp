@@ -1546,6 +1546,28 @@ std::weak_ptr<IContinuationRegisterManager> Ability::GetContinuationRegisterMana
  * is null, this method has the same effect as continueAbility().
  *
  */
+void Ability::ContinueAbilityWithStack(const std::string &deviceId)
+{
+    if (deviceId.empty()) {
+        APP_LOGE("ContinueAbilityWithStack(deviceId) failed. deviceId is empty");
+        return;
+    }
+
+    if (!VerifySupportForContinuation()) {
+        APP_LOGE("ContinueAbilityWithStack(deviceId) failed. VerifySupportForContinuation failed");
+        return;
+    }
+    continuationManager_->ContinueAbilityWithStack(deviceId);
+}
+
+/**
+ * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
+ * ability slices must implement the IAbilityContinuation interface.
+ *
+ * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
+ * is null, this method has the same effect as continueAbility().
+ *
+ */
 void Ability::ContinueAbility(const std::string &deviceId)
 {
     if (deviceId.empty()) {
@@ -1554,7 +1576,7 @@ void Ability::ContinueAbility(const std::string &deviceId)
     }
 
     if (!VerifySupportForContinuation()) {
-        APP_LOGE("Ability::ContinueAbility(deviceId) failed. VerifySupportForContinuation faled");
+        APP_LOGE("Ability::ContinueAbility(deviceId) failed. VerifySupportForContinuation failed");
         return;
     }
     continuationManager_->ContinueAbility(false, deviceId);

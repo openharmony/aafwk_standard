@@ -466,20 +466,35 @@ public:
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo);
 
     /**
+     * ContinueMission, continue ability from mission center.
+     *
+     * @param srcDeviceId, origin deviceId.
+     * @param dstDeviceId, target deviceId.
+     * @param missionId, indicates which ability to continue.
+     * @param callBack, notify result back.
+     * @param wantParams, extended params.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
+        int32_t missionId, const sptr<IRemoteObject> &callback, AAFwk::WantParams &wantParams);
+
+    /**
      * start continuation.
      * @param want, used to start a ability.
      * @param abilityToken, ability token.
+     * @param status, continue status.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken);
+    ErrCode StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status);
 
     /**
-     * notify continuation result.
-     * @param abilityToken, ability token.
-     * @param result, continuation result.
-     * @return Returns ERR_OK on success, others on failure.
+     * notify continuation complete to dms.
+     * @param deviceId, source device which start a continuation.
+     * @param sessionId, represent a continuaion.
+     * @param isSuccess, continuation result.
+     * @return
      */
-    ErrCode NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result);
+    void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess);
 
     /**
      * @brief Lock specified mission.

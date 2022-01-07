@@ -68,7 +68,10 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[STOP_SERVICE_ABILITY] = &AbilityManagerStub::StopServiceAbilityInner;
     requestFuncMap_[DUMP_STATE] = &AbilityManagerStub::DumpStateInner;
     requestFuncMap_[START_ABILITY_FOR_SETTINGS] = &AbilityManagerStub::StartAbilityForSettingsInner;
+    requestFuncMap_[CONTINUE_MISSION] = &AbilityManagerStub::ContinueMissionInner;
+    requestFuncMap_[CONTINUE_ABILITY] = &AbilityManagerStub::ContinueAbilityInner;
     requestFuncMap_[START_CONTINUATION] = &AbilityManagerStub::StartContinuationInner;
+    requestFuncMap_[NOTIFY_COMPLETE_CONTINUATION] = &AbilityManagerStub::NotifyCompleteContinuationInner;
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilityManagerStub::NotifyContinuationResultInner;
     requestFuncMap_[MOVE_MISSION_TO_FLOATING_STACK] = &AbilityManagerStub::MoveMissionToFloatingStackInner;
     requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
@@ -904,35 +907,73 @@ int AbilityManagerStub::GetSystemMemoryAttrInner(MessageParcel &data, MessagePar
     return NO_ERROR;
 }
 
+int AbilityManagerStub::ContinueMissionInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string srcDeviceId = data.ReadString();
+    std::string dstDeviceId = data.ReadString();
+    int32_t missionId = data.ReadInt32();
+    sptr<IRemoteObject> callback = data.ReadRemoteObject();
+    if (callback == nullptr) {
+        HILOG_ERROR("ContinueMissionInner callback readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    std::unique_ptr<WantParams> wantParams(data.ReadParcelable<WantParams>());
+    if (wantParams == nullptr) {
+        HILOG_ERROR("ContinueMissionInner wantParams readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t result = ContinueMission(srcDeviceId, dstDeviceId, missionId, callback, *wantParams);
+    HILOG_INFO("ContinueMissionInner result = %{public}d", result);
+    return result;
+}
+
+int AbilityManagerStub::ContinueAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    int32_t missionId = data.ReadInt32();
+    int32_t result = ContinueAbility(deviceId, missionId);
+    HILOG_INFO("ContinueAbilityInner result = %{public}d", result);
+    return result;
+}
+
 int AbilityManagerStub::StartContinuationInner(MessageParcel &data, MessageParcel &reply)
 {
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (want == nullptr) {
-        HILOG_ERROR("DistributedSchedStub: StartContinuationInner want readParcelable failed!");
+        HILOG_ERROR("StartContinuationInner want readParcelable failed!");
         return ERR_NULL_OBJECT;
     }
 
     sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
     if (abilityToken == nullptr) {
-        HILOG_ERROR("DistributedSchedStub: StartContinuationInner abilityToken readParcelable failed!");
+        HILOG_ERROR("AbilityManagerStub: StartContinuationInner abilityToken readParcelable failed!");
         return ERR_NULL_OBJECT;
     }
-    int32_t result = StartContinuation(*want, abilityToken);
-    HILOG_INFO("DistributedSchedStub: StartContinuationInner result = %{public}d", result);
+    int32_t status = data.ReadInt32();
+    int32_t result = StartContinuation(*want, abilityToken, status);
+    HILOG_INFO("StartContinuationInner result = %{public}d", result);
+
     return result;
+}
+
+int AbilityManagerStub::NotifyCompleteContinuationInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string devId = data.ReadString();
+    int32_t sessionId = data.ReadInt32();
+    bool isSuccess = data.ReadBool();
+
+    NotifyCompleteContinuation(devId, sessionId, isSuccess);
+    HILOG_INFO("NotifyCompleteContinuationInner end");
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
-    if (abilityToken == nullptr) {
-        HILOG_ERROR("DistributedSchedStub: NotifyContinuationResultInner abilityToken readParcelable failed!");
-        return ERR_NULL_OBJECT;
-    }
-    int continuationResult = data.ReadInt32();
+    int32_t missionId = data.ReadInt32();
+    int32_t continuationResult = data.ReadInt32();
 
-    int32_t result = NotifyContinuationResult(abilityToken, continuationResult);
-    HILOG_INFO("DistributedSchedStub: StartContinuationInner result = %{public}d", result);
+    int32_t result = NotifyContinuationResult(missionId, continuationResult);
+    HILOG_INFO("StartContinuationInner result = %{public}d", result);
     return result;
 }
 

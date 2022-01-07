@@ -302,6 +302,13 @@ public:
     void NotifyTopActiveAbilityChanged(bool flag);
 
     /**
+     * @brief continue ability to target device.
+     *
+     * @param deviceId: target deviceId
+     */
+    void ContinueAbility(const std::string& deviceId);
+
+    /**
      * @brief notify this ability continuation result.
      *
      * @param result: Continuation result

@@ -504,9 +504,16 @@ public:
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) = 0;
 
-    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) = 0;
+    virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
+        int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) = 0;
 
-    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) = 0;
+    virtual int ContinueAbility(const std::string &deviceId, int32_t missionId) = 0;
+
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status) = 0;
+
+    virtual void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess) = 0;
+
+    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) = 0;
 
     virtual int LockMissionForCleanup(int32_t missionId) = 0;
 
@@ -756,6 +763,12 @@ public:
         START_CONTINUATION = 1101,
 
         NOTIFY_CONTINUATION_RESULT = 1102,
+
+        NOTIFY_COMPLETE_CONTINUATION = 1103,
+
+        CONTINUE_ABILITY = 1104,
+
+        CONTINUE_MISSION = 1105,
 
         // ipc id for mission manager(1110)
         REGISTER_REMOTE_MISSION_LISTENER = 1110,
