@@ -2438,5 +2438,17 @@ void AbilityManagerService::StartingSettingsDataAbility()
     want.SetElementName(AbilityConfig::SETTINGS_DATA_BUNDLE_NAME, AbilityConfig::SETTINGS_DATA_ABILITY_NAME);
     (void)StartAbility(want, DEFAULT_INVAL_VALUE);
 }
+
+int AbilityManagerService::StartUser(int userId)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    return 0;
+}
+
+int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &callback)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    return 0;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

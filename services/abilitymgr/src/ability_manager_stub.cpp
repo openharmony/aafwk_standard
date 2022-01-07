@@ -116,6 +116,8 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLEAN_MISSION] = &AbilityManagerStub::CleanMissionInner;
     requestFuncMap_[CLEAN_ALL_MISSIONS] = &AbilityManagerStub::CleanAllMissionsInner;
     requestFuncMap_[MOVE_MISSION_TO_FRONT] = &AbilityManagerStub::MoveMissionToFrontInner;
+    requestFuncMap_[START_USER] = &AbilityManagerStub::StartUserInner;
+    requestFuncMap_[STOP_USER] = &AbilityManagerStub::StopUserInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1045,6 +1047,29 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
     int result = MoveMissionToFront(missionId);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("MoveMissionToFront failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StartUserInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t userId = data.ReadInt32();
+    int result = StartUser(userId);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("StartUser failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t userId = data.ReadInt32();
+    auto callback = iface_cast<IStopUserCallback>(data.ReadParcelable<IRemoteObject>());
+    int result = StopUser(userId, callback);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("StopUser failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
