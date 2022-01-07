@@ -771,6 +771,27 @@ int AbilityManagerProxy::KillProcess(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteString16(Str8ToStr16(bundleName))) {
+        HILOG_ERROR("bundleName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    int error = Remote()->SendRequest(IAbilityManager::CLEAR_UP_APPLICATION_DATA, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
 {
     MessageParcel data;

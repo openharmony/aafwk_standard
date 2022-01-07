@@ -815,8 +815,17 @@ Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("%{public}s begin.", __func__);
+
+    // Update for the first time
+    if (!configuration_) {
+        configuration_ = std::make_shared<Configuration>(config);
+        APP_LOGI("AbilityImpl::Init the configuration");
+        return;
+    }
+
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
+        return;
     }
 
     ability_->OnConfigurationUpdated(config);

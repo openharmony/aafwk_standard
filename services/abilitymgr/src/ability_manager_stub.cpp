@@ -105,6 +105,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
     requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
+    requestFuncMap_[CLEAR_UP_APPLICATION_DATA] = &AbilityManagerStub::ClearUpApplicationDataInner;
     requestFuncMap_[LOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::LockMissionForCleanupInner;
     requestFuncMap_[UNLOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::UnlockMissionForCleanupInner;
     requestFuncMap_[REGISTER_MISSION_LISTENER] = &AbilityManagerStub::RegisterMissionListenerInner;
@@ -358,6 +359,17 @@ int AbilityManagerStub::KillProcessInner(MessageParcel &data, MessageParcel &rep
     int result = KillProcess(bundleName);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("remove stack error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string bundleName = Str16ToStr8(data.ReadString16());
+    int result = ClearUpApplicationData(bundleName);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("ClearUpApplicationData error");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
