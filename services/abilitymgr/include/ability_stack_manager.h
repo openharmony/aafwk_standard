@@ -725,6 +725,7 @@ private:
     void CheckMissionRecordIsResume(const std::shared_ptr<MissionRecord> &mission);
     int ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage,
         bool isPowerStateLockScreen = false);
+    void HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability);
     bool IsLockScreenState();
     bool CheckMissionRecordInWhiteList(const std::shared_ptr<MissionRecord> &mission);
     bool DeleteMissionRecordInStackOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord);

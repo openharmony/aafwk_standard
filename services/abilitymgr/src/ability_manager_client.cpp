@@ -296,6 +296,13 @@ ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
     return abms->KillProcess(bundleName);
 }
 
+ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleName)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->ClearUpApplicationData(bundleName);
+}
+
 ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
 {
     if (token == nullptr) {

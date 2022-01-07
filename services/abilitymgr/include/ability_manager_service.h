@@ -371,6 +371,15 @@ public:
     virtual int KillProcess(const std::string &bundleName) override;
 
     /**
+     * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
+     * clear the application data.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @return ERR_OK, return back success, others fail.
+     */
+    virtual int ClearUpApplicationData(const std::string &bundleName) override;
+
+    /**
      * Uninstall app
      *
      * @param bundleName.
@@ -712,6 +721,18 @@ private:
      *
      */
     void StartingSystemUiAbility(const SatrtUiMode &mode);
+
+    /**
+     * starting contacts ability.
+     *
+     */
+    void StartingContactsAbility();
+
+    /**
+     * starting mms ability.
+     *
+     */
+    void StartingMmsAbility();
 
     /**
      * connet bms.

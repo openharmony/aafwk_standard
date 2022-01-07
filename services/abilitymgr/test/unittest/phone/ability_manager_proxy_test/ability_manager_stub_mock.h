@@ -294,6 +294,11 @@ public:
         return 0;
     }
 
+    virtual int ClearUpApplicationData(const std::string &bundleName) override
+    {
+        return 0;
+    }
+
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD2(

@@ -51,6 +51,12 @@ const std::string PHONE_SERVICE_BUNDLE_NAME = "com.ohos.callui";
 const std::string PHONE_SERVICE_ABILITY_NAME = "com.ohos.callui.ServiceAbility";
 const std::string LOCK_SCREEN_EVENT_NAME = "lock_screen";
 
+const std::string CONTACTS_ABILITY_NAME = "com.ohos.contacts.ServiceAbility";
+const std::string CONTACTS_BUNDLE_NAME = "com.ohos.contacts";
+
+const std::string MMS_ABILITY_NAME = "com.ohos.mms.ServiceAbility";
+const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
+
 const std::string SETTINGS_DATA_ABILITY_NAME = "com.ohos.settingsdata.DataAbility";
 const std::string SETTINGS_DATA_BUNDLE_NAME = "com.ohos.settingsdata";
 }  // namespace AbilityConfig

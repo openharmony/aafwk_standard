@@ -106,14 +106,8 @@ void FilePath::GetComponents(std::vector<std::string> &components)
 
     // Capture root, if any.
     base = current.BaseName();
-    if (!base.path_.empty() && base.path_ != kCurrentDirectory)
+    if (!base.path_.empty() && base.path_ != kCurrentDirectory) {
         components.push_back(current.BaseName().path_);
-
-    // Capture drive letter, if any.
-    FilePath dir = current.DirName();
-    int letter = FindDriveLetter(dir.path_);
-    if (letter != static_cast<int>(std::string::npos)) {
-        components.push_back(std::string(dir.path_, 0, letter + 1));
     }
 }
 
@@ -122,22 +116,22 @@ FilePath FilePath::DirName()
     FilePath newPath(path_);
     newPath.StripTrailingSeparatorsInternal();
 
-    int letter = FindDriveLetter(newPath.path_);
     std::string::size_type lastSeparator =
         newPath.path_.find_last_of(kSeparators, std::string::npos, kSeparatorsLength - 1);
-    int one = 1;
-    int two = 2;
-    int three = 3;
+    std::string::size_type zero = 0;
+    std::string::size_type one = 1;
+    std::string::size_type two = 2;
+
     if (lastSeparator == std::string::npos) {
         // path_ is in the current directory.
-        newPath.path_.resize(letter + one);
-    } else if (lastSeparator == letter + one) {
+        newPath.path_.resize(zero);
+    } else if (lastSeparator == zero) {
         // path_ is in the root directory.
-        newPath.path_.resize(letter + two);
-    } else if (lastSeparator == letter + two && IsSeparator(newPath.path_[letter + one])) {
+        newPath.path_.resize(one);
+    } else if (lastSeparator == one && IsSeparator(newPath.path_[zero])) {
         // path_ is in "//" (possibly with a drive letter); leave the double
         // separator intact indicating alternate root.
-        newPath.path_.resize(letter + three);
+        newPath.path_.resize(two);
     } else if (lastSeparator != 0) {
         // path_ is somewhere else, trim the basename.
         newPath.path_.resize(lastSeparator);
@@ -154,11 +148,6 @@ FilePath FilePath::BaseName()
 {
     FilePath newPath(path_);
     newPath.StripTrailingSeparatorsInternal();
-    // The drive letter, if any, is always stripped.
-    int letter = FindDriveLetter(newPath.path_);
-    if (letter != static_cast<int>(std::string::npos)) {
-        newPath.path_.erase(0, letter + 1);
-    }
 
     // Keep everything after the final separator, but if the pathname is only
     // one character and it's a separator, leave it alone.
@@ -178,10 +167,7 @@ void FilePath::StripTrailingSeparatorsInternal()
     }
     int one = 1;
     int two = 2;
-    int start = FindDriveLetter(path_) + two;
-    if (start <= 0) {
-        return;
-    }
+    int start = 1;
     std::string::size_type lastStripped = std::string::npos;
     for (std::string::size_type pos = path_.length(); pos > start && FilePath::IsSeparator(path_[pos - one]); --pos) {
         if (pos != start + one || lastStripped == start + two || !FilePath::IsSeparator(path_[start - one])) {
@@ -189,11 +175,6 @@ void FilePath::StripTrailingSeparatorsInternal()
             lastStripped = pos;
         }
     }
-}
-
-int FilePath::FindDriveLetter(const std::string &path)
-{
-    return (int)std::string::npos;
 }
 
 bool FilePath::AreAllSeparators(const std::string &input)
