@@ -1824,5 +1824,62 @@ int AbilityManagerProxy::StopUser(int userId, const sptr<IStopUserCallback> &cal
     }
     return reply.ReadInt32();
 }
+
+int AbilityManagerProxy::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
+{
+    HILOG_INFO("called");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken faild");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteString(devId)) {
+        HILOG_ERROR("write deviceId fail.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!data.WriteBool(fixConflict)) {
+        HILOG_ERROR("WriteBool fail.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!data.WriteInt64(tag)) {
+        HILOG_ERROR("WriteInt64 fail.");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::START_SYNC_MISSIONS, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int32_t AbilityManagerProxy::StopSyncRemoteMissions(const std::string& devId)
+{
+    HILOG_INFO("called");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken faild");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteString(devId)) {
+        HILOG_ERROR("write deviceId fail.");
+        return ERR_INVALID_VALUE;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::STOP_SYNC_MISSIONS, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
 }  // namespace AAFwk
 }  // namespace OHOS
