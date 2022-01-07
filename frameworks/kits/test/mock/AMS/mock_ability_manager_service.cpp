@@ -176,7 +176,7 @@ int MockAbilityManagerService::GetRecentMissions(
     return 0;
 }
 
-int MockAbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+int MockAbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     return 0;
 }

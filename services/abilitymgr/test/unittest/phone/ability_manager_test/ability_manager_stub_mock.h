@@ -97,19 +97,7 @@ public:
     MOCK_METHOD1(ChangeFocusTest, void(const std::vector<int> missionId));
     MOCK_METHOD1(TerminateAbilityTest, void(int id));
     MOCK_METHOD1(MoveMissionToEnd, int(int id));
-    MOCK_METHOD2(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken));
-    MOCK_METHOD2(NotifyContinuationResult, int(const sptr<IRemoteObject> &abilityToken, const int32_t result));
-
-    MOCK_METHOD1(LockMissionForCleanup, int(int32_t missionId));
-    MOCK_METHOD1(UnlockMissionForCleanup, int(int32_t missionId));
-    MOCK_METHOD1(RegisterMissionListener, int(const sptr<IMissionListener> &listener));
-    MOCK_METHOD1(UnRegisterMissionListener, int(const sptr<IMissionListener> &listener));
-    MOCK_METHOD3(
-        GetMissionInfos, int(const std::string& deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos));
-    MOCK_METHOD3(GetMissionInfo, int(const std::string& deviceId, int32_t missionId, MissionInfo &missionInfo));
-    MOCK_METHOD1(CleanMission, int(int32_t missionId));
-    MOCK_METHOD0(CleanAllMissions, int());
-    MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 };
 }  // namespace AAFwk
 }  // namespace OHOS

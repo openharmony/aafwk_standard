@@ -100,6 +100,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[REGISTER_CANCEL_LISTENER] = &AbilityManagerStub::RegisterCancelListenerInner;
     requestFuncMap_[UNREGISTER_CANCEL_LISTENER] = &AbilityManagerStub::UnregisterCancelListenerInner;
     requestFuncMap_[GET_PENDING_REQUEST_WANT] = &AbilityManagerStub::GetPendingRequestWantInner;
+    requestFuncMap_[GET_PENDING_WANT_SENDER_INFO] = &AbilityManagerStub::GetPendingRequestWantInner;
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
@@ -290,10 +291,10 @@ int AbilityManagerStub::ScheduleCommandAbilityDoneInner(MessageParcel &data, Mes
 
 int AbilityManagerStub::GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply)
 {
-    MissionSnapshotInfo snapshot;
+    MissionPixelMap missionPixelMap;
     int32_t missionId = data.ReadInt32();
-    int32_t result = GetMissionSnapshot(missionId, snapshot);
-    if (!reply.WriteParcelable(&snapshot)) {
+    int32_t result = GetMissionSnapshot(missionId, missionPixelMap);
+    if (!reply.WriteParcelable(&missionPixelMap)) {
         HILOG_ERROR("GetMissionSnapshot error");
         return ERR_INVALID_VALUE;
     }
@@ -861,6 +862,24 @@ int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageP
         return ERR_INVALID_VALUE;
     }
     reply.WriteParcelable(want.get());
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetWantSenderInfoInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    if (wantSender == nullptr) {
+        HILOG_ERROR("wantSender is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::shared_ptr<WantSenderInfo> info(data.ReadParcelable<WantSenderInfo>());
+    int32_t result = GetWantSenderInfo(wantSender, info);
+    if (result != NO_ERROR) {
+        HILOG_ERROR("GetWantSenderInfo is failed");
+        return ERR_INVALID_VALUE;
+    }
+    reply.WriteParcelable(info.get());
     return NO_ERROR;
 }
 

@@ -109,6 +109,8 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+    MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
+    MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
@@ -117,7 +119,7 @@ public:
     int GetRecentMissions(
         const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
 
-    int GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot) override;
+    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
     int RemoveMission(int id) override;
 

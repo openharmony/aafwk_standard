@@ -54,7 +54,7 @@ void AbilitySchedulerStubTest::WriteInterfaceToken(MessageParcel &data)
  * EnvConditions: code is SCHEDULE_ABILITY_TRANSACTION
  * CaseDescription: Verify the normal process of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_001, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_001, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -77,7 +77,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_001, TestSize.Level0)
  * EnvConditions: code is SCHEDULE_ABILITY_TRANSACTION
  * CaseDescription: Verifying stateinfo is nullptr causes onremoterequest to fail
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_002, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_002, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -99,7 +99,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_002, TestSize.Level0)
  * EnvConditions: code is SEND_RESULT
  * CaseDescription: Verify the normal process of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_003, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_003, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -123,7 +123,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_003, TestSize.Level0)
  * EnvConditions: code is SEND_RESULT
  * CaseDescription: Verifying want is nullptr causes onremoterequest to fail
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_004, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_004, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -144,7 +144,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_004, TestSize.Level0)
  * EnvConditions: code is SCHEDULE_ABILITY_CONNECT
  * CaseDescription: Verify the normal and failed conditions of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_005, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_005, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -171,7 +171,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_005, TestSize.Level0)
  * EnvConditions: code is SCHEDULE_ABILITY_DISCONNECT
  * CaseDescription: Verify the normal conditions of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_006, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_006, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -189,7 +189,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_006, TestSize.Level0)
  * EnvConditions: code is SCHEDULE_SAVE_ABILITY_STATE
  * CaseDescription: Verify the failed conditions of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_007, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_007, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -207,7 +207,7 @@ HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_007, TestSize.Level0)
  * EnvConditions: code is default
  * CaseDescription: Verify the normal conditions of onremoterequest
  */
-HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_008, TestSize.Level0)
+HWTEST_F(AbilitySchedulerStubTest, AbilitySchedulerStub_008, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
