@@ -21,24 +21,24 @@
 
 namespace OHOS {
 namespace AAFwk {
-bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
+bool MissionPixelMap::ReadFromParcel(Parcel &parcel)
 {
-    auto elementName = parcel.ReadParcelable<AppExecFwk::ElementName>();
-    if (elementName == nullptr) {
+    std::unique_ptr<AppExecFwk::ElementName> ability(parcel.ReadParcelable<AppExecFwk::ElementName>());
+    if (ability == nullptr) {
         return false;
     }
-    ability = *elementName;
-    auto pixelMap = parcel.ReadParcelable<Media::PixelMap>();
-    if (pixelMap == nullptr) {
+    topAbility = *ability;
+    std::unique_ptr<AAFwk::ImageInfo> image(parcel.ReadParcelable<AAFwk::ImageInfo>());
+    if (ability == nullptr) {
         return false;
     }
-    snapshot = *pixelMap;
+    imageInfo = *image;
     return true;
 }
 
-MissionSnapshot *MissionSnapshot::Unmarshalling(Parcel &parcel)
+MissionPixelMap *MissionPixelMap::Unmarshalling(Parcel &parcel)
 {
-    MissionSnapshot *info = new (std::nothrow) MissionSnapshot();
+    MissionPixelMap *info = new (std::nothrow) MissionPixelMap();
     if (info == nullptr) {
         return nullptr;
     }
@@ -50,10 +50,14 @@ MissionSnapshot *MissionSnapshot::Unmarshalling(Parcel &parcel)
     return info;
 }
 
-bool MissionSnapshot::Marshalling(Parcel &parcel) const
+bool MissionPixelMap::Marshalling(Parcel &parcel) const
 {
-    parcel.WriteParcelable(&ability);
-    parcel.WriteParcelable(&snapshot);
+    if (!parcel.WriteParcelable(&topAbility)) {
+        return false;
+    }
+    if (!parcel.WriteParcelable(&imageInfo)) {
+        return false;
+    }
     return true;
 }
 }  // namespace AAFwk

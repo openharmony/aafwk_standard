@@ -3182,6 +3182,45 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_084, TestSize.
 
 /*
  * Feature: AbilityStackManager
+ * Function : GetMissionSnapshot
+ * SubFunction : NA
+ * FunctionPoints : Get Mission Snapshot
+ * EnvConditions: NA
+ * CaseDescription : Get Mission Snapshot
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_getMissionSnapshot_001, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    int32_t missionId = -1;
+    MissionPixelMap missionPixelMap;
+    auto ret = stackManager_->GetMissionSnapshot(missionId, missionPixelMap);
+
+    EXPECT_TRUE(REMOVE_MISSION_ID_NOT_EXIST == ret);
+}
+
+/*
+ * Feature: AbilityStackManager
+ * Function : GetMissionSnapshot
+ * SubFunction : NA
+ * FunctionPoints : Get Mission Snapshot
+ * EnvConditions: NA
+ * CaseDescription : Get Mission Snapshot
+ */
+HWTEST_F(AbilityStackManagerTest, ability_stack_manager_getMissionSnapshot_002, TestSize.Level1)
+{
+    stackManager_->Init();
+    EXPECT_TRUE(stackManager_);
+    int32_t missionId = 0;
+    MissionPixelMap missionPixelMap;
+    stackManager_->missionStackList_.clear();
+    auto ret = stackManager_->GetMissionSnapshot(missionId, missionPixelMap);
+
+    EXPECT_TRUE(REMOVE_MISSION_ID_NOT_EXIST == ret);
+}
+
+/*
+ * Feature: AbilityStackManager
  * Function: GenerateMissinOptionsOfSplitScreen
  * SubFunction: NA
  * FunctionPoints: creat splitscerenn mission option
@@ -3201,7 +3240,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_087, TestSize.
     auto ref = stackManager_->GenerateMissinOptionsOfSplitScreen(primary, secondary, options);
     EXPECT_EQ(ERR_INVALID_DATA, ref);
 }
-
+ 
 /*
  * Feature: AbilityStackManager
  * Function: GenerateMissinOptionsOfSplitScreen

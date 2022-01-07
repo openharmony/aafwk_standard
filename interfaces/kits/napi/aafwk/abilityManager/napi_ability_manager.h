@@ -21,11 +21,16 @@
 #include "ability_mission_info.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
+#include "pixel_map_napi.h"
+#include "ability_manager_client.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"
+#include "ability_mission_info.h"
+#include "mission_snapshot.h"
 
 using RunningProcessInfo = OHOS::AppExecFwk::RunningProcessInfo;
 using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
+using MissionSnapshot = OHOS::AAFwk::MissionSnapshot;
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -121,6 +126,15 @@ struct AsyncPreviousMissionInfosCallbackInfo {
     std::vector<AbilityMissionInfo> previousMissionInfo;
 };
 
+struct AsyncGetMissionSnapshot {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback[2] = {0};
+    int32_t missionId = -1;
+    MissionSnapshot missionSnapshot;
+};
+
 struct SystemMemroyInfoCB {
     std::shared_ptr<SystemMemoryAttr> info = nullptr;
     napi_async_work asyncWork = nullptr;
@@ -140,8 +154,10 @@ napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info);
 napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
+napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info);
 void CreateWeightReasonCodeObject(napi_env env, napi_value value);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
+napi_value NapiGetNull(napi_env env);
 napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info);
 }  // namespace AppExecFwk
 }  // namespace OHOS

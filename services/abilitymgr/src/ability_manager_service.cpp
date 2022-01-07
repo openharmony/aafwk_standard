@@ -598,9 +598,13 @@ int AbilityManagerService::GetRecentMissions(
     return currentStackManager_->GetRecentMissions(numMax, flags, recentList);
 }
 
-int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionSnapshotInfo &snapshot)
+int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
-    return 0;
+    if (missionId < 0) {
+        HILOG_ERROR("GetMissionSnapshot failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return currentStackManager_->GetMissionSnapshot(missionId, missionPixelMap);
 }
 
 int AbilityManagerService::SetMissionDescriptionInfo(
@@ -2351,6 +2355,15 @@ bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     HILOG_ERROR("callerUid %{public}d", callerUid);
     return bms->CheckIsSystemAppByUid(callerUid);
+}
+
+int AbilityManagerService::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
+{
+    HILOG_INFO("Get pending request info.");
+    CHECK_POINTER_AND_RETURN(pendingWantManager_, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(target, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(info, ERR_INVALID_VALUE);
+    return pendingWantManager_->GetWantSenderInfo(target, info);
 }
 
 void AbilityManagerService::UpdateLockScreenState(bool isLockScreen)
