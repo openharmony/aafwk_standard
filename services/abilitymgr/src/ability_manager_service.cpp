@@ -825,7 +825,35 @@ int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &co
     return dms->DisconnectRemoteAbility(connect);
 }
 
-int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken)
+int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
+    int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams)
+{
+    HILOG_INFO("ContinueMission srcDeviceId: %{public}s, dstDeviceId: %{public}s, missionId: %{public}d",
+        srcDeviceId.c_str(), dstDeviceId.c_str(), missionId);
+
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("ContinueMission failed to get dms.");
+        return ERR_INVALID_VALUE;
+    }
+    return dmsProxy->ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
+}
+
+int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
+{
+    HILOG_INFO("ContinueAbility deviceId : %{public}s, missionId = %{public}d.", deviceId.c_str(), missionId);
+
+    sptr<IRemoteObject> abilityToken = GetAbilityTokenByMissionId(missionId);
+    CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
+
+    auto abilityRecord = Token::GetAbilityRecordByToken(abilityToken);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    abilityRecord->ContinueAbility(deviceId);
+    return ERR_OK;
+}
+
+int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status)
 {
     HILOG_INFO("Start Continuation.");
     if (!CheckIfOperateRemote(want)) {
@@ -841,12 +869,37 @@ int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemot
         HILOG_ERROR("AbilityManagerService::StartContinuation failed to get dms.");
         return ERR_INVALID_VALUE;
     }
-    return dmsProxy->StartContinuation(want, abilityToken, appUid);
+    int32_t missionId = GetMissionIdByAbilityToken(abilityToken);
+    if (missionId == -1) {
+        HILOG_ERROR("AbilityManagerService::StartContinuation failed to get missionId.");
+        return ERR_INVALID_VALUE;
+    }
+    auto result =  dmsProxy->StartContinuation(want, missionId, appUid, status);
+    if (result != ERR_OK) {
+        HILOG_ERROR("StartContinuation failed, result = %{public}d, notify caller", result);
+        NotifyContinuationResult(missionId, result);
+    }
+    return result;
 }
 
-int AbilityManagerService::NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result)
+void AbilityManagerService::NotifyCompleteContinuation(const std::string &deviceId,
+    int32_t sessionId, bool isSuccess)
+{
+    HILOG_INFO("NotifyCompleteContinuation.");
+
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("AbilityManagerService::NotifyCompleteContinuation failed to get dms.");
+        return;
+    }
+    dmsProxy->NotifyCompleteContinuation(Str8ToStr16(deviceId), sessionId, isSuccess);
+}
+
+int AbilityManagerService::NotifyContinuationResult(int32_t missionId, const int32_t result)
 {
     HILOG_INFO("Notify Continuation Result : %{public}d.", result);
+
+    auto abilityToken = GetAbilityTokenByMissionId(missionId);
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
 
     auto abilityRecord = Token::GetAbilityRecordByToken(abilityToken);

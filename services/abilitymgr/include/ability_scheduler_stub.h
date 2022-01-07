@@ -64,6 +64,7 @@ private:
     int MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply);
     int TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply);
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
+    int ContinueAbilityInner(MessageParcel &data, MessageParcel &reply);
     using RequestFuncType = int (AbilitySchedulerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

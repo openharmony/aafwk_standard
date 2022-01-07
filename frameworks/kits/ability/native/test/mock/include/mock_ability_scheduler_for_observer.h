@@ -59,6 +59,7 @@ public:
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
     MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operation));
     MOCK_METHOD1(NotifyContinuationResult, void(const int32_t result));
+    MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
 };
 
 }  // namespace AppExecFwk
