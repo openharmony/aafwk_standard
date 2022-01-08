@@ -32,11 +32,11 @@ public:
     virtual ~ScreenshotHandler() = default;
 
     void StartScreenshot(int32_t missionId, int32_t winId);
-    WMImageInfo GetImageInfo(int32_t missionId);
+    OHOS::WMImageInfo GetImageInfo(int32_t missionId);
     void RemoveImageInfo(int32_t missionId);
 
 private:
-    std::map<int32_t, WMImageInfo> screenShot_;
+    std::map<int32_t, OHOS::WMImageInfo> screenShot_;
     sptr<IWindowManagerService> windowMS_;
 };
 }  // namespace AAFwk

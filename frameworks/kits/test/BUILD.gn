@@ -91,6 +91,7 @@ ohos_moduletest("ability_moduletest") {
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -298,10 +299,10 @@ group("moduletest") {
 
   if (is_phone_product) {
     deps += [
-      #":ability_conetxt_test",
-      #":ability_moduletest",
-      #":data_ability_helper_module_test",
-      #":data_ability_operation_moduletest",
+      ":ability_conetxt_test",
+      ":ability_moduletest",
+      ":data_ability_helper_module_test",
+      ":data_ability_operation_moduletest",
     ]
   }
 }

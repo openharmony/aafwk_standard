@@ -98,6 +98,14 @@ public:
     MOCK_METHOD1(TerminateAbilityTest, void(int id));
     MOCK_METHOD1(MoveMissionToEnd, int(int id));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    virtual int StartUser(int userId) override
+    {
+        return 0;
+    }
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override
+    {
+        return 0;
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

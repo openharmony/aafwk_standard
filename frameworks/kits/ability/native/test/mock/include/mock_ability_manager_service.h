@@ -186,6 +186,16 @@ public:
         return 0;
     }
 
+    virtual int StartUser(int userId) override
+    {
+        return 0;
+    }
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override
+    {
+        return 0;
+    }
+
     enum RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,

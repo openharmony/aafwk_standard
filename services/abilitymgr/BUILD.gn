@@ -25,9 +25,10 @@ group("abilityms_target") {
 
 group("unittest") {
   testonly = true
+
   deps = []
 
-  #deps = [ "test:unittest" ]
+  # deps = [ "test:unittest" ]
 }
 
 config("abilityms_config") {

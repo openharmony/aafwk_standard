@@ -76,14 +76,14 @@ void ScreenShotHandlerTest::TearDown()
  */
 HWTEST_F(ScreenShotHandlerTest, ability_screenshot_response_001, TestSize.Level1)
 {
-    WMImageInfo info;
+    OHOS::WMImageInfo info;
     info.width = 1;
     info.size = 5;
     info.height = 2;
     info.format = 3;
     info.data = nullptr;
     screenShotResponse_->OnWindowShot(info);
-    WMImageInfo infos = screenShotResponse_->GetImageInfo();
+    OHOS::WMImageInfo infos = screenShotResponse_->GetImageInfo();
     EXPECT_EQ(infos.width, static_cast<uint32_t>(1));
     EXPECT_EQ(infos.size, static_cast<uint32_t>(5));
     EXPECT_EQ(infos.height, static_cast<uint32_t>(2));
@@ -102,7 +102,7 @@ HWTEST_F(ScreenShotHandlerTest, ability_screenshot_response_001, TestSize.Level1
 HWTEST_F(ScreenShotHandlerTest, ability_screenshot_handler_001, TestSize.Level1)
 {
     int missionId = 0;
-    WMImageInfo info;
+    OHOS::WMImageInfo info;
     info.width = 1;
     info.size = 5;
     info.height = 2;
@@ -130,7 +130,7 @@ HWTEST_F(ScreenShotHandlerTest, ability_screenshot_handler_001, TestSize.Level1)
 HWTEST_F(ScreenShotHandlerTest, ability_screenshot_handler_002, TestSize.Level1)
 {
     int missionId = 0;
-    WMImageInfo info;
+    OHOS::WMImageInfo info;
     info.width = 1;
     info.size = 5;
     info.height = 2;
