@@ -532,6 +532,22 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) = 0;
 
+    /**
+     * Start synchronizing remote device mission
+     * @param devId, deviceId.
+     * @param fixConflict, resolve synchronizing conflicts flag.
+     * @param tag, call tag.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) = 0;
+
+    /**
+     * Stop synchronizing remote device mission
+     * @param devId, deviceId.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StopSyncRemoteMissions(const std::string& devId) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -740,6 +756,12 @@ public:
         START_CONTINUATION = 1101,
 
         NOTIFY_CONTINUATION_RESULT = 1102,
+
+        // ipc id for mission manager(1110)
+        REGISTER_REMOTE_MISSION_LISTENER = 1110,
+        UNREGISTER_REMOTE_MISSION_LISTENER = 1111,
+        START_SYNC_MISSIONS = 1112,
+        STOP_SYNC_MISSIONS = 1113,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

@@ -180,6 +180,14 @@ public:
     {
         return 0;
     }
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override
+    {
+        return 0;
+    }
+    virtual int StopSyncRemoteMissions(const std::string& devId) override
+    {
+        return 0;
+    }
 
     sptr<IAbilityScheduler> abilityScheduler_ = nullptr;  // kit interface used to schedule ability life
     Want want_;

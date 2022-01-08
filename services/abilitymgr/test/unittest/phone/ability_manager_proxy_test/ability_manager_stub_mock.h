@@ -308,7 +308,14 @@ public:
     {
         return 0;
     }
-
+    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override
+    {
+        return 0;
+    }
+    virtual int StopSyncRemoteMissions(const std::string& devId) override
+    {
+        return 0;
+    }
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD2(

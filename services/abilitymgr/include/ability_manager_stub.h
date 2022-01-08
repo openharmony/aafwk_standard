@@ -121,6 +121,9 @@ private:
     int StartUserInner(MessageParcel &data, MessageParcel &reply);
     int StopUserInner(MessageParcel &data, MessageParcel &reply);
 
+    int StartSyncRemoteMissionsInner(MessageParcel &data, MessageParcel &reply);
+    int StopSyncRemoteMissionsInner(MessageParcel &data, MessageParcel &reply);
+
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

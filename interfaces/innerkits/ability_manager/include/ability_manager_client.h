@@ -556,6 +556,21 @@ public:
      */
     ErrCode MoveMissionToFront(int32_t missionId);
 
+    /**
+     * Start synchronizing remote device mission
+     * @param devId, deviceId.
+     * @param fixConflict, resolve synchronizing conflicts flag.
+     * @param tag, call tag.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag);
+
+    /**
+     * Stop synchronizing remote device mission
+     * @param devId, deviceId.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StopSyncRemoteMissions(const std::string& devId);
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;

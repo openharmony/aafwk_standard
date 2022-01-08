@@ -35,6 +35,7 @@
 #include "iservice_registry.h"
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
+#include "mission/mission_info_converter.h"
 #include "sa_mgr_client.h"
 #include "softbus_bus_center.h"
 #include "string_ex.h"
@@ -49,6 +50,7 @@ static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 const int32_t EXTENSION_SUPPORT_API_VERSION = 8;
+const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const std::string EMPTY_DEVICE_ID = "";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
@@ -472,10 +474,10 @@ sptr<DistributedSchedule::IDistributedSched> AbilityManagerService::GetDmsProxy(
         return nullptr;
     }
     HILOG_INFO("get dms proxy success.");
-    sptr<DistributedSchedule::IDistributedSched> iDistributedSchedule =
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy =
         iface_cast<DistributedSchedule::IDistributedSched>(remoteObject);
     HILOG_INFO("%{public}s end.", __func__);
-    return iDistributedSchedule;
+    return dmsProxy;
 }
 
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
@@ -854,6 +856,26 @@ int AbilityManagerService::NotifyContinuationResult(const sptr<IRemoteObject> &a
     return ERR_OK;
 }
 
+int AbilityManagerService::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
+{
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("AbilityManagerService::StartSyncRemoteMissions failed to get dms.");
+        return ERR_INVALID_VALUE;
+    }
+    return dmsProxy->StartSyncRemoteMissions(devId, fixConflict, tag);
+}
+
+int AbilityManagerService::StopSyncRemoteMissions(const std::string& devId)
+{
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("AbilityManagerService::StopSyncRemoteMissions failed to get dms.");
+        return ERR_INVALID_VALUE;
+    }
+    return dmsProxy->StopSyncRemoteMissions(devId);
+}
+
 void AbilityManagerService::RemoveAllServiceRecord()
 {
     connectManager_->RemoveAll();
@@ -1094,11 +1116,28 @@ int AbilityManagerService::GetMissionInfos(const std::string& deviceId, int32_t 
     }
 
     if (CheckIsRemote(deviceId)) {
-        HILOG_ERROR("get remote missioninfos not support yet.");
-        return -1;
+        return GetRemoteMissionInfos(deviceId, numMax, missionInfos);
     }
 
     return currentMissionListManager_->GetMissionInfos(numMax, missionInfos);
+}
+
+int AbilityManagerService::GetRemoteMissionInfos(const std::string& deviceId, int32_t numMax,
+    std::vector<MissionInfo> &missionInfos)
+{
+    HILOG_INFO("GetRemoteMissionInfos begin");
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("GetRemoteMissionInfos failed to get dms.");
+        return ERR_INVALID_VALUE;
+    }
+    std::vector<DistributedSchedule::DstbMissionInfo> dstbMissionInfos;
+    int result = dmsProxy->GetMissionInfos(deviceId, numMax, dstbMissionInfos);
+    if (result != ERR_OK) {
+        HILOG_ERROR("GetRemoteMissionInfos failed, result = %{public}d", result);
+        return result;
+    }
+    return DistributedSchedule::MissionInfoConverter::ConvertToMissionInfos(dstbMissionInfos, missionInfos);
 }
 
 int AbilityManagerService::GetMissionInfo(const std::string& deviceId, int32_t missionId,
@@ -1114,11 +1153,29 @@ int AbilityManagerService::GetMissionInfo(const std::string& deviceId, int32_t m
     }
 
     if (CheckIsRemote(deviceId)) {
-        HILOG_ERROR("get remote mission not support yet.");
-        return -1;
+        return GetRemoteMissionInfo(deviceId, missionId, missionInfo);
     }
 
     return currentMissionListManager_->GetMissionInfo(missionId, missionInfo);
+}
+
+int AbilityManagerService::GetRemoteMissionInfo(const std::string& deviceId, int32_t missionId,
+    MissionInfo &missionInfo)
+{
+    HILOG_INFO("GetMissionInfoFromDms begin");
+    std::vector<MissionInfo> missionVector;
+    int result = GetRemoteMissionInfos(deviceId, MAX_NUMBER_OF_DISTRIBUTED_MISSIONS, missionVector);
+    if (result != ERR_OK) {
+        return result;
+    }
+    for (auto iter = missionVector.begin(); iter != missionVector.end(); iter++) {
+        if (iter->id == missionId) {
+            missionInfo = *iter;
+            return ERR_OK;
+        }
+    }
+    HILOG_WARN("missionId not found");
+    return ERR_INVALID_VALUE;
 }
 
 int AbilityManagerService::CleanMission(int32_t missionId)
