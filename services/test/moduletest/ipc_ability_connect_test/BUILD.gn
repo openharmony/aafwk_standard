@@ -45,7 +45,6 @@ ohos_moduletest("IpcAbilityConnectModuleTest") {
 
 group("moduletest") {
   testonly = true
-  deps = []
 
-  #deps = [ ":IpcAbilityConnectModuleTest" ]
+  deps = [ ":IpcAbilityConnectModuleTest" ]
 }

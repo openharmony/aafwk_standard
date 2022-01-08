@@ -73,6 +73,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image_native",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
@@ -81,7 +82,6 @@ ohos_moduletest("PandingWantMgrTest") {
 
 group("moduletest") {
   testonly = true
-  deps = []
 
-  #deps = [ ":PandingWantMgrTest" ]
+  deps = [ ":PandingWantMgrTest" ]
 }

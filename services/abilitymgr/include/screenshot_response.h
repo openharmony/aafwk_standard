@@ -22,7 +22,7 @@
 #include <string>
 #include "nocopyable.h"
 #include <condition_variable>
-#include "wm_common.h"
+#include "../wmclient/wm_common.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -31,14 +31,14 @@ public:
     ScreenShotResponse() = default;
     virtual ~ScreenShotResponse() = default;
 
-    void OnWindowShot(const struct WMImageInfo &info);
-    WMImageInfo GetImageInfo();
+    void OnWindowShot(const OHOS::WMImageInfo &info);
+    OHOS::WMImageInfo GetImageInfo();
 
 private:
     static constexpr int TIME_OUT = 200 * 1000;
     std::mutex mutex_;
     std::condition_variable condition_;
-    std::shared_ptr<WMImageInfo> info_;
+    std::shared_ptr<OHOS::WMImageInfo> info_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

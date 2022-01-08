@@ -337,11 +337,11 @@ group("unittest") {
   deps = []
 
   deps += [
-    ##    ":intent_params_test",
-    ##    ":intent_parameters_test",
-    ##    ":intent_parse_to_uri_test",
-    ##    ":intent_base_test",
-    ##    ":intent_filter_test",
+    ":intent_base_test",
+    ":intent_filter_test",
+    ":intent_parameters_test",
+    ":intent_params_test",
+    ":intent_parse_to_uri_test",
     ":operation_test",
     ":patterns_matcher_test",
     ":skills_test",
