@@ -209,6 +209,16 @@ public:
     {
         return 0;
     }
+    virtual int RegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) override
+    {
+        return 0;
+    }
+    virtual int UnRegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) override
+    {
+        return 0;
+    }
 
     enum RequestCode {
         E_STATE_INITIAL = 0,

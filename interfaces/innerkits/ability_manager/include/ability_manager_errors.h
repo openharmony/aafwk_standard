@@ -329,6 +329,16 @@ enum {
      * Result(2097217) for clear the application data fail.
      */
     CLEAR_APPLICATION_DATA_FAIL,
+
+    /**
+     * Result(2097216) for register remote mission listener fail.
+     */
+    REGISTER_REMOTE_MISSION_LISTENER_FAIL,
+
+    /**
+     * Result(2097217) for unregister remote mission listener fail.
+     */
+    UNREGISTER_REMOTE_MISSION_LISTENER_FAIL,
 };
 
 enum {

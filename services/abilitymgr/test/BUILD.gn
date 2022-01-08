@@ -72,6 +72,8 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/pending_want_manager.cpp",
     "${services_path}/abilitymgr/src/pending_want_record.cpp",
     "${services_path}/abilitymgr/src/power_storage.cpp",
+    "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
+    "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
     "${services_path}/abilitymgr/src/resume_mission_container.cpp",
     "${services_path}/abilitymgr/src/screenshot_handler.cpp",
     "${services_path}/abilitymgr/src/screenshot_response.cpp",

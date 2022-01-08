@@ -81,6 +81,8 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/mission_listener_controller.cpp",
   "${services_path}/abilitymgr/src/mission_listener_proxy.cpp",
   "${services_path}/abilitymgr/src/mission_listener_stub.cpp",
+  "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
+  "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
   "${services_path}/abilitymgr/src/mission_list_manager.cpp",
   "${services_path}/abilitymgr/src/mission_list.cpp",
   "${services_path}/abilitymgr/src/task_data_persistence_mgr.cpp",
