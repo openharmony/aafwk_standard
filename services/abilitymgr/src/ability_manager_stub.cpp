@@ -1066,7 +1066,10 @@ int AbilityManagerStub::StartUserInner(MessageParcel &data, MessageParcel &reply
 int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t userId = data.ReadInt32();
-    auto callback = iface_cast<IStopUserCallback>(data.ReadParcelable<IRemoteObject>());
+    sptr<IStopUserCallback> callback = nullptr;
+    if (data.ReadBool()) {
+        callback = iface_cast<IStopUserCallback>(data.ReadParcelable<IRemoteObject>());
+    }
     int result = StopUser(userId, callback);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("StopUser failed.");
