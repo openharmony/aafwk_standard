@@ -1813,9 +1813,15 @@ int AbilityManagerProxy::StopUser(int userId, const sptr<IStopUserCallback> &cal
         HILOG_ERROR("StopUser:WriteInt32 fail.");
         return ERR_INVALID_VALUE;
     }
-    if (!data.WriteParcelable(callback->AsObject())) {
-        HILOG_ERROR("StopUser:write IStopUserCallback fail.");
-        return ERR_INVALID_VALUE;
+
+    if (!callback) {
+        data.WriteBool(false);
+    } else {
+        data.WriteBool(true);
+        if (!data.WriteParcelable(callback->AsObject())) {
+            HILOG_ERROR("StopUser:write IStopUserCallback fail.");
+            return ERR_INVALID_VALUE;
+        }
     }
     error = Remote()->SendRequest(IAbilityManager::STOP_USER, data, reply, option);
     if (error != NO_ERROR) {
