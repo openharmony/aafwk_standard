@@ -164,7 +164,7 @@ bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abi
 }
 
 bool BundleMgrService::NotifyAbilityLifeStatus(
-    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
     return true;
 }

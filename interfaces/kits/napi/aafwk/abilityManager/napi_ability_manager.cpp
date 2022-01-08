@@ -1935,7 +1935,7 @@ napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value argv[argc];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    HILOG_INFO("argc = [%{public}d]", argc);
+    HILOG_INFO("argc = [%{public}d]", (int32_t)argc);
 
     napi_valuetype valuetype0;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype0));

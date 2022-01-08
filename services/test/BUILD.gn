@@ -31,15 +31,15 @@ group("moduletest") {
   testonly = true
 
   deps = [
-    #"moduletest/ability_mgr_service_test:moduletest",
-    #"moduletest/ability_record_test:moduletest",
-    #"moduletest/ability_stack_test:moduletest",
-    #"moduletest/dump_module_test:moduletest",
-    #"moduletest/ipc_ability_connect_test:moduletest",
-    #"moduletest/ipc_ability_mgr_test:moduletest",
-    #"moduletest/ipc_ability_scheduler_test:moduletest",
-    #"moduletest/module_test_dump_util:module_test_dump_util",
-    #"moduletest/panding_want_manager_test:moduletest",
-    #"//third_party/jsoncpp:jsoncpp",
+    "moduletest/ability_mgr_service_test:moduletest",
+    "moduletest/ability_record_test:moduletest",
+    "moduletest/ability_stack_test:moduletest",
+    "moduletest/dump_module_test:moduletest",
+    "moduletest/ipc_ability_connect_test:moduletest",
+    "moduletest/ipc_ability_mgr_test:moduletest",
+    "moduletest/ipc_ability_scheduler_test:moduletest",
+    "moduletest/module_test_dump_util:module_test_dump_util",
+    "moduletest/panding_want_manager_test:moduletest",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 }

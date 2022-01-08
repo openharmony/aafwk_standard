@@ -69,7 +69,7 @@ bool BundleMgrProxy::GetApplicationInfo(
 }
 
 bool BundleMgrProxy::NotifyAbilityLifeStatus(
-    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
     GTEST_LOG_(INFO) << "BundleMgrProxy::NotifyAbilityLifeStatus()";
     return true;
@@ -202,7 +202,7 @@ int BundleMgrService::GetUidByBundleName(const std::string &bundleName, const in
 }
 
 bool BundleMgrService::NotifyAbilityLifeStatus(
-    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
     GTEST_LOG_(INFO) << "BundleMgrService::NotifyAbilityLifeStatus()";
     return true;
