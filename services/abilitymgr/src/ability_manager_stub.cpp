@@ -1077,5 +1077,28 @@ int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
     }
     return NO_ERROR;
 }
+
+int AbilityManagerStub::StartSyncRemoteMissionsInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    bool fixConflict = data.ReadBool();
+    int64_t tag = data.ReadInt64();
+    int result = StartSyncRemoteMissions(deviceId, fixConflict, tag);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("StartSyncRemoteMissionsInner failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StopSyncRemoteMissionsInner(MessageParcel &data, MessageParcel &reply)
+{
+    int result = StopSyncRemoteMissions(data.ReadString());
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("StopSyncRemoteMissionsInner failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

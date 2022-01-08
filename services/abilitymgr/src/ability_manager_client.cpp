@@ -722,5 +722,31 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MoveMissionToFront(missionId);
 }
+
+/**
+ * Start synchronizing remote device mission
+ * @param devId, deviceId.
+ * @param fixConflict, resolve synchronizing conflicts flag.
+ * @param tag, call tag.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode AbilityManagerClient::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StartSyncRemoteMissions(devId, fixConflict, tag);
+}
+
+/**
+ * Stop synchronizing remote device mission
+ * @param devId, deviceId.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode AbilityManagerClient::StopSyncRemoteMissions(const std::string& devId)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StopSyncRemoteMissions(devId);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
