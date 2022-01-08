@@ -28,6 +28,7 @@
 #include "bundle_installer_interface.h"
 #include "bundle_status_callback_interface.h"
 #include "clean_cache_callback_interface.h"
+#include "common_event_info.h"
 #include "on_permission_changed_callback_interface.h"
 #include "ohos/aafwk/content/want.h"
 
@@ -270,7 +271,7 @@ public:
      * @param bundleName Indicates the bundle name of the application whose data is to be cleared.
      * @return Returns true if the data cleared successfully; returns false otherwise.
      */
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
     /**
      * @brief Register the specific bundle status callback.
      * @param bundleStatusCallback Indicates the callback to be invoked for returning the bundle status changed result.
@@ -431,7 +432,15 @@ public:
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
     virtual bool NotifyAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid = 0) = 0;
+    virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) = 0;
+    virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) = 0;
+    virtual int CheckPermissionByUid(
+        const std::string &bundleName, const std::string &permission, const int userId) = 0;
+    virtual bool GetAllCommonEventInfo(const std::string &eventKey, std::vector<CommonEventInfo> &commonEventInfos) = 0;
+    virtual bool RemoveClonedBundle(const std::string &bundleName, const int32_t uid) = 0;
+    virtual bool BundleClone(const std::string &bundleName) = 0;
+    virtual bool CheckBundleNameInAllowList(const std::string &bundleName) = 0;
 
     enum class Message {
         GET_APPLICATION_INFO,

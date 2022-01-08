@@ -108,8 +108,8 @@ group("moduletest") {
   testonly = true
 
   deps = [
-    #":aa_command_dump_module_test",
-    #":aa_command_start_module_test",
-    #":aa_command_stop_service_module_test",
+    ":aa_command_dump_module_test",
+    ":aa_command_start_module_test",
+    ":aa_command_stop_service_module_test",
   ]
 }

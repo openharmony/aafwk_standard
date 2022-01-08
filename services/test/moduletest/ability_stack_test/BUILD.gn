@@ -116,7 +116,6 @@ ohos_moduletest("ability_stack_module_test") {
 
 group("moduletest") {
   testonly = true
-  deps = []
 
-  #deps = [ ":ability_stack_module_test" ]
+  deps = [ ":ability_stack_module_test" ]
 }
