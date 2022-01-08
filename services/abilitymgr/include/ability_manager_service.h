@@ -646,6 +646,10 @@ public:
      */
     sptr<IRemoteObject> GetAbilityTokenByMissionId(int32_t missionId);
 
+    virtual int StartUser(int userId) override;
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;

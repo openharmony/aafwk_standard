@@ -1776,5 +1776,53 @@ int AbilityManagerProxy::MoveMissionToFront(int32_t missionId)
     }
     return reply.ReadInt32();
 }
+
+int AbilityManagerProxy::StartUser(int userId)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(userId)) {
+        HILOG_ERROR("StartUser:WriteInt32 fail.");
+        return ERR_INVALID_VALUE;
+    }
+    error = Remote()->SendRequest(IAbilityManager::START_USER, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("StartUser:SendRequest error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::StopUser(int userId, const sptr<IStopUserCallback> &callback)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(userId)) {
+        HILOG_ERROR("StopUser:WriteInt32 fail.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteParcelable(callback->AsObject())) {
+        HILOG_ERROR("StopUser:write IStopUserCallback fail.");
+        return ERR_INVALID_VALUE;
+    }
+    error = Remote()->SendRequest(IAbilityManager::STOP_USER, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("StopUser:SendRequest error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
 }  // namespace AAFwk
 }  // namespace OHOS

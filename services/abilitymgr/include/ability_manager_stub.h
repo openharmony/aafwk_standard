@@ -118,6 +118,8 @@ private:
     int CleanMissionInner(MessageParcel &data, MessageParcel &reply);
     int CleanAllMissionsInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontInner(MessageParcel &data, MessageParcel &reply);
+    int StartUserInner(MessageParcel &data, MessageParcel &reply);
+    int StopUserInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
