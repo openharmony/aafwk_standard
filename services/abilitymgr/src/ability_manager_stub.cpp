@@ -73,6 +73,8 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[START_CONTINUATION] = &AbilityManagerStub::StartContinuationInner;
     requestFuncMap_[NOTIFY_COMPLETE_CONTINUATION] = &AbilityManagerStub::NotifyCompleteContinuationInner;
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilityManagerStub::NotifyContinuationResultInner;
+    requestFuncMap_[REGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::RegisterRemoteMissionListenerInner;
+    requestFuncMap_[UNREGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::UnRegisterRemoteMissionListenerInner;
     requestFuncMap_[MOVE_MISSION_TO_FLOATING_STACK] = &AbilityManagerStub::MoveMissionToFloatingStackInner;
     requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
@@ -1140,6 +1142,40 @@ int AbilityManagerStub::StopSyncRemoteMissionsInner(MessageParcel &data, Message
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
+}
+
+int AbilityManagerStub::RegisterRemoteMissionListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    if (deviceId.empty()) {
+        HILOG_ERROR("AbilityManagerStub: RegisterRemoteMissionListenerInner deviceId empty!");
+        return ERR_NULL_OBJECT;
+    }
+    sptr<IRemoteMissionListener> listener = iface_cast<IRemoteMissionListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        HILOG_ERROR("AbilityManagerStub: RegisterRemoteMissionListenerInner listener readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t result = RegisterMissionListener(deviceId, listener);
+    HILOG_INFO("AbilityManagerStub: RegisterRemoteMissionListenerInner result = %{public}d", result);
+    return result;
+}
+
+int AbilityManagerStub::UnRegisterRemoteMissionListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    if (deviceId.empty()) {
+        HILOG_ERROR("AbilityManagerStub: UnRegisterRemoteMissionListenerInner deviceId empty!");
+        return ERR_NULL_OBJECT;
+    }
+    sptr<IRemoteMissionListener> listener = iface_cast<IRemoteMissionListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        HILOG_ERROR("AbilityManagerStub: UnRegisterRemoteMissionListenerInner listener readParcelable failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t result = UnRegisterMissionListener(deviceId, listener);
+    HILOG_INFO("AbilityManagerStub: UnRegisterRemoteMissionListenerInner result = %{public}d", result);
+    return result;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -42,6 +42,8 @@
 #include "mission_info.h"
 #include "start_options.h"
 #include "stop_user_callback.h"
+#include "remote_mission_listener_interface.h"
+
 
 namespace OHOS {
 namespace AAFwk {
@@ -554,6 +556,12 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int StopSyncRemoteMissions(const std::string& devId) = 0;
+
+    virtual int RegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) = 0;
+
+    virtual int UnRegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) = 0;
 
     enum {
         // ipc id 1-1000 for kit

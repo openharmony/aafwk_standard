@@ -693,6 +693,24 @@ ErrCode AbilityManagerClient::UnRegisterMissionListener(const sptr<IMissionListe
     return abms->UnRegisterMissionListener(listener);
 }
 
+ErrCode AbilityManagerClient::RegisterMissionListener(const std::string &deviceId,
+    const sptr<IRemoteMissionListener> &listener)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, REGISTER_REMOTE_MISSION_LISTENER_FAIL);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->RegisterMissionListener(deviceId, listener);
+}
+
+ErrCode AbilityManagerClient::UnRegisterMissionListener(const std::string &deviceId,
+    const sptr<IRemoteMissionListener> &listener)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, UNREGISTER_REMOTE_MISSION_LISTENER_FAIL);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->UnRegisterMissionListener(deviceId, listener);
+}
+
 ErrCode AbilityManagerClient::GetMissionInfos(const std::string& deviceId, int32_t numMax,
     std::vector<MissionInfo> &missionInfos)
 {
