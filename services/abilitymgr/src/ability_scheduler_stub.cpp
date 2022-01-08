@@ -58,6 +58,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_EXECUTEBATCH] = &AbilitySchedulerStub::ExecuteBatchInner;
     requestFuncMap_[TOP_ACTIVE_ABILITY_CHANGED] = &AbilitySchedulerStub::TopActiveAbilityChangedInner;
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilitySchedulerStub::NotifyContinuationResultInner;
+    requestFuncMap_[CONTINUE_ABILITY] = &AbilitySchedulerStub::ContinueAbilityInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -554,6 +555,13 @@ int AbilitySchedulerStub::ExecuteBatchInner(MessageParcel &data, MessageParcel &
         }
     }
     HILOG_INFO("AbilitySchedulerStub::ExecuteBatchInner end");
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::ContinueAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    ContinueAbility(deviceId);
     return NO_ERROR;
 }
 

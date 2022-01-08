@@ -56,6 +56,7 @@ public:
     void SetAbilityInfo(std::shared_ptr<AbilityInfo> &abilityInfo);
     void SetPrimaryStub(const sptr<IRemoteObject> &Primary);
     bool ReverseContinueAbility();
+    bool HandleStartContinuationWithStack(const sptr<IRemoteObject> &token, const std::string &deviceId);
 
     static const std::string ORIGINAL_DEVICE_ID;
 

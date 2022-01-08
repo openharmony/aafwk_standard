@@ -47,6 +47,13 @@ public:
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     
+    MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
+    MOCK_METHOD2(NotifyContinuationResult, int(int32_t missionId, const int32_t result));
+    MOCK_METHOD5(ContinueMission, int(const std::string &srcDeviceId, const std::string &dstDeviceId,
+        int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams));
+    MOCK_METHOD2(ContinueAbility, int(const std::string &deviceId, int32_t missionId));
+    MOCK_METHOD3(NotifyCompleteContinuation, void(const std::string &deviceId, int32_t sessionId, bool isSuccess));
+
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {
         code_ = code;
@@ -294,14 +301,6 @@ public:
     }
 
     virtual int ClearUpApplicationData(const std::string &bundleName) override
-    {
-        return 0;
-    }
-    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override
-    {
-        return 0;
-    }
-    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override
     {
         return 0;
     }
