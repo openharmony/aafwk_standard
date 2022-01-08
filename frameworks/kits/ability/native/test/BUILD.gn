@@ -1082,29 +1082,29 @@ group("unittest") {
   testonly = true
   deps = []
 
-  #deps += [
-  #  ":ability_context_test",
-  #  ":ability_impl_test",
-  #  ":ability_lifecycle_executor_test",
-  #  ":ability_lifecycle_test",
-  #  ":ability_permission_test",
-  #  ":ability_test",
-  #  ":ability_thread_dataability_test",
-  #  ":ability_thread_test",
-  #  ":continuation_test",
-  #  ":data_ability_helper_test",
-  #  ":data_ability_impl_file_secondpart_test",
-  #  ":data_ability_impl_file_test",
-  #  ":data_ability_impl_test",
-  #  ":data_ability_operation_test",
-  #  ":data_ability_result_test",
-  #  ":data_uri_utils_test",
-  #  ":form_host_client_test",
-  #  ":form_provider_client_test",
-  #  ":pac_map_test",
-  #  ":page_ability_impl_test",
-  #  ":service_ability_impl_test",
-  #  ":task_handler_client_test",
-  #]
+  deps += [
+    ":ability_context_test",
+    ":ability_impl_test",
+    ":ability_lifecycle_executor_test",
+    ":ability_lifecycle_test",
+    ":ability_permission_test",
+    ":ability_test",
+    ":ability_thread_dataability_test",
+    ":ability_thread_test",
+    ":continuation_test",
+    ":data_ability_helper_test",
+    ":data_ability_impl_file_secondpart_test",
+    ":data_ability_impl_file_test",
+    ":data_ability_impl_test",
+    ":data_ability_operation_test",
+    ":data_ability_result_test",
+    ":data_uri_utils_test",
+    ":form_host_client_test",
+    ":form_provider_client_test",
+    ":pac_map_test",
+    ":page_ability_impl_test",
+    ":service_ability_impl_test",
+    ":task_handler_client_test",
+  ]
 }
 ###############################################################################
