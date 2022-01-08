@@ -529,6 +529,26 @@ public:
     ErrCode UnRegisterMissionListener(const sptr<IMissionListener> &listener);
 
     /**
+     * @brief Register mission listener to ability manager service.
+     * @param deviceId The remote device Id.
+     * @param listener The handler of listener.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener);
+
+    /**
+     * @brief UnRegister mission listener from ability manager service.
+     * @param deviceId The remote device Id.
+     * @param listener The handler of listener.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode UnRegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener);
+
+    /**
      * @brief Get mission infos from ams.
      * @param deviceId local or remote deviceid.
      * @param numMax max number of missions.
