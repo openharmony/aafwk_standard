@@ -104,7 +104,17 @@ public:
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
 
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
-    
+
+    virtual int StartUser(int userId) override
+    {
+        return 0;
+    }
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override
+    {
+        return 0;
+    }
+
     void Wait()
     {
         sem_.Wait();

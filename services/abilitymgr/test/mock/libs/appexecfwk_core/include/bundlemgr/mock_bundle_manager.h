@@ -143,7 +143,7 @@ public:
         const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
 
     virtual bool NotifyAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) override;
     virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
@@ -170,7 +170,7 @@ public:
     MOCK_METHOD0(IsSafeMode, bool());
     MOCK_METHOD2(CleanBundleCacheFiles,
         bool(const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback));
-    MOCK_METHOD1(CleanBundleDataFiles, bool(const std::string &bundleName));
+    MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
         bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
@@ -227,7 +227,7 @@ public:
     bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
 
     virtual bool NotifyAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) override;
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid) override;
     MOCK_METHOD2(QueryWantAbility, int(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
@@ -253,7 +253,7 @@ public:
     MOCK_METHOD0(IsSafeMode, bool());
     MOCK_METHOD2(CleanBundleCacheFiles,
         bool(const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback));
-    MOCK_METHOD1(CleanBundleDataFiles, bool(const std::string &bundleName));
+    MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
         bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
@@ -285,6 +285,36 @@ public:
     MOCK_METHOD4(
         DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
+    virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) override
+    {
+        return true;
+    }
+    virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override
+    {
+        return true;
+    }
+    virtual int CheckPermissionByUid(
+        const std::string &bundleName, const std::string &permission, const int userId) override
+    {
+        return true;
+    }
+    virtual bool GetAllCommonEventInfo(const std::string &eventKey,
+        std::vector<CommonEventInfo> &commonEventInfos) override
+    {
+        return true;
+    }
+    virtual bool RemoveClonedBundle(const std::string &bundleName, const int32_t uid) override
+    {
+        return true;
+    }
+    virtual bool BundleClone(const std::string &bundleName) override
+    {
+        return true;
+    }
+    virtual bool CheckBundleNameInAllowList(const std::string &bundleName) override
+    {
+        return true;
+    }
 
 public:
     using QueryAbilityInfoFunType =
