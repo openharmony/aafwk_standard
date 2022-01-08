@@ -22,6 +22,7 @@
 #include "iremote_object.h"
 
 #include "bundle_info.h"
+#include "common_event_info.h"
 #include "hap_module_info.h"
 #include "ohos/aafwk/content/want.h"
 #include "permission_def.h"
@@ -191,7 +192,7 @@ public:
     virtual bool IsSafeMode() = 0;
     virtual bool CleanBundleCacheFiles(
         const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback) = 0;
-    virtual bool CleanBundleDataFiles(const std::string &bundleName) = 0;
+    virtual bool CleanBundleDataFiles(const std::string &bundleName, const int userId = 0) = 0;
     virtual bool RegisterBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool ClearBundleStatusCallback(const sptr<IBundleStatusCallback> &bundleStatusCallback) = 0;
     virtual bool UnregisterBundleStatusCallback() = 0;
@@ -218,7 +219,15 @@ public:
     virtual bool GetModuleUsageRecords(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords) = 0;
     virtual sptr<IBundleInstaller> GetBundleInstaller() = 0;
     virtual bool NotifyAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime) = 0;
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid = 0) = 0;
+    virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) = 0;
+    virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) = 0;
+    virtual int CheckPermissionByUid(
+        const std::string &bundleName, const std::string &permission, const int userId) = 0;
+    virtual bool GetAllCommonEventInfo(const std::string &eventKey, std::vector<CommonEventInfo> &commonEventInfos) = 0;
+    virtual bool RemoveClonedBundle(const std::string &bundleName, const int32_t uid) = 0;
+    virtual bool BundleClone(const std::string &bundleName) = 0;
+    virtual bool CheckBundleNameInAllowList(const std::string &bundleName) = 0;
 
     enum class Message {
         GET_APPLICATION_INFO,

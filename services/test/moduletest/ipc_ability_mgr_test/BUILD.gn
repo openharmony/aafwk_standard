@@ -50,7 +50,6 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
 
 group("moduletest") {
   testonly = true
-  deps = []
 
-  #deps = [ ":IpcAbilityMgrServiceModuleTest" ]
+  deps = [ ":IpcAbilityMgrServiceModuleTest" ]
 }

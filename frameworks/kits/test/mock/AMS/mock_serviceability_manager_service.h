@@ -171,6 +171,16 @@ public:
         return 0;
     }
 
+    virtual int StartUser(int userId) override
+    {
+        return 0;
+    }
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override
+    {
+        return 0;
+    }
+
     sptr<IAbilityScheduler> abilityScheduler_ = nullptr;  // kit interface used to schedule ability life
     Want want_;
     bool startAbility = false;

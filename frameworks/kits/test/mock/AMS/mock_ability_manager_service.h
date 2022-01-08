@@ -109,7 +109,6 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
-    MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
 
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
@@ -150,6 +149,16 @@ public:
     }
 
     virtual int ClearUpApplicationData(const std::string &bundleName) override
+    {
+        return 0;
+    }
+
+    virtual int StartUser(int userId) override
+    {
+        return 0;
+    }
+
+    virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override
     {
         return 0;
     }

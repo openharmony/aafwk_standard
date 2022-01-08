@@ -48,7 +48,7 @@ void ScreenshotHandler::StartScreenshot(int32_t missionId, int32_t winId)
     }
 
     auto then = [response](const auto &wmsinfo) {
-        WMImageInfo wminfo = {
+        OHOS::WMImageInfo wminfo = {
             .wret = wmsinfo.wret,
             .width = wmsinfo.width,
             .height = wmsinfo.height,
@@ -75,10 +75,10 @@ void ScreenshotHandler::StartScreenshot(int32_t missionId, int32_t winId)
     screenShot_.emplace(missionId, imageInfo);
 }
 
-WMImageInfo ScreenshotHandler::GetImageInfo(int32_t missionId)
+OHOS::WMImageInfo ScreenshotHandler::GetImageInfo(int32_t missionId)
 {
     HILOG_DEBUG("%{public}s begin", __func__);
-    WMImageInfo imageInfo;
+    OHOS::WMImageInfo imageInfo;
     auto iter = screenShot_.find(missionId);
     if (iter != screenShot_.end()) {
         imageInfo = iter->second;
