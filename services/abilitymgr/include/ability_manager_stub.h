@@ -106,7 +106,10 @@ private:
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
     int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
 
+    int ContinueMissionInner(MessageParcel &data, MessageParcel &reply);
+    int ContinueAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StartContinuationInner(MessageParcel &data, MessageParcel &reply);
+    int NotifyCompleteContinuationInner(MessageParcel &data, MessageParcel &reply);
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
 
     int LockMissionForCleanupInner(MessageParcel &data, MessageParcel &reply);

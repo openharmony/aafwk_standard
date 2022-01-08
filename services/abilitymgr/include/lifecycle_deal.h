@@ -57,6 +57,7 @@ public:
     void UpdateConfiguration(const AppExecFwk::Configuration &config);
     void ForegroundNew(const Want &want, LifeCycleStateInfo &stateInfo);
     void BackgroundNew(const Want &want, LifeCycleStateInfo &stateInfo);
+    void ContinueAbility(const std::string& deviceId);
     void NotifyContinuationResult(const int32_t result);
 
 private:

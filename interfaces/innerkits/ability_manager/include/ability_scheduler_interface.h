@@ -272,6 +272,7 @@ public:
     virtual Uri DenormalizeUri(const Uri &uri) = 0;
     virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) = 0;
+    virtual void ContinueAbility(const std::string& deviceId) = 0;
     virtual void NotifyContinuationResult(const int32_t result) = 0;
     enum {
         // ipc id for scheduling ability to a state of life cycle
@@ -353,6 +354,9 @@ public:
 
         // ipc id for notify continuation result
         NOTIFY_CONTINUATION_RESULT,
+
+        // ipc id for continue ability
+        CONTINUE_ABILITY,
     };
 };
 }  // namespace AAFwk

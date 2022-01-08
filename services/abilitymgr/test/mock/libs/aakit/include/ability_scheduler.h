@@ -99,6 +99,8 @@ public:
     };
     virtual void NotifyContinuationResult(const int32_t result) override
     {};
+    virtual void ContinueAbility(const std::string& deviceId) override
+    {};
 private:
     AbilityResult result_;
 };

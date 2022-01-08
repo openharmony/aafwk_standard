@@ -889,6 +889,15 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityImpl::ExecuteBatch(
     return results;
 }
 
+void AbilityImpl::ContinueAbility(const std::string& deviceId)
+{
+    if (ability_ == nullptr) {
+        APP_LOGE("AbilityImpl::ContinueAbility ability_ is nullptr");
+        return;
+    }
+    ability_->ContinueAbilityWithStack(deviceId);
+}
+
 void AbilityImpl::NotifyContinuationResult(const int32_t result)
 {
     if (ability_ == nullptr) {

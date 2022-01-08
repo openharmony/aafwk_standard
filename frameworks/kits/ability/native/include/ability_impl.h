@@ -320,6 +320,15 @@ public:
     virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 
     /**
+     * @brief continue ability to target device.
+     *
+     * @param deviceId: target deviceId
+     *
+     * @return
+     */
+    void ContinueAbility(const std::string& deviceId);
+
+    /**
      * @brief Notify continuation result to ability.
      *
      * @param result Continuaton result.

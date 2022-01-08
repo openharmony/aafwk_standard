@@ -146,22 +146,54 @@ public:
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
 
     /**
+     * ContinueMission, continue ability from mission center.
+     *
+     * @param srcDeviceId, origin deviceId.
+     * @param dstDeviceId, target deviceId.
+     * @param missionId, indicates which ability to continue.
+     * @param callBack, notify result back.
+     * @param wantParams, extended params.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
+        int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) override;
+
+    /**
+     * ContinueAbility, continue ability to ability.
+     *
+     * @param deviceId, target deviceId.
+     * @param missionId, indicates which ability to continue.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ContinueAbility(const std::string &deviceId, int32_t missionId) override;
+
+    /**
      * StartContinuation, continue ability to remote.
      *
      * @param want, Indicates the ability to start.
      * @param abilityToken, Caller ability token.
+     * @param status, continue status.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken) override;
+    virtual int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status) override;
+
+    /**
+     * NotifyCompleteContinuation, notify continuation complete to dms.
+     * @param deviceId, source device which start a continuation.
+     * @param sessionId, represent a continuaion.
+     * @param isSuccess, continuation result.
+     * @return
+     */
+    virtual void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess) override;
 
     /**
      * NotifyContinuationResult, notify continue result to ability.
      *
-     * @param abilityToken, Caller ability token.
+     * @param missionId, Caller mission id.
      * @param result, continuation result.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int NotifyContinuationResult(const sptr<IRemoteObject> &abilityToken, const int32_t result) override;
+    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) override;
 
     virtual int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
 

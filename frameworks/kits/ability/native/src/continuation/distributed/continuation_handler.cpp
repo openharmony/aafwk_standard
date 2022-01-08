@@ -23,11 +23,55 @@ using OHOS::AAFwk::WantParams;
 namespace OHOS {
 namespace AppExecFwk {
 const std::string ContinuationHandler::ORIGINAL_DEVICE_ID("deviceId");
+const int32_t ABILITY_REJECTED = 29360197;
 ContinuationHandler::ContinuationHandler(
     std::weak_ptr<ContinuationManager> &continuationManager, std::weak_ptr<Ability> &ability)
 {
     ability_ = ability;
     continuationManager_ = continuationManager;
+}
+
+bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObject> &token,
+    const std::string &deviceId)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+    if (token == nullptr) {
+        APP_LOGE("HandleStartContinuationWithStack token is null.");
+        return false;
+    }
+    if (abilityInfo_ == nullptr) {
+        APP_LOGE("HandleStartContinuationWithStack abilityInfo is null.");
+        return false;
+    }
+
+    abilityInfo_->deviceId = deviceId;
+
+    std::shared_ptr<ContinuationManager> continuationManagerTmp = nullptr;
+    continuationManagerTmp = continuationManager_.lock();
+    if (continuationManagerTmp == nullptr) {
+        APP_LOGE("HandleStartContinuationWithStack: get continuationManagerTmp is nullptr");
+        return false;
+    }
+    int32_t status = 0;
+    // decided to start continuation. Callback to ability.
+    WantParams wantParams;
+    if (!continuationManagerTmp->OnContinue(wantParams)) {
+        APP_LOGI("HandleStartContinuationWithStack: OnContinue failed, BundleName = %{public}s, ClassName= %{public}s",
+            abilityInfo_->bundleName.c_str(),
+            abilityInfo_->name.c_str());
+        status = ABILITY_REJECTED;
+    }
+
+    Want want = SetWantParams(wantParams);
+    want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
+
+    int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token, status);
+    if (result != ERR_OK) {
+        APP_LOGE("startContinuation failed.");
+        return false;
+    }
+    APP_LOGI("%{public}s called end", __func__);
+    return true;
 }
 
 bool ContinuationHandler::HandleStartContinuation(const sptr<IRemoteObject> &token, const std::string &deviceId)
@@ -72,7 +116,7 @@ bool ContinuationHandler::HandleStartContinuation(const sptr<IRemoteObject> &tok
     Want want = SetWantParams(wantParams);
     want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
 
-    int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token);
+    int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token, 0);
     if (result != 0) {
         APP_LOGE("distClient_.startContinuation failed.");
         return false;

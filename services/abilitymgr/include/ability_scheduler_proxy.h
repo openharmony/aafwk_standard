@@ -282,6 +282,15 @@ public:
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override;
 
     /**
+     * ContinueAbility, call ContinueAbility() through proxy project,
+     * Notify continue ability.
+     *
+     * @param The target deviceId.
+     * @return
+     */
+    void ContinueAbility(const std::string& deviceId) override;
+
+    /**
      * NotifyContinuationResult, call NotifyContinuationResult() through proxy project,
      * Notify continuation result to ability.
      *
