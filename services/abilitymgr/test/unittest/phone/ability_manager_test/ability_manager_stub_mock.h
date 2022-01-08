@@ -120,6 +120,16 @@ public:
         int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams));
     MOCK_METHOD2(ContinueAbility, int(const std::string &deviceId, int32_t missionId));
     MOCK_METHOD3(NotifyCompleteContinuation, void(const std::string &deviceId, int32_t sessionId, bool isSuccess));
+    virtual int RegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) override
+    {
+        return 0;
+    }
+    virtual int UnRegisterMissionListener(const std::string &deviceId,
+        const sptr<IRemoteMissionListener> &listener) override
+    {
+        return 0;
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

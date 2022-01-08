@@ -929,6 +929,61 @@ int AbilityManagerService::StopSyncRemoteMissions(const std::string& devId)
     return dmsProxy->StopSyncRemoteMissions(devId);
 }
 
+int AbilityManagerService::RegisterMissionListener(const std::string &deviceId,
+    const sptr<IRemoteMissionListener> &listener)
+{
+    std::string localDeviceId;
+    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
+        HILOG_ERROR("RegisterMissionListener: Check DeviceId failed");
+        return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
+    }
+    return CallMissionListener(deviceId, listener);
+}
+
+int AbilityManagerService::CallMissionListener(const std::string &deviceId,
+    const sptr<IRemoteMissionListener> &listener)
+{
+    if (callListenerHandler_ == nullptr) {
+        HILOG_INFO("init callListenerHandler_");
+        auto parseRunner = AppExecFwk::EventRunner::Create("CallRemoteMissionListener");
+        callListenerHandler_ = std::make_shared<AppExecFwk::EventHandler>(parseRunner);
+    }
+    int32_t delayTime = 2000;
+    auto callNotifyMissionsChanged = [listener, deviceId, this]() {
+        HILOG_INFO("callNotifyMissionsChanged");
+        listener->NotifyMissionsChanged(deviceId);
+    };
+    if (!callListenerHandler_->PostTask(callNotifyMissionsChanged, delayTime)) {
+        HILOG_ERROR("CallMissionListener: post NotifyMissionsChanged task failed");
+    }
+    auto callNotifySnapshot = [listener, deviceId, this]() {
+        HILOG_INFO("callNotifySnapshot");
+        listener->NotifySnapshot(deviceId, 1);
+    };
+    if (!callListenerHandler_->PostTask(callNotifySnapshot, delayTime)) {
+        HILOG_ERROR("CallMissionListener: post NotifySnapshot task failed");
+    }
+    auto callNotifyNetDisconnect = [listener, deviceId, this]() {
+        HILOG_INFO("callNotifyNetDisconnect");
+        listener->NotifyNetDisconnect(deviceId, 1);
+    };
+    if (!callListenerHandler_->PostTask(callNotifyNetDisconnect, delayTime)) {
+        HILOG_ERROR("CallMissionListener: post NotifyNetDisconnect task failed");
+    }
+    return ERR_OK;
+}
+
+int AbilityManagerService::UnRegisterMissionListener(const std::string &deviceId,
+    const sptr<IRemoteMissionListener> &listener)
+{
+    std::string localDeviceId;
+    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
+        HILOG_ERROR("RegisterMissionListener: Check DeviceId failed");
+        return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
+    }
+    return ERR_OK;
+}
+
 void AbilityManagerService::RemoveAllServiceRecord()
 {
     connectManager_->RemoveAll();
