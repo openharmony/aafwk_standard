@@ -27,6 +27,7 @@
 #include "mock_ability_lifecycle_callbacks.h"
 #include "ohos_application.h"
 #include "page_ability_impl.h"
+#include "locale_config.h"
 
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
@@ -37,7 +38,6 @@ namespace AppExecFwk {
 using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::AppExecFwk;
-const int TARGET_VERSION_THRESHOLDS = 8;
 
 class AbilityImplTest : public testing::Test {
 public:
@@ -67,6 +67,177 @@ void AbilityImplTest::SetUp(void)
 
 void AbilityImplTest::TearDown(void)
 {}
+
+/*
+ * Feature: AbilityImpl
+ * Function: ScheduleUpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: ScheduleUpdateConfiguration
+ * EnvConditions: NA
+ * CaseDescription: Test the normal behavior of the AbilityImpl::ScheduleUpdateConfiguration init
+ */
+HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ScheduleUpdateConfiguration_001, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_001 start";
+    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
+    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = "pageAbility";
+    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+    EXPECT_NE(token, nullptr);
+    if (token != nullptr) {
+        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+        EXPECT_NE(abilityThread, nullptr);
+        if (abilityThread != nullptr) {
+            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+            std::shared_ptr<MockPageAbility> pMocKPageAbility = std::make_shared<MockPageAbility>();
+            EXPECT_NE(pMocKPageAbility, nullptr);
+            std::shared_ptr<Ability> ability = pMocKPageAbility ;
+            if (pMocKPageAbility != nullptr) {
+                std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                std::shared_ptr<Global::Resource::ResourceManager> resourceManager(
+                    Global::Resource::CreateResourceManager());
+                if (resourceManager == nullptr) {
+                    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_001 resourceManager is nullptr";
+                }
+                contextDeal->initResourceManager(resourceManager);
+                contextDeal->SetApplicationContext(application);
+                pMocKPageAbility->AttachBaseContext(contextDeal);
+                application->AttachBaseContext(contextDeal);
+                mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
+
+                Configuration config;
+                auto testNotify1 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify1, 0);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify2 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify2, 0);
+            }
+        }
+    }
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_001 end";
+}
+
+/*
+ * Feature: AbilityImpl
+ * Function: ScheduleUpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: ScheduleUpdateConfiguration
+ * EnvConditions: NA
+ * CaseDescription: Test the normal behavior of the AbilityImpl::ScheduleUpdateConfiguration change
+ */
+HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002 start";
+    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
+    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = "pageAbility";
+    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+    EXPECT_NE(token, nullptr);
+    if (token != nullptr) {
+        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+        EXPECT_NE(abilityThread, nullptr);
+        if (abilityThread != nullptr) {
+            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+            std::shared_ptr<MockPageAbility> pMocKPageAbility = std::make_shared<MockPageAbility>();
+            EXPECT_NE(pMocKPageAbility, nullptr);
+            std::shared_ptr<Ability> ability = pMocKPageAbility;
+            if (pMocKPageAbility != nullptr) {
+                std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                std::shared_ptr<Global::Resource::ResourceManager> resourceManager(
+                    Global::Resource::CreateResourceManager());
+                if (resourceManager == nullptr) {
+                    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002 resourceManager is nullptr";
+                }
+                contextDeal->initResourceManager(resourceManager);
+                contextDeal->SetApplicationContext(application);
+                pMocKPageAbility->AttachBaseContext(contextDeal);
+                application->AttachBaseContext(contextDeal);
+                mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
+
+                Configuration config;
+                auto testNotify1 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify1, 0);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify2 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify2, 0);
+                auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
+                GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002 : " << language;
+                config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify3 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify3, 1);
+            }
+        }
+    }
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002 end";
+}
+
+/*
+ * Feature: AbilityImpl
+ * Function: ScheduleUpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: ScheduleUpdateConfiguration
+ * EnvConditions: NA
+ * CaseDescription: Test the normal behavior of the AbilityImpl::ScheduleUpdateConfiguration repeat
+ */
+HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003, TestSize.Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003 start";
+    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
+    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = "pageAbility";
+    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+    EXPECT_NE(token, nullptr);
+    if (token != nullptr) {
+        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
+        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
+        EXPECT_NE(abilityThread, nullptr);
+        if (abilityThread != nullptr) {
+            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
+            std::shared_ptr<MockPageAbility> pMocKPageAbility = std::make_shared<MockPageAbility>();
+            EXPECT_NE(pMocKPageAbility, nullptr);
+            std::shared_ptr<Ability> ability = pMocKPageAbility;
+            if (pMocKPageAbility != nullptr) {
+                std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
+                std::shared_ptr<Global::Resource::ResourceManager> resourceManager(
+                    Global::Resource::CreateResourceManager());
+                if (resourceManager == nullptr) {
+                    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003 resourceManager is nullptr";
+                }
+                contextDeal->initResourceManager(resourceManager);
+                contextDeal->SetApplicationContext(application);
+                pMocKPageAbility->AttachBaseContext(contextDeal);
+                application->AttachBaseContext(contextDeal);
+                mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
+
+                Configuration config;
+                auto testNotify1 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify1, 0);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify2 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify2, 0);
+                auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
+                GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003 : " << language;
+                config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify3 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify3, 1);
+                mockAbilityimpl->ScheduleUpdateConfiguration(config);
+                auto testNotify4 = pMocKPageAbility->OnConfigurationUpdated_;
+                EXPECT_EQ(testNotify4, 1);
+            }
+        }
+    }
+    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003 end";
+}
 
 /*
  * Feature: AbilityImpl
@@ -464,8 +635,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Foreground_001, TestSize.Level1)
 
                 Want want;
                 AbilityLifecycleExecutor AbilityLifecycleExecutor_;
-                mockAbilityimpl->ImplForeground(want);
-
                 EXPECT_EQ(MockPageAbility::Event::ON_FOREGROUND, pMocKPageAbility->state_);
                 EXPECT_EQ(AAFwk::ABILITY_STATE_INACTIVE, mockAbilityimpl->GetCurrentState());
             }
@@ -622,13 +791,10 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_001, TestSize.Level1)
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
                 Want want;
                 mockAbilityimpl->ImplForeground(want);
-
                 EXPECT_EQ(MockPageAbility::Event::ON_FOREGROUND, pMocKPageAbility->state_);
                 EXPECT_EQ(AAFwk::ABILITY_STATE_FOREGROUND_NEW, mockAbilityimpl->GetCurrentState());
             }
@@ -666,15 +832,12 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_002, TestSize.Level1)
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
                 Want want;
                 mockAbilityimpl->ImplForeground(want);
                 mockAbilityimpl->ImplForeground(want);
                 mockAbilityimpl->ImplForeground(want);
-
                 EXPECT_EQ(MockPageAbility::Event::ON_FOREGROUND, pMocKPageAbility->state_);
                 EXPECT_EQ(AAFwk::ABILITY_STATE_FOREGROUND_NEW, mockAbilityimpl->GetCurrentState());
             }
@@ -712,7 +875,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Background_001, TestSize.Level1)
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -755,7 +917,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Background_002, TestSize.Level1)
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -800,7 +961,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_Background_001, TestS
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -845,7 +1005,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_Background_002, TestS
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -891,7 +1050,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_Background_003, TestS
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -936,7 +1094,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_New_Foreground_Background_004, TestS
             EXPECT_NE(pMocKPageAbility, nullptr);
             if (pMocKPageAbility != nullptr) {
                 ability.reset(pMocKPageAbility);
-                ability->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
                 std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
                 mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
 
@@ -1774,6 +1931,5 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CheckAndRestore_001, TestSize.Level1
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CheckAndRestore_001 end";
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
