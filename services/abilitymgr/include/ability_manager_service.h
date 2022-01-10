@@ -732,6 +732,7 @@ public:
 
     static constexpr uint32_t MIN_DUMP_ARGUMENT_NUM = 2;
     static constexpr uint32_t MAX_WAIT_SYSTEM_UI_NUM = 600;
+    static constexpr uint32_t MAX_WAIT_SETTINGS_DATA_NUM = 300;
 
     enum DumpKey {
         KEY_DUMP_ALL = 0,
