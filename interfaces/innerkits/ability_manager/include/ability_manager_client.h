@@ -614,6 +614,15 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode StartUser(int accountId);
+
+    /**
+     * @brief stop user.
+     * @param accountId accountId.
+     * @param callback callback.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StopUser(int accountId, const sptr<IStopUserCallback> &callback);
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
