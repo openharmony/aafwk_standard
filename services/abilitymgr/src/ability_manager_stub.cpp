@@ -80,6 +80,8 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
     requestFuncMap_[MINIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MinimizeMultiWindowInner;
     requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
+    requestFuncMap_[START_SYNC_MISSIONS] = &AbilityManagerStub::StartSyncRemoteMissionsInner;
+    requestFuncMap_[STOP_SYNC_MISSIONS] = &AbilityManagerStub::StopSyncRemoteMissionsInner;
 }
 
 void AbilityManagerStub::SecondStepInit()
