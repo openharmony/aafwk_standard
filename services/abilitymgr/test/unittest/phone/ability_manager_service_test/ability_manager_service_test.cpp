@@ -1701,6 +1701,50 @@ HWTEST_F(AbilityManagerServiceTest, NotifyContinuationResult_002, TestSize.Level
     EXPECT_EQ(OHOS::ERR_OK, result);
 }
 
+/**
+ * @tc.name: ContinueMission_001
+ * @tc.desc: test ContinueMission
+ * @tc.type: FUNC
+ * @tc.require: SR000GKT4A
+ */
+HWTEST_F(AbilityManagerServiceTest, ContinueMission_001, TestSize.Level0)
+{
+    std::string srcId = "123";
+    std::string dstId = "456";
+    int32_t missionId = 0;
+    WantParams wantParams;
+    int res = abilityMs_->ContinueMission(srcId, dstId, missionId, nullptr, wantParams);
+    EXPECT_NE(res, NO_ERROR);
+}
+
+/**
+ * @tc.name: ContinueAbility_001
+ * @tc.desc: test ContinueAbility
+ * @tc.type: FUNC
+ * @tc.require: SR000GKT4A
+ */
+HWTEST_F(AbilityManagerServiceTest, ContinueAbility_001, TestSize.Level0)
+{
+    std::string dstId = "123";
+    int32_t missionId = 0;
+    int res = abilityMs_->ContinueAbility(dstId, missionId);
+    EXPECT_EQ(res, ERR_INVALID_VALUE);
+}
+
+/**
+ * @tc.name: NotifyCompleteContinuation_001
+ * @tc.desc: test NotifyCompleteContinuation
+ * @tc.type: FUNC
+ * @tc.require: SR000GKT4A
+ */
+HWTEST_F(AbilityManagerServiceTest, NotifyCompleteContinuation_001, TestSize.Level0)
+{
+    std::string deviceId = "123";
+    int32_t sessionId = 0;
+    bool isSuccess = true;
+    abilityMs_->NotifyCompleteContinuation(deviceId, sessionId, isSuccess);
+}
+
 /*
  * @tc.name: startAbility_005
  * @tc.desc: Verify function startAbility with illegal deviceId
