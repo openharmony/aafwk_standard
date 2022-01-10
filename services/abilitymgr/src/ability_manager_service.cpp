@@ -2597,11 +2597,41 @@ void AbilityManagerService::StartingSettingsDataAbility()
         return;
     }
 
-    /* query if settingdatas ability has installed */
     AppExecFwk::AbilityInfo abilityInfo;
     Want want;
     want.SetElementName(AbilityConfig::SETTINGS_DATA_BUNDLE_NAME, AbilityConfig::SETTINGS_DATA_ABILITY_NAME);
-    (void)StartAbility(want, DEFAULT_INVAL_VALUE);
+    uint32_t waitCnt = 0;
+    // Wait 5 minutes for the installation to complete.
+    while (!iBundleManager_->QueryAbilityInfo(want, abilityInfo) && waitCnt < MAX_WAIT_SETTINGS_DATA_NUM) {
+        HILOG_INFO("Waiting query settings data info completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+        waitCnt++;
+    }
+
+    // node: do not use abilityInfo.uri directly, need check uri first.
+    auto GetValidUri = [&]() -> std::string {
+        int32_t firstSeparator = abilityInfo.uri.find_first_of('/');
+        int32_t lastSeparator = abilityInfo.uri.find_last_of('/');
+        if (lastSeparator - firstSeparator != 1) {
+            HILOG_ERROR("ability info uri error, uri: %{public}s", abilityInfo.uri.c_str());
+            return "";
+        }
+
+        std::string uriStr = abilityInfo.uri;
+        uriStr.insert(lastSeparator, "/");
+        return uriStr;
+    };
+
+    std::string abilityUri = GetValidUri();
+    if (abilityUri.empty()) {
+        return;
+    }
+
+    HILOG_INFO("abilityInfo uri: %{public}s.", abilityUri.c_str());
+
+    // start settings data ability
+    Uri uri(abilityUri);
+    (void)AcquireDataAbility(uri, true, nullptr);
 }
 
 int AbilityManagerService::StartUser(int userId)
