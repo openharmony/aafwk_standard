@@ -31,6 +31,8 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/particleAbility:particleability",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/service_extension_context:serviceextensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/serviceextension:serviceextension_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension:staticsubscriberextension_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension_context:staticsubscriberextensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
   ]
 }
