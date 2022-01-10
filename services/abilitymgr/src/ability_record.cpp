@@ -138,7 +138,7 @@ bool AbilityRecord::Init()
 
 int AbilityRecord::LoadAbility()
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%s", __func__);
     startTime_ = AbilityUtil::SystemTimeMillis();
     CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
@@ -165,6 +165,7 @@ int AbilityRecord::LoadAbility()
 
 void AbilityRecord::ForegroundAbility()
 {
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("ForegroundAbility.");
     CHECK_POINTER(lifecycleDeal_);
 
@@ -703,7 +704,7 @@ void AbilityRecord::RemoveConnectRecordFromList(const std::shared_ptr<Connection
 
 void AbilityRecord::AddCallerRecord(const sptr<IRemoteObject> &callerToken, int requestCode)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Add caller record.");
     auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
     CHECK_POINTER(abilityRecord);
