@@ -828,7 +828,7 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
         return;
     }
 
-    ability_->OnConfigurationUpdated(config);
+    ability_->OnConfigurationUpdatedNotify(config);
     APP_LOGI("%{public}s end.", __func__);
 }
 

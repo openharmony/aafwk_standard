@@ -479,6 +479,13 @@ public:
     /**
      * @brief Called when the system configuration is updated.
      *
+     * @param configuration Indicates the updated configuration information.
+     */
+    void OnConfigurationUpdatedNotify(const Configuration &configuration);
+
+    /**
+     * @brief Called when the system configuration is updated.
+     *
      * @param level Indicates the memory trim level, which shows the current memory usage status.
      *
      */
@@ -1394,6 +1401,7 @@ protected:
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
     std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
+    std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
     sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
     LaunchParam launchParam_;
 
@@ -1434,6 +1442,7 @@ private:
     std::shared_ptr<ContinuationHandler> continuationHandler_ = nullptr;
     std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
     std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
+    std::shared_ptr<Configuration> configuration_ = nullptr;
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
     std::shared_ptr<AbilityHandler> handler_ = nullptr;
     std::shared_ptr<LifeCycle> lifecycle_ = nullptr;
@@ -1443,7 +1452,7 @@ private:
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
-    std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
+    
     bool bWindowFocus_ = false;
     int compatibleVersion_ = 0;
 

@@ -12,11 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <regex>
 #include "ability_runtime/js_ability.h"
 
 #include "ability_runtime/js_ability_context.h"
 #include "ability_runtime/js_window_stage.h"
+#include "ability_start_setting.h"
 #include "hilog_wrapper.h"
 #include "js_data_struct_converter.h"
 #include "js_runtime.h"
@@ -249,8 +250,23 @@ void JsAbility::DoOnForeground(const Want& want)
             HILOG_ERROR("%{public}s error. failed to create WindowScene instance!", __func__);
             return;
         }
+
+        int32_t displayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
+        if (setting_ != nullptr) {
+            std::string strDisplayId = setting_->GetProperty(
+                OHOS::AppExecFwk::AbilityStartSetting::WINDOW_DISPLAY_ID_KEY);
+            std::regex formatRegex("[0-9]{0,9}$");
+            std::smatch sm;
+            bool flag = std::regex_match(strDisplayId, sm, formatRegex);
+            if (flag) {
+                displayId = std::stoi(strDisplayId);
+                HILOG_INFO("%{public}s success. displayId is %{public}d", __func__, displayId);
+            } else {
+                HILOG_INFO("%{public}s error. failed to formatRegex str", __func__);
+            }
+        }
         auto option = GetWindowOption(want);
-        Rosen::WMError ret = scene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext_, sceneListener_);
+        Rosen::WMError ret = scene_->Init(displayId, abilityContext_, sceneListener_);
         if (ret != Rosen::WMError::WM_OK) {
             HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
             return;
