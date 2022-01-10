@@ -786,5 +786,13 @@ ErrCode AbilityManagerClient::StartUser(int accountId)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StartUser(accountId);
 }
+
+ErrCode AbilityManagerClient::StopUser(int accountId, const sptr<IStopUserCallback> &callback)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StopUser(accountId, callback);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
