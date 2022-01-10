@@ -29,6 +29,14 @@ public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.StopUserCallback");
 
     virtual void OnStopUserDone(int userId, int errcode) = 0;
+
+    enum StopUserCallbackCmd {
+        // ipc id for OnStopUserDone
+        ON_STOP_USER_DONE = 0,
+
+        // maximum of enum
+        CMD_MAX
+    };
 };
 }  // namespace AAFwk
 }  // namespace OHOS
