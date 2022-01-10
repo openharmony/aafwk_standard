@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_PAGE_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_PAGE_ABILITY_H
 
-#include "ability.h"
 #include <gtest/gtest.h>
+#include "ability.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -160,8 +160,15 @@ public:
         GTEST_LOG_(INFO) << "Mock Ability::OnSaveAbilityState called";
     }
 
+    void OnConfigurationUpdated(const Configuration &config)
+    {
+        GTEST_LOG_(INFO) << "Mock Ability::OnConfigurationUpdated called";
+        OnConfigurationUpdated_++;
+    }
+
     MockPageAbility::Event state_ = UNDEFINED;
     bool onNewWantCalled_ = false;
+    int OnConfigurationUpdated_ = 0;
     std::vector<std::string> value;
 };
 }  // namespace AppExecFwk
