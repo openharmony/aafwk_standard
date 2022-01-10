@@ -70,7 +70,9 @@
               "ability_manager_client.h",
               "ability_manager_errors.h",
               "ability_manager_interface.h",
-              "ability_scheduler_interface.h"
+              "ability_scheduler_interface.h",
+              "stop_user_callback.h",
+              "stop_user_callback_stub.h"
             ]
           },
           "name": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager"

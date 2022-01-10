@@ -2643,6 +2643,9 @@ int AbilityManagerService::StartUser(int userId)
 int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &callback)
 {
     HILOG_DEBUG("%{public}s", __func__);
+    if (callback) {
+        callback->OnStopUserDone(userId, ERR_OK);
+    }
     return 0;
 }
 }  // namespace AAFwk
