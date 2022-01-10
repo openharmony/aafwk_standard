@@ -50,6 +50,7 @@ ohos_shared_library("ability_context_native") {
 
   external_deps = [
     "aafwk_standard:runtime",
+    "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "utils_base:utils",

@@ -125,7 +125,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 int AbilityStackManager::StartAbilityLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     // lock screen state
     if (IsLockScreenState()) {
         HILOG_DEBUG("Start ability with white list ...");
@@ -200,7 +200,7 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
 int AbilityStackManager::StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> lastTopAbility,
     std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(currentTopAbility, ERR_INVALID_VALUE);
     enum ChangeType { T_ACTIVE = 0, T_CHANGE, T_DEFAULT } changeType;
@@ -310,7 +310,7 @@ int AbilityStackManager::GetTargetChangeType(bool isMissionChanged, bool isStack
 int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability as special locked.");
 
     CHECK_POINTER_AND_RETURN(currentTopAbility, INNER_ERR);
@@ -397,7 +397,7 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
 int AbilityStackManager::StartAbilityByAllowListLocked(
     const std::shared_ptr<AbilityRecord> &currentTopAbility, const AbilityRequest &abilityRequest)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability as allow list locked.");
     // 1. lockscreen stack is target mission stack
     std::shared_ptr<MissionStack> targetStack = GetTargetMissionStack(abilityRequest);
@@ -453,7 +453,7 @@ void AbilityStackManager::SortPreMission(
 void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
     std::shared_ptr<AbilityRecord> &targetAbilityRecord, std::shared_ptr<MissionRecord> &targetMissionRecord)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Move mission and ability.");
     CHECK_POINTER(targetAbilityRecord);
     CHECK_POINTER(targetMissionRecord);

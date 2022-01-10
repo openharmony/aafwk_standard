@@ -17,6 +17,7 @@
 
 #include <cstdint>
 
+#include "bytrace.h"
 #include "hilog_wrapper.h"
 #include "js_context_utils.h"
 #include "js_data_struct_converter.h"
@@ -45,6 +46,7 @@ void JsAbilityContext::Finalizer(NativeEngine* engine, void* data, void* hint)
 
 NativeValue* JsAbilityContext::StartAbility(NativeEngine* engine, NativeCallbackInfo* info)
 {
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
 }

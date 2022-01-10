@@ -212,7 +212,7 @@ int AbilityManagerService::StartAbility(const Want &want, int requestCode)
 
 int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto flags = want.GetFlags();
     if ((flags & Want::FLAG_ABILITY_CONTINUATION) == Want::FLAG_ABILITY_CONTINUATION) {
         HILOG_ERROR("StartAbility with continuation flags is not allowed!");
@@ -230,7 +230,7 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
 int AbilityManagerService::StartAbility(
     const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s", __func__);
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
@@ -278,7 +278,7 @@ int AbilityManagerService::StartAbility(
 int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
     const sptr<IRemoteObject> &callerToken, int requestCode)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Start ability setting.");
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
@@ -328,7 +328,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
 int AbilityManagerService::StartAbility(const Want &want, const StartOptions &startOptions,
     const sptr<IRemoteObject> &callerToken, int requestCode)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Start ability options.");
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
@@ -372,7 +372,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
 
 int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Terminate ability for result: %{public}d", (resultWant != nullptr));
     if (!VerificationToken(token)) {
         return ERR_INVALID_VALUE;
@@ -739,7 +739,7 @@ int AbilityManagerService::RemoveStack(int id)
 int AbilityManagerService::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Connect ability.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
@@ -753,7 +753,7 @@ int AbilityManagerService::ConnectAbility(
 
 int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Disconnect ability.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
@@ -766,7 +766,7 @@ int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &con
 int AbilityManagerService::ConnectLocalAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin ConnectAbilityLocal", __func__);
     AbilityRequest abilityRequest;
     ErrCode result = GenerateAbilityRequest(want, DEFAULT_INVAL_VALUE, abilityRequest, callerToken);
@@ -1415,7 +1415,7 @@ int AbilityManagerService::ReleaseDataAbility(
 int AbilityManagerService::AttachAbilityThread(
     const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Attach ability thread.");
     CHECK_POINTER_AND_RETURN(scheduler, ERR_INVALID_VALUE);
 
@@ -1621,7 +1621,7 @@ void AbilityManagerService::DumpState(const std::string &args, std::vector<std::
 
 int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Ability transition done, state:%{public}d", state);
     if (!VerificationToken(token)) {
         return ERR_INVALID_VALUE;
@@ -1657,7 +1657,7 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 int AbilityManagerService::ScheduleConnectAbilityDone(
     const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &remoteObject)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule connect ability done.");
     if (!VerificationToken(token)) {
         return ERR_INVALID_VALUE;
@@ -1677,7 +1677,7 @@ int AbilityManagerService::ScheduleConnectAbilityDone(
 
 int AbilityManagerService::ScheduleDisconnectAbilityDone(const sptr<IRemoteObject> &token)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule disconnect ability done.");
     if (!VerificationToken(token)) {
         return ERR_INVALID_VALUE;
@@ -1697,7 +1697,7 @@ int AbilityManagerService::ScheduleDisconnectAbilityDone(const sptr<IRemoteObjec
 
 int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> &token)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule command ability done.");
     if (!VerificationToken(token)) {
         return ERR_INVALID_VALUE;
@@ -1726,7 +1726,7 @@ void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int3
 
 void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("On ability request done.");
     if (!VerificationToken(token)) {
         return;
@@ -1908,7 +1908,7 @@ void AbilityManagerService::StartSystemUi(const std::string abilityName)
 int AbilityManagerService::GenerateAbilityRequest(
     const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     request.want = want;
     request.requestCode = requestCode;
     request.callerToken = callerToken;
@@ -1989,7 +1989,7 @@ int AbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> &tok
 
 int AbilityManagerService::StopServiceAbility(const Want &want)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Stop service ability.");
     AbilityRequest abilityRequest;
     int result = GenerateAbilityRequest(want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr);

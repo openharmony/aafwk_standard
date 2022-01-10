@@ -18,6 +18,7 @@
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
 #include "ability_util.h"
+#include "bytrace.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
 #include "mission_info_mgr.h"
@@ -661,6 +662,7 @@ int MissionListManager::DispatchForegroundNew(const std::shared_ptr<AbilityRecor
 
 void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     CHECK_POINTER(abilityRecord);
