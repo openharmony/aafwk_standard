@@ -87,5 +87,7 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/mission_list.cpp",
   "${services_path}/abilitymgr/src/task_data_persistence_mgr.cpp",
   "${services_path}/abilitymgr/src/start_options.cpp",
+  "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
+  "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
   "${services_path}/abilitymgr/src/kernal_ability_manager.cpp",
 ]
