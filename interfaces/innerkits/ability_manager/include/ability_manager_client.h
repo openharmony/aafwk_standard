@@ -606,6 +606,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode StopSyncRemoteMissions(const std::string& devId);
+
+    /**
+     * @brief start user.
+     * @param accountId accountId.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartUser(int accountId);
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
