@@ -27,6 +27,7 @@
 #include "ohos/aafwk/content/want.h"
 #include "permission_def.h"
 #include "module_usage_record.h"
+#include "distributed_bundle_info.h"
 
 using OHOS::AAFwk::Want;
 
@@ -228,6 +229,9 @@ public:
     virtual bool RemoveClonedBundle(const std::string &bundleName, const int32_t uid) = 0;
     virtual bool BundleClone(const std::string &bundleName) = 0;
     virtual bool CheckBundleNameInAllowList(const std::string &bundleName) = 0;
+    virtual bool GetDistributedBundleInfo(
+        const std::string &networkId, int32_t userId, const std::string &bundleName,
+        DistributedBundleInfo &distributedBundleInfo) = 0;
 
     enum class Message {
         GET_APPLICATION_INFO,
