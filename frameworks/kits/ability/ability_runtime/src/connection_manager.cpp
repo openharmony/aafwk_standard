@@ -51,21 +51,32 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
     if (item != abilityConnections_.end()) {
         std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks = item->second;
         callbacks.push_back(connectCallback);
+        abilityConnections_[item->first] = callbacks;
         abilityConnection = item->first.abilityConnection;
-        HILOG_INFO("%{public}s find abilityConnection:%{public}p exist, callbackSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)callbacks.size());
+        abilityConnection->SetConnectCallback(connectCallback);
+        HILOG_INFO("%{public}s end, find abilityConnection:%{public}p exist, callbackSize:%{public}d.",
+            __func__, abilityConnection.GetRefPtr(), callbacks.size());
+        if (abilityConnection->GetResultCode() == ERR_OK) {
+            connectCallback->OnAbilityConnectDone(connectReceiver, abilityConnection->GetRemoteObject(),
+                abilityConnection->GetResultCode());
+            return ERR_OK;
+        } else {
+            return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+        }
     } else {
         abilityConnection = new AbilityConnection(connectCallback);
-        ConnectionInfo connectionInfo(connectCaller, connectReceiver, abilityConnection);
-        std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks;
-        callbacks.push_back(connectCallback);
-        abilityConnections_[connectionInfo] = callbacks;
-        HILOG_DEBUG("%{public}s end, abilityConnection is not exist, make a new abilityConnection.", __func__);
-        HILOG_DEBUG("%{public}s end, abilityConnection: %{public}p, abilityConnectionsSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)abilityConnections_.size());
+        ErrCode ret =
+            AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+        if (ret == ERR_OK) {
+            ConnectionInfo connectionInfo(connectCaller, connectReceiver, abilityConnection);
+            std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks;
+            callbacks.push_back(connectCallback);
+            abilityConnections_[connectionInfo] = callbacks;
+        }
+        HILOG_DEBUG("%{public}s end, not find connection, connection: %{public}p, abilityConnectionsSize:%{public}d.",
+            __func__, abilityConnection.GetRefPtr(), abilityConnections_.size());
+        return ret;
     }
-
-    return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
 }
 
 ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectCaller,
@@ -89,20 +100,27 @@ ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectC
         });
     if (item != abilityConnections_.end()) {
         std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks = item->second;
-        HILOG_DEBUG("%{public}s begin remove callback, callbackSize:%{public}d.", __func__, (int32_t)callbacks.size());
-        for (auto iter = callbacks.begin(); iter != callbacks.end(); iter++) {
+        HILOG_DEBUG("%{public}s begin remove callback, callbackSize:%{public}d.", __func__, callbacks.size());
+        auto iter = callbacks.begin();
+        while (iter != callbacks.end()) {
             if (*iter == connectCallback) {
-                callbacks.erase(iter);
+                iter = callbacks.erase(iter);
+            } else {
+                iter++;
             }
         }
+        abilityConnections_[item->first] = callbacks;
         sptr<AbilityConnection> abilityConnection;
         abilityConnection = item->first.abilityConnection;
+        abilityConnection->SetConnectCallback(connectCallback);
         HILOG_INFO("%{public}s end, find abilityConnection:%{public}p exist, abilityConnectionsSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)abilityConnections_.size());
+            __func__, abilityConnection.GetRefPtr(), abilityConnections_.size());
         if (callbacks.size() == 0) {
+            abilityConnections_.erase(item);
             HILOG_DEBUG("%{public}s disconnectAbility.", __func__);
             return AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(abilityConnection);
         } else {
+            connectCallback->OnAbilityDisconnectDone(connectReceiver, ERR_OK);
             HILOG_DEBUG("%{public}s callbacks is not empty, do not need disconnectAbility.", __func__);
             return ERR_OK;
         }
@@ -119,13 +137,17 @@ bool ConnectionManager::DisconnectCaller(const sptr<IRemoteObject> &connectCalle
         HILOG_ERROR("%{public}s end, connectCaller is nullptr.", __func__);
         return false;
     }
+
     HILOG_DEBUG("%{public}s, connectCaller:%{public}p, abilityConnectionsSize:%{public}d.",
-        __func__, connectCaller.GetRefPtr(), (int32_t)abilityConnections_.size());
+        __func__, connectCaller.GetRefPtr(), abilityConnections_.size());
+
     bool isDisconnect = false;
     auto iter = abilityConnections_.begin();
     while (iter != abilityConnections_.end()) {
         ConnectionInfo connectionInfo = iter->first;
         if (IsConnectCallerEqual(connectionInfo.connectCaller, connectCaller)) {
+            HILOG_DEBUG("%{public}s DisconnectAbility connection:%{public}p.",
+                __func__, connectionInfo.abilityConnection.GetRefPtr());
             ErrCode ret =
                 AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(connectionInfo.abilityConnection);
             if (ret != ERR_OK) {
@@ -138,25 +160,21 @@ bool ConnectionManager::DisconnectCaller(const sptr<IRemoteObject> &connectCalle
         }
     }
 
-    HILOG_DEBUG("%{public}s end, abilityConnectionsSize:%{public}d.", __func__, (int32_t)abilityConnections_.size());
+    HILOG_DEBUG("%{public}s end, abilityConnectionsSize:%{public}d.", __func__, abilityConnections_.size());
     return isDisconnect;
 }
 
 bool ConnectionManager::DisconnectReceiver(const AppExecFwk::ElementName &connectReceiver)
 {
     HILOG_DEBUG("%{public}s begin, abilityConnectionsSize:%{public}d, bundleName:%{public}s, abilityName:%{public}s.",
-        __func__, (int32_t)abilityConnections_.size(), connectReceiver.GetBundleName().c_str(),
+        __func__, abilityConnections_.size(), connectReceiver.GetBundleName().c_str(),
         connectReceiver.GetAbilityName().c_str());
+
     bool isDisconnect = false;
     auto iter = abilityConnections_.begin();
     while (iter != abilityConnections_.end()) {
         ConnectionInfo connectionInfo = iter->first;
         if (IsConnectReceiverEqual(connectionInfo.connectReceiver, connectReceiver)) {
-            ErrCode ret =
-                AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(connectionInfo.abilityConnection);
-            if (ret != ERR_OK) {
-                HILOG_ERROR("%{public}s ams->DisconnectAbility error, ret=%{public}d", __func__, ret);
-            }
             iter = abilityConnections_.erase(iter);
             isDisconnect = true;
         } else {
@@ -164,7 +182,7 @@ bool ConnectionManager::DisconnectReceiver(const AppExecFwk::ElementName &connec
         }
     }
 
-    HILOG_DEBUG("%{public}s end, abilityConnectionsSize:%{public}d.", __func__, (int32_t)abilityConnections_.size());
+    HILOG_DEBUG("%{public}s end, abilityConnectionsSize:%{public}d.", __func__, abilityConnections_.size());
     return isDisconnect;
 }
 

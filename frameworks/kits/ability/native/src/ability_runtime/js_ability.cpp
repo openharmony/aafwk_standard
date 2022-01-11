@@ -116,6 +116,10 @@ void JsAbility::OnStop()
     Ability::OnStop();
 
     CallObjectMethod("onDestroy");
+    bool ret = ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
+    if (ret) {
+        HILOG_INFO("The service connection is not disconnected.");
+    }
 }
 
 void JsAbility::OnSceneCreated()
