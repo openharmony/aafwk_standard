@@ -123,7 +123,7 @@ void ConnectionRecord::CompleteConnect(int resultCode)
     AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
     auto remoteObject = targetService_->GetConnRemoteObject();
     if (connCallback_) {
-        connCallback_->OnAbilityDisconnectDone(element, isDied ? (resultCode - 1) : resultCode);
+        connCallback_->OnAbilityConnectDone(element, remoteObject, resultCode);
     }
     HILOG_INFO("result: %{public}d. connectstate:%{public}d.", resultCode, state_);
 }
@@ -137,7 +137,7 @@ void ConnectionRecord::CompleteDisconnect(int resultCode, bool isDied)
     const AppExecFwk::AbilityInfo &abilityInfo = targetService_->GetAbilityInfo();
     AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
     if (connCallback_) {
-        connCallback_->OnAbilityDisconnectDone(element, resultCode);
+        connCallback_->OnAbilityDisconnectDone(element, isDied ? (resultCode - 1) : resultCode);
     }
     HILOG_INFO("result: %{public}d. connectstate:%{public}d.", resultCode, state_);
 }
