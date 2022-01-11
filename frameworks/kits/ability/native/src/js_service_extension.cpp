@@ -107,6 +107,10 @@ void JsServiceExtension::OnStop()
     ServiceExtension::OnStop();
     HILOG_INFO("JsServiceExtension OnStop begin.");
     CallObjectMethod("onDestroy");
+    bool ret = ConnectionManager::GetInstance().DisconnectCaller(GetContext()->GetToken());
+    if (ret) {
+        HILOG_INFO("The service extension connection is not disconnected.");
+    }
     HILOG_INFO("%{public}s end.", __func__);
 }
 

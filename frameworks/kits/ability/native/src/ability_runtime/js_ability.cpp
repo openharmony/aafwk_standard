@@ -18,6 +18,7 @@
 #include "ability_runtime/js_ability_context.h"
 #include "ability_runtime/js_window_stage.h"
 #include "ability_start_setting.h"
+#include "connection_manager.h"
 #include "hilog_wrapper.h"
 #include "js_data_struct_converter.h"
 #include "js_runtime.h"
@@ -116,6 +117,10 @@ void JsAbility::OnStop()
     Ability::OnStop();
 
     CallObjectMethod("onDestroy");
+    bool ret = ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
+    if (ret) {
+        HILOG_INFO("The service connection is not disconnected.");
+    }
 }
 
 void JsAbility::OnSceneCreated()

@@ -19,6 +19,7 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+const int DIED = -1;
 AbilityConnection::AbilityConnection(const std::shared_ptr<AbilityConnectCallback> &abilityConnectCallback)
 {
     abilityConnectCallback_ = abilityConnectCallback;
@@ -31,6 +32,8 @@ void AbilityConnection::OnAbilityConnectDone(
     if (abilityConnectCallback_ == nullptr) {
         HILOG_ERROR("%{public}s abilityConnectCallback is nullptr.", __func__);
     }
+    SetRemoteObject(remoteObject);
+    SetResultCode(resultCode);
     abilityConnectCallback_->OnAbilityConnectDone(element, remoteObject, resultCode);
     HILOG_DEBUG("%{public}s end, remoteObject:%{public}p, bundleName:%{public}s, abilityName:%{public}s.",
         __func__, remoteObject.GetRefPtr(), element.GetBundleName().c_str(), element.GetAbilityName().c_str());
@@ -38,13 +41,47 @@ void AbilityConnection::OnAbilityConnectDone(
 
 void AbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("%{public}s begin, resultCode:%{public}d.", __func__, resultCode);
     if (abilityConnectCallback_ == nullptr) {
         HILOG_ERROR("%{public}s abilityConnectCallback is nullptr.", __func__);
     }
-    abilityConnectCallback_->OnAbilityDisconnectDone(element, resultCode);
+    // if resultCode < 0 that means the connectReceiver is died
+    if (resultCode == DIED) {
+        bool ret = ConnectionManager::GetInstance().DisconnectReceiver(element);
+        if (ret) {
+            HILOG_INFO("The service connection is not disconnected.");
+        }
+        abilityConnectCallback_->OnAbilityDisconnectDone(element, DIED + 1);
+    } else {
+        abilityConnectCallback_->OnAbilityDisconnectDone(element, resultCode);
+    }
     HILOG_DEBUG("%{public}s end, bundleName:%{public}s, abilityName:%{public}s.",
         __func__, element.GetBundleName().c_str(), element.GetAbilityName().c_str());
+}
+
+void AbilityConnection::SetConnectCallback(std::shared_ptr<AbilityConnectCallback> abilityConnectCallback)
+{
+    abilityConnectCallback_ = abilityConnectCallback;
+}
+
+void AbilityConnection::SetRemoteObject(const sptr<IRemoteObject> &remoteObject)
+{
+    remoteObject_ = remoteObject;
+}
+
+void AbilityConnection::SetResultCode(int resultCode)
+{
+    resultCode_ = resultCode;
+}
+
+sptr<IRemoteObject> AbilityConnection::GetRemoteObject()
+{
+    return remoteObject_;
+}
+
+int AbilityConnection::GetResultCode()
+{
+    return resultCode_;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS
