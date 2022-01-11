@@ -25,6 +25,7 @@
 namespace OHOS {
 namespace AAFwk {
 namespace {
+constexpr uint32_t NEXTABILITY_TIMEOUT = 1000;         // ms
 std::string Time2str(time_t time)
 {
     std::stringstream str;
@@ -700,7 +701,7 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
     CHECK_POINTER_LOG(handler, "Fail to get AbilityEventHandler.");
 
     /* PostTask to trigger start Ability from waiting queue */
-    handler->PostTask(startWaittingAbilityTask, "startWaittingAbility");
+    handler->PostTask(startWaittingAbilityTask, "startWaittingAbility", NEXTABILITY_TIMEOUT);
 }
 
 int MissionListManager::DispatchBackground(const std::shared_ptr<AbilityRecord> &abilityRecord)
@@ -804,7 +805,7 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
     abilityRecord->SendResultToCallers();
 
     // 1. if the ability was foregorund, first should find wether there is other ability foregorund
-    if (abilityRecord->IsActiveState()) {
+    if (abilityRecord->IsAbilityState(FOREGROUND_NEW) || abilityRecord->IsAbilityState(FOREGROUNDING_NEW)) {
         HILOG_DEBUG("current ability is active");
         if (abilityRecord->GetNextAbilityRecord()) {
             abilityRecord->GetNextAbilityRecord()->ProcessForegroundAbility();
@@ -855,13 +856,14 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
     // 1. clear old
     abilityRecord->SetNextAbilityRecord(nullptr);
     // 2. if the ability to terminate is background, just background
-    if (!abilityRecord->IsActiveState()) {
+    if (!(abilityRecord->IsAbilityState(FOREGROUND_NEW) || abilityRecord->IsAbilityState(FOREGROUNDING_NEW))) {
         HILOG_DEBUG("ability state is %{public}d, just return", abilityRecord->GetAbilityState());
         return;
     }
     // 3. if the launcher is foreground, just background
     std::shared_ptr<AbilityRecord> launcherRoot = launcherList_->GetLauncherRoot();
-    if (launcherRoot->IsActiveState()) {
+    if (launcherRoot
+        && (launcherRoot->IsAbilityState(FOREGROUND_NEW) || launcherRoot->IsAbilityState(FOREGROUNDING_NEW))) {
         HILOG_DEBUG("launcherRoot state is %{public}d, no need to schedule next", launcherRoot->GetAbilityState());
         return;
     }
@@ -869,7 +871,7 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
     // 4. the ability should find the next ability to foreground
     if (missionList->IsEmpty()) {
         HILOG_DEBUG("missionList is empty, next is launcher");
-        abilityRecord->SetNextAbilityRecord(launcherList_->GetTopAbility());
+        abilityRecord->SetNextAbilityRecord(GetCurrentTopAbilityLocked());
     } else {
         std::shared_ptr<AbilityRecord> needTopAbility = missionList->GetTopAbility();
         abilityRecord->SetNextAbilityRecord(needTopAbility);
@@ -1144,8 +1146,10 @@ std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByEventId(int
 
 void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {
+    HILOG_INFO("On ability died.");
     if (!abilityRecord) {
         HILOG_ERROR("OnAbilityDied come, abilityRecord is nullptr.");
+        return;
     }
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("OnAbilityDied come, ability is %{public}s", element.c_str());
@@ -1153,6 +1157,8 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
         HILOG_ERROR("Ability type is not page.");
         return;
     }
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    HandleAbilityDied(abilityRecord);
 }
 
 std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missionId, std::shared_ptr<Mission> &mission)
@@ -1266,6 +1272,122 @@ void MissionListManager::PostStartWaittingAbility()
 
     /* PostTask to trigger start Ability from waiting queue */
     handler->PostTask(startWaittingAbilityTask, "startWaittingAbility");
+}
+
+void MissionListManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
+{
+    HILOG_INFO("Handle Ability Died.");
+    CHECK_POINTER(abilityRecord);
+    if (abilityRecord->IsLauncherAbility()) {
+        HandleLauncherDied(abilityRecord);
+        return;
+    }
+    HandleAbilityDiedByDefault(abilityRecord);
+}
+
+void MissionListManager::HandleLauncherDied(std::shared_ptr<AbilityRecord> ability)
+{
+    HILOG_INFO("Handle launcher Ability Died.");
+    auto mission = ability->GetMission();
+    CHECK_POINTER_LOG(mission, "Fail to get launcher mission.");
+    auto missionList = mission->GetMissionList();
+    if (launcherList_ != missionList) {
+        HILOG_ERROR("not launcher missionList.");
+        return;
+    }
+
+    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);
+    if (ability->IsLauncherRoot()) {
+        HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
+        ability->SetAbilityState(AbilityState::INITIAL);
+    } else {
+        HILOG_INFO("launcher Ability died, remove, %{public}d", __LINE__);
+        missionList->RemoveMission(mission);
+    }
+    if (isForeground) {
+        HILOG_INFO("active launchrer ability died, start launcher, %{public}d", __LINE__);
+        DelayedStartLauncher();
+    }
+}
+
+void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecord> ability)
+{
+    HILOG_INFO("Handle Ability DiedByDefault.");
+    auto mission = ability->GetMission();
+    CHECK_POINTER_LOG(mission, "Fail to get mission.");
+    auto missionList = mission->GetMissionList();
+    CHECK_POINTER_LOG(missionList, "Fail to get mission list.");
+
+    std::shared_ptr<AbilityRecord> launcherRoot = launcherList_->GetLauncherRoot();
+    bool isLauncherActive = (launcherRoot &&
+        (launcherRoot->IsAbilityState(FOREGROUND_NEW) || launcherRoot->IsAbilityState(FOREGROUNDING_NEW)));
+    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);
+
+    // remove from mission list.
+    missionList->RemoveMission(mission);
+    if (missionList->GetType() == MissionListType::CURRENT && missionList->IsEmpty()) {
+        RemoveMissionList(missionList);
+    }
+
+    // update running state.
+    InnerMissionInfo info;
+    if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(), info) == 0) {
+        info.missionInfo.runningState = -1;
+        DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+    }
+
+    // start launcher
+    if (isForeground && !isLauncherActive) {
+        HILOG_INFO("active ability died, start launcher later, %{public}d", __LINE__);
+        DelayedStartLauncher();
+    }
+}
+
+void MissionListManager::DelayedStartLauncher()
+{
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(ams);
+    auto handler = ams->GetEventHandler();
+    CHECK_POINTER(handler);
+    std::weak_ptr<MissionListManager> wpListMgr = shared_from_this();
+    auto timeoutTask = [wpListMgr]() {
+        HILOG_DEBUG("The launcher needs to be restarted.");
+        auto listMgr = wpListMgr.lock();
+        if (listMgr) {
+            listMgr->BackToLauncher();
+        }
+    };
+    handler->PostTask(timeoutTask, "Launcher_Restart");
+}
+
+void MissionListManager::BackToLauncher()
+{
+    HILOG_INFO("Back to launcher.");
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    CHECK_POINTER(launcherList_);
+
+    auto currentTop = GetCurrentTopAbilityLocked();
+    if (currentTop && (currentTop->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+        currentTop->IsAbilityState(AbilityState::FOREGROUNDING_NEW))) {
+        HILOG_WARN("Current top ability is already foreground, no need to start launcher.");
+        return;
+    }
+
+    auto launcherRootAbility = launcherList_->GetLauncherRoot();
+    CHECK_POINTER_LOG(launcherRootAbility, "There is no root launcher ability, back to launcher failed.");
+    auto launcherRootMission = launcherRootAbility->GetMission();
+    CHECK_POINTER_LOG(launcherRootMission, "There is no root launcher mission, back to launcher failed.");
+    if (launcherRootAbility->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+        launcherRootAbility->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+        HILOG_WARN("launcher is already foreground, no need to start launcher.");
+        return;
+    }
+    std::queue<AbilityRequest> emptyQueue;
+    std::swap(waittingAbilityQueue_, emptyQueue);
+
+    launcherList_->AddMissionToTop(launcherRootMission);
+    MoveMissionListToTop(launcherList_);
+    launcherRootAbility->ProcessForegroundAbility();
 }
 
 void MissionListManager::Dump(std::vector<std::string> &info)
