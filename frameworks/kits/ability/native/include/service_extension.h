@@ -66,12 +66,6 @@ public:
      * @return The ServiceExtension instance.
      */
     static ServiceExtension* Create(const std::unique_ptr<Runtime>& runtime);
-
-    /**
-     * @brief Stop the extension.
-     *
-     */
-    virtual void OnStop() override;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

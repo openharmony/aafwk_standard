@@ -660,7 +660,7 @@ void AbilityConnectManager::HandleDisconnectTask(const ConnectListType &connectl
         if (targetService && connectRecord->GetConnectState() == ConnectionState::DISCONNECTED &&
             targetService->GetConnectRecordList().size() > 1) {
             HILOG_WARN("This record complete disconnect directly. recordId:%{public}d", connectRecord->GetRecordId());
-            connectRecord->CompleteDisconnect(ERR_OK);
+            connectRecord->CompleteDisconnect(ERR_OK, false);
             targetService->RemoveConnectRecordFromList(connectRecord);
             RemoveConnectionRecordFromMap(connectRecord);
         };
@@ -907,7 +907,7 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
     ConnectListType connlist = abilityRecord->GetConnectRecordList();
     for (auto &connectRecord : connlist) {
         HILOG_WARN("This record complete disconnect directly. recordId:%{public}d", connectRecord->GetRecordId());
-        connectRecord->CompleteDisconnect(ERR_OK);
+        connectRecord->CompleteDisconnect(ERR_OK, true);
         abilityRecord->RemoveConnectRecordFromList(connectRecord);
         RemoveConnectionRecordFromMap(connectRecord);
     }

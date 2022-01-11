@@ -62,8 +62,25 @@ public:
      * @param resultCode, ERR_OK on success, others on failure.
      */
     void OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)  override;
+
+    /**
+     * set abilityConnectCallback
+     *
+     * @param abilityConnectCallback is used to notify caller ability that connect or disconnect is complete
+    */
+    void SetConnectCallback(std::shared_ptr<AbilityConnectCallback> abilityConnectCallback);
+
+    void SetRemoteObject(const sptr<IRemoteObject> &remoteObject);
+
+    void SetResultCode(int resultCode);
+
+    sptr<IRemoteObject> GetRemoteObject();
+
+    int GetResultCode();
 private:
     std::shared_ptr<AbilityConnectCallback> abilityConnectCallback_;
+    sptr<IRemoteObject> remoteObject_;
+    int resultCode_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
