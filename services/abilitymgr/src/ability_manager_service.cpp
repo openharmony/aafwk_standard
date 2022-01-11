@@ -2015,8 +2015,8 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
         return;
     }
 
-    if (currentStackManager_) {
-        currentStackManager_->OnAbilityDied(abilityRecord);
+    if (currentMissionListManager_) {
+        currentMissionListManager_->OnAbilityDied(abilityRecord);
     }
 
     if (connectManager_) {
