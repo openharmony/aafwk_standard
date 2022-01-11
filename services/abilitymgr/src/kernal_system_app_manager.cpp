@@ -32,7 +32,7 @@ KernalSystemAppManager::~KernalSystemAppManager()
 
 int KernalSystemAppManager::StartAbility(const AbilityRequest &abilityRequest)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("start kernal systerm ability.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     if (!waittingAbilityQueue_.empty()) {
