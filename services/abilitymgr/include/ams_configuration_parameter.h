@@ -37,6 +37,7 @@ const std::string SYSTEM_CONFIGURATION {"system_configuration"};
 const std::string SYSTEM_ORIENTATION {"system_orientation"};
 const std::string STARTUP_CONTACTS {"startup_contacts"};
 const std::string STARTUP_MMS {"startup_mms"};
+const std::string USE_NEW_MISSION {"use_new_mission"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -101,6 +102,12 @@ public:
      * Get current system direction parameters, Temporary method.
      */
     std::string GetOrientation() const;
+    /**
+     * check if use new mission.
+     *
+     * return true if use mission list, false if use mission stack.
+     */
+    bool IsUseNewMission() const;
 
     enum { READ_OK = 0, READ_FAIL = 1, READ_JSON_FAIL = 2 };
 
@@ -123,6 +130,7 @@ private:
     bool canStartPhoneService_ {false};
     bool canStartContacts {false};
     bool canStartMms {false};
+    bool useNewMission_ {false};
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
     std::map<std::string, std::string> memThreshold_;
