@@ -267,11 +267,6 @@ void Ability::OnStop()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_STOP);
-
-    bool ret = AbilityRuntime::ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
-    if (ret) {
-        APP_LOGI("The service connection is not disconnected.");
-    }
     APP_LOGI("%{public}s end.", __func__);
 }
 

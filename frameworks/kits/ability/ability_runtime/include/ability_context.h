@@ -71,23 +71,24 @@ public:
     virtual void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) = 0;
 
     /**
-     * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
-     *
-     * @param want Indicates the want containing information about the ability to connect
-     * @param conn Indicates the callback object when the target ability is connected.
-     * @return True means success and false means failure
-     */
+    * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+    *
+    * @param want Indicates the want containing information about the ability to connect
+    * @param connectCallback Indicates the callback object when the target ability is connected.
+    * @return True means success and false means failure
+    */
     virtual bool ConnectAbility(const AAFwk::Want &want,
-                                const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
+        const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
-     * @brief Disconnects the current ability from an ability
-     *
-     * @param conn Indicates the IAbilityConnection callback object passed by connectAbility after the connection
-     * is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
-     */
+    * @brief Disconnects the current ability from an ability
+    *
+    * @param want Indicates the want containing information about the ability to disconnect
+    * @param connectCallback Indicates the callback object when the target ability is connected.
+    * is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
+    */
     virtual void DisconnectAbility(const AAFwk::Want &want,
-                                   const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
+        const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
      * @brief get ability info of the current ability

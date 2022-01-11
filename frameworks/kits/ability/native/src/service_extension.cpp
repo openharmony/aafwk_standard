@@ -65,14 +65,5 @@ std::shared_ptr<ServiceExtensionContext> ServiceExtension::CreateAndInitContext(
     context->SetAbilityInfo(record->GetAbilityInfo());
     return context;
 }
-
-void ServiceExtension::OnStop()
-{
-    Extension::OnStop();
-    bool ret = ConnectionManager::GetInstance().DisconnectCaller(GetContext()->GetToken());
-    if (ret) {
-        HILOG_INFO("The service connection is not disconnected.");
-    }
-}
 }
 }
