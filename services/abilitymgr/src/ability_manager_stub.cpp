@@ -1179,5 +1179,32 @@ int AbilityManagerStub::UnRegisterRemoteMissionListenerInner(MessageParcel &data
     HILOG_INFO("AbilityManagerStub: UnRegisterRemoteMissionListenerInner result = %{public}d", result);
     return result;
 }
+
+int AbilityManagerStub::RegisterSnapshotHandlerInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<ISnapshotHandler> handler = iface_cast<ISnapshotHandler>(data.ReadRemoteObject());
+    if (handler == nullptr) {
+        HILOG_ERROR("snapshot: AbilityManagerStub read snapshot handler failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t result = RegisterSnapshotHandler(handler);
+    HILOG_INFO("snapshot: AbilityManagerStub register snapshot handler result = %{public}d", result);
+    return result;
+}
+
+int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string deviceId = data.ReadString();
+    if (deviceId.empty()) {
+        HILOG_ERROR("missionSnapshot: get deviceId empty!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t missionId = data.ReadInt32();
+    MissionSnapshot missionSnapshot;
+    int32_t result = GetMissionSnapshot(deviceId, missionId, missionSnapshot);
+    HILOG_INFO("snapshot: AbilityManagerStub get snapshot result = %{public}d", result);
+    reply.WriteParcelable(&missionSnapshot);
+    return result;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

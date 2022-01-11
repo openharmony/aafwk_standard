@@ -46,6 +46,7 @@ ohos_shared_library("missionmanager_napi") {
     "appexecfwk_standard:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image",
   ]
 
   relative_install_dir = "module/application"
