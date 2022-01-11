@@ -16,6 +16,7 @@
 #include "ability_context_impl.h"
 
 #include "ability_manager_client.h"
+#include "bytrace.h"
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
 
@@ -58,45 +59,46 @@ std::string AbilityContextImpl::GetDistributedFilesDir()
 
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)
 {
-    HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling ams->StartAbility.");
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling StartAbility.");
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
-    HILOG_INFO("AbilityContextImpl::StartAbility. End calling ams->StartAbility. ret=%{public}d", err);
+    HILOG_INFO("AbilityContextImpl::StartAbility. End calling StartAbility. ret=%{public}d", err);
     return err;
 }
 
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions,
     int requestCode)
 {
-    HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling ams->StartAbility.");
+    HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling StartAbility.");
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, requestCode);
-    HILOG_INFO("AbilityContextImpl::StartAbility. End calling ams->StartAbility. ret=%{public}d", err);
+    HILOG_INFO("AbilityContextImpl::StartAbility. End calling StartAbility. ret=%{public}d", err);
     return err;
 }
 
 ErrCode AbilityContextImpl::StartAbilityForResult(const AAFwk::Want &want, int requestCode, RuntimeTask &&task)
 {
-    HILOG_DEBUG("%{public}s. Start calling ams->StartAbilityForResult.", __func__);
+    HILOG_DEBUG("%{public}s. Start calling StartAbilityForResult.", __func__);
     resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
-    HILOG_INFO("%{public}s. End calling ams->StartAbilityForResult. ret=%{public}d", __func__, err);
+    HILOG_INFO("%{public}s. End calling StartAbilityForResult. ret=%{public}d", __func__, err);
     return err;
 }
 
 
 ErrCode AbilityContextImpl::TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode)
 {
-    HILOG_DEBUG("%{public}s. Start calling ams->TerminateAbilityWithResult.", __func__);
+    HILOG_DEBUG("%{public}s. Start calling TerminateAbilityWithResult.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode, &want);
-    HILOG_INFO("%{public}s. End calling ams->TerminateAbilityWithResult. ret=%{public}d", __func__, err);
+    HILOG_INFO("%{public}s. End calling TerminateAbilityWithResult. ret=%{public}d", __func__, err);
     return err;
 }
 
 void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData)
 {
-    HILOG_DEBUG("%{public}s. Start calling ams->OnAbilityResult.", __func__);
+    HILOG_DEBUG("%{public}s. Start calling OnAbilityResult.", __func__);
     resultCallbacks_[requestCode](resultCode, resultData);
     resultCallbacks_.erase(requestCode);
-    HILOG_INFO("%{public}s. End calling ams->OnAbilityResult.", __func__);
+    HILOG_INFO("%{public}s. End calling OnAbilityResult.", __func__);
 }
 
 bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
@@ -116,9 +118,9 @@ void AbilityContextImpl::DisconnectAbility(const AAFwk::Want &want,
     ErrCode ret =
         ConnectionManager::GetInstance().DisconnectAbility(token_, want.GetElement(), connectCallback);
     if (ret != ERR_OK) {
-        HILOG_ERROR("%{public}s end ams->DisconnectAbility error, ret=%{public}d", __func__, ret);
+        HILOG_ERROR("%{public}s end DisconnectAbility error, ret=%{public}d", __func__, ret);
     }
-    HILOG_INFO("%{public}s end ams->DisconnectAbility", __func__);
+    HILOG_INFO("%{public}s end DisconnectAbility", __func__);
 }
 
 std::string AbilityContextImpl::GetBundleName() const
