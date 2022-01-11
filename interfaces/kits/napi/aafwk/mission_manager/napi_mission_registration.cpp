@@ -196,7 +196,7 @@ napi_value NAPI_StartSyncRemoteMissions(napi_env env, napi_callback_info info)
     auto syncContext = new SyncRemoteMissionsContext();
     if (syncContext == nullptr) {
         HILOG_ERROR("%{public}s, syncContext is nullptr.", __func__);
-        NAPI_ASSERT(env, syncContext == nullptr, "Wrong argument");
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
     if (!ProcessSyncInput(env, info, true, syncContext)) {
         delete syncContext;
@@ -272,7 +272,7 @@ napi_value NAPI_StopSyncRemoteMissions(napi_env env, napi_callback_info info)
     auto syncContext = new SyncRemoteMissionsContext();
     if (syncContext == nullptr) {
         HILOG_ERROR("%{public}s, syncContext is nullptr.", __func__);
-        NAPI_ASSERT(env, syncContext == nullptr, "Wrong argument");
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
     if (!ProcessSyncInput(env, info, false, syncContext)) {
         delete syncContext;
@@ -553,7 +553,7 @@ napi_value NAPI_RegisterMissionListener(napi_env env, napi_callback_info info)
     RegisterMissonCB *registerMissonCB = CreateRegisterMissonCBCBInfo(env);
     if (registerMissonCB == nullptr) {
         HILOG_ERROR("%{public}s registerMissonCB == nullptr", __func__);
-        return nullptr;
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
 
     napi_value ret = RegisterMissonWrap(env, info, registerMissonCB);
@@ -561,7 +561,7 @@ napi_value NAPI_RegisterMissionListener(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s ret == nullptr", __func__);
         delete registerMissonCB;
         registerMissonCB = nullptr;
-        NAPI_ASSERT(env, ret == nullptr, "wrong arguments");
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
@@ -982,7 +982,7 @@ napi_value NAPI_UnRegisterMissionListener(napi_env env, napi_callback_info info)
     RegisterMissonCB *registerMissonCB = CreateRegisterMissonCBCBInfo(env);
     if (registerMissonCB == nullptr) {
         HILOG_ERROR("%{public}s registerMissonCB == nullptr", __func__);
-        return nullptr;
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
 
     napi_value ret = UnRegisterMissonWrap(env, info, registerMissonCB);
@@ -990,7 +990,7 @@ napi_value NAPI_UnRegisterMissionListener(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s ret == nullptr", __func__);
         delete registerMissonCB;
         registerMissonCB = nullptr;
-        NAPI_ASSERT(env, ret == nullptr, "wrong arguments");
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
@@ -1279,7 +1279,7 @@ napi_value NAPI_ContinueAbility(napi_env env, napi_callback_info info)
     ContinueAbilityCB *continueAbilityCB = CreateContinueAbilityCBCBInfo(env);
     if (continueAbilityCB == nullptr) {
         HILOG_ERROR("%{public}s continueAbilityCB == nullptr", __func__);
-        return nullptr;
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
 
     napi_value ret = ContinueAbilityWrap(env, info, continueAbilityCB);
@@ -1287,7 +1287,7 @@ napi_value NAPI_ContinueAbility(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s ret == nullptr", __func__);
         delete continueAbilityCB;
         continueAbilityCB = nullptr;
-        NAPI_ASSERT(env, ret == nullptr, "wrong arguments");
+        NAPI_ASSERT(env, false, "wrong arguments");
     }
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
