@@ -166,7 +166,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<EventRunner> &mainRunner,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::Attach begin");
     if ((application == nullptr) || (abilityRecord == nullptr) || (mainRunner == nullptr)) {
         APP_LOGE("AbilityThread::ability attach failed,context or record is nullptr");
@@ -235,7 +235,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
 void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<EventRunner> &mainRunner)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::AttachExtension begin");
     if ((application == nullptr) || (abilityRecord == nullptr) || (mainRunner == nullptr)) {
         APP_LOGE("AbilityThread::AttachExtension attach failed,context or record is nullptr");
@@ -290,7 +290,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
 void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::AttachExtension begin");
     if ((application == nullptr) || (abilityRecord == nullptr)) {
         APP_LOGE("AbilityThread::AttachExtension failed,context or record is nullptr");
@@ -349,7 +349,7 @@ void AbilityThread::Attach(
     std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &abilityRecord,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::Attach begin");
     if ((application == nullptr) || (abilityRecord == nullptr)) {
         APP_LOGE("AbilityThread::ability attach failed,context or record is nullptr");
@@ -420,7 +420,7 @@ void AbilityThread::Attach(
  */
 void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleAbilityTransaction begin");
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleAbilityTransaction abilityImpl_ == nullptr");
@@ -446,7 +446,7 @@ void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleSt
  */
 void AbilityThread::HandleExtensionTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleExtensionTransaction begin");
     if (extensionImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleExtensionTransaction extensionImpl_ == nullptr");
@@ -462,7 +462,7 @@ void AbilityThread::HandleExtensionTransaction(const Want &want, const LifeCycle
  */
 void AbilityThread::HandleConnectAbility(const Want &want)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleConnectAbility begin");
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleConnectAbility abilityImpl_ == nullptr");
@@ -486,7 +486,7 @@ void AbilityThread::HandleConnectAbility(const Want &want)
  */
 void AbilityThread::HandleDisconnectAbility(const Want &want)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleDisconnectAbility begin");
     if (abilityImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleDisconnectAbility abilityImpl_ == nullptr");
@@ -519,7 +519,7 @@ void AbilityThread::HandleDisconnectAbility(const Want &want)
  */
 void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int startId)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleCommandAbility begin");
     APP_LOGI("AbilityThread::HandleCommandAbility before abilityImpl_->CommandAbility");
     abilityImpl_->CommandAbility(want, restart, startId);
@@ -540,7 +540,7 @@ void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int sta
  */
 void AbilityThread::HandleConnectExtension(const Want &want)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleConnectExtension begin");
     if (extensionImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleConnectExtension extensionImpl_ == nullptr");
@@ -559,7 +559,7 @@ void AbilityThread::HandleConnectExtension(const Want &want)
  */
 void AbilityThread::HandleDisconnectExtension(const Want &want)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleDisconnectExtension begin");
     if (extensionImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleDisconnectExtension extensionImpl_ == nullptr");
@@ -585,7 +585,7 @@ void AbilityThread::HandleDisconnectExtension(const Want &want)
  */
 void AbilityThread::HandleCommandExtension(const Want &want, bool restart, int startId)
 {
-    BYTRACE(BYTRACE_TAG_ABILITY_MANAGER);
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleCommandExtension begin");
     if (extensionImpl_ == nullptr) {
         APP_LOGE("AbilityThread::HandleCommandExtension extensionImpl_ == nullptr");
@@ -702,6 +702,7 @@ void AbilityThread::HandleUpdateConfiguration(const Configuration &config)
  */
 void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("ScheduleAbilityTransaction begin: targeState = %{public}d, isNewWant = %{public}d",
         lifeCycleStateInfo.state,
         lifeCycleStateInfo.isNewWant);
