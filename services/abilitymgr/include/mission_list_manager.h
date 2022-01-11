@@ -286,6 +286,11 @@ private:
     std::shared_ptr<MissionList> GetTargetMissionList(int missionId, std::shared_ptr<Mission> &mission);
     void UpdateMissionTimeStamp(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void PostStartWaittingAbility();
+    void HandleAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
+    void HandleLauncherDied(std::shared_ptr<AbilityRecord> ability);
+    void HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecord> abilityRecord);
+    void DelayedStartLauncher();
+    void BackToLauncher();
 
 private:
     int userId_;

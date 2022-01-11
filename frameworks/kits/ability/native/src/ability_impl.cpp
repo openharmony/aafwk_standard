@@ -23,6 +23,8 @@
 namespace OHOS {
 namespace AppExecFwk {
 const int TARGET_VERSION_THRESHOLDS = 8;
+static bool g_useNewMission = false;
+static bool g_isMissionFlagSetted = false;
 
 void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &record,
     std::shared_ptr<Ability> &ability, std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token,
@@ -905,6 +907,19 @@ void AbilityImpl::NotifyContinuationResult(const int32_t result)
         return;
     }
     ability_->OnCompleteContinuation(result);
+}
+
+void AbilityImpl::SetUseNewMission(bool useNewMission)
+{
+    if (!g_isMissionFlagSetted) {
+        g_isMissionFlagSetted = true;
+        g_useNewMission = useNewMission;
+    }
+}
+
+bool AbilityImpl::IsUseNewMission()
+{
+    return g_useNewMission;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

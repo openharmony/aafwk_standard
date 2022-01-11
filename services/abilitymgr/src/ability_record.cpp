@@ -1225,6 +1225,11 @@ void AbilityRecord::SetMissionList(const std::shared_ptr<MissionList> &missionLi
     missionList_ = missionList;
 }
 
+void AbilityRecord::SetUseNewMission()
+{
+    lifeCycleStateInfo_.useNewMission = true;
+}
+
 void AbilityRecord::SetMission(const std::shared_ptr<Mission> &mission)
 {
     if (mission) {
