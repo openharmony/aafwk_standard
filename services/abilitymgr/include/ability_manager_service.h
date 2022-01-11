@@ -886,6 +886,7 @@ private:
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
 
     // new ams here
+    bool useNewMission_ {false};
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;

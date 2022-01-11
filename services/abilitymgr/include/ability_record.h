@@ -724,6 +724,7 @@ public:
     void NotifyContinuationResult(const int32_t result);
     std::shared_ptr<MissionList> GetOwnedMissionList() const;
 
+    void SetUseNewMission();
     void SetMission(const std::shared_ptr<Mission> &mission);
     void SetMissionList(const std::shared_ptr<MissionList> &missionList);
     std::shared_ptr<Mission> GetMission() const;
