@@ -18,6 +18,7 @@
 #include "ability_runtime/js_ability_context.h"
 #include "ability_runtime/js_window_stage.h"
 #include "ability_start_setting.h"
+#include "connection_manager.h"
 #include "hilog_wrapper.h"
 #include "js_data_struct_converter.h"
 #include "js_runtime.h"
