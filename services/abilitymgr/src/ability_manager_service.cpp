@@ -2776,5 +2776,24 @@ int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &c
     }
     return 0;
 }
+
+int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
+    snapshotHandler_ = handler;
+    return 0;
+}
+
+int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
+    MissionSnapshot& missionSnapshot)
+{
+    if (!snapshotHandler_) {
+        return 0;
+    }
+    Snapshot snapshot;
+    int32_t result = snapshotHandler_->GetSnapshot(GetAbilityTokenByMissionId(missionId), snapshot);
+    missionSnapshot.snapshot = snapshot.GetPixelMap();
+    return result;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -37,9 +37,13 @@ struct MissionPixelMap : public Parcelable {
     static MissionPixelMap *Unmarshalling(Parcel &parcel);
 };
 
-struct MissionSnapshot {
+struct MissionSnapshot : public Parcelable {
     AppExecFwk::ElementName topAbility;
     std::shared_ptr<Media::PixelMap> snapshot;
+
+    bool ReadFromParcel(Parcel &parcel);
+    virtual bool Marshalling(Parcel &parcel) const override;
+    static MissionSnapshot *Unmarshalling(Parcel &parcel);
 };
 
 }  // namespace AAFwk

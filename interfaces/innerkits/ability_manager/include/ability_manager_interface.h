@@ -40,6 +40,7 @@
 #include "system_memory_attr.h"
 #include "mission_listener_interface.h"
 #include "mission_info.h"
+#include "snapshot.h"
 #include "start_options.h"
 #include "stop_user_callback.h"
 #include "remote_mission_listener_interface.h"
@@ -531,6 +532,8 @@ public:
     virtual int GetMissionInfo(const std::string& deviceId, int32_t missionId,
         MissionInfo &missionInfo) = 0;
 
+    virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) = 0;
+
     virtual int CleanMission(int32_t missionId) = 0;
 
     virtual int CleanAllMissions() = 0;
@@ -562,6 +565,13 @@ public:
 
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) = 0;
+
+    /**
+     * @brief Register the snapshot handler
+     * @param handler snapshot handler
+     * @return int Returns ERR_OK on success, others on failure.
+     */
+    virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) = 0;
 
     enum {
         // ipc id 1-1000 for kit
@@ -783,6 +793,7 @@ public:
         UNREGISTER_REMOTE_MISSION_LISTENER = 1111,
         START_SYNC_MISSIONS = 1112,
         STOP_SYNC_MISSIONS = 1113,
+        REGISTER_SNAPSHOT_HANDLER = 1114,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

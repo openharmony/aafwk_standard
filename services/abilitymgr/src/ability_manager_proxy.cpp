@@ -666,6 +666,38 @@ int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionPixe
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteString(deviceId)) {
+        HILOG_ERROR("deviceId write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(missionId)) {
+        HILOG_ERROR("missionId write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    std::unique_ptr<MissionSnapshot> info(reply.ReadParcelable<MissionSnapshot>());
+    if (!info) {
+        HILOG_ERROR("readParcelableInfo failed.");
+        return ERR_UNKNOWN_OBJECT;
+    }
+    snapshot = *info;
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::MoveMissionToTop(int32_t missionId)
 {
     int error;
@@ -2029,6 +2061,26 @@ int AbilityManagerProxy::UnRegisterMissionListener(const std::string &deviceId,
     auto error = Remote()->SendRequest(IAbilityManager::UNREGISTER_REMOTE_MISSION_LISTENER, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteRemoteObject(handler->AsObject())) {
+        HILOG_ERROR("snapshot: handler write failed.");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::REGISTER_SNAPSHOT_HANDLER, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("snapshot: send request error: %{public}d", error);
         return error;
     }
     return reply.ReadInt32();

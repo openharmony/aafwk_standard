@@ -60,5 +60,45 @@ bool MissionPixelMap::Marshalling(Parcel &parcel) const
     }
     return true;
 }
+
+bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
+{
+    std::unique_ptr<AppExecFwk::ElementName> ability(parcel.ReadParcelable<AppExecFwk::ElementName>());
+    if (ability == nullptr) {
+        return false;
+    }
+    topAbility = *ability;
+    std::shared_ptr<Media::PixelMap> pixelMap(parcel.ReadParcelable<Media::PixelMap>());
+    if (ability == nullptr) {
+        return false;
+    }
+    snapshot = pixelMap;
+    return true;
+}
+
+MissionSnapshot *MissionSnapshot::Unmarshalling(Parcel &parcel)
+{
+    MissionSnapshot *info = new (std::nothrow) MissionSnapshot();
+    if (info == nullptr) {
+        return nullptr;
+    }
+
+    if (!info->ReadFromParcel(parcel)) {
+        delete info;
+        info = nullptr;
+    }
+    return info;
+}
+
+bool MissionSnapshot::Marshalling(Parcel &parcel) const
+{
+    if (!parcel.WriteParcelable(&topAbility)) {
+        return false;
+    }
+    if (!parcel.WriteParcelable(snapshot.get())) {
+        return false;
+    }
+    return true;
+}
 }  // namespace AAFwk
 }  // namespace OHOS
