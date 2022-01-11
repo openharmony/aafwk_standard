@@ -18,6 +18,7 @@
 #include <cinttypes>
 #include <thread>
 
+#include "ability_impl.h"
 #include "ability_loader.h"
 #include "ability_post_event_timeout.h"
 #include "ability_runtime/js_ability.h"
@@ -673,9 +674,15 @@ void Ability::InitWindow(Rosen::WindowType winType)
         APP_LOGE("Ability::InitWindow abilityWindow_ is nullptr");
         return;
     }
-
+    bool useNewMission = AbilityImpl::IsUseNewMission();
     APP_LOGI("%{public}s beign abilityWindow_->InitWindow.", __func__);
-    abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_);
+    if (useNewMission) {
+        abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_);
+    } else {
+        std::shared_ptr<AbilityRuntime::AbilityContext> context = nullptr;
+        sptr<Rosen::IWindowLifeCycle> listener = nullptr;
+        abilityWindow_->InitWindow(winType, context, listener);
+    }
     APP_LOGI("%{public}s end abilityWindow_->InitWindow.", __func__);
 }
 
