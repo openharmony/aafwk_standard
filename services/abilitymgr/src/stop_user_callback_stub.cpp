@@ -45,7 +45,7 @@ int StopUserCallbackStub::OnRemoteRequest(
         return ERR_INVALID_STATE;
     }
 
-    if (code < StopUserCallbackCmd::ON_STOP_USER_DONE && code >= 0) {
+    if (code < StopUserCallbackCmd::CMD_MAX && code >= 0) {
         auto memberFunc = vecMemberFunc_[code];
         return (this->*memberFunc)(data, reply);
     }
