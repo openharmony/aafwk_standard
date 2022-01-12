@@ -1452,7 +1452,7 @@ private:
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
-    
+
     bool bWindowFocus_ = false;
     int compatibleVersion_ = 0;
 
@@ -1484,7 +1484,6 @@ private:
     static const int32_t RELEASE_FORM = 8;
     static const int32_t RELEASE_CACHED_FORM = 9;
     static const int64_t MIN_NEXT_TIME = 5;
-    static const std::map<int32_t, Rosen::WindowMode> convertWindowModeMap_;
 
 private:
     /**
