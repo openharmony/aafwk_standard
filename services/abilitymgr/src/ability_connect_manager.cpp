@@ -577,7 +577,7 @@ void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &ab
         }
     }
     DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
-        token, perToken, abilityRecord->GetAbilityInfo(), abilityRecord->GetApplicationInfo(), abilityRecord->GetUid());
+        token, perToken, abilityRecord->GetAbilityInfo(), abilityRecord->GetApplicationInfo());
 
     abilityRecord->SetStartTime();
 }
