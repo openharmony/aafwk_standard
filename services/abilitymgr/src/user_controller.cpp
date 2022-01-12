@@ -19,6 +19,7 @@
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "os_account_manager.h"
+#include "task_data_persistence_mgr.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -155,7 +156,46 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
 
 int32_t UserController::StopUser(int32_t userId)
 {
-    return -1;
+    if (userId < 0 || userId == USER_ID_DEFAULT) {
+        HILOG_ERROR("userId is invalid:%{public}d", userId);
+        return -1;
+    }
+
+    if (IsCurrentUser(userId)) {
+        HILOG_WARN("user is already current:%{public}d", userId);
+        return 0;
+    }
+
+    if (!IsExistOsAccount(userId)) {
+        HILOG_ERROR("not exist such account:%{public}d", userId);
+        return -1;
+    }
+
+    BroacastUserStopping(userId);
+
+    auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
+    if (!appScheduler) {
+        HILOG_ERROR("appScheduler is null");
+        return -1;
+    }
+    appScheduler->KillProcessesByUserId(userId);
+
+    auto taskDataPersistenceMgr = DelayedSingleton<TaskDataPersistenceMgr>::GetInstance();
+    if (!taskDataPersistenceMgr) {
+        HILOG_ERROR("taskDataPersistenceMgr is null");
+        return -1;
+    }
+    taskDataPersistenceMgr->RemoveUserDir(userId);
+
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (!abilityManagerService) {
+        HILOG_ERROR("abilityManagerService is null");
+        return -1;
+    }
+    abilityManagerService->ClearUserData(userId);
+
+    BroacastUserStopped(userId);
+    return 0;
 }
 
 int32_t UserController::GetCurrentUserId()
@@ -263,6 +303,16 @@ void UserController::BroacastUserBackground(int32_t userId)
 void UserController::BroacastUserForeground(int32_t userId)
 {
     // todo: broadcast event user switch to fg.
+}
+
+void UserController::BroacastUserStopping(int32_t userId)
+{
+    // todo
+}
+
+void UserController::BroacastUserStopped(int32_t userId)
+{
+    // todo
 }
 
 void UserController::SendSystemUserStart(int32_t userId)

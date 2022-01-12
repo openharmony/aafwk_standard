@@ -2791,6 +2791,15 @@ int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &c
     return 0;
 }
 
+void AbilityManagerService::ClearUserData(int32_t userId)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    missionListManagers_.erase(userId);
+    connectManagers_.erase(userId);
+    dataAbilityManagers_.erase(userId);
+    pendingWantManagers_.erase(userId);
+}
+
 int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
 {
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
