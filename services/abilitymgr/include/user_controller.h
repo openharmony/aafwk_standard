@@ -94,6 +94,8 @@ private:
     void UserBootDone(std::shared_ptr<UserItem> &item);
     void BroacastUserBackground(int32_t userId);
     void BroacastUserForeground(int32_t userId);
+    void BroacastUserStopping(int32_t userId);
+    void BroacastUserStopped(int32_t userId);
 
     void SendSystemUserStart(int32_t userId);
     void SendSystemUserCurrent(int32_t oldUserId, int32_t newUserId);

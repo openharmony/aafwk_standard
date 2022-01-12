@@ -708,6 +708,8 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
 
+    void ClearUserData(int32_t userId);
+
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 
     virtual int32_t GetMissionSnapshot(const std::string& deviceId, int32_t missionId,

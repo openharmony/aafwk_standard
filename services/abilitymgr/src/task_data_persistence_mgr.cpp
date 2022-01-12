@@ -15,6 +15,7 @@
 
 #include "task_data_persistence_mgr.h"
 #include "ability_util.h"
+#include "file_util.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -49,6 +50,7 @@ bool TaskDataPersistenceMgr::Init(int userId)
     } else {
         currentMissionDataStorage_ = missionDataStorageMgr_[userId];
     }
+    currentUserId_ = userId;
 
     CHECK_POINTER_RETURN_BOOL(currentMissionDataStorage_);
     HILOG_INFO("Init success.");
@@ -87,6 +89,21 @@ bool TaskDataPersistenceMgr::DeleteMissionInfo(int missionId)
     std::function<void()> DeleteMissionInfoFunc = std::bind(&MissionDataStorage::DeleteMissionInfo,
         currentMissionDataStorage_, missionId);
     return handler_->PostTask(DeleteMissionInfoFunc, DELETE_MISSION_INFO);
+}
+
+bool TaskDataPersistenceMgr::RemoveUserDir(int32_t userId)
+{
+    if (currentUserId_ == userId) {
+        HILOG_ERROR("can not removed current user dir");
+        return false;
+    }
+    std::string userDir = TASK_DATA_FILE_BASE_PATH + "/" + std::to_string(userId);
+    bool ret = OHOS::HiviewDFX::FileUtil::ForceRemoveDirectory(userDir);
+    if (!ret) {
+        HILOG_ERROR("remove user dir %{public}s failed.", userDir.c_str());
+        return false;
+    }
+    return true;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
