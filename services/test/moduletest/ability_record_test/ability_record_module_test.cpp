@@ -239,8 +239,7 @@ HWTEST_F(AbilityRecordModuleTest, LoadAbility_001, TestSize.Level3)
         auto mockHandler = [&](const sptr<IRemoteObject> &token,
                                const sptr<IRemoteObject> &preToken,
                                const AbilityInfo &abilityInfo,
-                               const ApplicationInfo &appInfo,
-			       int32_t uid) {
+                               const ApplicationInfo &appInfo) {
             if (abilityInfo != abilityRequest.abilityInfo) {
                 return static_cast<AppMgrResultCode>(ERR_INVALID_VALUE);
             }
@@ -250,7 +249,7 @@ HWTEST_F(AbilityRecordModuleTest, LoadAbility_001, TestSize.Level3)
             return AppExecFwk::RESULT_OK;
         };
 
-        EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+        EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
         auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
         auto backupAppMgrClient = std::move(appScheduler->appMgrClient_);

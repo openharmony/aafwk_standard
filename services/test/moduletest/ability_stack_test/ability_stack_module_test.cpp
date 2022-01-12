@@ -97,7 +97,7 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         EXPECT_TRUE(abilityMs->pendingWantManager_);
 
         int userId = abilityMs->GetUserId();
-        abilityMs->SetStackManager(userId, true);
+        abilityMs->SetStackManager(userId);
         abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs->systemAppManager_);
 

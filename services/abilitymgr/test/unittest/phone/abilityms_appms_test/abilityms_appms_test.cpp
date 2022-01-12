@@ -119,7 +119,7 @@ void AbilityMsAppmsTest::OnStartabilityAms()
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
       
         int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
+        abilityMs_->SetStackManager(userId);
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs_->systemAppManager_);
 
