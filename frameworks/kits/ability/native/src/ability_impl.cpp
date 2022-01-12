@@ -43,8 +43,11 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     record->SetAbilityImpl(shared_from_this());
     ability_ = ability;
     handler_ = handler;
-    ability_->SetSceneListener(
-        sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
+    auto info = record->GetAbilityInfo();
+    if (info && info->type == AbilityType::PAGE) {
+        ability_->SetSceneListener(
+            sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
+    }
     ability_->Init(record->GetAbilityInfo(), application, handler, token);
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_ = application;
