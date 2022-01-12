@@ -794,5 +794,20 @@ ErrCode AbilityManagerClient::StopUser(int accountId, const sptr<IStopUserCallba
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StopUser(accountId, callback);
 }
+
+ErrCode AbilityManagerClient::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->RegisterSnapshotHandler(handler);
+}
+
+ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
+    MissionSnapshot& snapshot)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetMissionSnapshot(deviceId, missionId, snapshot);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -136,6 +136,14 @@ public:
     {
         return 0;
     }
+    virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot)
+    {
+        return 0;
+    }
+    virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+    {
+        return 0;
+    }
 
     void Wait()
     {

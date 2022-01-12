@@ -22,6 +22,7 @@
 #include "ability_manager_errors.h"
 #include "ability_scheduler_interface.h"
 #include "ability_manager_interface.h"
+#include "snapshot.h"
 #include "want.h"
 
 #include "iremote_object.h"
@@ -569,6 +570,15 @@ public:
     ErrCode GetMissionInfo(const std::string& deviceId, int32_t missionId, MissionInfo &missionInfo);
 
     /**
+     * @brief Get the Mission Snapshot Info object
+     * @param deviceId local or remote deviceid.
+     * @param missionId Id of target mission.
+     * @param snapshot snapshot of target mission
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot);
+
+    /**
      * @brief Clean mission by id.
      * @param missionId Id of target mission.
      *
@@ -623,6 +633,13 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode StopUser(int accountId, const sptr<IStopUserCallback> &callback);
+
+    /**
+     * @brief Register the snapshot handler
+     * @param handler snapshot handler
+     * @return ErrCode Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
