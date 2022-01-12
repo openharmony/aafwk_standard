@@ -111,6 +111,7 @@ std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityR
             abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.compatibleVersion);
     }
     CHECK_POINTER_AND_RETURN(abilityRecord, nullptr);
+    abilityRecord->SetUid(abilityRequest.uid);
     if (!abilityRecord->Init()) {
         HILOG_ERROR("failed to init new ability record");
         return nullptr;
@@ -134,6 +135,16 @@ bool AbilityRecord::Init()
         isLauncherAbility_ = true;
     }
     return true;
+}
+
+void AbilityRecord::SetUid(int32_t uid)
+{
+    uid_ = uid;
+}
+
+int32_t AbilityRecord::GetUid()
+{
+    return uid_;
 }
 
 int AbilityRecord::LoadAbility()
@@ -160,7 +171,7 @@ int AbilityRecord::LoadAbility()
         callerToken_ = callerList_.back()->GetCaller()->GetToken();
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
-        token_, callerToken_, abilityInfo_, applicationInfo_);
+        token_, callerToken_, abilityInfo_, applicationInfo_, uid_);
 }
 
 void AbilityRecord::ForegroundAbility()
