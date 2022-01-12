@@ -185,6 +185,40 @@ void JsAbility::OnBackground()
     CallObjectMethod("onBackground");
 }
 
+bool JsAbility::OnContinue(WantParams &wantParams)
+{
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+
+    NativeValue* value = jsAbilityObj_->Get();
+    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get Ability object");
+        return false;
+    }
+
+    NativeValue* methodOnCreate = obj->GetProperty("onContinue");
+    if (methodOnCreate == nullptr) {
+        HILOG_ERROR("Failed to get 'onContinue' from Ability object");
+        return false;
+    }
+
+    napi_value napiWantParams = OHOS::AppExecFwk::WrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), wantParams);
+    NativeValue* jsWantParams = reinterpret_cast<NativeValue*>(napiWantParams);
+
+    NativeValue* result = nativeEngine.CallFunction(value, methodOnCreate, &jsWantParams, 1);
+
+    napi_value new_napiWantParams = reinterpret_cast<napi_value>(jsWantParams);
+    OHOS::AppExecFwk::UnwrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), new_napiWantParams, wantParams);
+
+    NativeBoolean* boolResult = ConvertNativeValueTo<NativeBoolean>(result);
+    if (boolResult == nullptr) {
+        return false;
+    }
+
+    return *boolResult;
+}
+
 void JsAbility::OnAbilityResult(int requestCode, int resultCode, const Want &resultData)
 {
     HILOG_INFO("%{public}s begin.", __func__);

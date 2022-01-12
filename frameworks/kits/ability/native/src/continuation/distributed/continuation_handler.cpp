@@ -23,7 +23,6 @@ using OHOS::AAFwk::WantParams;
 namespace OHOS {
 namespace AppExecFwk {
 const std::string ContinuationHandler::ORIGINAL_DEVICE_ID("deviceId");
-const int32_t ABILITY_REJECTED = 29360197;
 ContinuationHandler::ContinuationHandler(
     std::weak_ptr<ContinuationManager> &continuationManager, std::weak_ptr<Ability> &ability)
 {
@@ -52,14 +51,15 @@ bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObj
         APP_LOGE("HandleStartContinuationWithStack: get continuationManagerTmp is nullptr");
         return false;
     }
-    int32_t status = 0;
+
     // decided to start continuation. Callback to ability.
     WantParams wantParams;
-    if (!continuationManagerTmp->OnContinue(wantParams)) {
-        APP_LOGI("HandleStartContinuationWithStack: OnContinue failed, BundleName = %{public}s, ClassName= %{public}s",
+    int32_t status = continuationManagerTmp->OnContinue(wantParams);
+    if (status != ERR_OK) {
+        APP_LOGI("OnContinue failed, BundleName = %{public}s, ClassName= %{public}s, status: %{public}d",
             abilityInfo_->bundleName.c_str(),
-            abilityInfo_->name.c_str());
-        status = ABILITY_REJECTED;
+            abilityInfo_->name.c_str(),
+            status);
     }
 
     Want want = SetWantParams(wantParams);

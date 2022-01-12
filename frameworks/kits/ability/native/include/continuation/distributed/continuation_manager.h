@@ -51,7 +51,11 @@ public:
 
     bool StartContinuation();
 
-    bool OnContinue(WantParams &wantParams);
+    int32_t OnContinue(WantParams &wantParams);
+
+    int32_t OnStartAndSaveData(WantParams &wantParams);
+
+    int32_t OnContinueAndGetContent(WantParams &wantParams);
 
     bool SaveData(WantParams &saveData);
 
@@ -96,6 +100,8 @@ private:
     bool DoScheduleRestoreData(const WantParams &restoreData);
 
     bool DoRestoreFromRemote(const WantParams &restoreData);
+
+    bool GetContentInfo(WantParams &wantParams);
 
     sptr<IRemoteObject> continueToken_ = nullptr;
     std::weak_ptr<Ability> ability_;
