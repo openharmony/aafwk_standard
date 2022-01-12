@@ -51,6 +51,7 @@ public:
 
     void OnForeground(const Want &want) override;
     void OnBackground() override;
+    bool OnContinue(WantParams &wantParams) override;
 
     void OnAbilityResult(int requestCode, int resultCode, const Want &resultData) override;
     void OnRequestPermissionsFromUserResult(
