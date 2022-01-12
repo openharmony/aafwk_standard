@@ -22,6 +22,8 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+const size_t AbilityContext::CONTEXT_TYPE_ID(std::hash<const char*> {} ("AbilityContext"));
+
 std::string AbilityContextImpl::GetBundleCodeDir()
 {
     return stageContext_ ? stageContext_->GetBundleCodeDir() : "";

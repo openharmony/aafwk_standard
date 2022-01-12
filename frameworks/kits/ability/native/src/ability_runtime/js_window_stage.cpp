@@ -111,18 +111,14 @@ NativeValue* JsWindowStage::OnSetUIContent(NativeEngine& engine, NativeCallbackI
         HILOG_ERROR("JsWindowStage::OnSetUIContent info->argv[0] InValid");
         return engine.CreateUndefined();
     }
-    auto contentValue = objContext->GetProperty("__context_impl__");
-    auto contentObj = AbilityRuntime::ConvertNativeValueTo<NativeObject>(contentValue);
-    if (contentObj == nullptr) {
-        HILOG_ERROR("JsWindowStage::OnSetUIContent contentObj is nullptr");
+
+    auto context = static_cast<std::weak_ptr<AbilityRuntime::Context>*>(objContext->GetNativePointer());
+    auto abilityContext = Context::ConvertTo<AbilityRuntime::AbilityContext>(context->lock());
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("JsWindowStage::OnSetUIContent context is nullptr");
         return engine.CreateUndefined();
     }
-    auto jsContext = static_cast<AbilityRuntime::JsAbilityContext*>(contentObj->GetNativePointer());
-    if (jsContext == nullptr) {
-        HILOG_ERROR("JsWindowStage::OnSetUIContent jsContext is nullptr");
-        return engine.CreateUndefined();
-    }
-    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = jsContext->GetAbilityContext();
+
     HILOG_INFO("JsWindowStage::OnSetUIContent Get context: %{public}p", abilityContext.get());
 
     // Parse info->argv[1] as url

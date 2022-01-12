@@ -88,6 +88,21 @@ void JsFormExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
     context->Bind(jsRuntime_, shellContextRef.release());
     HILOG_INFO("JsFormExtension::SetProperty.");
     obj->SetProperty("context", contextObj);
+
+    auto nativeObj = ConvertNativeValueTo<NativeObject>(contextObj);
+    if (nativeObj == nullptr) {
+        HILOG_ERROR("Failed to get form extension native object");
+        return;
+    }
+
+    HILOG_INFO("Set form extension context pointer: %{public}p", context.get());
+
+    nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
+        [](NativeEngine*, void* data, void*) {
+            HILOG_INFO("Finalizer for weak_ptr form extension context is called");
+            delete static_cast<std::weak_ptr<AbilityRuntime::Context>*>(data);
+        }, nullptr);
+
     HILOG_INFO("JsFormExtension::Init end.");
 }
 
