@@ -147,7 +147,7 @@ void AbilityManagerServiceTest::OnStartAms()
         abilityMs_->GetGlobalConfiguration();
 
         int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
+        abilityMs_->SetStackManager(userId);
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs_->systemAppManager_);
 
@@ -615,7 +615,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
  */
 HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level1)
 {
-    abilityMs_->SetStackManager(0, true);
+    abilityMs_->SetStackManager(0);
     EXPECT_NE(nullptr, abilityMs_->GetStackManager());
 }
 

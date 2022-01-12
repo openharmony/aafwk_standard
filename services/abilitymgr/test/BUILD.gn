@@ -82,8 +82,6 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/stack_info.cpp",
     "${services_path}/abilitymgr/src/stack_setting.cpp",
     "${services_path}/abilitymgr/src/task_data_persistence_mgr.cpp",
-    "${services_path}/abilitymgr/src/user_controller.cpp",
-    "${services_path}/abilitymgr/src/user_event_handler.cpp",
     "${services_path}/abilitymgr/src/want_receiver_proxy.cpp",
     "${services_path}/abilitymgr/src/want_receiver_stub.cpp",
     "${services_path}/abilitymgr/src/want_sender_info.cpp",
@@ -101,10 +99,6 @@ ohos_source_set("abilityms_test_source") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
-    "//base/account/os_account/frameworks/common/account_error/include",
-    "//base/account/os_account/frameworks/common/database/include",
-    "//base/account/os_account/frameworks/common/log/include",
-    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
   ]
 
   external_dependent_files = [
@@ -128,7 +122,6 @@ ohos_source_set("abilityms_test_source") {
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",

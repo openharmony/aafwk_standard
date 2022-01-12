@@ -137,7 +137,7 @@ void DumpModuleTest::OnStartAms()
         EXPECT_TRUE(g_abilityMs->pendingWantManager_);
       
         int userId = g_abilityMs->GetUserId();
-        g_abilityMs->SetStackManager(userId, true);
+        g_abilityMs->SetStackManager(userId);
         g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(g_abilityMs->systemAppManager_);
 

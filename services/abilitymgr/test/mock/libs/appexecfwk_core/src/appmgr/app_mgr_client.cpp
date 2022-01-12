@@ -35,7 +35,7 @@ AppMgrClient::~AppMgrClient()
 {}
 
 AppMgrResultCode AppMgrClient::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-    const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo, int32_t uid)
+    const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo)
 {
     return AppMgrResultCode::RESULT_OK;
 }
