@@ -190,7 +190,7 @@ static void OnStartAms()
         AbilityMgrModuleTest::abilityMgrServ_->GetGlobalConfiguration();
 
         int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
-        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId);
+        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
         AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
 
@@ -285,7 +285,7 @@ std::shared_ptr<AbilityRecord> AbilityMgrModuleTest::GreatePageAbility(
     const std::string &abilityName, const std::string &bundleName)
 {
     Want want = CreateWant(abilityName, bundleName);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     int testRequestCode = 1;
     SetActive();
     abilityMgrServ_->StartAbility(want, testRequestCode);
@@ -329,7 +329,8 @@ void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, spt
                                const sptr<IRemoteObject> &token,
                                const sptr<IRemoteObject> &preToken,
                                const AbilityInfo &abilityInfo,
-                               const ApplicationInfo &appInfo) {
+                               const ApplicationInfo &appInfo,
+			                   int32_t uid) {
         dataAbilityToken = token;
         testFailed = testFailed || (abilityInfo.type != AbilityType::DATA);
         std::thread(&AbilityManagerService::AttachAbilityThread, abilityMgrServ.get(), mockDataAbilityScheduler, token)
@@ -337,7 +338,7 @@ void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, spt
         return AppMgrResultCode::RESULT_OK;
     };
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
     int counts = 2;
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _))
         .Times(counts)
@@ -385,14 +386,15 @@ void AbilityMgrModuleTest::MockServiceAbilityLoadHandlerInner(
     auto mockHandler = [&testResult, &bundleName, &abilityName, &testToken](const sptr<IRemoteObject> &token,
                            const sptr<IRemoteObject> &preToken,
                            const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
+                           const ApplicationInfo &appInfo,
+                           int32_t uid) {
         testToken = token;
         testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
                      appInfo.bundleName == bundleName;
         return AppMgrResultCode::RESULT_OK;
     };
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 }
 
 void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want,
@@ -547,14 +549,15 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
     auto mockHandler = [&](const sptr<IRemoteObject> &token,
                            const sptr<IRemoteObject> &preToken,
                            const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
+                           const ApplicationInfo &appInfo,
+                           int32_t uid) {
         testToken = token;
         testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
                      appInfo.bundleName == bundleName;
         return AppMgrResultCode::RESULT_OK;
     };
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
@@ -912,7 +915,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<AbilityRecord> record =
         abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -976,7 +979,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(2);
     abilityMgrServ_->ConnectAbility(want1, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want2, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want1, callback2, nullptr);
@@ -1036,13 +1039,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
     auto mockHandler = [&](const sptr<IRemoteObject> &token,
                            const sptr<IRemoteObject> &preToken,
                            const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
+                           const ApplicationInfo &appInfo,
+                           int32_t uid) {
         testToken = token;
         testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
                      appInfo.bundleName == bundleName;
         return AppMgrResultCode::RESULT_OK;
     };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
     SetActive();
@@ -1107,13 +1111,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
     auto mockHandler = [&](const sptr<IRemoteObject> &token,
                            const sptr<IRemoteObject> &preToken,
                            const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
+                           const ApplicationInfo &appInfo,
+                           int32_t uid) {
         testToken = token;
         testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
                      appInfo.bundleName == bundleName;
         return AppMgrResultCode::RESULT_OK;
     };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
@@ -1184,7 +1189,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_013, TestSize.Level1)
     Want want2 = CreateWant(abilityName2, bundleName2);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(2);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want1, testRequestCode);
     abilityMgrServ_->StartAbility(want2, testRequestCode);
@@ -1217,7 +1222,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1263,7 +1268,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1308,7 +1313,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1357,7 +1362,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1406,7 +1411,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     SetActive();
     abilityMgrServ_->StartAbility(want, testRequestCode);
@@ -1477,7 +1482,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
     EXPECT_TRUE(abilityMgrServ_);
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1547,7 +1552,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
 
     sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->connectMap_.size());
     EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
@@ -1594,7 +1599,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
@@ -1640,7 +1645,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     Want want2 = CreateWant(abilityName2, bundleName2);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
     EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(2);
@@ -1677,7 +1682,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
     EXPECT_TRUE(abilityMgrServ_);
     EXPECT_TRUE(mockAppMgrClient_);
     ClearStack();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     Want want = CreateWant("RadioTopAbility", COM_IX_HIRADIO);
     abilityMgrServ_->StartAbility(want);
     auto testAbilityRecord = GetTopAbility();
@@ -1705,7 +1710,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
     auto stackManager = abilityMgrServ_->GetStackManager();
     EXPECT_TRUE(stackManager);
     sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     Want want = CreateWant("PhoneAbility1", COM_IX_PHONE);
@@ -1806,7 +1811,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
     std::string bundleName = "com.ix.hiMusic";
 
     SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);
@@ -1864,7 +1869,7 @@ HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
     std::string bundleName = "com.ix.hiService";
 
     SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     Want want = CreateWant(abilityName, bundleName);
     auto startRef = abilityMgrServ_->StartAbility(want);

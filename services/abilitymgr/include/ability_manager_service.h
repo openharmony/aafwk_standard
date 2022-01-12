@@ -42,6 +42,7 @@
 #include "pending_want_manager.h"
 #include "ams_configuration_parameter.h"
 #include "event_handler.h"
+#include "user_controller.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -305,7 +306,7 @@ public:
      *
      * @param userId, user id.
      */
-    void SetStackManager(int userId);
+    void SetStackManager(int userId, bool switchUser);
 
     /**
      * GetStackManager, get the current stack manager.
@@ -580,7 +581,7 @@ public:
      *
      * @param userId, user id.
      */
-    void InitMissionListManager(int userId);
+    void InitMissionListManager(int userId, bool switchUser);
 
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override;
@@ -756,6 +757,7 @@ public:
     };
 
     friend class AbilityStackManager;
+    friend class UserController;
 
 protected:
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) override;
@@ -868,6 +870,18 @@ private:
     void DumpFuncInit();
     bool CheckCallerIsSystemAppByIpc();
     bool IsExistFile(const std::string &path);
+
+    void InitConnectManager(int32_t userId, bool switchUser);
+    void InitDataAbilityManager(int32_t userId, bool switchUser);
+    void InitPendWantManager(int32_t userId, bool switchUser);
+
+    // multi user
+    void StartFreezingScreen();
+    void StopFreezingScreen();
+    void UserStarted(int32_t userId);
+    void SwitchToUser(int32_t userId);
+    void StartLauncherAbility(int32_t userId);
+
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
 
@@ -879,10 +893,13 @@ private:
     ServiceRunningState state_;
     std::unordered_map<int, std::shared_ptr<AbilityStackManager>> stackManagers_;
     std::shared_ptr<AbilityStackManager> currentStackManager_;
+    std::unordered_map<int, std::shared_ptr<AbilityConnectManager>> connectManagers_;
     std::shared_ptr<AbilityConnectManager> connectManager_;
     sptr<AppExecFwk::IBundleMgr> iBundleManager_;
     std::shared_ptr<AppScheduler> appScheduler_;
+    std::unordered_map<int, std::shared_ptr<DataAbilityManager>> dataAbilityManagers_;
     std::shared_ptr<DataAbilityManager> dataAbilityManager_;
+    std::unordered_map<int, std::shared_ptr<PendingWantManager>> pendingWantManagers_;
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
     std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
@@ -896,6 +913,7 @@ private:
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;
     sptr<ISnapshotHandler> snapshotHandler_;
+    std::shared_ptr<UserController> userController_;
 };
 
 }  // namespace AAFwk

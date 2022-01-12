@@ -89,7 +89,6 @@ AbilityManagerService::AbilityManagerService()
       eventLoop_(nullptr),
       handler_(nullptr),
       state_(ServiceRunningState::STATE_NOT_START),
-      connectManager_(std::make_shared<AbilityConnectManager>()),
       iBundleManager_(nullptr)
 {
     std::shared_ptr<AppScheduler> appScheduler(
@@ -132,14 +131,19 @@ bool AbilityManagerService::Init()
 
     handler_ = std::make_shared<AbilityEventHandler>(eventLoop_, weak_from_this());
     CHECK_POINTER_RETURN_BOOL(handler_);
-    CHECK_POINTER_RETURN_BOOL(connectManager_);
-    connectManager_->SetEventHandler(handler_);
+
+    // init user controller.
+    userController_ = std::make_shared<UserController>();
+    userController_->Init();
+    int userId = GetUserId();
+
+    InitConnectManager(userId, true);
 
     // init ConfigurationDistributor
     DelayedSingleton<ConfigurationDistributor>::GetInstance();
 
-    auto dataAbilityManager = std::make_shared<DataAbilityManager>();
-    CHECK_POINTER_RETURN_BOOL(dataAbilityManager);
+    InitDataAbilityManager(userId, true);
+    InitPendWantManager(userId, true);
 
     amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
     if (amsConfigResolver_) {
@@ -148,22 +152,15 @@ bool AbilityManagerService::Init()
     }
     useNewMission_ = amsConfigResolver_->IsUseNewMission();
 
-    auto pendingWantManager = std::make_shared<PendingWantManager>();
-    if (!pendingWantManager) {
-        HILOG_ERROR("Failed to init pending want ability manager.");
-        return false;
-    }
-
     // after amsConfigResolver_
     configuration_ = std::make_shared<AppExecFwk::Configuration>();
     GetGlobalConfiguration();
 
-    int userId = GetUserId();
-    SetStackManager(userId);
+    SetStackManager(userId, true);
     systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
     CHECK_POINTER_RETURN_BOOL(systemAppManager_);
 
-    InitMissionListManager(userId);
+    InitMissionListManager(userId, true);
     kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(userId);
     CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
 
@@ -185,8 +182,6 @@ bool AbilityManagerService::Init()
         outFile.close();
     };
     handler_->PostTask(creatWhiteListTask, "creatWhiteList");
-    dataAbilityManager_ = dataAbilityManager;
-    pendingWantManager_ = pendingWantManager;
     HILOG_INFO("Init success.");
     return true;
 }
@@ -1841,27 +1836,37 @@ std::shared_ptr<AbilityEventHandler> AbilityManagerService::GetEventHandler()
     return handler_;
 }
 
-void AbilityManagerService::SetStackManager(int userId)
+void AbilityManagerService::SetStackManager(int userId, bool switchUser)
 {
     auto iterator = stackManagers_.find(userId);
     if (iterator != stackManagers_.end()) {
-        currentStackManager_ = iterator->second;
+        if (switchUser) {
+            currentStackManager_ = iterator->second;
+        }
     } else {
-        currentStackManager_ = std::make_shared<AbilityStackManager>(userId);
-        currentStackManager_->Init();
-        stackManagers_.emplace(userId, currentStackManager_);
+        auto manager = std::make_shared<AbilityStackManager>(userId);
+        manager->Init();
+        stackManagers_.emplace(userId, manager);
+        if (switchUser) {
+            currentStackManager_ = manager;
+        }
     }
 }
 
-void AbilityManagerService::InitMissionListManager(int userId)
+void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
 {
     auto iterator = missionListManagers_.find(userId);
     if (iterator != missionListManagers_.end()) {
-        currentMissionListManager_ = iterator->second;
+        if (switchUser) {
+            currentMissionListManager_ = iterator->second;
+        }
     } else {
-        currentMissionListManager_ = std::make_shared<MissionListManager>(userId);
-        currentMissionListManager_->Init();
-        missionListManagers_.emplace(userId, currentMissionListManager_);
+        auto manager = std::make_shared<MissionListManager>(userId);
+        manager->Init();
+        missionListManagers_.emplace(userId, manager);
+        if (switchUser) {
+            currentMissionListManager_ = manager;
+        }
     }
 }
 
@@ -1879,6 +1884,9 @@ void AbilityManagerService::DumpWaittingAbilityQueue(std::string &result)
 // multi user scene
 int AbilityManagerService::GetUserId()
 {
+    if (userController_) {
+        return userController_->GetCurrentUserId();
+    }
     return DEFAULT_USER_ID;
 }
 
@@ -1989,7 +1997,9 @@ int AbilityManagerService::GenerateAbilityRequest(
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
 
-    bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, 0, request.abilityInfo);
+    int userId = GetUserId();
+    bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
+        userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         HILOG_ERROR("Get ability info failed.");
         return RESOLVE_ABILITY_ERR;
@@ -2018,11 +2028,13 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("Query app name: %{public}s,", request.appInfo.name.c_str());
 
     AppExecFwk::BundleInfo bundleInfo;
-    if (!bms->GetBundleInfo(request.appInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo)) {
+    if (!bms->GetBundleInfo(request.appInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT,
+        bundleInfo, userId)) {
         HILOG_ERROR("Failed to get bundle info when generate ability request.");
         return RESOLVE_APP_ERR;
     }
     request.compatibleVersion = bundleInfo.compatibleVersion;
+    request.uid = bundleInfo.uid;
 
     return ERR_OK;
 }
@@ -2195,7 +2207,8 @@ int AbilityManagerService::PreLoadAppDataAbilities(const std::string &bundleName
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
 
     AppExecFwk::BundleInfo bundleInfo;
-    bool ret = bms->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo);
+    int32_t userId = GetUserId();
+    bool ret = bms->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId);
     if (!ret) {
         HILOG_ERROR("Failed to get bundle info when app data abilities preloading.");
         return RESOLVE_APP_ERR;
@@ -2215,6 +2228,7 @@ int AbilityManagerService::PreLoadAppDataAbilities(const std::string &bundleName
             return ERR_TIMED_OUT;
         }
         dataAbilityRequest.abilityInfo = *it;
+        dataAbilityRequest.uid = bundleInfo.uid;
         HILOG_INFO("App data ability preloading: '%{public}s.%{public}s'...", it->bundleName.c_str(), it->name.c_str());
 
         auto dataAbility = dataAbilityManager_->Acquire(dataAbilityRequest, false, nullptr, false);
@@ -2794,6 +2808,92 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
     int32_t result = snapshotHandler_->GetSnapshot(GetAbilityTokenByMissionId(missionId), snapshot);
     missionSnapshot.snapshot = snapshot.GetPixelMap();
     return result;
+}
+
+void AbilityManagerService::StartFreezingScreen()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+}
+
+void AbilityManagerService::StopFreezingScreen()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+}
+
+void AbilityManagerService::UserStarted(int32_t userId)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    InitConnectManager(userId, false);
+    SetStackManager(userId, false);
+    InitMissionListManager(userId, false);
+    InitDataAbilityManager(userId, false);
+    InitPendWantManager(userId, false);
+}
+
+void AbilityManagerService::SwitchToUser(int32_t userId)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    InitConnectManager(userId, true);
+    SetStackManager(userId, true);
+    InitMissionListManager(userId, true);
+    InitDataAbilityManager(userId, true);
+    InitPendWantManager(userId, true);
+}
+
+void AbilityManagerService::StartLauncherAbility(int32_t userId)
+{
+    HILOG_DEBUG("StartLauncherAbility, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
+    ConnectBmsService();
+    StartingLauncherAbility();
+}
+
+void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)
+{
+    auto it = connectManagers_.find(userId);
+    if (it == connectManagers_.end()) {
+        auto manager = std::make_shared<AbilityConnectManager>();
+        manager->SetEventHandler(handler_);
+        connectManagers_.emplace(userId, manager);
+        if (switchUser) {
+            connectManager_ = manager;
+        }
+    } else {
+        if (switchUser) {
+            connectManager_ = it->second;
+        }
+    }
+}
+
+void AbilityManagerService::InitDataAbilityManager(int32_t userId, bool switchUser)
+{
+    auto it = dataAbilityManagers_.find(userId);
+    if (it == dataAbilityManagers_.end()) {
+        auto manager = std::make_shared<DataAbilityManager>();
+        dataAbilityManagers_.emplace(userId, manager);
+        if (switchUser) {
+            dataAbilityManager_ = manager;
+        }
+    } else {
+        if (switchUser) {
+            dataAbilityManager_ = it->second;
+        }
+    }
+}
+
+void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
+{
+    auto it = pendingWantManagers_.find(userId);
+    if (it == pendingWantManagers_.end()) {
+        auto manager = std::make_shared<PendingWantManager>();
+        pendingWantManagers_.emplace(userId, manager);
+        if (switchUser) {
+            pendingWantManager_ = manager;
+        }
+    } else {
+        if (switchUser) {
+            pendingWantManager_ = it->second;
+        }
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS
