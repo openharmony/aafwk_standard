@@ -292,7 +292,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_001, TestSize.Level1)
     EXPECT_NE(pandingWant, nullptr);
 
     // ams mock
-    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     std::shared_ptr<CompletedCallback> callback;
     MockCompletedCallback *call = new MockCompletedCallback();
@@ -425,7 +425,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_003, TestSize.Level1)
     EXPECT_NE(pandingWant, nullptr);
 
     // ams mock
-    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     std::shared_ptr<CompletedCallback> callback;
     MockCompletedCallback *call = new MockCompletedCallback();
@@ -491,7 +491,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_004, TestSize.Level1)
     EXPECT_NE(pandingWant, nullptr);
 
     // ams mock
-    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*appClient, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
 
     std::shared_ptr<CompletedCallback> callback;
     MockCompletedCallback *call = new MockCompletedCallback();
