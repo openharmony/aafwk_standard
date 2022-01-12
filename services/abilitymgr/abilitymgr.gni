@@ -90,8 +90,4 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
   "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
   "${services_path}/abilitymgr/src/kernal_ability_manager.cpp",
-
-  #multi user
-  "${services_path}/abilitymgr/src/user_controller.cpp",
-  "${services_path}/abilitymgr/src/user_event_handler.cpp",
 ]

@@ -153,7 +153,7 @@ void TerminateAbilityTest::OnStartAms()
         EXPECT_TRUE(g_aams->pendingWantManager_);
       
         int userId = g_aams->GetUserId();
-        g_aams->SetStackManager(userId, true);
+        g_aams->SetStackManager(userId);
         g_aams->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(g_aams->systemAppManager_);
 
