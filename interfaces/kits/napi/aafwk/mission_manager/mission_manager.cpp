@@ -23,6 +23,7 @@
 #include "js_mission_listener.h"
 #include "js_runtime_utils.h"
 #include "mission_snapshot.h"
+#include "pixel_map_napi.h"
 
 #include <mutex>
 
@@ -30,6 +31,10 @@ namespace OHOS {
 namespace AbilityRuntime {
 using namespace OHOS::AppExecFwk;
 using AbilityManagerClient = AAFwk::AbilityManagerClient;
+namespace {
+    constexpr int32_t ARG_COUNT_TWO = 1;
+    constexpr int32_t ARG_COUNT_THREE = 1;
+}
 class JsMissionManager {
 public:
     JsMissionManager() = default;
@@ -241,7 +246,38 @@ private:
     NativeValue* OnGetMissionSnapShot(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
-        return nullptr;
+        if (info.argc != ARG_COUNT_TWO && info.argc != ARG_COUNT_THREE) {
+            HILOG_ERROR("missionSnapshot: need two or three params");
+            return engine.CreateUndefined();
+        }
+        std::string deviceId;
+        if (!ConvertFromJsValue(engine, info.argv[0], deviceId)) {
+            HILOG_ERROR("missionSnapshot: Parse deviceId failed");
+            return engine.CreateUndefined();
+        }
+        int32_t missionId = -1;
+        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+            HILOG_ERROR("missionSnapshot: Parse missionId failed");
+            return engine.CreateUndefined();
+        }
+        AsyncTask::CompleteCallback complete =
+            [deviceId, missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                AAFwk::MissionSnapshot missionSnapshot;
+                auto errcode = AbilityManagerClient::GetInstance()->GetMissionSnapshot(
+                    deviceId, missionId, missionSnapshot);
+                if (errcode == 0) {
+                    auto nativeValue = reinterpret_cast<NativeValue*>(Media::PixelMapNapi::CreatePixelMap(
+                        reinterpret_cast<napi_env>(&engine), missionSnapshot.snapshot));
+                    task.Resolve(engine, nativeValue);
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Get mission snapshot failed."));
+                }
+            };
+        NativeValue* lastParam = (info.argc == ARG_COUNT_TWO) ? nullptr : info.argv[2];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
     }
 
     NativeValue* OnLockMission(NativeEngine &engine, NativeCallbackInfo &info)

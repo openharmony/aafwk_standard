@@ -186,6 +186,14 @@ public:
     {
         return 0;
     }
+    virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot)
+    {
+        return 0;
+    }
+    virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+    {
+        return 0;
+    }
 
     AbilityLifeCycleState curstate_ = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life
