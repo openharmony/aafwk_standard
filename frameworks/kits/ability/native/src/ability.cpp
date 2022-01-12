@@ -72,12 +72,6 @@ const std::string Ability::DMS_ORIGIN_DEVICE_ID("deviceId");
 const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const int TARGET_VERSION_THRESHOLDS = 8;
-const std::map<int32_t, Rosen::WindowMode> Ability::convertWindowModeMap_ = {
-    {AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN, Rosen::WindowMode::WINDOW_MODE_FULLSCREEN},
-    //{AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY, Rosen::WindowMode::WINDOW_MODE_SPLIT_PRIMARY},
-    //{AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY, Rosen::WindowMode::WINDOW_MODE_SPLIT_SECONDARY},
-    {AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING, Rosen::WindowMode::WINDOW_MODE_FLOATING}
-};
 
 static std::mutex formLock;
 
@@ -897,7 +891,7 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &configuration)
     } else {
         APP_LOGE("%{public}s scene_ is nullptr.", __func__);
     }
-   
+
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -3208,11 +3202,9 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
     }
     auto windowMode = want.GetIntParam(StartOptions::STRING_WINDOW_MODE,
         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
-    auto iter = convertWindowModeMap_.find(windowMode);
-    if (iter != convertWindowModeMap_.end()) {
-        option->SetWindowMode(iter->second);
-        APP_LOGI("Ability::GetWindowOption window mode is %{public}d.", iter->second);
-    }
+    APP_LOGI("Ability::GetWindowOption window mode is %{public}d.", windowMode);
+    option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+
     APP_LOGI("%{public}s end", __func__);
     return option;
 }
