@@ -57,6 +57,10 @@ config("abilityms_config") {
     "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//base/hiviewdfx/hiview/adapter/utility/include",
+    "//base/account/os_account/frameworks/common/account_error/include",
+    "//base/account/os_account/frameworks/common/database/include",
+    "//base/account/os_account/frameworks/common/log/include",
+    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -72,6 +76,7 @@ ohos_shared_library("abilityms") {
   deps = [
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
+    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
