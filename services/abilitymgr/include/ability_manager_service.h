@@ -581,7 +581,7 @@ public:
      *
      * @param userId, user id.
      */
-    void InitMissionListManager(int userId);
+    void InitMissionListManager(int userId, bool switchUser);
 
     virtual sptr<IWantSender> GetWantSender(
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override;
@@ -871,6 +871,10 @@ private:
     bool CheckCallerIsSystemAppByIpc();
     bool IsExistFile(const std::string &path);
 
+    void InitConnectManager(int32_t userId, bool switchUser);
+    void InitDataAbilityManager(int32_t userId, bool switchUser);
+    void InitPendWantManager(int32_t userId, bool switchUser);
+
     // multi user
     void StartFreezingScreen();
     void StopFreezingScreen();
@@ -889,10 +893,13 @@ private:
     ServiceRunningState state_;
     std::unordered_map<int, std::shared_ptr<AbilityStackManager>> stackManagers_;
     std::shared_ptr<AbilityStackManager> currentStackManager_;
+    std::unordered_map<int, std::shared_ptr<AbilityConnectManager>> connectManagers_;
     std::shared_ptr<AbilityConnectManager> connectManager_;
     sptr<AppExecFwk::IBundleMgr> iBundleManager_;
     std::shared_ptr<AppScheduler> appScheduler_;
+    std::unordered_map<int, std::shared_ptr<DataAbilityManager>> dataAbilityManagers_;
     std::shared_ptr<DataAbilityManager> dataAbilityManager_;
+    std::unordered_map<int, std::shared_ptr<PendingWantManager>> pendingWantManagers_;
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
     std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
@@ -906,6 +913,7 @@ private:
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;
     sptr<ISnapshotHandler> snapshotHandler_;
+    std::shared_ptr<UserController> userController_;
 };
 
 }  // namespace AAFwk
