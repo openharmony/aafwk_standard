@@ -22,7 +22,7 @@
 #include "ipc_skeleton.h"
 #include "sa_mgr_client.h"
 #include "bundlemgr/bundle_mgr_interface.h"
-#include "utils/system/safwk/native/include/system_ability_definition.h"
+#include "system_ability_definition.h"
 #include "ability_manager_errors.h"
 
 namespace OHOS {
