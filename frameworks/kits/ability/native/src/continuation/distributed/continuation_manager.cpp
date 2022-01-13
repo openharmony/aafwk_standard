@@ -89,10 +89,6 @@ std::string ContinuationManager::GetOriginalDeviceId()
 void ContinuationManager::ContinueAbilityWithStack(const std::string &deviceId)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    if (CheckContinuationIllegal()) {
-        APP_LOGE("ContinueAbilityWithStack failed. Ability not available to continueAbility.");
-        return;
-    }
 
     HandleContinueAbilityWithStack(deviceId);
     APP_LOGI("%{public}s called end", __func__);
@@ -130,11 +126,18 @@ bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &devi
 int32_t ContinuationManager::OnStartAndSaveData(WantParams &wantParams)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    if (!StartContinuation()) {
+    std::shared_ptr<Ability> ability = nullptr;
+    ability = ability_.lock();
+    if (ability == nullptr) {
+        APP_LOGE("ability is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!ability->OnStartContinuation()) {
         APP_LOGE("Ability rejected.");
         return CONTINUE_ABILITY_REJECTED;
     }
-    if (!SaveData(wantParams)) {
+    if (!ability->OnSaveData(wantParams)) {
         APP_LOGE("SaveData failed.");
         return CONTINUE_SAVE_DATA_FAILED;
     }
