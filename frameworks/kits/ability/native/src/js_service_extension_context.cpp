@@ -112,8 +112,14 @@ private:
                     return;
                 }
 
-                (unwrapArgc == 1) ? context->StartAbility(want) : context->StartAbility(want, startOptions);
-                task.Resolve(engine, engine.CreateUndefined());
+                ErrCode errcode = ERR_OK;
+                (unwrapArgc == 1) ? errcode = context->StartAbility(want) :
+                    errcode = context->StartAbility(want, startOptions);
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
+                }
             };
 
         NativeValue* lastParam = (info.argc == unwrapArgc) ? nullptr : info.argv[unwrapArgc];
@@ -142,8 +148,12 @@ private:
                     return;
                 }
 
-                context->TerminateAbility();
-                task.Resolve(engine, engine.CreateUndefined());
+                auto errcode = context->TerminateAbility();
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Terminate Ability failed."));
+                }
             };
 
         NativeValue* lastParam = (info.argc == ARGC_ZERO) ? nullptr : info.argv[INDEX_ZERO];
@@ -253,8 +263,12 @@ private:
                     return;
                 }
                 HILOG_INFO("context->DisconnectAbility");
-                context->DisconnectAbility(want, connection);
-                task.Resolve(engine, engine.CreateUndefined());
+                auto errcode = context->DisconnectAbility(want, connection);
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Disconnect Ability failed."));
+                }
             };
 
         NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[INDEX_ONE];
