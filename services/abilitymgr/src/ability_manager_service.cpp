@@ -2795,5 +2795,27 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
     missionSnapshot.snapshot = snapshot.GetPixelMap();
     return result;
 }
+
+void AbilityManagerService::StartFreezingScreen()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+}
+
+void AbilityManagerService::StopFreezingScreen()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+}
+
+void AbilityManagerService::UserStarted(int32_t userId)
+{
+}
+
+void AbilityManagerService::SwitchToUser(int32_t userId)
+{
+}
+
+void AbilityManagerService::StartLauncherAbility(int32_t userId)
+{
+}
 }  // namespace AAFwk
 }  // namespace OHOS
