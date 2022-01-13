@@ -37,6 +37,7 @@ constexpr int32_t ERROR_CODE_TWO = 2;
 constexpr size_t ARGC_ZERO = 0;
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
+constexpr size_t ARGC_THREE = 3;
 
 class JsServiceExtensionContext final {
 public:
@@ -78,8 +79,8 @@ private:
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
     {
         HILOG_INFO("OnStartAbility is called");
-        // only support one or two params
-        if (info.argc != ARGC_ONE && info.argc != ARGC_TWO) {
+        // only support one or two or three params
+        if (info.argc != ARGC_ONE && info.argc != ARGC_TWO && info.argc != ARGC_THREE) {
             HILOG_ERROR("Not enough params");
             return engine.CreateUndefined();
         }
