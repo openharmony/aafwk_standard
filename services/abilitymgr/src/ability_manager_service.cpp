@@ -272,6 +272,10 @@ int AbilityManagerService::StartAbility(
         return connectManager_->StartAbility(abilityRequest);
     }
 
+    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+        return ERR_WOULD_BLOCK;
+    }
+
     if (useNewMission_) {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
             return kernalAbilityManager_->StartAbility(abilityRequest);
@@ -329,11 +333,15 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Only support for page type ability.");
         return ERR_INVALID_VALUE;
     }
+
+    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+        return ERR_WOULD_BLOCK;
+    }
+
     if (useNewMission_) {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
             return kernalAbilityManager_->StartAbility(abilityRequest);
         }
-
         return currentMissionListManager_->StartAbility(abilityRequest);
     } else {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
@@ -382,6 +390,9 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         }
     }
 
+    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+        return ERR_WOULD_BLOCK;
+    }
     if (IsSystemUiApp(abilityRequest.abilityInfo)) {
         if (useNewMission_) {
             return kernalAbilityManager_->StartAbility(abilityRequest);
@@ -437,6 +448,10 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_CALLER_BUNDLENAME) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_REQUEST_PERMISSIONS)) {
         RequestPermission(resultWant);
+    }
+
+    if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+        return ERR_WOULD_BLOCK;
     }
 
     if (useNewMission_) {
@@ -577,11 +592,17 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
         case AppExecFwk::AbilityType::EXTENSION: {
             auto result = connectManager_->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
+                if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+                    return ERR_WOULD_BLOCK;
+                }
                 return currentStackManager_->TerminateAbility(abilityRecord, requestCode);
             }
             return result;
         }
         case AppExecFwk::AbilityType::PAGE: {
+            if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+                return ERR_WOULD_BLOCK;
+            }
             auto result = currentStackManager_->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
                 return connectManager_->TerminateAbility(abilityRecord, requestCode);
@@ -614,6 +635,10 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token)
         return ERR_INVALID_VALUE;
     }
 
+    if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+        return ERR_WOULD_BLOCK;
+    }
+ 
     if (useNewMission_) {
         return currentMissionListManager_->MinimizeAbility(token);
     } else {
@@ -2862,6 +2887,50 @@ void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
             pendingWantManager_ = it->second;
         }
     }
+}
+
+int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &abilityController,
+    bool imAStabilityTest)
+{
+    HILOG_DEBUG("%{public}s, imAStabilityTest: %{public}d", __func__, imAStabilityTest);
+    std::lock_guard<std::recursive_mutex> guard(globalLock_);
+    abilityController_ = abilityController;
+    controllerIsAStabilityTest_ = imAStabilityTest;
+    return ERR_OK;
+}
+
+bool AbilityManagerService::IsUserAStabilityTest()
+{
+    std::lock_guard<std::recursive_mutex> guard(globalLock_);
+    bool ret = abilityController_ != nullptr && controllerIsAStabilityTest_;
+    HILOG_DEBUG("%{public}s, isUserAStabilityTest: %{public}d", __func__, ret);
+    return ret;
+}
+
+bool AbilityManagerService::IsAbilityControllerStarting(const Want &want, const std::string &bundleName)
+{
+    if (abilityController_ != nullptr) {
+        HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
+        bool isStart = abilityController_->AbilityStarting(want, bundleName);
+        if (!isStart) {
+            HILOG_INFO("Not finishing start ability because controller starting: %{public}s", bundleName.c_str());
+            return false;
+        }
+    }
+    return true;
+}
+
+bool AbilityManagerService::IsAbilityControllerResuming(const std::string &bundleName)
+{
+    if (abilityController_ != nullptr) {
+        HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
+        bool isResume = abilityController_->AbilityResuming(bundleName);
+        if (!isResume) {
+            HILOG_INFO("Not finishing terminate ability because controller resuming: %{public}s", bundleName.c_str());
+            return false;
+        }
+    }
+    return true;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
