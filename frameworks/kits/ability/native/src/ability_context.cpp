@@ -41,8 +41,10 @@ int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
  * ranges from 0 to 65535. This parameter takes effect only on abilities using the AbilityInfo.AbilityType.PAGE
  * template.
  *
+ * @return errCode ERR_OK on success, others on failure.
+ *
  */
-void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
+ErrCode AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
 {
     APP_LOGI("%{public}s begin.", __func__);
     APP_LOGI("AbilityContext::StartAbility called, requestCode = %{public}d", requestCode);
@@ -50,7 +52,7 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (type != AppExecFwk::AbilityType::PAGE && type != AppExecFwk::AbilityType::SERVICE) {
         APP_LOGE("AbilityContext::StartAbility AbilityType = %{public}d", type);
-        return;
+        return ERR_INVALID_VALUE;
     }
 
     APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
@@ -60,6 +62,7 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
         APP_LOGE("AbilityContext::StartAbility is failed %{public}d", err);
     }
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -70,14 +73,15 @@ void AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
  * to identify the results returned by abilities. The value ranges from 0 to 65535.
  * @param abilityStartSetting Indicates the special start setting used in starting ability.
  *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void AbilityContext::StartAbility(const Want &want, int requestCode, const AbilityStartSetting &abilityStartSetting)
+ErrCode AbilityContext::StartAbility(const Want &want, int requestCode, const AbilityStartSetting &abilityStartSetting)
 {
     APP_LOGI("%{public}s begin.", __func__);
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         APP_LOGE("AbilityContext::StartAbility AbilityType = %{public}d", type);
-        return;
+        return ERR_INVALID_VALUE;
     }
 
     APP_LOGI("%{public}s. Start calling ams->StartAbility.", __func__);
@@ -89,6 +93,7 @@ void AbilityContext::StartAbility(const Want &want, int requestCode, const Abili
     }
 
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -97,8 +102,9 @@ void AbilityContext::StartAbility(const Want &want, int requestCode, const Abili
  *
  * @param requestCode Indicates the request code passed for starting the ability.
  *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void AbilityContext::TerminateAbility(int requestCode)
+ErrCode AbilityContext::TerminateAbility(int requestCode)
 {
     APP_LOGI("%{public}s begin.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, requestCode);
@@ -106,19 +112,21 @@ void AbilityContext::TerminateAbility(int requestCode)
         APP_LOGE("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
  * @brief Destroys the current ability.
  *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void AbilityContext::TerminateAbility()
+ErrCode AbilityContext::TerminateAbility()
 {
     APP_LOGI("%{public}s begin.", __func__);
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
     if (info == nullptr) {
         APP_LOGE("AbilityContext::TerminateAbility info == nullptr");
-        return;
+        return ERR_NULL_OBJECT;
     }
 
     ErrCode err = ERR_OK;
@@ -143,6 +151,7 @@ void AbilityContext::TerminateAbility()
         APP_LOGE("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -245,15 +254,17 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
  *
  * @param conn Indicates the IAbilityDisConnection callback object passed by disconnectAbility after the disconnection
  *              is set up. The IAbilityDisConnection object uniquely identifies a disconnection between two abilities.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
+ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
     APP_LOGI("%{public}s begin.", __func__);
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         APP_LOGE("AbilityContext::DisconnectAbility AbilityType = %{public}d", type);
-        return;
+        return ERR_INVALID_VALUE;
     }
 
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
@@ -262,6 +273,7 @@ void AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &co
         APP_LOGE("AbilityContext::DisconnectAbility error");
     }
     APP_LOGD("AbilityContext::DisconnectAbility end");
+    return ret;
 }
 
 /**
