@@ -195,6 +195,17 @@ public:
         return 0;
     }
 
+    virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+        bool imAStabilityTest) override
+    {
+        return 0;
+    }
+
+    virtual bool IsUserAStabilityTest() override
+    {
+        return true;
+    }
+
     AbilityLifeCycleState curstate_ = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     sptr<IAbilityScheduler> abilityScheduler_;  // kit interface used to schedule ability life
     Want want_;
