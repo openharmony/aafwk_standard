@@ -78,6 +78,20 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
     context->Bind(jsRuntime_, shellContextRef.release());
     obj->SetProperty("context", contextObj);
+
+    auto nativeObj = ConvertNativeValueTo<NativeObject>(contextObj);
+    if (nativeObj == nullptr) {
+        HILOG_ERROR("Failed to get ability native object");
+        return;
+    }
+
+    HILOG_INFO("Set ability context pointer: %{public}p", context.get());
+
+    nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
+        [](NativeEngine*, void* data, void*) {
+            HILOG_INFO("Finalizer for weak_ptr ability context is called");
+            delete static_cast<std::weak_ptr<AbilityRuntime::Context>*>(data);
+        }, nullptr);
 }
 
 void JsAbility::OnStart(const Want &want)
