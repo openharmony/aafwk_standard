@@ -162,7 +162,7 @@ bool AbilityManagerService::Init()
     GetGlobalConfiguration();
 
     int userId = GetUserId();
-    SetStackManager(userId, true);
+    SetStackManager(userId);
     systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
     CHECK_POINTER_RETURN_BOOL(systemAppManager_);
 
@@ -1844,7 +1844,7 @@ std::shared_ptr<AbilityEventHandler> AbilityManagerService::GetEventHandler()
     return handler_;
 }
 
-void AbilityManagerService::SetStackManager(int userId, bool switchUser)
+void AbilityManagerService::SetStackManager(int userId)
 {
     auto iterator = stackManagers_.find(userId);
     if (iterator != stackManagers_.end()) {
@@ -2813,7 +2813,7 @@ void AbilityManagerService::UserStarted(int32_t userId)
 {
     HILOG_DEBUG("%{public}s", __func__);
     InitConnectManager(userId, false);
-    SetStackManager(userId, false);
+    SetStackManager(userId);
     InitMissionListManager(userId, false);
     InitDataAbilityManager(userId, false);
     InitPendWantManager(userId, false);
@@ -2823,7 +2823,7 @@ void AbilityManagerService::SwitchToUser(int32_t userId)
 {
     HILOG_DEBUG("%{public}s", __func__);
     InitConnectManager(userId, true);
-    SetStackManager(userId, true);
+    SetStackManager(userId);
     InitMissionListManager(userId, true);
     InitDataAbilityManager(userId, true);
     InitPendWantManager(userId, true);
