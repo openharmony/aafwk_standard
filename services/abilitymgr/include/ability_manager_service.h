@@ -42,6 +42,7 @@
 #include "pending_want_manager.h"
 #include "ams_configuration_parameter.h"
 #include "event_handler.h"
+#include "user_controller.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -756,6 +757,7 @@ public:
     };
 
     friend class AbilityStackManager;
+    friend class UserController;
 
 protected:
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) override;
@@ -868,6 +870,14 @@ private:
     void DumpFuncInit();
     bool CheckCallerIsSystemAppByIpc();
     bool IsExistFile(const std::string &path);
+
+    // multi user
+    void StartFreezingScreen();
+    void StopFreezingScreen();
+    void UserStarted(int32_t userId);
+    void SwitchToUser(int32_t userId);
+    void StartLauncherAbility(int32_t userId);
+
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
 
