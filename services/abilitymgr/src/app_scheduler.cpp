@@ -35,6 +35,11 @@ bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
     CHECK_POINTER_RETURN_BOOL(callback.lock());
     CHECK_POINTER_RETURN_BOOL(appMgrClient_);
 
+    std::lock_guard<std::recursive_mutex> guard(lock_);
+    if (isInit_) {
+        return true;
+    }
+
     callback_ = callback;
     /* because the errcode type of AppMgr Client API will be changed to int,
      * so must to covert the return result  */
@@ -50,6 +55,7 @@ bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
         return false;
     }
     HILOG_INFO("success to ConnectAppMgrService");
+    isInit_ = true;
     return true;
 }
 
