@@ -499,19 +499,24 @@ void Ability::OnDisconnect(const Want &want)
  *
  * @param want information of other ability
  * @param requestCode request code for abilityMS to return result
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::StartAbilityForResult(const Want &want, int requestCode)
+ErrCode Ability::StartAbilityForResult(const Want &want, int requestCode)
 {
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::StartAbilityForResult abilityInfo_ == nullptr");
-        return;
+        return ERR_NULL_OBJECT;
     }
     APP_LOGI("Ability::StartAbilityForResult called type = %{public}d", abilityInfo_->type);
-    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        AbilityContext::StartAbility(want, requestCode);
+    if (abilityInfo_->type != AppExecFwk::AbilityType::PAGE) {
+        APP_LOGE("Ability::StartAbility ability type: %{public}d", abilityInfo_->type);
+        return ERR_INVALID_VALUE;
     }
+    ErrCode err = AbilityContext::StartAbility(want, requestCode);
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -524,19 +529,24 @@ void Ability::StartAbilityForResult(const Want &want, int requestCode)
  * @param requestCode Indicates the request code returned after the ability is started. You can define the request
  * code to identify the results returned by abilities. The value ranges from 0 to 65535.
  * @param abilityStartSetting Indicates the setting ability used to start.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::StartAbilityForResult(const Want &want, int requestCode, AbilityStartSetting abilityStartSetting)
+ErrCode Ability::StartAbilityForResult(const Want &want, int requestCode, AbilityStartSetting abilityStartSetting)
 {
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::StartAbilityForResult abilityInfo_ == nullptr");
-        return;
+        return ERR_NULL_OBJECT;
     }
     APP_LOGI("Ability::StartAbilityForResult called type = %{public}d", abilityInfo_->type);
-    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        AbilityContext::StartAbility(want, requestCode, abilityStartSetting);
+    if (abilityInfo_->type != AppExecFwk::AbilityType::PAGE) {
+        APP_LOGE("Ability::StartAbility ability type: %{public}d", abilityInfo_->type);
+        return ERR_INVALID_VALUE;
     }
+    ErrCode err = AbilityContext::StartAbility(want, requestCode, abilityStartSetting);
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -548,19 +558,24 @@ void Ability::StartAbilityForResult(const Want &want, int requestCode, AbilitySt
  *
  * @param want Indicates the ability to start.
  * @param abilityStartSetting Indicates the setting ability used to start.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSetting)
+ErrCode Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSetting)
 {
     APP_LOGI("%{public}s beign.", __func__);
     if (abilityInfo_ == nullptr) {
         APP_LOGE("Ability::StartAbility abilityInfo_ == nullptr");
-        return;
+        return ERR_NULL_OBJECT;
     }
     APP_LOGI("Ability::StartAbility called type = %{public}d", abilityInfo_->type);
-    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE || abilityInfo_->type == AppExecFwk::AbilityType::SERVICE) {
-        AbilityContext::StartAbility(want, -1, abilityStartSetting);
+    if (abilityInfo_->type != AppExecFwk::AbilityType::PAGE && abilityInfo_->type != AppExecFwk::AbilityType::SERVICE) {
+        APP_LOGE("Ability::StartAbility ability type: %{public}d", abilityInfo_->type);
+        return ERR_INVALID_VALUE;
     }
+    ErrCode err = AbilityContext::StartAbility(want, -1, abilityStartSetting);
     APP_LOGI("%{public}s end.", __func__);
+    return err;
 }
 
 /**
@@ -1452,24 +1467,26 @@ AbilityLifecycleExecutor::LifecycleState Ability::GetState()
  * the ability to start using the intent parameter.
  *
  * @param intent Indicates the ability to start.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::StartAbility(const Want &want)
+ErrCode Ability::StartAbility(const Want &want)
 {
-    APP_LOGI("%{public}s begin.", __func__);
-    AbilityContext::StartAbility(want, -1);
-    APP_LOGI("%{public}s end.", __func__);
+    APP_LOGI("%{public}s begin Ability::StartAbility", __func__);
+    return AbilityContext::StartAbility(want, -1);
 }
 
 /**
  * @brief Destroys this Page or Service ability.
  * After a Page or Service ability performs all operations, it can use this method to destroy itself
  * to free up memory. This method can be called only after the ability is initialized.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::TerminateAbility()
+ErrCode Ability::TerminateAbility()
 {
-    APP_LOGI("%{public}s begin.", __func__);
-    AbilityContext::TerminateAbility();
-    APP_LOGI("%{public}s end.", __func__);
+    APP_LOGI("%{public}s begin Ability::TerminateAbility", __func__);
+    return AbilityContext::TerminateAbility();
 }
 
 /**
@@ -1546,8 +1563,10 @@ bool Ability::ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnect
  *
  * @param conn Indicates the IAbilityConnection callback object passed by connectAbility after the connection
  *              is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
+ *
+ * @return errCode ERR_OK on success, others on failure.
  */
-void Ability::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
+ErrCode Ability::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
     return AbilityContext::DisconnectAbility(conn);
 }

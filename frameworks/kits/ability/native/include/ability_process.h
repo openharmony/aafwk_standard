@@ -32,7 +32,7 @@ public:
     virtual ~AbilityProcess();
     static std::shared_ptr<AbilityProcess> GetInstance();
 
-    void StartAbility(Ability *ability, CallAbilityParam param, CallbackInfo callbackInfo);
+    ErrCode StartAbility(Ability *ability, CallAbilityParam param, CallbackInfo callbackInfo);
     void OnAbilityResult(Ability *ability, int requestCode, int resultCode, const Want &resultData);
 
     void RequestPermissionsFromUser(Ability *ability, CallAbilityPermissionParam &param, CallbackInfo callbackInfo);
