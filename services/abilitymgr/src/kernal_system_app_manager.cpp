@@ -125,7 +125,7 @@ void KernalSystemAppManager::OnAppStateChanged(const AppInfo &info)
                 return appData.appName == appName;
             };
             auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
-            if(iter != info.appData.end()) {
+            if (iter != info.appData.end()) {
                 ability->SetAppState(info.state);
             }
         }
@@ -348,10 +348,10 @@ void KernalSystemAppManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     auto abilityRecord = GetAbilityRecordByEventId(eventId);
     CHECK_POINTER(abilityRecord);
 
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER(ams);
+    auto abilityMS = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityMS);
 
-    auto handler = ams->GetEventHandler();
+    auto handler = abilityMS->GetEventHandler();
     CHECK_POINTER(handler);
 
     switch (msgId) {
@@ -360,13 +360,13 @@ void KernalSystemAppManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             std::string bundleName = abilityRecord->GetAbilityInfo().bundleName;
             std::string name = abilityRecord->GetAbilityInfo().name;
             RemoveAbilityRecord(abilityRecord);
-            auto task = [ams, bundleName]() {
-                ams->KillProcess(bundleName);
+            auto task = [abilityMS, bundleName]() {
+                abilityMS->KillProcess(bundleName);
                 HILOG_ERROR("System UI on time out event: KillProcess:%{public}s", bundleName.c_str());
             };
             handler->PostTask(task);
-            auto timeoutTask = [ams, name]() {
-                ams->StartSystemUi(name);
+            auto timeoutTask = [abilityMS, name]() {
+                abilityMS->StartSystemUi(name);
                 HILOG_ERROR("System UI on time out event: restart:%{public}s", name.c_str());
             };
             handler->PostTask(timeoutTask, "SystemUi_Timeout_" + name, AbilityManagerService::RESTART_TIMEOUT);
