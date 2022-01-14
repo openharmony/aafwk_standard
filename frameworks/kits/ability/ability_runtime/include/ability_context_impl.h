@@ -43,6 +43,8 @@ public:
     ErrCode StartAbility(const AAFwk::Want &want, int requestCode) override;
     ErrCode StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions, int requestCode) override;
     ErrCode StartAbilityForResult(const AAFwk::Want &want, int requestCode, RuntimeTask &&task) override;
+    ErrCode StartAbilityForResult(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions,
+        int requestCode, RuntimeTask &&task) override;
     ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) override;
     void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) override;
     bool ConnectAbility(const AAFwk::Want &want,

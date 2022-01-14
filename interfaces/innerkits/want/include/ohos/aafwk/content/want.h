@@ -787,6 +787,9 @@ public:
     static constexpr int HEX_STRING_BUF_LEN = 36;
     static constexpr int HEX_STRING_LEN = 10;
 
+    // reserved param definition
+    static const std::string PARAM_RESV_WINDOW_MODE;
+
 private:
     WantParams parameters_;
     Operation operation_;

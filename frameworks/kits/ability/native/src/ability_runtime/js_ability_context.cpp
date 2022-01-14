@@ -152,8 +152,16 @@ NativeValue* JsAbilityContext::OnStartAbilityForResult(NativeEngine& engine, Nat
         HILOG_ERROR("%s Failed to parse want!", __func__);
         return engine.CreateUndefined();
     }
+    decltype(info.argc) unwrapArgc = 1;
+    AAFwk::StartOptions startOptions;
+    if (info.argc > ARGC_ONE && info.argv[1]->TypeOf() == NATIVE_OBJECT) {
+        HILOG_INFO("OnStartAbilityForResult start options is used.");
+        AppExecFwk::UnwrapStartOptions(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[1]), startOptions);
+        unwrapArgc++;
+    }
 
-    NativeValue* lastParam = info.argc == 1 ? nullptr : info.argv[1];
+    NativeValue* lastParam = info.argc == unwrapArgc ? nullptr : info.argv[unwrapArgc];
     NativeValue* result = nullptr;
     std::unique_ptr<AsyncTask> uasyncTask =
         CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, nullptr, &result);
@@ -175,7 +183,8 @@ NativeValue* JsAbilityContext::OnStartAbilityForResult(NativeEngine& engine, Nat
         asyncTask->Reject(engine, CreateJsError(engine, 1, "context is released!"));
     } else {
         curRequestCode_ = (curRequestCode_ == INT_MAX) ? 0 : (curRequestCode_ + 1);
-        context->StartAbilityForResult(want, curRequestCode_, std::move(task));
+        (unwrapArgc == 1) ? context->StartAbilityForResult(want, curRequestCode_, std::move(task)) :
+            context->StartAbilityForResult(want, startOptions, curRequestCode_, std::move(task));
     }
     HILOG_INFO("OnStartAbilityForResult is called end");
     return result;
