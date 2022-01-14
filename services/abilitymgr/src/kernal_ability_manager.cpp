@@ -116,10 +116,14 @@ void KernalAbilityManager::OnAppStateChanged(const AppInfo &info)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     for (auto ability : abilities_) {
-        if (ability && ability->GetApplicationInfo().name == info.appName &&
-            (info.processName == ability->GetAbilityInfo().process ||
-            info.processName == ability->GetApplicationInfo().bundleName)) {
-            ability->SetAppState(info.state);
+        if (ability && (info.processName == ability->GetAbilityInfo().process ||
+                           info.processName == ability->GetApplicationInfo().bundleName)) {
+            auto appName = ability->GetApplicationInfo().name;
+            auto isExist = [&appName](const AppData &appData) { return appData.appName == appName; };
+            auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+            if (iter != info.appData.end()) {
+                ability->SetAppState(info.state);
+            }
         }
     }
 }
@@ -183,14 +187,14 @@ void KernalAbilityManager::CompleteForeground(const std::shared_ptr<AbilityRecor
 void KernalAbilityManager::GetOrCreateAbilityRecord(
     const AbilityRequest &abilityRequest, std::shared_ptr<AbilityRecord> &targetAbility)
 {
-    std::string abilityFlag = KernalAbilityManager::GetFlagOfAbility(
-        abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+    std::string abilityFlag =
+        KernalAbilityManager::GetFlagOfAbility(abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
     auto isExist = [targetFlag = abilityFlag](const std::shared_ptr<AbilityRecord> &ability) {
         if (ability == nullptr) {
             return false;
         }
-        return KernalAbilityManager::GetFlagOfAbility(
-            ability->GetAbilityInfo().bundleName, ability->GetAbilityInfo().name) == targetFlag;
+        return KernalAbilityManager::GetFlagOfAbility(ability->GetAbilityInfo().bundleName,
+            ability->GetAbilityInfo().name) == targetFlag;
     };
     auto iter = std::find_if(abilities_.begin(), abilities_.end(), isExist);
     if (iter != abilities_.end()) {

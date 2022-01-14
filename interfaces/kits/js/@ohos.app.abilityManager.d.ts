@@ -28,13 +28,6 @@ import { ActiveProcessInfo } from './app/activeProcessInfo';
  */
 declare namespace abilityManager {
 
-    enum ProcessErrCode {
-        NO_ERROR = 0,
-        CRASHED,
-        NO_RESPONSE,
-    }
-
-
     /**
      * Get information about running processes
      * @since 7
