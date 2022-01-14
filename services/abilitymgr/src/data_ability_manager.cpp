@@ -307,19 +307,31 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
         auto abilityRecord = it->second->GetAbilityRecord();
-        if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
-            (info.processName == abilityRecord->GetAbilityInfo().process ||
-            info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
-            abilityRecord->SetAppState(info.state);
+        if (abilityRecord && (info.processName == abilityRecord->GetAbilityInfo().process ||
+                                 info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            auto appName = abilityRecord->GetApplicationInfo().name;
+            auto uid = abilityRecord->GetAbilityInfo().applicationInfo.uid;
+            auto isExist = [&appName, &uid](
+                               const AppData &appData) { return appData.appName == appName && appData.uid == uid; };
+            auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+            if (iter != info.appData.end()) {
+                abilityRecord->SetAppState(info.state);
+            }
         }
     }
 
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
         auto abilityRecord = it->second->GetAbilityRecord();
-        if (abilityRecord && abilityRecord->GetApplicationInfo().name == info.appName &&
-            (info.processName == abilityRecord->GetAbilityInfo().process ||
-            info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
-            abilityRecord->SetAppState(info.state);
+        if (abilityRecord && (info.processName == abilityRecord->GetAbilityInfo().process ||
+                                 info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
+            auto appName = abilityRecord->GetApplicationInfo().name;
+            auto uid = abilityRecord->GetAbilityInfo().applicationInfo.uid;
+            auto isExist = [&appName, &uid](
+                               const AppData &appData) { return appData.appName == appName && appData.uid == uid; };
+            auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+            if (iter != info.appData.end()) {
+                abilityRecord->SetAppState(info.state);
+            }
         }
     }
 }

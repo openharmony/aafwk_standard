@@ -150,9 +150,11 @@ public:
 
     void CancelWantSenderLocked(PendingWantRecord &record, bool cleanAbility);
     int32_t PendingWantStartAbility(
-        const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, int32_t callerUid);
+        const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid);
     int32_t PendingWantStartAbilitys(const std::vector<WantsInfo> wnatsInfo, const sptr<IRemoteObject> &callerToken,
-        int32_t requestCode, int32_t callerUid);
+        int32_t requestCode, const int32_t callerUid);
+    int32_t DeviceIdDetermine(
+        const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid);
     int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo, int32_t callerUid);
     void ClearPendingWantRecord(const std::string &bundleName);
 

@@ -52,10 +52,14 @@ enum class AppState {
     END,
 };
 
-struct AppInfo {
+struct AppData {
     std::string appName;
-    std::string processName;
     int32_t uid;
+};
+
+struct AppInfo {
+    std::vector<AppData> appData;
+    std::string processName;
     AppState state;
 };
 /**

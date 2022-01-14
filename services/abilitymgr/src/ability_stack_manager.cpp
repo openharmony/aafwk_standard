@@ -1411,8 +1411,14 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
             if (!ability) {
                 continue;
             }
-            if (ability->GetApplicationInfo().name == info.appName &&
-                (info.processName == ability->GetAbilityInfo().process ||
+            auto appName = ability->GetApplicationInfo().name;
+            auto uid = ability->GetAbilityInfo().applicationInfo.uid;
+            auto isExist = [&appName, &uid](const AppData &appData) {
+                return appData.appName == appName && appData.uid == uid;
+            };
+            auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+
+            if (iter != info.appData.end() && (info.processName == ability->GetAbilityInfo().process ||
                 info.processName == ability->GetApplicationInfo().bundleName)) {
                 ability->SetAppState(info.state);
             }
@@ -1436,7 +1442,14 @@ void AbilityStackManager::OnAppStateChanged(const AppInfo &info)
                         continue;
                     }
 
-                    if (ability->GetApplicationInfo().name == info.appName &&
+                    auto appName = ability->GetApplicationInfo().name;
+                    auto uid = ability->GetAbilityInfo().applicationInfo.uid;
+                    auto isExist = [&appName, &uid](const AppData &appData) {
+                        return appData.appName == appName && appData.uid == uid;
+                    };
+                    auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+
+                    if (iter != info.appData.end() &&
                         (info.processName == ability->GetAbilityInfo().process ||
                         info.processName == ability->GetApplicationInfo().bundleName)) {
                         ability->SetAppState(info.state);

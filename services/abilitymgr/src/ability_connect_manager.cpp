@@ -375,10 +375,16 @@ void AbilityConnectManager::OnAppStateChanged(const AppInfo &info)
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     std::for_each(serviceMap_.begin(), serviceMap_.end(), [&info](ServiceMapType::reference service) {
-        if (service.second && service.second->GetApplicationInfo().name == info.appName &&
-            (info.processName == service.second->GetAbilityInfo().process ||
-            info.processName == service.second->GetApplicationInfo().bundleName)) {
-            service.second->SetAppState(info.state);
+        if (service.second && (info.processName == service.second->GetAbilityInfo().process ||
+                                  info.processName == service.second->GetApplicationInfo().bundleName)) {
+            auto appName = service.second->GetApplicationInfo().name;
+            auto uid = service.second->GetAbilityInfo().applicationInfo.uid;
+            auto isExist = [&appName, &uid](
+                               const AppData &appData) { return appData.appName == appName && appData.uid == uid; };
+            auto iter = std::find_if(info.appData.begin(), info.appData.end(), isExist);
+            if (iter != info.appData.end()) {
+                service.second->SetAppState(info.state);
+            }
         }
     });
 }
@@ -397,13 +403,13 @@ int AbilityConnectManager::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 
     switch (state) {
         case AbilityState::INACTIVE: {
-            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
-                AppExecFwk::ExtensionState::EXTENSION_STATE_CREATE);
+            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(
+                token, AppExecFwk::ExtensionState::EXTENSION_STATE_CREATE);
             return DispatchInactive(abilityRecord, state);
         }
         case AbilityState::INITIAL: {
-            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
-                AppExecFwk::ExtensionState::EXTENSION_STATE_TERMINATED);
+            DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(
+                token, AppExecFwk::ExtensionState::EXTENSION_STATE_TERMINATED);
             return DispatchTerminate(abilityRecord);
         }
         default: {
@@ -432,8 +438,8 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
         return INVALID_CONNECTION_STATE;
     }
 
-    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
-        AppExecFwk::ExtensionState::EXTENSION_STATE_CONNECTED);
+    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(
+        token, AppExecFwk::ExtensionState::EXTENSION_STATE_CONNECTED);
 
     abilityRecord->SetConnRemoteObject(remoteObject);
     // There may be multiple callers waiting for the connection result
@@ -460,8 +466,8 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
         return INVALID_CONNECTION_STATE;
     }
 
-    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(token,
-        AppExecFwk::ExtensionState::EXTENSION_STATE_DISCONNECTED);
+    DelayedSingleton<AppScheduler>::GetInstance()->UpdateExtensionState(
+        token, AppExecFwk::ExtensionState::EXTENSION_STATE_DISCONNECTED);
 
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("disconnect ability done with service %{public}s", element.c_str());
