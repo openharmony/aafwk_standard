@@ -646,7 +646,8 @@ int AbilityStackManager::TerminateAbilityLocked(std::list<TerminatingAbility> &t
             ability->SendResultToCallers();
             MoveToBackgroundTask(ability);
         }
-        if (ability->IsAbilityState(AbilityState::BACKGROUND)) {
+        if (ability->IsAbilityState(AbilityState::BACKGROUND) ||
+            ability->IsAbilityState(AbilityState::BACKGROUND_NEW)) {
             // ability on background, remove AbilityRecord out of stack and then schedule to terminate.
             RemoveTerminatingAbility(ability, lastActiveAbility);
             ability->SendResultToCallers();
