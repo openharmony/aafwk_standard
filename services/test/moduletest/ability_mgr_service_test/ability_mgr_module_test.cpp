@@ -190,7 +190,7 @@ static void OnStartAms()
         AbilityMgrModuleTest::abilityMgrServ_->GetGlobalConfiguration();
 
         int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
-        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId);
+        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
         AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
 
