@@ -604,8 +604,6 @@ public:
      */
     std::vector<long> GetLongArrayParam(const std::string &key) const;
 
-    Want &SetParam(const std::string &key, long long value);
-
     /**
      * @description: Sets a parameter value of the long type.
      * @param key Indicates the key matching the parameter.
