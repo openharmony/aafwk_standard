@@ -41,7 +41,6 @@
 #include "ability_config.h"
 #include "pending_want_manager.h"
 #include "ams_configuration_parameter.h"
-#include "event_handler.h"
 #include "user_controller.h"
 
 namespace OHOS {
@@ -852,7 +851,6 @@ private:
         std::vector<MissionInfo> &missionInfos);
     int GetRemoteMissionInfo(const std::string& deviceId, int32_t missionId,
         MissionInfo &missionInfo);
-    int CallMissionListener(const std::string &deviceId, const sptr<IRemoteMissionListener> &listener);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackListInner(const std::string &args, std::vector<std::string> &info);
@@ -904,7 +902,6 @@ private:
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
     std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
     std::shared_ptr<AppExecFwk::Configuration> configuration_;
-    std::shared_ptr<AppExecFwk::EventHandler> callListenerHandler_ = nullptr;
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
 
     // new ams here
