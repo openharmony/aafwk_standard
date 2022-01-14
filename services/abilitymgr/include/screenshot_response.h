@@ -20,8 +20,8 @@
 #include <memory>
 #include <mutex>
 #include <string>
-#include "nocopyable.h"
 #include <condition_variable>
+#include "nocopyable.h"
 #include "../wmclient/wm_common.h"
 
 namespace OHOS {
