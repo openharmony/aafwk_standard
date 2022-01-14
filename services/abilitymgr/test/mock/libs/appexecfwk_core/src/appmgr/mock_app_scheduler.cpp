@@ -79,6 +79,11 @@ void AppScheduler::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
     HILOG_INFO("Test AppScheduler::KillProcessByAbilityToken()");
 }
 
+void AppScheduler::KillProcessesByUserId(int32_t userId)
+{
+    HILOG_INFO("Test AppScheduler::KillProcessesByUserId()");
+}
+
 AppAbilityState AppScheduler::ConvertToAppAbilityState(const int32_t state)
 {
     AppExecFwk::AbilityState abilityState = static_cast<AppExecFwk::AbilityState>(state);
