@@ -2125,6 +2125,10 @@ int AbilityManagerService::KillProcess(const std::string &bundleName)
 int AbilityManagerService::ClearUpApplicationData(const std::string &bundleName)
 {
     HILOG_DEBUG("ClearUpApplicationData, bundleName: %{public}s", bundleName.c_str());
+    if (!CheckCallerIsSystemAppByIpc()) {
+        HILOG_ERROR("caller is not systemApp");
+        return CALLER_ISNOT_SYSTEMAPP;
+    }
     int ret = DelayedSingleton<AppScheduler>::GetInstance()->ClearUpApplicationData(bundleName);
     if (ret != ERR_OK) {
         return CLEAR_APPLICATION_DATA_FAIL;

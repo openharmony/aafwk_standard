@@ -22,6 +22,8 @@
 #include "ability_manager_service.h"
 #include "ability_util.h"
 #include "hilog_wrapper.h"
+#include "distributed_sched_interface.h"
+#include "distributed_sched_proxy.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -213,28 +215,60 @@ void PendingWantManager::CancelWantSenderLocked(PendingWantRecord &record, bool 
         wantRecords_.erase(record.GetKey());
     }
 }
+int32_t PendingWantManager::DeviceIdDetermine(
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid)
+{
+    int32_t result = ERR_OK;
+    if (want.GetElement().GetDeviceID() == "") {
+        result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
+            want, callerToken, requestCode, callerUid);
+        if (result != ERR_OK && result != START_ABILITY_WAITING) {
+            HILOG_ERROR("%{public}s:result != ERR_OK && result != START_ABILITY_WAITING.", __func__);
+        }
+        return result;
+    }
+
+    sptr<IRemoteObject> remoteObject =
+        OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("failed to get distributed schedule manager service");
+        result = ERR_INVALID_VALUE;
+        return result;
+    }
+
+    auto dms = iface_cast<OHOS::DistributedSchedule::IDistributedSched>(remoteObject);
+    if (dms == nullptr) {
+        result = ERR_INVALID_VALUE;
+        HILOG_ERROR("It wants to start a remote ability, but failed to get dms.");
+        return result;
+    }
+
+    result = dms->StartRemoteAbility(want, callerUid, requestCode);
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s: StartRemoteAbility Error! result = %{public}d", __func__, result);
+    }
+
+    return result;
+}
 
 int32_t PendingWantManager::PendingWantStartAbility(
-    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, int32_t callerUid)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
-    return DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
-        want, callerToken, requestCode, callerUid);
+    int32_t result = DeviceIdDetermine(want, callerToken, requestCode, callerUid);
+    return result;
 }
 
 int32_t PendingWantManager::PendingWantStartAbilitys(const std::vector<WantsInfo> wantsInfo,
-    const sptr<IRemoteObject> &callerToken, int32_t requestCode, int32_t callerUid)
+    const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid)
 {
     HILOG_INFO("%{public}s:begin.", __func__);
 
     int32_t result = ERR_OK;
     for (const auto &item : wantsInfo) {
-        const auto &want = item.want;
-        result = DelayedSingleton<AbilityManagerService>::GetInstance()->StartAbility(
-            want, callerToken, requestCode, callerUid);
-        if (result != ERR_OK && result != START_ABILITY_WAITING) {
-            HILOG_ERROR("%{public}s:result != ERR_OK && result != START_ABILITY_WAITING.", __func__);
-            return result;
+        auto res = DeviceIdDetermine(item.want, callerToken, requestCode, callerUid);
+        if (res != ERR_OK && res != START_ABILITY_WAITING) {
+            result = res;
         }
     }
     return result;

@@ -119,7 +119,6 @@ void AppScheduler::UpdateExtensionState(const sptr<IRemoteObject> &token, const 
     appMgrClient_->UpdateExtensionState(token, state);
 }
 
-
 void AppScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const int32_t visibility, const int32_t perceptibility, const int32_t connectionState)
 {
@@ -226,9 +225,13 @@ void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
     auto callback = callback_.lock();
     CHECK_POINTER(callback);
     AppInfo info;
-    info.appName = appData.appName;
+    for (const auto &list : appData.appDatas) {
+        AppData data;
+        data.appName = list.appName;
+        data.uid = list.uid;
+        info.appData.push_back(data);
+    }
     info.processName = appData.processName;
-    info.uid = appData.uid;
     info.state = static_cast<AppState>(appData.appState);
     callback->OnAppStateChanged(info);
 }
