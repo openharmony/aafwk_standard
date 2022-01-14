@@ -51,7 +51,7 @@ public:
      */
     bool InitWindow(Rosen::WindowType winType,
         std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext,
-        sptr<Rosen::IWindowLifeCycle> &listener, int32_t displayId);
+        sptr<Rosen::IWindowLifeCycle> &listener, int32_t displayId, sptr<Rosen::WindowOption> option);
 
     /**
      * @brief Called when this ability is started.

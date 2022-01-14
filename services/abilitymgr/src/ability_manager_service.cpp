@@ -393,9 +393,8 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         }
     }
 
-    abilityRequest.want.SetParam(StartOptions::STRING_WINDOW_MODE, startOptions.GetWindowMode());
     abilityRequest.want.SetParam(StartOptions::STRING_DISPLAY_ID, startOptions.GetDisplayID());
-
+    abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
     if (useNewMission_) {
         return currentMissionListManager_->StartAbility(abilityRequest);
     } else {
@@ -631,7 +630,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token)
     if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
         return ERR_WOULD_BLOCK;
     }
- 
+
     if (useNewMission_) {
         return currentMissionListManager_->MinimizeAbility(token);
     } else {
@@ -2591,7 +2590,7 @@ void AbilityManagerService::StartSystemApplication()
         HILOG_INFO("start mms");
         StartingMmsAbility();
     }
-    
+
     // Location may change
     DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
 }
