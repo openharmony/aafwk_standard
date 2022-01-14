@@ -69,7 +69,8 @@ void AbilityImpl::Start(const Want &want)
         return;
     }
 
-    if (ability_->GetAbilityInfo()->type == AbilityType::PAGE) {
+    if ((ability_->GetAbilityInfo()->type == AbilityType::PAGE) &&
+        (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS)) {
         ability_->HandleCreateAsContinuation(want);
     }
 
