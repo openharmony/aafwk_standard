@@ -306,7 +306,7 @@ public:
      *
      * @param userId, user id.
      */
-    void SetStackManager(int userId);
+    void SetStackManager(int userId, bool switchUser);
 
     /**
      * GetStackManager, get the current stack manager.
