@@ -72,6 +72,11 @@ AppMgrResultCode AppMgrClient::KillProcessByAbilityToken(const sptr<IRemoteObjec
     return AppMgrResultCode::RESULT_OK;
 }
 
+AppMgrResultCode AppMgrClient::KillProcessesByUserId(int32_t userId)
+{
+    return AppMgrResultCode::RESULT_OK;
+}
+
 AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
 {
     return AppMgrResultCode::RESULT_OK;

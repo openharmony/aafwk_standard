@@ -162,6 +162,14 @@ public:
     void KillProcessByAbilityToken(const sptr<IRemoteObject> &token);
 
     /**
+     * KillProcessesByUserId, call KillProcessesByUserId() through proxy object,
+     * kill the process by user id.
+     *
+     * @param userId, the user id.
+     */
+    void KillProcessesByUserId(int32_t userId);
+
+    /**
      * convert ability state to app ability state.
      *
      * @param state, the state of ability.

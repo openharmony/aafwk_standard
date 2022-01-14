@@ -59,11 +59,19 @@ public:
      */
     bool DeleteMissionInfo(int missionId);
 
+    /**
+     * @brief Remove user directory.
+     * @param userId Indicates this user id.
+     * @return Returns true if the directory is successfully removed; returns false otherwise.
+     */
+    bool RemoveUserDir(int32_t userId);
+
 private:
     std::unordered_map<int, std::shared_ptr<MissionDataStorage>> missionDataStorageMgr_;
     std::shared_ptr<MissionDataStorage> currentMissionDataStorage_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    int32_t currentUserId_ = -1;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
