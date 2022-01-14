@@ -1287,6 +1287,22 @@ public:
     std::weak_ptr<IContinuationRegisterManager> GetContinuationRegisterManager();
 
     /**
+     * @brief Prepare user data of local Ability.
+     *
+     * @param wantParams Indicates the user data to be saved.
+     * @return If the ability is willing to continue and data saved successfully, it returns true;
+     * otherwise, it returns false.
+     */
+    virtual bool OnContinue(WantParams &wantParams);
+
+    /**
+     * @brief Get page ability stack info.
+     *
+     * @return A string represents page ability stack info, empty if failed;
+     */
+    virtual const std::string& GetContentInfo();
+
+    /**
      * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
      * ability slices must implement the IAbilityContinuation interface.
      *

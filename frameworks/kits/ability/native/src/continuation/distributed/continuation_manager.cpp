@@ -23,12 +23,19 @@
 #include "distributed_client.h"
 #include "operation_builder.h"
 #include "string_ex.h"
+#include "string_wrapper.h"
 #include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 const int ContinuationManager::TIMEOUT_MS_WAIT_DMS_NOTIFY_CONTINUATION_COMPLETE = 25000;
 const int ContinuationManager::TIMEOUT_MS_WAIT_REMOTE_NOTIFY_BACK = 6000;
+const int TARGET_VERSION_THRESHOLDS = 8;
+const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
+const int32_t CONTINUE_ABILITY_REJECTED = 29360197;
+const int32_t CONTINUE_SAVE_DATA_FAILED = 29360198;
+const int32_t CONTINUE_ON_CONTINUE_FAILED = 29360199;
+const int32_t CONTINUE_GET_CONTENT_FAILED = 29360200;
 
 ContinuationManager::ContinuationManager()
 {
@@ -82,10 +89,6 @@ std::string ContinuationManager::GetOriginalDeviceId()
 void ContinuationManager::ContinueAbilityWithStack(const std::string &deviceId)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    if (CheckContinuationIllegal()) {
-        APP_LOGE("ContinueAbilityWithStack failed. Ability not available to continueAbility.");
-        return;
-    }
 
     HandleContinueAbilityWithStack(deviceId);
     APP_LOGI("%{public}s called end", __func__);
@@ -120,14 +123,94 @@ bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &devi
     return true;
 }
 
-bool ContinuationManager::OnContinue(WantParams &wantParams)
+int32_t ContinuationManager::OnStartAndSaveData(WantParams &wantParams)
 {
+    APP_LOGI("%{public}s called begin", __func__);
     std::shared_ptr<Ability> ability = nullptr;
     ability = ability_.lock();
     if (ability == nullptr) {
-        APP_LOGE("ContinuationManager::CheckContinuationIllegal failed. ability is nullptr");
+        APP_LOGE("ability is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!ability->OnStartContinuation()) {
+        APP_LOGE("Ability rejected.");
+        return CONTINUE_ABILITY_REJECTED;
+    }
+    if (!ability->OnSaveData(wantParams)) {
+        APP_LOGE("SaveData failed.");
+        return CONTINUE_SAVE_DATA_FAILED;
+    }
+    APP_LOGI("%{public}s called end", __func__);
+    return ERR_OK;
+}
+
+int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+    std::shared_ptr<Ability> ability = nullptr;
+    ability = ability_.lock();
+    if (ability == nullptr) {
+        APP_LOGE("ability is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    bool status;
+    APP_LOGI("OnContinue begin");
+    status = ability->OnContinue(wantParams);
+    APP_LOGI("OnContinue end");
+    if (!status) {
+        APP_LOGE("OnContinue failed.");
+        return CONTINUE_ON_CONTINUE_FAILED;
+    }
+
+    status = GetContentInfo(wantParams);
+    if (!status) {
+        APP_LOGE("GetContentInfo failed.");
+        return CONTINUE_GET_CONTENT_FAILED;
+    }
+    APP_LOGI("%{public}s called end", __func__);
+    return ERR_OK;
+}
+
+int32_t ContinuationManager::OnContinue(WantParams &wantParams)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+    std::shared_ptr<Ability> ability = nullptr;
+    ability = ability_.lock();
+    if (ability == nullptr) {
+        APP_LOGE("ability is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    int32_t apiVersion = ability->GetCompatibleVersion();
+    APP_LOGI("ability api version is %{public}d", apiVersion);
+    if (apiVersion < TARGET_VERSION_THRESHOLDS) {
+        return OnStartAndSaveData(wantParams);
+    } else {
+        return OnContinueAndGetContent(wantParams);
+    }
+}
+
+bool ContinuationManager::GetContentInfo(WantParams &wantParams)
+{
+    APP_LOGI("%{public}s called begin", __func__);
+    std::shared_ptr<Ability> ability = nullptr;
+    ability = ability_.lock();
+    if (ability == nullptr) {
+        APP_LOGE("ability is nullptr");
         return false;
     }
+
+    std::string pageStack = ability->GetContentInfo();
+    if (pageStack.empty()) {
+        APP_LOGE("GetContentInfo failed.");
+        return false;
+    }
+    APP_LOGI("ability pageStack: %{public}s", pageStack.c_str());
+    wantParams.SetParam(PAGE_STACK_PROPERTY_NAME, String::Box(pageStack));
+
+    APP_LOGI("%{public}s called end", __func__);
     return true;
 }
 
