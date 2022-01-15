@@ -21,9 +21,8 @@
 
 #include "ability_manager_service.h"
 #include "ability_util.h"
+#include "distributed_client.h"
 #include "hilog_wrapper.h"
-#include "distributed_sched_interface.h"
-#include "distributed_sched_proxy.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -235,15 +234,8 @@ int32_t PendingWantManager::DeviceIdDetermine(
         result = ERR_INVALID_VALUE;
         return result;
     }
-
-    auto dms = iface_cast<OHOS::DistributedSchedule::IDistributedSched>(remoteObject);
-    if (dms == nullptr) {
-        result = ERR_INVALID_VALUE;
-        HILOG_ERROR("It wants to start a remote ability, but failed to get dms.");
-        return result;
-    }
-
-    result = dms->StartRemoteAbility(want, callerUid, requestCode);
+    DistributedClient dmsClient;
+    result = dmsClient.StartRemoteAbility(want, callerUid, requestCode);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s: StartRemoteAbility Error! result = %{public}d", __func__, result);
     }

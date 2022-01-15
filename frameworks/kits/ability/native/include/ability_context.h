@@ -20,8 +20,6 @@
 
 #include "context_container.h"
 #include "data_ability_helper.h"
-#include "distributed_sched_interface.h"
-#include "distributed_sched_proxy.h"
 
 namespace OHOS {
 namespace AppExecFwk {
