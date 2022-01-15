@@ -387,7 +387,7 @@ public:
      *
      * @param windowOption Indicates the window option defined by the user.
      */
-    virtual void InitWindow(Rosen::WindowType winType);
+    virtual void InitWindow(Rosen::WindowType winType, int32_t displayId);
 
     /**
      * @brief Get the window belong to the ability.
