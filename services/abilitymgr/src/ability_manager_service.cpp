@@ -30,6 +30,7 @@
 #include "bytrace.h"
 #include "bundle_mgr_client.h"
 #include "configuration_distributor.h"
+#include "distributed_client.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
@@ -461,14 +462,10 @@ int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
 {
     HILOG_INFO("%{public}s", __func__);
     want.DumpInfo(0);
-    sptr<DistributedSchedule::IDistributedSched> dms = GetDmsProxy();
-    if (dms == nullptr) {
-        HILOG_ERROR("AbilityManagerService::StartAbility failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
     int32_t callerUid = IPCSkeleton::GetCallingUid();
+    DistributedClient dmsClient;
     HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, callerUid = %{public}d", callerUid);
-    int result = dms->StartRemoteAbility(want, callerUid, requestCode);
+    int result = dmsClient.StartRemoteAbility(want, callerUid, requestCode);
     if (result != ERR_NONE) {
         HILOG_ERROR("AbilityManagerService::StartRemoteAbility failed, result = %{public}d", result);
     }
@@ -506,22 +503,6 @@ bool AbilityManagerService::CheckIfOperateRemote(const Want &want)
         return false;
     }
     return true;
-}
-
-sptr<DistributedSchedule::IDistributedSched> AbilityManagerService::GetDmsProxy()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto remoteObject =
-        OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
-    if (remoteObject == nullptr) {
-        HILOG_ERROR("failed to get dms service");
-        return nullptr;
-    }
-    HILOG_INFO("get dms proxy success.");
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy =
-        iface_cast<DistributedSchedule::IDistributedSched>(remoteObject);
-    HILOG_INFO("%{public}s end.", __func__);
-    return dmsProxy;
 }
 
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
@@ -856,14 +837,10 @@ int AbilityManagerService::ConnectLocalAbility(
 int AbilityManagerService::ConnectRemoteAbility(const Want &want, const sptr<IRemoteObject> &connect)
 {
     HILOG_INFO("%{public}s begin ConnectAbilityRemote", __func__);
-    sptr<DistributedSchedule::IDistributedSched> dms = GetDmsProxy();
-    if (dms == nullptr) {
-        HILOG_ERROR("AbilityManagerService::ConnectRemoteAbility failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     int32_t callerPid = IPCSkeleton::GetCallingPid();
-    return dms->ConnectRemoteAbility(want, connect, callerUid, callerPid);
+    DistributedClient dmsClient;
+    return dmsClient.ConnectRemoteAbility(want, connect, callerUid, callerPid);
 }
 
 int AbilityManagerService::DisconnectLocalAbility(const sptr<IAbilityConnection> &connect)
@@ -875,12 +852,8 @@ int AbilityManagerService::DisconnectLocalAbility(const sptr<IAbilityConnection>
 int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &connect)
 {
     HILOG_INFO("%{public}s begin DisconnectAbilityRemote", __func__);
-    sptr<DistributedSchedule::IDistributedSched> dms = GetDmsProxy();
-    if (dms == nullptr) {
-        HILOG_ERROR("AbilityManagerService::DisconnectRemoteAbility failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dms->DisconnectRemoteAbility(connect);
+    DistributedClient dmsClient;
+    return dmsClient.DisconnectRemoteAbility(connect);
 }
 
 int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
@@ -888,13 +861,8 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
 {
     HILOG_INFO("ContinueMission srcDeviceId: %{public}s, dstDeviceId: %{public}s, missionId: %{public}d",
         srcDeviceId.c_str(), dstDeviceId.c_str(), missionId);
-
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("ContinueMission failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dmsProxy->ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
+    DistributedClient dmsClient;
+    return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
 }
 
 int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
@@ -921,18 +889,13 @@ int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemot
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
 
     int32_t appUid = IPCSkeleton::GetCallingUid();
-
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::StartContinuation failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
     int32_t missionId = GetMissionIdByAbilityToken(abilityToken);
     if (missionId == -1) {
         HILOG_ERROR("AbilityManagerService::StartContinuation failed to get missionId.");
         return ERR_INVALID_VALUE;
     }
-    auto result =  dmsProxy->StartContinuation(want, missionId, appUid, status);
+    DistributedClient dmsClient;
+    auto result =  dmsClient.StartContinuation(want, missionId, appUid, status);
     if (result != ERR_OK) {
         HILOG_ERROR("StartContinuation failed, result = %{public}d, notify caller", result);
         NotifyContinuationResult(missionId, result);
@@ -944,13 +907,8 @@ void AbilityManagerService::NotifyCompleteContinuation(const std::string &device
     int32_t sessionId, bool isSuccess)
 {
     HILOG_INFO("NotifyCompleteContinuation.");
-
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::NotifyCompleteContinuation failed to get dms.");
-        return;
-    }
-    dmsProxy->NotifyCompleteContinuation(Str8ToStr16(deviceId), sessionId, isSuccess);
+    DistributedClient dmsClient;
+    dmsClient.NotifyCompleteContinuation(Str8ToStr16(deviceId), sessionId, isSuccess);
 }
 
 int AbilityManagerService::NotifyContinuationResult(int32_t missionId, const int32_t result)
@@ -969,22 +927,14 @@ int AbilityManagerService::NotifyContinuationResult(int32_t missionId, const int
 
 int AbilityManagerService::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
 {
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::StartSyncRemoteMissions failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dmsProxy->StartSyncRemoteMissions(devId, fixConflict, tag);
+    DistributedClient dmsClient;
+    return dmsClient.StartSyncRemoteMissions(devId, fixConflict, tag);
 }
 
 int AbilityManagerService::StopSyncRemoteMissions(const std::string& devId)
 {
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::StopSyncRemoteMissions failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dmsProxy->StopSyncRemoteMissions(devId);
+    DistributedClient dmsClient;
+    return dmsClient.StopSyncRemoteMissions(devId);
 }
 
 int AbilityManagerService::RegisterMissionListener(const std::string &deviceId,
@@ -996,12 +946,8 @@ int AbilityManagerService::RegisterMissionListener(const std::string &deviceId,
         return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
     }
     CHECK_POINTER_AND_RETURN(listener, ERR_INVALID_VALUE);
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::RegisterMissionListener failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dmsProxy->RegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
+    DistributedClient dmsClient;
+    return dmsClient.RegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
 }
 
 int AbilityManagerService::UnRegisterMissionListener(const std::string &deviceId,
@@ -1013,12 +959,8 @@ int AbilityManagerService::UnRegisterMissionListener(const std::string &deviceId
         return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
     }
     CHECK_POINTER_AND_RETURN(listener, ERR_INVALID_VALUE);
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("AbilityManagerService::UnRegisterMissionListener failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    return dmsProxy->UnRegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
+    DistributedClient dmsClient;
+    return dmsClient.UnRegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
 }
 
 void AbilityManagerService::RemoveAllServiceRecord()
@@ -1271,18 +1213,13 @@ int AbilityManagerService::GetRemoteMissionInfos(const std::string& deviceId, in
     std::vector<MissionInfo> &missionInfos)
 {
     HILOG_INFO("GetRemoteMissionInfos begin");
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("GetRemoteMissionInfos failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
-    std::vector<DistributedSchedule::DstbMissionInfo> dstbMissionInfos;
-    int result = dmsProxy->GetMissionInfos(deviceId, numMax, dstbMissionInfos);
+    DistributedClient dmsClient;
+    int result = dmsClient.GetMissionInfos(deviceId, numMax, missionInfos);
     if (result != ERR_OK) {
         HILOG_ERROR("GetRemoteMissionInfos failed, result = %{public}d", result);
         return result;
     }
-    return DistributedSchedule::MissionInfoConverter::ConvertToMissionInfos(dstbMissionInfos, missionInfos);
+    return ERR_OK;
 }
 
 int AbilityManagerService::GetMissionInfo(const std::string& deviceId, int32_t missionId,
@@ -2901,13 +2838,9 @@ int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& d
     MissionSnapshot& missionSnapshot)
 {
     HILOG_INFO("GetRemoteMissionSnapshotInfo begin");
-    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
-    if (dmsProxy == nullptr) {
-        HILOG_ERROR("GetRemoteMissionSnapshotInfo failed to get dms.");
-        return ERR_INVALID_VALUE;
-    }
     std::unique_ptr<MissionSnapshot> missionSnapshotPtr = std::make_unique<MissionSnapshot>();
-    int result = dmsProxy->GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshotPtr);
+    DistributedClient dmsClient;
+    int result = dmsClient.GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshotPtr);
     if (result != ERR_OK) {
         HILOG_ERROR("GetRemoteMissionSnapshotInfo failed, result = %{public}d", result);
         return result;

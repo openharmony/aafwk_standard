@@ -22,6 +22,7 @@ ohos_moduletest("ability_stack_module_test") {
   include_dirs = [
     "${services_path}/test/mock/include",
     "//third_party/jsoncpp/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
 

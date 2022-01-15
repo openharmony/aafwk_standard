@@ -108,10 +108,7 @@ ohos_shared_library("abilityms") {
     "ipc:ipc_core",
   ]
 
-  public_deps = [
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
-    "//foundation/graphic/standard:libwmservice",
-  ]
+  public_deps = [ "//foundation/graphic/standard:libwmservice" ]
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
