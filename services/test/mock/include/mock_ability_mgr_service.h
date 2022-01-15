@@ -145,6 +145,17 @@ public:
         return 0;
     }
 
+    virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+        bool imAStabilityTest) override
+    {
+        return 0;
+    }
+
+    virtual bool IsUserAStabilityTest() override
+    {
+        return true;
+    }
+
     void Wait()
     {
         sem_.Wait();
