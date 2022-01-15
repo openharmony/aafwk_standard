@@ -50,10 +50,10 @@ void AbilityWindow::Init(std::shared_ptr<AbilityHandler>& handler, std::shared_p
  */
 bool AbilityWindow::InitWindow(Rosen::WindowType winType,
     std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext,
-    sptr<Rosen::IWindowLifeCycle> &listener)
+    sptr<Rosen::IWindowLifeCycle> &listener, int32_t displayId)
 {
     APP_LOGI("%{public}s begin.", __func__);
-    auto ret = windowScene_->Init(Rosen::WindowScene::DEFAULT_DISPLAY_ID, abilityContext, listener);
+    auto ret = windowScene_->Init(displayId, abilityContext, listener);
     if (ret != OHOS::Rosen::WMError::WM_OK) {
         APP_LOGE("%{public}s error. failed to init window scene!", __func__);
         return false;
