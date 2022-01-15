@@ -20,12 +20,13 @@
 
 #include "ability_window_configuration.h"
 #include "parcel.h"
-
 namespace OHOS {
 namespace AAFwk {
 class StartOptions : public Parcelable {
 public:
     static const std::string STRING_WINDOW_MODE;
+    static const std::string STRING_DISPLAY_ID;
+    const int32_t DEFAULT_DISPLAY_ID {0};
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
@@ -33,8 +34,12 @@ public:
 
     void SetWindowMode(int32_t windowMode);
     int32_t GetWindowMode() const;
+
+    void SetDisplayID(int32_t displayId);
+    int32_t GetDisplayID() const;
 private:
     int32_t windowMode_ = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED;
+    int32_t displayId_ = DEFAULT_DISPLAY_ID;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

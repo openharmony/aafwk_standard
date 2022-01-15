@@ -383,6 +383,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     abilityRequest.want.SetParam(StartOptions::STRING_WINDOW_MODE, startOptions.GetWindowMode());
+    abilityRequest.want.SetParam(StartOptions::STRING_DISPLAY_ID, startOptions.GetDisplayID());
 
     if (useNewMission_) {
         return currentMissionListManager_->StartAbility(abilityRequest);

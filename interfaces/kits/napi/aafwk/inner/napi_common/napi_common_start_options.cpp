@@ -37,6 +37,12 @@ bool UnwrapStartOptions(napi_env env, napi_value param, AAFwk::StartOptions &sta
         startOptions.SetWindowMode(windowMode);
     }
 
+    int32_t displayId = 0;
+    if (UnwrapInt32ByPropertyName(env, param, "displayId", displayId)) {
+        HILOG_INFO("get display id ok displayId %{public}d", displayId);
+        startOptions.SetDisplayID(displayId);
+    }
+
     return true;
 }
 EXTERN_C_END
