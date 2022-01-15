@@ -2927,6 +2927,7 @@ void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     auto abilityRecord = GetAbilityRecordByEventId(eventId);
     if (abilityRecord == nullptr) {
         HILOG_ERROR("stack manager on time out event: ability record is nullptr.");
+        BackToLauncher();
         return;
     }
 
