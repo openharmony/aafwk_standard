@@ -2782,6 +2782,12 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
 int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
     MissionSnapshot& missionSnapshot)
 {
+    if (CheckIsRemote(deviceId)) {
+        HILOG_INFO("get remote mission snapshot.");
+        return GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshot);
+    }
+
+    HILOG_INFO("get local mission snapshot.");
     if (!snapshotHandler_) {
         return 0;
     }
@@ -2789,6 +2795,25 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
     int32_t result = snapshotHandler_->GetSnapshot(GetAbilityTokenByMissionId(missionId), snapshot);
     missionSnapshot.snapshot = snapshot.GetPixelMap();
     return result;
+}
+
+int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
+    MissionSnapshot& missionSnapshot)
+{
+    HILOG_INFO("GetRemoteMissionSnapshotInfo begin");
+    sptr<DistributedSchedule::IDistributedSched> dmsProxy = GetDmsProxy();
+    if (dmsProxy == nullptr) {
+        HILOG_ERROR("GetRemoteMissionSnapshotInfo failed to get dms.");
+        return ERR_INVALID_VALUE;
+    }
+    std::unique_ptr<MissionSnapshot> missionSnapshotPtr = std::make_unique<MissionSnapshot>();
+    int result = dmsProxy->GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshotPtr);
+    if (result != ERR_OK) {
+        HILOG_ERROR("GetRemoteMissionSnapshotInfo failed, result = %{public}d", result);
+        return result;
+    }
+    missionSnapshot = *missionSnapshotPtr;
+    return ERR_OK;
 }
 
 void AbilityManagerService::StartFreezingScreen()
