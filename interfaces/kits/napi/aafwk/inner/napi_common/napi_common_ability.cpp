@@ -2322,14 +2322,19 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         return;
     }
 
+    ErrCode ret = ERR_OK;
     if (asyncCallbackInfo->param.setting == nullptr) {
         HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);
-        asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want);
+        ret = asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want);
     } else {
         HILOG_INFO("%{public}s param.setting != nullptr call StartAbility.", __func__);
-        asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want, *(asyncCallbackInfo->param.setting));
+        ret = asyncCallbackInfo->ability->StartAbility(asyncCallbackInfo->param.want,
+            *(asyncCallbackInfo->param.setting));
     }
-    HILOG_INFO("%{public}s end.", __func__);
+    if (ret != ERR_OK) {
+        asyncCallbackInfo->errCode = ret;
+    }
+    HILOG_INFO("%{public}s end. ret:%{public}d", __func__, ret);
 }
 
 void StartAbilityCallbackCompletedCB(napi_env env, napi_status status, void *data)
