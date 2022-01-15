@@ -530,6 +530,22 @@ public:
 
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) override;
+    
+    /**
+     * Set ability controller.
+     *
+     * @param abilityController, The ability controller.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+        bool imAStabilityTest) override;
+
+    /**
+     * Is user a stability test.
+     *
+     * @return Returns true if user is a stability test.
+     */
+    virtual bool IsUserAStabilityTest() override;
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 

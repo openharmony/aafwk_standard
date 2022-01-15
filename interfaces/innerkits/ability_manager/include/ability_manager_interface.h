@@ -44,6 +44,7 @@
 #include "start_options.h"
 #include "stop_user_callback.h"
 #include "remote_mission_listener_interface.h"
+#include "iability_controller.h"
 
 
 namespace OHOS {
@@ -565,6 +566,22 @@ public:
 
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) = 0;
+    
+    /**
+     * Set ability controller.
+     *
+     * @param abilityController, The ability controller.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+        bool imAStabilityTest) = 0;
+
+    /**
+     * Is user a stability test.
+     *
+     * @return Returns true if user is a stability test.
+     */
+    virtual bool IsUserAStabilityTest() = 0;
 
     /**
      * @brief Register the snapshot handler
@@ -724,6 +741,12 @@ public:
 
         // ipc id for move mission to front (50)
         STOP_USER,
+
+        // ipc id for set ability controller (51)
+        SET_ABILITY_CONTROLLER,
+
+        // ipc id for get stability test flag (52)
+        IS_USER_A_STABILITY_TEST,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
