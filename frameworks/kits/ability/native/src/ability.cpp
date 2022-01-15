@@ -196,7 +196,8 @@ void Ability::OnStart(const Want &want)
 
         int defualtDisplayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
         int displayId = want.GetIntParam(StartOptions::STRING_DISPLAY_ID, defualtDisplayId);
-        APP_LOGI("Ability::OnStart bundleName:[%{public}s] abilityName:[%{public}s] set config.type = [%{public}d] displayId = [%{public}d]",
+        APP_LOGI("Ability::OnStart bundleName:[%{public}s] abilityName:[%{public}s]
+            set config.type = [%{public}d] displayId = [%{public}d]",
             abilityInfo_->bundleName.c_str(),
             abilityInfo_->name.c_str(),
             winType,
@@ -2605,7 +2606,7 @@ bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
  *
  * This method must be called when the application has detected that a system setting item (such as the language,
  * resolution, or screen orientation) being listened for has changed. Upon receiving the update request, the form
- * provider automatically updates the form data (if there is any update) through the form framework, with the update
+ * supplier automatically updates the form data (if there is any update) through the form framework, with the update
  * process being unperceivable by the application.
  *
  * @param formId Indicates the ID of the form to update.
