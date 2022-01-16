@@ -16,6 +16,17 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk_standard/tools"
 
+config("tools_aa_test_config") {
+  include_dirs = [
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "${appexecfwk_path}/tools/bm/include",
+    "//utils/system/safwk/native/include",
+    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
+    "//base/security/appverify/interfaces/innerkits/appverify/include",
+  ]
+}
+
 ohos_systemtest("aa_command_start_system_test") {
   module_out_path = module_output_path
 
@@ -26,7 +37,7 @@ ohos_systemtest("aa_command_start_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
+  configs = [ ":tools_aa_test_config" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -54,7 +65,7 @@ ohos_systemtest("aa_command_stop_service_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
+  configs = [ ":tools_aa_test_config" ]
 
   cflags = []
   if (target_cpu == "arm") {
@@ -84,7 +95,7 @@ ohos_systemtest("aa_command_dump_system_test") {
     "tool_system_test.cpp",
   ]
 
-  configs = [ "${appexecfwk_path}/tools/bm:tools_bm_config" ]
+  configs = [ ":tools_aa_test_config" ]
 
   cflags = []
   if (target_cpu == "arm") {
