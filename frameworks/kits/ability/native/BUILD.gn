@@ -205,7 +205,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
-    "//foundation/windowmanager/wm:libwmutil",
     "//third_party/icu/icu4c:shared_icuuc",
   ]
 
