@@ -16,6 +16,8 @@
 #include "js_mission_info_utils.h"
 
 #include "hilog_wrapper.h"
+#include "napi_common_want.h"
+#include "napi_remote_object.h"
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"

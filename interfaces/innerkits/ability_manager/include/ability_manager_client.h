@@ -131,8 +131,8 @@ public:
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
+    ErrCode StartAbility(const Want &want, const StartOptions &startOptions, const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE);
 
     /**
      * TerminateAbility with want, return want from ability manager service.
@@ -358,8 +358,7 @@ public:
      *                    mission. This parameter cannot be null.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description);
+    ErrCode SetMissionDescriptionInfo(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description);
 
     /**
      * get current system mission lock mode state.
@@ -476,8 +475,8 @@ public:
      * @param wantParams, extended params.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
-        int32_t missionId, const sptr<IRemoteObject> &callback, AAFwk::WantParams &wantParams);
+    ErrCode ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId, int32_t missionId,
+        const sptr<IRemoteObject> &callback, AAFwk::WantParams &wantParams);
 
     /**
      * start continuation.
@@ -536,8 +535,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode RegisterMissionListener(const std::string &deviceId,
-        const sptr<IRemoteMissionListener> &listener);
+    ErrCode RegisterMissionListener(const std::string &deviceId, const sptr<IRemoteMissionListener> &listener);
 
     /**
      * @brief UnRegister mission listener from ability manager service.
@@ -546,8 +544,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode UnRegisterMissionListener(const std::string &deviceId,
-        const sptr<IRemoteMissionListener> &listener);
+    ErrCode UnRegisterMissionListener(const std::string &deviceId, const sptr<IRemoteMissionListener> &listener);
 
     /**
      * @brief Get mission infos from ams.
@@ -557,7 +554,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode GetMissionInfos(const std::string& deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos);
+    ErrCode GetMissionInfos(const std::string &deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos);
 
     /**
      * @brief Get mission info by id.
@@ -567,7 +564,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode GetMissionInfo(const std::string& deviceId, int32_t missionId, MissionInfo &missionInfo);
+    ErrCode GetMissionInfo(const std::string &deviceId, int32_t missionId, MissionInfo &missionInfo);
 
     /**
      * @brief Get the Mission Snapshot Info object
@@ -601,6 +598,12 @@ public:
      */
     ErrCode MoveMissionToFront(int32_t missionId);
 
+    ErrCode GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
+
+    ErrCode GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info);
+
+    ErrCode GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
+
     /**
      * Start synchronizing remote device mission
      * @param devId, deviceId.
@@ -608,14 +611,14 @@ public:
      * @param tag, call tag.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag);
+    ErrCode StartSyncRemoteMissions(const std::string &devId, bool fixConflict, int64_t tag);
 
     /**
      * Stop synchronizing remote device mission
      * @param devId, deviceId.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StopSyncRemoteMissions(const std::string& devId);
+    ErrCode StopSyncRemoteMissions(const std::string &devId);
 
     /**
      * @brief start user.
