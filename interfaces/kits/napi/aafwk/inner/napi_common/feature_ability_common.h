@@ -18,6 +18,7 @@
 #include "ability.h"
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
+#include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "napi_common.h"

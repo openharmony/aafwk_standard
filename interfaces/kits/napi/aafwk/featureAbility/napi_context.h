@@ -17,6 +17,7 @@
 #define OHOS_APPEXECFWK_NAPI_CONTEXT_H
 #include "../inner/napi_common/napi_common.h"
 #include "ability.h"
+#include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 
