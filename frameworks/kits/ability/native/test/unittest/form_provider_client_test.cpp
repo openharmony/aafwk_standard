@@ -35,7 +35,7 @@ const std::string FORM_SUPPLY_INFO = "com.form.supply.info.test";
 
 class FormProviderClientTest : public testing::Test {
 public:
-    FormProviderClientTest() 
+    FormProviderClientTest()
     {}
     ~FormProviderClientTest()
     {}
@@ -71,9 +71,9 @@ void FormProviderClientTest::SetUp(void)
     Permission::PermissionKit::AddDefPermissions(permList);
     std::vector<std::string> permnameList;
     permnameList.emplace_back(PERMISSION_NAME_REQUIRE_FORM);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME,
         permnameList, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME, 
+    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME,
         PERMISSION_NAME_REQUIRE_FORM, 0);
 }
 
