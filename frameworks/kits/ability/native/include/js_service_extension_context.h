@@ -61,7 +61,7 @@ struct key_compare {
     }
 };
 
-static std::map<ConnecttionKey, std::shared_ptr<JSServiceExtensionConnection>, key_compare> connects_;
+static std::map<ConnecttionKey, sptr<JSServiceExtensionConnection>, key_compare> connects_;
 static int64_t serialNumber_ = 0;
 static std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;
 }  // namespace AbilityRuntime

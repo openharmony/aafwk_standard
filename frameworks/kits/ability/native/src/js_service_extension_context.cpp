@@ -182,7 +182,7 @@ private:
             want.GetBundle().c_str(),
             want.GetElement().GetAbilityName().c_str());
         // unwarp connection
-        std::shared_ptr<JSServiceExtensionConnection> connection = std::make_shared<JSServiceExtensionConnection>();
+        sptr<JSServiceExtensionConnection> connection = new JSServiceExtensionConnection();
         connection->SetNativeEngine(&engine);
         connection->SetJsConnectionObject(info.argv[1]);
         int64_t connectId = serialNumber_;
@@ -195,7 +195,7 @@ private:
         } else {
             serialNumber_ = 0;
         }
-        HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, connection.get());
+        HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, connection.GetRefPtr());
         AsyncTask::CompleteCallback complete =
             [weak = context_, want, connection, connectId](NativeEngine& engine, AsyncTask& task, int32_t status) {
                 HILOG_INFO("OnConnectAbility begin");
@@ -230,20 +230,20 @@ private:
         AAFwk::Want want;
         // unwrap connectId
         int64_t connectId = -1;
-        std::shared_ptr<JSServiceExtensionConnection> connection = nullptr;
+        sptr<JSServiceExtensionConnection> connection = nullptr;
         napi_get_value_int64(reinterpret_cast<napi_env>(&engine),
             reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), &connectId);
         HILOG_INFO("OnDisconnectAbility connection:%{public}d", (int32_t)connectId);
         auto item = std::find_if(connects_.begin(), connects_.end(),
             [&connectId](
-                const std::map<ConnecttionKey, std::shared_ptr<JSServiceExtensionConnection>>::value_type &obj) {
+                const std::map<ConnecttionKey, sptr<JSServiceExtensionConnection>>::value_type &obj) {
                     return connectId == obj.first.id;
             });
         if (item != connects_.end()) {
             // match id
             want = item->first.want;
             connection = item->second;
-            HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.get());
+            HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.GetRefPtr());
         } else {
             HILOG_INFO("%{public}s not find conn exist.", __func__);
         }
@@ -264,12 +264,13 @@ private:
                     return;
                 }
                 HILOG_INFO("context->DisconnectAbility");
-                auto errcode = context->DisconnectAbility(want, connection);
+                context->DisconnectAbility(want, connection);
+                /* auto errcode = context->DisconnectAbility(want, connection);
                 if (errcode == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
                     task.Reject(engine, CreateJsError(engine, errcode, "Disconnect Ability failed."));
-                }
+                } */
             };
 
         NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[INDEX_ONE];
@@ -410,7 +411,7 @@ void JSServiceExtensionConnection::HandleOnAbilityDisconnectDone(const AppExecFw
     auto item = std::find_if(connects_.begin(),
         connects_.end(),
         [bundleName, abilityName](
-            const std::map<ConnecttionKey, std::shared_ptr<JSServiceExtensionConnection>>::value_type &obj) {
+            const std::map<ConnecttionKey, sptr<JSServiceExtensionConnection>>::value_type &obj) {
             return (bundleName == obj.first.want.GetBundle()) &&
                    (abilityName == obj.first.want.GetElement().GetAbilityName());
         });

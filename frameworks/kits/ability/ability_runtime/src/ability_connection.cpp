@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace AbilityRuntime {
 const int DIED = -1;
-AbilityConnection::AbilityConnection(const std::shared_ptr<AbilityConnectCallback> &abilityConnectCallback)
+AbilityConnection::AbilityConnection(const sptr<AbilityConnectCallback> &abilityConnectCallback)
 {
     abilityConnectCallback_ = abilityConnectCallback;
 }
@@ -59,7 +59,7 @@ void AbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &e
         __func__, element.GetBundleName().c_str(), element.GetAbilityName().c_str());
 }
 
-void AbilityConnection::SetConnectCallback(std::shared_ptr<AbilityConnectCallback> abilityConnectCallback)
+void AbilityConnection::SetConnectCallback(sptr<AbilityConnectCallback> abilityConnectCallback)
 {
     abilityConnectCallback_ = abilityConnectCallback;
 }

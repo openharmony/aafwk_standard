@@ -37,7 +37,7 @@ public:
      * @brief Constructor.
      * @param abilityConnectCallback is used to notify caller ability that connect or disconnect is complete
      */
-    explicit AbilityConnection(const std::shared_ptr<AbilityConnectCallback> &abilityConnectCallback);
+    explicit AbilityConnection(const sptr<AbilityConnectCallback> &abilityConnectCallback);
 
     /**
      * @brief Destructor.
@@ -68,7 +68,7 @@ public:
      *
      * @param abilityConnectCallback is used to notify caller ability that connect or disconnect is complete
     */
-    void SetConnectCallback(std::shared_ptr<AbilityConnectCallback> abilityConnectCallback);
+    void SetConnectCallback(sptr<AbilityConnectCallback> abilityConnectCallback);
 
     void SetRemoteObject(const sptr<IRemoteObject> &remoteObject);
 
@@ -78,9 +78,9 @@ public:
 
     int GetResultCode();
 private:
-    std::shared_ptr<AbilityConnectCallback> abilityConnectCallback_;
-    sptr<IRemoteObject> remoteObject_;
-    int resultCode_;
+    sptr<AbilityConnectCallback> abilityConnectCallback_;
+    sptr<IRemoteObject> remoteObject_ = nullptr;
+    int resultCode_ = -1;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
