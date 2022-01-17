@@ -20,7 +20,7 @@ ability_manager_headers = {
     "ability_manager_interface.h",
     "ability_running_info.h",
     "ability_scheduler_interface.h",
-    "extension_running_info.h"
+    "extension_running_info.h",
     "lifecycle_state_info.h",
     "mission_stack_info.h",
     "stack_info.h",
