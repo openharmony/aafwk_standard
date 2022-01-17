@@ -82,7 +82,7 @@ public:
      * @return Returns the result of connecting ability connection.
      */
     ErrCode ConnectAbility(const sptr<IRemoteObject> &connectCaller,
-        const AAFwk::Want &want, const std::shared_ptr<AbilityConnectCallback> &connectCallback);
+        const AAFwk::Want &want, const sptr<AbilityConnectCallback> &connectCallback);
 
     /**
      * @brief disconnect ability connection.
@@ -93,7 +93,7 @@ public:
      * @return Returns the result of disconnecting ability connection.
      */
     ErrCode DisconnectAbility(const sptr<IRemoteObject> &connectCaller,
-        const AppExecFwk::ElementName &connectReceiver, const std::shared_ptr<AbilityConnectCallback> &connectCallback);
+        const AppExecFwk::ElementName &connectReceiver, const sptr<AbilityConnectCallback> &connectCallback);
 
     /**
      * @brief check the ability connection of caller is disconnect.
@@ -115,7 +115,7 @@ private:
     bool IsConnectCallerEqual(const sptr<IRemoteObject> &connectCaller, const sptr<IRemoteObject> &connectCallerOther);
     bool IsConnectReceiverEqual(const AppExecFwk::ElementName &connectReceiver,
         const AppExecFwk::ElementName &connectReceiverOther);
-    std::map<ConnectionInfo, std::vector<std::shared_ptr<AbilityConnectCallback>>> abilityConnections_;
+    std::map<ConnectionInfo, std::vector<sptr<AbilityConnectCallback>>> abilityConnections_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

@@ -48,9 +48,9 @@ public:
     ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) override;
     void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) override;
     bool ConnectAbility(const AAFwk::Want &want,
-                        const std::shared_ptr<AbilityConnectCallback> &connectCallback) override;
+                        const sptr<AbilityConnectCallback> &connectCallback) override;
     void DisconnectAbility(const AAFwk::Want &want,
-                           const std::shared_ptr<AbilityConnectCallback> &connectCallback) override;
+                           const sptr<AbilityConnectCallback> &connectCallback) override;
     std::shared_ptr<AppExecFwk::HapModuleInfo> GetHapModuleInfo() const override;
     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const override;
     void MinimizeAbility() override;
