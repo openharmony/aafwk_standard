@@ -56,6 +56,7 @@ ohos_unittest("ability_service_start_test") {
   ]
 
   external_deps = [
+    "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
