@@ -333,7 +333,7 @@ void JsAbility::DoOnForeground(const Want& want)
                 AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME)));
             HandleScope handleScope(jsRuntime_);
             auto& engine = jsRuntime_.GetNativeEngine();
-            scene_->GetMainWindow()->SetUIContent(abilityContext_, pageStack, &engine,
+            scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
                 static_cast<NativeValue*>(abilityContext_->GetContentStorage()));
             OnSceneRestored();
             NotityContinuationResult(want, true);
