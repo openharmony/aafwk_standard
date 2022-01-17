@@ -66,6 +66,8 @@ const std::string Want::OCT_SEMICOLON("073");  // ';'
 const std::string Want::MIME_TYPE("mime-type");
 const std::string Want::WANT_HEADER("#Intent;");
 
+const std::string Want::PARAM_RESV_WINDOW_MODE("ohos.aafwk.param.windowMode");
+
 /**
  * @description:Default construcotr of Want class, which is used to initialzie flags and URI.
  * @param None

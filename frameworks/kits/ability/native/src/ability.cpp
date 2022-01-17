@@ -202,8 +202,8 @@ void Ability::OnStart(const Want &want)
             abilityInfo_->name.c_str(),
             winType,
             displayId);
-
-        InitWindow(winType, displayId);
+        auto option = GetWindowOption(want);
+        InitWindow(winType, displayId, option);
 
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStart.", __func__);
@@ -677,7 +677,7 @@ void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int
  *
  * @param windowOption Indicates the window option defined by the user.
  */
-void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId)
+void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option)
 {
     if (abilityWindow_ == nullptr) {
         APP_LOGE("Ability::InitWindow abilityWindow_ is nullptr");
@@ -686,11 +686,11 @@ void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId)
     bool useNewMission = AbilityImpl::IsUseNewMission();
     APP_LOGI("%{public}s beign abilityWindow_->InitWindow.", __func__);
     if (useNewMission) {
-        abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId);
+        abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
     } else {
         std::shared_ptr<AbilityRuntime::AbilityContext> context = nullptr;
         sptr<Rosen::IWindowLifeCycle> listener = nullptr;
-        abilityWindow_->InitWindow(winType, context, listener, displayId);
+        abilityWindow_->InitWindow(winType, context, listener, displayId, option);
     }
     APP_LOGI("%{public}s end abilityWindow_->InitWindow.", __func__);
 }
@@ -3247,7 +3247,7 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
         APP_LOGE("Ability::GetWindowOption option is null.");
         return nullptr;
     }
-    auto windowMode = want.GetIntParam(StartOptions::STRING_WINDOW_MODE,
+    auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
     APP_LOGI("Ability::GetWindowOption window mode is %{public}d.", windowMode);
     option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
