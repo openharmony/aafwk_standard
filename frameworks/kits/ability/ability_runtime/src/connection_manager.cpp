@@ -61,17 +61,7 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
                 abilityConnection->GetResultCode());
             return ERR_OK;
         } else {
-            if (abilityConnection->GetRemoteObject() == nullptr) {
-                while (true) {
-                    if (abilityConnection->GetRemoteObject() != nullptr) {
-                        connectCallback->OnAbilityConnectDone(connectReceiver, abilityConnection->GetRemoteObject(),
-                            abilityConnection->GetResultCode());
-                        return ERR_OK;
-                    }
-                }
-                
-            }
-            return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+            return HandleCallbackTimeOut(connectCaller, want, connectReceiver, abilityConnection, connectCallback);
         }
     } else {
         abilityConnection = new AbilityConnection(connectCallback);
@@ -207,6 +197,23 @@ bool ConnectionManager::IsConnectReceiverEqual(const AppExecFwk::ElementName &co
 {
     return connectReceiver.GetBundleName() == connectReceiverOther.GetBundleName() &&
            connectReceiver.GetAbilityName() == connectReceiverOther.GetAbilityName();
+}
+
+ErrCode ConnectionManager::HandleCallbackTimeOut(const sptr<IRemoteObject> &connectCaller, const AAFwk::Want &want,
+    const AppExecFwk::ElementName &connectReceiver, sptr<AbilityConnection> abilityConnection,
+    const sptr<AbilityConnectCallback> &connectCallback)
+{
+    if (abilityConnection->GetRemoteObject() == nullptr) {
+        while (true) {
+            if (abilityConnection->GetRemoteObject() != nullptr) {
+                connectCallback->OnAbilityConnectDone(connectReceiver, abilityConnection->GetRemoteObject(),
+                    abilityConnection->GetResultCode());
+                return ERR_OK;
+            }
+        }
+    } else {
+        return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+    }
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS
