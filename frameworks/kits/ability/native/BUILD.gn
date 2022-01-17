@@ -81,6 +81,7 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
     "//foundation/appexecfwk/standard/interfaces/innerkits/fmskit/native/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_napi",
   ]
 }
 
@@ -118,7 +119,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window",
     "//base/global/i18n_standard/frameworks/intl/include",
   ]
 
@@ -210,9 +210,6 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_window_stage.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window_manager.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window_utils.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
   ]
@@ -264,6 +261,7 @@ ohos_shared_library("abilitykit_native") {
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime:window_native_kit",
     "//foundation/windowmanager/wm:libwm",
   ]
 
