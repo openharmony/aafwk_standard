@@ -40,6 +40,7 @@
 #include "softbus_bus_center.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "png.h"
 
 using OHOS::AppExecFwk::ElementName;
 
@@ -2865,8 +2866,12 @@ void AbilityManagerService::ClearUserData(int32_t userId)
 
 int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
 {
+    if (!currentMissionListManager_) {
+        HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
+        return 0;
+    }
+    currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    snapshotHandler_ = handler;
     return 0;
 }
 
@@ -2877,15 +2882,14 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
         HILOG_INFO("get remote mission snapshot.");
         return GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshot);
     }
-
     HILOG_INFO("get local mission snapshot.");
-    if (!snapshotHandler_) {
-        return 0;
+    if (!currentMissionListManager_) {
+        HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
+        return -1;
     }
-    Snapshot snapshot;
-    int32_t result = snapshotHandler_->GetSnapshot(GetAbilityTokenByMissionId(missionId), snapshot);
-    missionSnapshot.snapshot = snapshot.GetPixelMap();
-    return result;
+    auto token = GetAbilityTokenByMissionId(missionId);
+    currentMissionListManager_->GetMissionSnapshot(missionId, token, missionSnapshot);
+    return 0;
 }
 
 int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,

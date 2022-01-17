@@ -751,6 +751,17 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
             terminateAbility->Terminate(timeoutTask);
         }
     }
+    auto mission = abilityRecord->GetMission();
+    if (!mission) {
+        HILOG_ERROR("snapshot: GetMission failed");
+        return;
+    }
+    MissionSnapshot snapshot;
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(mission->GetMissionId(),
+        abilityRecord->GetToken(), snapshot);
+    if (listenerController_) {
+        listenerController_->NotifyMissionSnapshotChanged(mission->GetMissionId());
+    }
 }
 
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &abilityRecord,
@@ -1493,6 +1504,17 @@ void MissionListManager::DumpMission(int missionId, std::vector<std::string> &in
         return;
     }
     innerMissionInfo.Dump(info);
+}
+
+void MissionListManager::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->RegisterSnapshotHandler(handler);
+}
+
+void MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+    MissionSnapshot& missionSnapshot)
+{
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionSnapshot(missionId, abilityToken, missionSnapshot);
 }
 
 void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
