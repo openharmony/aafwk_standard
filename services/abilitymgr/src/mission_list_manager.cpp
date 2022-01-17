@@ -225,9 +225,11 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     // 4. move target list to top
     MoveMissionListToTop(targetList);
 
-    // ability is already foreground, process next ability.
-    if (targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-        targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+    // ability is already foreground, process next ability, excepting for launcher's MainAbility.
+    if ((abilityRequest.abilityInfo.bundleName != AbilityConfig::LAUNCHER_BUNDLE_NAME ||
+        abilityRequest.abilityInfo.name != AbilityConfig::LAUNCHER_ABILITY_NAME) &&
+        (targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
+        targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW))) {
         PostStartWaittingAbility();
         return 0;
     }
@@ -834,8 +836,8 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
 
 /**
  * @brief This method aims to do things as below
- * 1. remove the mission form the current missionList
- * 2. if the current missionList is empty after, then remove form the manager
+ * 1. remove the mission from the current missionList
+ * 2. if the current missionList is empty after, then remove from the manager
  * 3. if the current ability is foreground, then should schedule the next ability to foreground before terminate
  *
  * @param abilityRecord the ability that was terminating
@@ -863,11 +865,9 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         HILOG_DEBUG("ability state is %{public}d, just return", abilityRecord->GetAbilityState());
         return;
     }
-    // 3. if the launcher is foreground, just background
-    std::shared_ptr<AbilityRecord> launcherRoot = launcherList_->GetLauncherRoot();
-    if (launcherRoot
-        && (launcherRoot->IsAbilityState(FOREGROUND_NEW) || launcherRoot->IsAbilityState(FOREGROUNDING_NEW))) {
-        HILOG_DEBUG("launcherRoot state is %{public}d, no need to schedule next", launcherRoot->GetAbilityState());
+    // 3. if run on a laptop, noting to do
+    if (IsPC()) {
+        HILOG_DEBUG("Run on a laptop, no need to schedule next ability.");
         return;
     }
 
@@ -1493,6 +1493,40 @@ void MissionListManager::DumpMission(int missionId, std::vector<std::string> &in
         return;
     }
     innerMissionInfo.Dump(info);
+}
+
+bool MissionListManager::IsPC()
+{
+    if (MissionDmInitCallback::isInit_) {
+        return isPC_;
+    }
+    std::string pkgName = "ohos.aafwk.aafwk_standard";
+    auto callback = std::make_shared<MissionDmInitCallback>();
+    int32_t ret = DistributedHardware::DeviceManager::GetInstance().InitDeviceManager(pkgName, callback);
+    if (ret != ERR_OK) {
+        HILOG_WARN("DeviceManager initialization failed.");
+        return false;
+    }
+    DistributedHardware::DmDeviceInfo deviceInfo;
+    ret = DistributedHardware::DeviceManager::GetInstance().GetLocalDeviceInfo(pkgName, deviceInfo);
+    if (ret != ERR_OK) {
+        HILOG_WARN("Failed to get local device info.");
+        return false;
+    }
+    MissionDmInitCallback::isInit_ = true;
+    if (deviceInfo.deviceTypeId != DistributedHardware::DmDeviceType::DEVICE_TYPE_PC) {
+        HILOG_WARN("The device is not a laptop.");
+        return false;
+    }
+    isPC_ = true;
+    return isPC_;
+}
+
+bool MissionListManager::MissionDmInitCallback::isInit_ = false;
+void MissionListManager::MissionDmInitCallback::OnRemoteDied()
+{
+    isInit_ = false;
+    HILOG_WARN("DeviceManager died.");
 }
 }  // namespace AAFwk
 }  // namespace OHOS

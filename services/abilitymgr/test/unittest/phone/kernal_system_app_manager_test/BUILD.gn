@@ -57,6 +57,7 @@ ohos_unittest("kernal_system_app_mgr_test") {
     "//utils/native/base:utils",
   ]
   external_deps = [
+    "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
