@@ -515,7 +515,7 @@ void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
         AppExecFwk::RunningProcessInfo processInfo;
         runningInfo.ability = abilityRecord->GetWant().GetElement();
         DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
         runningInfo.pid = processInfo.pid_;
         runningInfo.uid = processInfo.uid_;
         runningInfo.processName = processInfo.processName_;
