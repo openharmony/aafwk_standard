@@ -19,6 +19,9 @@
 
 #include "file_util.h"
 #include "hilog_wrapper.h"
+#include "image_source.h"
+#include "media_errors.h"
+#include "png.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -123,6 +126,100 @@ bool MissionDataStorage::CheckFileNameValid(const std::string &fileName)
         }
     }
 
+    return true;
+}
+
+void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
+{
+    std::string filePath = GetMissionSnapshotPath(missionId);
+    std::string dirPath = OHOS::HiviewDFX::FileUtil::ExtractFilePath(filePath);
+    if (!OHOS::HiviewDFX::FileUtil::FileExists(dirPath)) {
+        bool createDir = OHOS::HiviewDFX::FileUtil::ForceCreateDirectory(dirPath);
+        if (!createDir) {
+            HILOG_ERROR("snapshot: create dir %{public}s failed.", dirPath.c_str());
+            return;
+        }
+    }
+    const uint8_t* data = missionSnapshot.snapshot->GetPixels();
+    bool saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
+        missionSnapshot.snapshot->GetHeight(), data);
+    if (!saveMissionFile) {
+        HILOG_ERROR("snapshot: save mission snapshot failed, path = %{public}s.", filePath.c_str());
+    }
+}
+
+bool MissionDataStorage::GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot)
+{
+    std::string filePath = GetMissionSnapshotPath(missionId);
+    if (!OHOS::HiviewDFX::FileUtil::FileExists(filePath)) {
+        HILOG_INFO("snapshot: storage snapshot not exists, missionId = %{public}d", missionId);
+        return false;
+    }
+    uint32_t errCode = 0;
+    Media::SourceOptions sourceOptions;
+    auto imageSource = Media::ImageSource::CreateImageSource(filePath, sourceOptions, errCode);
+    if (errCode != OHOS::Media::SUCCESS) {
+        HILOG_ERROR("snapshot: CreateImageSource failed, errCode = %{public}d", errCode);
+        return false;
+    }
+    Media::DecodeOptions decodeOptions;
+    auto pixelMap = imageSource->CreatePixelMap(decodeOptions, errCode);
+    if (errCode != OHOS::Media::SUCCESS) {
+        HILOG_ERROR("snapshot: CreatePixelMap failed, errCode = %{public}d", errCode);
+        return false;
+    }
+    missionSnapshot.snapshot = std::move(pixelMap);
+    return true;
+}
+
+std::string MissionDataStorage::GetMissionSnapshotPath(int missionId)
+{
+    return GetMissionDataDirPath() + "/"
+        + MISSION_JSON_FILE_PREFIX + "_" + std::to_string(missionId) + PNG_FILE_SUFFIX;
+}
+
+bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data)
+{
+    const int BITMAP_DEPTH = 8; // color depth
+    const int BPP = 4; // bytes per pixel
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (png_ptr == nullptr) {
+        HILOG_ERROR("snapshot: png_create_write_struct error, nullptr!\n");
+        return false;
+    }
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (png_ptr == nullptr) {
+        HILOG_ERROR("snapshot: png_create_info_struct error, nullptr!\n");
+        png_destroy_write_struct(&png_ptr, nullptr);
+        return false;
+    }
+    FILE *fp = fopen(fileName, "wb");
+    if (fp == nullptr) {
+        HILOG_ERROR("snapshot: open file [%s] error, nullptr!\n", fileName);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        return false;
+    }
+    png_init_io(png_ptr, fp);
+
+    // set png header
+    png_set_IHDR(png_ptr, info_ptr,
+        width, height,
+        BITMAP_DEPTH,
+        PNG_COLOR_TYPE_RGBA,
+        PNG_INTERLACE_NONE,
+        PNG_COMPRESSION_TYPE_BASE,
+        PNG_FILTER_TYPE_BASE);
+    png_set_packing(png_ptr);
+    png_write_info(png_ptr, info_ptr);
+
+    for (uint32_t i = 0; i < height; i++) {
+        png_write_row(png_ptr, data + (i * width * BPP));
+    }
+    png_write_end(png_ptr, info_ptr);
+
+    // free memory
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    (void)fclose(fp);
     return true;
 }
 }  // namespace AAFwk

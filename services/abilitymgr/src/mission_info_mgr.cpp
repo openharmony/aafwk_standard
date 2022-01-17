@@ -305,5 +305,61 @@ void MissionInfoMgr::Dump(std::vector<std::string> &info)
         innerMissionInfo.Dump(info);
     }
 }
+
+void MissionInfoMgr::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    snapshotHandler_ = handler;
+}
+
+bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+    MissionSnapshot& missionSnapshot) const
+{
+    auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
+        return missionId == info.missionInfo.id;
+    });
+    if (it == missionInfoList_.end()) {
+        HILOG_ERROR("snapshot: get mission failed, missionId %{public}d not exists", missionId);
+        return false;
+    }
+    Snapshot snapshot;
+    int32_t result = snapshotHandler_->GetSnapshot(abilityToken, snapshot);
+    if (result != 0) {
+        HILOG_ERROR("snapshot: get WMS snapshot failed, result = %{public}d", result);
+        return false;
+    }
+    if (!taskDataPersistenceMgr_) {
+        HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
+        return false;
+    }
+    missionSnapshot.snapshot = snapshot.GetPixelMap();
+    missionSnapshot.topAbility = it->missionInfo.want.GetElement();
+    if (!taskDataPersistenceMgr_->SaveMissionSnapshot(missionId, missionSnapshot)) {
+        HILOG_ERROR("snapshot: save mission snapshot failed");
+        return false;
+    }
+    return true;
+}
+
+bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+    MissionSnapshot& missionSnapshot) const
+{
+    auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
+        return missionId == info.missionInfo.id;
+    });
+    if (it == missionInfoList_.end()) {
+        HILOG_ERROR("snapshot: get mission failed, missionId %{public}d not exists", missionId);
+        return false;
+    }
+    if (!taskDataPersistenceMgr_) {
+        HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
+        return false;
+    }
+    if (taskDataPersistenceMgr_->GetMissionSnapshot(missionId, missionSnapshot)) {
+        missionSnapshot.topAbility = it->missionInfo.want.GetElement();
+        return true;
+    }
+    HILOG_INFO("snapshot: storage mission snapshot not exists, create new snapshot");
+    return UpdateMissionSnapshot(missionId, abilityToken, missionSnapshot);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
