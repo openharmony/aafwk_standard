@@ -55,7 +55,7 @@ ohos_shared_library("missionmanager_napi") {
   part_name = "aafwk_standard"
 }
 
-ohos_shared_library("missionregistration_napi") {
+ohos_shared_library("distributedmissionmanager") {
   include_dirs = [
     "//third_party/libuv/include",
     "//third_party/node/src",
