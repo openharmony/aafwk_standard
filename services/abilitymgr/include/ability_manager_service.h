@@ -873,6 +873,8 @@ private:
         std::vector<MissionInfo> &missionInfos);
     int GetRemoteMissionInfo(const std::string& deviceId, int32_t missionId,
         MissionInfo &missionInfo);
+    int32_t GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
+        MissionSnapshot& missionSnapshot);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackListInner(const std::string &args, std::vector<std::string> &info);
