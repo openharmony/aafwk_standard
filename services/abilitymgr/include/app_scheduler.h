@@ -28,6 +28,7 @@
 #include "refbase.h"
 #include "singleton.h"
 #include "system_memory_attr.h"
+#include "running_process_info.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -223,10 +224,13 @@ public:
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo, std::string &strConfig);
 
+    void GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info);
     /**
      * Start a resident process
      */
     void StartupResidentProcess();
+
+    int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
 
 protected:
     /**

@@ -375,6 +375,32 @@ void KernalAbilityManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     }
 }
 
+void KernalAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    HILOG_DEBUG("Get ability running infos");
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+
+    for (auto &ability : abilities_) {
+        if (!ability) {
+            HILOG_DEBUG("ability is nullptr.");
+            continue;
+        }
+
+        AbilityRunningInfo runningInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+        runningInfo.ability = ability->GetWant().GetElement();
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+        runningInfo.pid = processInfo.pid_;
+        runningInfo.uid = processInfo.uid_;
+        runningInfo.processName = processInfo.processName_;
+        runningInfo.startTime = ability->GetStartTime();
+        runningInfo.abilityState = static_cast<int>(ability->GetAbilityState());
+        info.emplace_back(runningInfo);
+    }
+}
+
+
 void KernalAbilityManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)
 {
     CHECK_POINTER(abilityRecord);

@@ -494,5 +494,38 @@ void DataAbilityManager::DumpState(std::vector<std::string> &info, const std::st
     }
     return;
 }
+
+void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    HILOG_INFO("Get ability running infos");
+    std::lock_guard<std::mutex> locker(mutex_);
+
+    auto queryInfo = [&info](DataAbilityRecordPtrMap::reference data) {
+        auto dataAbilityRecord = data.second;
+        if (!dataAbilityRecord) {
+            return;
+        }
+
+        auto abilityRecord = dataAbilityRecord->GetAbilityRecord();
+        if (!abilityRecord) {
+            return;
+        }
+
+        AbilityRunningInfo runningInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+        runningInfo.ability = abilityRecord->GetWant().GetElement();
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+        runningInfo.pid = processInfo.pid_;
+        runningInfo.uid = processInfo.uid_;
+        runningInfo.processName = processInfo.processName_;
+        runningInfo.startTime = abilityRecord->GetStartTime();
+        runningInfo.abilityState = static_cast<int>(abilityRecord->GetAbilityState());
+        info.emplace_back(runningInfo);
+    };
+
+    std::for_each(dataAbilityRecordsLoading_.begin(), dataAbilityRecordsLoading_.end(), queryInfo);
+    std::for_each(dataAbilityRecordsLoaded_.begin(), dataAbilityRecordsLoaded_.end(), queryInfo);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -23,6 +23,8 @@
 #include "ability_connect_callback_interface.h"
 #include "ability_event_handler.h"
 #include "ability_record.h"
+#include "ability_running_info.h"
+#include "extension_running_info.h"
 #include "connection_record.h"
 #include "element_name.h"
 #include "ohos/aafwk/content/want.h"
@@ -180,6 +182,10 @@ public:
     std::shared_ptr<AbilityRecord> GetServiceRecordByToken(const sptr<IRemoteObject> &token);
     ConnectListType GetConnectRecordListByCallback(sptr<IAbilityConnection> callback);
     void RemoveAll();
+
+    void GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info);
+
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 
     /**
      * SetEventHandler.
