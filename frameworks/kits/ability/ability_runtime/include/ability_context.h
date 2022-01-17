@@ -81,7 +81,7 @@ public:
     * @return True means success and false means failure
     */
     virtual bool ConnectAbility(const AAFwk::Want &want,
-        const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
+        const sptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
     * @brief Disconnects the current ability from an ability
@@ -91,7 +91,7 @@ public:
     * is set up. The IAbilityConnection object uniquely identifies a connection between two abilities.
     */
     virtual void DisconnectAbility(const AAFwk::Want &want,
-        const std::shared_ptr<AbilityConnectCallback> &connectCallback) = 0;
+        const sptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
      * @brief get ability info of the current ability
