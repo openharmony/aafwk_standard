@@ -107,7 +107,7 @@ public:
     int TerminateAbility(Want &want);
 
     /**
-     * @brief By binding an action, you can set different action parameters in Intent to present different initial
+     * @brief By binding an action, you can set different action parameters in want to present different initial
      * pages. You must register actions in the profile file.
      *
      * @param action Indicates the action to bind.
@@ -199,8 +199,8 @@ public:
      * Starts a new ability with specific start settings.
      * A Page or Service ability uses this method to start a specific ability.
      * The system locates the target ability from installed abilities based on
-     * the value of the intent parameter and then starts it. You can specify the
-     * ability to start using the intent parameter.
+     * the value of the want parameter and then starts it. You can specify the
+     * ability to start using the want parameter.
      *
      * @param want Indicates the ability to start.
      * @param abilityStartSetting Indicates the setting ability used to start.
@@ -387,7 +387,7 @@ public:
      *
      * @param windowOption Indicates the window option defined by the user.
      */
-    virtual void InitWindow(Rosen::WindowType winType, int32_t displayId);
+    virtual void InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option);
 
     /**
      * @brief Get the window belong to the ability.
@@ -850,10 +850,10 @@ public:
 
     /**
      * @brief A Page or Service ability uses this method to start a specific ability. The system locates the target
-     * ability from installed abilities based on the value of the intent parameter and then starts it. You can specify
-     * the ability to start using the intent parameter.
+     * ability from installed abilities based on the value of the want parameter and then starts it. You can specify
+     * the ability to start using the want parameter.
      *
-     * @param intent Indicates the ability to start.
+     * @param want Indicates the ability to start.
      *
      * @return errCode ERR_OK on success, others on failure.
      */
@@ -1492,10 +1492,10 @@ private:
     // Keep consistent with DMS defines. Used to callback to DMS.
     static const std::string DMS_SESSION_ID;
 
-    // The originating deviceId passed by DMS using intent param.
+    // The originating deviceId passed by DMS using want param.
     static const std::string DMS_ORIGIN_DEVICE_ID;
 
-    // If session id cannot get from intent, assign it as default.
+    // If session id cannot get from want, assign it as default.
     static const int DEFAULT_DMS_SESSION_ID;
 
     std::vector<int64_t> lostedByReconnectTempForms_;

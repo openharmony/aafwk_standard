@@ -64,6 +64,9 @@ public:
 
     virtual ErrCode StartAbilityForResult(const AAFwk::Want &Want, int requestCode, RuntimeTask &&task) = 0;
 
+    virtual ErrCode StartAbilityForResult(const AAFwk::Want &Want, const AAFwk::StartOptions &startOptions,
+        int requestCode, RuntimeTask &&task) = 0;
+
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
 
     virtual ErrCode RestoreWindowStage(void* contentStorage) = 0;

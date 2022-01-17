@@ -24,7 +24,6 @@ namespace OHOS {
 namespace AAFwk {
 class StartOptions : public Parcelable {
 public:
-    static const std::string STRING_WINDOW_MODE;
     static const std::string STRING_DISPLAY_ID;
     const int32_t DEFAULT_DISPLAY_ID {0};
 
