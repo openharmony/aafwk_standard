@@ -246,7 +246,7 @@ NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCall
         want.GetElement().GetAbilityName().c_str());
 
     // unwarp connection
-    std::shared_ptr<JSAbilityConnection> connection = std::make_shared<JSAbilityConnection>(&engine);
+    sptr<JSAbilityConnection> connection = new JSAbilityConnection(&engine);
     connection->SetJsConnectionObject(info.argv[1]);
     int64_t connectId = g_serialNumber;
     ConnectionKey key;
@@ -258,7 +258,7 @@ NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCall
     } else {
         g_serialNumber = 0;
     }
-    HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, connection.get());
+    HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, connection.GetRefPtr());
     AsyncTask::CompleteCallback complete =
         [weak = context_, want, connection, connectId](NativeEngine& engine, AsyncTask& task, int32_t status) {
             HILOG_INFO("OnConnectAbility begin");
@@ -293,20 +293,20 @@ NativeValue* JsAbilityContext::OnDisconnectAbility(NativeEngine& engine, NativeC
     AAFwk::Want want;
     // unwrap connectId
     int64_t connectId = -1;
-    std::shared_ptr<JSAbilityConnection> connection = nullptr;
+    sptr<JSAbilityConnection> connection = nullptr;
     napi_get_value_int64(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]), &connectId);
     HILOG_INFO("OnDisconnectAbility connection:%{public}d", (int32_t)connectId);
     auto item = std::find_if(abilityConnects_.begin(),
         abilityConnects_.end(),
-        [&connectId](const std::map<ConnectionKey, std::shared_ptr<JSAbilityConnection>>::value_type &obj) {
+        [&connectId](const std::map<ConnectionKey, sptr<JSAbilityConnection>>::value_type &obj) {
             return connectId == obj.first.id;
         });
     if (item != abilityConnects_.end()) {
         // match id
         want = item->first.want;
         connection = item->second;
-        HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.get());
+        HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.GetRefPtr());
     } else {
         HILOG_INFO("%{public}s not find conn exist.", __func__);
     }
@@ -630,7 +630,7 @@ void JSAbilityConnection::HandleOnAbilityDisconnectDone(const AppExecFwk::Elemen
     std::string abilityName = element.GetAbilityName();
     auto item = std::find_if(abilityConnects_.begin(), abilityConnects_.end(),
         [bundleName, abilityName] (
-            const std::map<ConnectionKey, std::shared_ptr<JSAbilityConnection>>::value_type &obj) {
+            const std::map<ConnectionKey, sptr<JSAbilityConnection>>::value_type &obj) {
                 return (bundleName == obj.first.want.GetBundle()) &&
                     (abilityName == obj.first.want.GetElement().GetAbilityName());
         });
