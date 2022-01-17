@@ -146,6 +146,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/extension.cpp",
     "${SUBSYSTEM_DIR}/src/extension_base.cpp",
     "${SUBSYSTEM_DIR}/src/extension_impl.cpp",
+    "${SUBSYSTEM_DIR}/src/extension_module_loader.cpp",
     "${SUBSYSTEM_DIR}/src/form_extension.cpp",
 
     #"${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
@@ -287,6 +288,30 @@ ohos_shared_library("dummy_classes") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "aafwk_standard"
+}
+
+ohos_shared_library("service_extension_module") {
+  include_dirs =
+      [ "//foundation/aafwk/standard/frameworks/kits/ability/native/include" ]
+
+  sources = [ "//foundation/aafwk/standard/frameworks/kits/ability/native/src/service_extension_module_loader.cpp" ]
+
+  configs = [ ":ability_config" ]
+  public_configs = [ ":ability_public_config" ]
+
+  deps = [
+    ":abilitykit_native",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "aafwk_standard:runtime",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 
   subsystem_name = "aafwk"
