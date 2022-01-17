@@ -22,6 +22,7 @@
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
+#include "runtime.h"
 
 using namespace OHOS;
 using namespace OHOS::AAFwk;
@@ -38,6 +39,7 @@ namespace {
     constexpr int DECIMAL_VALUE = 10;
     constexpr int BASE_NUMBER = 9;
     constexpr int REF_COUNT = 1;
+    OHOS::AppExecFwk::Ability* g_ability = nullptr;
 }
 
 /**
@@ -66,7 +68,7 @@ OHOS::AppExecFwk::Ability* GetGlobalAbility(napi_env env)
     // get global value
     napi_value global = nullptr;
     napi_get_global(env, &global);
-    
+
     // get ability
     napi_value abilityObj = nullptr;
     napi_get_named_property(env, global, "ability", &abilityObj);
@@ -75,7 +77,14 @@ OHOS::AppExecFwk::Ability* GetGlobalAbility(napi_env env)
     OHOS::AppExecFwk::Ability* ability = nullptr;
     napi_get_value_external(env, abilityObj, (void**)&ability);
     HILOG_INFO("%{public}s, ability = [%{public}p]", __func__, ability);
-
+    if (ability == nullptr) {
+        if (g_ability == nullptr) {
+            std::unique_ptr<AbilityRuntime::Runtime> runtime;
+            g_ability = OHOS::AppExecFwk::Ability::Create(runtime);
+        }
+        ability = g_ability;
+        HILOG_INFO("%{public}s, Use Local tmp Ability for Stage Module", __func__);
+    }
     return ability;
 }
 
