@@ -27,7 +27,7 @@ namespace AbilityRuntime {
  * @class AbilityConnectCallback
  * AbilityConnectCallback is used to notify caller ability that connect or disconnect is complete.
  */
-class AbilityConnectCallback : public RefBase{
+class AbilityConnectCallback : public RefBase {
 public:
     /**
      * @brief Constructor.
