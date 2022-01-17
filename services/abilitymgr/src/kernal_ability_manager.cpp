@@ -390,7 +390,7 @@ void KernalAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo
         AppExecFwk::RunningProcessInfo processInfo;
         runningInfo.ability = ability->GetWant().GetElement();
         DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+            GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
         runningInfo.pid = processInfo.pid_;
         runningInfo.uid = processInfo.uid_;
         runningInfo.processName = processInfo.processName_;

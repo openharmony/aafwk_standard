@@ -956,7 +956,7 @@ void AbilityConnectManager::GetExtensionRunningInfos(int upperLimit, std::vector
         AppExecFwk::RunningProcessInfo processInfo;
         extensionInfo.extension = abilityRecord->GetWant().GetElement();
         DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(extensionInfo.token, processInfo);
+            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
         extensionInfo.pid = processInfo.pid_;
         extensionInfo.uid = processInfo.uid_;
         extensionInfo.processName = processInfo.processName_;
@@ -987,7 +987,7 @@ void AbilityConnectManager::GetAbilityRunningInfos(std::vector<AbilityRunningInf
         AppExecFwk::RunningProcessInfo processInfo;
         runningInfo.ability = abilityRecord->GetWant().GetElement();
         DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
         runningInfo.pid = processInfo.pid_;
         runningInfo.uid = processInfo.uid_;
         runningInfo.processName = processInfo.processName_;

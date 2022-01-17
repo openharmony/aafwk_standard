@@ -1517,7 +1517,7 @@ void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
         runningInfo.abilityState = static_cast<int>(ability->GetAbilityState());
 
         DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(runningInfo.token, processInfo);
+            GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
         runningInfo.pid = processInfo.pid_;
         runningInfo.uid = processInfo.uid_;
         runningInfo.processName = processInfo.processName_;
