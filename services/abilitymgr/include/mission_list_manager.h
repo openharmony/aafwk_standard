@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "ability_running_info.h"
+#include "foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp/include/device_manager.h"
 #include "mission_list.h"
 #include "mission_listener_controller.h"
 #include "mission_info.h"
@@ -310,6 +311,7 @@ private:
     void HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecord> abilityRecord);
     void DelayedStartLauncher();
     void BackToLauncher();
+    bool IsPC();
 
 private:
     int userId_;
@@ -325,6 +327,16 @@ private:
 
     std::queue<AbilityRequest> waittingAbilityQueue_;
     std::shared_ptr<MissionListenerController> listenerController_;
+    bool isPC_ = false;
+
+private:
+class MissionDmInitCallback : public DistributedHardware::DmInitCallback {
+public:
+    void OnRemoteDied() override;
+
+public:
+    static bool isInit_;
+};
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -46,7 +46,10 @@ ohos_unittest("window_info_test") {
     "//utils/native/base:utils",
   ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "device_manager_base:devicemanagersdk",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 }
 
 group("unittest") {

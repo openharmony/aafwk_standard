@@ -58,6 +58,7 @@ ohos_unittest("ability_manager_proxy_test") {
   ]
 
   external_deps = [
+    "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
