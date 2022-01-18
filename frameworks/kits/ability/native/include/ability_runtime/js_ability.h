@@ -63,6 +63,7 @@ protected:
 private:
     void CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
     std::unique_ptr<NativeReference> CreateAppWindowStage();
+    void GetPageStackFromWant(const Want& want, std::string& pageStack);
 
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsAbilityObj_;
