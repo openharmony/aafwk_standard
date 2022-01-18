@@ -131,8 +131,8 @@ int AbilityManagerProxy::StartAbility(const Want &want, const sptr<IRemoteObject
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::StartAbility(const Want &want, const StartOptions &startOptions,
-    const sptr<IRemoteObject> &callerToken, int requestCode)
+int AbilityManagerProxy::StartAbility(
+    const Want &want, const StartOptions &startOptions, const sptr<IRemoteObject> &callerToken, int requestCode)
 {
     int error;
     MessageParcel data;
@@ -592,7 +592,7 @@ int AbilityManagerProxy::GetAllStackInfo(StackInfo &stackInfo)
     return result;
 }
 
-template<typename T>
+template <typename T>
 int AbilityManagerProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {
     int32_t infoSize = reply.ReadInt32();
@@ -684,7 +684,7 @@ int AbilityManagerProxy::GetMissionSnapshot(const std::string& deviceId, int32_t
         HILOG_ERROR("missionId write failed.");
         return ERR_INVALID_VALUE;
     }
-    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT, data, reply, option);
+    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT_INFO, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
@@ -1978,6 +1978,80 @@ int AbilityManagerProxy::StopUser(int userId, const sptr<IStopUserCallback> &cal
     error = Remote()->SendRequest(IAbilityManager::STOP_USER, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("StopUser:SendRequest error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_ABILITY_RUNNING_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Get ability running info, error: %{public}d", error);
+        return error;
+    }
+    error = GetParcelableInfos<AbilityRunningInfo>(reply, info);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("GetParcelableInfos fail, error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    if (!data.WriteInt32(upperLimit)) {
+        HILOG_ERROR("upperLimit write failed.");
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_EXTENSION_RUNNING_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Get extension running info failed., error: %{public}d", error);
+        return error;
+    }
+    error = GetParcelableInfos<ExtensionRunningInfo>(reply, info);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("GetParcelableInfos fail, error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_PROCESS_RUNNING_INFO, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Get process running info, error: %{public}d", error);
+        return error;
+    }
+    error = GetParcelableInfos<AppExecFwk::RunningProcessInfo>(reply, info);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("GetParcelableInfos fail, error: %{public}d", error);
         return error;
     }
     return reply.ReadInt32();

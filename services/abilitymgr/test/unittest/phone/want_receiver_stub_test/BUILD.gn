@@ -51,6 +51,7 @@ ohos_unittest("want_receiver_stub_test") {
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
 

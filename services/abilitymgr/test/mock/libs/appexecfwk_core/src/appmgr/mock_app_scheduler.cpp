@@ -164,5 +164,16 @@ void AppScheduler::StartupResidentProcess()
 {
     HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
 }
+
+int AppScheduler::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    HILOG_INFO("Test AppScheduler::GetProcessRunningInfos()");
+    return 0;
+}
+
+void AppScheduler::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info)
+{
+    HILOG_INFO("Test AppScheduler::GetRunningProcessInfoByToken()");
+}
 }  // namespace AAFwk
 }  // namespace OHOS

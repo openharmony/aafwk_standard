@@ -50,6 +50,7 @@ ohos_unittest("ability_connect_manage_test") {
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
 

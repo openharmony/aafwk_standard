@@ -113,7 +113,7 @@ void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const 
 }
 
 bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
-                                        const std::shared_ptr<AbilityConnectCallback> &connectCallback)
+                                        const sptr<AbilityConnectCallback> &connectCallback)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
     ErrCode ret =
@@ -123,7 +123,7 @@ bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
 }
 
 void AbilityContextImpl::DisconnectAbility(const AAFwk::Want &want,
-                                           const std::shared_ptr<AbilityConnectCallback> &connectCallback)
+                                           const sptr<AbilityConnectCallback> &connectCallback)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
     ErrCode ret =

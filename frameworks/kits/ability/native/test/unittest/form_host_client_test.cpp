@@ -33,7 +33,7 @@ using OHOS::Parcel;
 
 class FormHostClientTest : public testing::Test {
 public:
-    FormHostClientTest() 
+    FormHostClientTest()
     {}
     ~FormHostClientTest()
     {}

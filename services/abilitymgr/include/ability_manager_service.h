@@ -679,6 +679,10 @@ public:
 
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
 
+    virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override;
+    virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) override;
+    virtual int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info) override;
+
     int GetMissionSaveTime() const;
 
     /**
@@ -897,6 +901,10 @@ private:
     void InitDataAbilityManager(int32_t userId, bool switchUser);
     void InitPendWantManager(int32_t userId, bool switchUser);
 
+    int32_t GetAbilityInfoFromExtension(const Want &want, AppExecFwk::AbilityInfo& abilityInfo);
+    int32_t InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
+        AppExecFwk::AbilityInfo &abilityInfo);
+
     // multi user
     void StartFreezingScreen();
     void StopFreezingScreen();
@@ -933,7 +941,6 @@ private:
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;
-    sptr<ISnapshotHandler> snapshotHandler_;
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;

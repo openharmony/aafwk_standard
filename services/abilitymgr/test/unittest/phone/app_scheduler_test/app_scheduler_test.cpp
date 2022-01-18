@@ -253,7 +253,7 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_008, TestSize.Level1)
 HWTEST_F(AppSchedulerTest, AppScheduler_oprator_009, TestSize.Level1)
 {
     DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-  
+
     std::string deviceName = "device";
     std::string abilityName = "FirstAbility";
     std::string appName = "FirstApp";

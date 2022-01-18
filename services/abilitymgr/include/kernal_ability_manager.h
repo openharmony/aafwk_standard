@@ -20,6 +20,7 @@
 #include <queue>
 
 #include "ability_record.h"
+#include "ability_running_info.h"
 #include "want.h"
 
 namespace OHOS {
@@ -90,6 +91,8 @@ public:
     std::shared_ptr<AbilityRecord> GetAbilityRecordByToken(const sptr<IRemoteObject> &token);
 
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
+
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 
 private:
     /**

@@ -13,14 +13,10 @@
  * limitations under the License.
  */
 
-#include "native_engine/native_engine.h"
-#include "native_engine/native_value.h"
-#ifndef OHOS_JS_WINDOW_MANAGER_H
-#define OHOS_JS_WINDOW_MANAGER_H
-namespace OHOS {
-namespace AbilityRuntime {
-NativeValue* JsWindowManagerInit(NativeEngine* engine, NativeValue* exportObj);
-}  // namespace AbilityRuntime
-}  // namespace OHOS
+class StaticSubscriberExtension {
+    onCommonEventTriggered(event) {
+        console.log('onCommonEventTriggered, event:' + event.code);
+    }
+}
 
-#endif
+export default StaticSubscriberExtension

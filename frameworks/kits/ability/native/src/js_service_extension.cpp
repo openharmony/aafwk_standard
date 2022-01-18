@@ -42,22 +42,22 @@ JsServiceExtension::JsServiceExtension(JsRuntime& jsRuntime) : jsRuntime_(jsRunt
 JsServiceExtension::~JsServiceExtension() = default;
 
 void JsServiceExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
-    const std::shared_ptr<OHOSApplication> &application,
-    std::shared_ptr<AbilityHandler> &handler,
+    const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
     ServiceExtension::Init(record, application, handler, token);
-    std::string srcPath(Extension::abilityInfo_->package);
-    srcPath.append("/assets/js/");
-    if (!Extension::abilityInfo_->srcPath.empty()) {
-        srcPath.append(Extension::abilityInfo_->srcPath);
+    if (Extension::abilityInfo_->srcEntrance.empty()) {
+        HILOG_ERROR("abilityInfo srcEntrance is empty");
+        return;
     }
-    srcPath.append("/").append(Extension::abilityInfo_->name).append(".abc");
+    std::string srcPath(Extension::abilityInfo_->moduleName + "/");
+    srcPath.append(Extension::abilityInfo_->srcPath);
+    srcPath.erase(srcPath.rfind('.'));
+    srcPath.append(".abc");
 
     std::string moduleName(Extension::abilityInfo_->moduleName);
     moduleName.append("::").append(abilityInfo_->name);
-    HILOG_INFO("JsServiceExtension::Init moduleName:%{public}s,srcPath:%{public}s.",
-        moduleName.c_str(), srcPath.c_str());
+    HILOG_INFO("JsServiceExtension::Init module:%{public}s,srcPath:%{public}s.", moduleName.c_str(), srcPath.c_str());
     HandleScope handleScope(jsRuntime_);
     auto& engine = jsRuntime_.GetNativeEngine();
 

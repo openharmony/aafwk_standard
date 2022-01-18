@@ -4433,7 +4433,7 @@ int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &
     CHECK_POINTER_AND_RETURN_LOG(topAbilityRecord, REMOVE_MISSION_ID_NOT_EXIST, "top ability is invalid.");
     auto windowInfo = topAbilityRecord->GetWindowInfo();
     int windowID = 0;
-    if(windowInfo){
+    if (windowInfo) {
         windowID = windowInfo->windowToken_;
         HILOG_INFO("windowID is %{public}d", windowID);
     }
