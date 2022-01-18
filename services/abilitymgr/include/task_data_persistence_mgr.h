@@ -28,6 +28,8 @@ namespace AAFwk {
 const std::string THREAD_NAME = "TaskDataStorage";
 const std::string SAVE_MISSION_INFO = "SaveMissionInfo";
 const std::string DELETE_MISSION_INFO = "DeleteMissionInfo";
+const std::string SAVE_MISSION_SNAPSHOT = "SaveMissionSnapshot";
+const std::string GET_MISSION_SNAPSHOT = "GetMissionSnapshot";
 
 class TaskDataPersistenceMgr : public std::enable_shared_from_this<TaskDataPersistenceMgr> {
     DECLARE_DELAYED_SINGLETON(TaskDataPersistenceMgr)
@@ -65,6 +67,22 @@ public:
      * @return Returns true if the directory is successfully removed; returns false otherwise.
      */
     bool RemoveUserDir(int32_t userId);
+
+    /**
+     * @brief save mission snapshot
+     * @param missionId id of mission
+     * @param snapshot result of snapshot
+     * @return return true if update mission snapshot success, else false
+     */
+    bool SaveMissionSnapshot(int missionId, const MissionSnapshot& snapshot);
+
+    /**
+     * @brief get the mission snapshot object
+     * @param missionId id of mission
+     * @param missionSnapshot
+     * @return return true if update mission snapshot success, else false
+     */
+    bool GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot);
 
 private:
     std::unordered_map<int, std::shared_ptr<MissionDataStorage>> missionDataStorageMgr_;

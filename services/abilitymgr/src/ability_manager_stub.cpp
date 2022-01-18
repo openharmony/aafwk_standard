@@ -130,6 +130,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[GET_PROCESS_RUNNING_INFO] = &AbilityManagerStub::GetProcessRunningInfosInner;
     requestFuncMap_[SET_ABILITY_CONTROLLER] = &AbilityManagerStub::SetAbilityControllerInner;
     requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsUserAStabilityTestInner;
+    requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

@@ -941,7 +941,6 @@ private:
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;
-    sptr<ISnapshotHandler> snapshotHandler_;
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;
