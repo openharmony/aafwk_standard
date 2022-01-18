@@ -51,11 +51,24 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     }
 
     std::string srcPath(abilityInfo->package);
-    srcPath.append("/assets/js/");
-    if (!abilityInfo->srcPath.empty()) {
-        srcPath.append(abilityInfo->srcPath);
+    if (!abilityInfo->isStageBasedModel) {
+        /* temporary compatibility api8 + config.json */
+        srcPath.append("/assets/js/");
+        if (!abilityInfo->srcPath.empty()) {
+            srcPath.append(abilityInfo->srcPath);
+        }
+        srcPath.append("/").append(abilityInfo->name).append(".abc");
+    } else {
+        if (abilityInfo->srcEntrance.empty()) {
+            HILOG_ERROR("abilityInfo srcEntrance is empty");
+            return;
+        }
+        srcPath.append("/");
+        srcPath.append(abilityInfo->srcEntrance);
+        srcPath.erase(srcPath.rfind("."));
+        srcPath.append(".abc");
+        HILOG_INFO("JsAbility srcPath is %{public}s", srcPath.c_str());
     }
-    srcPath.append("/").append(abilityInfo->name).append(".abc");
 
     std::string moduleName(abilityInfo->moduleName);
     moduleName.append("::").append(abilityInfo->name);
