@@ -63,6 +63,7 @@ ohos_moduletest("dump_module_test") {
 
   external_deps = [
     "bytrace_standard:bytrace_core",
+    "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
