@@ -89,7 +89,7 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
         }
 
         abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
-        
+
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
@@ -108,7 +108,7 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
 
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-      
+
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId, true);
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);

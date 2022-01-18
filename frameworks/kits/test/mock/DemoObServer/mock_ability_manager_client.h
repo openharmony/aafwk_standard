@@ -37,7 +37,7 @@ public:
     DemoAbilityManagerClientData() {};
     virtual ~DemoAbilityManagerClientData() {};
 
-    std::map<std::string, sptr<AAFwk::IAbilityScheduler>> data;   
+    std::map<std::string, sptr<AAFwk::IAbilityScheduler>> data;
 };
 
 static DemoAbilityManagerClientData demoAbilityMgrClientData;
@@ -52,9 +52,9 @@ sptr<AAFwk::IAbilityScheduler> AAFwk::AbilityManagerClient::AcquireDataAbility(
         sptr<AppExecFwk::AbilityThread> abilityThread = AppExecFwk::MockCreateAbilityThread();
         sptr<AAFwk::AbilitySchedulerProxy> remoteProxy(new (std::nothrow) AAFwk::AbilitySchedulerProxy(abilityThread));
         demoAbilityMgrClientData.data.emplace(uri.ToString(), remoteProxy);
-        
+
         retval = remoteProxy;
-        
+
         if (retval == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock result retval is  nullptr called";
         }

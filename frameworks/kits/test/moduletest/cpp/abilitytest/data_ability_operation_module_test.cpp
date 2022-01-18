@@ -122,7 +122,7 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_AssertBuilde
 
     int count = operation->GetExpectedCount();
     EXPECT_EQ(count, 2);
-    
+
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_AssertBuilder_0100";
 }
 
@@ -144,7 +144,7 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_DeleteBuilde
     EXPECT_NE(operation, nullptr);
     bool isDeleteOperation = operation->IsDeleteOperation();
     EXPECT_TRUE(isDeleteOperation);
-    
+
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_DeleteBuilder_0100";
 }
 
