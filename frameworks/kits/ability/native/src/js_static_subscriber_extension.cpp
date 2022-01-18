@@ -47,12 +47,14 @@ void JsStaticSubscriberExtension::Init(const std::shared_ptr<AbilityLocalRecord>
     const sptr<IRemoteObject>& token)
 {
     StaticSubscriberExtension::Init(record, application, handler, token);
-    std::string srcPath(Extension::abilityInfo_->package);
-    srcPath.append("/assets/js/");
-    if (!Extension::abilityInfo_->srcPath.empty()) {
-        srcPath.append(Extension::abilityInfo_->srcPath);
+    if (Extension::abilityInfo_->srcEntrance.empty()) {
+        HILOG_ERROR("%{public}s abilityInfo srcEntrance is empty", __func__);
+        return;
     }
-    srcPath.append("/").append(Extension::abilityInfo_->name).append(".abc");
+    std::string srcPath(Extension::abilityInfo_->moduleName + "/");
+    srcPath.append(Extension::abilityInfo_->srcEntrance);
+    srcPath.erase(srcPath.rfind('.'));
+    srcPath.append(".abc");
 
     std::string moduleName(Extension::abilityInfo_->moduleName);
     moduleName.append("::").append(abilityInfo_->name);
