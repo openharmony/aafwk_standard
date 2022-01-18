@@ -118,9 +118,9 @@ void AbilityDumpTest::OnStartAms()
         if (g_abilityMs->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-   
+
         g_abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
-        
+
         g_abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(g_abilityMs->eventLoop_);
 
@@ -139,7 +139,7 @@ void AbilityDumpTest::OnStartAms()
 
         g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_abilityMs->pendingWantManager_);
-      
+
         int userId = g_abilityMs->GetUserId();
         g_abilityMs->SetStackManager(userId, true);
         g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
@@ -189,7 +189,7 @@ void AbilityDumpTest::StartAbilityes()
     if (currentTopAbilityRecord) {
         currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
     }
-    
+
     startAbility6();
     startAbility1();
     startAbility2();

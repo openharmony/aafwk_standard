@@ -224,7 +224,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_EventNotify_0100, Func
 
     // callerToken
     const sptr<IRemoteObject> callerToken = MockFormSupplyCallback::GetInstance();
-    
+
     // want
     Want want;
     want.SetParam(Constants::PARAM_FORM_MANAGER_SERVICE_BUNDLENAME_KEY, FORM_MANAGER_SERVICE_BUNDLE_NAME)
@@ -259,7 +259,7 @@ HWTEST_F(FormProviderClientTest, AaFwk_FormProviderClient_EventNotify_0200, Func
 
     // callerToken
     const sptr<IRemoteObject> callerToken = MockFormSupplyCallback::GetInstance();
-    
+
     // want
     Want want;
     want.SetParam(Constants::PARAM_FORM_MANAGER_SERVICE_BUNDLENAME_KEY, FORM_MANAGER_SERVICE_BUNDLE_NAME)

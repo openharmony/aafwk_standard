@@ -120,9 +120,9 @@ void AbilityManagerServiceTest::OnStartAms()
         if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-   
+
         abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
-        
+
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
@@ -730,7 +730,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
     wantLuncher.SetElement(elementLun);
     abilityMs_->StartAbility(wantLuncher);
     WaitUntilTaskFinished();
-    
+
     Want want;
     ElementName element("device", "com.ix.music", "MusicAbility");
     want.SetElement(element);
@@ -2013,7 +2013,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_001, TestSize.Level1)
     AbilityRecordInfo barAbilityInfo;
     barAbility->GetAbilityRecordInfo(barAbilityInfo);
     auto dialogtoken = barAbility->GetToken();
-    
+
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
     EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -2254,12 +2254,12 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_008, TestSize.Level1)
     auto abilityToken = ability->GetToken();
 
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
- 
+
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
-    
+
     // helloAbility inactive
     stackManager->CompleteInactive(ability);
 
@@ -2305,7 +2305,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_009, TestSize.Level1)
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
-    
+
     // helloAbility inactive
     stackManager->CompleteInactive(ability);
 
@@ -2403,7 +2403,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_011, TestSize.Level1)
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
 
     abilityMs_->HandleLoadTimeOut(INT32_MAX);
-  
+
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");

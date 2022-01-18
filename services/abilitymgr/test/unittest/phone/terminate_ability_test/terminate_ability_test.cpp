@@ -130,9 +130,9 @@ void TerminateAbilityTest::OnStartAms()
         if (g_aams->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-   
+
         g_aams->state_ = ServiceRunningState::STATE_RUNNING;
-        
+
         g_aams->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(g_aams->eventLoop_);
 
@@ -151,7 +151,7 @@ void TerminateAbilityTest::OnStartAms()
 
         g_aams->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_aams->pendingWantManager_);
-      
+
         int userId = g_aams->GetUserId();
         g_aams->SetStackManager(userId, true);
         g_aams->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
@@ -224,7 +224,7 @@ bool TerminateAbilityTest::StartAbility(
         GTEST_LOG_(ERROR) << "new token is nullptr";
         return false;
     }
-    
+
     abilityScheduler = new AbilityScheduler();
     if (g_aams->AttachAbilityThread(abilityScheduler, token) != 0) {
         GTEST_LOG_(ERROR) << "fail to AttachAbilityThread";
@@ -772,7 +772,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_014, TestSize.Level1
     std::shared_ptr<AbilityRecord> testAbilityRecordB = stackManager->GetCurrentTopAbility();
 
     EXPECT_EQ(g_aams->AttachAbilityThread(new AbilityScheduler(), tokenB), 0);
-    
+
     testAbilityRecordA->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVE);
     testAbilityRecordB->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
