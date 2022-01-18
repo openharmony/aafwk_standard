@@ -78,9 +78,31 @@ NativeValue* CreateJsAbilityInfo(NativeEngine& engine, const AppExecFwk::Ability
     object->SetProperty("minFormWidth", CreateJsValue(engine, abilityInfo.minFormWidth));
     object->SetProperty("defaultFormWidth", CreateJsValue(engine, abilityInfo.defaultFormWidth));
     object->SetProperty("uri", CreateJsValue(engine, abilityInfo.uri));
-    // customizeData: Map<string, Array<CustomizeData>>;
 
+    object->SetProperty("metaData", CreateJsCustomizeDataArray(engine, abilityInfo.metaData.customizeData));
     return objValue;
+}
+
+NativeValue* CreateJsCustomizeData(NativeEngine& engine, const AppExecFwk::CustomizeData &Info)
+{
+    NativeValue *objValue = engine.CreateObject();
+    NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    object->SetProperty("name", CreateJsValue(engine, Info.name));
+    object->SetProperty("value", CreateJsValue(engine, Info.value));
+    object->SetProperty("extra", CreateJsValue(engine, Info.extra));
+    return objValue;
+}
+
+NativeValue* CreateJsCustomizeDataArray(NativeEngine& engine, const std::vector<AppExecFwk::CustomizeData> &info)
+{
+    NativeValue* arrayValue = engine.CreateArray(info.size());
+    NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
+    uint32_t index = 0;
+    for (const auto& item : info) {
+        array->SetElement(index++, CreateJsCustomizeData(engine, item));
+    }
+    return arrayValue;
 }
 
 NativeValue* CreateJsModuleInfo(NativeEngine& engine, const AppExecFwk::ModuleInfo &moduleInfo)
@@ -126,6 +148,10 @@ NativeValue* CreateJsApplicationInfo(NativeEngine& engine, const AppExecFwk::App
         }
     }
     object->SetProperty("moduleInfo", arrayValue);
+    // metaData: Map<string, Array<CustomizeData>>;
+    for (auto &item : applicationInfo.metaData) {
+        object->SetProperty(item.first.c_str(), CreateJsCustomizeDataArray(engine, item.second));
+    }
 
     return objValue;
 }
