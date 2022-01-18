@@ -328,13 +328,13 @@ public:
 
         // ipc id for dataAbilityObServer Reguster
         SCHEDULE_REGISTEROBSERVER,
-		
+
         // ipc id for dataAbilityObServer UnReguster
         SCHEDULE_UNREGISTEROBSERVER,
-		
-		// ipc id for dataAbilityObServer change
+
+        // ipc id for dataAbilityObServer change
         SCHEDULE_NOTIFYCHANGE,
-		
+
         // ipc id for scheduling multi window changed
         MULTI_WIN_CHANGED,
 
@@ -348,8 +348,8 @@ public:
 
         // ipc id for scheduling DenormalizeUri
         SCHEDULE_DENORMALIZEURI,
-		
-		// ipc id for scheduling ExecuteBatch
+
+        // ipc id for scheduling ExecuteBatch
         SCHEDULE_EXECUTEBATCH,
 
         // ipc id for notify continuation result

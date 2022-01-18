@@ -67,7 +67,7 @@ void DataAbilityHelperForObserverTest::TearDown(void)
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -100,7 +100,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetFileTypes_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -133,7 +133,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetFileTypes_
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -163,7 +163,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0100
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenFile_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -193,7 +193,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenFile_0200
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -224,7 +224,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0100, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Insert_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -255,7 +255,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Insert_0200, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -287,7 +287,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0100, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Update_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -319,7 +319,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Update_0200, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -349,7 +349,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0100, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Delete_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -379,7 +379,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Delete_0200, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -411,7 +411,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0100, F
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Query_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -443,7 +443,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Query_0200, F
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -472,7 +472,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0100,
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_GetType_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -501,7 +501,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_GetType_0200,
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -531,7 +531,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_OpenRawFile_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -561,7 +561,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_OpenRawFile_0
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -588,7 +588,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0100, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_Reload_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -615,7 +615,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_Reload_0200, 
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -642,7 +642,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0200, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_BatchInsert_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -669,7 +669,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_BatchInsert_0
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -677,7 +677,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
     // Test to AbilityThread interface
-    auto returnNormalizeUri = [&](const Uri &uri) { 
+    auto returnNormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -686,7 +686,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
         .WillOnce(testing::Invoke(returnNormalizeUri));
 
     dataAbilityHelper->NormalizeUri(*uri);
-    
+
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0100 end";
 }
 
@@ -698,7 +698,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_0200, Function | MediumTest | Level3)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_NormalizeUri_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -706,7 +706,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
     // Test to AbilityThread interface
-    auto returnNormalizeUri = [&](const Uri &uri) { 
+    auto returnNormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -727,7 +727,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_NormalizeUri_
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUri_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0100 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -735,7 +735,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context, uri);
     // Test to AbilityThread interface
-    auto returnDenormalizeUri = [&](const Uri &uri) { 
+    auto returnDenormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
@@ -756,7 +756,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
 HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUri_0200, Function | MediumTest | Level3)
 {
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityHelper_DenormalizeUri_0200 start";
-    
+
     std::shared_ptr<MockAbilitySchedulerTools> mockTools = MockAbilitySchedulerTools::GetInstance();
     mockTools->SetMockStatus(true);
     std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
@@ -764,7 +764,7 @@ HWTEST_F(DataAbilityHelperForObserverTest, AaFwk_DataAbilityHelper_DenormalizeUr
         std::make_shared<Uri>("dataability://device_id/com.domainname.dataability.persondata/person/10");
     std::shared_ptr<DataAbilityHelper> dataAbilityHelper = DataAbilityHelper::Creator(context);
     // Test to AbilityThread interface
-    auto returnDenormalizeUri = [&](const Uri &uri) { 
+    auto returnDenormalizeUri = [&](const Uri &uri) {
         Uri uriValue("dataability://device_id/com.domainname.dataability.");
         return uriValue;
     };
