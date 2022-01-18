@@ -2189,7 +2189,7 @@ int AbilityManagerProxy::SetAbilityController(const sptr<AppExecFwk::IAbilityCon
     return reply.ReadInt32();
 }
 
-bool AbilityManagerProxy::IsUserAStabilityTest()
+bool AbilityManagerProxy::IsRunningInStabilityTest()
 {
     MessageParcel data;
     MessageParcel reply;

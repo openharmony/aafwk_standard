@@ -590,7 +590,7 @@ public:
      *
      * @return Returns true if user is a stability test.
      */
-    virtual bool IsUserAStabilityTest() = 0;
+    virtual bool IsRunningInStabilityTest() = 0;
 
     /**
      * @brief Register the snapshot handler

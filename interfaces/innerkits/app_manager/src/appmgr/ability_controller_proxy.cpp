@@ -33,7 +33,7 @@ bool AbilityControllerProxy::WriteInterfaceToken(MessageParcel &data)
     return true;
 }
 
-bool AbilityControllerProxy::AbilityStarting(const Want &want, const std::string &bundleName)
+bool AbilityControllerProxy::AllowAbilityStart(const Want &want, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -49,7 +49,7 @@ bool AbilityControllerProxy::AbilityStarting(const Want &want, const std::string
         return true;
     }
     int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ABILITY_STARTING),
+        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_START),
         data, reply, option);
     if (ret != NO_ERROR) {
         APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
@@ -58,7 +58,7 @@ bool AbilityControllerProxy::AbilityStarting(const Want &want, const std::string
     return reply.ReadBool();
 }
 
-bool AbilityControllerProxy::AbilityResuming(const std::string &bundleName)
+bool AbilityControllerProxy::AllowAbilityForeground(const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -73,7 +73,7 @@ bool AbilityControllerProxy::AbilityResuming(const std::string &bundleName)
         return true;
     }
     int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ABILITY_RESUMING),
+        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_FOREGROUND),
         data, reply, option);
     if (ret != NO_ERROR) {
         APP_LOGW("SendRequest is failed, error code: %{public}d", ret);

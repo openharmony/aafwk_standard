@@ -76,10 +76,10 @@ public:
         return (me != nullptr) ? me->OnGetProcessRunningInfos(*engine, *info) : nullptr;
     }
 
-    static NativeValue* IsUserAStabilityTest(NativeEngine* engine, NativeCallbackInfo* info)
+    static NativeValue* IsRunningInStabilityTest(NativeEngine* engine, NativeCallbackInfo* info)
     {
         JsAppManager* me = CheckParamsAndGetThis<JsAppManager>(engine, info);
-        return (me != nullptr) ? me->OnIsUserAStabilityTest(*engine, *info) : nullptr;
+        return (me != nullptr) ? me->OnIsRunningInStabilityTest(*engine, *info) : nullptr;
     }
 
 private:
@@ -237,7 +237,7 @@ private:
         return result;
     }
 
-    NativeValue* OnIsUserAStabilityTest(NativeEngine& engine, NativeCallbackInfo& info)
+    NativeValue* OnIsRunningInStabilityTest(NativeEngine& engine, NativeCallbackInfo& info)
     {
         // only support 0 or 1 params
         if (info.argc != ARGC_ONE && info.argc != ARGC_ZERO) {
@@ -251,9 +251,9 @@ private:
                     task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "abilityManager nullptr"));
                     return;
                 }
-                HILOG_INFO("IsUserAStabilityTest begin");
-                bool ret = abilityManager->IsUserAStabilityTest();
-                HILOG_INFO("IsUserAStabilityTest result:%{public}d", ret);
+                HILOG_INFO("IsRunningInStabilityTest begin");
+                bool ret = abilityManager->IsRunningInStabilityTest();
+                HILOG_INFO("IsRunningInStabilityTest result:%{public}d", ret);
                 task.Resolve(engine, CreateJsValue(engine, ret));
             };
 
@@ -312,10 +312,10 @@ NativeValue* JsAppManagerInit(NativeEngine* engine, NativeValue* exportObj)
         JsAppManager::UnregisterApplicationStateObserver);
     BindNativeFunction(*engine, *object, "getForegroundApplications",
         JsAppManager::GetForegroundApplications);
-    BindNativeFunction(*engine, *object, "isUserAStabilityTest",
-        JsAppManager::IsUserAStabilityTest);
     BindNativeFunction(*engine, *object, "getProcessRunningInfos",
         JsAppManager::GetProcessRunningInfos);
+    BindNativeFunction(*engine, *object, "isRunningInStabilityTest",
+        JsAppManager::IsRunningInStabilityTest);
     HILOG_INFO("JsAppManagerInit end");
     return engine->CreateUndefined();
 }

@@ -732,11 +732,11 @@ public:
      *
      * @return Returns true if user is a stability test.
      */
-    virtual bool IsUserAStabilityTest() override;
+    virtual bool IsRunningInStabilityTest() override;
 
-    bool IsAbilityControllerStarting(const Want &want, const std::string &bundleName);
+    bool IsAbilityControllerStart(const Want &want, const std::string &bundleName);
 
-    bool IsAbilityControllerResuming(const std::string &bundleName);
+    bool IsAbilityControllerForeground(const std::string &bundleName);
 
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
