@@ -39,6 +39,8 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
   "${services_path}/abilitymgr/src/stack_info.cpp",
   "${services_path}/abilitymgr/src/mission_stack_info.cpp",
+  "${services_path}/abilitymgr/src/ability_running_info.cpp",
+  "${services_path}/abilitymgr/src/extension_running_info.cpp",
   "${services_path}/abilitymgr/src/mission_record_info.cpp",
   "${services_path}/abilitymgr/src/ability_record_info.cpp",
   "${services_path}/abilitymgr/src/ability_mission_info.cpp",

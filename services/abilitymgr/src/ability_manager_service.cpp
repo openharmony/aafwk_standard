@@ -231,25 +231,27 @@ int AbilityManagerService::StartAbility(
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_INFO("%{public}s 1111111111", __func__);
     AbilityRequest abilityRequest;
     int result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken);
     if (result != ERR_OK) {
         HILOG_ERROR("Generate ability request error.");
         return result;
     }
+    HILOG_INFO("%{public}s 2222222", __func__);
     auto abilityInfo = abilityRequest.abilityInfo;
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
         return result;
     }
+    HILOG_INFO("%{public}s 3333333", __func__);
     auto type = abilityInfo.type;
     if (type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_INFO("%{public}s 4444444", __func__);
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
         result = PreLoadAppDataAbilities(abilityInfo.bundleName);
         if (result != ERR_OK) {
@@ -2797,6 +2799,59 @@ int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &c
         callback->OnStopUserDone(userId, ERR_OK);
     }
     return 0;
+}
+
+int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    HILOG_DEBUG("Get running ability infos.");
+    auto bundleMgr = GetBundleManager();
+    if (!bundleMgr) {
+        HILOG_ERROR("bundleMgr is nullptr.");
+        return INNER_ERR;
+    }
+
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto isSystem = bundleMgr->CheckIsSystemAppByUid(callerUid);
+    HILOG_DEBUG("callerUid : %{public}d, isSystem : %{public}d", callerUid, static_cast<int>(isSystem));
+
+    if (!isSystem) {
+        HILOG_ERROR("callar is not system app.");
+        return INNER_ERR;
+    }
+
+    currentMissionListManager_->GetAbilityRunningInfos(info);
+    kernalAbilityManager_->GetAbilityRunningInfos(info);
+    connectManager_->GetAbilityRunningInfos(info);
+    dataAbilityManager_->GetAbilityRunningInfos(info);
+
+    return ERR_OK;
+}
+
+int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info)
+{
+    HILOG_DEBUG("Get extension infos, upperLimit : %{public}d", upperLimit);
+    auto bundleMgr = GetBundleManager();
+    if (!bundleMgr) {
+        HILOG_ERROR("bundleMgr is nullptr.");
+        return INNER_ERR;
+    }
+
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto isSystem = bundleMgr->CheckIsSystemAppByUid(callerUid);
+    HILOG_DEBUG("callerUid : %{public}d, isSystem : %{public}d", callerUid, static_cast<int>(isSystem));
+
+    if (!isSystem) {
+        HILOG_ERROR("callar is not system app.");
+        return INNER_ERR;
+    }
+
+    connectManager_->GetExtensionRunningInfos(upperLimit, info);
+    return ERR_OK;
+}
+
+int AbilityManagerService::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    return DelayedSingleton<AppScheduler>::GetInstance()->GetProcessRunningInfos(info);
 }
 
 void AbilityManagerService::ClearUserData(int32_t userId)

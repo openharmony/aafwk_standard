@@ -242,10 +242,22 @@ void AppScheduler::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo,
     appMgrClient_->GetSystemMemoryAttr(memoryInfo, strConfig);
 }
 
+void AppScheduler::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info)
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->GetRunningProcessInfoByToken(token, info);
+}
+
 void AppScheduler::StartupResidentProcess()
 {
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->StartupResidentProcess();
+}
+
+int AppScheduler::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    return static_cast<int>(appMgrClient_->GetAllRunningProcesses(info));
 }
 }  // namespace AAFwk
 }  // namespace OHOS
