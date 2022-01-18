@@ -129,8 +129,8 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[GET_EXTENSION_RUNNING_INFO] = &AbilityManagerStub::GetExtensionRunningInfosInner;
     requestFuncMap_[GET_PROCESS_RUNNING_INFO] = &AbilityManagerStub::GetProcessRunningInfosInner;
     requestFuncMap_[SET_ABILITY_CONTROLLER] = &AbilityManagerStub::SetAbilityControllerInner;
-    requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsUserAStabilityTestInner;
     requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
+    requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsRunningInStabilityTestInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1280,12 +1280,12 @@ int AbilityManagerStub::SetAbilityControllerInner(MessageParcel &data, MessagePa
     return NO_ERROR;
 }
 
-int AbilityManagerStub::IsUserAStabilityTestInner(MessageParcel &data, MessageParcel &reply)
+int AbilityManagerStub::IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply)
 {
-    bool result = IsUserAStabilityTest();
-    HILOG_INFO("AbilityManagerStub: isUserAStabilityTest result = %{public}d", result);
+    bool result = IsRunningInStabilityTest();
+    HILOG_INFO("AbilityManagerStub: IsRunningInStabilityTest result = %{public}d", result);
     if (!reply.WriteBool(result)) {
-        HILOG_ERROR("isUserAStabilityTest failed.");
+        HILOG_ERROR("IsRunningInStabilityTest failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

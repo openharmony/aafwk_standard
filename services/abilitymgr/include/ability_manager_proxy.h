@@ -551,7 +551,7 @@ public:
      *
      * @return Returns true if user is a stability test.
      */
-    virtual bool IsUserAStabilityTest() override;
+    virtual bool IsRunningInStabilityTest() override;
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 

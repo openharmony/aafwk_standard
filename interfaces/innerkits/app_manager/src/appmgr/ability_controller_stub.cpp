@@ -24,11 +24,11 @@ namespace AppExecFwk {
 AbilityControllerStub::AbilityControllerStub()
 {
     memberFuncMap_[static_cast<uint32_t>(
-        IAbilityController::Message::TRANSACT_ON_ABILITY_STARTING)] =
-        &AbilityControllerStub::HandleAbilityStarting;
+        IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_START)] =
+        &AbilityControllerStub::HandleAllowAbilityStart;
     memberFuncMap_[static_cast<uint32_t>(
-        IAbilityController::Message::TRANSACT_ON_ABILITY_RESUMING)] =
-        &AbilityControllerStub::HandleAbilityResuming;
+        IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_FOREGROUND)] =
+        &AbilityControllerStub::HandleAllowAbilityForeground;
 }
 
 AbilityControllerStub::~AbilityControllerStub()
@@ -57,35 +57,35 @@ int AbilityControllerStub::OnRemoteRequest(
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
-bool AbilityControllerStub::AbilityStarting(const Want &want, const std::string &bundleName)
+bool AbilityControllerStub::AllowAbilityStart(const Want &want, const std::string &bundleName)
 {
     return true;
 }
 
-bool AbilityControllerStub::AbilityResuming(const std::string &bundleName)
+bool AbilityControllerStub::AllowAbilityForeground(const std::string &bundleName)
 {
     return true;
 }
 
-int32_t AbilityControllerStub::HandleAbilityStarting(MessageParcel &data, MessageParcel &reply)
+int32_t AbilityControllerStub::HandleAllowAbilityStart(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("HandleAbilityStarting");
+    APP_LOGI("HandleAllowAbilityStart");
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
         APP_LOGE("ReadParcelable<Want> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     std::string pkg = data.ReadString();
-    bool ret = AbilityStarting(*want, pkg);
+    bool ret = AllowAbilityStart(*want, pkg);
     reply.WriteBool(ret);
     return NO_ERROR;
 }
 
-int32_t AbilityControllerStub::HandleAbilityResuming(MessageParcel &data, MessageParcel &reply)
+int32_t AbilityControllerStub::HandleAllowAbilityForeground(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("HandleAbilityResuming");
+    APP_LOGI("HandleAllowAbilityForeground");
     std::string pkg = data.ReadString();
-    bool ret = AbilityResuming(pkg);
+    bool ret = AllowAbilityForeground(pkg);
     reply.WriteBool(ret);
     return NO_ERROR;
 }

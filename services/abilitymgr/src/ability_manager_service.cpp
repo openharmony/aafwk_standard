@@ -268,7 +268,7 @@ int AbilityManagerService::StartAbility(
         return connectManager_->StartAbility(abilityRequest);
     }
 
-    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+    if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
 
@@ -330,7 +330,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return ERR_INVALID_VALUE;
     }
 
-    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+    if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
 
@@ -386,7 +386,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         }
     }
 
-    if (!IsAbilityControllerStarting(want, abilityInfo.bundleName)) {
+    if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
     if (IsSystemUiApp(abilityRequest.abilityInfo)) {
@@ -446,7 +446,7 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
         RequestPermission(resultWant);
     }
 
-    if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+    if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
         return ERR_WOULD_BLOCK;
     }
 
@@ -588,7 +588,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
         case AppExecFwk::AbilityType::EXTENSION: {
             auto result = connectManager_->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
-                if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+                if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
                     return ERR_WOULD_BLOCK;
                 }
                 return currentStackManager_->TerminateAbility(abilityRecord, requestCode);
@@ -596,7 +596,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
             return result;
         }
         case AppExecFwk::AbilityType::PAGE: {
-            if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+            if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
                 return ERR_WOULD_BLOCK;
             }
             auto result = currentStackManager_->TerminateAbility(abilityRecord, requestCode);
@@ -631,7 +631,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token)
         return ERR_INVALID_VALUE;
     }
 
-    if (!IsAbilityControllerResuming(abilityRecord->GetAbilityInfo().bundleName)) {
+    if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
         return ERR_WOULD_BLOCK;
     }
 
@@ -3012,19 +3012,19 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
     return ERR_OK;
 }
 
-bool AbilityManagerService::IsUserAStabilityTest()
+bool AbilityManagerService::IsRunningInStabilityTest()
 {
     std::lock_guard<std::recursive_mutex> guard(globalLock_);
     bool ret = abilityController_ != nullptr && controllerIsAStabilityTest_;
-    HILOG_DEBUG("%{public}s, isUserAStabilityTest: %{public}d", __func__, ret);
+    HILOG_DEBUG("%{public}s, IsRunningInStabilityTest: %{public}d", __func__, ret);
     return ret;
 }
 
-bool AbilityManagerService::IsAbilityControllerStarting(const Want &want, const std::string &bundleName)
+bool AbilityManagerService::IsAbilityControllerStart(const Want &want, const std::string &bundleName)
 {
     if (abilityController_ != nullptr) {
         HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
-        bool isStart = abilityController_->AbilityStarting(want, bundleName);
+        bool isStart = abilityController_->AllowAbilityStart(want, bundleName);
         if (!isStart) {
             HILOG_INFO("Not finishing start ability because controller starting: %{public}s", bundleName.c_str());
             return false;
@@ -3033,11 +3033,11 @@ bool AbilityManagerService::IsAbilityControllerStarting(const Want &want, const 
     return true;
 }
 
-bool AbilityManagerService::IsAbilityControllerResuming(const std::string &bundleName)
+bool AbilityManagerService::IsAbilityControllerForeground(const std::string &bundleName)
 {
     if (abilityController_ != nullptr) {
         HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
-        bool isResume = abilityController_->AbilityResuming(bundleName);
+        bool isResume = abilityController_->AllowAbilityForeground(bundleName);
         if (!isResume) {
             HILOG_INFO("Not finishing terminate ability because controller resuming: %{public}s", bundleName.c_str());
             return false;

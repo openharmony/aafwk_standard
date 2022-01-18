@@ -31,23 +31,25 @@ public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.appexecfwk.IAbilityController");
 
     /**
-     * The system is trying to start an ability. Return true to allow, or false to reject.
+     * The system is trying to start an ability.
      *
      * @param want The want of ability to start.
      * @param bundleName The bundleName of ability to start.
+     * @return Return true to allow ability to start, or false to reject.
      */
-    virtual bool AbilityStarting(const Want &want, const std::string &bundleName) = 0;
+    virtual bool AllowAbilityStart(const Want &want, const std::string &bundleName) = 0;
 
     /**
-     * The system is trying to return to an ability. Return true to allow, or false to reject.
+     * The system is scheduling Ability to the foreground.
      *
      * @param bundleName The bundleName of ability to return.
+     * @return Return true to allow ability to foreground, or false to reject.
      */
-    virtual bool AbilityResuming(const std::string &bundleName) = 0;
+    virtual bool AllowAbilityForeground(const std::string &bundleName) = 0;
 
     enum class Message {
-        TRANSACT_ON_ABILITY_STARTING = 0,
-        TRANSACT_ON_ABILITY_RESUMING,
+        TRANSACT_ON_ALLOW_ABILITY_START = 0,
+        TRANSACT_ON_ALLOW_ABILITY_FOREGROUND,
     };
 };
 }  // namespace AppExecFwk
