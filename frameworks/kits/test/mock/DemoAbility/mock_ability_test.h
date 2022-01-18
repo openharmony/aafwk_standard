@@ -72,7 +72,7 @@ public:
             return -1;
         }
         fd = fileno(fd2);
-       
+
         return fd;
     }
 

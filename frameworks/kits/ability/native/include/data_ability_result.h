@@ -26,66 +26,66 @@ namespace AppExecFwk {
 class DataAbilityResult final : public Parcelable {
 public:
     /**
-     * @brief A constructor used to create a DataAbilityResult instance 
-     * with the input parameter count specified. 
+     * @brief A constructor used to create a DataAbilityResult instance
+     * with the input parameter count specified.
      */
     DataAbilityResult(int count);
-    
+
     /**
-     * @brief A constructor used to create a DataAbilityResult instance 
+     * @brief A constructor used to create a DataAbilityResult instance
      * with the input parameter uri specified
-     */    
+     */
     DataAbilityResult(const Uri &uri);
-    
+
     /**
-     * @brief A constructor used to create a DataAbilityResult instance 
+     * @brief A constructor used to create a DataAbilityResult instance
      * with a Parcel object specified.
      */
     DataAbilityResult(Parcel &parcel);
 
     /**
-     * @brief A constructor used to create a DataAbilityResult instance 
-     * with input parameters uri, count, and failure specified. 
+     * @brief A constructor used to create a DataAbilityResult instance
+     * with input parameters uri, count, and failure specified.
      */
     DataAbilityResult(const Uri &uri, int count);
 
     ~DataAbilityResult();
 
     /**
-     * @brief Obtains the Uri object corresponding to the operation. 
-     * @return Obtains the Uri object corresponding to the operation. 
+     * @brief Obtains the Uri object corresponding to the operation.
+     * @return Obtains the Uri object corresponding to the operation.
      */
     Uri GetUri();
 
     /**
-     * @brief Obtains the number of rows affected by the operation. 
+     * @brief Obtains the number of rows affected by the operation.
      * @return Returns the number of rows affected by the operation.
      */
     int GetCount();
 
     /**
-     * @brief Prints out a string containing the class object information. 
+     * @brief Prints out a string containing the class object information.
      * @return Returns object information.
      */
     std::string ToString();
 
     /**
-     * @brief Marshals a DataAbilityResult object into a Parcel. 
+     * @brief Marshals a DataAbilityResult object into a Parcel.
      * @param parcel Indicates the Parcel object for marshalling.
      * @return Returns true if the marshalling is successful; returns false otherwise.
      */
     virtual bool Marshalling(Parcel &parcel) const;
 
     /**
-     * @brief Unmarshals a DataAbilityResult object from a Parcel. 
+     * @brief Unmarshals a DataAbilityResult object from a Parcel.
      * @param parcel Indicates the Parcel object for unmarshalling.
      * @return Returns true if the unmarshalling is successful; returns false otherwise.
      */
     static DataAbilityResult *Unmarshalling(Parcel &parcel);
 
     /**
-     * @brief Creates a DataAbilityResult instance based on the given Parcel object. 
-     * Used to transfer DataAbilityResult object using Parcel. 
+     * @brief Creates a DataAbilityResult instance based on the given Parcel object.
+     * Used to transfer DataAbilityResult object using Parcel.
      * @param parcel Indicates the Parcel object.
      * @return Returns the DataAbilityResult object.
      */
@@ -93,7 +93,7 @@ public:
 
 private:
     Uri uri_;
-    int count_;    
+    int count_;
 
     bool ReadFromParcel(Parcel &parcel);
     // no object in parcel

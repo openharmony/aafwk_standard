@@ -468,7 +468,7 @@ HWTEST_F(MissionStackTest, MS_oprator_019, TestSize.Level1)
 
     auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
     auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
-    
+
     MissionOption option;
     option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
     missionRecordOne->SetMissionOption(option);
@@ -500,7 +500,7 @@ HWTEST_F(MissionStackTest, MS_oprator_020, TestSize.Level1)
 
     auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
     auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
-    
+
     EXPECT_EQ(0, (int)missionStack_->missions_.size());
 
     missionStack_->AddMissionRecordToEnd(missionRecordOne);
@@ -527,7 +527,7 @@ HWTEST_F(MissionStackTest, MS_oprator_021, TestSize.Level1)
 
     auto missionRecordOne = std::make_shared<MissionRecord>("test_one");
     auto missionRecordTwo = std::make_shared<MissionRecord>("test_two");
-    
+
     MissionOption option;
     option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
     missionRecordOne->SetMissionOption(option);

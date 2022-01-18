@@ -56,7 +56,7 @@ public:
     using SuccessCallback = std::function<void()>;
     // A callback that is called when the operation fails.
     using FailureCallback = std::function<void()>;
-    
+
     using ProgressCallback = std::function<void(int64_t)>;
 
     // This class represents information of an entry (file or directory) in

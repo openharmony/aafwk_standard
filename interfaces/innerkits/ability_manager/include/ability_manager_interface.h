@@ -575,7 +575,7 @@ public:
 
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) = 0;
-    
+
     /**
      * Set ability controller.
      *
