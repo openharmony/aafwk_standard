@@ -22,6 +22,8 @@
 
 #include "inner_mission_info.h"
 #include "mission_listener_controller.h"
+#include "mission_snapshot.h"
+#include "snapshot.h"
 #include "task_data_persistence_mgr.h"
 
 namespace OHOS {
@@ -120,6 +122,32 @@ public:
      * @param info dump result.
      */
     void Dump(std::vector<std::string> &info);
+
+    /**
+     * @brief update mission snapshot
+     * @param missionId mission id
+     * @param abilityToken abilityToken to get current mission snapshot
+     * @param missionSnapshot result of snapshot
+     * @return return true if update mission snapshot success, else false
+     */
+    bool UpdateMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+        MissionSnapshot& missionSnapshot) const;
+
+    /**
+     * @brief get the mission snapshot object
+     * @param missionId mission id
+     * @param abilityToken abilityToken to get current mission snapshot
+     * @param missionSnapshot result of snapshot
+     * @return true return true if get mission snapshot success, else false
+     */
+    bool GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+        MissionSnapshot& missionSnapshot) const;
+
+    /**
+     * @brief register snapshotHandler
+     * @param handler the snapshotHandler
+     */
+    void RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
 private:
     /**
      * @brief Boot query mission info.
@@ -131,6 +159,7 @@ private:
     std::unordered_map<int32_t, bool> missionIdMap_; // key:distributed misisonid, vaule: has been saved
     std::list<InnerMissionInfo> missionInfoList_;
     std::shared_ptr<TaskDataPersistenceMgr> taskDataPersistenceMgr_;
+    sptr<ISnapshotHandler> snapshotHandler_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

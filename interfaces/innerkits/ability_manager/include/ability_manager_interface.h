@@ -832,6 +832,7 @@ public:
         START_SYNC_MISSIONS = 1112,
         STOP_SYNC_MISSIONS = 1113,
         REGISTER_SNAPSHOT_HANDLER = 1114,
+        GET_MISSION_SNAPSHOT_INFO = 1115,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
