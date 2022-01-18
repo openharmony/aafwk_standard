@@ -27,6 +27,8 @@
 #include "foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/configuration.h"
 #include "mission_snapshot.h"
 #include "ability_mission_info.h"
+#include "ability_running_info.h"
+#include "extension_running_info.h"
 #include "mission_option.h"
 #include "stack_info.h"
 #include "stack_setting.h"
@@ -43,9 +45,9 @@
 #include "snapshot.h"
 #include "start_options.h"
 #include "stop_user_callback.h"
+#include "running_process_info.h"
 #include "remote_mission_listener_interface.h"
 #include "iability_controller.h"
-
 
 namespace OHOS {
 namespace AAFwk {
@@ -99,8 +101,11 @@ public:
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) { return 0; }
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions, const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE)
+    {
+        return 0;
+    }
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -508,8 +513,8 @@ public:
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) = 0;
 
-    virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
-        int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) = 0;
+    virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId, int32_t missionId,
+        const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) = 0;
 
     virtual int ContinueAbility(const std::string &deviceId, int32_t missionId) = 0;
 
@@ -527,11 +532,10 @@ public:
 
     virtual int UnRegisterMissionListener(const sptr<IMissionListener> &listener) = 0;
 
-    virtual int GetMissionInfos(const std::string& deviceId, int32_t numMax,
-        std::vector<MissionInfo> &missionInfos) = 0;
+    virtual int GetMissionInfos(
+        const std::string &deviceId, int32_t numMax, std::vector<MissionInfo> &missionInfos) = 0;
 
-    virtual int GetMissionInfo(const std::string& deviceId, int32_t missionId,
-        MissionInfo &missionInfo) = 0;
+    virtual int GetMissionInfo(const std::string &deviceId, int32_t missionId, MissionInfo &missionInfo) = 0;
 
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) = 0;
 
@@ -545,6 +549,12 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) = 0;
 
+    virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
+
+    virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) = 0;
+
+    virtual int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info) = 0;
+
     /**
      * Start synchronizing remote device mission
      * @param devId, deviceId.
@@ -552,17 +562,16 @@ public:
      * @param tag, call tag.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) = 0;
+    virtual int StartSyncRemoteMissions(const std::string &devId, bool fixConflict, int64_t tag) = 0;
 
     /**
      * Stop synchronizing remote device mission
      * @param devId, deviceId.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StopSyncRemoteMissions(const std::string& devId) = 0;
+    virtual int StopSyncRemoteMissions(const std::string &devId) = 0;
 
-    virtual int RegisterMissionListener(const std::string &deviceId,
-        const sptr<IRemoteMissionListener> &listener) = 0;
+    virtual int RegisterMissionListener(const std::string &deviceId, const sptr<IRemoteMissionListener> &listener) = 0;
 
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) = 0;
@@ -706,7 +715,7 @@ public:
         // ipc id for minimize ability (38)
         MINIMIZE_ABILITY,
 
-         // ipc id for lock mission for cleanup operation (39)
+        // ipc id for lock mission for cleanup operation (39)
         LOCK_MISSION_FOR_CLEANUP,
 
         // ipc id for unlock mission for cleanup operation (40)
@@ -718,7 +727,7 @@ public:
         // ipc id for unregister mission listener (42)
         UNREGISTER_MISSION_LISTENER,
 
-         // ipc id for get mission infos (43)
+        // ipc id for get mission infos (43)
         GET_MISSION_INFOS,
 
         // ipc id for get mission info by id (44)
@@ -795,6 +804,12 @@ public:
         GET_ABILITY_MISSION_SNAPSHOT,
 
         GET_SYSTEM_MEMORY_ATTR,
+
+        GET_ABILITY_RUNNING_INFO,
+
+        GET_EXTENSION_RUNNING_INFO,
+
+        GET_PROCESS_RUNNING_INFO,
 
         CLEAR_UP_APPLICATION_DATA,
 

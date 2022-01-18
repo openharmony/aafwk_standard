@@ -460,6 +460,7 @@ NativeValue* JsMissionManagerInit(NativeEngine* engine, NativeValue* exportObj)
     BindNativeFunction(*engine, *object, "clearMission", JsMissionManager::ClearMission);
     BindNativeFunction(*engine, *object, "clearAllMissions", JsMissionManager::ClearAllMissions);
     BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
+    BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
     return engine->CreateUndefined();
 }
 }  // namespace AbilityRuntime

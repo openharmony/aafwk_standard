@@ -20,6 +20,7 @@
 #include <queue>
 #include <memory>
 
+#include "ability_running_info.h"
 #include "mission_list.h"
 #include "mission_listener_controller.h"
 #include "mission_info.h"
@@ -249,6 +250,8 @@ public:
      * @param info dump result.
      */
     void DumpMissionInfos(std::vector<std::string> &info);
+
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 private:
     int StartAbilityLocked(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);

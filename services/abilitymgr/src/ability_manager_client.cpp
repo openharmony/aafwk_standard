@@ -753,6 +753,27 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId)
     return abms->MoveMissionToFront(missionId);
 }
 
+ErrCode AbilityManagerClient::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetAbilityRunningInfos(info);
+}
+
+ErrCode AbilityManagerClient::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetExtensionRunningInfos(upperLimit, info);
+}
+
+ErrCode AbilityManagerClient::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetProcessRunningInfos(info);
+}
+
 /**
  * Start synchronizing remote device mission
  * @param devId, deviceId.
@@ -760,37 +781,32 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId)
  * @param tag, call tag.
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode AbilityManagerClient::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
+ErrCode AbilityManagerClient::StartSyncRemoteMissions(const std::string &devId, bool fixConflict, int64_t tag)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StartSyncRemoteMissions(devId, fixConflict, tag);
 }
-
 /**
  * Stop synchronizing remote device mission
  * @param devId, deviceId.
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode AbilityManagerClient::StopSyncRemoteMissions(const std::string& devId)
+ErrCode AbilityManagerClient::StopSyncRemoteMissions(const std::string &devId)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StopSyncRemoteMissions(devId);
 }
-
 ErrCode AbilityManagerClient::StartUser(int accountId)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StartUser(accountId);
 }
-
 ErrCode AbilityManagerClient::StopUser(int accountId, const sptr<IStopUserCallback> &callback)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StopUser(accountId, callback);
 }
@@ -810,4 +826,4 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, in
     return abms->GetMissionSnapshot(deviceId, missionId, snapshot);
 }
 }  // namespace AAFwk
-}  // namespace OHOS
+}  // namespace AAFwk

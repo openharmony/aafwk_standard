@@ -1494,5 +1494,49 @@ void MissionListManager::DumpMission(int missionId, std::vector<std::string> &in
     }
     innerMissionInfo.Dump(info);
 }
+
+void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+
+    auto func = [&info](const std::shared_ptr<Mission> &mission) {
+        if (!mission) {
+            return;
+        }
+
+        auto ability = mission->GetAbilityRecord();
+        if (!ability) {
+            return;
+        }
+
+        AbilityRunningInfo runningInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+
+        runningInfo.ability = ability->GetWant().GetElement();
+        runningInfo.startTime = ability->GetStartTime();
+        runningInfo.abilityState = static_cast<int>(ability->GetAbilityState());
+
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
+        runningInfo.pid = processInfo.pid_;
+        runningInfo.uid = processInfo.uid_;
+        runningInfo.processName = processInfo.processName_;
+        info.emplace_back(runningInfo);
+    };
+    if (!(defaultStandardList_->GetAllMissions().empty())) {
+        auto list = defaultStandardList_->GetAllMissions();
+        std::for_each(list.begin(), list.end(), func);
+    }
+    if (!(defaultSingleList_->GetAllMissions().empty())) {
+        auto list = defaultSingleList_->GetAllMissions();
+        std::for_each(list.begin(), list.end(), func);
+    }
+    for (auto missionList : currentMissionLists_) {
+        if (!(missionList->GetAllMissions().empty())) {
+            auto list = missionList->GetAllMissions();
+            std::for_each(list.begin(), list.end(), func);
+        }
+    }
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -679,6 +679,10 @@ public:
 
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
 
+    virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override;
+    virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) override;
+    virtual int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info) override;
+
     int GetMissionSaveTime() const;
 
     /**

@@ -36,6 +36,7 @@ const std::string COM_IX_HIRADIO = "com.ix.hiRadio";
 const std::string COM_IX_HISERVICE = "com.ix.hiService";
 const std::string COM_IX_MUSICSERVICE = "com.ix.musicService";
 const std::string COM_IX_HIDATA = "com.ix.hiData";
+const std::string COM_IX_HIEXTENSION = "com.ix.hiExtension";
 constexpr int32_t MAX_SYS_UID = 2899;
 constexpr int32_t ROOT_UID = 0;
 
@@ -121,6 +122,16 @@ auto HiDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     abilityInfo.applicationInfo.name = "hiData";
     abilityInfo.type = AbilityType::DATA;
     abilityInfo.process = "p6";
+    return true;
+};
+
+auto HiExtensionInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationName = "hiExtension";
+    abilityInfo.applicationInfo.name = "hiExtension";
+    abilityInfo.type = AbilityType::EXTENSION;
     return true;
 };
 }  // namespace

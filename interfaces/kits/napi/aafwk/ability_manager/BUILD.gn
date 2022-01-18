@@ -13,20 +13,19 @@
 
 import("//build/ohos.gni")
 
-ohos_shared_library("missionmanager_napi") {
+ohos_shared_library("abilitymanager_napi") {
   include_dirs = []
 
   sources = [
-    "js_mission_info_utils.cpp",
-    "js_mission_listener.cpp",
-    "mission_manager.cpp",
-    "native_module.cpp",
+    "ability_manager_module.cpp",
+    "js_ability_manager.cpp",
+    "js_ability_manager_utils.cpp",
   ]
 
   configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
 
   include_dirs = [
-    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//third_party/icu/icu4c/source/common",
@@ -55,56 +54,9 @@ ohos_shared_library("missionmanager_napi") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
-    "multimedia_image_standard:image",
   ]
 
   relative_install_dir = "module/application"
-
-  subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
-}
-
-ohos_shared_library("distributedmissionmanager") {
-  include_dirs = [
-    "//third_party/libuv/include",
-    "//third_party/node/src",
-    "//utils/native/base/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-  ]
-
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
-
-  cflags = [
-    "-fPIC",
-    "-g3",
-  ]
-
-  sources = [
-    "mission_continue_stub.cpp",
-    "napi_mission_registration.cpp",
-  ]
-
-  deps = [
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "ipc_js:rpc",
-  ]
-
-  relative_install_dir = "module"
 
   subsystem_name = "aafwk"
   part_name = "aafwk_standard"
