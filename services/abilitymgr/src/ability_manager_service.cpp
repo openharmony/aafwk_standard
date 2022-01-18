@@ -28,6 +28,7 @@
 #include "ability_manager_errors.h"
 #include "ability_util.h"
 #include "bytrace.h"
+#include "bundle_mgr_client.h"
 #include "configuration_distributor.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
@@ -2007,8 +2008,12 @@ int AbilityManagerService::GenerateAbilityRequest(
     bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
         userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
-        HILOG_ERROR("Get ability info failed.");
-        return RESOLVE_ABILITY_ERR;
+        // try to find extension
+        int ret = GetAbilityInfoFromExtension(want, request.abilityInfo);
+        if (!ret) {
+            HILOG_ERROR("Get ability info failed.");
+            return RESOLVE_ABILITY_ERR;
+        }
     }
     HILOG_DEBUG("Query ability name: %{public}s,", request.abilityInfo.name.c_str());
     if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE) {
@@ -3035,6 +3040,73 @@ bool AbilityManagerService::IsAbilityControllerResuming(const std::string &bundl
         }
     }
     return true;
+}
+
+int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
+    AppExecFwk::AbilityInfo &abilityInfo)
+{
+    abilityInfo.bundleName = extensionInfo.bundleName;
+    abilityInfo.package = extensionInfo.moduleName;
+    abilityInfo.moduleName = extensionInfo.moduleName;
+    abilityInfo.name = extensionInfo.name;
+    abilityInfo.srcEntrance = extensionInfo.srcEntrance;
+    abilityInfo.srcPath = extensionInfo.srcEntrance;
+    abilityInfo.iconPath = extensionInfo.icon;
+    abilityInfo.iconId = extensionInfo.iconId;
+    abilityInfo.label = extensionInfo.label;
+    abilityInfo.labelId = extensionInfo.labelId;
+    abilityInfo.description = extensionInfo.description;
+    abilityInfo.descriptionId = extensionInfo.descriptionId;
+    abilityInfo.permissions = extensionInfo.permissions;
+    abilityInfo.readPermission = extensionInfo.readPermission;
+    abilityInfo.writePermission = extensionInfo.writePermission;
+    abilityInfo.extensionAbilityType = extensionInfo.type;
+    abilityInfo.visible = extensionInfo.visible;
+    abilityInfo.applicationInfo = extensionInfo.applicationInfo;
+    abilityInfo.resourcePath = extensionInfo.resourcePath;
+    abilityInfo.enabled = extensionInfo.enabled;
+    switch (extensionInfo.type) {
+        case AppExecFwk::ExtensionAbilityType::FORM:
+            abilityInfo.type = AppExecFwk::AbilityType::FORM;
+            break;
+        case AppExecFwk::ExtensionAbilityType::SERVICE:
+            abilityInfo.type = AppExecFwk::AbilityType::SERVICE;
+            break;
+        case AppExecFwk::ExtensionAbilityType::DATASHARE:
+            abilityInfo.type = AppExecFwk::AbilityType::DATA;
+            break;
+        default:
+            abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
+            break;
+    }
+    return 0;
+}
+
+int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, AppExecFwk::AbilityInfo &abilityInfo)
+{
+    ElementName elementName = want.GetElement();
+    std::string bundleName = elementName.GetBundleName();
+    std::string abilityName = elementName.GetAbilityName();
+    AppExecFwk::BundleMgrClient bundleClient;
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!bundleClient.GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo)) {
+        HILOG_ERROR("Failed to get bundle info when generate ability request.");
+        return RESOLVE_APP_ERR;
+    }
+    bool found = false;
+
+    for (auto &extensionInfo: bundleInfo.extensionInfos) {
+        if (extensionInfo.name != abilityName) {
+            continue;
+        }
+        found = true;
+        HILOG_DEBUG("GetExtensionAbilityInfo, extension ability info found, name=%{public}s", abilityName.c_str());
+        abilityInfo.applicationName = bundleInfo.applicationInfo.name;
+        InitAbilityInfoFromExtension(extensionInfo, abilityInfo);
+        break;
+    }
+
+    return found;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
