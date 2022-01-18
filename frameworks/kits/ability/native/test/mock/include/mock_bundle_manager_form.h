@@ -184,7 +184,7 @@ public:
     };
 
     /**
-	 *  @brief Obtains information about the shortcuts of the application.
+     *  @brief Obtains information about the shortcuts of the application.
      *  @param bundleName Indicates the name of the bundle to shortcut.
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success
@@ -396,7 +396,7 @@ public:
     };
 
     /**
-	 *  @brief Obtains information about the shortcuts of the application.
+     *  @brief Obtains information about the shortcuts of the application.
      *  @param bundleName Indicates the name of the bundle to shortcut.
      *  @param form Indicates the callback a list to shortcutinfo.
      *  @return Returns true if shortcutinfo get success

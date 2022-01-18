@@ -52,7 +52,7 @@ public:
       * @param useNewMission new mission flag.
       */
      static void SetUseNewMission(bool useNewMission);
- 
+
      /**
       * @brief Get if use new mission.
       *

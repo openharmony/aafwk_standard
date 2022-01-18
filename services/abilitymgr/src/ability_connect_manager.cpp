@@ -941,5 +941,62 @@ void AbilityConnectManager::DumpState(std::vector<std::string> &info, const std:
         }
     }
 }
+
+void AbilityConnectManager::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info)
+{
+    HILOG_INFO("Get extension running info.");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    auto queryInfo = [&info, upperLimit](ServiceMapType::reference service) {
+        if (static_cast<int>(info.size()) >= upperLimit) {
+            return;
+        }
+        auto abilityRecord = service.second;
+        CHECK_POINTER(abilityRecord);
+        ExtensionRunningInfo extensionInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+        extensionInfo.extension = abilityRecord->GetWant().GetElement();
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
+        extensionInfo.pid = processInfo.pid_;
+        extensionInfo.uid = processInfo.uid_;
+        extensionInfo.processName = processInfo.processName_;
+        extensionInfo.startTime = abilityRecord->GetStartTime();
+        ConnectListType connectRecordList = abilityRecord->GetConnectRecordList();
+        for (auto &connectRecord : connectRecordList) {
+            CHECK_POINTER(connectRecord);
+            auto callerAbilityRecord = Token::GetAbilityRecordByToken(connectRecord->GetToken());
+            CHECK_POINTER(callerAbilityRecord);
+            std::string package = callerAbilityRecord->GetAbilityInfo().bundleName;
+            extensionInfo.clientPackage.emplace_back(package);
+        }
+        info.emplace_back(extensionInfo);
+        // extension type
+    };
+    std::for_each(serviceMap_.begin(), serviceMap_.end(), queryInfo);
+}
+
+void AbilityConnectManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    HILOG_INFO("Query running ability infos.");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+
+    auto queryInfo = [&info](ServiceMapType::reference service) {
+        auto abilityRecord = service.second;
+        CHECK_POINTER(abilityRecord);
+        AbilityRunningInfo runningInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+        runningInfo.ability = abilityRecord->GetWant().GetElement();
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
+        runningInfo.pid = processInfo.pid_;
+        runningInfo.uid = processInfo.uid_;
+        runningInfo.processName = processInfo.processName_;
+        runningInfo.startTime = abilityRecord->GetStartTime();
+        runningInfo.abilityState = static_cast<int>(abilityRecord->GetAbilityState());
+        info.emplace_back(runningInfo);
+    };
+
+    std::for_each(serviceMap_.begin(), serviceMap_.end(), queryInfo);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

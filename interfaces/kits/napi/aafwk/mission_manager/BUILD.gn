@@ -25,13 +25,20 @@ ohos_shared_library("missionmanager_napi") {
 
   configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
 
-  include_dirs =
-      [ "//foundation/multimedia/image_standard/interfaces/innerkits/include" ]
+  include_dirs = [
+    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "//base/global/resmgr_standard/interfaces/innerkits/include",
+    "//third_party/icu/icu4c/source/common",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
+    "//foundation/communication/ipc/ipc/native/src/napi/include",
+  ]
 
   deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
@@ -41,11 +48,13 @@ ohos_shared_library("missionmanager_napi") {
   ]
 
   external_deps = [
+    "aafwk_standard:ability_manager",
     "aafwk_standard:runtime",
     "aafwk_standard:want",
     "appexecfwk_standard:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "ipc_js:rpc",
     "multimedia_image_standard:image",
   ]
 
@@ -55,7 +64,7 @@ ohos_shared_library("missionmanager_napi") {
   part_name = "aafwk_standard"
 }
 
-ohos_shared_library("missionregistration_napi") {
+ohos_shared_library("distributedmissionmanager") {
   include_dirs = [
     "//third_party/libuv/include",
     "//third_party/node/src",

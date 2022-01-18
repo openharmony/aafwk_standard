@@ -88,6 +88,7 @@ BundleMgrService::BundleMgrService()
     abilityInfoMap_.emplace(COM_IX_HISERVICE, HiServiceInfo);
     abilityInfoMap_.emplace(COM_IX_MUSICSERVICE, MusicServiceInfo);
     abilityInfoMap_.emplace(COM_IX_HIDATA, HiDataInfo);
+    abilityInfoMap_.emplace(COM_IX_HIEXTENSION, HiExtensionInfo);
     GTEST_LOG_(INFO) << "BundleMgrService()";
 }
 

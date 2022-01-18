@@ -130,8 +130,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int NotifyWhetherVisibleForms(
-        const std::vector<int64_t> &formIds, 
-        const sptr<IRemoteObject> &callerToken, 
+        const std::vector<int64_t> &formIds,
+        const sptr<IRemoteObject> &callerToken,
         const int32_t formVisibleType)
     {
         if (formIds.size() == 1) {
@@ -139,7 +139,7 @@ public:
         }
         return 1;
     }
-    
+
     /**
      * @brief temp form to normal form.
      * @param formId The Id of the form.
@@ -196,7 +196,7 @@ public:
             return ERR_OK;
         } else {
             return ERR_INVALID_VALUE;
-        }  
+        }
     }
 
     /**
@@ -207,8 +207,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int LifecycleUpdate(
-        const std::vector<int64_t> &formIds, 
-        const sptr<IRemoteObject> &callerToken, 
+        const std::vector<int64_t> &formIds,
+        const sptr<IRemoteObject> &callerToken,
         const int32_t updateType)
     {
         if (formIds.size() == 0) {

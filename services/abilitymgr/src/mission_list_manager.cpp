@@ -753,6 +753,17 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
             terminateAbility->Terminate(timeoutTask);
         }
     }
+    auto mission = abilityRecord->GetMission();
+    if (!mission) {
+        HILOG_ERROR("snapshot: GetMission failed");
+        return;
+    }
+    MissionSnapshot snapshot;
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(mission->GetMissionId(),
+        abilityRecord->GetToken(), snapshot);
+    if (listenerController_) {
+        listenerController_->NotifyMissionSnapshotChanged(mission->GetMissionId());
+    }
 }
 
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &abilityRecord,
@@ -1527,6 +1538,61 @@ void MissionListManager::MissionDmInitCallback::OnRemoteDied()
 {
     isInit_ = false;
     HILOG_WARN("DeviceManager died.");
+}
+
+void MissionListManager::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
+{
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->RegisterSnapshotHandler(handler);
+}
+
+void MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+    MissionSnapshot& missionSnapshot)
+{
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionSnapshot(missionId, abilityToken, missionSnapshot);
+}
+
+void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+
+    auto func = [&info](const std::shared_ptr<Mission> &mission) {
+        if (!mission) {
+            return;
+        }
+
+        auto ability = mission->GetAbilityRecord();
+        if (!ability) {
+            return;
+        }
+
+        AbilityRunningInfo runningInfo;
+        AppExecFwk::RunningProcessInfo processInfo;
+
+        runningInfo.ability = ability->GetWant().GetElement();
+        runningInfo.startTime = ability->GetStartTime();
+        runningInfo.abilityState = static_cast<int>(ability->GetAbilityState());
+
+        DelayedSingleton<AppScheduler>::GetInstance()->
+            GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
+        runningInfo.pid = processInfo.pid_;
+        runningInfo.uid = processInfo.uid_;
+        runningInfo.processName = processInfo.processName_;
+        info.emplace_back(runningInfo);
+    };
+    if (!(defaultStandardList_->GetAllMissions().empty())) {
+        auto list = defaultStandardList_->GetAllMissions();
+        std::for_each(list.begin(), list.end(), func);
+    }
+    if (!(defaultSingleList_->GetAllMissions().empty())) {
+        auto list = defaultSingleList_->GetAllMissions();
+        std::for_each(list.begin(), list.end(), func);
+    }
+    for (auto missionList : currentMissionLists_) {
+        if (!(missionList->GetAllMissions().empty())) {
+            auto list = missionList->GetAllMissions();
+            std::for_each(list.begin(), list.end(), func);
+        }
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS

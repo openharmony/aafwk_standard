@@ -22,6 +22,7 @@
 #include <string>
 
 #include "ability_record.h"
+#include "ability_running_info.h"
 #include "data_ability_record.h"
 #include "nocopyable.h"
 
@@ -46,6 +47,7 @@ public:
     std::shared_ptr<AbilityRecord> GetAbilityRecordByScheduler(const sptr<IAbilityScheduler> &scheduler);
     void Dump(const char *func, int line);
     void DumpState(std::vector<std::string> &info, const std::string &args = "") const;
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 
 private:
     using DataAbilityRecordPtr = std::shared_ptr<DataAbilityRecord>;

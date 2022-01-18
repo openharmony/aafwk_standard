@@ -412,12 +412,12 @@ HWTEST_F(FormAbilityTest, AaFwk_Ability_DeleteForm_0100, Function | MediumTest |
         .SetElementName(deviceId2, bundleName2, abilityName2)
         .SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, tempFormFlg2);
     std::shared_ptr<MockPageAbility::FormCallback> callback_2;
-    
+
     ability_->appCallbacks_.insert(std::make_pair(120L, callback1));
     ability_->userReqParams_.insert(std::make_pair(120L, want1));
     ability_->appCallbacks_.insert(std::make_pair(121L, callback_2));
     ability_->userReqParams_.insert(std::make_pair(121L, want2));
-    
+
     int64_t formId = 120L;
     ability_->DeleteForm(formId);
 
@@ -497,7 +497,7 @@ HWTEST_F(FormAbilityTest, AaFwk_Ability_DeleteForm_0400, Function | MediumTest |
         .SetElementName(deviceId2, bundleName2, abilityName2)
         .SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, tempFormFlg2);
     std::shared_ptr<MockPageAbility::FormCallback> callback2;
-    
+
     ability_->appCallbacks_.insert(std::make_pair(120L, callback1));
     ability_->userReqParams_.insert(std::make_pair(120L, want1));
     ability_->appCallbacks_.insert(std::make_pair(121L, callback2));
@@ -1098,7 +1098,7 @@ HWTEST_F(FormAbilityTest, AaFwk_Ability_FmsDeathCallback_OnDeathReceived_0200, F
         .SetElementName(deviceId2, bundleName2, abilityName2)
         .SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, tempFormFlg2);
     std::shared_ptr<MockPageAbility::FormCallback> callback2;
-    
+
     FormMgr::GetInstance().RegisterDeathCallback(ability_);
 
     int64_t formId1 = 200L;
@@ -1157,7 +1157,7 @@ HWTEST_F(FormAbilityTest, AaFwk_Ability_FmsDeathCallback_OnDeathReceived_0300, F
         .SetElementName(deviceId2, bundleName2, abilityName2)
         .SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, tempFormFlg2);
     std::shared_ptr<MockPageAbility::FormCallback> callback2;
-    
+
     FormMgr::GetInstance().RegisterDeathCallback(ability_);
 
     int64_t formId1 = 200L;

@@ -20,10 +20,13 @@
 #include <queue>
 #include <memory>
 
+#include "ability_running_info.h"
 #include "foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp/include/device_manager.h"
 #include "mission_list.h"
 #include "mission_listener_controller.h"
 #include "mission_info.h"
+#include "mission_snapshot.h"
+#include "snapshot.h"
 #include "want.h"
 
 namespace OHOS {
@@ -250,6 +253,22 @@ public:
      * @param info dump result.
      */
     void DumpMissionInfos(std::vector<std::string> &info);
+
+    /**
+     * @brief register snapshotHandler
+     * @param handler the snapshotHandler
+     */
+    void RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
+
+    /**
+     * @brief Get the Mission Snapshot object
+     * @param missionId mission id
+     * @param abilityToken abilityToken to get current mission snapshot
+     * @param missionSnapshot result of snapshot
+     */
+    void GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+        MissionSnapshot& missionSnapshot);
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 private:
     int StartAbilityLocked(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);

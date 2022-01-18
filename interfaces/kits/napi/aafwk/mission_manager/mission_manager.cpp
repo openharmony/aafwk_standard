@@ -33,7 +33,7 @@ using namespace OHOS::AppExecFwk;
 using AbilityManagerClient = AAFwk::AbilityManagerClient;
 namespace {
     constexpr int32_t ARG_COUNT_TWO = 1;
-    constexpr int32_t ARG_COUNT_THREE = 1;
+    constexpr int32_t ARG_COUNT_THREE = 3;
 }
 class JsMissionManager {
 public:
@@ -256,7 +256,7 @@ private:
             return engine.CreateUndefined();
         }
         int32_t missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+        if (!ConvertFromJsValue(engine, info.argv[1], missionId)) {
             HILOG_ERROR("missionSnapshot: Parse missionId failed");
             return engine.CreateUndefined();
         }
@@ -459,6 +459,7 @@ NativeValue* JsMissionManagerInit(NativeEngine* engine, NativeValue* exportObj)
     BindNativeFunction(*engine, *object, "unlockMission", JsMissionManager::UnlockMission);
     BindNativeFunction(*engine, *object, "clearMission", JsMissionManager::ClearMission);
     BindNativeFunction(*engine, *object, "clearAllMissions", JsMissionManager::ClearAllMissions);
+    BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
     BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
     return engine->CreateUndefined();
 }

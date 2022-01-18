@@ -28,7 +28,7 @@ ConnectionManager& ConnectionManager::GetInstance()
 }
 
 ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCaller,
-    const AAFwk::Want &want, const std::shared_ptr<AbilityConnectCallback> &connectCallback)
+    const AAFwk::Want &want, const sptr<AbilityConnectCallback> &connectCallback)
 {
     if (connectCaller == nullptr || connectCallback == nullptr) {
         HILOG_ERROR("%{public}s, connectCaller or connectCallback is nullptr.", __func__);
@@ -43,13 +43,13 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
     sptr<AbilityConnection> abilityConnection;
     auto item = std::find_if(abilityConnections_.begin(), abilityConnections_.end(),
         [&connectCaller, &connectReceiver](const std::map<ConnectionInfo,
-            std::vector<std::shared_ptr<AbilityConnectCallback>>>::value_type &obj) {
+            std::vector<sptr<AbilityConnectCallback>>>::value_type &obj) {
                 return connectCaller == obj.first.connectCaller &&
                     connectReceiver.GetBundleName() == obj.first.connectReceiver.GetBundleName() &&
                     connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName();
         });
     if (item != abilityConnections_.end()) {
-        std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks = item->second;
+        std::vector<sptr<AbilityConnectCallback>> callbacks = item->second;
         callbacks.push_back(connectCallback);
         abilityConnections_[item->first] = callbacks;
         abilityConnection = item->first.abilityConnection;
@@ -61,7 +61,7 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
                 abilityConnection->GetResultCode());
             return ERR_OK;
         } else {
-            return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+            return HandleCallbackTimeOut(connectCaller, want, connectReceiver, abilityConnection, connectCallback);
         }
     } else {
         abilityConnection = new AbilityConnection(connectCallback);
@@ -69,7 +69,7 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
             AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
         if (ret == ERR_OK) {
             ConnectionInfo connectionInfo(connectCaller, connectReceiver, abilityConnection);
-            std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks;
+            std::vector<sptr<AbilityConnectCallback>> callbacks;
             callbacks.push_back(connectCallback);
             abilityConnections_[connectionInfo] = callbacks;
         }
@@ -80,7 +80,7 @@ ErrCode ConnectionManager::ConnectAbility(const sptr<IRemoteObject> &connectCall
 }
 
 ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectCaller,
-    const AppExecFwk::ElementName &connectReceiver, const std::shared_ptr<AbilityConnectCallback> &connectCallback)
+    const AppExecFwk::ElementName &connectReceiver, const sptr<AbilityConnectCallback> &connectCallback)
 {
     if (connectCaller == nullptr || connectCallback == nullptr) {
         HILOG_ERROR("%{public}s, connectCaller or connectCallback is nullptr.", __func__);
@@ -93,13 +93,13 @@ ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectC
 
     auto item = std::find_if(abilityConnections_.begin(), abilityConnections_.end(),
         [&connectCaller, &connectReceiver](
-            const std::map<ConnectionInfo, std::vector<std::shared_ptr<AbilityConnectCallback>>>::value_type &obj) {
+            const std::map<ConnectionInfo, std::vector<sptr<AbilityConnectCallback>>>::value_type &obj) {
             return connectCaller == obj.first.connectCaller &&
                    connectReceiver.GetBundleName() == obj.first.connectReceiver.GetBundleName() &&
                    connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName();
         });
     if (item != abilityConnections_.end()) {
-        std::vector<std::shared_ptr<AbilityConnectCallback>> callbacks = item->second;
+        std::vector<sptr<AbilityConnectCallback>> callbacks = item->second;
         HILOG_DEBUG("%{public}s begin remove callback, callbackSize:%{public}d.", __func__, (int32_t)callbacks.size());
         auto iter = callbacks.begin();
         while (iter != callbacks.end()) {
@@ -197,6 +197,23 @@ bool ConnectionManager::IsConnectReceiverEqual(const AppExecFwk::ElementName &co
 {
     return connectReceiver.GetBundleName() == connectReceiverOther.GetBundleName() &&
            connectReceiver.GetAbilityName() == connectReceiverOther.GetAbilityName();
+}
+
+ErrCode ConnectionManager::HandleCallbackTimeOut(const sptr<IRemoteObject> &connectCaller, const AAFwk::Want &want,
+    const AppExecFwk::ElementName &connectReceiver, sptr<AbilityConnection> abilityConnection,
+    const sptr<AbilityConnectCallback> &connectCallback)
+{
+    if (abilityConnection->GetRemoteObject() == nullptr) {
+        while (true) {
+            if (abilityConnection->GetRemoteObject() != nullptr) {
+                connectCallback->OnAbilityConnectDone(connectReceiver, abilityConnection->GetRemoteObject(),
+                    abilityConnection->GetResultCode());
+                return ERR_OK;
+            }
+        }
+    } else {
+        return AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, abilityConnection, connectCaller);
+    }
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

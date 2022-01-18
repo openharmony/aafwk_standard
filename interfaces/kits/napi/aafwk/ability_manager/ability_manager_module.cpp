@@ -13,24 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_JS_WINDOW_UTILS_H
-#define OHOS_JS_WINDOW_UTILS_H
 #include "native_engine/native_engine.h"
-#include "native_engine/native_value.h"
-#include "window.h"
-#include "window_option.h"
-#include "wm_common.h"
+#include "js_ability_manager.h"
 
-namespace OHOS {
-namespace AbilityRuntime {
-namespace {
-    constexpr size_t ARGC_ONE = 1;
-    constexpr size_t ARGC_TWO = 2;
-    constexpr int32_t INDEX_ONE = 1;
-    constexpr int32_t INDEX_TWO = 2;
-}
+extern "C" __attribute__((constructor))
+void NAPI_application_AbilityManager_AutoRegister()
+{
+    auto moduleManager = NativeModuleManager::GetInstance();
+    NativeModule newModuleInfo = {
+        .name = "application.AbilityManager",
+        .fileName = "application/abilitymanager_napi.so/ability_manager.js",
+        .registerCallback = OHOS::AbilityRuntime::JsAbilityManagerInit,
+    };
 
-    NativeValue* CreateJsWindowPropertiesObject(NativeEngine& engine, sptr<Rosen::Window>& window);
+    moduleManager->Register(&newModuleInfo);
 }
-}
-#endif

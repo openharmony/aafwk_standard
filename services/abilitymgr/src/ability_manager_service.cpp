@@ -28,6 +28,7 @@
 #include "ability_manager_errors.h"
 #include "ability_util.h"
 #include "bytrace.h"
+#include "bundle_mgr_client.h"
 #include "configuration_distributor.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
@@ -40,6 +41,7 @@
 #include "softbus_bus_center.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "png.h"
 
 using OHOS::AppExecFwk::ElementName;
 
@@ -231,25 +233,27 @@ int AbilityManagerService::StartAbility(
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_INFO("%{public}s 1111111111", __func__);
     AbilityRequest abilityRequest;
     int result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken);
     if (result != ERR_OK) {
         HILOG_ERROR("Generate ability request error.");
         return result;
     }
+    HILOG_INFO("%{public}s 2222222", __func__);
     auto abilityInfo = abilityRequest.abilityInfo;
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
         return result;
     }
+    HILOG_INFO("%{public}s 3333333", __func__);
     auto type = abilityInfo.type;
     if (type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_INFO("%{public}s 4444444", __func__);
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
         result = PreLoadAppDataAbilities(abilityInfo.bundleName);
         if (result != ERR_OK) {
@@ -2005,8 +2009,12 @@ int AbilityManagerService::GenerateAbilityRequest(
     bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
         userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
-        HILOG_ERROR("Get ability info failed.");
-        return RESOLVE_ABILITY_ERR;
+        // try to find extension
+        int ret = GetAbilityInfoFromExtension(want, request.abilityInfo);
+        if (!ret) {
+            HILOG_ERROR("Get ability info failed.");
+            return RESOLVE_ABILITY_ERR;
+        }
     }
     HILOG_DEBUG("Query ability name: %{public}s,", request.abilityInfo.name.c_str());
     if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE) {
@@ -2799,6 +2807,59 @@ int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &c
     return 0;
 }
 
+int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+{
+    HILOG_DEBUG("Get running ability infos.");
+    auto bundleMgr = GetBundleManager();
+    if (!bundleMgr) {
+        HILOG_ERROR("bundleMgr is nullptr.");
+        return INNER_ERR;
+    }
+
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto isSystem = bundleMgr->CheckIsSystemAppByUid(callerUid);
+    HILOG_DEBUG("callerUid : %{public}d, isSystem : %{public}d", callerUid, static_cast<int>(isSystem));
+
+    if (!isSystem) {
+        HILOG_ERROR("callar is not system app.");
+        return INNER_ERR;
+    }
+
+    currentMissionListManager_->GetAbilityRunningInfos(info);
+    kernalAbilityManager_->GetAbilityRunningInfos(info);
+    connectManager_->GetAbilityRunningInfos(info);
+    dataAbilityManager_->GetAbilityRunningInfos(info);
+
+    return ERR_OK;
+}
+
+int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info)
+{
+    HILOG_DEBUG("Get extension infos, upperLimit : %{public}d", upperLimit);
+    auto bundleMgr = GetBundleManager();
+    if (!bundleMgr) {
+        HILOG_ERROR("bundleMgr is nullptr.");
+        return INNER_ERR;
+    }
+
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto isSystem = bundleMgr->CheckIsSystemAppByUid(callerUid);
+    HILOG_DEBUG("callerUid : %{public}d, isSystem : %{public}d", callerUid, static_cast<int>(isSystem));
+
+    if (!isSystem) {
+        HILOG_ERROR("callar is not system app.");
+        return INNER_ERR;
+    }
+
+    connectManager_->GetExtensionRunningInfos(upperLimit, info);
+    return ERR_OK;
+}
+
+int AbilityManagerService::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
+{
+    return DelayedSingleton<AppScheduler>::GetInstance()->GetProcessRunningInfos(info);
+}
+
 void AbilityManagerService::ClearUserData(int32_t userId)
 {
     HILOG_DEBUG("%{public}s", __func__);
@@ -2810,8 +2871,12 @@ void AbilityManagerService::ClearUserData(int32_t userId)
 
 int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
 {
+    if (!currentMissionListManager_) {
+        HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
+        return 0;
+    }
+    currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    snapshotHandler_ = handler;
     return 0;
 }
 
@@ -2822,15 +2887,14 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
         HILOG_INFO("get remote mission snapshot.");
         return GetRemoteMissionSnapshotInfo(deviceId, missionId, missionSnapshot);
     }
-
     HILOG_INFO("get local mission snapshot.");
-    if (!snapshotHandler_) {
-        return 0;
+    if (!currentMissionListManager_) {
+        HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
+        return -1;
     }
-    Snapshot snapshot;
-    int32_t result = snapshotHandler_->GetSnapshot(GetAbilityTokenByMissionId(missionId), snapshot);
-    missionSnapshot.snapshot = snapshot.GetPixelMap();
-    return result;
+    auto token = GetAbilityTokenByMissionId(missionId);
+    currentMissionListManager_->GetMissionSnapshot(missionId, token, missionSnapshot);
+    return 0;
 }
 
 int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
@@ -2980,6 +3044,73 @@ bool AbilityManagerService::IsAbilityControllerResuming(const std::string &bundl
         }
     }
     return true;
+}
+
+int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
+    AppExecFwk::AbilityInfo &abilityInfo)
+{
+    abilityInfo.bundleName = extensionInfo.bundleName;
+    abilityInfo.package = extensionInfo.moduleName;
+    abilityInfo.moduleName = extensionInfo.moduleName;
+    abilityInfo.name = extensionInfo.name;
+    abilityInfo.srcEntrance = extensionInfo.srcEntrance;
+    abilityInfo.srcPath = extensionInfo.srcEntrance;
+    abilityInfo.iconPath = extensionInfo.icon;
+    abilityInfo.iconId = extensionInfo.iconId;
+    abilityInfo.label = extensionInfo.label;
+    abilityInfo.labelId = extensionInfo.labelId;
+    abilityInfo.description = extensionInfo.description;
+    abilityInfo.descriptionId = extensionInfo.descriptionId;
+    abilityInfo.permissions = extensionInfo.permissions;
+    abilityInfo.readPermission = extensionInfo.readPermission;
+    abilityInfo.writePermission = extensionInfo.writePermission;
+    abilityInfo.extensionAbilityType = extensionInfo.type;
+    abilityInfo.visible = extensionInfo.visible;
+    abilityInfo.applicationInfo = extensionInfo.applicationInfo;
+    abilityInfo.resourcePath = extensionInfo.resourcePath;
+    abilityInfo.enabled = extensionInfo.enabled;
+    switch (extensionInfo.type) {
+        case AppExecFwk::ExtensionAbilityType::FORM:
+            abilityInfo.type = AppExecFwk::AbilityType::FORM;
+            break;
+        case AppExecFwk::ExtensionAbilityType::SERVICE:
+            abilityInfo.type = AppExecFwk::AbilityType::SERVICE;
+            break;
+        case AppExecFwk::ExtensionAbilityType::DATASHARE:
+            abilityInfo.type = AppExecFwk::AbilityType::DATA;
+            break;
+        default:
+            abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
+            break;
+    }
+    return 0;
+}
+
+int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, AppExecFwk::AbilityInfo &abilityInfo)
+{
+    ElementName elementName = want.GetElement();
+    std::string bundleName = elementName.GetBundleName();
+    std::string abilityName = elementName.GetAbilityName();
+    AppExecFwk::BundleMgrClient bundleClient;
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!bundleClient.GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo)) {
+        HILOG_ERROR("Failed to get bundle info when generate ability request.");
+        return RESOLVE_APP_ERR;
+    }
+    bool found = false;
+
+    for (auto &extensionInfo: bundleInfo.extensionInfos) {
+        if (extensionInfo.name != abilityName) {
+            continue;
+        }
+        found = true;
+        HILOG_DEBUG("GetExtensionAbilityInfo, extension ability info found, name=%{public}s", abilityName.c_str());
+        abilityInfo.applicationName = bundleInfo.applicationInfo.name;
+        InitAbilityInfoFromExtension(extensionInfo, abilityInfo);
+        break;
+    }
+
+    return found;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

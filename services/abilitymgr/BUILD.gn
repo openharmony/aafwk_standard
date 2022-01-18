@@ -92,6 +92,7 @@ ohos_shared_library("abilityms") {
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
 

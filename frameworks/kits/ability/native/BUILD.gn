@@ -81,7 +81,37 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
     "//foundation/appexecfwk/standard/interfaces/innerkits/fmskit/native/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_napi",
   ]
+}
+
+ohos_shared_library("static_subscriber_ipc") {
+  include_dirs = [
+    "${SUBSYSTEM_DIR}/include",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content/",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
+  ]
+
+  sources = [
+    "${SUBSYSTEM_DIR}/src/static_subscriber_proxy.cpp",
+    "${SUBSYSTEM_DIR}/src/static_subscriber_stub.cpp",
+  ]
+
+  deps = [
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "aafwk_standard:want",
+    "ces_standard:cesfwk_innerkits",
+    "ipc:ipc_core",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "aafwk_standard"
 }
 
 ohos_shared_library("abilitykit_native") {
@@ -89,7 +119,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window",
     "//base/global/i18n_standard/frameworks/intl/include",
   ]
 
@@ -118,22 +147,26 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/extension_base.cpp",
     "${SUBSYSTEM_DIR}/src/extension_impl.cpp",
     "${SUBSYSTEM_DIR}/src/form_extension.cpp",
-    "${SUBSYSTEM_DIR}/src/form_runtime/form_extension_provider_client.cpp",
-    "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension.cpp",
-    "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension_context.cpp",
-    "${SUBSYSTEM_DIR}/src/js_service_extension.cpp",
-    "${SUBSYSTEM_DIR}/src/js_service_extension_context.cpp",
-    "${SUBSYSTEM_DIR}/src/service_extension.cpp",
 
     #"${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates.cpp",
     #"${SUBSYSTEM_DIR}/src/dummy_result_set.cpp",
     #"${SUBSYSTEM_DIR}/src/dummy_values_bucket.cpp",
     "${SUBSYSTEM_DIR}/src/form_js_event_handler.cpp",
     "${SUBSYSTEM_DIR}/src/form_provider_client.cpp",
+    "${SUBSYSTEM_DIR}/src/form_runtime/form_extension_provider_client.cpp",
+    "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension.cpp",
+    "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension_context.cpp",
+    "${SUBSYSTEM_DIR}/src/js_service_extension.cpp",
+    "${SUBSYSTEM_DIR}/src/js_service_extension_context.cpp",
+    "${SUBSYSTEM_DIR}/src/js_static_subscriber_extension.cpp",
+    "${SUBSYSTEM_DIR}/src/js_static_subscriber_extension_context.cpp",
     "${SUBSYSTEM_DIR}/src/mission_information.cpp",
     "${SUBSYSTEM_DIR}/src/new_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/page_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/service_ability_impl.cpp",
+    "${SUBSYSTEM_DIR}/src/service_extension.cpp",
+    "${SUBSYSTEM_DIR}/src/static_subscriber_extension.cpp",
+    "${SUBSYSTEM_DIR}/src/static_subscriber_stub_imp.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_start_setting.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/launch_param.cpp",
 
@@ -166,6 +199,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/appexecfwk/standard/kits/appkit/native/ability_runtime/extension_context.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/ability_runtime/form_extension_context.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/ability_runtime/service_extension_context.cpp",
+    "//foundation/appexecfwk/standard/kits/appkit/native/ability_runtime/static_subscriber_extension_context.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/appexecfwk/standard/kits/appkit/native/app/src/context_deal.cpp",
@@ -176,9 +210,6 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_window_stage.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window_manager.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/window/js_window_utils.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
   ]
@@ -189,6 +220,7 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   deps = [
+    ":static_subscriber_ipc",
     "${INNERKITS_PATH}/base:base",
     "${INNERKITS_PATH}/want:want",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
@@ -213,6 +245,7 @@ ohos_shared_library("abilitykit_native") {
     "aafwk_standard:runtime",
     "appexecfwk_standard:fmskit_native",
     "bytrace_standard:bytrace_core",
+    "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
@@ -228,6 +261,7 @@ ohos_shared_library("abilitykit_native") {
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime:window_native_kit",
     "//foundation/windowmanager/wm:libwm",
   ]
 

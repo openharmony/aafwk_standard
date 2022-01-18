@@ -30,7 +30,7 @@ namespace OHOS {
 namespace AAFwk {
 class WantParamsBaseTest : public testing::Test {
 public:
-    WantParamsBaseTest() 
+    WantParamsBaseTest()
     {}
     ~WantParamsBaseTest()
     {
@@ -76,7 +76,7 @@ HWTEST_F(WantParamsBaseTest, AaFwk_WantParams_Parcelable_0100, Function | Medium
         wantParamsIn_->Marshalling(in);
         std::shared_ptr<WantParams> wantParamsOut_(WantParams::Unmarshalling(in));
         EXPECT_EQ(valueStr, String::Unbox(IString::Query(wantParamsOut_->GetParam(keyStr))));
-    }  
+    }
 }
 
 /**
@@ -95,7 +95,7 @@ HWTEST_F(WantParamsBaseTest, AaFwk_WantParams_Parcelable_0200, Function | Medium
         wantParamsIn_->Marshalling(in);
         std::shared_ptr<WantParams> wantParamsOut_(WantParams::Unmarshalling(in));
         EXPECT_EQ(valueBool, Boolean::Unbox(IBoolean::Query(wantParamsOut_->GetParam(keyStr))));
-    }  
+    }
 }
 
 /**
@@ -117,7 +117,7 @@ HWTEST_F(WantParamsBaseTest, AaFwk_WantParams_Parcelable_0300, Function | Medium
         right = Integer::Unbox(IInteger::Query(wantParamsOut_->GetParam(keyStr)));
         EXPECT_EQ(valueInteger, right);
 
-        wantParamsOut_ = nullptr;     
+        wantParamsOut_ = nullptr;
     }
 }
 

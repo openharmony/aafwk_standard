@@ -42,6 +42,8 @@ ohos_unittest("window_info_test") {
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
+    "//utils/native/base:utils",
   ]
 
   external_deps = [

@@ -48,7 +48,7 @@ public:
 private:
     static std::mutex mutex;
     static sptr<MockFormSupplyCallback> instance;
-    
+
     DISALLOW_COPY_AND_MOVE(MockFormSupplyCallback);
 };
 }  // namespace AppExecFwk

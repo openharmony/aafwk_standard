@@ -170,7 +170,7 @@ private:
     std::string GetTypeName();
 
     MissionListType type_;
-    std::list<std::shared_ptr<Mission>> missions_;
+    std::list<std::shared_ptr<Mission>> missions_ {};
 };
 }  // namespace AAFwk
 }  // namespace OHOS
