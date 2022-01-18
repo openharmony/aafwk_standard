@@ -5,8 +5,8 @@
         "//foundation/aafwk/standard/services:services_target",
         "//foundation/aafwk/standard/tools:tools_target",
         "//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
-        "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
         "//foundation/aafwk/standard/frameworks/kits/ability/native:static_subscriber_ipc",
+        "//foundation/aafwk/standard/frameworks/kits/ability/native:service_extension_module",
         "//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
         "//foundation/aafwk/standard/interfaces/kits/napi:napi_packages",
         "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
@@ -96,6 +96,18 @@
             ]
           },
           "name": "//foundation/aafwk/standard/interfaces/innerkits/runtime:runtime"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
+            "header_files": [
+              "extension.h",
+              "extension_base.h",
+              "service_extension.h",
+              "extension_module_loader.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native"
         }
       ],
       "test_list": [
