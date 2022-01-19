@@ -43,7 +43,7 @@ constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
 constexpr static char ACE_FORM_ABILITY_NAME[] = "AceFormAbility";
 constexpr static char BASE_SERVICE_EXTENSION[] = "ServiceExtension";
 constexpr static char FORM_EXTENSION[] = "FormExtension";
-// constexpr static char STATIC_SUBSCRIBER_EXTENSION[] = "StaticSubscriberExtension";
+constexpr static char STATIC_SUBSCRIBER_EXTENSION[] = "StaticSubscriberExtension";
 constexpr int TARGET_VERSION_THRESHOLDS = 8;
 
 /**
@@ -84,33 +84,34 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
     APP_LOGI("AbilityThread::ability attach the ability type is %{public}d", abilityInfo->type);
     APP_LOGI("AbilityThread::ability attach the ability is Native %{public}d", abilityInfo->isNativeAbility);
 
-    if (abilityInfo->isNativeAbility == false) {
-        if (abilityInfo->type == AbilityType::PAGE) {
-            if (abilityRecord->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS) {
-                abilityName = ABILITY_NAME;
-            } else {
-                abilityName = ACE_ABILITY_NAME;
-            }
-        } else if (abilityInfo->type == AbilityType::SERVICE) {
-            if (abilityInfo->formEnabled == true) {
-                abilityName = ACE_FORM_ABILITY_NAME;
-            } else {
-                abilityName = ACE_SERVICE_ABILITY_NAME;
-            }
-        } else if (abilityInfo->type == AbilityType::DATA) {
-            abilityName = ACE_DATA_ABILITY_NAME;
-        } else if (abilityInfo->type == AbilityType::EXTENSION) {
-            /* if (abilityInfo->extensionAbilityType == ExtensionAbilityType::STATICSUBSCRIBER) {
-                abilittName = STATIC_SUBSCRIBER_EXTENSION;
-            } */
-            abilityName = BASE_SERVICE_EXTENSION;
-            if (abilityInfo->formEnabled == true) {
-                abilityName = FORM_EXTENSION;
-            }
-            APP_LOGI("CreateAbilityName extension type, abilityName:%{public}s", abilityName.c_str());
+    if (abilityInfo->isNativeAbility) {
+        APP_LOGI("AbilityThread::CreateAbilityName end, create native ability.");
+        return abilityInfo->name;
+    }
+
+    if (abilityInfo->type == AbilityType::PAGE) {
+        if (abilityRecord->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS) {
+            abilityName = ABILITY_NAME;
         } else {
-            abilityName = abilityInfo->name;
+            abilityName = ACE_ABILITY_NAME;
         }
+    } else if (abilityInfo->type == AbilityType::SERVICE) {
+        if (abilityInfo->formEnabled == true) {
+            abilityName = ACE_FORM_ABILITY_NAME;
+        } else {
+            abilityName = ACE_SERVICE_ABILITY_NAME;
+        }
+    } else if (abilityInfo->type == AbilityType::DATA) {
+        abilityName = ACE_DATA_ABILITY_NAME;
+    } else if (abilityInfo->type == AbilityType::EXTENSION) {
+        abilityName = BASE_SERVICE_EXTENSION;
+        if (abilityInfo->formEnabled == true) {
+            abilityName = FORM_EXTENSION;
+        }
+        if (abilityInfo->extensionAbilityType == ExtensionAbilityType::STATICSUBSCRIBER) {
+            abilityName = STATIC_SUBSCRIBER_EXTENSION;
+        }
+        APP_LOGI("CreateAbilityName extension type, abilityName:%{public}s", abilityName.c_str());
     } else {
         abilityName = abilityInfo->name;
     }
