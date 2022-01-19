@@ -85,6 +85,8 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
     "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_napi",
+    "//third_party/jsoncpp/include",
+    "//third_party/json/include",
   ]
 }
 
@@ -263,6 +265,7 @@ ohos_shared_library("abilitykit_native") {
   public_deps = [
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "//foundation/ace/napi:ace_napi",
     "//foundation/graphic/standard:libwmclient",
     "//foundation/windowmanager/interfaces/kits/napi/window_runtime:window_native_kit",
     "//foundation/windowmanager/wm:libwm",
