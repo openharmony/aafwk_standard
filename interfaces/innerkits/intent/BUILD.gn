@@ -69,5 +69,5 @@ ohos_shared_library("intent") {
   configs = [ ":intent_config" ]
   public_configs = [ ":intent_public_config" ]
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

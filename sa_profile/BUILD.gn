@@ -17,7 +17,14 @@ ohos_sa_profile("aafwk_sa_profile") {
   sources = [
     "180.xml",
     "182.xml",
+    "501.xml",
   ]
 
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
+}
+
+ohos_sa_profile("form_sa_profile") {
+  sources = [ "403.xml" ]
+
+  part_name = "form_runtime"
 }

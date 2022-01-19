@@ -50,6 +50,7 @@ ohos_shared_library("dataobsms") {
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
@@ -66,5 +67,5 @@ ohos_shared_library("dataobsms") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

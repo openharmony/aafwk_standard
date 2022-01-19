@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/abilitymgr"
+module_output_path = "ability_runtime/abilitymgr"
 
 ohos_unittest("window_info_test") {
   module_out_path = module_output_path

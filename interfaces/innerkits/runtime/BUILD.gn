@@ -63,12 +63,12 @@ ohos_shared_library("runtime") {
   ]
 
   external_deps = [
-    "aafwk_standard:want",
+    "ability_runtime:want",
     "appexecfwk_standard:appexecfwk_base",
     "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

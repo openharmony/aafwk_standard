@@ -16,8 +16,8 @@ import("//build/ohos.gni")
 ohos_executable("runtime_test") {
   sources = [ "main.cpp" ]
 
-  external_deps = [ "aafwk_standard:runtime" ]
+  external_deps = [ "ability_runtime:runtime" ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

@@ -19,13 +19,14 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:abilitymanager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_context:abilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager:abilitymanager_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_stage:abilitystage_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_stage_context:abilitystagecontext_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/appMgr:napi_app_mgr",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/app_manager:appmanager_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/context:context_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataUriUtils:datauriutils",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/extensioncontext:extensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager:formmanager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_binding_data:formbindingdata_napi",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension:formextension_napi",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension_context:formextensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/mission_manager:distributedmissionmanager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/mission_manager:missionmanager_napi",
@@ -35,5 +36,14 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension:staticsubscriberextension_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension_context:staticsubscriberextensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
+  ]
+}
+
+group("form_napi_packages") {
+  deps = [
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager:formmanager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_binding_data:formbindingdata_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension:formextension_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension_context:formextensioncontext_napi",
   ]
 }

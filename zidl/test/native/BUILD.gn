@@ -44,7 +44,7 @@ ohos_executable("zidl_server_test") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "zidl"
 }
 
 ohos_executable("zidl_client_test") {
@@ -65,5 +65,5 @@ ohos_executable("zidl_client_test") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "zidl"
 }

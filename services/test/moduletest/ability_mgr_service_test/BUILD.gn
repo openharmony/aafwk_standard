@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/mstabilitymgrservice"
+module_output_path = "ability_runtime/mstabilitymgrservice"
 
 ohos_moduletest("ability_mgr_module_test") {
   module_out_path = module_output_path
@@ -76,14 +76,14 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager_public_config",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock_config",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base_sdk_config",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appmgr_sdk_config",
+    "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${innerkits_path}/base:base",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${innerkits_path}/want:want",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
