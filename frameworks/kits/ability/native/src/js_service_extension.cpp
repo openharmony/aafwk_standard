@@ -46,14 +46,12 @@ void JsServiceExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
     const sptr<IRemoteObject> &token)
 {
     ServiceExtension::Init(record, application, handler, token);
-    if (Extension::abilityInfo_->srcEntrance.empty()) {
-        HILOG_ERROR("abilityInfo srcEntrance is empty");
+    std::string srcPath = "";
+    GetSrcPath(srcPath);
+    if (srcPath.empty()) {
+        HILOG_ERROR("Failed to get srcPath");
         return;
     }
-    std::string srcPath(Extension::abilityInfo_->moduleName + "/");
-    srcPath.append(Extension::abilityInfo_->srcPath);
-    srcPath.erase(srcPath.rfind('.'));
-    srcPath.append(".abc");
 
     std::string moduleName(Extension::abilityInfo_->moduleName);
     moduleName.append("::").append(abilityInfo_->name);
@@ -245,6 +243,27 @@ NativeValue* JsServiceExtension::CallObjectMethod(const char* name, NativeValue*
     }
     HILOG_INFO("JsServiceExtension::CallFunction(%{public}s), success", name);
     return nativeEngine.CallFunction(value, method, argv, argc);
+}
+
+void JsServiceExtension::GetSrcPath(std::string &srcPath)
+{
+    if (!Extension::abilityInfo_->isStageBasedModel) {
+        /* temporary compatibility api8 + config.json */
+        srcPath.append(Extension::abilityInfo_->package);
+        srcPath.append("/assets/js/");
+        if (!Extension::abilityInfo_->srcPath.empty()) {
+            srcPath.append(Extension::abilityInfo_->srcPath);
+        }
+        srcPath.append("/").append(Extension::abilityInfo_->name).append(".abc");
+        return;
+    }
+
+    if (!Extension::abilityInfo_->srcEntrance.empty()) {
+        srcPath.append(Extension::abilityInfo_->moduleName + "/");
+        srcPath.append(Extension::abilityInfo_->srcEntrance);
+        srcPath.erase(srcPath.rfind('.'));
+        srcPath.append(".abc");
+    }
 }
 }
 }
