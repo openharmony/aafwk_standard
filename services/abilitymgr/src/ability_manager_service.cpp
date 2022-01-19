@@ -3010,6 +3010,7 @@ int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::Extensio
     abilityInfo.applicationInfo = extensionInfo.applicationInfo;
     abilityInfo.resourcePath = extensionInfo.resourcePath;
     abilityInfo.enabled = extensionInfo.enabled;
+    abilityInfo.isStageBasedModel = true;
     switch (extensionInfo.type) {
         case AppExecFwk::ExtensionAbilityType::FORM:
             abilityInfo.type = AppExecFwk::AbilityType::FORM;
