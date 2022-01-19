@@ -30,16 +30,17 @@ ohos_shared_library("napi_common") {
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/kits:appkit_native",
     "//third_party/libuv:uv_static",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
-    "aafwk_standard:ability_manager",
-    "aafwk_standard:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:app_manager",
+    "ability_runtime:want",
     "appexecfwk_standard:appexecfwk_base",
     "appexecfwk_standard:appexecfwk_core",
     "appexecfwk_standard:libeventhandler",
@@ -54,5 +55,5 @@ ohos_shared_library("napi_common") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

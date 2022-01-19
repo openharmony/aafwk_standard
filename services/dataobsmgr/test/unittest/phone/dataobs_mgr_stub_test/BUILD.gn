@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/dataobsmgr"
+module_output_path = "ability_runtime/dataobsmgr"
 
 ohos_unittest("dataobs_mgr_stub_test") {
   module_out_path = module_output_path

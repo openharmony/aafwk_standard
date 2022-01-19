@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/tools"
+module_output_path = "ability_tools/tools"
 
 config("tools_aa_config_mock") {
   include_dirs = [

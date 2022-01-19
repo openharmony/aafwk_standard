@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 SO_DIR = "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime"
 INNERKITS_DIR = "//foundation/aafwk/standard/interfaces/innerkits"
-APPKIT_DIR = "//foundation/appexecfwk/standard/kits"
+APPKIT_DIR = "//foundation/aafwk/standard/frameworks/kits"
 
 config("ability_context_public_config") {
   visibility = [ ":*" ]
@@ -41,7 +41,7 @@ ohos_shared_library("ability_context_native") {
   ]
 
   deps = [
-    "${APPKIT_DIR}:app_context",
+    "${APPKIT_DIR}/appkit:app_context",
     "${INNERKITS_DIR}/ability_manager:ability_manager",
     "${INNERKITS_DIR}/want:want",
     "//foundation/ace/napi:ace_napi",
@@ -49,7 +49,7 @@ ohos_shared_library("ability_context_native") {
   ]
 
   external_deps = [
-    "aafwk_standard:runtime",
+    "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -57,5 +57,5 @@ ohos_shared_library("ability_context_native") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }
