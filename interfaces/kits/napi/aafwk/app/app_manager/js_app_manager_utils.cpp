@@ -28,10 +28,21 @@ NativeValue* CreateJsAppStateData(NativeEngine &engine, const AppStateData &appS
 {
     HILOG_INFO("%{public}s called.", __func__);
     NativeValue* objValue = engine.CreateObject();
+    if (objValue == nullptr) {
+        HILOG_ERROR("objValue nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s ConvertNativeValueTo begin.", __func__);
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+    if (object == nullptr) {
+        HILOG_ERROR("object nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s SetProperty begin.", __func__);
     object->SetProperty("bundleName", CreateJsValue(engine, appStateData.bundleName));
     object->SetProperty("uid", CreateJsValue(engine, appStateData.uid));
     object->SetProperty("state", CreateJsValue(engine, appStateData.state));
+    HILOG_INFO("%{public}s end.", __func__);
     return objValue;
 }
 
@@ -39,12 +50,23 @@ NativeValue* CreateJsAbilityStateData(NativeEngine &engine, const AbilityStateDa
 {
     HILOG_INFO("%{public}s called.", __func__);
     NativeValue* objValue = engine.CreateObject();
+    if (objValue == nullptr) {
+        HILOG_ERROR("objValue nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s ConvertNativeValueTo begin.", __func__);
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+    if (object == nullptr) {
+        HILOG_ERROR("object nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s SetProperty begin.", __func__);
     object->SetProperty("bundleName", CreateJsValue(engine, abilityStateData.bundleName));
     object->SetProperty("abilityName", CreateJsValue(engine, abilityStateData.abilityName));
     object->SetProperty("pid", CreateJsValue(engine, abilityStateData.pid));
     object->SetProperty("uid", CreateJsValue(engine, abilityStateData.uid));
     object->SetProperty("state", CreateJsValue(engine, abilityStateData.abilityState));
+    HILOG_INFO("%{public}s end.", __func__);
     return objValue;
 }
 
@@ -52,21 +74,34 @@ NativeValue* CreateJsProcessData(NativeEngine &engine, const ProcessData &proces
 {
     HILOG_INFO("%{public}s called.", __func__);
     NativeValue* objValue = engine.CreateObject();
+    if (objValue == nullptr) {
+        HILOG_ERROR("objValue nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s ConvertNativeValueTo begin.", __func__);
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+    if (object == nullptr) {
+        HILOG_ERROR("object nullptr.");
+        return nullptr;
+    }
+    HILOG_INFO("%{public}s SetProperty begin.", __func__);
     object->SetProperty("bundleName", CreateJsValue(engine, processData.bundleName));
     object->SetProperty("pid", CreateJsValue(engine, processData.pid));
     object->SetProperty("uid", CreateJsValue(engine, processData.uid));
+    HILOG_INFO("%{public}s end.", __func__);
     return objValue;
 }
 
 NativeValue* CreateJsAppStateDataArray(NativeEngine &engine, std::vector<AppStateData> &appStateDatas)
 {
+    HILOG_INFO("%{public}s called.", __func__);
     NativeValue* arrayValue = engine.CreateArray(appStateDatas.size());
     NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
     uint32_t index = 0;
     for (const auto &appStateData : appStateDatas) {
         array->SetElement(index++, CreateJsAppStateData(engine, appStateData));
     }
+    HILOG_INFO("%{public}s end.", __func__);
     return arrayValue;
 }
 
