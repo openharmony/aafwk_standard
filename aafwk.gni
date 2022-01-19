@@ -19,3 +19,5 @@ services_path = "${aafwk_path}/services"
 kits_path = "${aafwk_path}/frameworks/kits"
 
 innerkits_path = "${aafwk_path}/interfaces/innerkits"
+
+dispatcher_path = "${aafwk_path}/common/task_dispatcher"

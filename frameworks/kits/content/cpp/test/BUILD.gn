@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 
-module_output_path = "aafwk_standard/intent_test"
+module_output_path = "ability_runtime/intent_test"
 
 ###############################################################################
 config("module_private_config") {

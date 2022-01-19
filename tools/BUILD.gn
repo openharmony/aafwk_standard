@@ -17,6 +17,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 group("tools_target") {
   deps = [
     "aa:tools_aa",
-    "zip:tools_zip",
+    "fm:tools_fm",
   ]
 }

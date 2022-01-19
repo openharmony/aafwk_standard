@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/mstabilitymgrservice"
+module_output_path = "ability_runtime/mstabilitymgrservice"
 
 ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   module_out_path = module_output_path
@@ -48,6 +48,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",

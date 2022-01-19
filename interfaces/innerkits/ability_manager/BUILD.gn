@@ -26,8 +26,8 @@ config("ability_manager_public_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
-    "//foundation/appexecfwk/standard/kits/appkit/native/app/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
     "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
@@ -92,6 +92,7 @@ ohos_shared_library("ability_manager") {
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
@@ -115,5 +116,5 @@ ohos_shared_library("ability_manager") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

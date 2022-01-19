@@ -14,9 +14,14 @@
 group("innerkits_target") {
   deps = [
     "ability_manager:ability_manager",
+    "app_manager:app_manager",
     "base:base",
     "dataobs_manager:dataobs_manager",
     "intent:intent",
     "want:want",
   ]
+}
+
+group("fms_innerkits_target") {
+  deps = [ "form_manager:form_manager" ]
 }

@@ -1,0 +1,97 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+
+config("appmgr_sdk_config") {
+  include_dirs = [
+    "include/appmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+  ]
+}
+
+config("appexecfwk_core_config") {
+  include_dirs = [ "include" ]
+}
+
+ohos_shared_library("app_manager") {
+  include_dirs = [
+    "//third_party/json/include",
+    "${aafwk_path}/services/appmgr/include",
+    "//utils/system/safwk/native/include",
+  ]
+
+  sources = [
+    "src/appmgr/ability_controller_proxy.cpp",
+    "src/appmgr/ability_controller_stub.cpp",
+    "src/appmgr/ability_state_data.cpp",
+    "src/appmgr/ams_mgr_proxy.cpp",
+    "src/appmgr/ams_mgr_stub.cpp",
+    "src/appmgr/app_launch_data.cpp",
+    "src/appmgr/app_mgr_client.cpp",
+    "src/appmgr/app_mgr_proxy.cpp",
+    "src/appmgr/app_mgr_stub.cpp",
+    "src/appmgr/app_process_data.cpp",
+    "src/appmgr/app_record_id.cpp",
+    "src/appmgr/app_scheduler_host.cpp",
+    "src/appmgr/app_scheduler_proxy.cpp",
+    "src/appmgr/app_service_manager.cpp",
+    "src/appmgr/app_state_callback_host.cpp",
+    "src/appmgr/app_state_callback_proxy.cpp",
+    "src/appmgr/app_state_data.cpp",
+    "src/appmgr/app_task_info.cpp",
+    "src/appmgr/application_state_observer_proxy.cpp",
+    "src/appmgr/application_state_observer_stub.cpp",
+    "src/appmgr/configuration.cpp",
+    "src/appmgr/priority_object.cpp",
+    "src/appmgr/process_data.cpp",
+    "src/appmgr/process_info.cpp",
+    "src/appmgr/profile.cpp",
+  ]
+
+  public_configs = [
+    ":appexecfwk_core_config",
+    ":appmgr_sdk_config",
+  ]
+
+  defines = [
+    "APP_LOG_TAG = \"AppexecfwkCore\"",
+    "LOG_DOMAIN = 0xD001100",
+  ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  deps = [
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "bytrace_standard:bytrace_core",
+    "ces_standard:cesfwk_core",
+    "ces_standard:cesfwk_innerkits",
+    "hiviewdfx_hilog_native:libhilog",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_runtime"
+}

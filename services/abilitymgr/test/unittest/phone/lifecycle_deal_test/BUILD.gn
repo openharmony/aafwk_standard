@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "aafwk_standard/abilitymgr"
+module_output_path = "ability_runtime/abilitymgr"
 
 ohos_unittest("lifecycle_deal_test") {
   module_out_path = module_output_path
@@ -57,6 +57,7 @@ ohos_unittest("lifecycle_deal_test") {
   ]
 
   external_deps = [
+    "ability_runtime:app_manager",
     "appexecfwk_standard:appexecfwk_core",
     "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
