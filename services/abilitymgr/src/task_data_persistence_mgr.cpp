@@ -105,5 +105,25 @@ bool TaskDataPersistenceMgr::RemoveUserDir(int32_t userId)
     }
     return true;
 }
+
+bool TaskDataPersistenceMgr::SaveMissionSnapshot(int missionId, const MissionSnapshot& snapshot)
+{
+    if (!handler_ || !currentMissionDataStorage_) {
+        HILOG_ERROR("snapshot: handler_ or currentMissionDataStorage_ is nullptr");
+        return false;
+    }
+    std::function<void()> SaveMissionSnapshotFunc = std::bind(&MissionDataStorage::SaveMissionSnapshot,
+        currentMissionDataStorage_, missionId, snapshot);
+    return handler_->PostTask(SaveMissionSnapshotFunc, SAVE_MISSION_SNAPSHOT);
+}
+
+bool TaskDataPersistenceMgr::GetMissionSnapshot(int missionId, MissionSnapshot& snapshot)
+{
+    if (!currentMissionDataStorage_) {
+        HILOG_ERROR("snapshot: currentMissionDataStorage_ is nullptr");
+        return false;
+    }
+    return currentMissionDataStorage_->GetMissionSnapshot(missionId, snapshot);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

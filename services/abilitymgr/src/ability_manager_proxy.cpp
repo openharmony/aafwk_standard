@@ -684,7 +684,7 @@ int AbilityManagerProxy::GetMissionSnapshot(const std::string& deviceId, int32_t
         HILOG_ERROR("missionId write failed.");
         return ERR_INVALID_VALUE;
     }
-    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT, data, reply, option);
+    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT_INFO, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
