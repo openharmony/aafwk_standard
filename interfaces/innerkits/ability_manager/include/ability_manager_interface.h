@@ -24,7 +24,7 @@
 #include "ability_connect_callback_interface.h"
 #include "ability_scheduler_interface.h"
 #include "ability_start_setting.h"
-#include "foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/configuration.h"
+#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 #include "mission_snapshot.h"
 #include "ability_mission_info.h"
 #include "ability_running_info.h"

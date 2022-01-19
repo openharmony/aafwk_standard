@@ -33,5 +33,5 @@ ohos_shared_library("module_test_dump_util_lib") {
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

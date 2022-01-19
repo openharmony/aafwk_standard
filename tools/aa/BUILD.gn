@@ -18,7 +18,7 @@ config("ability_command_config") {
   include_dirs = [
     "include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//utils/system/safwk/native/include",
     "//third_party/jsoncpp/include",
   ]
@@ -43,6 +43,7 @@ ohos_source_set("tools_aa_source_set") {
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
@@ -82,7 +83,7 @@ ohos_executable("aa") {
   install_enable = true
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_tools"
 }
 
 group("tools_aa") {

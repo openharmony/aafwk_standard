@@ -47,9 +47,9 @@ ohos_shared_library("abilitymanager_napi") {
   ]
 
   external_deps = [
-    "aafwk_standard:ability_manager",
-    "aafwk_standard:runtime",
-    "aafwk_standard:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
+    "ability_runtime:want",
     "appexecfwk_standard:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -59,5 +59,5 @@ ohos_shared_library("abilitymanager_napi") {
   relative_install_dir = "module/application"
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

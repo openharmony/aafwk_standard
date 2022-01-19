@@ -57,5 +57,5 @@ ohos_shared_library("dataobs_manager") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

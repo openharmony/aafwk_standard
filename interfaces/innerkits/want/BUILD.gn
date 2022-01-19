@@ -78,5 +78,5 @@ ohos_shared_library("want") {
   configs = [ ":want_config" ]
   public_configs = [ ":want_public_config" ]
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "ability_runtime"
 }

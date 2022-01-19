@@ -22,7 +22,7 @@ config("appexecfwk_core_mock_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
     "//base/telephony/core_service/sim/include/",
     "//base/notification/ces_standard/frameworks/core/include/",
@@ -43,6 +43,7 @@ ohos_source_set("appexecfwk_appmgr_mock") {
   }
   deps = [
     "${innerkits_path}/want:want",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",

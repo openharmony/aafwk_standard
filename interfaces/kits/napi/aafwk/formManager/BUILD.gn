@@ -28,21 +28,21 @@ ohos_shared_library("formmanager") {
 
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/kits:appkit_native",
   ]
 
   external_deps = [
-    "aafwk_standard:ability_manager",
-    "aafwk_standard:runtime",
-    "aafwk_standard:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
+    "ability_runtime:want",
     "hiviewdfx_hilog_native:libhilog",
   ]
 
   relative_install_dir = "module/ability"
 
   subsystem_name = "aafwk"
-  part_name = "aafwk_standard"
+  part_name = "form_runtime"
 }

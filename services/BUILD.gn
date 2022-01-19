@@ -14,8 +14,13 @@
 group("services_target") {
   deps = [
     "abilitymgr:abilityms_target",
+    "appmgr:ams_target",
     "dataobsmgr:dataobsms",
   ]
+}
+
+group("fms_services_target") {
+  deps = [ "formmgr:fms_target" ]
 }
 
 group("unittest") {
