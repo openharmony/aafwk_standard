@@ -127,6 +127,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[STOP_USER] = &AbilityManagerStub::StopUserInner;
     requestFuncMap_[SET_ABILITY_CONTROLLER] = &AbilityManagerStub::SetAbilityControllerInner;
     requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsUserAStabilityTestInner;
+    requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1197,10 +1198,6 @@ int AbilityManagerStub::RegisterSnapshotHandlerInner(MessageParcel &data, Messag
 int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string deviceId = data.ReadString();
-    if (deviceId.empty()) {
-        HILOG_ERROR("missionSnapshot: get deviceId empty!");
-        return ERR_NULL_OBJECT;
-    }
     int32_t missionId = data.ReadInt32();
     MissionSnapshot missionSnapshot;
     int32_t result = GetMissionSnapshot(deviceId, missionId, missionSnapshot);
