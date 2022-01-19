@@ -324,11 +324,11 @@ void JsAbility::DoOnForeground(const Want& want)
             std::regex formatRegex("[0-9]{0,9}$");
             std::smatch sm;
             bool flag = std::regex_match(strDisplayId, sm, formatRegex);
-            if (flag) {
+            if (flag && !strDisplayId.empty()) {
                 displayId = std::stoi(strDisplayId);
                 HILOG_INFO("%{public}s success. displayId is %{public}d", __func__, displayId);
             } else {
-                HILOG_INFO("%{public}s error. failed to formatRegex str", __func__);
+                HILOG_INFO("%{public}s failed to formatRegex:[%{public}s]", __func__, strDisplayId.c_str());
             }
         }
         auto option = GetWindowOption(want);
