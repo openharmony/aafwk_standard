@@ -50,6 +50,7 @@ ohos_unittest("mission_list_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
 
