@@ -162,14 +162,16 @@ bool MissionInfoMgr::DeleteAllMissionInfos(const std::shared_ptr<MissionListener
         return false;
     }
 
-    for (auto listIter = missionInfoList_.begin(); listIter != missionInfoList_.end(); listIter++) {
+    for (auto listIter = missionInfoList_.begin(); listIter != missionInfoList_.end();) {
         if (!(listIter->missionInfo.lockedState)) {
             missionIdMap_.erase(listIter->missionInfo.id);
-            missionInfoList_.erase(listIter);
             taskDataPersistenceMgr_->DeleteMissionInfo(listIter->missionInfo.id);
             if (listenerController) {
                 listenerController->NotifyMissionDestroyed(listIter->missionInfo.id);
             }
+            missionInfoList_.erase(listIter++);
+        } else {
+            ++listIter;
         }
     }
     return true;
