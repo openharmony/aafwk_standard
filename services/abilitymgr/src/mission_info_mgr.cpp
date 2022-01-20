@@ -323,6 +323,10 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
         HILOG_ERROR("snapshot: get mission failed, missionId %{public}d not exists", missionId);
         return false;
     }
+    if (!snapshotHandler_) {
+        HILOG_ERROR("snapshot: snapshotHandler_ is nullptr");
+        return false;
+    }
     Snapshot snapshot;
     int32_t result = snapshotHandler_->GetSnapshot(abilityToken, snapshot);
     if (result != 0) {
