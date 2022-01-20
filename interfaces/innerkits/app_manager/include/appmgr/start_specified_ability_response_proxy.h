@@ -18,7 +18,6 @@
 
 #include "iremote_proxy.h"
 #include "istart_specified_ability_response.h"
-
 namespace OHOS {
 namespace AppExecFwk {
 class StartSpecifiedAbilityResponseProxy : public IRemoteProxy<IStartSpecifiedAbilityResponse> {

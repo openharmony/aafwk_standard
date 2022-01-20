@@ -317,7 +317,7 @@ private:
     void DelayedStartLauncher();
     void BackToLauncher();
     bool IsPC();
-	std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
+    std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
 
 private:
     int userId_;
