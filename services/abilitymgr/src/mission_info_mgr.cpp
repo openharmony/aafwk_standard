@@ -339,6 +339,7 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
         HILOG_ERROR("snapshot: save mission snapshot failed");
         return false;
     }
+    HILOG_INFO("snapshot: update mission snapshot success");
     return true;
 }
 
