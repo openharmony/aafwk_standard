@@ -75,6 +75,7 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
     "${services_path}/abilitymgr/src/want_sender_info.cpp",
+    "${services_path}/abilitymgr/src/want_sender_stub.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation_builder.cpp",

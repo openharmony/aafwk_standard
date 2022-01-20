@@ -26,6 +26,7 @@
 #undef private
 #undef protected
 
+#include "context/context.h"
 #include "system_ability_definition.h"
 #include "mock_ability_scheduler.h"
 #include "mock_app_mgr_client.h"
@@ -268,7 +269,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_001, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -301,7 +302,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_001, TestSize.Level1)
     TriggerInfo paramsInfo("", nullptr, abilityWant, 11);
 
     EXPECT_CALL(*call, OnSendFinished(_, _, _, _)).Times(1);
-    WantAgentHelper::TriggerWantAgent(context, wantAgent, callback, paramsInfo);
+    WantAgentHelper::TriggerWantAgent(wantAgent, callback, paramsInfo);
 
     // An ability should be activated
     auto stackMgr = ams->GetStackManager();
@@ -340,7 +341,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_002, TestSize.Level1)
     wants.push_back(abilityWant1);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -377,7 +378,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_002, TestSize.Level1)
     EXPECT_NE(topAbility, nullptr);
     topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
 
-    WantAgentHelper::TriggerWantAgent(context, wantAgent, callback, paramsInfo);
+    WantAgentHelper::TriggerWantAgent(wantAgent, callback, paramsInfo);
 }
 
 /*
@@ -401,7 +402,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_003, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -434,7 +435,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_003, TestSize.Level1)
     TriggerInfo paramsInfo("", nullptr, abilityWant, 11);
 
     EXPECT_CALL(*call, OnSendFinished(_, _, _, _)).Times(1);
-    WantAgentHelper::TriggerWantAgent(context, wantAgent, callback, paramsInfo);
+    WantAgentHelper::TriggerWantAgent(wantAgent, callback, paramsInfo);
 
     // An ability should be activated
     auto serviceRecord = ams->connectManager_->GetServiceRecordByElementName(abilityWant->GetElement().GetURI());
@@ -467,7 +468,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_004, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -500,7 +501,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_004, TestSize.Level1)
     TriggerInfo paramsInfo("", nullptr, abilityWant, 11);
 
     EXPECT_CALL(*call, OnSendFinished(_, _, _, _)).Times(1);
-    WantAgentHelper::TriggerWantAgent(context, wantAgent, callback, paramsInfo);
+    WantAgentHelper::TriggerWantAgent(wantAgent, callback, paramsInfo);
 
     // An ability should be activated
     auto serviceRecord = ams->connectManager_->GetServiceRecordByElementName(abilityWant->GetElement().GetURI());
@@ -532,7 +533,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_005, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -562,7 +563,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_005, TestSize.Level1)
     TriggerInfo paramsInfo("", nullptr, abilityWant, 11);
 
     EXPECT_CALL(*call, OnSendFinished(_, _, _, _)).Times(1);
-    WantAgentHelper::TriggerWantAgent(context, wantAgent, callback, paramsInfo);
+    WantAgentHelper::TriggerWantAgent(wantAgent, callback, paramsInfo);
 }
 
 /*
@@ -586,7 +587,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_006, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
@@ -653,7 +654,7 @@ HWTEST_F(PandingWantManagerTest, pending_want_mgr_test_007, TestSize.Level1)
     wants.push_back(abilityWant);
 
     WantAgentInfo info = MakeWantAgentInfo(type, requsetCode, flags, wants);
-    std::shared_ptr<Context> context = std::make_shared<AbilityContext>();
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
 
     // proxy start
     auto amsProxyGetWantSenderReturn = [&](const WantSenderInfo &wantSenderInfo,
