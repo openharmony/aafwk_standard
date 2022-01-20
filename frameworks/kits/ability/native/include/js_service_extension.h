@@ -107,6 +107,8 @@ public:
 private:
     NativeValue* CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
 
+    void GetSrcPath(std::string &srcPath);
+
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsObj_;
 };
