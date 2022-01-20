@@ -93,6 +93,12 @@ NativeValue* JsAbilityContext::RestoreWindowStage(NativeEngine* engine, NativeCa
     return (me != nullptr) ? me->OnRestoreWindowStage(*engine, *info) : nullptr;
 }
 
+NativeValue* JsAbilityContext::SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnSetMissionLabel(*engine, *info) : nullptr;
+}
+
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("OnStartAbility is called");
@@ -441,6 +447,45 @@ NativeValue* JsAbilityContext::OnRestoreWindowStage(NativeEngine& engine, Native
     return engine.CreateUndefined();
 }
 
+NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnSetMissionLabel is called, argc = %{public}d", static_cast<int>(info.argc));
+
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("OnSetMissionLabel, Not enough params");
+        return engine.CreateUndefined();
+    }
+
+    std::string label;
+    if (!ConvertFromJsValue(engine, info.argv[0], label)) {
+        HILOG_ERROR("OnSetMissionLabel, parse label failed.");
+        return engine.CreateUndefined();
+    }
+
+    AsyncTask::CompleteCallback complete =
+        [weak = context_, label](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            auto context = weak.lock();
+            if (!context) {
+                HILOG_WARN("context is released");
+                task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
+                return;
+            }
+
+            auto errcode = context->SetMissionLabel(label);
+            if (errcode == 0) {
+                task.Resolve(engine, engine.CreateUndefined());
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "SetMissionLabel failed."));
+            }
+        };
+
+    NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[1];
+    NativeValue* result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    return result;
+}
+
 bool JsAbilityContext::UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want)
 {
     if (argv == nullptr) {
@@ -520,6 +565,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "terminateSelfWithResult", JsAbilityContext::TerminateSelfWithResult);
     BindNativeFunction(engine, *object, "requestPermissionsFromUser", JsAbilityContext::RequestPermissionsFromUser);
     BindNativeFunction(engine, *object, "restoreWindowStage", JsAbilityContext::RestoreWindowStage);
+    BindNativeFunction(engine, *object, "setMissionLabel", JsAbilityContext::SetMissionLabel);
     return objValue;
 }
 

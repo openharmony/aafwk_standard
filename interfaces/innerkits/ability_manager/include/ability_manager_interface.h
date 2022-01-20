@@ -549,6 +549,8 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) = 0;
 
+    virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) = 0;
+
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
 
     virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) = 0;
@@ -756,6 +758,9 @@ public:
 
         // ipc id for get stability test flag (52)
         IS_USER_A_STABILITY_TEST,
+
+        // ipc id for set mission label (53)
+        SET_MISSION_LABEL,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

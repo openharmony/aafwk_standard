@@ -301,11 +301,11 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     info.isSingletonMode = isSingleton;
     info.missionInfo.runningState = 0;
     info.missionInfo.time = Time2str(time(0));
-    info.missionInfo.label = abilityRequest.appInfo.label;
     info.missionInfo.iconPath = abilityRequest.appInfo.iconPath;
     info.missionInfo.want = abilityRequest.want;
 
     if (!findReusedMissionInfo) {
+        info.missionInfo.label = abilityRequest.appInfo.label;
         if (!DelayedSingleton<MissionInfoMgr>::GetInstance()->GenerateMissionId(info.missionInfo.id)) {
             HILOG_DEBUG("failed to generate mission id.");
             return;
@@ -1431,6 +1431,23 @@ void MissionListManager::BackToLauncher()
     launcherList_->AddMissionToTop(launcherRootMission);
     MoveMissionListToTop(launcherList_);
     launcherRootAbility->ProcessForegroundAbility();
+}
+
+int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
+{
+    if (!token) {
+        HILOG_INFO("SetMissionLabel token is nullptr.");
+        return -1;
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    auto missionId = GetMissionIdByAbilityToken(token);
+    if (missionId <= 0) {
+        HILOG_INFO("SetMissionLabel find mission failed.");
+        return -1;
+    }
+
+    return DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionLabel(missionId, label);
 }
 
 void MissionListManager::Dump(std::vector<std::string> &info)
