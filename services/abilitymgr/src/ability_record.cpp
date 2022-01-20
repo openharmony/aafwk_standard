@@ -88,6 +88,11 @@ AbilityRecord::AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &ab
     requestCode_(requestCode), compatibleVersion_(apiVersion)
 {
     recordId_ = abilityRecordId++;
+    auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (abilityMgr) {
+        abilityMgr->GetMaxRestartNum(restratMax_);
+    }
+    restartCount_ = restratMax_;
 }
 
 AbilityRecord::~AbilityRecord()
@@ -159,7 +164,7 @@ int AbilityRecord::LoadAbility()
         return ERR_INVALID_VALUE;
     }
 
-    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ < 0)) {
+    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ < 0) && IsNewVersion()) {
         HILOG_ERROR("Root launcher restart is out of max count.");
         return ERR_INVALID_VALUE;
     }
@@ -900,7 +905,7 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
                std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
     info.push_back(dumpInfo);
 
-    if (isLauncherRoot_) {
+    if (isLauncherRoot_ && IsNewVersion()) {
         dumpInfo = "        can restart num #" + std::to_string(restartCount_);
         info.push_back(dumpInfo);
     }
@@ -1131,13 +1136,6 @@ bool AbilityRecord::GetPowerState() const
 void AbilityRecord::SetRestarting(const bool isRestart)
 {
     isRestarting_ = isRestart;
-
-    if (restratMax_ < 0) {
-        auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
-        if (abilityMgr) {
-            abilityMgr->GetMaxRestartNum(restratMax_);
-        }
-    }
 
     if (isLauncherRoot_ && IsLauncherAbility()) {
         restartCount_ = isRestart ? (--restartCount_) : restratMax_;
