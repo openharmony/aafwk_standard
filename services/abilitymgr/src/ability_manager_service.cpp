@@ -2589,6 +2589,11 @@ void AbilityManagerService::StartSystemApplication()
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
     }
 
+    if (amsConfigResolver_->GetPhoneServiceState()) {
+        HILOG_INFO("start phone service");
+        StartingPhoneServiceAbility();
+    }
+
     if (amsConfigResolver_->GetStartContactsState()) {
         HILOG_INFO("start contacts");
         StartingContactsAbility();
