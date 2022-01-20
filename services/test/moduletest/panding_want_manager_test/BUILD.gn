@@ -21,6 +21,7 @@ ohos_moduletest("PandingWantMgrTest") {
   module_out_path = module_output_path
 
   include_dirs = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
     "//foundation/aafwk/standard/services/test/mock/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmg",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
@@ -53,6 +54,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
