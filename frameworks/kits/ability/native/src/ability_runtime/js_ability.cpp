@@ -304,6 +304,14 @@ std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
     return jsRuntime_.LoadSystemModule("application.WindowStage", &jsWindowStage, 1);
 }
 
+void JsAbility::GetPageStackFromWant(const Want& want, std::string& pageStack)
+{
+    auto stringObj = AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME));
+    if (stringObj != nullptr) {
+        pageStack = AAFwk::String::Unbox(stringObj);
+    }
+}
+
 void JsAbility::DoOnForeground(const Want& want)
 {
     if (scene_ == nullptr) {
@@ -316,7 +324,6 @@ void JsAbility::DoOnForeground(const Want& want)
             HILOG_ERROR("%{public}s error. failed to create WindowScene instance!", __func__);
             return;
         }
-
         int32_t displayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
         if (setting_ != nullptr) {
             std::string strDisplayId = setting_->GetProperty(
@@ -337,17 +344,16 @@ void JsAbility::DoOnForeground(const Want& want)
             HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
             return;
         }
-
         // multi-instance ability continuation
         HILOG_INFO("lauch reason = %{public}d, contentStorage = %{public}p", launchParam_.launchReason,
             abilityContext_->GetContentStorage());
         if (IsRestoredInContinuation()) {
-            std::string pageStack = AAFwk::String::Unbox(
-                AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME)));
+            std::string pageStack;
+            GetPageStackFromWant(want, pageStack);
             HandleScope handleScope(jsRuntime_);
             auto& engine = jsRuntime_.GetNativeEngine();
             scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
-                static_cast<NativeValue*>(abilityContext_->GetContentStorage()));
+                static_cast<NativeValue*>(abilityContext_->GetContentStorage()), true);
             OnSceneRestored();
             NotityContinuationResult(want, true);
         } else {
