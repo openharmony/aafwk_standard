@@ -1095,17 +1095,19 @@ int MissionListManager::SetMissionLockedState(int missionId, bool lockedState)
     std::shared_ptr<Mission> mission = GetMissionById(missionId);
     if (mission) {
         mission->SetLockedState(lockedState);
-        // update inner mission info time
-        InnerMissionInfo innerMissionInfo;
-        DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(),
-            innerMissionInfo);
-        innerMissionInfo.missionInfo.time = Time2str(time(0));
-        innerMissionInfo.missionInfo.lockedState = lockedState;
-        DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
-        return ERR_OK;
     }
-    HILOG_ERROR("mission is not exist, missionId %{public}d", missionId);
-    return MISSION_NOT_FOUND;
+
+    // update inner mission info time
+    InnerMissionInfo innerMissionInfo;
+    auto ret = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(missionId, innerMissionInfo);
+    if (ret != 0) {
+        HILOG_ERROR("mission is not exist, missionId %{public}d", missionId);
+        return MISSION_NOT_FOUND;
+    }
+    innerMissionInfo.missionInfo.time = Time2str(time(0));
+    innerMissionInfo.missionInfo.lockedState = lockedState;
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
+    return ERR_OK;
 }
 
 void MissionListManager::MoveToBackgroundTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
@@ -1388,9 +1390,9 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
 
 void MissionListManager::DelayedStartLauncher()
 {
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER(ams);
-    auto handler = ams->GetEventHandler();
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityManagerService);
+    auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
     std::weak_ptr<MissionListManager> wpListMgr = shared_from_this();
     auto timeoutTask = [wpListMgr]() {
