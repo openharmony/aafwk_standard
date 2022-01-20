@@ -1135,18 +1135,57 @@ void MissionListManager::OnTimeOut(uint32_t msgId, int64_t eventId)
 
     switch (msgId) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG:
+            HandleLoadTimeout(abilityRecord);
             break;
         case AbilityManagerService::ACTIVE_TIMEOUT_MSG:
             break;
         case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
         case AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG:
-            if (abilityRecord->GetMission()) {
-                abilityRecord->GetMission()->SetMovingState(false);
-            }
+            HandleForgroundNewTimeout(abilityRecord);
             break;
         default:
             break;
     }
+}
+
+void MissionListManager::HandleLoadTimeout(const std::shared_ptr<AbilityRecord> &ability)
+{
+    if (ability == nullptr) {
+        HILOG_ERROR("MissionListManager on time out event: ability record is nullptr.");
+        return;
+    }
+    // root launcher load timeout, notify appMs force terminate the ability and restart immediately.
+    if (ability->IsLauncherAbility() && ability->IsLauncherRoot()) {
+        ability->SetRestarting(true);
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
+        HILOG_INFO("Launcher root load timeout, restart.");
+        DelayedStartLauncher();
+        return;
+    }
+
+    // other
+}
+
+void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<AbilityRecord> &ability)
+{
+    if (ability == nullptr) {
+        HILOG_ERROR("MissionListManager on time out event: ability record is nullptr.");
+        return;
+    }
+
+    if (ability->GetMission()) {
+        ability->GetMission()->SetMovingState(false);
+    }
+
+    // root launcher load timeout, notify appMs force terminate the ability and restart immediately.
+    if (ability->IsLauncherAbility() && ability->IsLauncherRoot()) {
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
+        HILOG_INFO("Launcher root load timeout, restart.");
+        DelayedStartLauncher();
+        return;
+    }
+
+    // other
 }
 
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByCaller(
@@ -1186,7 +1225,7 @@ std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByEventId(int
     return defaultStandardList_->GetAbilityRecordById(eventId);
 }
 
-void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
+void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord, int32_t currentUserId)
 {
     HILOG_INFO("On ability died.");
     if (!abilityRecord) {
@@ -1199,7 +1238,17 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
         HILOG_ERROR("Ability type is not page.");
         return;
     }
+
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
+
+    if (abilityRecord->IsLauncherRoot() && currentUserId != userId_) {
+        HILOG_WARN("delay restart root launcher when start user.");
+        HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
+        abilityRecord->SetAbilityState(AbilityState::INITIAL);
+        abilityRecord->SetRestarting(true);
+        return;
+    }
+
     HandleAbilityDied(abilityRecord);
 }
 
@@ -1321,10 +1370,17 @@ void MissionListManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abilit
 {
     HILOG_INFO("Handle Ability Died.");
     CHECK_POINTER(abilityRecord);
+
+    if (abilityRecord->GetAbilityInfo().type != AbilityType::PAGE) {
+        HILOG_ERROR("Ability type is not page.");
+        return;
+    }
+
     if (abilityRecord->IsLauncherAbility()) {
         HandleLauncherDied(abilityRecord);
         return;
     }
+
     HandleAbilityDiedByDefault(abilityRecord);
 }
 
@@ -1343,6 +1399,7 @@ void MissionListManager::HandleLauncherDied(std::shared_ptr<AbilityRecord> abili
     if (ability->IsLauncherRoot()) {
         HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
         ability->SetAbilityState(AbilityState::INITIAL);
+        ability->SetRestarting(true);
     } else {
         HILOG_INFO("launcher Ability died, remove, %{public}d", __LINE__);
         missionList->RemoveMission(mission);

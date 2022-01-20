@@ -655,6 +655,7 @@ public:
     std::list<std::shared_ptr<ConnectionRecord>> GetConnectRecordListByCallback(sptr<IAbilityConnection> callback);
 
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
+    void GetMaxRestartNum(int &max);
 
     /**
      * wait for starting system ui.
