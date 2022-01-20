@@ -984,6 +984,10 @@ int MissionListManager::ClearMission(int missionId)
     }
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     auto mission = GetMissionById(missionId);
+    if (mission->GetMissionList() && mission->GetMissionList()->GetType() == MissionListType::LAUNCHER) {
+        HILOG_ERROR("Mission id is launcher, can not clear.");
+        return ERR_INVALID_VALUE;
+    }
     return ClearMissionLocked(missionId, mission);
 }
 
