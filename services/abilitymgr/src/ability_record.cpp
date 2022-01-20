@@ -161,7 +161,7 @@ int AbilityRecord::LoadAbility()
 
     if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ < 0)) {
         HILOG_ERROR("Root launcher restart is out of max count.");
-        return ERR_INVALID_VALUE;;
+        return ERR_INVALID_VALUE;
     }
 
     if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
@@ -1133,9 +1133,9 @@ void AbilityRecord::SetRestarting(const bool isRestart)
     isRestarting_ = isRestart;
 
     if (restratMax_ < 0) {
-        auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-        if (ams) {
-            ams->GetMaxRestartNum(restratMax_);
+        auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+        if (abilityMgr) {
+            abilityMgr->GetMaxRestartNum(restratMax_);
         }
     }
 

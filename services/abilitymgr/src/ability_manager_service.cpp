@@ -2324,7 +2324,7 @@ void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
         if (currentMissionListManager_) {
             currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
         }
-    }else {
+    } else {
         if (currentStackManager_) {
             currentStackManager_->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
         }
@@ -2610,6 +2610,11 @@ void AbilityManagerService::StartSystemApplication()
     if (amsConfigResolver_->GetNavigationBarState()) {
         HILOG_INFO("start navigation bar");
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
+    }
+
+    if (amsConfigResolver_->GetPhoneServiceState()) {
+        HILOG_INFO("start phone service");
+        StartingPhoneServiceAbility();
     }
 
     if (amsConfigResolver_->GetStartContactsState()) {
