@@ -150,7 +150,7 @@ NativeValue* JsWindowStage::OnGetMainWindow(NativeEngine& engine, NativeCallback
                 HILOG_INFO("JsWindowStage::OnGetMainWindow success");
             } else {
                 task.Reject(engine, CreateJsError(engine,
-                    static_cast<int32_t>(WMError::WM_ERROR_NULLPTR),
+                    static_cast<int32_t>(Rosen::WMError::WM_ERROR_NULLPTR),
                     "JsWindowStage::OnGetMainWindow failed."));
             }
         };
