@@ -413,5 +413,43 @@ void AppRunningManager::GetForegroundApplications(std::vector<AppStateData> &lis
         }
     }
 }
+
+void AppRunningManager::HandleAddAbilityStageTimeOut(const int64_t eventId)
+{
+    APP_LOGD("Handle add ability stage timeout.");
+    auto abilityRecord = GetAbilityRunningRecord(eventId);
+    if (!abilityRecord) {
+        APP_LOGE("abilityRecord is nullptr");
+        return;
+    }
+
+    auto abilityToken = abilityRecord->GetToken();
+    auto appRecord = GetTerminatingAppRunningRecord(abilityToken);
+    if (!appRecord) {
+        APP_LOGE("appRecord is nullptr");
+        return;
+    }
+
+    appRecord->ScheduleProcessSecurityExit();
+}
+
+void AppRunningManager::HandleStartSpecifiedAbilityTimeOut(const int64_t eventId)
+{
+    APP_LOGD("Handle receive multi instances timeout.");
+    auto abilityRecord = GetAbilityRunningRecord(eventId);
+    if (!abilityRecord) {
+        APP_LOGE("abilityRecord is nullptr");
+        return;
+    }
+
+    auto abilityToken = abilityRecord->GetToken();
+    auto appRecord = GetTerminatingAppRunningRecord(abilityToken);
+    if (!appRecord) {
+        APP_LOGE("appRecord is nullptr");
+        return;
+    }
+
+    appRecord->ScheduleProcessSecurityExit();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

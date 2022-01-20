@@ -504,5 +504,25 @@ int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
     }
     return reply.ReadInt32();
 }
+
+void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("WriteInterfaceToken faild");
+        return;
+    }
+
+    if (!data.WriteInt32(recordId) || !data.WriteParcelable(&want) || !data.WriteString(flag)) {
+        APP_LOGE("want write failed.");
+        return;
+    }
+
+    if (!SendTransactCmd(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE, data, reply)) {
+        APP_LOGE("SendTransactCmd faild");
+        return;
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

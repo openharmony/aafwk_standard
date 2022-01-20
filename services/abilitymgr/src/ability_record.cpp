@@ -1261,6 +1261,16 @@ int32_t AbilityRecord::GetMissionId() const
     return missionId_;
 }
 
+void AbilityRecord::SetSpecifiedFlag(const std::string &flag)
+{
+    specifiedFlag_ = flag;
+}
+
+std::string AbilityRecord::GetSpecifiedFlag() const
+{
+    return specifiedFlag_;
+}
+
 AbilityRecordNew::AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
     const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode, int32_t apiVersion)
     : AbilityRecord(want, abilityInfo, applicationInfo, requestCode, apiVersion)

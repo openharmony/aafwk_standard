@@ -21,6 +21,7 @@
 #include "app_launch_data.h"
 #include "configuration.h"
 #include "hap_module_info.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -134,6 +135,8 @@ public:
      */
     virtual void ScheduleProcessSecurityExit() = 0;
 
+    virtual void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) = 0;
+
     enum class Message {
         SCHEDULE_FOREGROUND_APPLICATION_TRANSACTION = 0,
         SCHEDULE_BACKGROUND_APPLICATION_TRANSACTION,
@@ -147,6 +150,7 @@ public:
         SCHEDULE_CONFIGURATION_UPDATED,
         SCHEDULE_PROCESS_SECURITY_EXIT_TRANSACTION,
         SCHEDULE_ABILITY_STAGE_INFO,
+        SCHEDULE_ACCEPT_WANT,
     };
 };
 }  // namespace AppExecFwk

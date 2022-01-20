@@ -129,5 +129,15 @@ sptr<IAppScheduler> AppLifeCycleDeal::GetApplicationClient() const
 {
     return appThread_;
 }
+
+void AppLifeCycleDeal::ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName)
+{
+    if (!appThread_) {
+        APP_LOGE("appThread_ is nullptr");
+        return;
+    }
+
+    appThread_->ScheduleAcceptWant(want, moduleName);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

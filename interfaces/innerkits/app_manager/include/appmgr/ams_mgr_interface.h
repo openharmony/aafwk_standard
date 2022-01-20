@@ -24,6 +24,7 @@
 #include "app_record_id.h"
 #include "iapp_state_callback.h"
 #include "running_process_info.h"
+#include "istart_specified_ability_response.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -152,6 +153,10 @@ public:
     virtual void GetRunningProcessInfoByToken(
         const sptr<IRemoteObject> &token, OHOS::AppExecFwk::RunningProcessInfo &info) = 0;
 
+    virtual void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo) = 0;
+
+    virtual void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response) = 0;
+
     enum class Message {
         LOAD_ABILITY = 0,
         TERMINATE_ABILITY,
@@ -168,6 +173,8 @@ public:
         PREPARE_TERMINATE_ABILITY,
         KILL_APPLICATION_BYUID,
         GET_RUNNING_PROCESS_INFO_BY_TOKEN,
+        START_SPECIFIED_ABILITY,
+        REGISTER_START_SPECIFIED_ABILITY_RESPONSE,
     };
 };
 }  // namespace AppExecFwk

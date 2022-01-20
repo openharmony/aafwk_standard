@@ -35,6 +35,7 @@ public:
     MOCK_METHOD1(ScheduleConfigurationUpdated, void(const Configuration &));
     MOCK_METHOD0(ScheduleProcessSecurityExit, void());
     MOCK_METHOD1(ScheduleAbilityStage, void(const HapModuleInfo &));
+    MOCK_METHOD2(ScheduleAcceptWant, void(const AAFwk::Want &want, const std::string &moduleName));
 
     void Post()
     {

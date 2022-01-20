@@ -23,6 +23,7 @@
 // #include "app_process_data.h"
 #include "appmgr/app_mgr_client.h"
 #include "appmgr/app_state_callback_host.h"
+#include "appmgr/start_specified_ability_response_stub.h"
 #include "application_info.h"
 #include "iremote_object.h"
 #include "refbase.h"
@@ -77,6 +78,15 @@ public:
     virtual void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state) = 0;
 
     virtual void OnAppStateChanged(const AppInfo &info) = 0;
+};
+
+class StartSpecifiedAbilityResponse : public AppExecFwk::StartSpecifiedAbilityResponseStub {
+public:
+    StartSpecifiedAbilityResponse() = default;
+    virtual ~StartSpecifiedAbilityResponse() = default;
+
+    virtual void OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag) override;
+    virtual void OnTimeoutResponse(const AAFwk::Want &want) override;
 };
 
 /**
@@ -230,6 +240,7 @@ public:
      */
     void StartupResidentProcess();
 
+    void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
     int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
 
 protected:
@@ -254,6 +265,7 @@ private:
     std::weak_ptr<AppStateCallback> callback_;
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
     AppAbilityState appAbilityState_ = AppAbilityState::ABILITY_STATE_UNDEFINED;
+    sptr<StartSpecifiedAbilityResponse> startSpecifiedAbilityResponse_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

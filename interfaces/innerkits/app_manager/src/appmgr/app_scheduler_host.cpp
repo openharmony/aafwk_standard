@@ -48,6 +48,8 @@ AppSchedulerHost::AppSchedulerHost()
         &AppSchedulerHost::HandleScheduleProcessSecurityExit;
     memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ABILITY_STAGE_INFO)] =
         &AppSchedulerHost::HandleScheduleAbilityStage;
+    memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ACCEPT_WANT)] =
+        &AppSchedulerHost::HandleScheduleAcceptWant;
 }
 
 AppSchedulerHost::~AppSchedulerHost()
@@ -189,6 +191,19 @@ int32_t AppSchedulerHost::HandleScheduleProcessSecurityExit(MessageParcel &data,
 {
     BYTRACE(BYTRACE_TAG_APP);
     ScheduleProcessSecurityExit();
+    return NO_ERROR;
+}
+
+int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageParcel &reply)
+{
+    BYTRACE(BYTRACE_TAG_APP);
+    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    if (want == nullptr) {
+        APP_LOGE("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto moduleName = data.ReadString();
+    ScheduleAcceptWant(*want, moduleName);
     return NO_ERROR;
 }
 }  // namespace AppExecFwk
