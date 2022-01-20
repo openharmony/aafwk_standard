@@ -713,6 +713,8 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
 
+    virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
+
     void ClearUserData(int32_t userId);
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;

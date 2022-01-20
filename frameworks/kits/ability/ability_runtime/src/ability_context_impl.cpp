@@ -218,5 +218,15 @@ ErrCode AbilityContextImpl::RestoreWindowStage(void* contentStorage)
     contentStorage_ = contentStorage;
     return err;
 }
+
+ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
+{
+    HILOG_INFO("%{public}s begin. label = %{public}s", __func__, label.c_str());
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->SetMissionLabel(token_, label);
+    if (err != ERR_OK) {
+        HILOG_ERROR("AbilityContextImpl::SetMissionLabel is failed %{public}d", err);
+    }
+    return err;
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

@@ -1983,6 +1983,30 @@ int AbilityManagerProxy::StopUser(int userId, const sptr<IStopUserCallback> &cal
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteRemoteObject(token)) {
+        HILOG_ERROR("SetMissionLabel write token failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteString16(Str8ToStr16(label))) {
+        HILOG_ERROR("SetMissionLabel write label failed.");
+        return ERR_INVALID_VALUE;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::SET_MISSION_LABEL, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("SetMissionLabel Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {
     MessageParcel data;
