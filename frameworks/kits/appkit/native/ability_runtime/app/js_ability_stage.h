@@ -35,6 +35,8 @@ public:
 
     void OnCreate() const override;
 
+    std::string OnAcceptWant(const AAFwk::Want &want) override;
+
 private:
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsAbilityStageObj_;

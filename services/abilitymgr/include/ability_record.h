@@ -123,6 +123,7 @@ struct AbilityRequest {
     sptr<IRemoteObject> callerToken;
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
     int32_t compatibleVersion = 0;
+    std::string specifiedFlag;
 
     bool IsNewVersion() const
     {
@@ -745,6 +746,9 @@ public:
     void OnSchedulerDied(const wptr<IRemoteObject> &remote);
     void SendEvent(uint32_t msg, uint32_t timeOut);
 
+    void SetSpecifiedFlag(const std::string &flag);
+    std::string GetSpecifiedFlag() const;
+
     static int64_t abilityRecordId;
     int recordId_ = 0;                                // record id
     Want want_ = {};                                       // want to start this ability
@@ -813,6 +817,7 @@ public:
     std::weak_ptr<MissionList> missionList_;
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
+    std::string specifiedFlag_;
 };
 
 class AbilityRecordNew : public AbilityRecord {

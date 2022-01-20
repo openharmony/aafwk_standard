@@ -344,5 +344,42 @@ void AppMgrClient::StartupResidentProcess()
 
     service->StartupResidentProcess();
 }
+
+void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        return;
+    }
+    sptr<IAmsMgr> amsService = service->GetAmsMgr();
+    if (amsService == nullptr) {
+        return;
+    }
+    amsService->StartSpecifiedAbility(want, abilityInfo);
+}
+
+void AppMgrClient::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        return;
+    }
+    sptr<IAmsMgr> amsService = service->GetAmsMgr();
+    if (amsService == nullptr) {
+        return;
+    }
+    amsService->RegisterStartSpecifiedAbilityResponse(response);
+}
+
+void AppMgrClient::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        APP_LOGE("service is nullptr");
+        return;
+    }
+
+    service->ScheduleAcceptWantDone(recordId, want, flag);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

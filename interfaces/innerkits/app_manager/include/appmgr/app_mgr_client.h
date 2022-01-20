@@ -25,6 +25,7 @@
 #include "iapp_state_callback.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"
+#include "istart_specified_ability_response.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -213,6 +214,12 @@ public:
      * Start a resident process
      */
     virtual void StartupResidentProcess();
+
+    virtual void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
+
+    virtual void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response);
+
+    virtual void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag);
 
 private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);

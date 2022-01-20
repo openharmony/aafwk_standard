@@ -39,6 +39,15 @@ void AppRunningRecord::SetApplicationClient(const sptr<IAppScheduler> &thread)
         appLifeCycleDeal_ = std::make_shared<AppLifeCycleDeal>();
     }
     appLifeCycleDeal_->SetApplicationClient(thread);
+
+    auto moduleRecordList = GetAllModuleRecord();
+    if (moduleRecordList.empty()) {
+        APP_LOGE("moduleRecordList is empty");
+        return;
+    }
+    for (const auto &moduleRecord : moduleRecordList) {
+        moduleRecord->SetApplicationClient(appLifeCycleDeal_);
+    }
 }
 
 const std::string &AppRunningRecord::GetBundleName() const
@@ -261,11 +270,26 @@ void AppRunningRecord::AddAbilityStage()
     APP_LOGI("The current process[%{public}s] is updated", processName_.c_str());
 }
 
+void AppRunningRecord::AddAbilityStageBySpecifiedAbility(const std::string &bundleName)
+{
+    HapModuleInfo hapModuleInfo;
+    if (GetTheModuleInfoNeedToUpdated(bundleName, hapModuleInfo)) {
+        SendEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT);
+        appLifeCycleDeal_->AddAbilityStage(hapModuleInfo);
+    }
+}
+
 void AppRunningRecord::AddAbilityStageDone()
 {
     APP_LOGI("Add ability stage done.");
-    eventHandler_->RemoveEvent(AMSEventHandler::TERMINATE_ABILITY_TIMEOUT_MSG, appRecordId_);
+    eventHandler_->RemoveEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, appRecordId_);
     // Should proceed to the next notification
+
+    if (isSpecifiedAbility_) {
+        ScheduleAcceptWant(moduleName_);
+        return;
+    }
+
     AddAbilityStage();
 }
 
@@ -651,8 +675,6 @@ void AppRunningRecord::AbilityTerminated(const sptr<IRemoteObject> &token)
 
 std::list<std::shared_ptr<ModuleRunningRecord>> AppRunningRecord::GetAllModuleRecord() const
 {
-    APP_LOGI("Get all module record.");
-
     std::list<std::shared_ptr<ModuleRunningRecord>> moduleRecordList;
     for (const auto &item : hapModules_) {
         for (const auto &list : item.second) {
@@ -837,6 +859,36 @@ void AppRunningRecord::GetBundleNames(std::vector<std::string> &bundleNames)
     for (auto &app : appInfos_) {
         bundleNames.emplace_back(app.first);
     }
+}
+
+void AppRunningRecord::SetSpecifiedAbilityFlagAndWant(
+    const bool flag, const AAFwk::Want &want, const std::string &moduleName)
+{
+    isSpecifiedAbility_ = flag;
+    SpecifiedWant_ = want;
+    moduleName_ = moduleName;
+}
+
+bool AppRunningRecord::IsStartSpecifiedAbility() const
+{
+    return isSpecifiedAbility_;
+}
+
+void AppRunningRecord::ScheduleAcceptWant(const std::string &moduleName)
+{
+    SendEvent(
+        AMSEventHandler::START_MULTI_INSTANCES_ABILITY_MSG, AMSEventHandler::START_MULTI_INSTANCES_ABILITY_TIMEOUT);
+    appLifeCycleDeal_->ScheduleAcceptWant(SpecifiedWant_, moduleName);
+}
+
+void AppRunningRecord::ScheduleAcceptWantDone()
+{
+    eventHandler_->RemoveEvent(AMSEventHandler::START_MULTI_INSTANCES_ABILITY_MSG, appRecordId_);
+}
+
+const AAFwk::Want &AppRunningRecord::GetSpecifiedWant() const
+{
+    return SpecifiedWant_;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -16,6 +16,9 @@
 class AbilityStage {
     constructor() {}
     onCreate() {}
+    onAcceptWant(want) {
+        console.log('onAcceptWant, want:' + want.abilityName);
+    }
 }
 
 export default AbilityStage

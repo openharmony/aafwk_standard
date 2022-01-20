@@ -253,7 +253,7 @@ public:
      */
     const std::unique_ptr<AbilityRuntime::Runtime>& GetRuntime();
 
-    bool InitAddAbilityStage(const std::shared_ptr<AbilityInfo> &abilityInfo);
+    void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName, std::string &flag);
 
 private:
     std::list<std::shared_ptr<AbilityLifecycleCallbacks>> abilityLifecycleCallbacks_;

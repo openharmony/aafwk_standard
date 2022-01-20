@@ -160,6 +160,11 @@ public:
     virtual void GetRunningProcessInfoByToken(
         const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info) override;
 
+    virtual void StartSpecifiedAbility(
+        const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo) override;
+
+    virtual void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response) override;
+
 private:
     /**
      * @brief Judge whether the application service is ready.

@@ -215,6 +215,8 @@ public:
      */
     void ScheduleProcessSecurityExit() override;
 
+    void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
+
 private:
     /**
      *
@@ -222,6 +224,8 @@ private:
      *
      */
     void HandleTerminateApplicationLocal();
+
+    void HandleScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName);
 
     /**
      *

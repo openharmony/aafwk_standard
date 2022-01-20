@@ -82,6 +82,20 @@ int MissionListManager::StartAbility(const AbilityRequest &abilityRequest)
         }
     }
 
+    return StartAbility(currentTopAbility, callerAbility, abilityRequest);
+}
+
+int MissionListManager::StartAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
+    const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest)
+{
+    auto isSpecified = (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SPECIFIED);
+    if (isSpecified) {
+        EnqueueWaittingAbility(abilityRequest);
+        DelayedSingleton<AppScheduler>::GetInstance()->StartSpecifiedAbility(
+            abilityRequest.want, abilityRequest.abilityInfo);
+        return 0;
+    }
+
     return StartAbilityLocked(currentTopAbility, callerAbility, abilityRequest);
 }
 
@@ -138,6 +152,12 @@ int MissionListManager::GetMissionInfo(int32_t missionId, MissionInfo &missionIn
 
 int MissionListManager::MoveMissionToFront(int32_t missionId)
 {
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    return MoveMissionToFront(missionId, true);
+}
+
+int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher)
+{
     HILOG_INFO("move mission to front:%{public}d.", missionId);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::shared_ptr<Mission> mission;
@@ -147,7 +167,7 @@ int MissionListManager::MoveMissionToFront(int32_t missionId)
         return MOVE_MISSION_FAILED;
     }
 
-    MoveMissionToTargetList(true, targetMissionList, mission);
+    MoveMissionToTargetList(isCallerFromLauncher, targetMissionList, mission);
     MoveMissionListToTop(targetMissionList);
 
     // update inner mission info time
@@ -190,7 +210,7 @@ void MissionListManager::StartWaittingAbility()
         AbilityRequest abilityRequest = waittingAbilityQueue_.front();
         waittingAbilityQueue_.pop();
         auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
-        StartAbilityLocked(topAbility, callerAbility, abilityRequest);
+        StartAbility(topAbility, callerAbility, abilityRequest);
         return;
     }
 }
@@ -295,6 +315,10 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName);
     targetRecord->SetUseNewMission();
     targetRecord->SetMission(targetMission);
+
+    if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SPECIFIED) {
+        targetRecord->SetSpecifiedFlag(abilityRequest.specifiedFlag);
+    }
 
     if (abilityRequest.abilityInfo.applicationInfo.isLauncherApp) {
         return;
@@ -1508,6 +1532,57 @@ void MissionListManager::DumpMission(int missionId, std::vector<std::string> &in
         return;
     }
     innerMissionInfo.Dump(info);
+}
+
+void MissionListManager::OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    if (waittingAbilityQueue_.empty()) {
+        return;
+    }
+
+    AbilityRequest abilityRequest = waittingAbilityQueue_.front();
+    waittingAbilityQueue_.pop();
+
+    auto currentTopAbility = GetCurrentTopAbilityLocked();
+    auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
+
+    auto mission = GetMissionBySpecifiedFlag(flag);
+    if (mission) {
+        auto ability = mission->GetAbilityRecord();
+        if (!ability) {
+            return;
+        }
+        ability->SetWant(abilityRequest.want);
+        ability->SetIsNewWant(true);
+
+        auto isCallerFromLauncher = (callerAbility && callerAbility->IsLauncherAbility());
+        MoveMissionToFront(mission->GetMissionId(), isCallerFromLauncher);
+        return;
+    }
+
+    abilityRequest.specifiedFlag = flag;
+    StartAbilityLocked(currentTopAbility, callerAbility, abilityRequest);
+}
+
+std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const std::string &flag) const
+{
+    std::shared_ptr<Mission> mission = nullptr;
+    for (auto missionList : currentMissionLists_) {
+        if (missionList && (mission = missionList->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+            return mission;
+        }
+    }
+
+    if ((mission = defaultSingleList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+        return mission;
+    }
+
+    if ((mission = launcherList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+        return mission;
+    }
+
+    return defaultStandardList_->GetMissionBySpecifiedFlag(flag);
 }
 
 bool MissionListManager::IsPC()

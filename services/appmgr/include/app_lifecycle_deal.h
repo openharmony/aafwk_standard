@@ -20,6 +20,7 @@
 #include "app_launch_data.h"
 #include "ability_running_record.h"
 #include "hap_module_info.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -129,6 +130,8 @@ public:
      * @return Returns the application client.
      */
     sptr<IAppScheduler> GetApplicationClient() const;
+
+    void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName);
 
 private:
     sptr<IAppScheduler> appThread_ = nullptr;

@@ -42,6 +42,9 @@ public:
     MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD2(GetRunningProcessInfoByToken,
         void(const sptr<IRemoteObject> &token, OHOS::AppExecFwk::RunningProcessInfo &info));
+    MOCK_METHOD2(StartSpecifiedAbility, void(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo));
+    MOCK_METHOD1(RegisterStartSpecifiedAbilityResponse, void(const sptr<IStartSpecifiedAbilityResponse> &response));
+
     MockAmsMgrScheduler() : AmsMgrStub() {};
     virtual ~MockAmsMgrScheduler(){};
     virtual void RegisterAppStateCallback(const sptr<IAppStateCallback> &callback) override

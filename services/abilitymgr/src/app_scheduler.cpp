@@ -16,6 +16,7 @@
 #include "app_scheduler.h"
 
 #include "ability_manager_errors.h"
+#include "ability_manager_service.h"
 #include "ability_record.h"
 #include "ability_util.h"
 #include "appmgr/app_mgr_constants.h"
@@ -54,6 +55,10 @@ bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
         HILOG_ERROR("failed to RegisterAppStateCallback");
         return false;
     }
+
+    startSpecifiedAbilityResponse_ = new (std::nothrow) StartSpecifiedAbilityResponse();
+    appMgrClient_->RegisterStartSpecifiedAbilityResponse(startSpecifiedAbilityResponse_);
+
     HILOG_INFO("success to ConnectAppMgrService");
     isInit_ = true;
     return true;
@@ -254,6 +259,22 @@ void AppScheduler::StartupResidentProcess()
     appMgrClient_->StartupResidentProcess();
 }
 
+void AppScheduler::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->StartSpecifiedAbility(want, abilityInfo);
+}
+
+void StartSpecifiedAbilityResponse::OnAcceptWantResponse(
+    const AAFwk::Want &want, const std::string &flag)
+{
+    DelayedSingleton<AbilityManagerService>::GetInstance()->OnAcceptWantResponse(want, flag);
+}
+
+void StartSpecifiedAbilityResponse::OnTimeoutResponse(const AAFwk::Want &want)
+{
+    DelayedSingleton<AbilityManagerService>::GetInstance()->OnStartSpecifiedAbilityTimeoutResponse(want);
+}
 int AppScheduler::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);

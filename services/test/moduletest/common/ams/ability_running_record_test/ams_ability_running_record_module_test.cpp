@@ -125,6 +125,9 @@ public:
     void ScheduleAbilityStage(const HapModuleInfo &) override
     {}
 
+    void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override
+    {}
+
     void Reset() override
     {
         MockedSchedulerBase::Reset();
