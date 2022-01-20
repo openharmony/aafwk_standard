@@ -825,5 +825,12 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, in
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetMissionSnapshot(deviceId, missionId, snapshot);
 }
+
+ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string& label)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->SetMissionLabel(token, label);
+}
 }  // namespace AAFwk
 }  // namespace AAFwk

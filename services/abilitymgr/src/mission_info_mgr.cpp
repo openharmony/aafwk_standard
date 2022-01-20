@@ -277,6 +277,30 @@ void MissionInfoMgr::UpdateMissionTimeStamp(int32_t missionId, const std::string
     (void)AddMissionInfo(updateInfo);
 }
 
+int MissionInfoMgr::UpdateMissionLabel(int32_t missionId, const std::string& label)
+{
+    if (!taskDataPersistenceMgr_) {
+        HILOG_ERROR("task data persist not init.");
+        return -1;
+    }
+    auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
+        return missionId == info.missionInfo.id;
+    });
+    if (it == missionInfoList_.end()) {
+        HILOG_ERROR("UpdateMissionLabel failed, missionId %{public}d not exists", missionId);
+        return -1;
+    }
+
+    InnerMissionInfo updateInfo = *it;
+    updateInfo.missionInfo.label = label;
+
+    if (!taskDataPersistenceMgr_->SaveMissionInfo(updateInfo)) {
+        HILOG_ERROR("save mission info failed.");
+        return -1;
+    }
+    return 0;
+}
+
 bool MissionInfoMgr::LoadAllMissionInfo()
 {
     if (!taskDataPersistenceMgr_) {

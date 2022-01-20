@@ -133,6 +133,14 @@ public:
      */
     virtual void* GetContentStorage() = 0;
 
+    /**
+     * @brief Set mission label of this ability.
+     *
+     * @param label the label of this ability.
+     * @return Returns ERR_OK if success.
+     */
+    virtual ErrCode SetMissionLabel(const std::string &label) = 0;
+
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;
 
