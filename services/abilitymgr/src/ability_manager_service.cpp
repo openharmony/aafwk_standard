@@ -2113,7 +2113,8 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
         }
 
         if (currentMissionListManager_) {
-            currentMissionListManager_->OnAbilityDied(abilityRecord);
+            int32_t currentUserId = userController_? userController_->GetCurrentUserId() : USER_ID_DEFAULT;
+            currentMissionListManager_->OnAbilityDied(abilityRecord, currentUserId);
         }
     } else {
         if (systemAppManager_ && abilityRecord->IsKernalSystemAbility()) {
@@ -2132,6 +2133,13 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
 
     if (dataAbilityManager_) {
         dataAbilityManager_->OnAbilityDied(abilityRecord);
+    }
+}
+
+void AbilityManagerService::GetMaxRestartNum(int &max)
+{
+    if (amsConfigResolver_) {
+        max = amsConfigResolver_->GetMaxRestartNum();
     }
 }
 
@@ -2275,14 +2283,17 @@ void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
         if (kernalAbilityManager_) {
             kernalAbilityManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
         }
+        if (currentMissionListManager_) {
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+        }
     } else {
         if (systemAppManager_) {
             systemAppManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
         }
+        if (currentStackManager_) {
+            currentStackManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+        }
      }
-    if (currentStackManager_) {
-        currentStackManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
-    }
 }
 
 void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
@@ -2293,21 +2304,30 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
         if (kernalAbilityManager_) {
             kernalAbilityManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
         }
+        if (currentMissionListManager_) {
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+        }
     } else {
         if (systemAppManager_) {
             systemAppManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
         }
-    }
-    if (currentStackManager_) {
-        currentStackManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
+        if (currentStackManager_) {
+            currentStackManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
+        }
     }
 }
 
 void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle inactive timeout.");
-    if (currentStackManager_) {
-        currentStackManager_->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
+    if (useNewMission_) {
+        if (currentMissionListManager_) {
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+        }
+    }else {
+        if (currentStackManager_) {
+            currentStackManager_->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
+        }
     }
 }
 
@@ -2318,13 +2338,16 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
         if (kernalAbilityManager_) {
             kernalAbilityManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
         }
+        if (currentMissionListManager_) {
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+        }
     } else {
         if (systemAppManager_) {
             systemAppManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
         }
-    }
-    if (currentStackManager_) {
-        currentStackManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
+        if (currentStackManager_) {
+            currentStackManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
+        }
     }
 }
 
@@ -2587,11 +2610,6 @@ void AbilityManagerService::StartSystemApplication()
     if (amsConfigResolver_->GetNavigationBarState()) {
         HILOG_INFO("start navigation bar");
         StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
-    }
-
-    if (amsConfigResolver_->GetPhoneServiceState()) {
-        HILOG_INFO("start phone service");
-        StartingPhoneServiceAbility();
     }
 
     if (amsConfigResolver_->GetStartContactsState()) {

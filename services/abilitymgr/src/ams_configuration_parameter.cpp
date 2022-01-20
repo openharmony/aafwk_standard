@@ -82,6 +82,11 @@ bool AmsConfigurationParameter::IsUseNewMission() const
     return useNewMission_;
 }
 
+int AmsConfigurationParameter::GetMaxRestartNum() const
+{
+    return maxRestartNum_;
+}
+
 int AmsConfigurationParameter::LoadAmsConfiguration(const std::string &filePath)
 {
     HILOG_DEBUG("%{public}s", __func__);
@@ -145,6 +150,7 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
         if (Object.at(AmsConfig::SERVICE_ITEM_AMS).contains(AmsConfig::USE_NEW_MISSION)) {
             useNewMission_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::USE_NEW_MISSION).get<bool>();
         }
+        maxRestartNum_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::ROOT_LAUNCHER_RESTART_MAX).get<int>();
         HILOG_INFO("get ams service config succes!");
         ret = 0;
     }
