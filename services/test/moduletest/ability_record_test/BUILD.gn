@@ -24,6 +24,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${EVENT_DIR}/frameworks/core/include",
     "${EVENT_DIR}/interfaces/innerkits/native/include",
     "//third_party/jsoncpp/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
 
