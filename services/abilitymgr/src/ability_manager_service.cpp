@@ -54,6 +54,7 @@ constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 const int32_t EXTENSION_SUPPORT_API_VERSION = 8;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
+const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
@@ -234,27 +235,23 @@ int AbilityManagerService::StartAbility(
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-    HILOG_INFO("%{public}s 1111111111", __func__);
     AbilityRequest abilityRequest;
     int result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken);
     if (result != ERR_OK) {
         HILOG_ERROR("Generate ability request error.");
         return result;
     }
-    HILOG_INFO("%{public}s 2222222", __func__);
     auto abilityInfo = abilityRequest.abilityInfo;
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
         return result;
     }
-    HILOG_INFO("%{public}s 3333333", __func__);
     auto type = abilityInfo.type;
     if (type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
     }
-    HILOG_INFO("%{public}s 4444444", __func__);
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
         result = PreLoadAppDataAbilities(abilityInfo.bundleName);
         if (result != ERR_OK) {
@@ -1892,12 +1889,18 @@ void AbilityManagerService::StartingContactsAbility()
     Want contactsWant;
     contactsWant.SetElementName(AbilityConfig::CONTACTS_BUNDLE_NAME, AbilityConfig::CONTACTS_ABILITY_NAME);
 
-    while (!(iBundleManager_->QueryAbilityInfo(contactsWant, contactsInfo))) {
+    int attemptNums = 1;
+    while (!(iBundleManager_->QueryAbilityInfo(contactsWant, contactsInfo)) &&
+        attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
         HILOG_INFO("Waiting query contacts service completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
+        attemptNums++;
     }
 
-    (void)StartAbility(contactsWant, DEFAULT_INVAL_VALUE);
+    HILOG_INFO("attemptNums : %{public}d", attemptNums);
+    if (attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
+        (void)StartAbility(contactsWant, DEFAULT_INVAL_VALUE);
+    }
 }
 
 void AbilityManagerService::StartingMmsAbility()
@@ -1911,13 +1914,19 @@ void AbilityManagerService::StartingMmsAbility()
     AppExecFwk::AbilityInfo mmsInfo;
     Want mmsWant;
     mmsWant.SetElementName(AbilityConfig::MMS_BUNDLE_NAME, AbilityConfig::MMS_ABILITY_NAME);
-
-    while (!(iBundleManager_->QueryAbilityInfo(mmsWant, mmsInfo))) {
+ 
+    int attemptNums = 1;
+    while (!(iBundleManager_->QueryAbilityInfo(mmsWant, mmsInfo)) &&
+        attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
         HILOG_INFO("Waiting query mms service completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
+        attemptNums++;
     }
 
-    (void)StartAbility(mmsWant, DEFAULT_INVAL_VALUE);
+    HILOG_INFO("attemptNums : %{public}d", attemptNums);
+    if (attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
+        (void)StartAbility(mmsWant, DEFAULT_INVAL_VALUE);
+    }
 }
 
 void AbilityManagerService::StartSystemUi(const std::string abilityName)
