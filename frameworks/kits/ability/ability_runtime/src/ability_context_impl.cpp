@@ -59,6 +59,14 @@ std::string AbilityContextImpl::GetDistributedFilesDir()
     return stageContext_ ? stageContext_->GetDistributedFilesDir() : "";
 }
 
+void AbilityContextImpl::SwitchArea(int mode)
+{
+    HILOG_DEBUG("AbilityContextImpl::SwitchArea.");
+    if (stageContext_ != nullptr) {
+        stageContext_->SwitchArea(mode);
+    }
+}
+
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);

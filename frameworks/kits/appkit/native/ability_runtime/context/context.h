@@ -138,6 +138,13 @@ public:
     virtual std::string GetDistributedFilesDir() = 0;
 
     /**
+     * @brief Switch file area
+     *
+     * @param mode file area.
+     */
+    virtual void SwitchArea(int mode) = 0;
+
+    /**
      * @brief Getting derived class
      *
      * @tparam T template

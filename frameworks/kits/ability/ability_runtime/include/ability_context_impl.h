@@ -34,6 +34,7 @@ public:
     std::string GetDatabaseDir() override;
     std::string GetStorageDir() override;
     std::string GetDistributedFilesDir() override;
+    void SwitchArea(int mode) override;
     std::string GetBundleName() const override;
     std::shared_ptr<AppExecFwk::ApplicationInfo> GetApplicationInfo() const override;
     std::shared_ptr<Global::Resource::ResourceManager> GetResourceManager() const override;

@@ -26,22 +26,23 @@ namespace OHOS {
 namespace AbilityRuntime {
 const size_t Context::CONTEXT_TYPE_ID(std::hash<const char*> {} ("Context"));
 const int64_t ContextImpl::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
-const std::string ContextImpl::CONTEXT_BUNDLECODE_BASE("/data/app/base/");
-const std::string ContextImpl::CONTEXT_BUNDLECODE("/data/storage/app/base");
+const std::string ContextImpl::CONTEXT_DATA_APP("/data/app/");
 const std::string ContextImpl::CONTEXT_BUNDLE("/bundle/");
 const std::string ContextImpl::CONTEXT_DISTRIBUTEDFILES_BASE_BEFORE("/mnt/hmdfs/");
 const std::string ContextImpl::CONTEXT_DISTRIBUTEDFILES_BASE_MIDDLE("/device_view/local/data/");
 const std::string ContextImpl::CONTEXT_DISTRIBUTEDFILES("distributedfiles");
 const std::string ContextImpl::CONTEXT_FILE_SEPARATOR("/");
 const std::string ContextImpl::CONTEXT_DATA("/data/");
-const std::string ContextImpl::CONTEXT_BASE("/data/storage/");
+const std::string ContextImpl::CONTEXT_DATA_STORAGE("/data/storage/");
+const std::string ContextImpl::CONTEXT_BASE("base");
 const std::string ContextImpl::CONTEXT_PRIVATE("/private/");
 const std::string ContextImpl::CONTEXT_CACHES("caches");
 const std::string ContextImpl::CONTEXT_STORAGE("storage");
 const std::string ContextImpl::CONTEXT_DATABASE("database");
 const std::string ContextImpl::CONTEXT_TEMP("/temp");
 const std::string ContextImpl::CONTEXT_FILES("/files");
-const std::string ContextImpl::CONTEXT_CE("ce");
+const std::string ContextImpl::CONTEXT_HAPS("/haps");
+const std::string ContextImpl::CONTEXT_ELS[] = {"el1", "el2", "el3", "el4"};
 
 std::string ContextImpl::GetBundleName() const
 {
@@ -55,9 +56,9 @@ std::string ContextImpl::GetBundleCodeDir()
 {
     std::string dir;
     if (IsCreateBySystemApp()) {
-        dir = CONTEXT_BUNDLECODE_BASE + GetBundleName();
+        dir = CONTEXT_DATA_APP + CONTEXT_ELS[0] + CONTEXT_BUNDLE + GetBundleName();
     } else {
-        dir = CONTEXT_BUNDLECODE;
+        dir = CONTEXT_DATA_STORAGE + CONTEXT_ELS[0] + CONTEXT_BUNDLE;
     }
     HILOG_DEBUG("ContextImpl::GetBundleCodeDir:%{public}s", dir.c_str());
     return dir;
@@ -72,7 +73,14 @@ std::string ContextImpl::GetCacheDir()
 
 std::string ContextImpl::GetDatabaseDir()
 {
-    std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_DATABASE;
+    std::string dir;
+    if (IsCreateBySystemApp()) {
+        dir = CONTEXT_DATA_APP + currArea_ + CONTEXT_FILE_SEPARATOR + GetCurrentAccountId() + CONTEXT_FILE_SEPARATOR +
+            CONTEXT_DATABASE + GetBundleName();
+    } else {
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
+    }
+    dir =  dir + CONTEXT_FILE_SEPARATOR + GetHapModuleInfo()->moduleName;
     HILOG_DEBUG("ContextImpl::GetDatabaseDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -106,23 +114,36 @@ std::string ContextImpl::GetDistributedFilesDir()
         dir = CONTEXT_DISTRIBUTEDFILES_BASE_BEFORE + GetCurrentAccountId() +
             CONTEXT_DISTRIBUTEDFILES_BASE_MIDDLE + GetBundleName();
     } else {
-        dir = CONTEXT_BASE + CONTEXT_DISTRIBUTEDFILES;
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTEDFILES +
+            CONTEXT_FILE_SEPARATOR + GetHapModuleInfo()->moduleName;
     }
     HILOG_DEBUG("ContextImpl::GetDistributedFilesDir:%{public}s", dir.c_str());
     return dir;
+}
+
+void ContextImpl::SwitchArea(int mode)
+{
+    HILOG_DEBUG("ContextImpl::SwitchArea, mode:%{public}d.", mode);
+    if (mode < 0 || mode >= (sizeof(CONTEXT_ELS) / sizeof(CONTEXT_ELS[0]))) {
+        HILOG_ERROR("ContextImpl::SwitchArea, mode is invalid.");
+        return;
+    }
+    currArea_ = CONTEXT_ELS[mode];
+    HILOG_DEBUG("ContextImpl::SwitchArea end, currArea:%{public}s.", currArea_.c_str());
 }
 
 std::string ContextImpl::GetBaseDir() const
 {
     std::string baseDir;
     if (IsCreateBySystemApp()) {
-        baseDir = CONTEXT_DATA + currArea_ + CONTEXT_FILE_SEPARATOR + GetCurrentAccountId() +
-            CONTEXT_BUNDLE + GetBundleName();
+        baseDir = CONTEXT_DATA_APP + currArea_ + CONTEXT_FILE_SEPARATOR + GetCurrentAccountId() +
+            CONTEXT_FILE_SEPARATOR + CONTEXT_BASE + CONTEXT_FILE_SEPARATOR + GetBundleName();
     } else {
-        baseDir = CONTEXT_BASE + currArea_;
+        baseDir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_BASE;
     }
     if (parentContext_ != nullptr) {
-        baseDir =  baseDir + CONTEXT_FILE_SEPARATOR + GetHapModuleInfo()->moduleName;
+        baseDir =  baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
+            GetHapModuleInfo()->moduleName;
     }
 
     HILOG_DEBUG("ContextImpl::GetBaseDir:%{public}s", baseDir.c_str());
