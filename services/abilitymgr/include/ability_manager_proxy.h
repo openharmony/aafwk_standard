@@ -525,6 +525,8 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
 
+    virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
+
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override;
 
     virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) override;

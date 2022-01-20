@@ -227,6 +227,15 @@ public:
     sptr<IRemoteObject> GetAbilityTokenByMissionId(int32_t missionId);
 
     /**
+     * Set mission label of this ability.
+     *
+     * @param abilityToken target ability token.
+     * @param label target label.
+     * @return Retun 0 if success.
+     */
+    int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
+
+    /**
      * @brief dump all abilities
      *
      * @param info dump result.

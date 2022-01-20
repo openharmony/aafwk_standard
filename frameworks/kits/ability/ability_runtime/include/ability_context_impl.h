@@ -60,6 +60,14 @@ public:
     void RequestPermissionsFromUser(const std::vector<std::string> &permissions, int requestCode) override;
     ErrCode RestoreWindowStage(void* contentStorage) override;
 
+    /**
+     * @brief Set mission label of this ability.
+     *
+     * @param label the label of this ability.
+     * @return Returns ERR_OK if success.
+     */
+    ErrCode SetMissionLabel(const std::string &label) override;
+
     void SetStageContext(const std::shared_ptr<AbilityRuntime::Context> &stageContext);
 
     /**

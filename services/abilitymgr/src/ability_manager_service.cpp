@@ -2734,6 +2734,16 @@ void AbilityManagerService::StartingSettingsDataAbility()
     (void)AcquireDataAbility(uri, true, nullptr);
 }
 
+int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    auto missionListManager = currentMissionListManager_;
+    if (missionListManager) {
+        missionListManager->SetMissionLabel(token, label);
+    }
+    return 0;
+}
+
 int AbilityManagerService::StartUser(int userId)
 {
     HILOG_DEBUG("%{public}s", __func__);

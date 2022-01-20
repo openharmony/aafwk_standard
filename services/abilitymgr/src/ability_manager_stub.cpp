@@ -123,6 +123,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLEAN_MISSION] = &AbilityManagerStub::CleanMissionInner;
     requestFuncMap_[CLEAN_ALL_MISSIONS] = &AbilityManagerStub::CleanAllMissionsInner;
     requestFuncMap_[MOVE_MISSION_TO_FRONT] = &AbilityManagerStub::MoveMissionToFrontInner;
+    requestFuncMap_[SET_MISSION_LABEL] = &AbilityManagerStub::SetMissionLabelInner;
     requestFuncMap_[START_USER] = &AbilityManagerStub::StartUserInner;
     requestFuncMap_[STOP_USER] = &AbilityManagerStub::StopUserInner;
     requestFuncMap_[GET_ABILITY_RUNNING_INFO] = &AbilityManagerStub::GetAbilityRunningInfosInner;
@@ -1124,6 +1125,23 @@ int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
     int result = StopUser(userId, callback);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("StopUser failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::SetMissionLabelInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    if (!token) {
+        HILOG_ERROR("SetMissionLabelInner read ability token failed.");
+        return ERR_NULL_OBJECT;
+    }
+
+    std::string label = Str16ToStr8(data.ReadString16());
+    int result = SetMissionLabel(token, label);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("SetMissionLabel failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

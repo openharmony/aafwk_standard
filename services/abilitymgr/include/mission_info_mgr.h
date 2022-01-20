@@ -117,6 +117,15 @@ public:
     bool DeleteAllMissionInfos(const std::shared_ptr<MissionListenerController> &listenerController);
 
     /**
+     * @brief Update mission label.
+     *
+     * @param missionId indicates this mission id.
+     * @param label indicates this mission label.
+     * @return 0 if success.
+     */
+    int UpdateMissionLabel(int32_t missionId, const std::string& label);
+
+    /**
      * @brief dump mission info
      *
      * @param info dump result.
