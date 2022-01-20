@@ -29,8 +29,6 @@
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
 #include "data_ability_manager.h"
-#include "distributed_sched_interface.h"
-#include "distributed_sched_proxy.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
 #include "kernal_ability_manager.h"
@@ -859,7 +857,6 @@ private:
      */
     void GetGlobalConfiguration();
 
-    sptr<DistributedSchedule::IDistributedSched> GetDmsProxy();
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
     int StartRemoteAbility(const Want &want, int requestCode);
     int ConnectLocalAbility(

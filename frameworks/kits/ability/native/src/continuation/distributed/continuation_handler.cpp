@@ -16,7 +16,7 @@
 
 #include "ability_manager_client.h"
 #include "app_log_wrapper.h"
-#include "distributed_client.h"
+#include "distributed_errors.h"
 #include "element_name.h"
 
 using OHOS::AAFwk::WantParams;

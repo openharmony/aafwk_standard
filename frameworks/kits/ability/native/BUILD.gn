@@ -42,6 +42,7 @@ config("ability_config") {
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/remote_register_service",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/distributed",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include/continuation",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
@@ -76,6 +77,7 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/ohos/aafwk/base",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/remote_register_service",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/distributed",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include/continuation",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
@@ -91,7 +93,6 @@ ohos_shared_library("static_subscriber_ipc") {
     "${SUBSYSTEM_DIR}/include",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content/",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
   ]
 
   sources = [
@@ -100,7 +101,6 @@ ohos_shared_library("static_subscriber_ipc") {
   ]
 
   deps = [
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",
   ]
@@ -177,7 +177,6 @@ ohos_shared_library("abilitykit_native") {
     # "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/continuation_handler.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/continuation_manager.cpp",
-    "${SUBSYSTEM_DIR}/src/continuation/distributed/distributed_client.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/reverse_continuation_scheduler_primary.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/reverse_continuation_scheduler_primary_proxy.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
@@ -193,6 +192,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/continuation/remote_register_service/continuation_register_manager_proxy.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/remote_register_service/remote_register_service_proxy.cpp",
     "${SUBSYSTEM_DIR}/src/continuation/remote_register_service/remote_register_service_stub.cpp",
+    "${SUBSYSTEM_DIR}/src/distributed_ability_runtime/distributed_client.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context_impl.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/extension_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/form_extension_context.cpp",
@@ -263,7 +263,6 @@ ohos_shared_library("abilitykit_native") {
   public_deps = [
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
     "//foundation/windowmanager/interfaces/kits/napi/window_runtime:window_native_kit",
     "//foundation/windowmanager/wm:libwm",
