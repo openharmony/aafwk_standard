@@ -81,19 +81,19 @@ NativeValue* JsBaseContext::OnSwitchArea(NativeEngine& engine, NativeCallbackInf
 {
     if (info.argc == 0) {
         HILOG_ERROR("Not enough params");
-        return engine->CreateUndefined();
+        return engine.CreateUndefined();
     }
 
     auto context = context_.lock();
     if (!context) {
         HILOG_WARN("context is already released");
-        return engine->CreateUndefined();
+        return engine.CreateUndefined();
     }
 
     int mode;
     if (!ConvertFromJsValue(engine, info.argv[0], mode)) {
         HILOG_ERROR("Parse mode failed");
-        return engine->CreateUndefined();
+        return engine.CreateUndefined();
     }
 
     context->SwitchArea(mode);
@@ -108,7 +108,7 @@ NativeValue* JsBaseContext::OnSwitchArea(NativeEngine& engine, NativeCallbackInf
     object->SetProperty("storageDir", CreateJsValue(engine, context->GetStorageDir()));
     object->SetProperty("bundleCodeDir", CreateJsValue(engine, context->GetBundleCodeDir()));
 
-    return engine->CreateUndefined();
+    return engine.CreateUndefined();
 }
 
 NativeValue* JsBaseContext::OnCreateBundleContext(NativeEngine& engine, NativeCallbackInfo& info)

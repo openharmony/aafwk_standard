@@ -88,6 +88,13 @@ public:
     std::string GetDistributedFilesDir() override;
 
     /**
+     * @brief Switch file area
+     *
+     * @param mode file area.
+     */
+    void SwitchArea(int mode) override;
+
+    /**
      * @brief set the ResourceManager.
      *
      * @param the ResourceManager has been inited.
