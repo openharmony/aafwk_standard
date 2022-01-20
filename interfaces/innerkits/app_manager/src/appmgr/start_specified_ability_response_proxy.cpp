@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 StartSpecifiedAbilityResponseProxy::StartSpecifiedAbilityResponseProxy(const sptr<IRemoteObject> &impl)
-: IRemoteProxy<IStartSpecifiedAbilityResponse>(impl)
+    : IRemoteProxy<IStartSpecifiedAbilityResponse>(impl)
 {}
 
 bool StartSpecifiedAbilityResponseProxy::WriteInterfaceToken(MessageParcel &data)
