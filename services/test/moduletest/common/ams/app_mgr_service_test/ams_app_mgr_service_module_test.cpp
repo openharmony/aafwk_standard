@@ -65,6 +65,8 @@ public:
     {}
     void ScheduleAbilityStage(const HapModuleInfo &) override
     {}
+    void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override
+    {}
 };
 class AppMgrServiceModuleTest : public testing::Test {
 public:

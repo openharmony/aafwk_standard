@@ -177,6 +177,8 @@ public:
      */
     virtual int32_t GetForegroundApplications(std::vector<AppStateData> &list) = 0;
 
+    virtual void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag) = 0;
+
     enum class Message {
         APP_ATTACH_APPLICATION = 0,
         APP_APPLICATION_FOREGROUNDED,
@@ -196,6 +198,7 @@ public:
         REGISTER_APPLICATION_STATE_OBSERVER,
         UNREGISTER_APPLICATION_STATE_OBSERVER,
         GET_FOREGROUND_APPLICATIONS,
+        SCHEDULE_ACCEPT_WANT_DONE,
     };
 };
 }  // namespace AppExecFwk

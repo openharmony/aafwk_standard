@@ -41,6 +41,7 @@
 #include "record_query_result.h"
 #include "running_process_info.h"
 #include "bundle_info.h"
+#include "istart_specified_ability_response.h"
 
 #include "process_optimizer_uba.h"
 
@@ -516,6 +517,12 @@ public:
      */
     int32_t GetForegroundApplications(std::vector<AppStateData> &list);
 
+	void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
+
+    void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response);
+
+    void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag);
+
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);
@@ -735,6 +742,8 @@ private:
 
     void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
 
+    void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
+
 private:
     /**
      * ClearUpApplicationData, clear the application data.
@@ -771,6 +780,7 @@ private:
     std::shared_ptr<ProcessOptimizerUBA> processOptimizerUBA_;
     std::shared_ptr<AMSEventHandler> eventHandler_;
     std::mutex serviceLock_;
+    sptr<IStartSpecifiedAbilityResponse> startSpecifiedAbilityResponse_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

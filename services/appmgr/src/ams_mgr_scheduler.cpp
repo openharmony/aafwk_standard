@@ -219,5 +219,24 @@ void AmsMgrScheduler::GetRunningProcessInfoByToken(
 
     amsMgrServiceInner_->GetRunningProcessInfoByToken(token, info);
 }
+
+void AmsMgrScheduler::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
+{
+    if (!IsReady()) {
+        return;
+    }
+
+    auto task = [=]() { amsMgrServiceInner_->StartSpecifiedAbility(want, abilityInfo); };
+    amsHandler_->PostTask(task);
+}
+
+void AmsMgrScheduler::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response)
+{
+    if (!IsReady()) {
+        return;
+    }
+    auto task = [=]() { amsMgrServiceInner_->RegisterStartSpecifiedAbilityResponse(response); };
+    amsHandler_->PostTask(task);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

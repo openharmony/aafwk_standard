@@ -533,5 +533,17 @@ const std::unique_ptr<AbilityRuntime::Runtime>& OHOSApplication::GetRuntime()
 {
     return runtime_;
 }
+
+void OHOSApplication::ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName, std::string &flag)
+{
+    APP_LOGI("OHOSApplication::ScheduleAcceptWant: called");
+    auto iter = abilityStages_.find(moduleName);
+    if (iter != abilityStages_.end()) {
+        auto abilityStage = iter->second;
+        if (abilityStage) {
+            flag = abilityStage->OnAcceptWant(want);
+        }
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

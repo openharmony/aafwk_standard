@@ -66,6 +66,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleUnregisterApplicationStateObserver;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::GET_FOREGROUND_APPLICATIONS)] =
         &AppMgrStub::HandleGetForegroundApplications;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE)] =
+        &AppMgrStub::HandleScheduleAcceptWantDone;
 }
 
 AppMgrStub::~AppMgrStub()
@@ -281,6 +283,20 @@ int32_t AppMgrStub::UnregisterApplicationStateObserver(const sptr<IApplicationSt
 
 int32_t AppMgrStub::GetForegroundApplications(std::vector<AppStateData> &list)
 {
+    return NO_ERROR;
+}
+
+int32_t AppMgrStub::HandleScheduleAcceptWantDone(MessageParcel &data, MessageParcel &reply)
+{
+    auto recordId = data.ReadInt32();
+    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    if (want == nullptr) {
+        APP_LOGE("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto flag = data.ReadString();
+
+    ScheduleAcceptWantDone(recordId, *want, flag);
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

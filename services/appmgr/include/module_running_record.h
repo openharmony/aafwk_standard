@@ -192,6 +192,8 @@ private:
 
     void SendEvent(uint32_t msg, int64_t timeOut, const std::shared_ptr<AbilityRunningRecord> &abilityRecord);
 
+    ModuleRecordState GetState() const;
+ 
 private:
     std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>> abilities_;
     std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>> terminateAbilitys_;

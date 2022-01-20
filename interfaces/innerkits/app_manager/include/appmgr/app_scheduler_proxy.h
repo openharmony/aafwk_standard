@@ -129,6 +129,8 @@ public:
      */
     virtual void ScheduleProcessSecurityExit() override;
 
+    virtual void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
+
 private:
     bool WriteInterfaceToken(MessageParcel &data);
     static inline BrokerDelegator<AppSchedulerProxy> delegator_;

@@ -22,6 +22,11 @@ ohos_unittest("AmsIpcAppSchedulerInterfaceTest") {
   include_dirs = [
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+  ]
+
+  configs = [
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want_public_config",
   ]
 
   sources = [ "ams_ipc_appscheduler_interface_test.cpp" ]

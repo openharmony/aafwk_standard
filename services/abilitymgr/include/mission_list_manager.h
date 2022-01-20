@@ -254,6 +254,8 @@ public:
      */
     void DumpMissionInfos(std::vector<std::string> &info);
 
+    void OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag);
+
     /**
      * @brief register snapshotHandler
      * @param handler the snapshotHandler
@@ -272,6 +274,9 @@ public:
 private:
     int StartAbilityLocked(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);
+    int StartAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
+        const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);
+    int MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher);
     int MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord);
     std::shared_ptr<AbilityRecord> GetCurrentTopAbilityLocked() const;
     std::shared_ptr<MissionList> GetTargetMissionList(
@@ -312,6 +317,7 @@ private:
     void DelayedStartLauncher();
     void BackToLauncher();
     bool IsPC();
+	std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
 
 private:
     int userId_;

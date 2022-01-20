@@ -48,6 +48,8 @@ public:
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
     MOCK_METHOD1(RegisterApplicationStateObserver, int32_t(const sptr<IApplicationStateObserver> &observer));
     MOCK_METHOD1(UnregisterApplicationStateObserver, int32_t(const sptr<IApplicationStateObserver> &observer));
+    MOCK_METHOD3(ScheduleAcceptWantDone,
+        void(const int32_t recordId, const AAFwk::Want &want, const std::string &flag));
 
     virtual void RegisterAppStateCallback(const sptr<IAppStateCallback> &callback)
     {

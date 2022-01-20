@@ -2807,6 +2807,20 @@ int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &c
     return 0;
 }
 
+void AbilityManagerService::OnAcceptWantResponse(
+    const AAFwk::Want &want, const std::string &flag)
+{
+    HILOG_DEBUG("On accept want response");
+    if (!currentMissionListManager_) {
+        return;
+    }
+    currentMissionListManager_->OnAcceptWantResponse(want, flag);
+}
+
+void AbilityManagerService::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Want &want)
+{
+    return;
+}
 int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {
     HILOG_DEBUG("Get running ability infos.");

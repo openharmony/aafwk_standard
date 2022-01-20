@@ -36,6 +36,9 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+const int RESTART_RESIDENT_PROCESS_MAX_TIMES = 15;
+}
 class AbilityRunningRecord;
 class AppMgrServiceInner;
 class AppRunningRecord : public std::enable_shared_from_this<AppRunningRecord> {
@@ -259,6 +262,8 @@ public:
      */
     void AddAbilityStage();
 
+    void AddAbilityStageBySpecifiedAbility(const std::string &bundleName);
+
     /**
      * AddAbilityStage Result returned.
      *
@@ -429,6 +434,12 @@ public:
 
     void GetBundleNames(std::vector<std::string> &bundleNames);
 
+    void SetSpecifiedAbilityFlagAndWant(const bool flag, const AAFwk::Want &want, const std::string &moduleName);
+    bool IsStartSpecifiedAbility() const;
+    void ScheduleAcceptWant(const std::string &moduleName);
+    void ScheduleAcceptWantDone();
+    const AAFwk::Want &GetSpecifiedWant() const;
+
 private:
     /**
      * SearchTheModuleInfoNeedToUpdated, Get an uninitialized abilitystage data.
@@ -501,8 +512,10 @@ private:
     bool isLauncherApp_;
     bool isClonedApp_;
     std::string mainAppName_;
-    int restartResidentProcCount_ = 15;
-    int restartCount_ = 15;
+    int restartResidentProcCount_ = RESTART_RESIDENT_PROCESS_MAX_TIMES;
+    bool isSpecifiedAbility_ = false;
+    AAFwk::Want SpecifiedWant_;
+    std::string moduleName_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

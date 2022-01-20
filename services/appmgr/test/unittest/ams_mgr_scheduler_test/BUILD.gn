@@ -28,6 +28,7 @@ ohos_unittest("AmsMgrSchedulerTest") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
   ]
 
   sources = [ "${services_path}/appmgr/src/ams_mgr_scheduler.cpp" ]

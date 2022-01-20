@@ -170,6 +170,9 @@ public:
      */
     virtual int32_t GetForegroundApplications(std::vector<AppStateData> &list) override;
 
+    virtual void ScheduleAcceptWantDone(
+        const int32_t recordId, const AAFwk::Want &want, const std::string &flag) override;
+
 private:
     bool SendTransactCmd(IAppMgr::Message code, MessageParcel &data, MessageParcel &reply);
     bool WriteInterfaceToken(MessageParcel &data);

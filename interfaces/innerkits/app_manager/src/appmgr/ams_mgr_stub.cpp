@@ -58,6 +58,10 @@ AmsMgrStub::AmsMgrStub()
         &AmsMgrStub::HandleKillApplicationByUid;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::GET_RUNNING_PROCESS_INFO_BY_TOKEN)] =
         &AmsMgrStub::HandleGetRunningProcessInfoByToken;
+    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::START_SPECIFIED_ABILITY)] =
+        &AmsMgrStub::HandleStartSpecifiedAbility;
+    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::REGISTER_START_SPECIFIED_ABILITY_RESPONSE)] =
+        &AmsMgrStub::HandleRegisterStartSpecifiedAbilityResponse;
 }
 
 AmsMgrStub::~AmsMgrStub()
@@ -237,6 +241,31 @@ int32_t AmsMgrStub::HandleGetRunningProcessInfoByToken(MessageParcel &data, Mess
         APP_LOGE("process info write failed.");
         return ERR_INVALID_VALUE;
     }
+    return NO_ERROR;
+}
+
+int32_t AmsMgrStub::HandleStartSpecifiedAbility(MessageParcel &data, MessageParcel &reply)
+{
+    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    if (want == nullptr) {
+        APP_LOGE("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    AbilityInfo *abilityInfo = data.ReadParcelable<AbilityInfo>();
+    if (abilityInfo == nullptr) {
+        APP_LOGE("abilityInfo is nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+    StartSpecifiedAbility(*want, *abilityInfo);
+    return NO_ERROR;
+}
+
+int32_t AmsMgrStub::HandleRegisterStartSpecifiedAbilityResponse(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> obj = data.ReadParcelable<IRemoteObject>();
+    sptr<IStartSpecifiedAbilityResponse> response = iface_cast<IStartSpecifiedAbilityResponse>(obj);
+    RegisterStartSpecifiedAbilityResponse(response);
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

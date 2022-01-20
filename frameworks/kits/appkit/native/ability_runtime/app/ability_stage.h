@@ -22,6 +22,7 @@
 
 #include "ability_local_record.h"
 #include "ability_runtime/context/context.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -42,6 +43,7 @@ public:
     virtual ~AbilityStage() = default;
     virtual void OnCreate() const;
     virtual void OnDestory() const;
+    virtual std::string OnAcceptWant(const AAFwk::Want &want);
     virtual void Init(std::shared_ptr<Context> context);
     std::shared_ptr<Context> GetContext() const;
     void AddAbility(const sptr<IRemoteObject> &token, std::shared_ptr<AppExecFwk::AbilityLocalRecord> abilityRecord);

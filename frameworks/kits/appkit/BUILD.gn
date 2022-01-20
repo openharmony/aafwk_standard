@@ -28,6 +28,7 @@ config("appkit_config") {
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//third_party/json/include",
   ]
 }
 
@@ -102,6 +103,7 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/common/task_dispatcher/include/task",
     "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
   ]
 
   configs = [ ":appkit_config" ]
