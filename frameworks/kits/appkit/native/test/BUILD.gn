@@ -344,6 +344,11 @@ ohos_unittest("ability_start_setting_test") {
 ohos_unittest("watchdog_test") {
   module_out_path = module_output_path
 
+  include_dirs = [
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//third_party/json/include",
+  ]
+
   configs = [
     ":module_context_config",
     ":ability_start_setting_config",

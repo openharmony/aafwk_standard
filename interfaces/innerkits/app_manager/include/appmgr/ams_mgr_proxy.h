@@ -147,6 +147,10 @@ public:
 
     void GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info) override;
 
+    virtual void StartSpecifiedAbility(
+        const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo) override;
+
+    virtual void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response) override;
 private:
     bool WriteInterfaceToken(MessageParcel &data);
 

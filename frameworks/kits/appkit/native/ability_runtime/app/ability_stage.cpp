@@ -86,5 +86,11 @@ bool AbilityStage::ContainsAbility()
 {
     return abilityRecords_.size() > 0;
 }
+
+std::string AbilityStage::OnAcceptWant(const AAFwk::Want &want)
+{
+    HILOG_INFO("AbilityStage::OnAcceptWant come");
+    return "";
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

@@ -815,9 +815,11 @@ void MainThread::HandleAbilityStage(const HapModuleInfo &abilityStage)
         APP_LOGE("application_ is nullptr");
         return;
     }
-    auto ref = application_->AddAbilityStage(abilityStage);
-    if (!ref) {
-        APP_LOGE("AddAbilityStage Failed ");
+
+    application_->AddAbilityStage(abilityStage);
+
+    if (!appMgr_ || !applicationImpl_) {
+        APP_LOGE("appMgr_ is nullptr");
         return;
     }
 
@@ -1435,6 +1437,35 @@ bool MainThread::CheckFileType(const std::string &fileName, const std::string &e
     std::string suffixStr = fileName.substr(position);
     APP_LOGD("MainThread::CheckFileType end.");
     return LowerStr(suffixStr) == extensionName;
+}
+
+void MainThread::HandleScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName)
+{
+    APP_LOGI("MainThread::HandleScheduleAcceptWant");
+    if (!application_) {
+        APP_LOGE("application_ is nullptr");
+        return;
+    }
+
+    std::string specifiedFlag;
+    application_->ScheduleAcceptWant(want, moduleName, specifiedFlag);
+
+    if (!appMgr_ || !applicationImpl_) {
+        APP_LOGE("appMgr_ is nullptr");
+        return;
+    }
+
+    appMgr_->ScheduleAcceptWantDone(applicationImpl_->GetRecordId(), want, specifiedFlag);
+}
+
+void MainThread::ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName)
+{
+    APP_LOGI("MainThread::ScheduleAcceptWant start");
+    auto task = [appThread = this, want, moduleName]() { appThread->HandleScheduleAcceptWant(want, moduleName); };
+    if (!mainHandler_->PostTask(task)) {
+        APP_LOGE("MainThread::ScheduleAcceptWant PostTask task failed");
+    }
+    APP_LOGI("MainThread::ScheduleAcceptWant end.");
 }
 #endif  // ABILITY_LIBRARY_LOADER
 }  // namespace AppExecFwk

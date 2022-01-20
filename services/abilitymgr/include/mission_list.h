@@ -166,6 +166,8 @@ public:
      * @param info dump result.
      */
     void DumpList(std::vector<std::string> &info);
+
+    std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
 private:
     std::string GetTypeName();
 

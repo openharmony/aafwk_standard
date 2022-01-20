@@ -113,6 +113,26 @@ std::shared_ptr<Mission> MissionList::GetMissionById(int missionId) const
     return nullptr;
 }
 
+std::shared_ptr<Mission> MissionList::GetMissionBySpecifiedFlag(const std::string &flag) const
+{
+    for (auto mission : missions_) {
+        if (!mission) {
+            return nullptr;
+        }
+
+        auto ability = mission->GetAbilityRecord();
+        if (!ability) {
+            return nullptr;
+        }
+
+        if (ability->GetSpecifiedFlag() == flag) {
+            return mission;
+        }
+    }
+
+    return nullptr;
+}
+
 bool MissionList::IsEmpty()
 {
     return missions_.empty();

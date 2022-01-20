@@ -367,5 +367,14 @@ int32_t AppMgrService::GetForegroundApplications(std::vector<AppStateData> &list
     }
     return appMgrServiceInner_->GetForegroundApplications(list);
 }
+
+void AppMgrService::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
+{
+    if (!IsReady()) {
+        return;
+    }
+    auto task = [=]() { appMgrServiceInner_->ScheduleAcceptWantDone(recordId, want, flag); };
+    handler_->PostTask(task);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

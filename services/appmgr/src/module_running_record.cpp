@@ -46,7 +46,6 @@ const std::shared_ptr<ApplicationInfo> ModuleRunningRecord::GetAppInfo()
 std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningRecordByToken(
     const sptr<IRemoteObject> &token) const
 {
-    APP_LOGI("Get ability running record by token.");
     if (!token) {
         APP_LOGE("token is null");
         return nullptr;
@@ -303,6 +302,11 @@ void ModuleRunningRecord::GetHapModuleInfo(HapModuleInfo &info)
 void ModuleRunningRecord::SetApplicationClient(std::shared_ptr<AppLifeCycleDeal> &appLifeCycleDeal)
 {
     appLifeCycleDeal_ = appLifeCycleDeal;
+}
+
+ModuleRecordState ModuleRunningRecord::GetState() const
+{
+    return owenState_;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

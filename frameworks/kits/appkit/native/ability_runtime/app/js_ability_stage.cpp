@@ -19,6 +19,8 @@
 #include "js_context_utils.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
+#include "napi_common_util.h"
+#include "napi_common_want.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -134,6 +136,42 @@ void JsAbilityStage::OnCreate() const
         return;
     }
     nativeEngine.CallFunction(value, methodOnCreate, nullptr, 0);
+}
+
+std::string JsAbilityStage::OnAcceptWant(const AAFwk::Want &want)
+{
+    HILOG_INFO("JsAbilityStage::OnAcceptWant come");
+
+    AbilityStage::OnAcceptWant(want);
+
+    if (!jsAbilityStageObj_) {
+        HILOG_WARN("Not found AbilityStage.js");
+        return "";
+    }
+
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+
+    NativeValue* value = jsAbilityStageObj_->Get();
+    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get AbilityStage object");
+        return "";
+    }
+
+    napi_value napiWant = OHOS::AppExecFwk::WrapWant(reinterpret_cast<napi_env>(&nativeEngine), want);
+    NativeValue* jsWant = reinterpret_cast<NativeValue*>(napiWant);
+
+    NativeValue* methodOnAcceptWant = obj->GetProperty("onAcceptWant");
+    if (methodOnAcceptWant == nullptr) {
+        HILOG_ERROR("Failed to get 'OnAcceptWant' from AbilityStage object");
+        return "";
+    }
+
+    NativeValue* argv[] = { jsWant };
+    NativeValue* flagNative = nativeEngine.CallFunction(value, methodOnAcceptWant, argv, 1);
+    return AppExecFwk::UnwrapStringFromJS(
+        reinterpret_cast<napi_env>(&nativeEngine), reinterpret_cast<napi_value>(flagNative));
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

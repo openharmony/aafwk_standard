@@ -190,6 +190,10 @@ public:
      * Start all resident process
      */
     virtual void StartupResidentProcess() override;
+
+    virtual void ScheduleAcceptWantDone(
+        const int32_t recordId, const AAFwk::Want &want, const std::string &flag) override;
+
 private:
     /**
      * Init, Initialize application services.

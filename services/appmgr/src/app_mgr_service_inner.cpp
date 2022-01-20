@@ -224,6 +224,11 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
         appRecord->AddAbilityStage();
         return;
     }
+
+    if (appRecord->IsStartSpecifiedAbility()) {
+        appRecord->AddAbilityStageBySpecifiedAbility(appRecord->GetBundleName());
+        return;
+    }
     appRecord->LaunchPendingAbilities();
 }
 
@@ -1468,6 +1473,9 @@ void AppMgrServiceInner::HandleTimeOut(const InnerEvent::Pointer &event)
         case AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG:
             HandleAddAbilityStageTimeOut(event->GetParam());
             break;
+        case AMSEventHandler::START_MULTI_INSTANCES_ABILITY_MSG:
+            HandleStartSpecifiedAbilityTimeOut(event->GetParam());
+            break;
         default:
             break;
     }
@@ -1868,5 +1876,95 @@ int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> 
     appRunningManager_->GetForegroundApplications(list);
     return ERR_OK;
 }
+
+void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
+{
+    APP_LOGD("Start specified ability.");
+    if (!CheckRemoteClient()) {
+        return;
+    }
+
+    BundleInfo bundleInfo;
+    HapModuleInfo hapModuleInfo;
+    auto appInfo = std::make_shared<ApplicationInfo>(abilityInfo.applicationInfo);
+    if (!appInfo) {
+        APP_LOGE("appInfo is nullptr.");
+        return;
+    }
+
+    if (!GetBundleAndHapInfo(abilityInfo, appInfo, bundleInfo, hapModuleInfo)) {
+        return;
+    }
+
+    std::string processName;
+    auto abilityInfoPtr = std::make_shared<AbilityInfo>(abilityInfo);
+    if (!abilityInfoPtr) {
+        APP_LOGE("abilityInfoPtr is nullptr.");
+        return;
+    }
+    MakeProcessName(processName, abilityInfoPtr, appInfo);
+
+    std::vector<HapModuleInfo> hapModules;
+    hapModules.emplace_back(hapModuleInfo);
+
+    std::shared_ptr<AppRunningRecord> appRecord;
+    appRecord = appRunningManager_->CheckAppRunningRecordIsExist(appInfo->name, processName, appInfo->uid, bundleInfo);
+    if (!appRecord) {
+        // new app record
+        appRecord = appRunningManager_->CreateAppRunningRecord(appInfo, processName, bundleInfo);
+        if (!appRecord) {
+            APP_LOGE("start process [%{public}s] failed!", processName.c_str());
+            return;
+        }
+
+        StartProcess(appInfo->name, processName, appRecord, appInfo->uid, appInfo->bundleName);
+
+        appRecord->SetEventHandler(eventHandler_);
+        appRecord->SetSpecifiedAbilityFlagAndWant(true, want, hapModuleInfo.moduleName);
+        appRecord->AddModules(appInfo, hapModules);
+    } else {
+        APP_LOGD("process is exist");
+        appRecord->SetSpecifiedAbilityFlagAndWant(true, want, hapModuleInfo.moduleName);
+        auto moduleRecord = appRecord->GetModuleRecordByModuleName(appInfo->bundleName, hapModuleInfo.moduleName);
+        if (!moduleRecord) {
+            APP_LOGD("module record is nullptr, add modules");
+            appRecord->AddModules(appInfo, hapModules);
+            appRecord->AddAbilityStageBySpecifiedAbility(appInfo->bundleName);
+        } else {
+            APP_LOGD("schedule accept want");
+            appRecord->ScheduleAcceptWant(hapModuleInfo.moduleName);
+        }
+    }
+}
+
+void AppMgrServiceInner::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response)
+{
+    if (!response) {
+        APP_LOGE("response is nullptr, register failed.");
+        return;
+    }
+
+    startSpecifiedAbilityResponse_ = response;
+}
+
+void AppMgrServiceInner::ScheduleAcceptWantDone(
+    const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
+{
+    APP_LOGD("Schedule accept want done, flag: %{public}s", flag.c_str());
+
+    auto appRecord = GetAppRunningRecordByAppRecordId(recordId);
+    if (!appRecord) {
+        APP_LOGE("Get app record failed.");
+        return;
+    }
+    appRecord->ScheduleAcceptWantDone();
+
+    if (startSpecifiedAbilityResponse_) {
+        startSpecifiedAbilityResponse_->OnAcceptWantResponse(want, flag);
+    }
+}
+
+void AppMgrServiceInner::HandleStartSpecifiedAbilityTimeOut(const int64_t eventId)
+{}
 }  // namespace AppExecFwk
 }  // namespace OHOS
