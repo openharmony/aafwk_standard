@@ -52,7 +52,7 @@ void JsStaticSubscriberExtension::Init(const std::shared_ptr<AbilityLocalRecord>
         return;
     }
     std::string srcPath(Extension::abilityInfo_->moduleName + "/");
-    srcPath.append(Extension::abilityInfo_->srcPath);
+    srcPath.append(Extension::abilityInfo_->srcEntrance);
     srcPath.erase(srcPath.rfind('.'));
     srcPath.append(".abc");
 
