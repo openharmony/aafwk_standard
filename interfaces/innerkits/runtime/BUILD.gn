@@ -64,7 +64,7 @@ ohos_shared_library("runtime") {
 
   external_deps = [
     "ability_runtime:want",
-    "appexecfwk_standard:appexecfwk_base",
+    "bundle_framework:appexecfwk_base",
     "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]

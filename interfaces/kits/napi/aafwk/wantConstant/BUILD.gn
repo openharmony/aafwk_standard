@@ -40,8 +40,8 @@ ohos_shared_library("wantconstant") {
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:want",
-    "appexecfwk_standard:appexecfwk_base",
-    "appexecfwk_standard:appexecfwk_core",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "appexecfwk_standard:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]

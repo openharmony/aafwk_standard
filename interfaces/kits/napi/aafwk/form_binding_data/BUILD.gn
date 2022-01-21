@@ -30,7 +30,7 @@ ohos_shared_library("formbindingdata_napi") {
 
   external_deps = [
     "ability_runtime:runtime",
-    "appexecfwk_standard:appexecfwk_base",
+    "bundle_framework:appexecfwk_base",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
