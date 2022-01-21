@@ -208,7 +208,7 @@ public:
      *
      * @param abilityRecord the died ability
      */
-    void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
+    void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord, int32_t currentUserId);
 
      /**
      * Get mission id by target ability token.
@@ -327,6 +327,9 @@ private:
     void BackToLauncher();
     bool IsPC();
     std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
+
+    void HandleLoadTimeout(const std::shared_ptr<AbilityRecord> &ability);
+    void HandleForgroundNewTimeout(const std::shared_ptr<AbilityRecord> &ability);
 
 private:
     int userId_;
