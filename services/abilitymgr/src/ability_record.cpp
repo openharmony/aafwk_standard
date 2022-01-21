@@ -88,6 +88,11 @@ AbilityRecord::AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &ab
     requestCode_(requestCode), compatibleVersion_(apiVersion)
 {
     recordId_ = abilityRecordId++;
+    auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (abilityMgr) {
+        abilityMgr->GetMaxRestartNum(restratMax_);
+    }
+    restartCount_ = restratMax_;
 }
 
 AbilityRecord::~AbilityRecord()
@@ -156,6 +161,11 @@ int AbilityRecord::LoadAbility()
     std::string appName = applicationInfo_.name;
     if (appName.empty()) {
         HILOG_ERROR("app name is empty");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ < 0) && IsNewVersion()) {
+        HILOG_ERROR("Root launcher restart is out of max count.");
         return ERR_INVALID_VALUE;
     }
 
@@ -303,6 +313,10 @@ void AbilityRecord::SetAbilityState(AbilityState state)
         if (mission) {
             mission->UpdateActiveTimestamp();
         }
+    }
+
+    if (state == AbilityState::FOREGROUND_NEW) {
+        SetRestarting(false);
     }
 }
 
@@ -890,6 +904,11 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
     dumpInfo = "        ready #" + std::to_string(isReady_) + "  window attached #" +
                std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
     info.push_back(dumpInfo);
+
+    if (isLauncherRoot_ && IsNewVersion()) {
+        dumpInfo = "        can restart num #" + std::to_string(restartCount_);
+        info.push_back(dumpInfo);
+    }
 }
 
 void AbilityRecord::SetStartTime()
@@ -1117,6 +1136,11 @@ bool AbilityRecord::GetPowerState() const
 void AbilityRecord::SetRestarting(const bool isRestart)
 {
     isRestarting_ = isRestart;
+
+    if (isLauncherRoot_ && IsLauncherAbility()) {
+        restartCount_ = isRestart ? (--restartCount_) : restratMax_;
+        HILOG_INFO("root launcher restart count: %{public}d", restartCount_);
+    }
 }
 
 bool AbilityRecord::IsRestarting() const

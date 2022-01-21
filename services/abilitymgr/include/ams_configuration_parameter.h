@@ -38,6 +38,7 @@ const std::string SYSTEM_ORIENTATION {"system_orientation"};
 const std::string STARTUP_CONTACTS {"startup_contacts"};
 const std::string STARTUP_MMS {"startup_mms"};
 const std::string USE_NEW_MISSION {"use_new_mission"};
+const std::string ROOT_LAUNCHER_RESTART_MAX {"root_launcher_restart_max"};
 }  // namespace AmsConfig
 
 enum class SatrtUiMode { STATUSBAR = 1, NAVIGATIONBAR = 2, STARTUIBOTH = 3 };
@@ -108,6 +109,10 @@ public:
      * return true if use mission list, false if use mission stack.
      */
     bool IsUseNewMission() const;
+    /**
+     * Get the max number of restart.
+     */
+    int GetMaxRestartNum() const;
 
     enum { READ_OK = 0, READ_FAIL = 1, READ_JSON_FAIL = 2 };
 
@@ -131,6 +136,7 @@ private:
     bool canStartContacts {false};
     bool canStartMms {false};
     bool useNewMission_ {false};
+    int maxRestartNum_ = 0;
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
     std::map<std::string, std::string> memThreshold_;
