@@ -22,6 +22,7 @@ bool MissionInfo::ReadFromParcel(Parcel &parcel)
     id = parcel.ReadInt32();
     runningState = parcel.ReadInt32();
     lockedState = parcel.ReadBool();
+    continuable = parcel.ReadBool();
     time = Str16ToStr8(parcel.ReadString16());
     label = Str16ToStr8(parcel.ReadString16());
     iconPath = Str16ToStr8(parcel.ReadString16());
@@ -54,6 +55,10 @@ bool MissionInfo::Marshalling(Parcel &parcel) const
     }
 
     if (!parcel.WriteBool(lockedState)) {
+        return false;
+    }
+
+    if (!parcel.WriteBool(continuable)) {
         return false;
     }
 

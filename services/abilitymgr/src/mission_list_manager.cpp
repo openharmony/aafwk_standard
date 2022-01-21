@@ -300,6 +300,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     info.missionName = missionName;
     info.isSingletonMode = isSingleton;
     info.missionInfo.runningState = 0;
+    info.missionInfo.continuable = abilityRequest.abilityInfo.continuable;
     info.missionInfo.time = Time2str(time(0));
     info.missionInfo.iconPath = abilityRequest.appInfo.iconPath;
     info.missionInfo.want = abilityRequest.want;

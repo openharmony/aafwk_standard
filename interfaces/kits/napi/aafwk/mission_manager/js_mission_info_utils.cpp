@@ -39,6 +39,7 @@ NativeValue* CreateJsMissionInfo(NativeEngine &engine, const AAFwk::MissionInfo 
     object->SetProperty("missionId", CreateJsValue(engine, missionInfo.id));
     object->SetProperty("runningState", CreateJsValue(engine, missionInfo.runningState));
     object->SetProperty("lockedState", CreateJsValue(engine, missionInfo.lockedState));
+    object->SetProperty("continuable", CreateJsValue(engine, missionInfo.continuable));
     object->SetProperty("timestamp", CreateJsValue(engine, missionInfo.time));
     object->SetProperty("want", CreateJsWant(engine, missionInfo.want));
     object->SetProperty("label", CreateJsValue(engine, missionInfo.label));
