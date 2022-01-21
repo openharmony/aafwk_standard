@@ -1,0 +1,44 @@
+{
+    "name": "@ohos/ability_tools",
+    "description": "元能力命令行工具 : 提供命令行中启动Ability, 打印Aility栈信息的能力",
+    "version": "3.1",
+    "license": "Apache License 2.0",
+    "publishAs": "code-segment",
+    "segment": {
+        "destPath": "foundation/aafwk/standard/tools"
+    },
+    "dirs": {},
+    "scripts": {},
+    "component": {
+        "name": "ability_tools",
+        "subsystem": "aafwk",
+        "syscap": [],
+        "features": [],
+        "adapted_system_type": [
+            "standard"
+        ],
+        "rom": "100KB",
+        "ram": "100KB",
+        "deps": {
+            "components": [
+                "ability_runtime",
+                "hiviewdfx_hilog_native",
+                "ipc",
+                "samgr_standard",
+                "utils_base"
+            ],
+            "third_party": []
+        },
+        "build": {
+            "sub_component": [
+                "//foundation/aafwk/standard/tools:tools_target"
+            ],
+            "inner_kits": [],
+            "test": [
+                "//foundation/aafwk/standard/tools/test:moduletest",
+                "//foundation/aafwk/standard/tools/test:systemtest",
+                "//foundation/aafwk/standard/tools/test:unittest"
+            ]
+        }
+    }
+}

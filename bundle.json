@@ -1,0 +1,201 @@
+{
+    "name": "@ohos/ability_runtime",
+    "description": "Ability管理服务统一调度和管理应用中各Ability和应用管理服务, 用于管理应用运行关系、调度应用进程生命周期及状态",
+    "version": "3.1",
+    "license": "Apache License 2.0",
+    "publishAs": "code-segment",
+    "segment": {
+        "destPath": "foundation/aafwk/standard"
+    },
+    "dirs": {},
+    "scripts": {},
+    "component": {
+        "name": "ability_runtime",
+        "subsystem": "aafwk",
+        "syscap": [],
+        "features": [],
+        "adapted_system_type": [
+            "standard"
+        ],
+        "rom": "",
+        "ram": "",
+        "deps": {
+          "components": [
+              "appspawn",
+              "bytrace_standard",
+              "ces_standard",
+              "ces_standard",
+              "device_manager_base",
+              "distributeddatamgr_appdatamgr",
+              "distributedschedule_dms_fwk",
+              "dsoftbus_standard",
+              "form_runtime",
+              "hiviewdfx_hilog_native",
+              "ipc",
+              "native_appdatamgr",
+              "napi",
+              "multimodalinput_base",
+              "multimedia_image_standard",
+              "os_account_standard",
+              "power_manager_native",
+              "safwk",
+              "samgr_standard",
+              "utils_base"
+            ],
+            "third_party": [
+              "libpng",
+              "node",
+              "jsoncpp",
+              "json"
+            ]
+        },
+        "build": {
+          "sub_component": [
+            "//foundation/aafwk/standard/services:services_target",
+            "//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
+            "//foundation/aafwk/standard/frameworks/kits/ability/native:static_subscriber_ipc",
+            "//foundation/aafwk/standard/frameworks/kits/ability/native:service_extension_module",
+            "//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
+            "//foundation/aafwk/standard/interfaces/kits/napi:napi_packages",
+            "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
+            "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+            "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+            "//foundation/aafwk/standard/frameworks/kits/appkit:appexec"
+          ],
+          "inner_kits": [
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
+                "header_files": [
+                  "ohos/aafwk/base/array_wrapper.h",
+                  "ohos/aafwk/base/base_def.h",
+                  "ohos/aafwk/base/base_interfaces.h",
+                  "ohos/aafwk/base/base_object.h",
+                  "ohos/aafwk/base/base_types.h",
+                  "ohos/aafwk/base/bool_wrapper.h",
+                  "ohos/aafwk/base/byte_wrapper.h",
+                  "ohos/aafwk/base/double_wrapper.h",
+                  "ohos/aafwk/base/float_wrapper.h",
+                  "ohos/aafwk/base/int_wrapper.h",
+                  "ohos/aafwk/base/light_refbase.h",
+                  "ohos/aafwk/base/long_wrapper.h",
+                  "ohos/aafwk/base/short_wrapper.h",
+                  "ohos/aafwk/base/string_wrapper.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
+                "header_files": [
+                  "ohos/aafwk/content/want.h",
+                  "ohos/aafwk/content/skills.h",
+                  "ohos/aafwk/content/want_params.h",
+                  "ohos/aafwk/content/match_type.h",
+                  "ohos/aafwk/content/operation.h",
+                  "ohos/aafwk/content/patterns_matcher.h",
+                  "ohos/aafwk/content/pac_map.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
+                "header_files": [
+                  "ohos/aafwk/content/intent.h",
+                  "ohos/aafwk/content/intent_filter.h",
+                  "ohos/aafwk/content/intent_params.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/intent:intent"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+                "header_files": [
+                  "ability_connect_callback_interface.h",
+                  "ability_connect_callback_stub.h",
+                  "ability_manager_client.h",
+                  "ability_manager_errors.h",
+                  "ability_manager_interface.h",
+                  "ability_scheduler_interface.h",
+                  "stop_user_callback.h",
+                  "stop_user_callback_stub.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/include",
+                "header_files": [
+                  "ability_context.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/runtime/include/",
+                "header_files": [
+                  "js_runtime.h",
+                  "runtime.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/runtime:runtime"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include",
+                "header_files": [
+                  "appmgr/app_mgr_client.h",
+                  "appmgr/iapp_state_callback.h",
+                  "appmgr/app_state_callback_host.h",
+                  "appmgr/app_mgr_constants.h",
+                  "appmgr/app_process_data.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
+                "header_files": [
+                  "extension.h",
+                  "extension_base.h",
+                  "service_extension.h",
+                  "extension_module_loader.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native"
+            },
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/common/task_dispatcher/include",
+                "header_files": [
+                  "dispatcher/parallel_task_dispatcher.h",
+                  "dispatcher/task_dispatcher_context",
+                  "threading/runnable.h",
+                  "task/task.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/common:common_target"
+            }
+          ],
+          "test": [
+            "//foundation/aafwk/standard/frameworks/kits/content/cpp/test:unittest",
+            "//foundation/aafwk/standard/frameworks/kits/ability/native/test:unittest",
+            "//foundation/aafwk/standard/frameworks/kits/test:moduletest",
+            "//foundation/aafwk/standard/services/test:moduletest",
+            "//foundation/aafwk/standard/services:unittest",
+            "//foundation/aafwk/standard/common/task_dispatcher/test:unittest",
+            "//foundation/aafwk/standard/common/test:moduletest",
+            "//foundation/aafwk/standard/frameworks/kits/appkit/native/test:unittest",
+            "//foundation/aafwk/standard/frameworks/kits/appkit/test:moduletest",
+            "//foundation/aafwk/standard/services/appmgr/test:unittest"
+          ]
+        }
+    }
+}
