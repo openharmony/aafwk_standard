@@ -35,6 +35,7 @@ struct MissionInfo : public Parcelable {
     int32_t id = -1;
     int32_t runningState = -1;
     bool lockedState;
+    bool continuable = false;
     std::string time;
     std::string label;
     std::string iconPath;
