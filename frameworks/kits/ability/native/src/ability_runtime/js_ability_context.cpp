@@ -328,6 +328,7 @@ NativeValue* JsAbilityContext::OnDisconnectAbility(NativeEngine& engine, NativeC
             }
             HILOG_INFO("context->DisconnectAbility");
             context->DisconnectAbility(want, connection);
+            task.Resolve(engine, engine.CreateUndefined());    
         };
 
     NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[1];
