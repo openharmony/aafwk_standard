@@ -70,7 +70,7 @@ ohos_shared_library("want") {
   ]
 
   external_deps = [
-    "appexecfwk_standard:appexecfwk_base",
+    "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
