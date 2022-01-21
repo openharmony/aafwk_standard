@@ -231,8 +231,9 @@ int AbilityManagerService::StartAbility(
     const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
+        HILOG_ERROR("%{public}s VerificationToken failed.", __func__);
         return ERR_INVALID_VALUE;
     }
     AbilityRequest abilityRequest;
@@ -248,38 +249,44 @@ int AbilityManagerService::StartAbility(
         return result;
     }
     auto type = abilityInfo.type;
+    HILOG_INFO("%{public}s Current ability type:%{public}d", __func__, type);
     if (type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
     }
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
+        HILOG_INFO("%{public}s PreLoadAppDataAbilities:%{public}s", __func__, abilityInfo.bundleName.c_str());
         result = PreLoadAppDataAbilities(abilityInfo.bundleName);
         if (result != ERR_OK) {
             HILOG_ERROR("StartAbility: App data ability preloading failed, '%{public}s', %{public}d",
-                abilityInfo.bundleName.c_str(),
-                result);
+                abilityInfo.bundleName.c_str(), result);
             return result;
         }
     }
 
     if (type == AppExecFwk::AbilityType::SERVICE || type == AppExecFwk::AbilityType::EXTENSION) {
+        HILOG_INFO("%{public}s Start SERVICE or EXTENSION", __func__);
         return connectManager_->StartAbility(abilityRequest);
     }
 
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
+        HILOG_ERROR("IsAbilityControllerStart failed: %{public}s", abilityInfo.bundleName.c_str());
         return ERR_WOULD_BLOCK;
     }
 
     if (useNewMission_) {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
+            HILOG_INFO("%{public}s NewMission Start SystemUiApp", __func__);
             return kernalAbilityManager_->StartAbility(abilityRequest);
         }
+        HILOG_INFO("%{public}s StartAbility by MissionList", __func__);
         return currentMissionListManager_->StartAbility(abilityRequest);
     } else {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
+            HILOG_INFO("%{public}s OldMission Start SystemUiApp", __func__);
             return systemAppManager_->StartAbility(abilityRequest);
         }
-
+        HILOG_INFO("%{public}s StartAbility by StackManager", __func__);
         return currentStackManager_->StartAbility(abilityRequest);
     }
 }

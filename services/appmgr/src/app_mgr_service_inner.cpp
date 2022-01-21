@@ -78,6 +78,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!CheckLoadabilityConditions(token, abilityInfo, appInfo)) {
+        APP_LOGE("CheckLoadabilityConditions failed");
         return;
     }
 
@@ -89,6 +90,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
     BundleInfo bundleInfo;
     HapModuleInfo hapModuleInfo;
     if (!GetBundleAndHapInfo(*abilityInfo, appInfo, bundleInfo, hapModuleInfo)) {
+        APP_LOGE("GetBundleAndHapInfo failed");
         return;
     }
 
@@ -102,14 +104,11 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         appRecord =
             CreateAppRunningRecord(token, preToken, appInfo, abilityInfo, processName, bundleInfo, hapModuleInfo);
         if (!appRecord) {
-            APP_LOGI("appRecord is nullptr");
+            APP_LOGI("CreateAppRunningRecord failed, appRecord is nullptr");
             return;
         }
-        StartProcess(abilityInfo->applicationName,
-            processName,
-            appRecord,
-            abilityInfo->applicationInfo.uid,
-            abilityInfo->applicationInfo.bundleName);
+        StartProcess(abilityInfo->applicationName, processName, appRecord,
+            abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo);
     }
@@ -210,7 +209,7 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
         return;
     }
     if (appRecord->GetState() != ApplicationState::APP_STATE_CREATE) {
-        APP_LOGE("wrong app state");
+        APP_LOGE("wrong app state:%{public}d", appRecord->GetState());
         return;
     }
     appRecord->LaunchApplication();
@@ -1203,9 +1202,8 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
         appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
         return;
     }
-    APP_LOGI("newPid %{public}d", pid);
+    APP_LOGI("newPid:%{public}d uid:%{public}d", pid, startMsg.uid);
     appRecord->GetPriorityObject()->SetPid(pid);
-    APP_LOGI("app uid %{public}d", startMsg.uid);
     appRecord->SetUid(startMsg.uid);
     OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     appRecord->SetAppMgrServiceInner(weak_from_this());

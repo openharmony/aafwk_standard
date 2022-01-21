@@ -82,7 +82,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
         bool result = whiteList->FindBundleNameOnWhiteList(abilityRequest.abilityInfo.bundleName, isAwakenScreen);
         whiteList.reset();
         if (!result) {
-            HILOG_DEBUG("the ability is not on the white list...");
+            HILOG_ERROR("the ability is not on the white list...");
             return START_ABILITY_NOT_ONTHE_WHITELIST;
         }
     }
@@ -90,6 +90,7 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     auto currentTopAbilityRecord = GetCurrentTopAbility();
     if (!CanStartInLockMissionState(abilityRequest, currentTopAbilityRecord)) {
         SendUnlockMissionMessage();
+        HILOG_ERROR("the ability can not start InLockMissionState");
         return LOCK_MISSION_STATE_DENY_REQUEST;
     }
 
@@ -103,7 +104,9 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     }
 
     if (!waittingAbilityQueue_.empty()) {
-        HILOG_INFO("Waiting queue is not empty, so enqueue ability for waiting.");
+        auto top = waittingAbilityQueue_.front().abilityInfo.name;
+        HILOG_INFO("Waiting queue not empty(%{public}s), enqueue(%{public}s) for waiting.",
+            top.c_str(), abilityRequest.abilityInfo.name.c_str());
         EnqueueWaittingAbility(abilityRequest);
         return START_ABILITY_WAITING;
     }
@@ -113,7 +116,8 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
         HILOG_DEBUG("current top: %{public}s", element.c_str());
         auto targetState = currentTopAbilityRecord->IsNewVersion() ? FOREGROUND_NEW : ACTIVE;
         if (currentTopAbilityRecord->GetAbilityState() != targetState) {
-            HILOG_INFO("Top ability is not active, so enqueue ability for waiting.");
+            HILOG_INFO("Top ability is not active(%{public}s), enqueue(%{public}s) for waiting.",
+                currentTopAbilityRecord->GetAbilityInfo().name.c_str(), abilityRequest.abilityInfo.name.c_str());
             EnqueueWaittingAbility(abilityRequest);
             return START_ABILITY_WAITING;
         }
@@ -134,7 +138,8 @@ int AbilityStackManager::StartAbilityLocked(
         } else {
             auto lockTopAbilityRecord = lockScreenMissionStack_->GetTopAbilityRecord();
             if (lockTopAbilityRecord && lockTopAbilityRecord->GetAbilityState() != ACTIVE) {
-                HILOG_INFO("lock screen stack top ability is not active, so enqueue ability for waiting.");
+                HILOG_INFO("lock screen stack top ability not active(%{public}s), enqueue(%{public}s) for waiting.",
+                    lockTopAbilityRecord->GetAbilityInfo().name.c_str(), abilityRequest.abilityInfo.name.c_str());
                 EnqueueWaittingAbility(abilityRequest);
                 return START_ABILITY_WAITING;
             }
@@ -145,14 +150,14 @@ int AbilityStackManager::StartAbilityLocked(
     if (abilityRequest.startSetting && !abilityRequest.abilityInfo.applicationInfo.isLauncherApp) {
         auto windowkey = static_cast<AbilityWindowConfiguration>(
             std::atoi(abilityRequest.startSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
-        HILOG_DEBUG("Start ability with settings ...");
         if (windowkey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING ||
             windowkey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
             windowkey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
+            HILOG_INFO("Start ability AsMultiWindow: %{public}d", windowkey);
             return StartAbilityAsMultiWindowLocked(currentTopAbility, abilityRequest);
         }
     }
-
+    HILOG_INFO("Start ability AsDefault.");
     return StartAbilityAsDefaultLocked(currentTopAbility, abilityRequest);
 }
 
@@ -188,11 +193,11 @@ int AbilityStackManager::StartAbilityAsDefaultLocked(
 
     // 4. start processing ability lifecycle
     if (currentTopAbility == nullptr) {
-        // top ability is null, then launch the first Ability.
+        HILOG_INFO("top ability is null, then launch the first Ability.");
         targetAbilityRecord->SetLauncherRoot();
         return targetAbilityRecord->LoadAbility();
     } else {
-        // complete ability background if needed.
+        HILOG_INFO("top ability not null, complete ability background if needed.");
         return StartAbilityLifeCycle(lastTopAbility, currentTopAbility, targetAbilityRecord);
     }
 }
