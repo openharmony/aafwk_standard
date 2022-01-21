@@ -28,6 +28,7 @@ std::string InnerMissionInfo::ToJsonStr() const
     value["MissionId"] = missionInfo.id;
     value["RunningState"] = missionInfo.runningState;
     value["LockedState"] = missionInfo.lockedState;
+    value["Continuable"] = missionInfo.continuable;
     value["Time"] = missionInfo.time;
     value["Label"] = missionInfo.label;
     value["IconPath"] = missionInfo.iconPath;
@@ -76,6 +77,9 @@ void InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
     if (CheckJsonNode("LockedState", JsonType::BOOLEAN)) {
         missionInfo.lockedState = value["LockedState"];
     }
+    if (CheckJsonNode("Continuable", JsonType::BOOLEAN)) {
+        missionInfo.continuable = value["Continuable"];
+    }
     if (CheckJsonNode("Time", JsonType::STRING)) {
         missionInfo.time = value["Time"];
     }
@@ -101,6 +105,8 @@ void InnerMissionInfo::Dump(std::vector<std::string> &info) const
     dumpInfo = "        runningState [" + std::to_string(missionInfo.runningState) + "]";
     info.push_back(dumpInfo);
     dumpInfo = "        lockedState [" + std::to_string(missionInfo.lockedState) + "]";
+    info.push_back(dumpInfo);
+    dumpInfo = "        continuable [" + std::to_string(missionInfo.continuable) + "]";
     info.push_back(dumpInfo);
     dumpInfo = "        timeStamp [" + missionInfo.time + "]";
     info.push_back(dumpInfo);
