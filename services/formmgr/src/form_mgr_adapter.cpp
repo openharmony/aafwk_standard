@@ -395,8 +395,10 @@ int FormMgrAdapter::UpdateForm(const int64_t formId,
     }
 
     // check then form under current user
-    if (!FormDataMgr::GetInstance().IsCallingUidValid(formRecord.formUserUids)) {
-        APP_LOGE("%{public}s error, not under current user, formId:%{public}" PRId64 ".", __func__, matchedFormId);
+    if (formRecord.userId != DEFAULT_USER_ID &&
+        !FormDataMgr::GetInstance().IsCallingUidValid(formRecord.formUserUids)) {
+        APP_LOGE("%{public}s error, not under current user, userId:%{public}d formId:%{public}d",
+            __func__, (int32_t)formRecord.userId, (int32_t)matchedFormId);
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
 
