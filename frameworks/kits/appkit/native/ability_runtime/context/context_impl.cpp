@@ -80,7 +80,7 @@ std::string ContextImpl::GetDatabaseDir()
     } else {
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
     }
-    dir =  dir + CONTEXT_FILE_SEPARATOR + (GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName;
+    dir =  dir + CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     HILOG_DEBUG("ContextImpl::GetDatabaseDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -115,7 +115,7 @@ std::string ContextImpl::GetDistributedFilesDir()
             CONTEXT_DISTRIBUTEDFILES_BASE_MIDDLE + GetBundleName();
     } else {
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTEDFILES +
-            CONTEXT_FILE_SEPARATOR + (GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName;
+            CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
     HILOG_DEBUG("ContextImpl::GetDistributedFilesDir:%{public}s", dir.c_str());
     return dir;
@@ -143,7 +143,7 @@ std::string ContextImpl::GetBaseDir() const
     }
     if (parentContext_ != nullptr) {
         baseDir =  baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
-            (GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName;
+            ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
 
     HILOG_DEBUG("ContextImpl::GetBaseDir:%{public}s", baseDir.c_str());
