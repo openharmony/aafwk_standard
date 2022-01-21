@@ -78,6 +78,8 @@ ProcessOptimizer::ProcessOptimizer(const LmksClientPtr &lmksClient, int suspendT
 
 ProcessOptimizer::~ProcessOptimizer()
 {
+    APP_LOGI("ProcessOptimizer destructed");
+    DelayedSingleton<CgroupManager>::GetInstance()->LowMemoryAlert = nullptr;
     if (lmksClient_) {
         lmksClient_->ProcPurge();
     }
