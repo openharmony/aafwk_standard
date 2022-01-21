@@ -21,7 +21,11 @@
 namespace OHOS {
 namespace AppExecFwk {
 static void *g_handle = nullptr;
+#ifdef _ARM64_
+constexpr char SHARED_LIBRARY_FEATURE_ABILITY[] = "/system/lib64/module/ability/libfeatureability.z.so";
+#else
 constexpr char SHARED_LIBRARY_FEATURE_ABILITY[] = "/system/lib/module/ability/libfeatureability.z.so";
+#endif
 constexpr char FUNC_CALL_ON_ABILITY_RESULT[] = "CallOnAbilityResult";
 using NAPICallOnAbilityResult = void (*)(int requestCode, int resultCode, const Want &resultData, CallbackInfo cb);
 constexpr char FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT[] = "CallOnRequestPermissionsFromUserResult";
