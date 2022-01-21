@@ -432,14 +432,12 @@ void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleSt
         return;
     }
 
-    APP_LOGI("AbilityThread::HandleAbilityTransaction before abilityImpl_->SetCallingContext");
+    APP_LOGI("AbilityThread::HandleAbilityTransaction abilityImpl_->SetCallingContext");
     abilityImpl_->SetCallingContext(lifeCycleStateInfo.caller.deviceId,
         lifeCycleStateInfo.caller.bundleName,
         lifeCycleStateInfo.caller.abilityName);
-    APP_LOGI("AbilityThread::HandleAbilityTransaction after abilityImpl_->SetCallingContext");
-    APP_LOGI("AbilityThread::HandleAbilityTransaction before abilityImpl_->HandleAbilityTransaction");
+    APP_LOGI("AbilityThread::HandleAbilityTransaction abilityImpl_->HandleAbilityTransaction");
     abilityImpl_->HandleAbilityTransaction(want, lifeCycleStateInfo);
-    APP_LOGI("AbilityThread::HandleAbilityTransaction after abilityImpl_->HandleAbilityTransaction");
     APP_LOGI("AbilityThread::HandleAbilityTransaction end");
 }
 

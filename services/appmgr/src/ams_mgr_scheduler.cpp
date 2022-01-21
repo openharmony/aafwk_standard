@@ -59,6 +59,7 @@ void AmsMgrScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<I
     }
 
     if (!IsReady()) {
+        APP_LOGE("AmsMgrScheduler not Ready");
         return;
     }
     PerfProfile::GetInstance().SetAbilityLoadStartTime(GetTickCount());
