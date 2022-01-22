@@ -29,7 +29,7 @@ void LockScreenEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData &
     std::string eventName = data.GetWant().GetAction();
     if (eventName == AbilityConfig::LOCK_SCREEN_EVENT_NAME) {
         bool isLockScreen = static_cast<bool>(data.GetCode());
-        auto task = [this, isLockScreen]() {
+        auto task = [isLockScreen]() {
             auto service = DelayedSingleton<AbilityManagerService>::GetInstance();
             service->UpdateLockScreenState(isLockScreen);
         };

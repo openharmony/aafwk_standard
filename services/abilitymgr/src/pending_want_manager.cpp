@@ -484,7 +484,7 @@ void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
     CHECK_POINTER(abilityManagerService);
     auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
-    auto task = [bundleName, this]() { ClearPendingWantRecordTask(bundleName); };
+    auto task = [bundleName, self = shared_from_this()]() { self->ClearPendingWantRecordTask(bundleName); };
     handler->PostTask(task);
 }
 

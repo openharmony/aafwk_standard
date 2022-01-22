@@ -2850,7 +2850,7 @@ void AbilityStackManager::UninstallApp(const std::string &bundleName)
     CHECK_POINTER(abilityManagerService);
     auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
-    auto task = [bundleName, this]() { AddUninstallTags(bundleName); };
+    auto task = [bundleName, self = shared_from_this()]() { self->AddUninstallTags(bundleName); };
     handler->PostTask(task);
 }
 
