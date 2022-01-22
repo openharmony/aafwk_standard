@@ -160,6 +160,7 @@ int32_t AppMgrService::CheckPermission(
 void AppMgrService::AttachApplication(const sptr<IRemoteObject> &app)
 {
     if (!IsReady()) {
+        APP_LOGE("AttachApplication failed, not ready.");
         return;
     }
 
