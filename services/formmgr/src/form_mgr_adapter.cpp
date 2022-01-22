@@ -92,7 +92,7 @@ int FormMgrAdapter::AddForm(const int64_t formId, const Want &want,
         return checkCode;
     }
 
-    // get from comfig info
+    // get from config info
     FormItemInfo formItemInfo;
     int32_t errCode = GetFormConfigInfo(want, formItemInfo);
     formItemInfo.SetFormId(formId);

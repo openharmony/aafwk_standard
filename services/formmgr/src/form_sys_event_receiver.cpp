@@ -58,7 +58,11 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
         return;
     }
     APP_LOGI("%{public}s, action:%{public}s.", __func__, action.c_str());
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
+        APP_LOGI("%{public}s, bundle added, bundleName: %{public}s", __func__, bundleName.c_str());
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
+        APP_LOGI("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         APP_LOGI("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
         HandleProviderRemoved(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
