@@ -17,8 +17,8 @@
 #define FOUNDATION_APPEXECFWK_SERVICES_FORMMGR_INCLUDE_FORM_RECORD_H
 
 #include <vector>
+#include "form_info_base.h"
 #include "form_provider_info.h"
-#include "form_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
