@@ -46,6 +46,7 @@ group("unittest") {
     "unittest/fms_form_data_mgr_test:unittest",
     "unittest/fms_form_db_record_test:unittest",
     "unittest/fms_form_host_record_test:unittest",
+    "unittest/fms_form_info_mgr_test:unittest",
     "unittest/fms_form_mgr_add_form_test:unittest",
     "unittest/fms_form_mgr_cast_temp_form_test:unittest",
     "unittest/fms_form_mgr_death_callback_test:unittest",
