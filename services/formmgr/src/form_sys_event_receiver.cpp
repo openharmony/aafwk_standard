@@ -26,6 +26,7 @@
 #include "form_data_mgr.h"
 #include "form_db_cache.h"
 #include "form_db_info.h"
+#include "form_info_mgr.h"
 #include "form_provider_mgr.h"
 #include "form_sys_event_receiver.h"
 #include "form_timer_mgr.h"
@@ -60,8 +61,18 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
     APP_LOGI("%{public}s, action:%{public}s.", __func__, action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
         APP_LOGI("%{public}s, bundle added, bundleName: %{public}s", __func__, bundleName.c_str());
+        std::vector<FormInfo> formInfos {};
+        FormInfoMgr::LoadFormConfigInfoByBundleName(bundleName, formInfos);
+        for (const auto& formInfo : formInfos) {
+            APP_LOGE("y00424102 form name=%{public}s", formInfo.name.c_str());
+        }
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
         APP_LOGI("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
+        std::vector<FormInfo> formInfos {};
+        FormInfoMgr::LoadFormConfigInfoByBundleName(bundleName, formInfos);
+        for (const auto& formInfo : formInfos) {
+            APP_LOGE("y00424102 form name=%{public}s", formInfo.name.c_str());
+        }
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         APP_LOGI("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
         HandleProviderRemoved(bundleName);
