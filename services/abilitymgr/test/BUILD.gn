@@ -151,6 +151,7 @@ ohos_source_set("abilityms_test_source") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "resmgr_standard:global_resmgr",
   ]
 }
 
