@@ -2386,7 +2386,7 @@ void StartAbilityPromiseCompletedCB(napi_env env, napi_status status, void *data
 napi_value StartAbilityAsync(
     napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s asyncCallback.", __func__);
+    HILOG_INFO("%{public}s async call.", __func__);
     if (args == nullptr || asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, param == nullptr.", __func__);
         return nullptr;
@@ -2410,13 +2410,13 @@ napi_value StartAbilityAsync(
             &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
 
-    HILOG_INFO("%{public}s asyncCallback end.", __func__);
+    HILOG_INFO("%{public}s async end.", __func__);
     return WrapVoidToJS(env);
 }
 
 napi_value StartAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s, promise.", __func__);
+    HILOG_INFO("%{public}s promise call.", __func__);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, param == nullptr.", __func__);
         return nullptr;
@@ -2437,7 +2437,7 @@ napi_value StartAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInf
             (void *)asyncCallbackInfo,
             &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    HILOG_INFO("%{public}s, end.", __func__);
+    HILOG_INFO("%{public}s promise end.", __func__);
     return promise;
 }
 
