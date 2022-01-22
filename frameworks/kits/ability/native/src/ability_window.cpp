@@ -195,7 +195,7 @@ void AbilityWindow::OnPostAbilityStop()
 
     if (windowScene_) {
         windowScene_ = nullptr;
-        APP_LOGI("AbilityWindow::widow:: windowScene_ release end.");
+        APP_LOGI("AbilityWindow::widow windowScene_ release end.");
     }
 
     isWindowAttached = false;

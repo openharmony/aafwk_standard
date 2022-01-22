@@ -100,9 +100,14 @@ void MissionListenerController::NotifyMissionCreated(int32_t missionId)
         HILOG_ERROR("handler not init");
         return;
     }
-
-    auto self(shared_from_this());
-    auto task = [self, missionId]() { self->NotifyListeners(missionId, Cmd::ON_MISSION_CREATED); };
+    auto task = [weak = weak_from_this(), missionId]() {
+        auto self = weak.lock();
+        if (self == nullptr) {
+            HILOG_ERROR("self is nullptr, NotifyMissionCreated failed.");
+            return;
+        }
+        self->NotifyListeners(missionId, Cmd::ON_MISSION_CREATED);
+    };
     handler_->PostTask(task);
 }
 
@@ -112,9 +117,14 @@ void MissionListenerController::NotifyMissionDestroyed(int32_t missionId)
         HILOG_ERROR("handler not init");
         return;
     }
-
-    auto self(shared_from_this());
-    auto task = [self, missionId]() { self->NotifyListeners(missionId, Cmd::ON_MISSION_DESTROYED); };
+    auto task = [weak = weak_from_this(), missionId]() {
+        auto self = weak.lock();
+        if (self == nullptr) {
+            HILOG_ERROR("self is nullptr, NotifyMissionDestroyed failed.");
+            return;
+        }
+        self->NotifyListeners(missionId, Cmd::ON_MISSION_DESTROYED);
+    };
     handler_->PostTask(task);
 }
 
@@ -125,8 +135,14 @@ void MissionListenerController::NotifyMissionSnapshotChanged(int32_t missionId)
         return;
     }
 
-    auto self(shared_from_this());
-    auto task = [self, missionId]() { self->NotifyListeners(missionId, Cmd::ON_MISSION_SNAPSHOT_CHANGED); };
+    auto task = [weak = weak_from_this(), missionId]() {
+        auto self = weak.lock();
+        if (self == nullptr) {
+            HILOG_ERROR("self is nullptr, NotifyMissionSnapshotChanged failed.");
+            return;
+        }
+        self->NotifyListeners(missionId, Cmd::ON_MISSION_SNAPSHOT_CHANGED);
+    };
     handler_->PostTask(task);
 }
 
@@ -137,8 +153,14 @@ void MissionListenerController::NotifyMissionMovedToFront(int32_t missionId)
         return;
     }
 
-    auto self(shared_from_this());
-    auto task = [self, missionId]() { self->NotifyListeners(missionId, Cmd::ON_MISSION_MOVED_TO_FRONT); };
+    auto task = [weak = weak_from_this(), missionId]() {
+        auto self = weak.lock();
+        if (self == nullptr) {
+            HILOG_ERROR("self is nullptr, NotifyMissionSnapshotChanged failed.");
+            return;
+        }
+        self->NotifyListeners(missionId, Cmd::ON_MISSION_MOVED_TO_FRONT);
+    };
     handler_->PostTask(task);
 }
 
