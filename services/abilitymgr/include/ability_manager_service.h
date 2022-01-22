@@ -913,6 +913,7 @@ private:
     void UserStarted(int32_t userId);
     void SwitchToUser(int32_t userId);
     void StartLauncherAbility(int32_t userId);
+    int32_t ShowPickerDialog(const Want& want, int32_t userId);
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
