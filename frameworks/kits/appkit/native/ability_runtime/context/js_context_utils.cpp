@@ -34,6 +34,7 @@ public:
     static void Finalizer(NativeEngine* engine, void* data, void* hint);
     static NativeValue* CreateBundleContext(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* GetApplicationContext(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SwitchArea(NativeEngine* engine, NativeCallbackInfo* info);
 
     void KeepContext(std::shared_ptr<Context> context)
     {
@@ -43,6 +44,7 @@ public:
 private:
     NativeValue* OnCreateBundleContext(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnGetApplicationContext(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnSwitchArea(NativeEngine& engine, NativeCallbackInfo& info);
 
     std::shared_ptr<Context> keepContext_;
 
@@ -66,6 +68,47 @@ NativeValue* JsBaseContext::GetApplicationContext(NativeEngine* engine, NativeCa
 {
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetApplicationContext(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::SwitchArea(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnSwitchArea(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnSwitchArea(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    if (info.argc == 0) {
+        HILOG_ERROR("Not enough params");
+        return engine.CreateUndefined();
+    }
+
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+
+    int mode;
+    if (!ConvertFromJsValue(engine, info.argv[0], mode)) {
+        HILOG_ERROR("Parse mode failed");
+        return engine.CreateUndefined();
+    }
+
+    context->SwitchArea(mode);
+
+    NativeValue* thisVar = info.thisVar;
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(thisVar);
+    object->SetProperty("cacheDir", CreateJsValue(engine, context->GetCacheDir()));
+    object->SetProperty("tempDir", CreateJsValue(engine, context->GetTempDir()));
+    object->SetProperty("filesDir", CreateJsValue(engine, context->GetFilesDir()));
+    object->SetProperty("distributedFilesDir", CreateJsValue(engine, context->GetDistributedFilesDir()));
+    object->SetProperty("databaseDir", CreateJsValue(engine, context->GetDatabaseDir()));
+    object->SetProperty("storageDir", CreateJsValue(engine, context->GetStorageDir()));
+    object->SetProperty("bundleCodeDir", CreateJsValue(engine, context->GetBundleCodeDir()));
+
+    return engine.CreateUndefined();
 }
 
 NativeValue* JsBaseContext::OnCreateBundleContext(NativeEngine& engine, NativeCallbackInfo& info)
@@ -151,6 +194,7 @@ NativeValue* CreateJsBaseContext(NativeEngine& engine, std::shared_ptr<Context> 
 
     BindNativeFunction(engine, *object, "createBundleContext", JsBaseContext::CreateBundleContext);
     BindNativeFunction(engine, *object, "getApplicationContext", JsBaseContext::GetApplicationContext);
+    BindNativeFunction(engine, *object, "switchArea", JsBaseContext::SwitchArea);
 
     return objValue;
 }
