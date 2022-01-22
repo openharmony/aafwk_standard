@@ -16,23 +16,54 @@
 class Context {
     constructor(obj) {
         this.__context_impl__ = obj
-
-        this.resourceManager = obj.resourceManager
-        this.applicationInfo = obj.applicationInfo
-        this.cacheDir = obj.cacheDir
-        this.tempDir = obj.tempDir
-        this.filesDir = obj.filesDir
-        this.distributedFilesDir = obj.distributedFilesDir
-        this.databaseDir = obj.databaseDir
-        this.storageDir = obj.storageDir
-        this.bundleCodeDir = obj.bundleCodeDir
     }
 
     createBundleContext(bundleName) {
         return this.__context_impl__.createBundleContext(bundleName)
     }
+
     getApplicationContext() {
         return this.__context_impl__.getApplicationContext()
+    }
+
+    switchArea(mode) {
+        return this.__context_impl__.switchArea(mode)
+    }
+
+    get resourceManager() {
+        return this.__context_impl__.resourceManager
+    }
+
+    get applicationInfo() {
+        return this.__context_impl__.applicationInfo
+    }
+
+    get cacheDir() {
+        return this.__context_impl__.cacheDir
+    }
+
+    get tempDir() {
+        return this.__context_impl__.tempDir
+    }
+
+    get filesDir() {
+        return this.__context_impl__.filesDir
+    }
+
+    get distributedFilesDir() {
+        return this.__context_impl__.distributedFilesDir
+    }
+
+    get databaseDir() {
+        return this.__context_impl__.databaseDir
+    }
+
+    get storageDir() {
+        return this.__context_impl__.storageDir
+    }
+
+    get bundleCodeDir() {
+        return this.__context_impl__.bundleCodeDir
     }
 }
 
