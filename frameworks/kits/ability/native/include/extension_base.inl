@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 
-#include "extension_base.h"
-
-#include "ability_local_record.h"
-#include "extension_context.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
