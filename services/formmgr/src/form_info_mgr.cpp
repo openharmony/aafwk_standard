@@ -15,6 +15,8 @@
 
 #include "form_info_mgr.h"
 
+#include <utility>
+
 #include "app_log_wrapper.h"
 #include "bundle_mgr_client.h"
 #include "extension_form_profile.h"
@@ -26,7 +28,7 @@ namespace {
 const std::string FORM_METADATA_NAME = "ohos.extension.form";
 } // namespace
 
-ErrCode FormInfoMgr::LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos)
+ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos)
 {
     if (bundleName.empty()) {
         APP_LOGE("bundleName is invalid");
@@ -58,7 +60,7 @@ ErrCode FormInfoMgr::LoadFormConfigInfoByBundleName(const std::string &bundleNam
     return ERR_OK;
 }
 
-ErrCode FormInfoMgr::LoadStageFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos)
+ErrCode FormInfoHelper::LoadStageFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos)
 {
     std::shared_ptr<BundleMgrClient> client = DelayedSingleton<BundleMgrClient>::GetInstance();
     if (client == nullptr) {
@@ -71,7 +73,7 @@ ErrCode FormInfoMgr::LoadStageFormConfigInfo(const BundleInfo &bundleInfo, std::
             continue;
         }
 
-        std::vector<std::string> profileInfos{};
+        std::vector<std::string> profileInfos {};
         if (!client->GetResConfigFile(extensionInfo, FORM_METADATA_NAME, profileInfos)) {
             APP_LOGE("failed to get form metadata.");
             continue;
@@ -92,7 +94,7 @@ ErrCode FormInfoMgr::LoadStageFormConfigInfo(const BundleInfo &bundleInfo, std::
     return ERR_OK;
 }
 
-ErrCode FormInfoMgr::LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos)
+ErrCode FormInfoHelper::LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos)
 {
     sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
     if (iBundleMgr == nullptr) {
@@ -103,7 +105,7 @@ ErrCode FormInfoMgr::LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std
     const std::string &bundleName = bundleInfo.name;
     for (const auto &modelInfo: bundleInfo.hapModuleInfos) {
         const std::string &moduleName = modelInfo.moduleName;
-        std::vector<FormInfo> formInfoVec{};
+        std::vector<FormInfo> formInfoVec {};
         if (!iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfoVec)) {
             continue;
         }
@@ -116,5 +118,175 @@ ErrCode FormInfoMgr::LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std
     return ERR_OK;
 }
 
+BundleFormInfo::BundleFormInfo(std::string bundleName) : bundleName_(std::move(bundleName))
+{
+}
+
+ErrCode BundleFormInfo::Update()
+{
+    std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    ErrCode errCode = FormInfoHelper::LoadFormConfigInfoByBundleName(bundleName_, formInfos_);
+    return errCode;
+}
+
+ErrCode BundleFormInfo::Remove()
+{
+    std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    formInfos_.clear();
+    return ERR_OK;
+}
+
+bool BundleFormInfo::Empty()
+{
+    std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    return formInfos_.empty();
+}
+
+ErrCode BundleFormInfo::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    for (const auto &formInfo : formInfos_) {
+        formInfos.push_back(formInfo);
+    }
+    return ERR_OK;
+}
+
+ErrCode BundleFormInfo::GetFormsInfoByModule(const std::string &moduleName, std::vector<FormInfo> &formInfos)
+{
+    std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    for (const auto &formInfo : formInfos_) {
+        if (formInfo.moduleName == moduleName) {
+            formInfos.push_back(formInfo);
+        }
+    }
+    return ERR_OK;
+}
+
+FormInfoMgr::FormInfoMgr() = default;
+
+FormInfoMgr::~FormInfoMgr() = default;
+
+ErrCode FormInfoMgr::Update(const std::string &bundleName)
+{
+    if (bundleName.empty()) {
+        APP_LOGE("bundleName is empty.");
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    auto bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
+    ErrCode errCode = bundleFormInfoPtr->Update();
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
+
+    if (bundleFormInfoPtr->Empty()) {
+        // no forms found, no need to be inserted into the map
+        return ERR_OK;
+    }
+
+    std::unique_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    bundleFormInfoMap_[bundleName] = bundleFormInfoPtr;
+    APP_LOGE("update forms info success, bundleName=%{public}s.", bundleName.c_str());
+    return ERR_OK;
+}
+
+ErrCode FormInfoMgr::Remove(const std::string &bundleName)
+{
+    if (bundleName.empty()) {
+        APP_LOGE("bundleName is empty.");
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    std::unique_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
+    if (bundleFormInfoIter == bundleFormInfoMap_.end()) {
+        // BundleFormInfo not found, no need to remove
+        return ERR_OK;
+    }
+
+    ErrCode errCode = ERR_OK;
+    if (bundleFormInfoIter->second != nullptr) {
+        errCode = bundleFormInfoIter->second->Remove();
+    }
+    bundleFormInfoMap_.erase(bundleFormInfoIter);
+    APP_LOGE("remove forms info success, bundleName=%{public}s.", bundleName.c_str());
+    return errCode;
+}
+
+ErrCode FormInfoMgr::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    for (const auto &bundleFormInfo: bundleFormInfoMap_) {
+        if (bundleFormInfo.second != nullptr) {
+            bundleFormInfo.second->GetAllFormsInfo(formInfos);
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode FormInfoMgr::GetFormsInfoByBundle(const std::string &bundleName, std::vector<FormInfo> &formInfos)
+{
+    if (bundleName.empty()) {
+        APP_LOGE("bundleName is empty.");
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
+    if (bundleFormInfoIter == bundleFormInfoMap_.end()) {
+        APP_LOGE("no forms found.");
+        return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
+    }
+
+    if (bundleFormInfoIter->second != nullptr) {
+        bundleFormInfoIter->second->GetAllFormsInfo(formInfos);
+    }
+    return ERR_OK;
+}
+
+ErrCode FormInfoMgr::GetFormsInfoByModule(const std::string &bundleName, const std::string &moduleName,
+                                          std::vector<FormInfo> &formInfos)
+{
+    if (bundleName.empty()) {
+        APP_LOGE("bundleName is empty.");
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
+    if (bundleFormInfoIter == bundleFormInfoMap_.end()) {
+        APP_LOGE("no forms found.");
+        return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
+    }
+
+    if (bundleFormInfoIter->second != nullptr) {
+        bundleFormInfoIter->second->GetFormsInfoByModule(moduleName, formInfos);
+    }
+    return ERR_OK;
+}
+
+std::shared_ptr<BundleFormInfo> FormInfoMgr::GetOrCreateBundleFromInfo(const std::string &bundleName)
+{
+    {
+        std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+        auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
+        if (bundleFormInfoIter != bundleFormInfoMap_.end()) {
+            // found
+            return bundleFormInfoIter->second;
+        }
+    }
+
+    // not found
+    std::unique_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
+    // try to find again
+    if (bundleFormInfoIter != bundleFormInfoMap_.end()) {
+        // found
+        return bundleFormInfoIter->second;
+    }
+    auto bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
+    bundleFormInfoMap_[bundleName] = bundleFormInfoPtr;
+    return bundleFormInfoPtr;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

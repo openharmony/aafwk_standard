@@ -50,7 +50,7 @@ FormSysEventReceiver::FormSysEventReceiver(const EventFwk::CommonEventSubscribeI
  */
 void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &eventData)
 {
-    AAFwk::Want want = eventData.GetWant();
+    const AAFwk::Want& want = eventData.GetWant();
     std::string action = want.GetAction();
     std::string bundleName = want.GetElement().GetBundleName();
     if (action.empty() || bundleName.empty()) {
@@ -61,21 +61,14 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
     APP_LOGI("%{public}s, action:%{public}s.", __func__, action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
         APP_LOGI("%{public}s, bundle added, bundleName: %{public}s", __func__, bundleName.c_str());
-        std::vector<FormInfo> formInfos {};
-        FormInfoMgr::LoadFormConfigInfoByBundleName(bundleName, formInfos);
-        for (const auto& formInfo : formInfos) {
-            APP_LOGE("y00424102 form name=%{public}s", formInfo.name.c_str());
-        }
+        HandleBundleFormInfoChanged(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
         APP_LOGI("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
-        std::vector<FormInfo> formInfos {};
-        FormInfoMgr::LoadFormConfigInfoByBundleName(bundleName, formInfos);
-        for (const auto& formInfo : formInfos) {
-            APP_LOGE("y00424102 form name=%{public}s", formInfo.name.c_str());
-        }
+        HandleBundleFormInfoChanged(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         APP_LOGI("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
         HandleProviderRemoved(bundleName);
+        HandleBundleFormInfoRemoved(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
         APP_LOGI("%{public}s, bundle updated, bundleName: %{public}s", __func__, bundleName.c_str());
         HandleProviderUpdated(bundleName);
@@ -220,6 +213,17 @@ bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
     APP_LOGI("%{public}s, no updated form.", __func__);
     return false;
 }
+
+void FormSysEventReceiver::HandleBundleFormInfoChanged(const std::string &bundleName)
+{
+    FormInfoMgr::GetInstance().Update(bundleName);
+}
+
+void FormSysEventReceiver::HandleBundleFormInfoRemoved(const std::string &bundleName)
+{
+    FormInfoMgr::GetInstance().Remove(bundleName);
+}
+
 void FormSysEventReceiver::HandleBundleDataCleared(const std::string &bundleName, const int uid)
 {
     APP_LOGD("%{public}s, bundleName:%{public}s, uid:%{public}d", __func__, bundleName.c_str(), uid);
