@@ -16,7 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_SERVICES_FORMMGR_INCLUDE_FORM_INFO_MGR_H
 #define FOUNDATION_APPEXECFWK_SERVICES_FORMMGR_INCLUDE_FORM_INFO_MGR_H
 
+#include <shared_mutex>
 #include <singleton.h>
+#include <unordered_map>
 
 #include "appexecfwk_errors.h"
 #include "bundle_info.h"
@@ -24,18 +26,58 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-class FormInfoMgr final : public DelayedRefSingleton<FormInfoMgr> {
-DECLARE_DELAYED_REF_SINGLETON(FormInfoMgr)
-
+class FormInfoHelper {
 public:
-    DISALLOW_COPY_AND_MOVE(FormInfoMgr);
-
     static ErrCode LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos);
 
 private:
     static ErrCode LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos);
 
     static ErrCode LoadStageFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos);
+};
+
+class BundleFormInfo {
+public:
+    explicit BundleFormInfo(std::string bundleName);
+
+    ErrCode Update();
+
+    ErrCode Remove();
+
+    bool Empty();
+
+    ErrCode GetAllFormsInfo(std::vector<FormInfo> &formInfos);
+
+    ErrCode GetFormsInfoByModule(const std::string &moduleName, std::vector<FormInfo> &formInfos);
+
+private:
+    std::string bundleName_ {};
+    mutable std::shared_timed_mutex formInfosMutex_ {};
+    std::vector<FormInfo> formInfos_ {};
+};
+
+class FormInfoMgr final : public DelayedRefSingleton<FormInfoMgr> {
+DECLARE_DELAYED_REF_SINGLETON(FormInfoMgr)
+
+public:
+    DISALLOW_COPY_AND_MOVE(FormInfoMgr);
+
+    ErrCode Update(const std::string &bundleName);
+
+    ErrCode Remove(const std::string &bundleName);
+
+    ErrCode GetAllFormsInfo(std::vector<FormInfo> &formInfos);
+
+    ErrCode GetFormsInfoByBundle(const std::string &bundleName, std::vector<FormInfo> &formInfos);
+
+    ErrCode GetFormsInfoByModule(const std::string &bundleName, const std::string &moduleName,
+                                 std::vector<FormInfo> &formInfos);
+
+private:
+    std::shared_ptr<BundleFormInfo> GetOrCreateBundleFromInfo(const std::string &bundleName);
+
+    mutable std::shared_timed_mutex bundleFormInfoMapMutex_ {};
+    std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap_ {};
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
