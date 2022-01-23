@@ -43,6 +43,7 @@
 #include "string_ex.h"
 #include "system_ability_definition.h"
 #include "png.h"
+#include "ui_service_mgr_client.h"
 
 using OHOS::AppExecFwk::ElementName;
 
@@ -57,6 +58,7 @@ const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
+const std::string ACTION_CHOOSE = "ohos.want.action.select";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-a", KEY_DUMP_ALL),
@@ -1959,6 +1961,9 @@ int AbilityManagerService::GenerateAbilityRequest(
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
 
     int userId = GetUserId();
+    if (want.GetAction().compare(ACTION_CHOOSE) == 0) {
+        return ShowPickerDialog(want, userId);
+    }
     bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
         userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
@@ -3113,6 +3118,16 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
     }
 
     return found;
+}
+
+int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId)
+{
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+    HILOG_INFO("share content: ShowPickerDialog");
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    bms->QueryAbilityInfos(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfos);
+    return Ace::UIServiceMgrClient::GetInstance()->ShowAppPickerDialog(want, abilityInfos);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
