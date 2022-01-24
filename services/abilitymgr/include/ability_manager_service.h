@@ -868,6 +868,7 @@ private:
     int ConnectRemoteAbility(const Want &want, const sptr<IRemoteObject> &connect);
     int DisconnectRemoteAbility(const sptr<IRemoteObject> &connect);
     int PreLoadAppDataAbilities(const std::string &bundleName);
+    void UpdateCallerInfo(Want& want);
 
     bool CheckIfOperateRemote(const Want &want);
     bool GetLocalDeviceId(std::string& localDeviceId);
