@@ -1053,41 +1053,49 @@ int MissionListManager::ClearAllMissions()
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteAllMissionInfos(listenerController_);
-    for (auto mission : defaultStandardList_->GetAllMissions()) {
-        if (mission && !mission->IsLockedState()) {
-            ClearMissionLocked(-1, mission);
-        }
-    }
-
-    for (auto mission : defaultSingleList_->GetAllMissions()) {
-        if (mission && !mission->IsLockedState()) {
-            ClearMissionLocked(-1, mission);
-        }
-    }
+    ClearAllMissionsLocked(defaultStandardList_, nullptr);
+    ClearAllMissionsLocked(defaultSingleList_, nullptr);
 
     std::list<std::shared_ptr<Mission>> foregroundAbilities;
-    for (auto missionList : currentMissionLists_) {
+    for (auto listIter = currentMissionLists_.begin(); listIter != currentMissionLists_.end();) {
+        auto missionList = (*listIter);
         if (!missionList || missionList->GetType() == MissionListType::LAUNCHER) {
+            ++listIter;
             continue;
         }
-        for (auto mission : missionList->GetAllMissions()) {
-            if (!mission || !mission->GetAbilityRecord() || mission->IsLockedState()) {
-                continue;
-            }
-
-            if (mission->GetAbilityRecord()->IsActiveState()) {
-                foregroundAbilities.push_front(mission);
-                continue;
-            }
-
-            ClearMissionLocked(-1, mission);
+        if (ClearAllMissionsLocked(missionList, foregroundAbilities)) {
+            ++listIter;
+        } else {
+            listIter++;
         }
     }
 
-    for (auto mission : foregroundAbilities) {
-        ClearMissionLocked(-1, mission);
-    }
+    ClearAllMissionsLocked(foregroundAbilities, nullptr);
     return ERR_OK;
+}
+
+bool MissionListManager::ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> missionList,
+    const std::list<std::shared_ptr<Mission>> &foregroundAbilities)
+{
+    bool result = false;
+    for (auto listIter = missionList.begin(); listIter != missionList.end();) {
+        auto mission = (*listIter);
+        if (!mission || mission->IsLockedState()) {
+            result = true;
+            ++listIter;
+            continue;
+        }
+
+        if (foregroundAbilities && mission->GetAbilityRecord() && mission->GetAbilityRecord()->IsActiveState()) {
+            result = true;
+            foregroundAbilities->push_front(mission);
+            ++listIter;
+            continue;
+        }
+        ClearMissionLocked(-1, mission);
+        listIter++;
+    }
+    return result;
 }
 
 int MissionListManager::SetMissionLockedState(int missionId, bool lockedState)
