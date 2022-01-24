@@ -203,6 +203,10 @@ int AbilitySchedulerStub::OpenFileInner(MessageParcel &data, MessageParcel &repl
         return ERR_INVALID_VALUE;
     }
     int fd = OpenFile(*uri, mode);
+    if (fd < 0) {
+        HILOG_ERROR("OpenFile fail, fd is %{pubilc}d", fd);
+        return ERR_INVALID_VALUE;
+    }
     if (!reply.WriteFileDescriptor(fd)) {
         HILOG_ERROR("fail to WriteFileDescriptor fd");
         return ERR_INVALID_VALUE;

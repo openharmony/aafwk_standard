@@ -289,7 +289,7 @@ bool DataAbilityHelper::Release()
     APP_LOGI("DataAbilityHelper::Release before ReleaseDataAbility.");
     int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy_, token_);
     if (err != ERR_OK) {
-        APP_LOGE("DataAbilityHelper::GetFileTypes failed to ReleaseDataAbility err = %{public}d", err);
+        APP_LOGE("DataAbilityHelper::Release failed to ReleaseDataAbility err = %{public}d", err);
         return false;
     }
     APP_LOGI("DataAbilityHelper::Release after ReleaseDataAbility.");
@@ -926,9 +926,14 @@ void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
     }
 
     dataAbilityProxy->ScheduleUnregisterObserver(uri, dataObserver);
-    int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy, token_);
-    if (err != ERR_OK) {
-        APP_LOGE("DataAbilityHelper::UnregisterObserver failed to ReleaseDataAbility err = %{public}d", err);
+    if (uri_ == nullptr) {
+        APP_LOGI("DataAbilityHelper::UnregisterObserver before ReleaseDataAbility.");
+        int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy_, token_);
+        APP_LOGI("DataAbilityHelper::UnregisterObserver after ReleaseDataAbility.");
+        if (err != ERR_OK) {
+            APP_LOGE("DataAbilityHelper::UnregisterObserver failed to ReleaseDataAbility err = %{public}d", err);
+        }
+        dataAbilityProxy_ = nullptr;
     }
     registerMap_.erase(dataObserver);
     uriMap_.erase(dataObserver);
