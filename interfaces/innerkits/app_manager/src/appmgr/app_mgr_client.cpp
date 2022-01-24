@@ -381,5 +381,19 @@ void AppMgrClient::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::W
 
     service->ScheduleAcceptWantDone(recordId, want, flag);
 }
+
+AppMgrResultCode AppMgrClient::UpdateConfiguration(const Configuration &config)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAmsMgr> amsService = service->GetAmsMgr();
+    if (amsService == nullptr) {
+        return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+    }
+    amsService->UpdateConfiguration(config);
+    return AppMgrResultCode::RESULT_OK;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

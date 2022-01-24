@@ -120,9 +120,9 @@ void AbilityManagerServiceTest::OnStartAms()
         if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-
+   
         abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
-
+        
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
@@ -141,10 +141,6 @@ void AbilityManagerServiceTest::OnStartAms()
 
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-
-        abilityMs_->configuration_ = std::make_shared<AppExecFwk::Configuration>();
-        EXPECT_TRUE(abilityMs_->configuration_);
-        abilityMs_->GetGlobalConfiguration();
 
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId, true);
@@ -730,7 +726,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_017, TestSize.Level1)
     wantLuncher.SetElement(elementLun);
     abilityMs_->StartAbility(wantLuncher);
     WaitUntilTaskFinished();
-
+    
     Want want;
     ElementName element("device", "com.ix.music", "MusicAbility");
     want.SetElement(element);
@@ -2013,7 +2009,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_001, TestSize.Level1)
     AbilityRecordInfo barAbilityInfo;
     barAbility->GetAbilityRecordInfo(barAbilityInfo);
     auto dialogtoken = barAbility->GetToken();
-
+    
     OHOS::sptr<IAbilityScheduler> scheduler = new AbilityScheduler();
     EXPECT_EQ(abilityMs_->AttachAbilityThread(scheduler, dialogtoken), OHOS::ERR_OK);
     EXPECT_TRUE(barAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
@@ -2254,12 +2250,12 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_008, TestSize.Level1)
     auto abilityToken = ability->GetToken();
 
     EXPECT_TRUE(ability->GetAbilityInfo().bundleName == COM_IX_HIWORLD);
-
+ 
     ElementName elementTv("device", "com.ix.hiTv", "TvAbility");
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
-
+    
     // helloAbility inactive
     stackManager->CompleteInactive(ability);
 
@@ -2305,7 +2301,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_009, TestSize.Level1)
     want.SetElement(elementTv);
     auto resultTv = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, resultTv);
-
+    
     // helloAbility inactive
     stackManager->CompleteInactive(ability);
 
@@ -2403,7 +2399,7 @@ HWTEST_F(AbilityManagerServiceTest, handleloadtimeout_011, TestSize.Level1)
     auto abilityTv = stackManagerTv->GetCurrentTopAbility();
 
     abilityMs_->HandleLoadTimeOut(INT32_MAX);
-
+  
     auto newStackManager = abilityMs_->GetStackManager();
     auto newAbility = newStackManager->GetCurrentTopAbility();
     EXPECT_TRUE(newAbility->GetAbilityInfo().bundleName == "com.ix.hiTv");
@@ -3069,60 +3065,6 @@ HWTEST_F(AbilityManagerServiceTest, AmsConfigurationParameter_003, TestSize.Leve
     EXPECT_TRUE(abilityMs_->amsConfigResolver_);
     auto ref = abilityMs_->amsConfigResolver_->LoadAmsConfiguration(" ");
     EXPECT_EQ(ref, 1);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- * MoveMissionToEnd NA
- */
-HWTEST_F(AbilityManagerServiceTest, UpdateConfiguration_001, TestSize.Level1)
-{
-    auto confiuration = abilityMs_->GetConfiguration();
-    EXPECT_TRUE(confiuration);
-
-    AppExecFwk::Configuration config;
-    int displayId = 1001;
-    std::string val {"中文"};
-    config.AddItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-    auto ref = abilityMs_->UpdateConfiguration(config);
-    EXPECT_EQ(ref, 0);
-
-    AppExecFwk::Configuration config2;
-    int displayId2 = 1001;
-    std::string val2 {"德语"};
-    config2.AddItem(displayId2, GlobalConfigurationKey::SYSTEM_LANGUAGE, val2);
-    ref = abilityMs_->UpdateConfiguration(config2);
-    EXPECT_EQ(ref, 0);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- * MoveMissionToEnd NA
- */
-HWTEST_F(AbilityManagerServiceTest, UpdateConfiguration_002, TestSize.Level1)
-{
-    auto confiuration = abilityMs_->GetConfiguration();
-    EXPECT_TRUE(confiuration);
-
-    AppExecFwk::Configuration config;
-    std::string val {"中文"};
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
-    auto ref = abilityMs_->UpdateConfiguration(config);
-    EXPECT_EQ(ref, 0);
-
-    // Because the original will be updated, no new ones will be added.
-    ref = abilityMs_->UpdateConfiguration(config);
-    EXPECT_EQ(ref, ERR_INVALID_VALUE);
 }
 
 /*

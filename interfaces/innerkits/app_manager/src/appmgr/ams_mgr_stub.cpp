@@ -62,6 +62,8 @@ AmsMgrStub::AmsMgrStub()
         &AmsMgrStub::HandleStartSpecifiedAbility;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::REGISTER_START_SPECIFIED_ABILITY_RESPONSE)] =
         &AmsMgrStub::HandleRegisterStartSpecifiedAbilityResponse;
+    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::UPDATE_CONFIGURATION)] =
+        &AmsMgrStub::HandleUpdateConfiguration;
 }
 
 AmsMgrStub::~AmsMgrStub()
@@ -267,6 +269,16 @@ int32_t AmsMgrStub::HandleRegisterStartSpecifiedAbilityResponse(MessageParcel &d
     sptr<IStartSpecifiedAbilityResponse> response = iface_cast<IStartSpecifiedAbilityResponse>(obj);
     RegisterStartSpecifiedAbilityResponse(response);
     return NO_ERROR;
+}
+
+int32_t AmsMgrStub::HandleUpdateConfiguration(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<Configuration> config(data.ReadParcelable<Configuration>());
+    if (config) {
+        UpdateConfiguration(*config);
+        return NO_ERROR;
+    }
+    return UNKNOWN_ERROR;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

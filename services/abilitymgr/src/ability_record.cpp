@@ -23,7 +23,6 @@
 #include "ability_scheduler_stub.h"
 #include "ability_util.h"
 #include "bytrace.h"
-#include "configuration_distributor.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
 
@@ -1156,21 +1155,6 @@ void AbilityRecord::SetAppState(const AppState &state)
 AppState AbilityRecord::GetAppState() const
 {
     return appState_;
-}
-
-void AbilityRecord::UpdateConfiguration(const AppExecFwk::Configuration &config)
-{
-    HILOG_INFO("%{public}s called", __FUNCTION__);
-    CHECK_POINTER(lifecycleDeal_);
-    HILOG_INFO("ability name : %{public}s | ready state : %{public}d", abilityInfo_.name.c_str(), isReady_);
-    if (IsReady()) {
-        lifecycleDeal_->UpdateConfiguration(config);
-    }
-}
-
-int AbilityRecord::GetId()
-{
-    return GetRecordId();
 }
 
 void AbilityRecord::ClearFlag()

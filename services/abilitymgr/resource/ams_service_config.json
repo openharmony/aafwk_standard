@@ -7,9 +7,9 @@
         "startup_phone_service" : true,
         "startup_contacts":true,
         "startup_mms":true,
-        "use_new_mission" : true,
         "mission_save_time" : 43200000,
-        "root_launcher_restart_max":15
+        "root_launcher_restart_max":15,
+        "use_new_mission":true
     },
     "memorythreshold":{
         "home_application": "20"

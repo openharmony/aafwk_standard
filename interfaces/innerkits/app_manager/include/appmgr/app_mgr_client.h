@@ -30,7 +30,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 class AppServiceManager;
-
+class Configuration;
 class AppMgrClient {
 public:
     AppMgrClient();
@@ -214,6 +214,14 @@ public:
      * Start a resident process
      */
     virtual void StartupResidentProcess();
+	
+	 /**
+     *  ANotify application update system environment changes.
+     *
+     * @param config System environment change parameters.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual AppMgrResultCode UpdateConfiguration(const Configuration &config);
 
     virtual void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 

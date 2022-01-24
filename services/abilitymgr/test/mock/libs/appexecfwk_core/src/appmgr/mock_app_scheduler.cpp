@@ -178,5 +178,10 @@ void AppScheduler::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token
 
 void AppScheduler::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {}
+
+int AppScheduler::UpdateConfiguration(const AppExecFwk::Configuration &)
+{
+    return 0;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

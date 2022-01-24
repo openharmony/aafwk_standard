@@ -253,7 +253,7 @@ public:
      *
      * @return
      */
-    void LaunchApplication();
+    void LaunchApplication(const Configuration &config);
 
     /**
      * AddAbilityStage, Notify application to ability stage.
@@ -395,6 +395,14 @@ public:
      * @return
      */
     void RemoveAppDeathRecipient() const;
+
+    /**
+    *  Notify application update system environment changes.
+    *
+    * @param config System environment change parameters.
+    * @return
+    */
+    void UpdateConfiguration(const Configuration &config);
 
     void SetEventHandler(const std::shared_ptr<AMSEventHandler> &handler);
 

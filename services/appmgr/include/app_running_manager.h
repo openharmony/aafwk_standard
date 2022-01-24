@@ -125,6 +125,13 @@ public:
      */
     void GetForegroundApplications(std::vector<AppStateData> &list);
 
+    /*
+    *  ANotify application update system environment changes.
+    *
+    * @param config System environment change parameters.
+    * @return
+    */
+    void UpdateConfiguration(const Configuration &config);
     void HandleTerminateTimeOut(int64_t eventId);
     void HandleAbilityAttachTimeOut(const sptr<IRemoteObject> &token);
     std::shared_ptr<AppRunningRecord> GetAppRunningRecord(const int64_t eventId);

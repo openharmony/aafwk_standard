@@ -89,7 +89,7 @@ public:
     {
         scheduled_ |= LOW_MEMORY_SCHEDULED;
     }
-    void ScheduleLaunchApplication(const AppLaunchData &) override
+    void ScheduleLaunchApplication(const AppLaunchData &, const Configuration &) override
     {
         scheduled_ |= LAUNCH_APPLICATION_SCHEDULED;
         appLaunchTime++;

@@ -377,7 +377,7 @@ HWTEST_F(AmsAppLifeCycleTest, Init_001, TestSize.Level1)
 
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
 
     serviceInner_->AttachApplication(NEW_PID, client);
@@ -430,7 +430,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_002, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
 
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
 
     serviceInner_->AttachApplication(NEW_PID, client);

@@ -53,7 +53,7 @@ public:
      *
      * @return void
      */
-    void Merge(const std::string &mergeItemKey, const Configuration &other);
+    void Merge(const std::vector<std::string> &diffKeyV, const Configuration &other);
 
     /**
      * @brief obtain the value according to the display number and storage key.
@@ -107,15 +107,6 @@ public:
      * @return return empty string if not found | return val if found
      */
     std::string GetItem(const std::string &key) const;
-
-    /**
-     * @brief obtain the value according to the display number and storage key.
-     *
-     * @param key The key obtained from Configuration
-     *
-     * @return return empty string if not found | return val if found
-     */
-    std::string GetItemForIdAndKey(const std::string &key) const;
 
     /**
      * @brief Delete element.

@@ -69,10 +69,8 @@ abilityms_files = [
   "${services_path}/abilitymgr/src/screenshot_handler.cpp",
   "${services_path}/abilitymgr/src/screenshot_response.cpp",
   "${services_path}/abilitymgr/src/ams_configuration_parameter.cpp",
-
   "${services_path}/abilitymgr/src/mission_index_info.cpp",
   "${services_path}/abilitymgr/src/lock_screen_event_subscriber.cpp",
-  "${services_path}/abilitymgr/src/configuration_distributor.cpp",
 
   # new ability manager service here
   "${services_path}/abilitymgr/src/inner_mission_info.cpp",
