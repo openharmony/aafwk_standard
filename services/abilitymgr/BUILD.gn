@@ -107,6 +107,7 @@ ohos_shared_library("abilityms") {
     "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "resmgr_standard:global_resmgr",
   ]
 
   public_deps = [ "//foundation/graphic/standard:libwmservice" ]
