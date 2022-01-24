@@ -29,6 +29,7 @@
 #include "form_constants.h"
 #include "form_data_mgr.h"
 #include "form_db_cache.h"
+#include "form_info_mgr.h"
 #include "form_mgr_adapter.h"
 #include "form_task_mgr.h"
 #include "form_timer_mgr.h"
@@ -376,7 +377,6 @@ ErrCode FormMgrService::Init()
 
     if (formSysEventReceiver_ == nullptr) {
         EventFwk::MatchingSkills matchingSkills;
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED);
@@ -389,6 +389,7 @@ ErrCode FormMgrService::Init()
         EventFwk::CommonEventManager::SubscribeCommonEvent(formSysEventReceiver_);
     }
     FormDbCache::GetInstance().Start();
+    FormInfoMgr::GetInstance().Start();
 
     APP_LOGI("init success");
     return ERR_OK;
@@ -470,7 +471,7 @@ int FormMgrService::GetFormsInfoByApp(std::string &bundleName, std::vector<FormI
  * @return Returns ERR_OK on success, others on failure.
  */
 int FormMgrService::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
-                         std::vector<FormInfo> &formInfos)
+                                         std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);

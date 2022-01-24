@@ -511,7 +511,7 @@ int32_t FormMgrStub::HandleGetAllFormsInfo(MessageParcel &data, MessageParcel &r
     std::vector<FormInfo> infos;
     int32_t result = GetAllFormsInfo(infos);
     reply.WriteInt32(result);
-    if (result) {
+    if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
             APP_LOGE("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
@@ -533,7 +533,7 @@ int32_t FormMgrStub::HandleGetFormsInfoByApp(MessageParcel &data, MessageParcel 
     std::vector<FormInfo> infos;
     int32_t result = GetFormsInfoByApp(bundleName, infos);
     reply.WriteInt32(result);
-    if (result) {
+    if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
             APP_LOGE("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
@@ -556,7 +556,7 @@ int32_t FormMgrStub::HandleGetFormsInfoByModule(MessageParcel &data, MessageParc
     std::vector<FormInfo> infos;
     int32_t result = GetFormsInfoByModule(bundleName, moduleName, infos);
     reply.WriteInt32(result);
-    if (result) {
+    if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
             APP_LOGE("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
