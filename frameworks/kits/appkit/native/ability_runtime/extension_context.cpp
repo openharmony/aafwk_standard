@@ -34,5 +34,19 @@ sptr<IRemoteObject> ExtensionContext::GetToken() const
 {
     return token_;
 }
+
+void ExtensionContext::SetAbilityInfo(const std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> &abilityInfo)
+{
+    if (abilityInfo == nullptr) {
+        HILOG_ERROR("ExtensionContext::SetAbilityInfo Info == nullptr");
+        return;
+    }
+    abilityInfo_ = abilityInfo;
+}
+
+std::shared_ptr<AppExecFwk::AbilityInfo> ExtensionContext::GetAbilityInfo() const
+{
+    return abilityInfo_;
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

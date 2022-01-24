@@ -19,7 +19,6 @@
 #include "extension_context.h"
 
 #include "ability_connect_callback.h"
-#include "ability_info.h"
 #include "connection_manager.h"
 #include "start_options.h"
 #include "want.h"
@@ -79,20 +78,6 @@ public:
      */
     ErrCode TerminateAbility();
 
-    /**
-     * @brief Obtains information about the current ability.
-     * The returned information includes the class name, bundle name, and other information about the current ability.
-     *
-     * @return Returns the AbilityInfo object for the current ability.
-     */
-    std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> GetAbilityInfo() const;
-
-    /**
-     * @brief Set AbilityInfo when init.
-     *
-     */
-    void SetAbilityInfo(const std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> &abilityInfo);
-
     using SelfType = ServiceExtensionContext;
     static const size_t CONTEXT_TYPE_ID;
 
@@ -111,8 +96,6 @@ private:
      * @return Current Ability Type
      */
     OHOS::AppExecFwk::AbilityType GetAbilityInfoType() const;
-
-    std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> abilityInfo_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
