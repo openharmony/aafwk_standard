@@ -58,7 +58,7 @@ ohos_unittest("lifecycle_deal_test") {
 
   external_deps = [
     "ability_runtime:app_manager",
-    "appexecfwk_standard:appexecfwk_core",
+    "bundle_framework:appexecfwk_core",
     "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
