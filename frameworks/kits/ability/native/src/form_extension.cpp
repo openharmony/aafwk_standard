@@ -16,7 +16,6 @@
 #include "form_extension.h"
 
 #include "ability_loader.h"
-#include "extension_base.cpp"
 #include "form_extension_context.h"
 #include "form_runtime/js_form_extension.h"
 #include "hilog_wrapper.h"

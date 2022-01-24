@@ -114,10 +114,11 @@
           "header": {
             "header_base": "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
             "header_files": [
-              "extension.h",
               "extension_base.h",
+              "extension_context.h",
+              "extension_module_loader.h",
               "service_extension.h",
-              "extension_module_loader.h"
+              "service_extension_context.h"
             ]
           },
           "name": "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native"

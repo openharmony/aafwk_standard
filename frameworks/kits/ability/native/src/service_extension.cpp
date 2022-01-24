@@ -17,7 +17,6 @@
 
 #include "ability_loader.h"
 #include "connection_manager.h"
-#include "extension_base.cpp"
 #include "hilog_wrapper.h"
 #include "js_service_extension.h"
 #include "runtime.h"
