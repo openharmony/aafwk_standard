@@ -21,6 +21,7 @@
 #include "form_js_info.h"
 #include "form_provider_info.h"
 #include "hilog_wrapper.h"
+#include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "nlohmann/json.hpp"

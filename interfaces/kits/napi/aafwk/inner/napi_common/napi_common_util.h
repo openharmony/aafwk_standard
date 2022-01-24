@@ -16,6 +16,7 @@
 #ifndef OHOS_APPEXECFWK_NAPI_COMMON_UTIL_H
 #define OHOS_APPEXECFWK_NAPI_COMMON_UTIL_H
 
+#include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "napi_common_data.h"
