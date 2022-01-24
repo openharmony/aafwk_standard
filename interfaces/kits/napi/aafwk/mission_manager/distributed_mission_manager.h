@@ -89,7 +89,7 @@ struct MissionRegistrationCB {
 
 struct RegisterMissonCB {
     CBBase cbBase;
-    std::u16string deviceId;
+    std::string deviceId;
     sptr<NAPIRemoteMissionListener> missionRegistration;
     MissionRegistrationCB missionRegistrationCB;
     int result = 0;
@@ -120,7 +120,7 @@ struct SyncRemoteMissionsContext {
     napi_env env;
     napi_async_work work;
 
-    char16_t deviceId[128] = {0};
+    std::string deviceId;
     size_t valueLen = 0;
     bool fixConflict = false;
     int64_t tag = -1;
@@ -135,7 +135,7 @@ bool SetSyncRemoteMissionsContext(
 bool ProcessSyncInput(napi_env env, napi_callback_info info, bool isStart,
     SyncRemoteMissionsContext* syncContext);
 mutex registrationLock_;
-map<std::u16string, sptr<NAPIRemoteMissionListener>> registration_;
+map<std::string, sptr<NAPIRemoteMissionListener>> registration_;
 
 enum ErrorCode {
     NO_ERROR = 0,

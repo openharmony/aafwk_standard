@@ -81,8 +81,8 @@ ohos_shared_library("distributedmissionmanager") {
   ]
 
   sources = [
+    "distributed_mission_manager.cpp",
     "mission_continue_stub.cpp",
-    "napi_mission_registration.cpp",
   ]
 
   deps = [
