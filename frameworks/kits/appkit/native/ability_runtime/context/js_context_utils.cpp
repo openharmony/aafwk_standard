@@ -196,6 +196,9 @@ NativeValue* CreateJsBaseContext(NativeEngine& engine, std::shared_ptr<Context> 
     BindNativeFunction(engine, *object, "getApplicationContext", JsBaseContext::GetApplicationContext);
     BindNativeFunction(engine, *object, "switchArea", JsBaseContext::SwitchArea);
 
+    // Set field 'stageMode' for 'BaseContext', that we are in Stage Mode.
+    object->SetProperty("stageMode", CreateJsValue(engine, true));
+
     return objValue;
 }
 }  // namespace AbilityRuntime
