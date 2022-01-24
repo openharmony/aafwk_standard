@@ -553,5 +553,60 @@ int FormMgr::DistributedDataDeleteForm(const std::string &formId)
 
     return remoteProxy_->DistributedDataDeleteForm(formId);
 }
+
+/**
+ * @brief Get All FormsInfo.
+ * @param formInfos Return the forms' information of all forms provided.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    APP_LOGI("%{public}s called.", __func__);
+
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
+
+    return remoteProxy_->GetAllFormsInfo(formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name .
+ * @param bundleName Application name.
+ * @param formInfos Return the forms' information of the specify application name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+{
+    APP_LOGI("%{public}s called.", __func__);
+
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
+
+    return remoteProxy_->GetFormsInfoByApp(bundleName, formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name and module name.
+ * @param bundleName bundle name.
+ * @param moduleName Module name of hap.
+ * @param formInfos Return the forms' information of the specify bundle name and module name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos)
+{
+    APP_LOGI("%{public}s called.", __func__);
+
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
+
+    return remoteProxy_->GetFormsInfoByModule(bundleName, moduleName, formInfos);
+}
+
 }  // namespace AppExecFwk
 }  // namespace OHOS

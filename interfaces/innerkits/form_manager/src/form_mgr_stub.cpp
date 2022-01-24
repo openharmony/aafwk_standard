@@ -15,6 +15,7 @@
 
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
+#include "form_info.h"
 #include "form_mgr_stub.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
@@ -75,6 +76,12 @@ FormMgrStub::FormMgrStub()
         &FormMgrStub::HandleDistributedDataAddForm;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_DISTRIBUTED_DATA_DELETE_FORM__ST)] =
         &FormMgrStub::HandleDistributedDataDeleteForm;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO)] =
+        &FormMgrStub::HandleGetAllFormsInfo;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_APP)] =
+        &FormMgrStub::HandleGetFormsInfoByApp;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_MODULE)] =
+        &FormMgrStub::HandleGetFormsInfoByModule;
 }
 
 FormMgrStub::~FormMgrStub()
@@ -490,6 +497,95 @@ int32_t FormMgrStub::HandleDistributedDataDeleteForm(MessageParcel &data, Messag
     int32_t result = DistributedDataDeleteForm(formId);
     reply.WriteInt32(result);
     return result;
+}
+
+/**
+ * @brief Handle GetAllFormsInfo message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleGetAllFormsInfo(MessageParcel &data, MessageParcel &reply)
+{
+    APP_LOGI("%{public}s called.", __func__);
+    std::vector<FormInfo> infos;
+    int32_t result = GetAllFormsInfo(infos);
+    reply.WriteInt32(result);
+    if (result) {
+        if (!WriteParcelableVector(infos, reply)) {
+            APP_LOGE("write failed");
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
+    }
+    return result;
+}
+
+/**
+ * @brief Handle GetFormsInfoByApp message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleGetFormsInfoByApp(MessageParcel &data, MessageParcel &reply)
+{
+    APP_LOGI("%{public}s called.", __func__);
+    std::string bundleName = data.ReadString();
+    std::vector<FormInfo> infos;
+    int32_t result = GetFormsInfoByApp(bundleName, infos);
+    reply.WriteInt32(result);
+    if (result) {
+        if (!WriteParcelableVector(infos, reply)) {
+            APP_LOGE("write failed");
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
+    }
+    return result;
+}
+
+/**
+ * @brief Handle GetFormsInfoByModule message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleGetFormsInfoByModule(MessageParcel &data, MessageParcel &reply)
+{
+    APP_LOGI("%{public}s called.", __func__);
+    std::string bundleName = data.ReadString();
+    std::string moduleName = data.ReadString();
+    std::vector<FormInfo> infos;
+    int32_t result = GetFormsInfoByModule(bundleName, moduleName, infos);
+    reply.WriteInt32(result);
+    if (result) {
+        if (!WriteParcelableVector(infos, reply)) {
+            APP_LOGE("write failed");
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
+    }
+    return result;
+}
+
+/**
+ * @brief Write a parcelabe vector objects to the proxy node.
+ * @param parcelableVector Indicates the objects to be write.
+ * @param reply Indicates the reply to be sent;
+ * @return Returns true if objects send successfully; returns false otherwise.
+ */
+template<typename T>
+bool FormMgrStub::WriteParcelableVector(std::vector<T> &parcelableVector, Parcel &reply)
+{
+    if (!reply.WriteInt32(parcelableVector.size())) {
+        APP_LOGE("write ParcelableVector failed");
+        return false;
+    }
+
+    for (auto &parcelable: parcelableVector) {
+        if (!reply.WriteParcelable(&parcelable)) {
+            APP_LOGE("write ParcelableVector failed");
+            return false;
+        }
+    }
+    return true;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -17,6 +17,7 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_FORMMGR_FORM_MGR_INTERFACE_H
 
 #include <vector>
+#include "form_info.h"
 #include "form_js_info.h"
 #include "form_provider_data.h"
 #include "ipc_types.h"
@@ -181,6 +182,31 @@ public:
      */
     virtual int DistributedDataDeleteForm(const std::string &formId) = 0;
 
+    /**
+     * @brief Get All FormsInfo.
+     * @param formInfos Return the forms' information of all forms provided.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetAllFormsInfo(std::vector<FormInfo> &formInfos) = 0;
+
+    /**
+     * @brief Get forms info by bundle name .
+     * @param bundleName Application name.
+     * @param formInfos Return the forms' information of the specify application name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos) = 0;
+
+    /**
+     * @brief Get forms info by bundle name and module name.
+     * @param bundleName bundle name.
+     * @param moduleName Module name of hap.
+     * @param formInfos Return the forms' information of the specify bundle name and module name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+                                     std::vector<FormInfo> &formInfos) = 0;
+
     enum class Message {
         // ipc id 1-1000 for kit
         // ipc id 1001-2000 for DMS
@@ -209,6 +235,9 @@ public:
         FORM_MGR_CLEAR_FORM_RECORDS_ST,
         FORM_MGR_DISTRIBUTED_DATA_ADD_FORM__ST,
         FORM_MGR_DISTRIBUTED_DATA_DELETE_FORM__ST,
+        FORM_MGR_GET_ALL_FORMS_INFO,
+        FORM_MGR_GET_FORMS_INFO_BY_APP,
+        FORM_MGR_GET_FORMS_INFO_BY_MODULE,
     };
 };
 }  // namespace AppExecFwk
