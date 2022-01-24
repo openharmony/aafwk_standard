@@ -80,6 +80,9 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
             break;
         }
         case AAFwk::ABILITY_STATE_FOREGROUND_NEW: {
+            if (targetState.isNewWant) {
+                NewWant(want);
+            }
             Foreground(want);
             ret = false;
             break;

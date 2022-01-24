@@ -34,9 +34,9 @@ using AbilityStartSetting = AppExecFwk::AbilityStartSetting;
 
 class JsAbility : public Ability {
 public:
-    static Ability* Create(const std::unique_ptr<Runtime>& runtime);
+    static Ability *Create(const std::unique_ptr<Runtime> &runtime);
 
-    JsAbility(JsRuntime& jsRuntime);
+    JsAbility(JsRuntime &jsRuntime);
     ~JsAbility() override;
 
     void Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<OHOSApplication> &application,
@@ -52,20 +52,21 @@ public:
     void OnForeground(const Want &want) override;
     void OnBackground() override;
     bool OnContinue(WantParams &wantParams) override;
+    void OnNewWant(const Want &want) override;
 
     void OnAbilityResult(int requestCode, int resultCode, const Want &resultData) override;
     void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
 
 protected:
-    void DoOnForeground(const Want& want) override;
+    void DoOnForeground(const Want &want) override;
 
 private:
-    void CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
+    void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
     std::unique_ptr<NativeReference> CreateAppWindowStage();
-    void GetPageStackFromWant(const Want& want, std::string& pageStack);
+    void GetPageStackFromWant(const Want &want, std::string &pageStack);
 
-    JsRuntime& jsRuntime_;
+    JsRuntime &jsRuntime_;
     std::unique_ptr<NativeReference> jsAbilityObj_;
 };
 }  // namespace AbilityRuntime

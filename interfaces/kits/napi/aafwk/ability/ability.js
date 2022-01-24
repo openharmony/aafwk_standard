@@ -23,6 +23,7 @@ class Ability {
     onBackground() {}
     onWindowStageRestore(windowStage) {}
     onContinue(wantParams) {}
+    onNewWant(want) {}
 }
 
 export default Ability
