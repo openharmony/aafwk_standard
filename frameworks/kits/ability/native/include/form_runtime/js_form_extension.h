@@ -18,6 +18,7 @@
 
 #include "form_extension.h"
 
+class NativeEngine;
 class NativeReference;
 class NativeValue;
 
@@ -53,9 +54,10 @@ public:
     void OnVisibilityChange(const std::map<int64_t, int32_t>& formEventsMap) override;
 
     sptr<IRemoteObject> OnConnect(const OHOS::AAFwk::Want& want) override;
-
 private:
     NativeValue* CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
+    bool UnwrapRawImageDataMap(NativeEngine& engine, NativeValue* argv,
+        std::map<std::string, int>& rawImageDataMap);
 
     void GetSrcPath(std::string &srcPath);
 
