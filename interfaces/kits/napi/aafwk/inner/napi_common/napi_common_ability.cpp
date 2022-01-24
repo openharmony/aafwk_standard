@@ -3449,7 +3449,17 @@ napi_value AcquireDataAbilityHelperWrap(napi_env env, napi_callback_info info, D
     NAPI_CALL(env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &args[PARAM0], &result));
 
     if (!IsTypeForNapiValue(env, result, napi_object)) {
-        HILOG_ERROR("%{public}s, IsTypeForNapiValue retval is false", __func__);
+        HILOG_ERROR("%{public}s, IsTypeForNapiValue isn`t object", __func__);
+        return nullptr;
+    }
+
+    if (IsTypeForNapiValue(env, result, napi_null)) {
+        HILOG_ERROR("%{public}s, IsTypeForNapiValue is null", __func__);
+        return nullptr;
+    }
+
+    if (IsTypeForNapiValue(env, result, napi_undefined)) {
+        HILOG_ERROR("%{public}s, IsTypeForNapiValue is undefined", __func__);
         return nullptr;
     }
 
