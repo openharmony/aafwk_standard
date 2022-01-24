@@ -47,10 +47,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-namespace {
-constexpr int TARGET_VERSION_THRESHOLDS = 8;
-}
-
 #define ACEABILITY_LIBRARY_LOADER
 #ifdef ABILITY_LIBRARY_LOADER
 #endif
@@ -824,7 +820,15 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData)
         return;
     }
 
-    if (bundleInfo.compatibleVersion >= TARGET_VERSION_THRESHOLDS) {
+    bool moduelJson = false;
+    bool isStageBased = false;
+    if (!bundleInfo.hapModuleInfos.empty()) {
+        moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
+        isStageBased = bundleInfo.hapModuleInfos.back().isStageBasedModel;
+    }
+    APP_LOGI("stageBased:%{public}d moduelJson:%{public}d size:%{public}d",
+        isStageBased, moduelJson, (int32_t)bundleInfo.hapModuleInfos.size());
+    if (isStageBased) {
         // Create runtime
         AbilityRuntime::Runtime::Options options;
         options.codePath = appInfo.codePath;

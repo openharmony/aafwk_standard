@@ -41,7 +41,6 @@ namespace AppExecFwk {
 using namespace OHOS::Security;
 
 namespace {
-constexpr int TARGET_VERSION_THRESHOLDS = 8;
 // NANOSECONDS mean 10^9 nano second
 constexpr int64_t NANOSECONDS = 1000000000;
 // MICROSECONDS mean 10^6 millias second
@@ -1692,8 +1691,15 @@ void AppMgrServiceInner::StartEmptyResidentProcess(
         return;
     }
 
-    APP_LOGI("StartEmptyResidentProcess current version  : [%{public}d], ", info.compatibleVersion);
-    appRecord->SetKeepAliveAppState(true, info.compatibleVersion >= TARGET_VERSION_THRESHOLDS);
+    bool isStageBased = false;
+    bool moduelJson = false;
+    if (!info.hapModuleInfos.empty()) {
+        isStageBased = info.hapModuleInfos.back().isStageBasedModel;
+        moduelJson = info.hapModuleInfos.back().isModuleJson;
+    }
+    APP_LOGI("StartEmptyResidentProcess stage:%{public}d moduel:%{public}d size:%{public}d",
+        isStageBased, moduelJson, (int32_t)info.hapModuleInfos.size());
+    appRecord->SetKeepAliveAppState(true, isStageBased);
 
     if (restartCount > 0) {
         APP_LOGI("StartEmptyResidentProcess restartCount : [%{public}d], ", restartCount);

@@ -34,7 +34,6 @@ using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::AppExecFwk;
 using OHOS::Parcel;
-const int TARGET_VERSION_THRESHOLDS = 8;
 
 class AbilityBaseTest : public testing::Test {
 public:
@@ -686,11 +685,11 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnForeground_0300, Function | MediumTest
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     AbilityType type = AbilityType::PAGE;
     abilityInfo->type = type;
+    abilityInfo->isStageBasedModel = true;
     std::shared_ptr<OHOSApplication> application = nullptr;
     std::shared_ptr<AbilityHandler> handler = nullptr;
     sptr<IRemoteObject> token = nullptr;
     ability_->Init(abilityInfo, application, handler, token);
-    ability_->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
     Want want;
     ability_->OnForeground(want);
 
@@ -766,11 +765,11 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0300, Function | MediumTest
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     AbilityType type = AbilityType::PAGE;
     abilityInfo->type = type;
+    abilityInfo->isStageBasedModel = true;
     std::shared_ptr<OHOSApplication> application = nullptr;
     std::shared_ptr<AbilityHandler> handler = nullptr;
     sptr<IRemoteObject> token = nullptr;
     ability_->Init(abilityInfo, application, handler, token);
-    ability_->SetCompatibleVersion(TARGET_VERSION_THRESHOLDS);
     ability_->OnBackground();
 
     AbilityLifecycleExecutor::LifecycleState state = ability_->GetState();
