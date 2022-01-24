@@ -111,7 +111,7 @@ public:
      * @param missionId the given missionId
      * @return the mission of the given id
      */
-    std::list<std::shared_ptr<Mission>>& GetAllMissions() const;
+    std::list<std::shared_ptr<Mission>>& GetAllMissions();
 
     /**
      * @brief Get the type of the missionList
