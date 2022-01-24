@@ -233,6 +233,7 @@ napi_value RegisterAsync(
  * @param data Point to asynchronous processing of data.
  */
 void RegisterExecuteCB(napi_env env, void *data);
+void RegisterCompleteCB(napi_env env, napi_status status, void *data);
 
 /**
  * @brief DataAbilityHelper NAPI method : off.

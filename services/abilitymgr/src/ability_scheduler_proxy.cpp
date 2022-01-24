@@ -266,7 +266,7 @@ int AbilitySchedulerProxy::OpenFile(const Uri &uri, const std::string &mode)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_OPENFILE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("OpenFile fail to SendRequest. err: %d", err);
-        return err;
+        return fd;
     }
 
     fd = reply.ReadFileDescriptor();
@@ -315,6 +315,7 @@ int AbilitySchedulerProxy::OpenRawFile(const Uri &uri, const std::string &mode)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_OPENRAWFILE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("OpenFile fail to SendRequest. err: %d", err);
+        return fd;
     }
 
     if (!reply.ReadInt32(fd)) {
@@ -358,7 +359,7 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_INSERT, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("Insert fail to SendRequest. err: %d", err);
-        return err;
+        return index;
     }
 
     if (!reply.ReadInt32(index)) {
@@ -408,7 +409,7 @@ int AbilitySchedulerProxy::Update(const Uri &uri, const NativeRdb::ValuesBucket 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_UPDATE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("Update fail to SendRequest. err: %d", err);
-        return err;
+        return index;
     }
 
     if (!reply.ReadInt32(index)) {
@@ -452,6 +453,7 @@ int AbilitySchedulerProxy::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_DELETE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("Delete fail to SendRequest. err: %d", err);
+        return index;
     }
 
     if (!reply.ReadInt32(index)) {
@@ -533,6 +535,7 @@ std::string AbilitySchedulerProxy::GetType(const Uri &uri)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_GETTYPE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        return type;
     }
 
     type = reply.ReadString();
@@ -579,6 +582,7 @@ bool AbilitySchedulerProxy::Reload(const Uri &uri, const PacMap &extras)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_RELOAD, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        return ret;
     }
 
     ret = reply.ReadBool();
@@ -631,6 +635,7 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_BATCHINSERT, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        return ret;
     }
 
     if (!reply.ReadInt32(ret)) {
@@ -830,6 +835,7 @@ Uri AbilitySchedulerProxy::NormalizeUri(const Uri &uri)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_NORMALIZEURI, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("NormalizeUri fail to SendRequest. err: %d", err);
+        return Uri("");
     }
 
     std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
@@ -870,6 +876,7 @@ Uri AbilitySchedulerProxy::DenormalizeUri(const Uri &uri)
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_DENORMALIZEURI, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("DenormalizeUri fail to SendRequest. err: %d", err);
+        return Uri("");
     }
 
     std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
@@ -912,6 +919,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_EXECUTEBATCH, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to SendRequest. err: %{public}d", err);
+        return results;
     }
 
     int total = 0;
