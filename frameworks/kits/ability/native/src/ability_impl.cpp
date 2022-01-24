@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int TARGET_VERSION_THRESHOLDS = 8;
 static bool g_useNewMission = false;
 static bool g_isMissionFlagSetted = false;
 
@@ -44,6 +43,7 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     ability_ = ability;
     handler_ = handler;
     auto info = record->GetAbilityInfo();
+    isStageBasedModel_ = info && info->isStageBasedModel;
     if (info && info->type == AbilityType::PAGE) {
         ability_->SetSceneListener(
             sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
@@ -70,14 +70,14 @@ void AbilityImpl::Start(const Want &want)
     }
 
     if ((ability_->GetAbilityInfo()->type == AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS)) {
+        (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         ability_->HandleCreateAsContinuation(want);
     }
 
     APP_LOGI("AbilityImpl::Start");
     ability_->OnStart(want);
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STARTED_NEW;
     } else {
         if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
@@ -91,7 +91,7 @@ void AbilityImpl::Start(const Want &want)
 
     // Multimodal Events Register
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS)) {
+        (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         WindowEventRegister();
     }
     APP_LOGI("%{public}s end.", __func__);
@@ -113,7 +113,7 @@ void AbilityImpl::Stop()
     APP_LOGI("AbilityImpl::Stop");
     ability_->OnStop();
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STOPED_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
@@ -175,6 +175,11 @@ void AbilityImpl::Inactive()
     APP_LOGI("%{public}s end.", __func__);
 }
 
+bool AbilityImpl::IsStageBasedModel() const
+{
+    return isStageBasedModel_;
+}
+
 int AbilityImpl::GetCompatibleVersion()
 {
     if (ability_) {
@@ -191,7 +196,7 @@ void AbilityImpl::AfterUnFocused()
         return;
     }
 
-    if (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS) {
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
         APP_LOGI("new version ability, do nothing when after unfocused.");
         return;
     }
@@ -212,7 +217,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
     auto owner = owner_.lock();
-    if (owner && owner->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
+    if (owner && !owner->IsStageBasedModel()) {
         return;
     }
 
@@ -227,7 +232,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
     auto owner = owner_.lock();
-    if (owner && owner->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
+    if (owner && !owner->IsStageBasedModel()) {
         return;
     }
 
@@ -269,7 +274,7 @@ void AbilityImpl::Foreground(const Want &want)
     APP_LOGI("AbilityImpl::Foreground");
     ability_->OnForeground(want);
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_FOREGROUND_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
@@ -295,7 +300,7 @@ void AbilityImpl::Background()
     ability_->OnLeaveForeground();
     ability_->OnBackground();
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetCompatibleVersion() >= TARGET_VERSION_THRESHOLDS)) {
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND_NEW;
     } else {
         lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
@@ -864,7 +869,7 @@ void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::Poin
 void AbilityImpl::WindowEventRegister()
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (ability_->GetCompatibleVersion() < TARGET_VERSION_THRESHOLDS) {
+    if (!ability_->GetAbilityInfo()->isStageBasedModel) {
         auto window = ability_->GetWindow();
         if (window) {
             std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =

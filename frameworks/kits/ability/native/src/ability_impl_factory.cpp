@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int TARGET_VERSION_THRESHOLDS = 8;
 /**
  *
  * default constructor
@@ -55,11 +54,11 @@ std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std
     }
 
     std::shared_ptr<AbilityImpl> abilityImpl = nullptr;
-    APP_LOGI("AbilityImplFactory::MakeAbilityImplObject type:%{public}d, compatibleVersion:%{public}d", info->type,
-        compatibleVersion);
+    APP_LOGI("AbilityImplFactory::MakeAbilityImplObject type:%{public}d, isStageBasedModel:%{public}d", info->type,
+        info->isStageBasedModel);
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
-            if (compatibleVersion >= TARGET_VERSION_THRESHOLDS) {
+            if (info->isStageBasedModel) {
                 abilityImpl = std::make_shared<NewAbilityImpl>();
             } else {
                 abilityImpl = std::make_shared<PageAbilityImpl>();

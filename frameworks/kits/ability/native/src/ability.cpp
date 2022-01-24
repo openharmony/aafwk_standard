@@ -73,7 +73,6 @@ const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
-const int TARGET_VERSION_THRESHOLDS = 8;
 
 static std::mutex formLock;
 
@@ -105,9 +104,8 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
 
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
-        if (compatibleVersion_ < TARGET_VERSION_THRESHOLDS) {
+        if (!abilityInfo_->isStageBasedModel) {
             abilityWindow_ = std::make_shared<AbilityWindow>();
-
             if (abilityWindow_ != nullptr) {
                 APP_LOGI("%{public}s begin abilityWindow_->Init", __func__);
                 abilityWindow_->Init(handler_, shared_from_this());
@@ -228,7 +226,7 @@ void Ability::OnStart(const Want &want)
         APP_LOGE("Ability::OnStart error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    if (compatibleVersion_ < TARGET_VERSION_THRESHOLDS) {
+    if (!abilityInfo_->isStageBasedModel) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::STARTED_NEW);
@@ -432,7 +430,7 @@ void Ability::OnBackground()
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin OnPostAbilityBackground.", __func__);
-        if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
+        if (abilityInfo_->isStageBasedModel) {
             if (scene_ == nullptr) {
                 APP_LOGE("Ability::OnBackground error. scene_ == nullptr.");
                 return;
@@ -453,7 +451,7 @@ void Ability::OnBackground()
         return;
     }
 
-    if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
+    if (abilityInfo_->isStageBasedModel) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
@@ -1763,7 +1761,7 @@ void Ability::DispatchLifecycleOnForeground(const Want &want)
         APP_LOGE("Ability::OnForeground error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
-    if (compatibleVersion_ >= TARGET_VERSION_THRESHOLDS) {
+    if (abilityInfo_->isStageBasedModel) {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::FOREGROUND_NEW);
     } else {
         abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INACTIVE);
