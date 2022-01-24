@@ -25,6 +25,8 @@
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 
+using namespace OHOS::AppExecFwk;
+
 namespace OHOS {
 namespace AAFwk {
 using AbilityManagerClient = AAFwk::AbilityManagerClient;
