@@ -1054,8 +1054,8 @@ int MissionListManager::ClearAllMissions()
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteAllMissionInfos(listenerController_);
     std::list<std::shared_ptr<Mission>> foregroundAbilities;
-    ClearAllMissionsLocked(defaultStandardList_, foregroundAbilities, false);
-    ClearAllMissionsLocked(defaultSingleList_, foregroundAbilities, false);
+    ClearAllMissionsLocked(defaultStandardList_->GetAllMissions(), foregroundAbilities, false);
+    ClearAllMissionsLocked(defaultSingleList_->GetAllMissions(), foregroundAbilities, false);
 
     for (auto listIter = currentMissionLists_.begin(); listIter != currentMissionLists_.end();) {
         auto missionList = (*listIter);
@@ -1063,14 +1063,14 @@ int MissionListManager::ClearAllMissions()
         if (!missionList || missionList->GetType() == MissionListType::LAUNCHER) {
             continue;
         }
-        ClearAllMissionsLocked(missionList, foregroundAbilities, true);
+        ClearAllMissionsLocked(missionList->GetAllMissions(), foregroundAbilities, true);
     }
 
     ClearAllMissionsLocked(foregroundAbilities, foregroundAbilities, false);
     return ERR_OK;
 }
 
-void MissionListManager::ClearAllMissionsLocked(std::shared_ptr<MissionList> missionListSptr,
+void MissionListManager::ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> &missionList,
     std::list<std::shared_ptr<Mission>> &foregroundAbilities, bool searchActive)
 {
     for (auto listIter = missionList.begin(); listIter != missionList.end();) {

@@ -180,7 +180,7 @@ public:
      */
     int ClearAllMissions();
 
-    void ClearAllMissionsLocked(std::shared_ptr<MissionList> missionListSptr,
+    void ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> &missionList,
         std::list<std::shared_ptr<Mission>> &foregroundAbilities, bool searchActive);
 
     /**
