@@ -25,6 +25,8 @@ namespace AppExecFwk {
 const int TARGET_VERSION_THRESHOLDS = 8;
 static bool g_useNewMission = false;
 static bool g_isMissionFlagSetted = false;
+const std::string PERMISSION_KEY = "ohos.user.grant.permission";
+const std::string GRANTED_RESULT_KEY = "ohos.user.grant.permission.result";
 
 void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &record,
     std::shared_ptr<Ability> &ability, std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token,
@@ -503,6 +505,14 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
         } else {
             APP_LOGI("%{public}s user cancel permissions.", __func__);
         }
+    } else if (resultData.HasParameter(PERMISSION_KEY)) {
+        std::vector<std::string> permissions = resultData.GetStringArrayParam(PERMISSION_KEY);
+        std::vector<int> grantedResult(permissions.size(), -1);
+        if (resultCode > 0) {
+            grantedResult = resultData.GetIntArrayParam(GRANTED_RESULT_KEY);
+            APP_LOGI("%{public}s Get user granted result.", __func__);
+        }
+        ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grantedResult);
     } else {
         ability_->OnAbilityResult(requestCode, resultCode, resultData);
     }

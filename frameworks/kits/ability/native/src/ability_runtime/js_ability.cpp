@@ -263,6 +263,13 @@ void JsAbility::OnRequestPermissionsFromUserResult(int requestCode, const std::v
     const std::vector<int> &grantResults)
 {
     HILOG_INFO("%{public}s called.", __func__);
+    std::shared_ptr<AbilityRuntime::AbilityContext> context = GetAbilityContext();
+    if (context == nullptr) {
+        HILOG_WARN("JsAbility not attached to any runtime context!");
+        return;
+    }
+    context->OnRequestPermissionsFromUserResult(requestCode, permissions, grantResults);
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 void JsAbility::CallObjectMethod(const char* name, NativeValue* const* argv, size_t argc)
