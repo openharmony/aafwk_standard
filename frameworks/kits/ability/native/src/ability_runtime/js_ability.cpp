@@ -31,12 +31,13 @@ namespace OHOS {
 namespace AbilityRuntime {
 const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 
-Ability* JsAbility::Create(const std::unique_ptr<Runtime>& runtime)
+Ability *JsAbility::Create(const std::unique_ptr<Runtime> &runtime)
 {
-    return new JsAbility(static_cast<JsRuntime&>(*runtime));
+    return new JsAbility(static_cast<JsRuntime &>(*runtime));
 }
 
-JsAbility::JsAbility(JsRuntime& jsRuntime) : jsRuntime_(jsRuntime) {}
+JsAbility::JsAbility(JsRuntime &jsRuntime) : jsRuntime_(jsRuntime)
+{}
 JsAbility::~JsAbility() = default;
 
 void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
@@ -74,18 +75,18 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     moduleName.append("::").append(abilityInfo->name);
 
     HandleScope handleScope(jsRuntime_);
-    auto& engine = jsRuntime_.GetNativeEngine();
+    auto &engine = jsRuntime_.GetNativeEngine();
 
     jsAbilityObj_ = jsRuntime_.LoadModule(moduleName, srcPath);
 
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(jsAbilityObj_->Get());
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(jsAbilityObj_->Get());
     if (obj == nullptr) {
         HILOG_ERROR("Failed to get AbilityStage object");
         return;
     }
 
     auto context = GetAbilityContext();
-    NativeValue* contextObj = CreateJsAbilityContext(engine, context);
+    NativeValue *contextObj = CreateJsAbilityContext(engine, context);
     auto shellContextRef = jsRuntime_.LoadSystemModule("application.AbilityContext", &contextObj, 1);
     contextObj = shellContextRef->Get();
 
@@ -100,11 +101,13 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
     HILOG_INFO("Set ability context pointer: %{public}p", context.get());
 
-    nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
-        [](NativeEngine*, void* data, void*) {
+    nativeObj->SetNativePointer(
+        new std::weak_ptr<AbilityRuntime::Context>(context),
+        [](NativeEngine *, void *data, void *) {
             HILOG_INFO("Finalizer for weak_ptr ability context is called");
-            delete static_cast<std::weak_ptr<AbilityRuntime::Context>*>(data);
-        }, nullptr);
+            delete static_cast<std::weak_ptr<AbilityRuntime::Context> *>(data);
+        },
+        nullptr);
 }
 
 void JsAbility::OnStart(const Want &want)
@@ -117,22 +120,22 @@ void JsAbility::OnStart(const Want &want)
     }
 
     HandleScope handleScope(jsRuntime_);
-    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    auto &nativeEngine = jsRuntime_.GetNativeEngine();
 
-    NativeValue* value = jsAbilityObj_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    NativeValue *value = jsAbilityObj_->Get();
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
     if (obj == nullptr) {
         HILOG_ERROR("Failed to get Ability object");
         return;
     }
 
     napi_value napiWant = OHOS::AppExecFwk::WrapWant(reinterpret_cast<napi_env>(&nativeEngine), want);
-    NativeValue* jsWant = reinterpret_cast<NativeValue*>(napiWant);
+    NativeValue *jsWant = reinterpret_cast<NativeValue *>(napiWant);
 
     obj->SetProperty("launchWant", jsWant);
     obj->SetProperty("lastRequestWant", jsWant);
 
-    NativeValue* argv[] = {
+    NativeValue *argv[] = {
         jsWant,
         CreateJsLaunchParam(nativeEngine, GetLaunchParam()),
     };
@@ -159,7 +162,7 @@ void JsAbility::OnSceneCreated()
         HILOG_ERROR("Failed to create jsAppWindowStage object by LoadSystemModule");
         return;
     }
-    NativeValue* argv[] = {jsAppWindowStage->Get()};
+    NativeValue *argv[] = {jsAppWindowStage->Get()};
     CallObjectMethod("onWindowStageCreate", argv, ArraySize(argv));
 }
 
@@ -172,7 +175,7 @@ void JsAbility::OnSceneRestored()
         HILOG_ERROR("Failed to create jsAppWindowStage object by LoadSystemModule");
         return;
     }
-    NativeValue* argv[] = {jsAppWindowStage->Get()};
+    NativeValue *argv[] = {jsAppWindowStage->Get()};
     CallObjectMethod("onWindowStageRestore", argv, ArraySize(argv));
 }
 
@@ -188,17 +191,17 @@ void JsAbility::OnForeground(const Want &want)
     Ability::OnForeground(want);
 
     HandleScope handleScope(jsRuntime_);
-    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    auto &nativeEngine = jsRuntime_.GetNativeEngine();
 
-    NativeValue* value = jsAbilityObj_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    NativeValue *value = jsAbilityObj_->Get();
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
     if (obj == nullptr) {
         HILOG_ERROR("Failed to get Ability object");
         return;
     }
 
     napi_value napiWant = OHOS::AppExecFwk::WrapWant(reinterpret_cast<napi_env>(&nativeEngine), want);
-    NativeValue* jsWant = reinterpret_cast<NativeValue*>(napiWant);
+    NativeValue *jsWant = reinterpret_cast<NativeValue *>(napiWant);
 
     obj->SetProperty("lastRequestWant", jsWant);
 
@@ -215,35 +218,59 @@ void JsAbility::OnBackground()
 bool JsAbility::OnContinue(WantParams &wantParams)
 {
     HandleScope handleScope(jsRuntime_);
-    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    auto &nativeEngine = jsRuntime_.GetNativeEngine();
 
-    NativeValue* value = jsAbilityObj_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    NativeValue *value = jsAbilityObj_->Get();
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
     if (obj == nullptr) {
         HILOG_ERROR("Failed to get Ability object");
         return false;
     }
 
-    NativeValue* methodOnCreate = obj->GetProperty("onContinue");
+    NativeValue *methodOnCreate = obj->GetProperty("onContinue");
     if (methodOnCreate == nullptr) {
         HILOG_ERROR("Failed to get 'onContinue' from Ability object");
         return false;
     }
 
     napi_value napiWantParams = OHOS::AppExecFwk::WrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), wantParams);
-    NativeValue* jsWantParams = reinterpret_cast<NativeValue*>(napiWantParams);
+    NativeValue *jsWantParams = reinterpret_cast<NativeValue *>(napiWantParams);
 
-    NativeValue* result = nativeEngine.CallFunction(value, methodOnCreate, &jsWantParams, 1);
+    NativeValue *result = nativeEngine.CallFunction(value, methodOnCreate, &jsWantParams, 1);
 
     napi_value new_napiWantParams = reinterpret_cast<napi_value>(jsWantParams);
     OHOS::AppExecFwk::UnwrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), new_napiWantParams, wantParams);
 
-    NativeBoolean* boolResult = ConvertNativeValueTo<NativeBoolean>(result);
+    NativeBoolean *boolResult = ConvertNativeValueTo<NativeBoolean>(result);
     if (boolResult == nullptr) {
         return false;
     }
 
     return *boolResult;
+}
+
+void JsAbility::OnNewWant(const Want &want)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    Ability::OnNewWant(want);
+
+    HandleScope handleScope(jsRuntime_);
+    auto &nativeEngine = jsRuntime_.GetNativeEngine();
+
+    NativeValue *value = jsAbilityObj_->Get();
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get Ability object");
+        return;
+    }
+
+    napi_value napiWant = OHOS::AppExecFwk::WrapWant(reinterpret_cast<napi_env>(&nativeEngine), want);
+    NativeValue *jsWant = reinterpret_cast<NativeValue *>(napiWant);
+
+    obj->SetProperty("lastRequestWant", jsWant);
+
+    CallObjectMethod("onNewWant", &jsWant, 1);
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 void JsAbility::OnAbilityResult(int requestCode, int resultCode, const Want &resultData)
@@ -259,13 +286,13 @@ void JsAbility::OnAbilityResult(int requestCode, int resultCode, const Want &res
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-void JsAbility::OnRequestPermissionsFromUserResult(int requestCode, const std::vector<std::string> &permissions,
-    const std::vector<int> &grantResults)
+void JsAbility::OnRequestPermissionsFromUserResult(
+    int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {
     HILOG_INFO("%{public}s called.", __func__);
 }
 
-void JsAbility::CallObjectMethod(const char* name, NativeValue* const* argv, size_t argc)
+void JsAbility::CallObjectMethod(const char *name, NativeValue *const *argv, size_t argc)
 {
     HILOG_INFO("JsAbility::CallObjectMethod(%{public}s", name);
 
@@ -275,16 +302,16 @@ void JsAbility::CallObjectMethod(const char* name, NativeValue* const* argv, siz
     }
 
     HandleScope handleScope(jsRuntime_);
-    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    auto &nativeEngine = jsRuntime_.GetNativeEngine();
 
-    NativeValue* value = jsAbilityObj_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    NativeValue *value = jsAbilityObj_->Get();
+    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
     if (obj == nullptr) {
         HILOG_ERROR("Failed to get Ability object");
         return;
     }
 
-    NativeValue* methodOnCreate = obj->GetProperty(name);
+    NativeValue *methodOnCreate = obj->GetProperty(name);
     if (methodOnCreate == nullptr) {
         HILOG_ERROR("Failed to get '%{public}s' from Ability object", name);
         return;
@@ -295,8 +322,8 @@ void JsAbility::CallObjectMethod(const char* name, NativeValue* const* argv, siz
 std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
 {
     HandleScope handleScope(jsRuntime_);
-    auto& engine = jsRuntime_.GetNativeEngine();
-    NativeValue* jsWindowStage = CreateJsWindowStage(engine, GetScene());
+    auto &engine = jsRuntime_.GetNativeEngine();
+    NativeValue *jsWindowStage = CreateJsWindowStage(engine, GetScene());
     if (jsWindowStage == nullptr) {
         HILOG_ERROR("Failed to create jsWindowSatge object");
         return nullptr;
@@ -304,7 +331,7 @@ std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
     return jsRuntime_.LoadSystemModule("application.WindowStage", &jsWindowStage, 1);
 }
 
-void JsAbility::GetPageStackFromWant(const Want& want, std::string& pageStack)
+void JsAbility::GetPageStackFromWant(const Want &want, std::string &pageStack)
 {
     auto stringObj = AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME));
     if (stringObj != nullptr) {
@@ -312,7 +339,7 @@ void JsAbility::GetPageStackFromWant(const Want& want, std::string& pageStack)
     }
 }
 
-void JsAbility::DoOnForeground(const Want& want)
+void JsAbility::DoOnForeground(const Want &want)
 {
     if (scene_ == nullptr) {
         if ((abilityContext_ == nullptr) || (sceneListener_ == nullptr)) {
@@ -326,8 +353,8 @@ void JsAbility::DoOnForeground(const Want& want)
         }
         int32_t displayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
         if (setting_ != nullptr) {
-            std::string strDisplayId = setting_->GetProperty(
-                OHOS::AppExecFwk::AbilityStartSetting::WINDOW_DISPLAY_ID_KEY);
+            std::string strDisplayId =
+                setting_->GetProperty(OHOS::AppExecFwk::AbilityStartSetting::WINDOW_DISPLAY_ID_KEY);
             std::regex formatRegex("[0-9]{0,9}$");
             std::smatch sm;
             bool flag = std::regex_match(strDisplayId, sm, formatRegex);
@@ -345,15 +372,16 @@ void JsAbility::DoOnForeground(const Want& want)
             return;
         }
         // multi-instance ability continuation
-        HILOG_INFO("lauch reason = %{public}d, contentStorage = %{public}p", launchParam_.launchReason,
+        HILOG_INFO("lauch reason = %{public}d, contentStorage = %{public}p",
+            launchParam_.launchReason,
             abilityContext_->GetContentStorage());
         if (IsRestoredInContinuation()) {
             std::string pageStack;
             GetPageStackFromWant(want, pageStack);
             HandleScope handleScope(jsRuntime_);
-            auto& engine = jsRuntime_.GetNativeEngine();
-            scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
-                static_cast<NativeValue*>(abilityContext_->GetContentStorage()), true);
+            auto &engine = jsRuntime_.GetNativeEngine();
+            scene_->GetMainWindow()->SetUIContent(
+                pageStack, &engine, static_cast<NativeValue *>(abilityContext_->GetContentStorage()), true);
             OnSceneRestored();
             NotityContinuationResult(want, true);
         } else {
