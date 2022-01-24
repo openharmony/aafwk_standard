@@ -27,8 +27,8 @@ namespace ConfigurationInner {
      * This must be synchronized with the value in GlobalConfigurationKey
      */
     const std::vector<std::string> SystemConfigurationKeyStore {
-        OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE,
-        OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION,
+        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE,
+        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION,
     };
 }
 
@@ -161,13 +161,18 @@ void Configuration::CompareDifferent(std::vector<std::string> &diffKeyV, const C
     }
 }
 
-void Configuration::Merge(const std::string &mergeItemKey, const Configuration &other)
+void Configuration::Merge(const std::vector<std::string> &diffKeyV, const Configuration &other)
 {
-    auto myItem = GetValue(mergeItemKey);
-    auto otherItem = other.GetValue(mergeItemKey);
-    // myItem possible empty
-    if (!otherItem.empty() && otherItem != myItem) {
-        configParameter_[mergeItemKey] = otherItem;
+    if (diffKeyV.empty()) {
+        return;
+    }
+    for (const auto &mergeItemKey : diffKeyV) {
+        auto myItem = GetValue(mergeItemKey);
+        auto otherItem = other.GetValue(mergeItemKey);
+        // myItem possible empty
+        if (!otherItem.empty() && otherItem != myItem) {
+            configParameter_[mergeItemKey] = otherItem;
+        }
     }
 }
 
@@ -193,22 +198,6 @@ bool Configuration::AddItem(const std::string &key, const std::string &value)
 std::string Configuration::GetItem(const std::string &key) const
 {
     return GetItem(defaultDisplayId_, key);
-}
-
-std::string Configuration::GetItemForIdAndKey(const std::string &key) const
-{
-    if (key.empty()) {
-        return ConfigurationInner::EMPTY_STRING;
-    }
-
-    APP_LOGI("Configuration::%{public}s called. [%{public}s]", __func__, key.c_str());
-
-    auto iter = configParameter_.find(key);
-    if (iter != configParameter_.end()) {
-        return iter->second;
-    }
-
-    return ConfigurationInner::EMPTY_STRING;
 }
 
 int Configuration::RemoveItem(const std::string &key)

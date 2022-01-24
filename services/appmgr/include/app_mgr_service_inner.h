@@ -57,6 +57,10 @@ public:
     virtual ~AppMgrServiceInner();
 
     /**
+     * Initialize the object.
+     */
+    void Init();
+    /**
      * LoadAbility, load the ability that needed to be started.
      *
      * @param token, the unique identification to start the ability.
@@ -487,6 +491,15 @@ public:
     void OnAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
 
     void GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info);
+	
+	 /**
+     * UpdateConfiguration, ANotify application update system environment changes.
+     *
+     * @param config, System environment change parameters.
+     */
+    void UpdateConfiguration(const Configuration &config);
+
+    std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
     /**
      * Start empty process
      */
@@ -744,6 +757,8 @@ private:
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 
+    void GetGlobalConfiguration();
+
 private:
     /**
      * ClearUpApplicationData, clear the application data.
@@ -779,6 +794,7 @@ private:
     std::shared_ptr<AppRunningManager> appRunningManager_;
     std::shared_ptr<ProcessOptimizerUBA> processOptimizerUBA_;
     std::shared_ptr<AMSEventHandler> eventHandler_;
+    std::shared_ptr<Configuration> configuration_;
     std::mutex serviceLock_;
     sptr<IStartSpecifiedAbilityResponse> startSpecifiedAbilityResponse_;
 };

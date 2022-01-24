@@ -824,19 +824,17 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("%{public}s begin.", __func__);
 
-    // Update for the first time
-    if (!configuration_) {
-        configuration_ = std::make_shared<Configuration>(config);
-        APP_LOGI("AbilityImpl::Init the configuration");
-        return;
-    }
 
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
         return;
     }
 
-    ability_->OnConfigurationUpdatedNotify(config);
+    if (lifecycleState_ != AAFwk::ABILITY_STATE_INITIAL) {
+        APP_LOGI("ability name: [%{public}s]", ability_->GetAbilityName().c_str());
+        ability_->OnConfigurationUpdatedNotify(config);
+    }
+
     APP_LOGI("%{public}s end.", __func__);
 }
 

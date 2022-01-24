@@ -319,9 +319,10 @@ HWTEST_F(AmsAppRunningRecordTest, CreateAppRunningRecord_005, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchApplication_001, TestSize.Level1)
 {
+    Configuration config;
     auto record = GetTestAppRunningRecord();
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
-    record->LaunchApplication();
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
+    record->LaunchApplication(config);
 }
 
 /*
@@ -544,7 +545,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_001, TestSize.Level1)
     EXPECT_TRUE(service_);
     auto record = StartLoadAbility(token, abilityInfo, appInfo, newPid);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(1);
     service_->AttachApplication(newPid, mockAppSchedulerClient_);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
@@ -576,7 +577,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_002, TestSize.Level1)
     const pid_t invalidPid = -1;
     auto record = StartLoadAbility(token, abilityInfo, appInfo, newPid);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(0);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(invalidPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
     APP_LOGI("AmsAppRunningRecordTest AttachApplication_002 end");
@@ -607,7 +608,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_003, TestSize.Level1)
     const pid_t anotherPid = 1000;
     auto record = StartLoadAbility(token, abilityInfo, appInfo, newPid);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(0);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(anotherPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
     APP_LOGI("AmsAppRunningRecordTest AttachApplication_003 end");
@@ -668,13 +669,13 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_005, TestSize.Level1)
     EXPECT_TRUE(service_ != nullptr);
     auto record = StartLoadAbility(token, abilityInfo, appInfo, newPid);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(1);
     service_->AttachApplication(newPid, GetMockedAppSchedulerClient());
     EXPECT_NE(record->GetApplicationClient(), nullptr);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(0);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(newPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
     APP_LOGI("AmsAppRunningRecordTest AttachApplication_005 end");
@@ -724,7 +725,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_006, TestSize.Level1)
     service_->LoadAbility(token3, nullptr, abilityInfo3, appInfo);
     EXPECT_EQ(record->GetAbilities().size(), EXPECT_RECORD_SIZE);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(EXPECT_ABILITY_LAUNCH_TIME);
     service_->AttachApplication(PID, mockAppSchedulerClient_);
     EXPECT_NE(record->GetApplicationClient(), nullptr);
@@ -762,7 +763,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_001, TestSize.Level1)
     auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
     EXPECT_TRUE(abilityRecord != nullptr);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(1);
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
@@ -819,7 +820,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_002, TestSize.Level1)
     auto abilityRecord3 = moduleRecord3->GetAbilityRunningRecordByToken(token3);
     EXPECT_TRUE(abilityRecord3 != nullptr);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(EXPECT_ABILITY_LAUNCH_TIME);
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
@@ -857,7 +858,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_003, TestSize.Level1)
     auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
     EXPECT_TRUE(abilityRecord != nullptr);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(0);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(0);
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
@@ -901,13 +902,13 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_004, TestSize.Level1)
     auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
     EXPECT_TRUE(abilityRecord != nullptr);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(1);
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(0);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(1);
     sptr<IRemoteObject> token2 = new (std::nothrow) MockAbilityToken();
     service_->LoadAbility(token2, nullptr, abilityInfo2, appInfo);
@@ -962,7 +963,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_005, TestSize.Level1)
     EXPECT_TRUE(moduleRecord3);
     auto abilityRecord3 = moduleRecord3->GetAbilityRunningRecordByToken(token3);
 
-    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_)).Times(1);
+    EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _)).Times(EXPECT_ABILITY_LAUNCH_TIME);
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);

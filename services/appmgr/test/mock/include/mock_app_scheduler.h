@@ -31,7 +31,7 @@ public:
     MOCK_METHOD0(ScheduleForegroundApplication, void());
     MOCK_METHOD0(ScheduleBackgroundApplication, void());
     MOCK_METHOD0(ScheduleTerminateApplication, void());
-    MOCK_METHOD1(ScheduleLaunchApplication, void(const AppLaunchData &));
+    MOCK_METHOD2(ScheduleLaunchApplication, void(const AppLaunchData &, const Configuration &config));
     MOCK_METHOD2(ScheduleLaunchAbility, void(const AbilityInfo &, const sptr<IRemoteObject> &));
     MOCK_METHOD1(ScheduleCleanAbility, void(const sptr<IRemoteObject> &));
     MOCK_METHOD1(ScheduleProfileChanged, void(const Profile &));

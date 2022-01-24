@@ -51,7 +51,7 @@ public:
     {}
     void ScheduleLowMemory() override
     {}
-    void ScheduleLaunchApplication(const AppLaunchData &) override
+    void ScheduleLaunchApplication(const AppLaunchData &, const Configuration &) override
     {}
     void ScheduleLaunchAbility(const AbilityInfo &, const sptr<IRemoteObject> &) override
     {}

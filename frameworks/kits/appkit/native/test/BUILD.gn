@@ -155,6 +155,7 @@ ohos_unittest("context_container_test") {
     "../app/src/ohos_application.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/mock_bundle_manager.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/context_container_test.cpp",
   ]
 
@@ -240,6 +241,7 @@ ohos_unittest("context_deal_test") {
     "../app/src/ohos_application.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/mock_bundle_manager.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "mock/include/mock_ability_manager_client.cpp",
     "unittest/context_deal_test.cpp",
   ]

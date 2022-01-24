@@ -451,5 +451,19 @@ void AppRunningManager::HandleStartSpecifiedAbilityTimeOut(const int64_t eventId
 
     appRecord->ScheduleProcessSecurityExit();
 }
+
+void AppRunningManager::UpdateConfiguration(const Configuration &config)
+{
+    APP_LOGI("call %{public}s", __func__);
+    std::lock_guard<std::recursive_mutex> guard(lock_);
+    APP_LOGI("current app size %{public}d", static_cast<int>(appRunningRecordMap_.size()));
+    for (const auto &item : appRunningRecordMap_) {
+        const auto &appRecord = item.second;
+        if (appRecord) {
+            APP_LOGI("Notification app [%{public}s]", appRecord->GetName().c_str());
+            appRecord->UpdateConfiguration(config);
+        }
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

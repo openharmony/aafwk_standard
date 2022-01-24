@@ -35,7 +35,6 @@
 #include "ability_manager_service.h"
 #include "ability_connect_callback_proxy.h"
 #include "ability_config.h"
-#include "configuration_distributor.h"
 #include "pending_want_manager.h"
 #include "pending_want_record.h"
 #undef private
@@ -184,10 +183,6 @@ static void OnStartAms()
 
         AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
-
-        AbilityMgrModuleTest::abilityMgrServ_->configuration_ = std::make_shared<AppExecFwk::Configuration>();
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->configuration_);
-        AbilityMgrModuleTest::abilityMgrServ_->GetGlobalConfiguration();
 
         int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
         AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
@@ -1790,175 +1785,6 @@ HWTEST_F(AbilityMgrModuleTest, AmsConfigurationParameter_027, TestSize.Level1)
     EXPECT_EQ(startLauncher, abilityMgrServ_->amsConfigResolver_->GetStartLauncherState());
     EXPECT_EQ(startstatusbar, abilityMgrServ_->amsConfigResolver_->GetStatusBarState());
     EXPECT_EQ(startnavigationbar, abilityMgrServ_->amsConfigResolver_->GetNavigationBarState());
-}
-/*
- * Feature: AbilityManagerService
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: normal ability, page
- */
-HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_028, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    std::string abilityName = "MusicAbility";
-    std::string bundleName = "com.ix.hiMusic";
-
-    SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    Want want = CreateWant(abilityName, bundleName);
-    auto startRef = abilityMgrServ_->StartAbility(want);
-    EXPECT_EQ(startRef, 0);
-
-    auto abilityRecord = abilityMgrServ_->GetStackManager()->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecord);
-
-    int displeyId = 1001;
-    std::string key = GlobalConfigurationKey::SYSTEM_LANGUAGE;
-    std::string val = "Chinese";
-    auto Compare = [displeyId, key, val](const AppExecFwk::Configuration &config) {
-        auto item = config.GetItem(displeyId, key);
-        EXPECT_EQ(item, val);
-    };
-
-    sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(2)
-        .WillOnce(Return())
-        .WillOnce(Invoke(Compare));
-
-    auto ref = abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
-    EXPECT_EQ(ref, 0);
-
-    int size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_TRUE(size > 0);
-
-    AppExecFwk::Configuration newConfig;
-    newConfig.AddItem(displeyId, key, val);
-
-    auto updateRef = abilityMgrServ_->UpdateConfiguration(newConfig);
-    EXPECT_EQ(updateRef, 0);
-
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(abilityRecord->GetToken(), 0, saveData);
-
-    int num = size - 1;
-    size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_EQ(size, num);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: service ability
- */
-HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_029, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    std::string abilityName = "hiService";
-    std::string bundleName = "com.ix.hiService";
-
-    SetActive();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
-    Want want = CreateWant(abilityName, bundleName);
-    auto startRef = abilityMgrServ_->StartAbility(want);
-    EXPECT_EQ(startRef, 0);
-
-    std::shared_ptr<AbilityRecord> abilityRecord = abilityMgrServ_->GetStackManager()->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecord);
-
-    int displeyId = 1001;
-    std::string key = GlobalConfigurationKey::SYSTEM_LANGUAGE;
-    std::string val = "German";
-    auto Compare = [displeyId, key, val](const AppExecFwk::Configuration &config) {
-        auto item = config.GetItem(displeyId, key);
-        EXPECT_EQ(item, val);
-    };
-
-    sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(2)
-        .WillOnce(Return())
-        .WillOnce(Invoke(Compare));
-
-    abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
-
-    int size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_TRUE(size > 0);
-
-    AppExecFwk::Configuration newConfig;
-    newConfig.AddItem(displeyId, key, val);
-
-    auto updateRef = abilityMgrServ_->UpdateConfiguration(newConfig);
-    EXPECT_EQ(updateRef, 0);
-
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(abilityRecord->GetToken(), 0, saveData);
-
-    int num = size - 1;
-    size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_EQ(size, num);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: UpdateConfiguration
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: luncher ability
- */
-HWTEST_F(AbilityMgrModuleTest, UpdateConfiguration_030, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    std::string abilityName = "hiworld";
-    std::string bundleName = "com.ix.hiworld";
-
-    SetActive();
-    Want want = CreateWant(abilityName, bundleName);
-    auto startRef = abilityMgrServ_->StartAbility(want);
-    EXPECT_EQ(startRef, 0);
-
-    std::shared_ptr<AbilityRecord> abilityRecord = abilityMgrServ_->GetStackManager()->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecord);
-
-    int displeyId = 1001;
-    std::string key = GlobalConfigurationKey::SYSTEM_LANGUAGE;
-    std::string val = "Italian";
-    auto Compare = [displeyId, key, val](const AppExecFwk::Configuration &config) {
-        auto item = config.GetItem(displeyId, key);
-        EXPECT_EQ(item, val);
-    };
-
-    sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
-    EXPECT_CALL(*scheduler, ScheduleUpdateConfiguration(_))
-        .Times(2)
-        .WillOnce(Return())
-        .WillOnce(Invoke(Compare));
-
-    abilityMgrServ_->AttachAbilityThread(scheduler, abilityRecord->GetToken());
-
-    int size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_TRUE(size > 0);
-
-    AppExecFwk::Configuration newConfig;
-    newConfig.AddItem(displeyId, key, val);
-
-    auto updateRef = abilityMgrServ_->UpdateConfiguration(newConfig);
-    EXPECT_EQ(updateRef, 0);
-
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(abilityRecord->GetToken(), 0, saveData);
-
-    int num = size - 1;
-    size = DelayedSingleton<ConfigurationDistributor>::GetInstance()->observerList_.size();
-    EXPECT_EQ(size, num);
 }
 
 /*

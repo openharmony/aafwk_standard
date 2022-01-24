@@ -28,7 +28,7 @@ public:
     MOCK_METHOD0(ScheduleTerminateApplication, void());
     MOCK_METHOD1(ScheduleShrinkMemory, void(const int));
     MOCK_METHOD0(ScheduleLowMemory, void());
-    MOCK_METHOD1(ScheduleLaunchApplication, void(const AppLaunchData &));
+    MOCK_METHOD2(ScheduleLaunchApplication, void(const AppLaunchData &, const Configuration &config));
     MOCK_METHOD2(ScheduleLaunchAbility, void(const AbilityInfo &, const sptr<IRemoteObject> &));
     MOCK_METHOD1(ScheduleCleanAbility, void(const sptr<IRemoteObject> &));
     MOCK_METHOD1(ScheduleProfileChanged, void(const Profile &));
@@ -58,7 +58,7 @@ public:
         return shrinkLevel_;
     }
 
-    void LaunchApplication(const AppLaunchData &launchData)
+    void LaunchApplication(const AppLaunchData &launchData, const Configuration &config)
     {
         launchData_ = launchData;
         lock_.Post();

@@ -138,13 +138,17 @@ int32_t AppSchedulerHost::HandleScheduleLaunchApplication(MessageParcel &data, M
 {
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<AppLaunchData> launchData(data.ReadParcelable<AppLaunchData>());
-
+    std::unique_ptr<Configuration> config(data.ReadParcelable<Configuration>());
     if (!launchData) {
         APP_LOGE("ReadParcelable<launchData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
+    if (!config) {
+        APP_LOGE("ReadParcelable<Configuration> failed");
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
 
-    ScheduleLaunchApplication(*launchData);
+    ScheduleLaunchApplication(*launchData, *config);
     return NO_ERROR;
 }
 
