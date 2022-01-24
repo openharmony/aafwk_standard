@@ -1648,6 +1648,12 @@ void AbilityStackManager::CompleteInactive(const std::shared_ptr<AbilityRecord> 
     HILOG_INFO("ability: %{public}s", element.c_str());
     abilityRecord->SetAbilityState(AbilityState::INACTIVE);
 
+    if (abilityRecord->IsSwitchingPause()) {
+        MoveToBackgroundTask(abilityRecord);
+        abilityRecord->SetSwitchingPause(false);
+        return;
+    }
+
     // 0. multi window moving , complete lifecycle.
     if (abilityRecord->GetInMovingState()) {
         if (abilityRecord == GetCurrentTopAbility()) {
@@ -4706,6 +4712,12 @@ void AbilityStackManager::CompleteInactiveByNewVersion(const std::shared_ptr<Abi
 
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
 
+    if (abilityRecord->IsSwitchingPause()) {
+        MoveToBackgroundTask(abilityRecord);
+        abilityRecord->SetSwitchingPause(false);
+        return;
+    }
+
     // 1. it may be inactive callback of terminate ability.
     if (abilityRecord->IsTerminating()) {
         abilityRecord->SendResultToCallers();
@@ -4728,6 +4740,11 @@ void AbilityStackManager::CompleteInactiveByNewVersion(const std::shared_ptr<Abi
         // top ability.has been pushed into stack, but haven't load.
         // so we need load it first
         nextActiveAbility->ProcessActivate();
+        return;
+    }
+
+    if (abilityRecord->IsSwitchingPause()) {
+        MoveToBackgroundTask(abilityRecord);
         return;
     }
 
@@ -4916,6 +4933,38 @@ void AbilityStackManager::CompleteBackgroundNew(const std::shared_ptr<AbilityRec
         };
         abilityRecord->Terminate(timeoutTask);
     }
+}
+
+bool AbilityStackManager::IsStarted()
+{
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    auto lanucherRoot = GetLauncherRootAbility();
+    return lanucherRoot != nullptr;
+}
+
+void AbilityStackManager::PauseManager()
+{
+    HILOG_INFO("PauseManager.");
+    std::lock_guard<std::recursive_mutex> guard(stackLock_);
+    auto currentTopAbility = GetCurrentTopAbility();
+    if (!currentTopAbility) {
+        HILOG_WARN("get top ability failed.");
+        return;
+    }
+
+    currentTopAbility->SetSwitchingPause(true);
+    if (currentTopAbility->IsAbilityState(AbilityState::ACTIVE)) {
+        currentTopAbility->ProcessInactivate();
+    }
+    if (currentTopAbility->IsAbilityState(AbilityState::INACTIVE)) {
+        MoveToBackgroundTask(currentTopAbility);
+    }
+}
+
+void AbilityStackManager::ResumeManager()
+{
+    HILOG_INFO("ResumeManager, back to launcher.");
+    BackToLauncher();
 }
 }  // namespace AAFwk
 }  // namespace OHOS
