@@ -57,6 +57,8 @@ bool MissionInfoMgr::Init(int userId)
         return false;
     }
 
+    missionInfoList_.clear();
+    missionIdMap_.clear();
     if (!LoadAllMissionInfo()) {
         return false;
     }

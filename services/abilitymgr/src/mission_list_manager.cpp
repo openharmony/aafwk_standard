@@ -766,6 +766,12 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
     // send application state to AppMS.
     // notify AppMS to update application state.
     DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(abilityRecord->GetToken());
+
+    if (abilityRecord->IsSwitchingPause()) {
+        abilityRecord->SetSwitchingPause(false);
+        return;
+    }
+
     // Abilities ahead of the one started with SingleTask mode were put in terminate list, we need to terminate
     // them.
     auto self(shared_from_this());
@@ -1467,22 +1473,11 @@ void MissionListManager::BackToLauncher()
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     CHECK_POINTER(launcherList_);
 
-    auto currentTop = GetCurrentTopAbilityLocked();
-    if (currentTop && (currentTop->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-        currentTop->IsAbilityState(AbilityState::FOREGROUNDING_NEW))) {
-        HILOG_WARN("Current top ability is already foreground, no need to start launcher.");
-        return;
-    }
-
     auto launcherRootAbility = launcherList_->GetLauncherRoot();
     CHECK_POINTER_LOG(launcherRootAbility, "There is no root launcher ability, back to launcher failed.");
     auto launcherRootMission = launcherRootAbility->GetMission();
     CHECK_POINTER_LOG(launcherRootMission, "There is no root launcher mission, back to launcher failed.");
-    if (launcherRootAbility->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-        launcherRootAbility->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
-        HILOG_WARN("launcher is already foreground, no need to start launcher.");
-        return;
-    }
+
     std::queue<AbilityRequest> emptyQueue;
     std::swap(waittingAbilityQueue_, emptyQueue);
 
@@ -1745,6 +1740,68 @@ void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
         if (!(missionList->GetAllMissions().empty())) {
             auto list = missionList->GetAllMissions();
             std::for_each(list.begin(), list.end(), func);
+        }
+    }
+}
+
+bool MissionListManager::IsStarted()
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    auto launcherRoot = launcherList_->GetLauncherRoot();
+    return launcherRoot != nullptr;
+}
+
+void MissionListManager::PauseManager()
+{
+    HILOG_INFO("MissionListManager PauseManager. move foreground to background.");
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    std::list<std::shared_ptr<AbilityRecord>> foregroundAbilities;
+    GetAllForegroundAbilities(foregroundAbilities);
+
+    for (auto& abilityRecord : foregroundAbilities) {
+        if (!abilityRecord) {
+            continue;
+        }
+        abilityRecord->SetSwitchingPause(true);
+        MoveToBackgroundTask(abilityRecord);
+    }
+}
+
+void MissionListManager::ResumeManager()
+{
+    HILOG_INFO("ResumeManager, back to launcher.");
+    BackToLauncher();
+}
+
+void MissionListManager::GetAllForegroundAbilities(std::list<std::shared_ptr<AbilityRecord>>& foregroundList)
+{
+    std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
+    for (auto& missionList : currentMissionLists_) {
+        GetForegroundAbilities(missionList, foregroundList);
+    }
+    GetForegroundAbilities(defaultSingleList_, foregroundList);
+    GetForegroundAbilities(defaultStandardList_, foregroundList);
+}
+
+void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionList>& missionList,
+    std::list<std::shared_ptr<AbilityRecord>>& foregroundList)
+{
+    if (!missionList || missionList->IsEmpty()) {
+        return;
+    }
+
+    for (auto& mission : missionList->GetAllMissions()) {
+        if (!mission) {
+            continue;
+        }
+
+        auto abilityRecord = mission->GetAbilityRecord();
+        if (!abilityRecord) {
+            continue;
+        }
+
+        if (abilityRecord->IsActiveState()) {
+            foregroundList.emplace_back(abilityRecord);
         }
     }
 }
