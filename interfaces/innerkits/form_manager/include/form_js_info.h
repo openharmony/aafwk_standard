@@ -16,7 +16,6 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_FORM_JS_INFO_H
 #define FOUNDATION_APPEXECFWK_OHOS_FORM_JS_INFO_H
 
-
 #include <string>
 #include "form_provider_data.h"
 #include "form_info_base.h"
@@ -29,6 +28,7 @@ namespace AppExecFwk {
  * Defines form js info.
  */
 struct FormJsInfo : public Parcelable {
+    static constexpr int IMAGE_DATA_THRESHOLD = 128;
     int64_t formId;
     std::string formName;
     std::string bundleName;
@@ -36,6 +36,7 @@ struct FormJsInfo : public Parcelable {
     bool formTempFlg = false;
     std::string jsFormCodePath;
     std::string formData;
+    std::map<std::string, std::pair<int, int32_t>> imageDataMap;
     FormProviderData formProviderData;
 
     std::string htmlPath;
@@ -52,6 +53,8 @@ struct FormJsInfo : public Parcelable {
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
     static FormJsInfo *Unmarshalling(Parcel &parcel);
+    bool WriteImageData(Parcel &parcel) const;
+    void ReadImageData(Parcel &parcel);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

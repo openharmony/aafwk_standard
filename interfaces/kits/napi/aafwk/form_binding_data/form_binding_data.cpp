@@ -39,9 +39,16 @@ public:
         return (me != nullptr) ? me->OnCreateFormBindingData(*engine, *info) : nullptr;
     }
 
+    static NativeValue* AddFormBindingImage(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        HILOG_INFO("%{public}s called.", __func__);
+        FormBindingData* me = CheckParamsAndGetThis<FormBindingData>(engine, info);
+        return (me != nullptr) ? me->OnAddFormBindingImage(*engine, *info) : nullptr;
+    }
 private:
     NativeValue* OnCreateFormBindingData(NativeEngine& engine, NativeCallbackInfo& info);
     std::shared_ptr<AppExecFwk::FormProviderData> formProviderData_;
+    NativeValue* OnAddFormBindingImage(NativeEngine& engine, NativeCallbackInfo& info);
 };
 
 NativeValue* FormBindingData::OnCreateFormBindingData(NativeEngine& engine, NativeCallbackInfo& info)
@@ -89,6 +96,22 @@ NativeValue* FormBindingData::OnCreateFormBindingData(NativeEngine& engine, Nati
     HILOG_INFO("%{public}s called end.", __func__);
     return objValue;
 }
+
+NativeValue* FormBindingData::OnAddFormBindingImage(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (info.argc == 0) {
+        HILOG_ERROR("%{public}s, not enough params", __func__);
+        return engine.CreateUndefined();
+    }
+
+    NativeValue* objValue = info.argv[1];
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    object->SetProperty("image", info.argv[0]);
+    HILOG_INFO("%{public}s called end.", __func__);
+    return objValue;
+}
 }
 
 NativeValue* FormBindingDataInit(NativeEngine* engine, NativeValue* exportObj)
@@ -110,6 +133,7 @@ NativeValue* FormBindingDataInit(NativeEngine* engine, NativeValue* exportObj)
     object->SetNativePointer(formBindingData.release(), FormBindingData::Finalizer, nullptr);
 
     BindNativeFunction(*engine, *object, "createFormBindingData", FormBindingData::CreateFormBindingData);
+    BindNativeFunction(*engine, *object, "addFormBindingImage", FormBindingData::AddFormBindingImage);
 
     HILOG_INFO("%{public}s called end.", __func__);
     return exportObj;

@@ -439,7 +439,9 @@ int FormProviderClient::HandleAcquire(
     const Want &newWant,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGI("%{public}s start", __func__);
+    APP_LOGI("%{public}s start, image state is %{public}d",
+        __func__, formProviderInfo.GetFormData().GetImageDataState());
+
     sptr<IFormSupply> formSupplyClient = iface_cast<IFormSupply>(callerToken);
     if (formSupplyClient == nullptr) {
         APP_LOGW("%{public}s warn, IFormSupply is nullptr", __func__);
