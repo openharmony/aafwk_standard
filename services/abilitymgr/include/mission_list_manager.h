@@ -181,6 +181,14 @@ public:
     int ClearAllMissions();
 
     /**
+     * @brief clear all the missions Locked
+     *
+     * @return int error code
+     */
+    bool ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> missionList,
+        const std::list<std::shared_ptr<Mission>> &foregroundAbilities);
+
+    /**
      * @brief Set the Mission Locked State object
      *
      * @param missionId the id of the mission
