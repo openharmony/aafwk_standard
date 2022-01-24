@@ -13,9 +13,55 @@
  * limitations under the License.
  */
 
+class EventHub {
+    constructor() {
+        this.eventMap = {};
+    }
+
+    on(event, callback) {
+        if ((typeof(event) != 'string') || (typeof(callback) != 'function')) {
+            return;
+        }
+        if (!this.eventMap[event]) {
+            this.eventMap[event] = [];
+        }
+        if (this.eventMap[event].indexOf(callback) == -1) {
+            this.eventMap[event].push(callback);
+        }
+    }
+
+    off(event, callback) {
+        if (typeof(event) != 'string') {
+            return;
+        }
+        if (this.eventMap[event]) {
+            if (callback) {
+                let index = this.eventMap[event].indexOf(callback);
+                if (index > -1) {
+                    this.eventMap[event].splice(index, 1);
+                }
+            } else {
+                this.eventMap[event].length = 0;
+            }
+        }
+    }
+
+    emit(event, ...args) {
+        if (typeof(event) != 'string') {
+            return;
+        }
+        if (this.eventMap[event]) {
+            this.eventMap[event].map((callback) => {
+                callback(...args);
+            });
+        }
+    }
+}
+
 class Context {
     constructor(obj) {
         this.__context_impl__ = obj
+        this.__context_impl__.eventHub = new EventHub()
     }
 
     createBundleContext(bundleName) {
@@ -64,6 +110,10 @@ class Context {
 
     get bundleCodeDir() {
         return this.__context_impl__.bundleCodeDir
+    }
+
+    get eventHub() {
+        return this.__context_impl__.eventHub
     }
 }
 
