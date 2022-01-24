@@ -58,7 +58,10 @@ public:
 
     ErrCode TerminateSelf() override;
     sptr<IRemoteObject> GetAbilityToken() override;
-    void RequestPermissionsFromUser(const std::vector<std::string> &permissions, int requestCode) override;
+    void RequestPermissionsFromUser(const std::vector<std::string> &permissions,
+        int requestCode, PermissionRequestTask &&task) override;
+    void OnRequestPermissionsFromUserResult(
+        int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
     ErrCode RestoreWindowStage(void* contentStorage) override;
 
     /**
@@ -103,6 +106,7 @@ private:
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
     std::shared_ptr<AbilityRuntime::Context> stageContext_ = nullptr;
     std::map<int, RuntimeTask> resultCallbacks_;
+    std::map<int, PermissionRequestTask> permissionRequestCallbacks_;
     void* contentStorage_ = nullptr;
 };
 }  // namespace AbilityRuntime

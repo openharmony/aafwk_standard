@@ -68,6 +68,8 @@ private:
     static NativeValue* WrapWant(NativeEngine& engine, const AAFwk::Want& want);
     static bool UnWrapAbilityResult(NativeEngine& engine, NativeValue* argv, int& resultCode, AAFwk::Want& want);
     static NativeValue* WrapAbilityResult(NativeEngine& engine, const int& resultCode, const AAFwk::Want& want);
+    static NativeValue* WrapPermissionRequestResult(NativeEngine& engine,
+        const std::vector<std::string> &permissions, const std::vector<int> &grantResults);
 
     std::weak_ptr<AbilityContext> context_;
     int curRequestCode_ = 0;
