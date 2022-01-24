@@ -1252,8 +1252,10 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     if (!watchDogHandler_->PostTask(taskWatchDog)) {
         APP_LOGE("MainThread::Init WatchDog postTask task failed");
     }
+    /*
     watchDogHandler_->Init(mainHandler_, watchDogHandler_);
     APP_LOGI("MainThread:Init before CreateRunner.");
+    */
     TaskHandlerClient::GetInstance()->CreateRunner();
     APP_LOGI("MainThread:Init after CreateRunner.");
     APP_LOGI("MainThread:Init end.");
