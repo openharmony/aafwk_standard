@@ -29,6 +29,7 @@
 #include "form_delete_connection.h"
 #include "form_dump_mgr.h"
 #include "form_event_notify_connection.h"
+#include "form_info_mgr.h"
 #include "form_mgr_adapter.h"
 #include "form_provider_info.h"
 #include "form_provider_interface.h"
@@ -1693,6 +1694,39 @@ int32_t FormMgrAdapter::GetCurrentUserId(const int callingUid)
     // get current userId
     int32_t userId = callingUid / UID_CALLINGUID_TRANSFORM_DIVISOR;
     return userId;
+}
+/**
+ * @brief Get All FormsInfo.
+ * @param formInfos Return the forms' information of all forms provided.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetAllFormsInfo(formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name .
+ * @param bundleName Application name.
+ * @param formInfos Return the forms' information of the specify application name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetFormsInfoByBundle(bundleName, formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name and module name.
+ * @param bundleName bundle name.
+ * @param moduleName Module name of hap.
+ * @param formInfos Return the forms' information of the specify bundle name and module name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+                                         std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

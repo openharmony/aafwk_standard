@@ -17,6 +17,7 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_FORMMGR_FORM_MGR_PROXY_H
 
 #include "form_db_info.h"
+#include "form_info.h"
 #include "form_mgr_interface.h"
 #include "iremote_proxy.h"
 
@@ -174,6 +175,31 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int DistributedDataDeleteForm(const std::string &formId) override;
+
+    /**
+     * @brief Get All FormsInfo.
+     * @param formInfos Return the forms' information of all forms provided.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetAllFormsInfo(std::vector<FormInfo> &formInfos) override;
+
+    /**
+     * @brief Get forms info by bundle name .
+     * @param bundleName Application name.
+     * @param formInfos Return the forms' information of the specify application name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos) override;
+
+    /**
+     * @brief Get forms info by bundle name and module name.
+     * @param bundleName bundle name.
+     * @param moduleName Module name of hap.
+     * @param formInfos Return the forms' information of the specify bundle name and module name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+                                     std::vector<FormInfo> &formInfos) override;
 private:
     template<typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);
@@ -182,6 +208,7 @@ private:
     int GetParcelableInfo(IFormMgr::Message code, MessageParcel &data, T &parcelableInfo);
     int SendTransactCmd(IFormMgr::Message code, MessageParcel &data, MessageParcel &reply);
     int GetStringInfo(IFormMgr::Message code, MessageParcel &data, std::string &stringInfo);
+    int GetFormsInfo(IFormMgr::Message code, MessageParcel &data, std::vector<FormInfo> &formInfos);
 private:
     static inline BrokerDelegator<FormMgrProxy> delegator_;
 };

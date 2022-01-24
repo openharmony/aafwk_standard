@@ -599,6 +599,23 @@ int FormMgrProxy::GetStringInfo(IFormMgr::Message code, MessageParcel &data, std
     APP_LOGD("get string info success");
     return ERR_OK;
 }
+int FormMgrProxy::GetFormsInfo(IFormMgr::Message code, MessageParcel &data, std::vector<FormInfo> &formInfos)
+{
+    int error;
+    MessageParcel reply;
+    error = SendTransactCmd(code, data, reply);
+    if (error != ERR_OK) {
+        return error;
+    }
+
+    error = reply.ReadInt32();
+    if (error != ERR_OK) {
+        APP_LOGE("%{public}s, failed to read reply result", __func__);
+        return error;
+    }
+
+    return GetParcelableInfos<FormInfo>(reply, formInfos);
+}
 template<typename T>
 int FormMgrProxy::GetParcelableInfo(IFormMgr::Message code, MessageParcel &data, T &parcelableInfo)
 {
@@ -701,6 +718,88 @@ int FormMgrProxy::DistributedDataDeleteForm(const std::string &formId)
         return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
     }
     return reply.ReadInt32();
+}
+
+/**
+ * @brief Get All FormsInfo.
+ * @param formInfos Return the forms' information of all forms provided.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrProxy::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO, data, formInfos);
+    if (error != ERR_OK) {
+        APP_LOGE("%{public}s, failed to GetAllFormsInfo: %{public}d", __func__, error);
+    }
+
+    return error;
+}
+
+/**
+ * @brief Get forms info by bundle name .
+ * @param bundleName Application name.
+ * @param formInfos Return the forms' information of the specify application name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrProxy::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    if (!data.WriteString(bundleName)) {
+        APP_LOGE("%{public}s, failed to write bundleName", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO, data, formInfos);
+    if (error != ERR_OK) {
+        APP_LOGE("%{public}s, failed to GetAllFormsInfo: %{public}d", __func__, error);
+    }
+
+    return error;
+}
+
+/**
+ * @brief Get forms info by bundle name and module name.
+ * @param bundleName bundle name.
+ * @param moduleName Module name of hap.
+ * @param formInfos Return the forms' information of the specify bundle name and module name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrProxy::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+                                       std::vector<FormInfo> &formInfos)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    if (!data.WriteString(bundleName)) {
+        APP_LOGE("%{public}s, failed to write bundleName", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    if (!data.WriteString(moduleName)) {
+        APP_LOGE("%{public}s, failed to write moduleName", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO, data, formInfos);
+    if (error != ERR_OK) {
+        APP_LOGE("%{public}s, failed to GetAllFormsInfo: %{public}d", __func__, error);
+    }
+
+    return error;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

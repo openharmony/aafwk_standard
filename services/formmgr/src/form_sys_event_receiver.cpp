@@ -217,11 +217,25 @@ bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
 void FormSysEventReceiver::HandleBundleFormInfoChanged(const std::string &bundleName)
 {
     FormInfoMgr::GetInstance().Update(bundleName);
+    std::vector<FormInfo> formInfos;
+    FormInfoMgr::GetInstance().GetAllFormsInfo(formInfos);
+    APP_LOGD("yzk, GetAllFormsInfo %{public}d", formInfos.size());
+    for (const auto &formInfo: formInfos) {
+        APP_LOGD("yzk, %{public}s-%{public}s-%{public}s", formInfo.bundleName.c_str(), formInfo.moduleName.c_str(),
+            formInfo.name.c_str());
+    }
 }
 
 void FormSysEventReceiver::HandleBundleFormInfoRemoved(const std::string &bundleName)
 {
     FormInfoMgr::GetInstance().Remove(bundleName);
+    std::vector<FormInfo> formInfos;
+    FormInfoMgr::GetInstance().GetAllFormsInfo(formInfos);
+    APP_LOGD("yzk, GetAllFormsInfo %{public}d", formInfos.size());
+    for (const auto &formInfo: formInfos) {
+        APP_LOGD("yzk, %{public}s-%{public}s-%{public}s", formInfo.bundleName.c_str(), formInfo.moduleName.c_str(),
+            formInfo.name.c_str());
+    }
 }
 
 void FormSysEventReceiver::HandleBundleDataCleared(const std::string &bundleName, const int uid)
