@@ -151,7 +151,7 @@ std::shared_ptr<AbilityRecord> MissionList::GetTopAbility() const
     return nullptr;
 }
 
-std::list<std::shared_ptr<Mission>>& MissionList::GetAllMissions() const
+std::list<std::shared_ptr<Mission>>& MissionList::GetAllMissions()
 {
     return missions_;
 }
