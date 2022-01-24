@@ -180,6 +180,9 @@ public:
      */
     int ClearAllMissions();
 
+    void ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> &missionList,
+        std::list<std::shared_ptr<Mission>> &foregroundAbilities, bool searchActive);
+
     /**
      * @brief Set the Mission Locked State object
      *
