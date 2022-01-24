@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -34,8 +35,20 @@ std::shared_ptr<C> ExtensionBase<C>::CreateAndInitContext(const std::shared_ptr<
     std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
+    HILOG_INFO("begin init base");
     std::shared_ptr<C> context = std::make_shared<C>();
     context->SetToken(token);
+    auto appContext = Context::GetApplicationContext();
+    context->SetApplicationInfo(appContext->GetApplicationInfo());
+    context->SetResourceManager(appContext->GetResourceManager());
+    if (record == nullptr) {
+        HILOG_ERROR("ServiceExtension::CreateAndInitContext record is nullptr");
+        return context;
+    }
+    HILOG_INFO("begin init abilityInfo");
+    auto abilityInfo = record->GetAbilityInfo();
+    context->SetAbilityInfo(abilityInfo);
+    context->InitHapModuleInfo(abilityInfo);
     return context;
 }
 

@@ -16,6 +16,7 @@
 #ifndef EXTENSION_CONTEXT_H
 #define EXTENSION_CONTEXT_H
 
+#include "ability_info.h"
 #include "context_impl.h"
 #include "iremote_object.h"
 
@@ -44,6 +45,20 @@ public:
      */
     sptr<IRemoteObject> GetToken() const;
 
+    /**
+     * @brief Obtains information about the current ability.
+     * The returned information includes the class name, bundle name, and other information about the current ability.
+     *
+     * @return Returns the AbilityInfo object for the current ability.
+     */
+    std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> GetAbilityInfo() const;
+
+    /**
+     * @brief Set AbilityInfo when init.
+     *
+     */
+    void SetAbilityInfo(const std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> &abilityInfo);
+
     using SelfType = ExtensionContext;
     static const size_t CONTEXT_TYPE_ID;
 
@@ -55,6 +70,7 @@ protected:
 
     sptr<IRemoteObject> token_;
 private:
+    std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> abilityInfo_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
