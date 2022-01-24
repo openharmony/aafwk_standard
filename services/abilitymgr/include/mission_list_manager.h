@@ -180,13 +180,8 @@ public:
      */
     int ClearAllMissions();
 
-    /**
-     * @brief clear all the missions Locked
-     *
-     * @return int error code
-     */
-    bool ClearAllMissionsLocked(std::list<std::shared_ptr<Mission>> missionList,
-        const std::list<std::shared_ptr<Mission>> &foregroundAbilities);
+    void ClearAllMissionsLocked(std::shared_ptr<MissionList> missionListSptr,
+        std::list<std::shared_ptr<Mission>> &foregroundAbilities, bool searchActive);
 
     /**
      * @brief Set the Mission Locked State object
