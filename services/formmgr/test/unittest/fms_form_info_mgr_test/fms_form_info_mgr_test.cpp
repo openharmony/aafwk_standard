@@ -29,7 +29,8 @@ const nlohmann::json JSON_BAD_FORMS = R"({"forms":""})"_json;
 const nlohmann::json JSON_EMPTY_FORMS = R"({"forms":[]})"_json;
 const nlohmann::json JSON_FORMS = R"(
 {
-    "forms": [{
+    "forms": [
+        {
             "name": "Form_001",
             "description": "$string:form_description",
             "src": "./js/pages/card/index",
@@ -46,7 +47,8 @@ const nlohmann::json JSON_FORMS = R"(
             "updateDuration": 1,
             "defaultDimension": "2*2",
             "supportDimensions": ["2*2"],
-            "metadata": [{
+            "metadata": [
+                {
                     "name": "string",
                     "value": "string"
                 }
@@ -72,7 +74,7 @@ std::string JsonToString(const nlohmann::json &json)
 
 HWTEST(ExtensionFormProfileTest, TransformTo_0100, TestSize.Level0)
 {
-    std::vector<ExtensionFormInfo> extensionFormInfos{};
+    std::vector<ExtensionFormInfo> extensionFormInfos {};
     // none profile
     EXPECT_EQ(ERR_APPEXECFWK_PARSE_BAD_PROFILE, ExtensionFormProfile::TransformTo(JSON_NONE, extensionFormInfos));
     EXPECT_EQ(0, extensionFormInfos.size());
@@ -93,7 +95,7 @@ HWTEST(ExtensionFormProfileTest, TransformTo_0100, TestSize.Level0)
 
 HWTEST(ExtensionFormProfileTest, TransformTo_0101, TestSize.Level0)
 {
-    std::vector<ExtensionFormInfo> extensionFormInfos{};
+    std::vector<ExtensionFormInfo> extensionFormInfos {};
     int32_t numForms = 0;
 
     std::vector<std::string> notMustPropKeys = {
@@ -133,7 +135,7 @@ HWTEST(ExtensionFormProfileTest, TransformTo_0101, TestSize.Level0)
 
 HWTEST(ExtensionFormProfileTest, TransformTo_0102, TestSize.Level0)
 {
-    std::vector<ExtensionFormInfo> extensionFormInfos{};
+    std::vector<ExtensionFormInfo> extensionFormInfos {};
     int32_t numForms = 0;
 
     // name
@@ -153,7 +155,7 @@ HWTEST(ExtensionFormProfileTest, TransformTo_0102, TestSize.Level0)
 
 HWTEST(ExtensionFormProfileTest, TransformTo_0103, TestSize.Level0)
 {
-    std::vector<ExtensionFormInfo> extensionFormInfos{};
+    std::vector<ExtensionFormInfo> extensionFormInfos {};
     int32_t numForms = 0;
 
     // dimension

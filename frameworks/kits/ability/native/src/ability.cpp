@@ -2741,7 +2741,7 @@ bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
         return false;
     }
 
-    return formInfos.empty();
+    return !formInfos.empty();
 }
 
 /**
@@ -2771,7 +2771,7 @@ bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &
         return false;
     }
 
-    return formInfos.empty();
+    return !formInfos.empty();
 }
 
 /**
@@ -2802,7 +2802,7 @@ bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleN
         return false;
     }
 
-    return formInfos.empty();
+    return !formInfos.empty();
 }
 
 /**

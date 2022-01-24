@@ -760,7 +760,7 @@ int FormMgrProxy::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInf
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO, data, formInfos);
+    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_APP, data, formInfos);
     if (error != ERR_OK) {
         APP_LOGE("%{public}s, failed to GetAllFormsInfo: %{public}d", __func__, error);
     }
@@ -794,7 +794,7 @@ int FormMgrProxy::GetFormsInfoByModule(std::string &bundleName, std::string &mod
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO, data, formInfos);
+    int error = GetFormsInfo(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_MODULE, data, formInfos);
     if (error != ERR_OK) {
         APP_LOGE("%{public}s, failed to GetAllFormsInfo: %{public}d", __func__, error);
     }

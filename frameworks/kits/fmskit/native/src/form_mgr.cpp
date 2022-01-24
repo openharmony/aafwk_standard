@@ -607,6 +607,5 @@ int FormMgr::GetFormsInfoByModule(std::string &bundleName, std::string &moduleNa
 
     return remoteProxy_->GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

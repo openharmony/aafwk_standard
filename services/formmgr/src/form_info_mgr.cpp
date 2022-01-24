@@ -21,6 +21,8 @@
 #include "bundle_mgr_client.h"
 #include "extension_form_profile.h"
 #include "form_bms_helper.h"
+#include "form_info_storage_mgr.h"
+#include "json_serializer.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -122,10 +124,36 @@ BundleFormInfo::BundleFormInfo(std::string bundleName) : bundleName_(std::move(b
 {
 }
 
+ErrCode BundleFormInfo::InitFromJson(const std::string &formInfosJson)
+{
+    nlohmann::json jsonObject = nlohmann::json::parse(formInfosJson, nullptr, false);
+    if (jsonObject.is_discarded()) {
+        APP_LOGE("bad profile");
+        return ERR_APPEXECFWK_PARSE_BAD_PROFILE;
+    }
+    std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
+    formInfos_ = jsonObject.get<std::vector<FormInfo>>();
+    return ERR_OK;
+}
+
 ErrCode BundleFormInfo::Update()
 {
     std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
     ErrCode errCode = FormInfoHelper::LoadFormConfigInfoByBundleName(bundleName_, formInfos_);
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
+    if (formInfos_.empty()) {
+        return ERR_OK;
+    }
+
+    nlohmann::json jsonObject = formInfos_;
+    if (jsonObject.is_discarded()) {
+        APP_LOGE("bad form infos.");
+        return ERR_APPEXECFWK_PARSE_BAD_PROFILE;
+    }
+    std::string formInfoStr = jsonObject.dump(Constants::DUMP_INDENT);
+    errCode = FormInfoStorageMgr::GetInstance().UpdateBundleFormInfos(bundleName_, formInfoStr);
     return errCode;
 }
 
@@ -133,7 +161,8 @@ ErrCode BundleFormInfo::Remove()
 {
     std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
     formInfos_.clear();
-    return ERR_OK;
+    ErrCode errCode = FormInfoStorageMgr::GetInstance().RemoveBundleFormInfos(bundleName_);
+    return errCode;
 }
 
 bool BundleFormInfo::Empty()
@@ -145,7 +174,7 @@ bool BundleFormInfo::Empty()
 ErrCode BundleFormInfo::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
     std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    for (const auto &formInfo : formInfos_) {
+    for (const auto &formInfo: formInfos_) {
         formInfos.push_back(formInfo);
     }
     return ERR_OK;
@@ -154,7 +183,7 @@ ErrCode BundleFormInfo::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 ErrCode BundleFormInfo::GetFormsInfoByModule(const std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    for (const auto &formInfo : formInfos_) {
+    for (const auto &formInfo: formInfos_) {
         if (formInfo.moduleName == moduleName) {
             formInfos.push_back(formInfo);
         }
@@ -162,9 +191,37 @@ ErrCode BundleFormInfo::GetFormsInfoByModule(const std::string &moduleName, std:
     return ERR_OK;
 }
 
-FormInfoMgr::FormInfoMgr() = default;
+FormInfoMgr::FormInfoMgr()
+{
+    APP_LOGI("FormInfoMgr is created");
+}
 
 FormInfoMgr::~FormInfoMgr() = default;
+
+ErrCode FormInfoMgr::Start()
+{
+    std::vector<std::pair<std::string, std::string>> formInfos;
+    ErrCode errCode = FormInfoStorageMgr::GetInstance().LoadFormInfos(formInfos);
+    if (errCode != ERR_OK) {
+        APP_LOGE("LoadFormData failed.");
+        return errCode;
+    }
+
+    std::unique_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
+    for (const auto &item: formInfos) {
+        const std::string &bundleName = item.first;
+        const std::string &formInfosJson = item.second;
+        auto bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
+        errCode = bundleFormInfoPtr->InitFromJson(formInfosJson);
+        if (errCode != ERR_OK) {
+            continue;
+        }
+        APP_LOGE("load bundle %{public}s form infos success.", bundleName.c_str());
+        bundleFormInfoMap_[bundleName] = bundleFormInfoPtr;
+    }
+    APP_LOGI("load bundle form infos from db done.");
+    return ERR_OK;
+}
 
 ErrCode FormInfoMgr::Update(const std::string &bundleName)
 {

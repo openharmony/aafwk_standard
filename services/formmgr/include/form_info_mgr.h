@@ -40,6 +40,8 @@ class BundleFormInfo {
 public:
     explicit BundleFormInfo(std::string bundleName);
 
+    ErrCode InitFromJson(const std::string &formInfosJson);
+
     ErrCode Update();
 
     ErrCode Remove();
@@ -61,6 +63,8 @@ DECLARE_DELAYED_REF_SINGLETON(FormInfoMgr)
 
 public:
     DISALLOW_COPY_AND_MOVE(FormInfoMgr);
+
+    ErrCode Start();
 
     ErrCode Update(const std::string &bundleName);
 
