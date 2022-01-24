@@ -40,6 +40,15 @@ napi_value ContextConstructor(napi_env env, napi_callback_info info)
 {
     napi_value jsthis = nullptr;
     NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &jsthis, nullptr));
+
+    napi_value value = nullptr;
+    NAPI_CALL(env, napi_get_boolean(env, false, &value));
+
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_PROPERTY("stageMode", value),
+    };
+    NAPI_CALL(env, napi_define_properties(env, jsthis, sizeof(desc) / sizeof(desc[0]), desc));
+
     return jsthis;
 }
 
