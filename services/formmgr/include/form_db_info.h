@@ -25,11 +25,12 @@ namespace OHOS {
 namespace AppExecFwk {
 struct FormDBInfo {
     int64_t formId;
+    int32_t userId;
     std::string formName;
     std::string bundleName;
     std::string moduleName;
     std::string abilityName;
-    std::vector<int32_t> formUserUids;
+    std::vector<int> formUserUids;
 
     /**
      * @brief Constructors
@@ -47,6 +48,7 @@ struct FormDBInfo {
     FormDBInfo(const int64_t formIdTmp, const FormRecord &formRecord)
     {
         formId = formIdTmp;
+        userId = formRecord.userId;
         formName = formRecord.formName;
         bundleName = formRecord.bundleName;
         moduleName = formRecord.moduleName;
@@ -79,6 +81,9 @@ struct FormDBInfo {
     bool Compare(const FormDBInfo &formDBInfo) const
     {
         if (formId != formDBInfo.formId) {
+            return false;
+        }
+        if (userId != formDBInfo.userId) {
             return false;
         }
         if (formName != formDBInfo.formName) {
@@ -117,6 +122,7 @@ public:
     InnerFormInfo(const FormDBInfo &formDBInfo)
     {
         formDBInfo_.formId = formDBInfo.formId;
+        formDBInfo_.userId = formDBInfo.userId;
         formDBInfo_.formName = formDBInfo.formName;
         formDBInfo_.bundleName = formDBInfo.bundleName;
         formDBInfo_.moduleName = formDBInfo.moduleName;
@@ -130,6 +136,7 @@ public:
     InnerFormInfo(const InnerFormInfo &innerFormInfo)
     {
         formDBInfo_.formId = innerFormInfo.formDBInfo_.formId;
+        formDBInfo_.userId = innerFormInfo.formDBInfo_.userId;
         formDBInfo_.formName = innerFormInfo.formDBInfo_.formName;
         formDBInfo_.bundleName = innerFormInfo.formDBInfo_.bundleName;
         formDBInfo_.moduleName = innerFormInfo.formDBInfo_.moduleName;
@@ -143,6 +150,7 @@ public:
     InnerFormInfo(const int64_t formId, const FormRecord &formRecord)
     {
         formDBInfo_.formId = formId;
+        formDBInfo_.userId = formRecord.userId;
         formDBInfo_.formName = formRecord.formName;
         formDBInfo_.bundleName = formRecord.bundleName;
         formDBInfo_.moduleName = formRecord.moduleName;
@@ -153,6 +161,7 @@ public:
     {
         nlohmann::json j;
         j["formId"] = formDBInfo_.formId;
+        j["userId"] = formDBInfo_.userId;
         j["formName"] = formDBInfo_.formName;
         j["bundleName"] = formDBInfo_.bundleName;
         j["moduleName"] = formDBInfo_.moduleName;
@@ -203,6 +212,24 @@ public:
     void SetFormId(const int64_t formId)
     {
         formDBInfo_.formId = formId;
+    }
+
+   /**
+     * @brief Get application user id.
+     * @return Returns the user id.
+     */
+    int64_t GetUserId() const
+    {
+        return formDBInfo_.userId;
+    }
+
+    /**
+     * @brief Set application user id.
+     * @param userId Indicates the user id to be set.
+     */
+    void SetUserId(const int64_t userId)
+    {
+        formDBInfo_.userId = userId;
     }
 
     /**
@@ -281,7 +308,7 @@ public:
      * @brief Get application user uids.
      * @return Returns the user uids.
      */
-    std::vector<int32_t> GetUserUids() const
+    std::vector<int> GetUserUids() const
     {
         return formDBInfo_.formUserUids;
     }
@@ -290,7 +317,7 @@ public:
      * @brief Set application user uids.
      * @param userId Indicates the user uids to be set.
      */
-    void SetUserUids(const std::vector<int32_t> &formUserUids)
+    void SetUserUids(const std::vector<int> &formUserUids)
     {
         formDBInfo_.formUserUids.insert(formDBInfo_.formUserUids.end(), formUserUids.begin(), formUserUids.end());
     }

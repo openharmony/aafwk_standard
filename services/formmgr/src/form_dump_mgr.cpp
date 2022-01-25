@@ -32,6 +32,7 @@ void FormDumpMgr::DumpStorageFormInfos(const std::vector<FormDBInfo> &storageInf
     for (const auto &info : storageInfos) {
         formInfos += "  FormId #" + std::to_string(info.formId);
         formInfos += "    formName [" + info.formName + "]";
+        formInfos += "    userId [" + std::to_string(info.userId) + "]";
         formInfos += "    bundleName [" + info.bundleName + "]";
         formInfos += "    moduleName [" + info.moduleName + "]";
         formInfos += "    abilityName [" + info.abilityName + "]";
@@ -67,6 +68,7 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
         formInfos += "    formTempFlg [" + std::to_string(info.formTempFlg) + "]";
         formInfos += "    formVisibleNotify [" + std::to_string(info.formVisibleNotify) + "]";
         formInfos += "    formVisibleNotifyState [" + std::to_string(info.formVisibleNotifyState) + "]";
+        formInfos += "    userId [" + std::to_string(info.userId) + "]";
 
         if (info.hapSourceDirs.size() > 0) {
             formInfos += "    hapSourceDirs [";
@@ -141,6 +143,7 @@ void FormDumpMgr::DumpFormInfo(const FormRecord &formRecordInfo, std::string &fo
     formInfo += "    versionName [" + formRecordInfo.versionName + "]";
     formInfo += "    compatibleVersion [" + std::to_string(formRecordInfo.compatibleVersion) + "]";
     formInfo += "    icon [" + formRecordInfo.icon + "]";
+    formInfo += "    userId [" + std::to_string(formRecordInfo.userId) + "]";
 
     if (formRecordInfo.hapSourceDirs.size() > 0) {
         formInfo += "    hapSourceDirs [";

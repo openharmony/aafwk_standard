@@ -51,7 +51,7 @@ public:
     std::vector<int> formUserUids;
     bool formVisibleNotify = false;
     int formVisibleNotifyState = 0;
-    int userId = 0;
+    int32_t userId = 0;
     std::string formSrc = "";
     FormWindow formWindow;
     uint32_t versionCode = 0;

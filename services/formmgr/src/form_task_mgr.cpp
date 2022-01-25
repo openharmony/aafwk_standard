@@ -28,7 +28,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int FORM_TASK_DELAY_TIME = 6; // ms
+const int FORM_TASK_DELAY_TIME = 20; // ms
 FormTaskMgr::FormTaskMgr() {}
 FormTaskMgr::~FormTaskMgr() {}
 /**

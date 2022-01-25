@@ -520,7 +520,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_008, TestSize.Level0)
         record1[tempCount].SetFormName(PARAM_FORM_NAME);
         record1[tempCount].SetSpecificationId(PARAM_FORM_DIMENSION_VALUE);
         record1[tempCount].SetTemporaryFlag(false);
-        FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1[tempCount], callingUid);
+        FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1[tempCount], callingUid++);
         // Set database info.
         FormDBInfo formDBInfo(formId+tempCount, retFormRec);
         FormDbCache::GetInstance().SaveFormInfo(formDBInfo);

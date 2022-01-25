@@ -27,6 +27,7 @@
 #include "form_refresh_limiter.h"
 #include "form_timer_option.h"
 #include "form_util.h"
+#include "os_account_manager.h"
 #include "want.h"
 
 namespace OHOS {
@@ -54,7 +55,7 @@ FormTimerMgr::~FormTimerMgr()
  */
 bool FormTimerMgr::AddFormTimer(const FormTimer &task)
 {
-    APP_LOGI("%{public}s, formId: %{public}" PRId64 "", __func__, task.formId);
+    APP_LOGI("%{public}s, formId: %{public}" PRId64 ", userId:%{public}d", __func__, task.formId, task.userId);
     if (task.isUpdateAt) {
         if (task.hour >= Constants::MIN_TIME && task.hour <= Constants::MAX_HOUR && task.min >= Constants::MIN_TIME &&
             task.min <= Constants::MAX_MININUTE) {
@@ -77,23 +78,26 @@ bool FormTimerMgr::AddFormTimer(const FormTimer &task)
  * @brief Add duration form timer.
  * @param formId The Id of the form.
  * @param updateDuration Update duration
+ * @param userId User ID.
  * @return Returns true on success, false on failure.
  */
-bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateDuration)
+bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateDuration, const int32_t userId)
 {
-    FormTimer timerTask(formId, updateDuration);
+    FormTimer timerTask(formId, updateDuration, userId);
     return AddFormTimer(timerTask);
 }
 /**
  * @brief Add scheduled form timer.
  * @param formId The Id of the form.
- * @param updateAtHour Hour
- * @param updateAtMin Min
+ * @param updateAtHour Hour.
+ * @param updateAtMin Min.
+ * @param userId User ID.
  * @return Returns true on success, false on failure.
  */
-bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateAtHour, const long updateAtMin)
+bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateAtHour,
+                                const long updateAtMin, const int32_t userId)
 {
-    FormTimer timerTask(formId, updateAtHour, updateAtMin);
+    FormTimer timerTask(formId, updateAtHour, updateAtMin, userId);
     return AddFormTimer(timerTask);
 }
 /**
@@ -318,9 +322,10 @@ void FormTimerMgr::IncreaseRefreshCount(const int64_t formId)
  * @brief Set next refresh time.
  * @param formId The Id of the form.
  * @param nextGapTime Next gap time(ms).
+ * @param userId User ID.
  * @return Returns true on success, false on failure.
  */
-bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTime)
+bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTime, const int32_t userId)
 {
     if (nextGapTime < Constants::MIN_NEXT_TIME) {
         APP_LOGE("%{public}s failed, nextGapTime is invalid, nextGapTime:%{public}ld", __func__, nextGapTime);
@@ -332,7 +337,7 @@ bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTi
     std::lock_guard<std::mutex> lock(refreshMutex_);
     bool isExist = false;
     for (auto &refreshItem: dynamicRefreshTasks_) {
-        if (refreshItem.formId == formId) {
+        if ((refreshItem.formId == formId) && (refreshItem.userId == userId)) {
             refreshItem.settedTime = refreshTime;
             isExist = true;
             break;
@@ -342,6 +347,7 @@ bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTi
         DynamicRefreshItem theItem;
         theItem.formId = formId;
         theItem.settedTime = refreshTime;
+        theItem.userId = userId;
         dynamicRefreshTasks_.emplace_back(theItem);
     }
     std::sort(dynamicRefreshTasks_.begin(), dynamicRefreshTasks_.end(), CompareDynamicRefreshItem);
@@ -555,7 +561,7 @@ bool FormTimerMgr::OnDynamicTimeTrigger(long updateTime)
         for (itItem = dynamicRefreshTasks_.begin(); itItem != dynamicRefreshTasks_.end();) {
             if (itItem->settedTime <= updateTime || itItem->settedTime <= markedTime) {
                 if (refreshLimiter_.IsEnableRefresh(itItem->formId)) {
-                    FormTimer timerTask(itItem->formId, true);
+                    FormTimer timerTask(itItem->formId, true, itItem->userId);
                     updateList.emplace_back(timerTask);
                 }
                 itItem = dynamicRefreshTasks_.erase(itItem);
@@ -682,6 +688,7 @@ bool FormTimerMgr::GetDynamicItem(const int64_t formId, DynamicRefreshItem &dyna
         if (itItem->formId == formId) {
             dynamicItem.formId = itItem->formId;
             dynamicItem.settedTime = itItem->settedTime;
+            dynamicItem.userId = itItem->userId;
             APP_LOGI("%{public}s, get dynamic item successfully", __func__);
             return true;
         }
@@ -873,7 +880,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
 std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime)
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
-    ElementName element("device", "bundleName", "abilityName");
+    ElementName element("", "", "");
     want->SetElement(element);
     want->SetAction(Constants::ACTION_UPDATEATTIMER);
     want->SetParam(Constants::KEY_ACTION_TYPE, Constants::TYPE_STATIC_UPDATE);
@@ -987,7 +994,7 @@ void FormTimerMgr::ClearLimiterTimerResource()
 std::shared_ptr<WantAgent> FormTimerMgr::GetLimiterWantAgent()
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
-    ElementName element("device", "bundleName", "abilityName");
+    ElementName element("", "", "");
     want->SetElement(element);
     want->SetAction(Constants::ACTION_UPDATEATTIMER);
     want->SetParam(Constants::KEY_ACTION_TYPE, Constants::TYPE_RESET_LIMIT);
@@ -1059,7 +1066,7 @@ bool FormTimerMgr::UpdateDynamicAlarm()
 std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime)
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
-    ElementName element("device", "bundleName", "abilityName");
+    ElementName element("", "", "");
     want->SetElement(element);
     want->SetAction(Constants::ACTION_UPDATEATTIMER);
     want->SetParam(Constants::KEY_ACTION_TYPE, Constants::TYPE_DYNAMIC_UPDATE);
@@ -1190,6 +1197,12 @@ void FormTimerMgr::ExecTimerTask(const FormTimer &timerTask)
         if (timerTask.isCountTimer) {
             want.SetParam(Constants::KEY_IS_TIMER, true);
         }
+        // multi user
+        if (IsActiveUser(timerTask.userId)) {
+            want.SetParam(Constants::PARAM_FORM_USER_ID, timerTask.userId);
+        }
+        APP_LOGI("%{public}s, userId:%{public}d", __func__, timerTask.userId);
+
         auto task = std::bind(&FormProviderMgr::RefreshForm, &FormProviderMgr::GetInstance(), timerTask.formId, want);
         taskExecutor_->AddTask(task);
     }
@@ -1266,6 +1279,18 @@ void FormTimerMgr::TimerReceiver::OnReceiveEvent(const EventFwk::CommonEventData
     } else {
         APP_LOGE("%{public}s failed, invalid action.", __func__);
     }
+}
+/**
+ * @brief check if user is active or not.
+ *
+ * @param userId User ID.
+ * @return true:active, false:inactive
+ */
+bool FormTimerMgr::IsActiveUser(const int32_t userId)
+{
+    bool isOsAccountActived = false;
+    AccountSA::OsAccountManager::IsOsAccountActived(userId, isOsAccountActived);
+    return isOsAccountActived;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

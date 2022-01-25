@@ -122,6 +122,12 @@ public:
      * @return Returns data storage.
      */
     std::shared_ptr<FormStorageMgr> GetDataStorage() const;
+	
+	/**
+     * @brief delete forms bu userId.
+     * @param userId user ID.
+     */
+    void DeleteDBFormsByUserId(const int32_t userId);
 private:
     std::shared_ptr<FormStorageMgr> dataStorage_;
     mutable std::mutex formDBInfosMutex_;
