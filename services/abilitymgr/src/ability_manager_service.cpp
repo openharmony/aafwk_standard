@@ -2183,7 +2183,7 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
             kernalAbilityManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
         }
         if (currentMissionListManager_) {
-            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
         }
     } else {
         if (systemAppManager_) {
@@ -2200,7 +2200,7 @@ void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
     HILOG_DEBUG("Handle inactive timeout.");
     if (useNewMission_) {
         if (currentMissionListManager_) {
-            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
         }
     } else {
         if (currentStackManager_) {
@@ -2217,7 +2217,7 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
             kernalAbilityManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
         }
         if (currentMissionListManager_) {
-            currentMissionListManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
+            currentMissionListManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
         }
     } else {
         if (systemAppManager_) {

@@ -216,6 +216,9 @@ void AbilityRecord::ProcessForegroundAbility()
             // background to activte state
             HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
             DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
+        } else if(IsAbilityState(AbilityState::FOREGROUND_NEW)) {
+            HILOG_DEBUG("already foreground_new, no need lifecycle. %{public}s", element.c_str());
+            return;
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
             ForegroundAbility();
