@@ -57,17 +57,10 @@ std::shared_ptr<ServiceExtensionContext> ServiceExtension::CreateAndInitContext(
 {
     std::shared_ptr<ServiceExtensionContext> context =
         ExtensionBase<ServiceExtensionContext>::CreateAndInitContext(record, application, handler, token);
-    if (record == nullptr) {
-        HILOG_ERROR("ServiceExtension::CreateAndInitContext record is nullptr");
+    if (context == nullptr) {
+        HILOG_ERROR("ServiceExtension::CreateAndInitContext context is nullptr");
         return context;
     }
-
-    auto abilityInfo = record->GetAbilityInfo();
-    context->SetAbilityInfo(abilityInfo);
-    context->InitHapModuleInfo(abilityInfo);
-    auto appContext = Context::GetApplicationContext();
-    context->SetApplicationInfo(appContext->GetApplicationInfo());
-    context->SetResourceManager(appContext->GetResourceManager());
     return context;
 }
 }

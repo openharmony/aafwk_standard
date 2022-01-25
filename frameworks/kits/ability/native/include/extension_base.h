@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "ability_local_record.h"
 #include "extension.h"
 #include "iremote_object.h"
 
@@ -25,7 +26,6 @@ namespace OHOS {
 namespace AppExecFwk {
 class OHOSApplication;
 class AbilityHandler;
-class AbilityLocalRecord;
 }
 namespace AbilityRuntime {
 using namespace OHOS::AppExecFwk;
