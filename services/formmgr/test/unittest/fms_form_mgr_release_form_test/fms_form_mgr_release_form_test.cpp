@@ -50,6 +50,7 @@ const std::string FORM_HOST_BUNDLE_NAME = "com.form.host.app";
 const std::string DEVICE_ID = "ohos-phone1";
 
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
+constexpr int32_t UID_CALLINGUID_TRANSFORM_DIVISOR = 200000;
 
 class FmsFormMgrReleaseFormTest : public testing::Test {
 public:
@@ -112,22 +113,27 @@ HWTEST_F(FmsFormMgrReleaseFormTest, ReleaseForm_001, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_release_test_001 start";
 
     int64_t formId = FormDataMgr::GetInstance().GenerateFormId();
-
+    int callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = callingUid/UID_CALLINGUID_TRANSFORM_DIVISOR;
     FormItemInfo record1;
     record1.SetFormId(formId);
     record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
-    FormDataMgr::GetInstance().AllotFormRecord(record1, 0);
+    FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid, userId);
+    // Set database info.
+    FormDBInfo formDBInfo(formId, retFormRec);
+    FormDbCache::GetInstance().SaveFormInfo(formDBInfo);
+
     int64_t formId2 = FormDataMgr::GetInstance().GenerateFormId();
     FormItemInfo record2;
     record2.SetFormId(formId2);
     record2.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record2.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record2.SetTemporaryFlag(false);
-    FormDataMgr::GetInstance().AllotFormRecord(record2, 1);
+    FormDataMgr::GetInstance().AllotFormRecord(record2, 1, userId);
     FormItemInfo itemInfo;
-    FormDataMgr::GetInstance().AllotFormHostRecord(itemInfo, token_, formId, 0);
+    FormDataMgr::GetInstance().AllotFormHostRecord(itemInfo, token_, formId, callingUid);
 
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().ReleaseForm(formId, token_, true));
 
@@ -168,7 +174,10 @@ HWTEST_F(FmsFormMgrReleaseFormTest, ReleaseForm_002, TestSize.Level0)
     record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
-    FormDataMgr::GetInstance().AllotFormRecord(record1, 0);
+    FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, 0);
+    // Set database info.
+    FormDBInfo formDBInfo(formId1, retFormRec);
+    FormDbCache::GetInstance().SaveFormInfo(formDBInfo);
 
     FormItemInfo record2;
     record2.SetFormId(formId2);
@@ -227,7 +236,7 @@ HWTEST_F(FmsFormMgrReleaseFormTest, ReleaseForm_005, TestSize.Level0)
     record.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record.SetTemporaryFlag(false);
     FormDataMgr::GetInstance().AllotFormRecord(record, 0);
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF, FormMgr::GetInstance().ReleaseForm(formId, token_, true));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_NOT_EXIST_ID, FormMgr::GetInstance().ReleaseForm(formId, token_, true));
     GTEST_LOG_(INFO) << "fms_form_mgr_release_test_005 end";
 }
 }

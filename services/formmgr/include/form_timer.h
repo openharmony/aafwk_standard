@@ -35,6 +35,7 @@ enum UpdateType {
 class FormTimer {
 public:
     int64_t formId;
+    int32_t userId;
     int64_t period;
     int hour;
     int min;
@@ -47,6 +48,7 @@ public:
     FormTimer()
     {
         formId = -1;
+        userId = -1;
         period = -1;
         hour = -1;
         min = -1;
@@ -56,9 +58,10 @@ public:
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
-    FormTimer(int64_t id, bool countTimer)
+    FormTimer(int64_t id, bool countTimer, int32_t uId = 0)
     {
         formId = id;
+        userId = uId;
         period = -1;
         hour = -1;
         min = -1;
@@ -68,9 +71,10 @@ public:
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
-    FormTimer(int64_t id, long repeatTime)
+    FormTimer(int64_t id, long repeatTime, int32_t uId = 0)
     {
         formId = id;
+        userId = uId;
         period = repeatTime;
         hour = -1;
         min = -1;
@@ -80,9 +84,10 @@ public:
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
-    FormTimer(int64_t id, int hourTime, int minTime)
+    FormTimer(int64_t id, int hourTime, int minTime, int32_t uId = 0)
     {
         formId = id;
+        userId = uId;
         hour = hourTime;
         min = minTime;
         period = -1;
@@ -111,13 +116,14 @@ class DynamicRefreshItem {
 public:
     int64_t formId = 0L;
     int64_t settedTime = -1L;
-
+    int32_t userId = -1;
     DynamicRefreshItem(){}
 
-    DynamicRefreshItem(int64_t id, int64_t time)
+    DynamicRefreshItem(int64_t id, int64_t time, int32_t uId = 0)
     {
         formId = id;
         settedTime = time;
+        userId = uId;
     }
     ~DynamicRefreshItem(void){
     }

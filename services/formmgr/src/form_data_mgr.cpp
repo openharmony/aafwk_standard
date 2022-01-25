@@ -39,12 +39,12 @@ FormDataMgr::~FormDataMgr()
 
 /**
  * @brief Allot form info by item info.
- * @param formId The Id of the form.
  * @param formInfo Form item info.
  * @param callingUid The UID of the proxy.
+ * @param userId User ID.
  * @return Returns form record.
  */
-FormRecord FormDataMgr::AllotFormRecord(const FormItemInfo &formInfo, const int callingUid)
+FormRecord FormDataMgr::AllotFormRecord(const FormItemInfo &formInfo, const int callingUid, const int32_t userId)
 {
     APP_LOGI("%{public}s, allot form info", __func__);
     if (formInfo.IsTemporaryForm() && !ExistTempForm(formInfo.GetFormId())) {
@@ -56,13 +56,13 @@ FormRecord FormDataMgr::AllotFormRecord(const FormItemInfo &formInfo, const int 
         std::lock_guard<std::mutex> lock(formRecordMutex_);
         if (formRecords_.empty()) { // formRecords_ is empty, create a new one
             APP_LOGD("%{public}s, form info not exist", __func__);
-            record = CreateFormRecord(formInfo, callingUid);
+            record = CreateFormRecord(formInfo, callingUid, userId);
             formRecords_.emplace(formInfo.GetFormId(), record);
         } else {
             auto info = formRecords_.find(formInfo.GetFormId());
             if (info == formRecords_.end()) {
                 APP_LOGD("%{public}s, form info not find", __func__);
-                record = CreateFormRecord(formInfo, callingUid);
+                record = CreateFormRecord(formInfo, callingUid, userId);
                 formRecords_.emplace(formInfo.GetFormId(), record);
             } else {
                 record = info->second;
@@ -144,13 +144,15 @@ bool FormDataMgr::CreateHostRecord(const FormItemInfo &info, const sptr<IRemoteO
  * @brief Create form record.
  * @param formInfo The form item info.
  * @param callingUid The UID of the proxy.
+ * @param userId User ID.
  * @return Form record.
  */
-FormRecord FormDataMgr::CreateFormRecord(const FormItemInfo &formInfo, const int callingUid) const
+FormRecord FormDataMgr::CreateFormRecord(const FormItemInfo &formInfo, const int callingUid, const int32_t userId) const
 {
     APP_LOGI("%{public}s, create form info", __func__);
     FormRecord newRecord;
     newRecord.formId = formInfo.GetFormId();
+    newRecord.userId = userId;
     newRecord.packageName = formInfo.GetPackageName();
     newRecord.bundleName = formInfo.GetProviderBundleName();
     newRecord.moduleName = formInfo.GetModuleName();
@@ -217,27 +219,29 @@ int FormDataMgr::CheckTempEnoughForm() const
 /**
  * @brief Check form count is max.
  * @param callingUid The UID of the proxy.
+ * @param currentUserId The current userId.
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
-int FormDataMgr::CheckEnoughForm(const int callingUid) const
+int FormDataMgr::CheckEnoughForm(const int callingUid, const int32_t currentUserId) const
 {
-    APP_LOGI("%{public}s, callingUid: %{public}d", __func__, callingUid);
+    APP_LOGI("%{public}s, callingUid: %{public}d, current userId: %{public}d", __func__, callingUid, currentUserId);
 
-    if (formRecords_.size() - tempForms_.size() >= Constants::MAX_FORMS) {
-        APP_LOGW("%{public}s, already exist %{public}d forms in system", __func__, Constants::MAX_FORMS);
-        return ERR_APPEXECFWK_FORM_MAX_SYSTEM_FORMS;
-    }
-
+    int formsInSystem = 0;
     int callingUidFormCounts = 0;
     for (auto &recordPair : formRecords_) {
         FormRecord record = recordPair.second;
-        if (IsCallingUidValid(record.formUserUids) && !record.formTempFlg) {
+        if ((record.userId == currentUserId) && !record.formTempFlg) {
+            if (++formsInSystem >= Constants::MAX_FORMS) {
+                APP_LOGW("%{public}s, already exist %{public}d forms in system", __func__, Constants::MAX_FORMS);
+                return ERR_APPEXECFWK_FORM_MAX_SYSTEM_FORMS;
+            }
             for (auto &userUid : record.formUserUids) {
                 if (userUid == callingUid) {
                     if (++callingUidFormCounts >= Constants::MAX_RECORD_PER_APP) {
                         APP_LOGW("%{public}s, already use %{public}d forms", __func__, Constants::MAX_RECORD_PER_APP);
                         return ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT;
                     }
+                    break;
                 }
             }
         }
@@ -274,7 +278,7 @@ bool FormDataMgr::ExistTempForm(const int64_t formId) const
  * @param formUserUids The form user uids.
  * @return Returns true if this user uid is valid; returns false otherwise.
  */
-bool FormDataMgr::IsCallingUidValid(const std::vector<int32_t> &formUserUids) const
+bool FormDataMgr::IsCallingUidValid(const std::vector<int> &formUserUids) const
 {
     if (formUserUids.size() != 0) {
         for (auto &userUid : formUserUids) {
@@ -308,7 +312,7 @@ bool FormDataMgr::ModifyFormTempFlg(const int64_t formId, const bool formTempFlg
  * @param formRecord The form record.
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
-bool FormDataMgr::AddFormUserUid(const int64_t formId, const int32_t formUserUid)
+bool FormDataMgr::AddFormUserUid(const int64_t formId, const int formUserUid)
 {
     APP_LOGI("%{public}s, add form user uid by formId", __func__);
     std::lock_guard<std::mutex> lock(formRecordMutex_);
@@ -328,7 +332,7 @@ bool FormDataMgr::AddFormUserUid(const int64_t formId, const int32_t formUserUid
  * @param uid calling user id.
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
-bool FormDataMgr::DeleteFormUserUid(const int64_t formId, const int32_t uid)
+bool FormDataMgr::DeleteFormUserUid(const int64_t formId, const int uid)
 {
     APP_LOGI("%{public}s, delete form user uid from form record", __func__);
     std::lock_guard<std::mutex> lock(formRecordMutex_);
@@ -1146,7 +1150,47 @@ bool FormDataMgr::IsFormCached(const FormRecord record)
     }
     return FormCacheMgr::GetInstance().IsExist(record.formId);
 }
+/**
+ * @brief delete forms by userId.
+ *
+ * @param userId user ID.
+ * @param removedFormIds removed userId.
+ */
+void FormDataMgr::DeleteFormsByUserId(const int32_t userId, std::vector<int64_t> &removedFormIds)
+{
+    APP_LOGI("%{public}s,  delete forms by userId", __func__);
 
+    // handle formRecords_
+    std::vector<int64_t> removedTempForms;
+    {
+        std::lock_guard<std::mutex> lock(formRecordMutex_);
+        std::map<int64_t, FormRecord>::iterator itFormRecord;
+        for (itFormRecord = formRecords_.begin(); itFormRecord != formRecords_.end(); itFormRecord++) {
+            if (userId == itFormRecord->second.userId) {
+                if (itFormRecord->second.formTempFlg) {
+                    removedTempForms.emplace_back(itFormRecord->second.formId);
+                }
+                removedFormIds.emplace_back(itFormRecord->second.formId);
+                itFormRecord = formRecords_.erase(itFormRecord);
+            } else {
+                itFormRecord++;
+            }
+        }
+    }
+
+    // handle tempForms_
+    if (removedTempForms.size() > 0) {
+        std::lock_guard<std::mutex> lock(formTempMutex_);
+        std::vector<int64_t>::iterator itTemp;
+        for (itTemp = tempForms_.begin();itTemp != tempForms_.end();) {
+            if (std::find(removedTempForms.begin(), removedTempForms.end(), *itTemp) != removedTempForms.end()) {
+                itTemp = tempForms_.erase(itTemp);
+            } else {
+                itTemp++;
+            }
+        }
+    }
+}
 /**
  * @brief Clear form records for st limit value test.
  */

@@ -57,18 +57,20 @@ public:
     /**
      * @brief Add duration form timer.
      * @param formId The Id of the form.
-     * @param updateDuration Update duration
+     * @param updateDuration Update duration.
+     * @param userId User ID.
      * @return Returns true on success, false on failure.
      */
-    bool AddFormTimer(const int64_t formId, const long updateDuration);
+    bool AddFormTimer(const int64_t formId, const long updateDuration, const int32_t userId = 0);
     /**
      * @brief Add scheduled form timer.
      * @param formId The Id of the form.
      * @param updateAtHour Hour
      * @param updateAtMin Min
+     * @param userId User ID.
      * @return Returns true on success, false on failure.
      */
-    bool AddFormTimer(const int64_t formId, const long updateAtHour, const long updateAtMin);
+    bool AddFormTimer(const int64_t formId, const long updateAtHour, const long updateAtMin, const int32_t userId = 0);
     /**
      * @brief Remove form timer by form id.
      * @param formId The Id of the form.
@@ -98,9 +100,10 @@ public:
      * @brief Set next refresh time.
      * @param formId The Id of the form.
      * @param nextGapTime Next gap time.
+     * @param userId User ID.
      * @return Returns true on success, false on failure.
      */
-    bool SetNextRefreshTime(const int64_t formId, const long nextGapTime);
+    bool SetNextRefreshTime(const int64_t formId, const long nextGapTime, const int32_t userId = 0);
     /**
      * @brief Get refresh count.
      * @param formId The Id of the form.
@@ -314,6 +317,13 @@ private:
      * @return Returns WantAgent.
      */
     std::shared_ptr<WantAgent> GetDynamicWantAgent(long nextTime);
+
+    /**
+     * @brief check if user is active or not.
+     * @param userId User ID.
+     * @return true:active, false:inactive
+     */
+    bool IsActiveUser(const int32_t userId);
 private:
     /**
      * @class TimerReceiver

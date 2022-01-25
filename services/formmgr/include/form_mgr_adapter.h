@@ -395,9 +395,10 @@ private:
      * @brief set next refresht time locked.
      * @param formId The form's id.
      * @param nextTime next refresh time.
+     * @param userId User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int SetNextRefreshtTimeLocked(const int64_t formId, const int64_t nextTime);
+    int SetNextRefreshtTimeLocked(const int64_t formId, const int64_t nextTime, const int32_t userId = 0);
 
     /**
      * @brief set next refresht time locked.
@@ -458,6 +459,12 @@ private:
      */
     bool CreateHandleEventMap(const int64_t matchedFormId, const FormRecord &formRecord,
         std::map<std::string, std::vector<int64_t>> &eventMaps);
+    /**
+     * @brief Get current user ID.
+     * @param callingUid calling Uid.
+     * @return Returns user ID.
+     */
+    int32_t GetCurrentUserId(const int callingUid);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

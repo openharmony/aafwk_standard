@@ -50,6 +50,7 @@ private:
     void ClearTempFormRecordData(const int uid, std::map<int64_t, bool> &removedFormsMap);
     void BatchDeleteNoHostDBForms(const int uid, std::map<FormIdKey, std::set<int64_t>> &noHostFormDbMap,
     std::map<int64_t, bool> &removedFormsMap);
+    void HandleUserIdRemoved(const int32_t userId); // multiuser
     /**
      * @brief Delete no host temp forms.
      * @param uid The caller uid.

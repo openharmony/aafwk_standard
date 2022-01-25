@@ -180,6 +180,7 @@ ErrCode FormDbCache::GetDBRecord(const int64_t formId, FormRecord &record) const
     std::lock_guard<std::mutex> lock(formDBInfosMutex_);
     for (const FormDBInfo &dbInfo : formDBInfos_) {
         if (dbInfo.formId == formId) {
+            record.userId = dbInfo.userId;
             record.formName = dbInfo.formName;
             record.bundleName = dbInfo.bundleName;
             record.moduleName = dbInfo.moduleName;
@@ -277,7 +278,29 @@ int FormDbCache::GetMatchCount(const std::string &bundleName, const std::string 
     }
     return matchCount;
 }
-
+/**
+ * @brief delete forms bu userId.
+ *
+ * @param userId user ID.
+ */
+void FormDbCache::DeleteDBFormsByUserId(const int32_t userId)
+{
+    std::lock_guard<std::mutex> lock(formDBInfosMutex_);
+    std::vector<FormDBInfo>::iterator itRecord;
+    for (itRecord = formDBInfos_.begin(); itRecord != formDBInfos_.end();) {
+        if (userId == itRecord->userId) {
+            int64_t formId = itRecord->formId;
+            if (dataStorage_->DeleteStorageFormInfo(std::to_string(formId)) == ERR_OK) {
+                itRecord = formDBInfos_.erase(itRecord);
+            } else {
+                APP_LOGE("%{public}s, failed to delete form, formId[%{public}" PRId64 "]", __func__, formId);
+                itRecord++;
+            }
+        } else {
+            itRecord++;
+        }
+    }
+}
 std::shared_ptr<FormStorageMgr> FormDbCache::GetDataStorage() const
 {
     return dataStorage_;
