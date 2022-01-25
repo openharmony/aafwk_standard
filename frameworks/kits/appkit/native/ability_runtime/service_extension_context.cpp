@@ -91,19 +91,5 @@ AppExecFwk::AbilityType ServiceExtensionContext::GetAbilityInfoType() const
 
     return info->type;
 }
-
-std::shared_ptr<AppExecFwk::AbilityInfo> ServiceExtensionContext::GetAbilityInfo() const
-{
-    return abilityInfo_;
-}
-
-void ServiceExtensionContext::SetAbilityInfo(const std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> &abilityInfo)
-{
-    if (abilityInfo == nullptr) {
-        HILOG_ERROR("ServiceExtensionContext::SetAbilityInfo Info == nullptr");
-        return;
-    }
-    abilityInfo_ = abilityInfo;
-}
 }  // namespace AbilityRuntime
 }  // namespace OHOS
