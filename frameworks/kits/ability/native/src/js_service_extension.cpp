@@ -247,7 +247,7 @@ NativeValue* JsServiceExtension::CallObjectMethod(const char* name, NativeValue*
 
 void JsServiceExtension::GetSrcPath(std::string &srcPath)
 {
-    if (!Extension::abilityInfo_->isStageBasedModel) {
+    if (!Extension::abilityInfo_->isModuleJson) {
         /* temporary compatibility api8 + config.json */
         srcPath.append(Extension::abilityInfo_->package);
         srcPath.append("/assets/js/");

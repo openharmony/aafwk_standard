@@ -30,7 +30,6 @@ namespace OHOS {
 namespace AppExecFwk {
 const int ContinuationManager::TIMEOUT_MS_WAIT_DMS_NOTIFY_CONTINUATION_COMPLETE = 25000;
 const int ContinuationManager::TIMEOUT_MS_WAIT_REMOTE_NOTIFY_BACK = 6000;
-const int TARGET_VERSION_THRESHOLDS = 8;
 const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 const int32_t CONTINUE_ABILITY_REJECTED = 29360197;
 const int32_t CONTINUE_SAVE_DATA_FAILED = 29360198;
@@ -176,16 +175,16 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
 int32_t ContinuationManager::OnContinue(WantParams &wantParams)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    std::shared_ptr<Ability> ability = nullptr;
-    ability = ability_.lock();
-    if (ability == nullptr) {
-        APP_LOGE("ability is nullptr");
+    auto ability = ability_.lock();
+    auto abilityInfo = abilityInfo_.lock();
+    if (ability == nullptr || abilityInfo == nullptr) {
+        APP_LOGE("ability or abilityInfo is nullptr");
         return ERR_INVALID_VALUE;
     }
 
-    int32_t apiVersion = ability->GetCompatibleVersion();
-    APP_LOGI("ability api version is %{public}d", apiVersion);
-    if (apiVersion < TARGET_VERSION_THRESHOLDS) {
+    bool stageBased = abilityInfo->isStageBasedModel;
+    APP_LOGI("ability isStageBasedModel %{public}d", stageBased);
+    if (!stageBased) {
         return OnStartAndSaveData(wantParams);
     } else {
         return OnContinueAndGetContent(wantParams);

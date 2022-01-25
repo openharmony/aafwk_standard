@@ -2995,6 +2995,7 @@ int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::Extensio
     abilityInfo.applicationInfo = extensionInfo.applicationInfo;
     abilityInfo.resourcePath = extensionInfo.resourcePath;
     abilityInfo.enabled = extensionInfo.enabled;
+    abilityInfo.isModuleJson = true;
     abilityInfo.isStageBasedModel = true;
     abilityInfo.process = extensionInfo.process;
     switch (extensionInfo.type) {
