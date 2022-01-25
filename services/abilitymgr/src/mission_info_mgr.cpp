@@ -181,17 +181,15 @@ bool MissionInfoMgr::DeleteAllMissionInfos(const std::shared_ptr<MissionListener
 
 int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &missionInfos)
 {
-    HILOG_ERROR("mission_list_info GetMissionInfos, numMax:%{public}d", numMax);
+    HILOG_INFO("GetMissionInfos, numMax:%{public}d", numMax);
     if (numMax < 0) {
         return -1;
     }
 
-    HILOG_ERROR("mission_list_info GetMissionInfos, listSize:%{public}zu", missionInfoList_.size());
     for (auto &mission : missionInfoList_) {
         if (static_cast<int>(missionInfos.size()) >= numMax) {
             break;
         }
-        HILOG_ERROR("mission_list_info GetMissionInfos, item, missionId:%{public}d", mission.missionInfo.id);
         MissionInfo info = mission.missionInfo;
         missionInfos.emplace_back(info);
     }
@@ -201,7 +199,7 @@ int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &mi
 
 int MissionInfoMgr::GetMissionInfoById(int32_t missionId, MissionInfo &missionInfo)
 {
-    HILOG_ERROR("mission_list_info GetMissionInfoById, missionId:%{public}d", missionId);
+    HILOG_INFO("GetMissionInfoById, missionId:%{public}d", missionId);
     if (missionIdMap_.find(missionId) == missionIdMap_.end()) {
         HILOG_ERROR("missionId %{public}d not exists, get mission info failed", missionId);
         return -1;
@@ -217,7 +215,7 @@ int MissionInfoMgr::GetMissionInfoById(int32_t missionId, MissionInfo &missionIn
         HILOG_ERROR("no such mission:%{public}d", missionId);
         return -1;
     }
-    HILOG_ERROR("mission_list_info GetMissionInfoById, find missionId missionId:%{public}d", missionId);
+    HILOG_INFO("GetMissionInfoById, find missionId missionId:%{public}d", missionId);
     missionInfo = (*it).missionInfo;
     return 0;
 }
