@@ -23,6 +23,10 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+namespace {
+const int CONTENT_STORAGE_ARG = 2;
+} // namespace
+
 void JsWindowStage::Finalizer(NativeEngine* engine, void* data, void* hint)
 {
     HILOG_INFO("JsWindowStage::Finalizer is called");
@@ -129,8 +133,7 @@ NativeValue* JsWindowStage::OnSetUIContent(NativeEngine& engine, NativeCallbackI
     }
     HILOG_INFO("JsWindowStage::OnSetUIContent Get url: %{public}s", contextUrl.c_str());
 
-    windowScene_->GetMainWindow()->SetUIContent(contextUrl, &engine,
-        static_cast<NativeValue*>(abilityContext->GetContentStorage()));
+    windowScene_->GetMainWindow()->SetUIContent(contextUrl, &engine, info.argv[CONTENT_STORAGE_ARG]);
 
     return engine.CreateUndefined();
 }
