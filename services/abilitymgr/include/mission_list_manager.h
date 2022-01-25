@@ -334,8 +334,6 @@ private:
     void HandleLoadTimeout(const std::shared_ptr<AbilityRecord> &ability);
     void HandleForgroundNewTimeout(const std::shared_ptr<AbilityRecord> &ability);
 
-    void LoadAndForeGroundCommon(const std::shared_ptr<AbilityRecord>& timeOutAbilityRecord);
-    void DelCurListAbilityAddToDefaultList(const std::shared_ptr<AbilityRecord>& abilityRecord);
 private:
     int userId_;
     std::recursive_mutex managerLock_;
