@@ -247,6 +247,7 @@ ohos_shared_library("abilitykit_native") {
 
   external_deps = [
     "ability_runtime:ability_context_native",
+    "ability_runtime:napi_base_context",
     "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_innerkits",
