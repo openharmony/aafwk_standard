@@ -99,6 +99,15 @@
         },
         {
           "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/napi_base_context/include",
+            "header_files": [
+              "napi_base_context.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/napi_base_context:napi_base_context"
+        },
+        {
+          "header": {
             "header_base": "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include",
             "header_files": [
               "appmgr/app_mgr_client.h",
