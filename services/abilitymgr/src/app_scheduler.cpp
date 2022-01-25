@@ -280,5 +280,17 @@ int AppScheduler::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessI
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     return static_cast<int>(appMgrClient_->GetAllRunningProcesses(info));
 }
+
+int AppScheduler::UpdateConfiguration(const AppExecFwk::Configuration &config)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    auto ret = static_cast<int>(appMgrClient_->UpdateConfiguration(config));
+    if (ret != ERR_OK) {
+        HILOG_ERROR("UpdateConfiguration failed.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

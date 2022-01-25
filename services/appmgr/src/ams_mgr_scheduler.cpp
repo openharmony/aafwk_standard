@@ -239,5 +239,16 @@ void AmsMgrScheduler::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpe
     auto task = [=]() { amsMgrServiceInner_->RegisterStartSpecifiedAbilityResponse(response); };
     amsHandler_->PostTask(task);
 }
+
+void AmsMgrScheduler::UpdateConfiguration(const Configuration &config)
+{
+    APP_LOGI("AmsMgrScheduler UpdateConfiguration begin");
+    if (!IsReady()) {
+        return;
+    }
+    auto task = [=]() { amsMgrServiceInner_->UpdateConfiguration(config); };
+    amsHandler_->PostTask(task);
+    APP_LOGI("AmsMgrScheduler UpdateConfiguration end");
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -23,6 +23,7 @@ ohos_shared_library("napi_common") {
 
   sources = [
     "napi_common_ability.cpp",
+    "napi_common_configuration.cpp",
     "napi_common_start_options.cpp",
     "napi_common_util.cpp",
     "napi_common_want.cpp",

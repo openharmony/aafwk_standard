@@ -382,18 +382,18 @@ void MainThread::ScheduleLowMemory()
  * @param data The launchdata of the application witch launced.
  *
  */
-void MainThread::ScheduleLaunchApplication(const AppLaunchData &data)
+void MainThread::ScheduleLaunchApplication(const AppLaunchData &data, const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("MainThread::scheduleLaunchApplication start");
     wptr<MainThread> weak = this;
-    auto task = [weak, data]() {
+    auto task = [weak, data, config]() {
         auto appThread = weak.promote();
         if (appThread == nullptr) {
             APP_LOGE("appThread is nullptr, HandleLaunchApplication failed.");
             return;
         }
-        appThread->HandleLaunchApplication(data);
+        appThread->HandleLaunchApplication(data, config);
     };
     if (!mainHandler_->PostTask(task)) {
         APP_LOGE("MainThread::ScheduleLaunchApplication PostTask task failed");
@@ -771,7 +771,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
  * @param appLaunchData The launchdata of the application witch launced.
  *
  */
-void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData)
+void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("MainThread::handleLaunchApplication called start.");
@@ -853,6 +853,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData)
     contextDeal->SetApplicationContext(application_);
     application_->AttachBaseContext(contextDeal);
     application_->SetAbilityRecordMgr(abilityRecordMgr_);
+    application_->SetConfiguration(config);
 
     // create contextImpl
     std::shared_ptr<AbilityRuntime::ContextImpl> contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();

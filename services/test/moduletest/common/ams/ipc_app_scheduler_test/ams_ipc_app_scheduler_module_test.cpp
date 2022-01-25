@@ -255,10 +255,11 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_008, TestSi
         launchData.SetProfile(profile);
         launchData.SetProcessInfo(processInfo);
 
-        EXPECT_CALL(*mockApplication, ScheduleLaunchApplication(_))
+        Configuration config;
+        EXPECT_CALL(*mockApplication, ScheduleLaunchApplication(_, _))
             .Times(1)
             .WillOnce(Invoke(mockApplication.GetRefPtr(), &MockApplication::LaunchApplication));
-        client->ScheduleLaunchApplication(launchData);
+        client->ScheduleLaunchApplication(launchData, config);
         mockApplication->Wait();
 
         bool isEqual = mockApplication->CompareAppLaunchData(launchData);
@@ -303,14 +304,14 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_010, TestSi
     OHOS::Semaphore sem(0);
     Configuration testConfig;
     std::string val = "ZH-HANS";
-    testConfig.AddItem(OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
+    testConfig.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAppScheduler> mockAppScheduler(new MockAppScheduler());
         sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler);
         bool testResult = false;
 
         auto mockHandler = [&](const Configuration &config) {
-            testResult = (val == config.GetItem(OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE));
+            testResult = (val == config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE));
             sem.Post();
         };
 
