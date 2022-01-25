@@ -19,7 +19,7 @@
 
 #include <string>
 #include "form_provider_data.h"
-#include "form_info.h"
+#include "form_info_base.h"
 #include "parcel.h"
 
 namespace OHOS {

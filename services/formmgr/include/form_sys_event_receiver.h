@@ -43,6 +43,8 @@ private:
     void HandleProviderUpdated(const std::string &bundleName);
     bool ProviderFormUpdated(const int64_t formId, const FormRecord &formRecord,
     const std::vector<FormInfo> &targetForms);
+    void HandleBundleFormInfoChanged(const std::string &bundleName);
+    void HandleBundleFormInfoRemoved(const std::string &bundleName);
     void HandleProviderRemoved(const std::string &bundleName);
     void HandleBundleDataCleared(const std::string &bundleName, const int uid);
     void HandleFormHostDataCleared(const int uid);
