@@ -104,7 +104,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         abilityName = ACE_DATA_ABILITY_NAME;
     } else if (abilityInfo->type == AbilityType::EXTENSION) {
         abilityName = BASE_SERVICE_EXTENSION;
-        if (abilityInfo->formEnabled == true) {
+        if (abilityInfo->formEnabled || abilityInfo->extensionAbilityType == ExtensionAbilityType::FORM) {
             abilityName = FORM_EXTENSION;
         }
         if (abilityInfo->extensionAbilityType == ExtensionAbilityType::STATICSUBSCRIBER) {
