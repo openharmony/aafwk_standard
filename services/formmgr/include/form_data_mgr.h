@@ -23,6 +23,7 @@
 #include <singleton.h>
 #include <string>
 
+#include "form_constants.h"
 #include "form_host_record.h"
 #include "form_id_key.h"
 #include "form_info.h"
@@ -46,9 +47,11 @@ public:
      * @param formId The Id of the form.
      * @param formInfo Form item info.
      * @param callingUid The UID of the proxy.
+     * @param userId User ID.
      * @return Returns form record.
      */
-    FormRecord AllotFormRecord(const FormItemInfo &formInfo, const int callingUid);
+    FormRecord AllotFormRecord(const FormItemInfo &formInfo, const int callingUid,
+    const int32_t userId = Constants::DEFAULT_USER_ID);
     /**
      * @brief Create form js info by form record.
      * @param formId The Id of the form.
@@ -85,10 +88,11 @@ public:
     int CheckTempEnoughForm() const;
     /**
      * @brief Check form count is max.
+     * @param currentUserId The current userId.
      * @param callingUid The UID of the proxy.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    int CheckEnoughForm(const int callingUid) const;
+    int CheckEnoughForm(const int callingUid, const int32_t currentUserId = Constants::DEFAULT_USER_ID) const;
     /**
      * @brief Delete temp form.
      * @param formId The Id of the form.
@@ -114,14 +118,14 @@ public:
      * @param formUserUid The form user uid.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    bool AddFormUserUid(const int64_t formId, const int32_t formUserUid);
+    bool AddFormUserUid(const int64_t formId, const int formUserUid);
     /**
      * @brief Delete form user uid from form record.
      * @param formId The Id of the form.
      * @param uid calling user id.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    bool DeleteFormUserUid(const int64_t formId, const int32_t uid);
+    bool DeleteFormUserUid(const int64_t formId, const int uid);
     /**
      * @brief Update form record.
      * @param formId The Id of the form.
@@ -185,7 +189,7 @@ public:
      * @param formUserUids The form user uids.
      * @return Returns true if this user uid is valid; returns false otherwise.
      */
-    bool IsCallingUidValid(const std::vector<int32_t> &formUserUids) const;
+    bool IsCallingUidValid(const std::vector<int> &formUserUids) const;
     /**
      * @brief Generate udid.
      * @return Returns true if this function is successfully called; returns false otherwise.
@@ -332,6 +336,13 @@ public:
     void UpdateFormProviderInfo(const int64_t formId, const FormProviderInfo &formProviderInfo);
 
     /**
+     * @brief delete forms by userId.
+     *
+     * @param userId user ID.
+     * @param removedFormIds removed userId.
+     */
+    void DeleteFormsByUserId(const int32_t userId, std::vector<int64_t> &removedFormIds);
+    /**
     * @brief Clear form records for st limit value test.
     */
     void ClearFormRecords();
@@ -340,9 +351,11 @@ private:
      * @brief Create form record.
      * @param formInfo The form item info.
      * @param callingUid The UID of the proxy.
+     * @param userId User ID.
      * @return Form record.
      */
-    FormRecord CreateFormRecord(const FormItemInfo &formInfo, const int callingUid) const;
+    FormRecord CreateFormRecord(const FormItemInfo &formInfo, const int callingUid,
+    const int32_t userId = Constants::DEFAULT_USER_ID) const;
     /**
      * @brief Create host record.
      * @param info The form item info.

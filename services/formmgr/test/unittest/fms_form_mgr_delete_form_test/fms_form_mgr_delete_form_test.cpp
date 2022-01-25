@@ -124,8 +124,14 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_delete_form_test_001 start";
 
+    // clear old data
+    FormDataMgr::GetInstance().ClearFormRecords();
+    std::vector<FormDBInfo> oldFormDBInfos;
+    FormDbCache::GetInstance().GetAllFormInfo(oldFormDBInfos);
+    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_HOST_BUNDLE_NAME, oldFormDBInfos);
+
     int64_t formId {12001};
-    int callingUid {0};
+    int callingUid = IPCSkeleton::GetCallingUid();
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
@@ -183,7 +189,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_002, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_delete_form_test_002 start";
 
     int64_t formId {12002};
-    int callingUid {0};
+    int callingUid = IPCSkeleton::GetCallingUid();
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
@@ -251,7 +257,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_006, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_delete_form_test_006 start";
 
     int64_t formId {12006};
-    int callingUid {0};
+    int callingUid = IPCSkeleton::GetCallingUid();
     FormItemInfo record1;
     record1.SetFormId(formId);
     record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
@@ -283,7 +289,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_007, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_delete_form_test_007 start";
 
     int64_t formId {12007};
-    int callingUid {0};
+    int callingUid = IPCSkeleton::GetCallingUid();
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
@@ -338,7 +344,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_008, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_delete_form_test_008 start";
 
     int64_t formId {12008};
-    int callingUid {0};
+    int callingUid = IPCSkeleton::GetCallingUid();
     FormItemInfo record1;
     record1.SetFormId(formId);
     record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);

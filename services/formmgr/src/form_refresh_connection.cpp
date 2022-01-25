@@ -56,6 +56,9 @@ void FormRefreshConnection::OnAbilityConnectDone(
 
     if (want_.HasParameter(Constants::PARAM_MESSAGE_KEY)) {
         std::string message = want_.GetStringParam(Constants::PARAM_MESSAGE_KEY);
+        Want msgWant = Want(want_);
+        msgWant.SetParam(Constants::FORM_CONNECT_ID, this->GetConnectId());
+        FormTaskMgr::GetInstance().PostFormEventTask(formId_, message, msgWant, remoteObject);
     } else if (want_.HasParameter(Constants::RECREATE_FORM_KEY)) {
         Want cloneWant = Want(want_);
         cloneWant.RemoveParam(Constants::RECREATE_FORM_KEY);

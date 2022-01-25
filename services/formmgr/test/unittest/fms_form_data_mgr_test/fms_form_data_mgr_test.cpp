@@ -45,7 +45,7 @@ public:
 
     void SetUp();
     void TearDown();
-    void InitFormItemInfo(int64_t formId, FormItemInfo &form_item_info);
+    void InitFormItemInfo(int64_t formId, FormItemInfo &form_item_info, bool istemp = true);
 
 protected:
     FormDataMgr formDataMgr_;
@@ -72,7 +72,7 @@ void FmsFormDataMgrTest::TearDown(void)
     formDataMgr_.udidHash_ = 0;
 }
 
-void FmsFormDataMgrTest::InitFormItemInfo(int64_t formId, FormItemInfo &form_item_info)
+void FmsFormDataMgrTest::InitFormItemInfo(int64_t formId, FormItemInfo &form_item_info, bool istemp)
 {
     // create hapSourceDirs
     std::vector<std::string> hapSourceDirs;
@@ -81,7 +81,7 @@ void FmsFormDataMgrTest::InitFormItemInfo(int64_t formId, FormItemInfo &form_ite
 
     // create form_item_info
     form_item_info.SetFormId(formId);
-    form_item_info.SetTemporaryFlag(true);
+    form_item_info.SetTemporaryFlag(istemp);
     form_item_info.SetEnableUpdateFlag(true);
     form_item_info.SetUpdateDuration(Constants::MIN_CONFIG_DURATION);
     form_item_info.SetScheduledUpdateTime("10:30");
@@ -494,9 +494,9 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_CheckEnoughForm_001, TestSize.Le
     // create formRecords
     for (int formId_index = 0; formId_index < Constants::MAX_FORMS; formId_index++) {
         FormItemInfo formItemInfo;
-        InitFormItemInfo(formId_index, formItemInfo);
+        InitFormItemInfo(formId_index, formItemInfo, false);
 
-        FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid);
+        FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid++);
         formDataMgr_.formRecords_.emplace(formId_index, record);
     }
 
