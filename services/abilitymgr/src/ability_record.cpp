@@ -1006,6 +1006,11 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
         abilityManagerService->OnAbilityDied(ability);
     };
     handler->PostTask(task);
+    auto uriTask = [want = want_, ability = shared_from_this()]() {
+        ability->SaveResultToCallers(-1, &want);
+        ability->SendResultToCallers();
+    };
+    handler->PostTask(uriTask);
 }
 
 void AbilityRecord::SetConnRemoteObject(const sptr<IRemoteObject> &remoteObject)
