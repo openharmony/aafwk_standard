@@ -133,7 +133,7 @@ int MissionListManager::UnRegisterMissionListener(const sptr<IMissionListener> &
 
 int MissionListManager::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &missionInfos)
 {
-    HILOG_INFO("Get mission infos.---------------------------------------------------------------------------------------->>>>>>>>>>>>>>>>>>>");
+    HILOG_INFO("Get mission infos.");
     if (numMax < 0) {
         HILOG_ERROR("numMax is invalid, numMax:%{public}d", numMax);
         return ERR_INVALID_VALUE;
@@ -1697,7 +1697,7 @@ void MissionListManager::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& h
 void MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
     MissionSnapshot& missionSnapshot)
 {
-    HILOG_INFO("GetMissionSnapshot.---------------------------------------------------------------------------------------->>>>>>>>>>>>>>>>>>>");
+    HILOG_INFO("GetMissionSnapshot.");
     DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionSnapshot(missionId, abilityToken, missionSnapshot);
 }
 
