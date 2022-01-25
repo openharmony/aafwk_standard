@@ -211,6 +211,30 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int DistributedDataDeleteForm(const std::string &formId);
+
+    /**
+      * @brief Get All FormsInfo.
+      * @param formInfos Return the forms' information of all forms provided.
+      * @return Returns ERR_OK on success, others on failure.
+      */
+    int GetAllFormsInfo(std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Get forms info by bundle name .
+     * @param bundleName Application name.
+     * @param formInfos Return the forms' information of the specify application name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Get forms info by bundle name and module name.
+     * @param bundleName bundle name.
+     * @param moduleName Module name of hap.
+     * @param formInfos Return the forms' information of the specify bundle name and module name.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
 private:
     /**
      * @brief Get form configure info.

@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "form_info_base.h"
 #include "form_record.h"
-#include "form_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {

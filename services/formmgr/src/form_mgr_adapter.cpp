@@ -29,6 +29,7 @@
 #include "form_delete_connection.h"
 #include "form_dump_mgr.h"
 #include "form_event_notify_connection.h"
+#include "form_info_mgr.h"
 #include "form_mgr_adapter.h"
 #include "form_provider_info.h"
 #include "form_provider_interface.h"
@@ -92,7 +93,7 @@ int FormMgrAdapter::AddForm(const int64_t formId, const Want &want,
         return checkCode;
     }
 
-    // get from comfig info
+    // get from config info
     FormItemInfo formItemInfo;
     int32_t errCode = GetFormConfigInfo(want, formItemInfo);
     formItemInfo.SetFormId(formId);
@@ -1048,18 +1049,7 @@ ErrCode FormMgrAdapter::GetBundleInfo(const AAFwk::Want &want, BundleInfo &bundl
         return ERR_APPEXECFWK_FORM_NO_SUCH_MODULE;
     }
 
-    for (const auto &abilityInfo : bundleInfo.abilityInfos) {
-        if (abilityInfo.bundleName == bundleName && abilityInfo.moduleName == moduleName
-            && abilityInfo.name == abilityName) {
-            packageName = bundleName + moduleName;
-            break;
-        }
-    }
-
-    if (packageName.empty()) {
-        APP_LOGE("GetBundleInfo can not find target ability %{public}s", abilityName.c_str());
-        return ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY;
-    }
+    packageName = bundleName + moduleName;
     APP_LOGD("GetBundleMgr end.");
     return ERR_OK;
 }
@@ -1080,15 +1070,11 @@ ErrCode FormMgrAdapter::GetFormInfo(const AAFwk::Want &want, FormInfo &formInfo)
         APP_LOGE("addForm bundleName or abilityName or moduleName is invalid");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
-    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
-    if (iBundleMgr == nullptr) {
-        APP_LOGE("GetFormInfo, failed to get IBundleMgr.");
-        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
-    }
 
-    std::vector<FormInfo> formInfos;
-    if (iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfos) == false) {
-        APP_LOGE("GetFormsInfoByModule,  failed to get form config info.");
+    std::vector<FormInfo> formInfos {};
+    ErrCode errCode = FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+    if (errCode != ERR_OK) {
+        APP_LOGE("GetFormsInfoByModule, failed to get form config info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
 
@@ -1693,6 +1679,39 @@ int32_t FormMgrAdapter::GetCurrentUserId(const int callingUid)
     // get current userId
     int32_t userId = callingUid / UID_CALLINGUID_TRANSFORM_DIVISOR;
     return userId;
+}
+/**
+ * @brief Get All FormsInfo.
+ * @param formInfos Return the forms' information of all forms provided.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetAllFormsInfo(formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name .
+ * @param bundleName Application name.
+ * @param formInfos Return the forms' information of the specify application name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetFormsInfoByBundle(bundleName, formInfos);
+}
+
+/**
+ * @brief Get forms info by bundle name and module name.
+ * @param bundleName bundle name.
+ * @param moduleName Module name of hap.
+ * @param formInfos Return the forms' information of the specify bundle name and module name.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+                                         std::vector<FormInfo> &formInfos)
+{
+    return FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
