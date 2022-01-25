@@ -22,6 +22,7 @@
 #include "appexecfwk_errors.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
+#include "context/context.h"
 #include "form_constants.h"
 #include "form_provider_mgr.h"
 #include "form_refresh_limiter.h"
@@ -890,7 +891,8 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime)
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_UPDATE_AT_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo);
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
 }
 
 /**
@@ -1003,7 +1005,8 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetLimiterWantAgent()
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_LIMITER_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo);
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
 }
 
 /**
@@ -1075,7 +1078,8 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime)
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_DYNAMIC_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo);
+    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
 }
 
 /**
