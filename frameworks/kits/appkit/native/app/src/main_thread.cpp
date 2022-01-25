@@ -47,6 +47,11 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+constexpr int32_t DELIVERY_TIME = 200;
+constexpr int32_t DISTRIBUTE_TIME = 100;
+}
+
 #define ACEABILITY_LIBRARY_LOADER
 #ifdef ABILITY_LIBRARY_LOADER
 #endif
@@ -1232,6 +1237,28 @@ void MainThread::HandleConfigurationUpdated(const Configuration &config)
     APP_LOGI("MainThread::HandleConfigurationUpdated called end.");
 }
 
+void MainThread::TaskTimeoutDetected()
+{
+    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    APP_LOGI("MainThread::TaskTimeoutDetected called start.");
+
+    auto deliveryTimeoutCallback = []() {
+        APP_LOGI("MainThread::TaskTimeoutDetected delivery timeout");
+    };
+    auto distributeTimeoutCallback = []() {
+        APP_LOGI("MainThread::TaskTimeoutDetected delivery timeout");
+    };
+
+    if (mainHandler_ != nullptr) {
+        mainHandler_->SetDeliveryTimeout(DELIVERY_TIME);
+        mainHandler_->SetDeliveryTimeoutCallback(deliveryTimeoutCallback);
+
+        mainHandler_->SetDistributeTimeout(DISTRIBUTE_TIME);
+        mainHandler_->SetDistributeTimeoutCallback(distributeTimeoutCallback);
+    }
+    APP_LOGI("MainThread::TaskTimeoutDetected called end.");
+}
+
 void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::shared_ptr<EventRunner> &watchDogRunner)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
@@ -1257,6 +1284,7 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     if (!watchDogHandler_->PostTask(taskWatchDog)) {
         APP_LOGE("MainThread::Init WatchDog postTask task failed");
     }
+    TaskTimeoutDetected();
     /*
     watchDogHandler_->Init(mainHandler_, watchDogHandler_);
     APP_LOGI("MainThread:Init before CreateRunner.");
