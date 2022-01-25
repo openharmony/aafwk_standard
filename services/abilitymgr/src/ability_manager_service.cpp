@@ -2768,8 +2768,7 @@ void AbilityManagerService::StartingSystemUiAbility(const SatrtUiMode &mode)
     // Wait 10 minutes for the installation to complete.
     auto userId = MAIN_USER_ID;
     while ((!(iBundleManager_->QueryAbilityInfo(statusBarWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT,
-            userId, statusBarInfo)) ||
+            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, statusBarInfo)) ||
         !(iBundleManager_->QueryAbilityInfo(navigationBarWant,
             OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, navigationBarInfo))) &&
             waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
