@@ -111,6 +111,14 @@ ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
 
+    // get current userId
+    int32_t currentUserId = want.GetIntParam(Constants::PARAM_FORM_USER_ID, DEFAULT_USER_ID);
+    if (currentUserId != record.userId) {
+        FormDataMgr::GetInstance().SetNeedRefresh(formId, true);
+        APP_LOGE("%{public}s, not current user, just set refresh flag, userId:%{public}d", __func__, record.userId);
+        return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
+    }
+
     bool isTimerRefresh = want.GetBoolParam(Constants::KEY_IS_TIMER, false);
     Want newWant(want);
     newWant.RemoveParam(Constants::KEY_IS_TIMER);

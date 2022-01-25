@@ -109,7 +109,7 @@ ohos_shared_library("libfms") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "os_account_standard:libaccountkits",
-    "os_account_standard:libaccountkits",
+    "os_account_standard:os_account_innerkits",
     "permission_standard:libpermissionsdk_standard",
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",

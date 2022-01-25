@@ -27,6 +27,9 @@
 #include "form_mgr_service.h"
 #include "form_timer_mgr.h"
 #undef private
+#include "if_system_ability_manager.h"
+#include "ipc_skeleton.h"
+#include "iservice_registry.h"
 #include "mock_bundle_manager.h"
 
 using namespace testing::ext;
@@ -38,6 +41,7 @@ const std::string FORM_HOST_BUNDLE_NAME = "com.form.provider.service";
 const std::string FORM_PROVIDER_ABILITY_NAME = "com.form.provider.app.test.abiliy";
 const std::string PERMISSION_NAME_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
+constexpr int32_t UID_CALLINGUID_TRANSFORM_DIVISOR = 200000;
 
 class FmsFormSetNextRefreshTest : public testing::Test {
 public:
@@ -115,7 +119,9 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
     GTEST_LOG_(INFO) << "FmsFormSetNextRefreshTest_SetNextRefreshTime_003 start";
     int64_t formId = 3;
     int64_t nextTime = Constants::MIN_NEXT_TIME;
-
+    int callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = callingUid/UID_CALLINGUID_TRANSFORM_DIVISOR;
+    GTEST_LOG_(INFO) << "callingUid:" << callingUid << " userId:" << userId;
     // check dynamicRefreshTasks_
     EXPECT_EQ(true, FormTimerMgr::GetInstance().dynamicRefreshTasks_.empty());
 
@@ -125,8 +131,8 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
     iteminfo.providerBundleName_ = FORM_HOST_BUNDLE_NAME;
     iteminfo.abilityName_ = FORM_PROVIDER_ABILITY_NAME;
     iteminfo.temporaryFlag_ = true;
-    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, 0);
 
+    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, callingUid, userId);
     EXPECT_EQ(ERR_OK, formSetNextRefresh_->SetNextRefreshTime(formId, nextTime));
 
     // check dynamicRefreshTasks_
@@ -168,18 +174,21 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
     GTEST_LOG_(INFO) << "FmsFormSetNextRefreshTest_SetNextRefreshTime_005 start";
     int64_t formId = 5;
     int64_t nextTime = Constants::MIN_NEXT_TIME;
-
+    int callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = callingUid/UID_CALLINGUID_TRANSFORM_DIVISOR;
     // creat formRecords_
     FormItemInfo iteminfo;
     iteminfo.formId_ = formId;
     iteminfo.providerBundleName_ = FORM_HOST_BUNDLE_NAME;
     iteminfo.abilityName_ = FORM_PROVIDER_ABILITY_NAME;
     iteminfo.temporaryFlag_ = true;
-    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, 0);
+
+    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, callingUid, userId);
 
     // Creat dynamicRefreshTasks_
     DynamicRefreshItem theItem;
     theItem.formId = formId;
+    theItem.userId = userId;
     theItem.settedTime = 1;
     FormTimerMgr::GetInstance().dynamicRefreshTasks_.clear();
     FormTimerMgr::GetInstance().dynamicRefreshTasks_.emplace_back(theItem);
@@ -187,7 +196,8 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
     EXPECT_EQ(1, FormTimerMgr::GetInstance().dynamicRefreshTasks_.at(0).settedTime);
 
     // Create IntervalTimerTasks_
-    FormTimer task(formId, 3 * Constants::MIN_PERIOD);
+    FormTimer task(formId, 3 * Constants::MIN_PERIOD, userId);
+
     task.isEnable = true;
     FormTimerMgr::GetInstance().AddFormTimer(task);
 
@@ -209,6 +219,8 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
 
     int64_t formId = 6;
     int64_t nextTime = Constants::MIN_NEXT_TIME;
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = callingUid/UID_CALLINGUID_TRANSFORM_DIVISOR;
 
     // creat formRecords_
     FormItemInfo iteminfo;
@@ -216,7 +228,7 @@ HWTEST_F(FmsFormSetNextRefreshTest, FmsFormSetNextRefreshTest_SetNextRefreshTime
     iteminfo.providerBundleName_ = FORM_HOST_BUNDLE_NAME;
     iteminfo.abilityName_ = FORM_PROVIDER_ABILITY_NAME;
     iteminfo.temporaryFlag_ = true;
-    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, 0);
+    FormDataMgr::GetInstance().AllotFormRecord(iteminfo, callingUid, userId);
 
     // set timerRefreshedCount
     FormTimerMgr::GetInstance().refreshLimiter_.AddItem(formId);

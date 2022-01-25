@@ -70,7 +70,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0001, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0002, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0002 start";
-    bool isOk = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  2, 50);
+    bool isOk = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  2, 50, 0);
     EXPECT_EQ(isOk, true);
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0002 end";
 }
@@ -85,7 +85,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0003, Function | MediumTest | Lev
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0003 start";
     bool isAddOk1 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_3,  336 * Constants::MIN_PERIOD);
     EXPECT_EQ(isAddOk1, true);
-    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  3, 30);
+    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  3, 30, 0);
     EXPECT_EQ(isAddOk2, true);
     bool isDelOk1 = FormTimerMgr::GetInstance().RemoveFormTimer(PARAM_FORM_ID_VALUE_3);
     EXPECT_EQ(isDelOk1, true);
@@ -121,7 +121,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0004, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0005, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0005 start";
-    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  3, 30);
+    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  3, 30, 0);
     EXPECT_EQ(isAddOk2, true);
 
     // TYPE_ATTIME_CHANGE
@@ -164,7 +164,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0006, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0007, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0007 start";
-    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  10, 30);
+    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  10, 30, 0);
     EXPECT_EQ(isAddOk4, true);
 
     // TYPE_ATTIME_TO_INTERVAL
@@ -184,7 +184,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0007, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0008, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0008 start";
-    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_1,  11, 30);
+    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_1,  11, 30, 0);
     EXPECT_EQ(isAddOk5, true);
     bool isAddOk6 = FormTimerMgr::GetInstance().HandleSystemTimeChanged();
     EXPECT_EQ(isAddOk6, true);
@@ -200,7 +200,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0008, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0009, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0009 start";
-    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  11, 30);
+    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  11, 30, 0);
     EXPECT_EQ(isAddOk5, true);
     bool isAddOk6 = FormTimerMgr::GetInstance().HandleSystemTimeChanged();
     EXPECT_EQ(isAddOk6, true);
@@ -215,7 +215,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0009, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0010, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0010 start";
-    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_3,  16, 30);
+    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_3,  16, 30, 0);
     EXPECT_EQ(isAddOk5, true);
     bool isAddOk6 = FormTimerMgr::GetInstance().HandleResetLimiter();
     EXPECT_EQ(isAddOk6, true);
@@ -231,7 +231,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0010, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0011, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0011 start";
-    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  11, 30);
+    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  11, 30, 0);
     EXPECT_EQ(isAddOk5, true);
 
     bool isAddOk6 = FormTimerMgr::GetInstance().OnUpdateAtTrigger(90L);
@@ -247,7 +247,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0011, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0012, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0012 start";
-    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_5,  11, 30);
+    bool isAddOk5 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_5,  11, 30, 0);
     EXPECT_EQ(isAddOk5, true);
 
     bool isAddOk6 = FormTimerMgr::GetInstance().OnDynamicTimeTrigger(90L);
@@ -277,7 +277,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0013, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0014, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0014 start";
-    bool isOk = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  0, 60);
+    bool isOk = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  0, 60, 0);
     EXPECT_EQ(isOk, false);
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0014 end";
 }
@@ -310,7 +310,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0015, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0016, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0016 start";
-    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  3, 30);
+    bool isAddOk2 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_2,  3, 30, 0);
     EXPECT_EQ(isAddOk2, true);
 
     // TYPE_ATTIME_CHANGE
@@ -353,7 +353,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0017, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0018, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0018 start";
-    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  10, 30);
+    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_4,  10, 30, 0);
     EXPECT_EQ(isAddOk4, true);
 
     // TYPE_ATTIME_TO_INTERVAL
@@ -537,7 +537,7 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0026, Function | MediumTest | Lev
 HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0027, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0027 start";
-    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_6,  10, 30);
+    bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_6,  10, 30, 0);
     EXPECT_EQ(isAddOk4, true);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(Constants::MIN_PERIOD));

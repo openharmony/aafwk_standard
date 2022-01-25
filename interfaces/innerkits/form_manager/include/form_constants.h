@@ -37,7 +37,7 @@ namespace Constants {
     const int32_t ORIENTATION_PORTRAIT = 1;
     const int32_t ORIENTATION_LANDSCAPE = 2;
     const std::string PARAM_FORM_ABILITY_NAME_KEY = "abilityName";
-
+    const std::string PARAM_FORM_USER_ID = "ohos.extra.param.key.form_user_id";
     const std::string KEY_IS_TIMER = "isTimerRefresh";
     const std::string SYSTEM_PARAM_FORM_UPDATE_TIME = "persist.sys.fms.form.update.time";
     const std::string SYSTEM_PARAM_FORM_REFRESH_MIN_TIME = "persist.sys.fms.form.refresh.min.time";
