@@ -171,11 +171,41 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     int32_t HandleDistributedDataDeleteForm(MessageParcel &data, MessageParcel &reply);
+    /**
+     * @brief Handle GetAllFormsInfo message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleGetAllFormsInfo(MessageParcel &data, MessageParcel &reply);
+    /**
+     * @brief Handle GetFormsInfoByApp message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleGetFormsInfoByApp(MessageParcel &data, MessageParcel &reply);
+    /**
+     * @brief Handle GetFormsInfoByModule message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleGetFormsInfoByModule(MessageParcel &data, MessageParcel &reply);
 private:
     using FormMgrFunc = int32_t (FormMgrStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, FormMgrFunc> memberFuncMap_;
 
     DISALLOW_COPY_AND_MOVE(FormMgrStub);
+
+    /**
+     * @brief Write a parcelabe vector objects to the proxy node.
+     * @param parcelableVector Indicates the objects to be write.
+     * @param reply Indicates the reply to be sent;
+     * @return Returns true if objects send successfully; returns false otherwise.
+     */
+    template<typename T>
+    bool WriteParcelableVector(std::vector<T> &parcelableVector, Parcel &reply);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
