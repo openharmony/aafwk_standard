@@ -34,6 +34,7 @@ using AbilityManagerClient = AAFwk::AbilityManagerClient;
 namespace {
     constexpr int32_t ARG_COUNT_TWO = 2;
     constexpr int32_t ARG_COUNT_THREE = 3;
+    constexpr int32_t ERR_NOT_OK = -1;
 }
 class JsMissionManager {
 public:
@@ -123,12 +124,12 @@ private:
 
         auto mainHandler = GetMainHandler();
         missionListener_ = new JsMissionListener(&engine, mainHandler);
-        auto errcode = AbilityManagerClient::GetInstance()->RegisterMissionListener(missionListener_);
-        if (errcode == 0) {
+        auto ret = AbilityManagerClient::GetInstance()->RegisterMissionListener(missionListener_);
+        if (ret == 0) {
             missionListener_->AddJsListenerObject(missionListenerId_, info.argv[0]);
             return engine.CreateNumber(missionListenerId_);
         } else {
-            HILOG_ERROR("RegisterMissionListener failed, ret = %{public}d", errcode);
+            HILOG_ERROR("RegisterMissionListener failed, ret = %{public}d", ret);
             missionListener_ = nullptr;
             return engine.CreateUndefined();
         }
@@ -137,30 +138,35 @@ private:
     NativeValue* OnUnregisterMissionListener(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc < 1) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        uint32_t missionListenerId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionListenerId)) {
+        int32_t missionListenerId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], missionListenerId)) {
             HILOG_ERROR("Parse missionListenerId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [&missionListener = missionListener_, missionListenerId]
+            [&missionListener = missionListener_, missionListenerId, errCode]
             (NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
                 missionListener->RemoveJsListenerObject(missionListenerId);
                 if (!missionListener->IsEmpty()) {
                     task.Resolve(engine, engine.CreateUndefined());
                     return;
                 }
-                auto errcode = AbilityManagerClient::GetInstance()->UnRegisterMissionListener(missionListener);
-                if (errcode == 0) {
+                auto ret = AbilityManagerClient::GetInstance()->UnRegisterMissionListener(missionListener);
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                     missionListener = nullptr;
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Unregister mission listener failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Unregister mission listener failed."));
                 }
             };
 
@@ -174,29 +180,34 @@ private:
     NativeValue* OnGetMissionInfos(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc < 2) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         std::string deviceId;
-        if (!ConvertFromJsValue(engine, info.argv[0], deviceId)) {
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], deviceId)) {
             HILOG_ERROR("Parse deviceId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         int numMax = -1;
-        if (!ConvertFromJsValue(engine, info.argv[1], numMax)) {
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[1], numMax)) {
             HILOG_ERROR("Parse numMax failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [deviceId, numMax](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            [deviceId, numMax, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
                 std::vector<AAFwk::MissionInfo> missionInfos;
-                auto errcode = AbilityManagerClient::GetInstance()->GetMissionInfos(deviceId, numMax, missionInfos);
-                if (errcode == 0) {
+                auto ret = AbilityManagerClient::GetInstance()->GetMissionInfos(deviceId, numMax, missionInfos);
+                if (ret == 0) {
                     task.Resolve(engine, CreateJsMissionInfoArray(engine, missionInfos));
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Get mission infos failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Get mission infos failed."));
                 }
             };
 
@@ -210,29 +221,34 @@ private:
     NativeValue* OnGetMissionInfo(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc < 2) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         std::string deviceId;
-        if (!ConvertFromJsValue(engine, info.argv[0], deviceId)) {
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], deviceId)) {
             HILOG_ERROR("Parse deviceId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        int missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[1], missionId)) {
+        int32_t missionId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[1], missionId)) {
             HILOG_ERROR("Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [deviceId, missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            [deviceId, missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
                 AAFwk::MissionInfo missionInfo;
-                auto errcode = AbilityManagerClient::GetInstance()->GetMissionInfo(deviceId, missionId, missionInfo);
-                if (errcode == 0) {
+                auto ret = AbilityManagerClient::GetInstance()->GetMissionInfo(deviceId, missionId, missionInfo);
+                if (ret == 0) {
                     task.Resolve(engine, CreateJsMissionInfo(engine, missionInfo));
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Get mission info failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Get mission info failed."));
                 }
             };
 
@@ -246,26 +262,31 @@ private:
     NativeValue* OnGetMissionSnapShot(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc != ARG_COUNT_TWO && info.argc != ARG_COUNT_THREE) {
             HILOG_ERROR("missionSnapshot: need two or three params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         std::string deviceId;
-        if (!ConvertFromJsValue(engine, info.argv[0], deviceId)) {
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], deviceId)) {
             HILOG_ERROR("missionSnapshot: Parse deviceId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         int32_t missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[1], missionId)) {
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[1], missionId)) {
             HILOG_ERROR("missionSnapshot: Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
         AsyncTask::CompleteCallback complete =
-            [deviceId, missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            [deviceId, missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
                 AAFwk::MissionSnapshot missionSnapshot;
-                auto errcode = AbilityManagerClient::GetInstance()->GetMissionSnapshot(
+                auto ret = AbilityManagerClient::GetInstance()->GetMissionSnapshot(
                     deviceId, missionId, missionSnapshot);
-                if (errcode == 0) {
+                if (ret == 0) {
                     NativeValue* objValue = engine.CreateObject();
                     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
                     NativeValue* abilityValue = engine.CreateObject();
@@ -280,7 +301,7 @@ private:
                     object->SetProperty("snapshot", snapshotValue);
                     task.Resolve(engine, objValue);
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Get mission snapshot failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Get mission snapshot failed."));
                 }
             };
         NativeValue* lastParam = (info.argc == ARG_COUNT_TWO) ? nullptr : info.argv[2];
@@ -293,23 +314,28 @@ private:
     NativeValue* OnLockMission(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc == 0) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        int missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+        int32_t missionId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], missionId)) {
             HILOG_ERROR("Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
-                auto errcode = AbilityManagerClient::GetInstance()->LockMissionForCleanup(missionId);
-                if (errcode == 0) {
+            [missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
+                auto ret = AbilityManagerClient::GetInstance()->LockMissionForCleanup(missionId);
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Lock mission failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Lock mission failed."));
                 }
             };
 
@@ -323,23 +349,28 @@ private:
     NativeValue* OnUnlockMission(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc == 0) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        int missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+        int32_t missionId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], missionId)) {
             HILOG_ERROR("Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
-                auto errcode = AbilityManagerClient::GetInstance()->UnlockMissionForCleanup(missionId);
-                if (errcode == 0) {
+            [missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
+                auto ret = AbilityManagerClient::GetInstance()->UnlockMissionForCleanup(missionId);
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Unlock mission failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Unlock mission failed."));
                 }
             };
 
@@ -353,23 +384,28 @@ private:
     NativeValue* OnClearMission(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc == 0) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        int missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+        int32_t missionId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], missionId)) {
             HILOG_ERROR("Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
-                auto errcode = AbilityManagerClient::GetInstance()->CleanMission(missionId);
-                if (errcode == 0) {
+            [missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
+                auto ret = AbilityManagerClient::GetInstance()->CleanMission(missionId);
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Clear mission failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Clear mission failed."));
                 }
             };
 
@@ -385,11 +421,11 @@ private:
         HILOG_INFO("%{public}s is called", __FUNCTION__);
         AsyncTask::CompleteCallback complete =
             [](NativeEngine &engine, AsyncTask &task, int32_t status) {
-                auto errcode = AbilityManagerClient::GetInstance()->CleanAllMissions();
-                if (errcode == 0) {
+                auto ret = AbilityManagerClient::GetInstance()->CleanAllMissions();
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Clear all missions failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Clear all missions failed."));
                 }
             };
 
@@ -403,23 +439,28 @@ private:
     NativeValue* OnMoveMissionToFront(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
+        int32_t errCode = 0;
         if (info.argc == 0) {
             HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
-        int missionId = -1;
-        if (!ConvertFromJsValue(engine, info.argv[0], missionId)) {
+        int32_t missionId = -1;
+        if (!errCode && !ConvertFromJsValue(engine, info.argv[0], missionId)) {
             HILOG_ERROR("Parse missionId failed");
-            return engine.CreateUndefined();
+            errCode = ERR_NOT_OK;
         }
 
         AsyncTask::CompleteCallback complete =
-            [missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
-                auto errcode = AbilityManagerClient::GetInstance()->MoveMissionToFront(missionId);
-                if (errcode == 0) {
+            [missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                if (errCode != 0) {
+                    task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
+                    return;
+                }
+                auto ret = AbilityManagerClient::GetInstance()->MoveMissionToFront(missionId);
+                if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
-                    task.Reject(engine, CreateJsError(engine, errcode, "Move mission to front failed."));
+                    task.Reject(engine, CreateJsError(engine, ret, "Move mission to front failed."));
                 }
             };
 
