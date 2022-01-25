@@ -39,6 +39,8 @@
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
 #include "task_handler_client.h"
+#include "faultloggerd_client.h"
+#include "dfx_dump_catcher.h"
 
 #if defined(ABILITY_LIBRARY_LOADER) || defined(APPLICATION_LIBRARY_LOADER)
 #include <dirent.h>
@@ -47,6 +49,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+std::shared_ptr<OHOSApplication> MainThread::applicationForAnr_ = nullptr;
 namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
@@ -799,6 +802,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         APP_LOGE("HandleLaunchApplication::application launch failed");
         return;
     }
+    applicationForAnr_ = application_;
 
     // init resourceManager.
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager(Global::Resource::CreateResourceManager());
@@ -1292,6 +1296,32 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     TaskHandlerClient::GetInstance()->CreateRunner();
     APP_LOGI("MainThread:Init after CreateRunner.");
     APP_LOGI("MainThread:Init end.");
+}
+
+void MainThread::HandleANRProcess(int sigMessage)
+{
+    if (sigMessage == SIGUSR1) {
+        int rFD = -1;
+        if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_CRASH))) < 0) {
+            APP_LOGE("MainThread::HandleANRProcess request file eescriptor failed");
+        }
+        auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
+        std::string mainThreadStackInfo = jsRuntime->BuildNativeAndJsBackStackTrace();
+        if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
+            APP_LOGE("MainThread::HandleANRProcess write main thread stack info failed");
+        }
+        OHOS::HiviewDFX::DfxDumpCatcher dumplog;
+        std::string proStackInfo;
+        if (dumplog.DumpCatch(getpid(), 0, proStackInfo) == false) {
+            APP_LOGE("MainThread::HandleANRProcess get process stack info failed");
+        }
+        if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != proStackInfo.size()) {
+            APP_LOGE("MainThread::HandleANRProcess write process stack info failed");
+        }
+        if (rFD != -1) {
+            close(rFD);
+        }
+    }
 }
 
 void MainThread::Start()

@@ -132,6 +132,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SET_ABILITY_CONTROLLER] = &AbilityManagerStub::SetAbilityControllerInner;
     requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
     requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsRunningInStabilityTestInner;
+    requestFuncMap_[SEND_APP_NOT_RESPONSE_PROCESS_ID] = &AbilityManagerStub::SendANRProcessIDInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1300,6 +1301,17 @@ int AbilityManagerStub::IsRunningInStabilityTestInner(MessageParcel &data, Messa
     HILOG_INFO("AbilityManagerStub: IsRunningInStabilityTest result = %{public}d", result);
     if (!reply.WriteBool(result)) {
         HILOG_ERROR("IsRunningInStabilityTest failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::SendANRProcessIDInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t pid = data.ReadInt32();
+    bool result = SendANRProcessID(pid);
+    if (!reply.WriteBool(result)) {
+        HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

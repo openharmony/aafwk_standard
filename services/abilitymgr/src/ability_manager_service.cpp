@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <csignal>
 
 #include "ability_info.h"
 #include "ability_manager_errors.h"
@@ -2936,6 +2937,21 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
     abilityController_ = abilityController;
     controllerIsAStabilityTest_ = imAStabilityTest;
     return ERR_OK;
+}
+
+bool AbilityManagerService::SendANRProcessID(int pid)
+{
+    int anrTimeOut = amsConfigResolver_->GetANRTimeOutTime();
+    auto timeoutTask = [pid]() {
+        if (kill(pid, SIGKILL) != ERR_OK) {
+            HILOG_ERROR("Kill app not response process failed");
+        }
+    };
+    if (kill(pid, SIGUSR1) != ERR_OK) {
+        HILOG_ERROR("Send sig to app not response process failed");
+    }
+    handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
+    return true;
 }
 
 bool AbilityManagerService::IsRunningInStabilityTest()

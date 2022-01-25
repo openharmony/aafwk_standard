@@ -601,6 +601,12 @@ public:
      */
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) = 0;
 
+    /**
+     * Send not response process ID to ability manager service.
+     * @param pid The not response process ID.
+     */
+    virtual bool SendANRProcessID(int pid) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -802,6 +808,8 @@ public:
 
         GET_PENDING_WANT_SENDER_INFO,
         SET_SHOW_ON_LOCK_SCREEN,
+
+        SEND_APP_NOT_RESPONSE_PROCESS_ID,
 
         // ipc id for starting ability by settings(1018)
         START_ABILITY_FOR_SETTINGS,
