@@ -67,6 +67,9 @@ const std::string Want::MIME_TYPE("mime-type");
 const std::string Want::WANT_HEADER("#Intent;");
 
 const std::string Want::PARAM_RESV_WINDOW_MODE("ohos.aafwk.param.windowMode");
+const std::string Want::PARAM_RESV_CALLER_TOKEN("ohos.aafwk.param.callerToken");
+const std::string Want::PARAM_RESV_CALLER_UID("ohos.aafwk.param.callerUid");
+const std::string Want::PARAM_RESV_CALLER_PID("ohos.aafwk.param.callerPid");
 
 /**
  * @description:Default construcotr of Want class, which is used to initialzie flags and URI.

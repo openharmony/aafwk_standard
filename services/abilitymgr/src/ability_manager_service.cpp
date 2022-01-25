@@ -255,7 +255,7 @@ int AbilityManagerService::StartAbility(
             return result;
         }
     }
-
+    UpdateCallerInfo(abilityRequest.want);
     if (type == AppExecFwk::AbilityType::SERVICE || type == AppExecFwk::AbilityType::EXTENSION) {
         HILOG_INFO("%{public}s Start SERVICE or EXTENSION", __func__);
         return connectManager_->StartAbility(abilityRequest);
@@ -330,7 +330,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
-
     if (useNewMission_) {
         if (IsSystemUiApp(abilityRequest.abilityInfo)) {
             return kernalAbilityManager_->StartAbility(abilityRequest);
@@ -393,7 +392,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
             return systemAppManager_->StartAbility(abilityRequest);
         }
     }
-
     abilityRequest.want.SetParam(StartOptions::STRING_DISPLAY_ID, startOptions.GetDisplayID());
     abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
     if (useNewMission_) {
@@ -3051,6 +3049,16 @@ int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId
     std::vector<AppExecFwk::AbilityInfo> abilityInfos;
     bms->QueryAbilityInfos(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfos);
     return Ace::UIServiceMgrClient::GetInstance()->ShowAppPickerDialog(want, abilityInfos);
+}
+
+void AbilityManagerService::UpdateCallerInfo(Want& want)
+{
+    int32_t tokenId = IPCSkeleton::GetCallingTokenID();
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    int32_t callerPid = IPCSkeleton::GetCallingPid();
+    want.SetParam(Want::PARAM_RESV_CALLER_TOKEN, tokenId);
+    want.SetParam(Want::PARAM_RESV_CALLER_UID, callerUid);
+    want.SetParam(Want::PARAM_RESV_CALLER_PID, callerPid);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
