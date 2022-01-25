@@ -31,7 +31,7 @@ std::shared_ptr<AbilityStage> JsAbilityStage::Create(
     std::string srcPath(hapModuleInfo.name);
 
     /* temporary compatibility api8 + config.json */
-    if (!hapModuleInfo.isStageBasedModel) {
+    if (!hapModuleInfo.isModuleJson) {
         srcPath.append("/assets/js/");
         if (hapModuleInfo.srcPath.empty()) {
             srcPath.append("AbilityStage.abc");

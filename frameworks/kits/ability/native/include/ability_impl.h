@@ -351,6 +351,8 @@ public:
      */
     virtual void NotifyContinuationResult(const int32_t result);
 
+    bool IsStageBasedModel() const;
+
     int GetCompatibleVersion();
 
     void AfterUnFocused();
@@ -428,6 +430,7 @@ protected:
 
     PacMap &GetRestoreData();
 
+    bool isStageBasedModel_ = false;
     int lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     sptr<IRemoteObject> token_;
     std::shared_ptr<Ability> ability_;
