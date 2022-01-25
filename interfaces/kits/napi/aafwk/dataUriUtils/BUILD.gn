@@ -42,9 +42,9 @@ ohos_shared_library("datauriutils") {
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:want",
-    "appexecfwk_standard:libeventhandler",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
