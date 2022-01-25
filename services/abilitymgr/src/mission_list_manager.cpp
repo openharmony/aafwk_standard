@@ -1165,19 +1165,25 @@ void MissionListManager::HandleLoadTimeout(const std::shared_ptr<AbilityRecord> 
     }
 
     // other
+    LoadAndForeGroundCommon(ability);
 }
 
 void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<AbilityRecord> &ability)
 {
+    HILOG_INFO("HandleForgroundNewTimeout step1");
     if (ability == nullptr) {
         HILOG_ERROR("MissionListManager on time out event: ability record is nullptr.");
         return;
     }
-
+    if (ability->IsAbilityState(AbilityState::FOREGROUND_NEW)) {
+        HILOG_ERROR("this ability is already forground new.");
+        return;
+    }
+    HILOG_INFO("HandleForgroundNewTimeout step2");
     if (ability->GetMission()) {
         ability->GetMission()->SetMovingState(false);
     }
-
+    HILOG_INFO("HandleForgroundNewTimeout step3");
     // root launcher load timeout, notify appMs force terminate the ability and restart immediately.
     if (ability->IsLauncherAbility() && ability->IsLauncherRoot()) {
         DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
@@ -1185,8 +1191,84 @@ void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<Ability
         DelayedStartLauncher();
         return;
     }
-
+    HILOG_INFO("HandleForgroundNewTimeout step4");
     // other
+    LoadAndForeGroundCommon(ability);
+}
+
+void MissionListManager::LoadAndForeGroundCommon(const std::shared_ptr<AbilityRecord> &timeOutAbilityRecord) 
+{
+    HILOG_INFO("LoadAndForeGroundCommon step1");
+    if (timeOutAbilityRecord == nullptr) {
+        HILOG_ERROR("LoadAndForeGroundCommon: timeOutAbilityRecord is nullptr.");
+        return;
+    }
+    HILOG_INFO("LoadAndForeGroundCommon step2");
+    std::list<std::shared_ptr<CallerRecord>> callerList = timeOutAbilityRecord->GetCallerRecordList();
+    
+    DelCurListAbilityAddToDefaultList(timeOutAbilityRecord);
+
+    if (timeOutAbilityRecord != nullptr) {
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(timeOutAbilityRecord->GetToken());
+    }
+    
+    if (callerList.size() == 0) {
+        // system service    
+        DelayedStartLauncher();
+        return;
+    }
+    HILOG_INFO("LoadAndForeGroundCommon step3");
+    const std::shared_ptr<CallerRecord> topCaller = callerList.back();
+    if (topCaller == nullptr) {
+        DelayedStartLauncher();
+        return;
+    }
+    HILOG_INFO("LoadAndForeGroundCommon step4");
+    std::shared_ptr<AbilityRecord> callerAbilityRecord = topCaller->GetCaller();
+    
+    // ServiceAbility : BackToLauncher
+    if ((callerAbilityRecord == nullptr) ||
+        (callerAbilityRecord->GetAbilityInfo().type == AppExecFwk::AbilityType::SERVICE) ||
+        (callerAbilityRecord->GetAbilityInfo().type == AppExecFwk::AbilityType::EXTENSION) ||
+        timeOutAbilityRecord->IsLauncherAbility()) {
+        DelayedStartLauncher();
+        return;
+    }
+    HILOG_INFO("LoadAndForeGroundCommon step5");
+    
+    // PageAbility : TopCallerAbility
+    auto isCallerFromLauncher = callerAbilityRecord->IsLauncherAbility();
+    MoveMissionToFront(callerAbilityRecord->GetMissionId(), isCallerFromLauncher);
+}
+void MissionListManager::DelCurListAbilityAddToDefaultList(const std::shared_ptr<AbilityRecord>& abilityRecord)
+{
+    HILOG_INFO("DelCurListAbilityAddToDefaultList step1");
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("DelCurListAbilityAddToDefaultList: ability record is nullptr.");
+        return;
+    }
+    HILOG_INFO("DelCurListAbilityAddToDefaultList step2");
+    std::shared_ptr<MissionList> missionList = abilityRecord->GetOwnedMissionList();
+    if (missionList == nullptr) {
+        HILOG_ERROR("DelCurListAbilityAddToDefaultList: missionList is nullptr.");
+        return;
+    }
+    HILOG_INFO("DelCurListAbilityAddToDefaultList step3");
+    std::shared_ptr<Mission> selMisson = abilityRecord->GetMission();
+    if (selMisson == nullptr) {
+        HILOG_ERROR("DelCurListAbilityAddToDefaultList: selMisson is nullptr.");
+        return;
+    }
+    missionList->RemoveMission(selMisson);
+
+    HILOG_INFO("DelCurListAbilityAddToDefaultList step4");
+    if (abilityRecord->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) {
+        defaultSingleList_->AddMissionToTop(selMisson);
+        HILOG_INFO("DelCurListAbilityAddToDefaultList add defaultSingleList");
+    } else {
+        HILOG_INFO("DelCurListAbilityAddToDefaultList add defaultStandardList");
+        defaultStandardList_->AddMissionToTop(selMisson);
+    }  
 }
 
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByCaller(
