@@ -350,9 +350,7 @@ HWTEST_F(ConfigurationTest, Merge_001, TestSize.Level1)
     int size = changeKeyV.size();
     EXPECT_EQ(size, 1);
 
-    for (const auto &s : changeKeyV) {
-        config.Merge(s, config2);
-    }
+    config.Merge(changeKeyV, config2);
 
     auto item = config.GetItem(displayId2, GlobalConfigurationKey::SYSTEM_LANGUAGE);
     EXPECT_EQ(item, English);
@@ -384,9 +382,7 @@ HWTEST_F(ConfigurationTest, Merge_002, TestSize.Level1)
     int size = changeKeyV.size();
     EXPECT_EQ(size, 1);
 
-    for (const auto &s : changeKeyV) {
-        config.Merge(s, config2);
-    }
+    config.Merge(changeKeyV, config2);
 
     auto item = config.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
     EXPECT_EQ(item, english);

@@ -79,7 +79,7 @@ public:
      *
      * @return
      */
-    virtual void ScheduleLaunchApplication(const AppLaunchData &) = 0;
+    virtual void ScheduleLaunchApplication(const AppLaunchData &, const Configuration &) = 0;
 
     /**
      * ScheduleAbilityStageInfo, call ScheduleAbilityStageInfo() through proxy project,

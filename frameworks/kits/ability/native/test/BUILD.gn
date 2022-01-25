@@ -91,9 +91,11 @@ config("module_ability_context_config") {
 ohos_unittest("ability_test") {
   module_out_path = module_output_path
   sources = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/ability_test.cpp",
   ]
 
@@ -554,6 +556,7 @@ ohos_unittest("ability_thread_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "mock/include/mock_ability_manager_client.cpp",
@@ -645,6 +648,7 @@ ohos_unittest("data_ability_impl_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "unittest/data_ability_impl_test.cpp",
@@ -692,6 +696,7 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "unittest/data_ability_impl_file_secondpart_test.cpp",
@@ -739,6 +744,7 @@ ohos_unittest("data_ability_impl_file_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "unittest/data_ability_impl_file_test.cpp",
@@ -786,6 +792,7 @@ ohos_unittest("ability_thread_dataability_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "mock/include/mock_ability_manager_client.cpp",
@@ -996,9 +1003,11 @@ ohos_unittest("data_ability_result_test") {
 ohos_unittest("form_host_client_test") {
   module_out_path = module_output_path
   sources = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_start_setting.cpp",
     "mock/include/mock_bundle_manager_form.cpp",
     "unittest/form_host_client_test.cpp",
@@ -1042,6 +1051,7 @@ ohos_unittest("continuation_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/continuation_test.cpp",
   ]
 

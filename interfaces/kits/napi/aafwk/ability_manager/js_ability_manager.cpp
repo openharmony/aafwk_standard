@@ -27,6 +27,7 @@
 #include "system_ability_definition.h"
 #include "js_ability_manager_utils.h"
 #include "event_runner.h"
+#include "napi_common_configuration.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -53,6 +54,12 @@ public:
     {
         JsAbilityManager* me = CheckParamsAndGetThis<JsAbilityManager>(engine, info);
         return (me != nullptr) ? me->OnGetExtensionRunningInfos(*engine, *info) : nullptr;
+    }
+
+    static NativeValue* UpdateConfiguration(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsAbilityManager* me = CheckParamsAndGetThis<JsAbilityManager>(engine, info);
+        return (me != nullptr) ? me->OnUpdateConfiguration(*engine, *info) : nullptr;
     }
 
 private:
@@ -107,6 +114,37 @@ private:
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
         return result;
     }
+
+    NativeValue* OnUpdateConfiguration(NativeEngine &engine, NativeCallbackInfo &info)
+    {
+        HILOG_INFO("%{public}s is called", __FUNCTION__);
+        if (info.argc == 0) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        AppExecFwk::Configuration changeConfig;
+        if (!UnwrapConfiguration(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[0]), changeConfig)) {
+            HILOG_INFO("OnStartAbility start options is used.");
+            return engine.CreateUndefined();
+        }
+
+        AsyncTask::CompleteCallback complete = [changeConfig](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            auto errcode = AbilityManagerClient::GetInstance()->UpdateConfiguration(changeConfig);
+            if (errcode == 0) {
+                task.Resolve(engine, engine.CreateUndefined());
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "update config failed."));
+            }
+        };
+
+        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
 };
 } // namespace
 
@@ -131,6 +169,7 @@ NativeValue* JsAbilityManagerInit(NativeEngine* engine, NativeValue* exportObj)
     HILOG_INFO("JsAbilityManagerInit BindNativeFunction called");
     BindNativeFunction(*engine, *object, "getAbilityRunningInfos", JsAbilityManager::GetAbilityRunningInfos);
     BindNativeFunction(*engine, *object, "getExtensionRunningInfos", JsAbilityManager::GetExtensionRunningInfos);
+    BindNativeFunction(*engine, *object, "updateConfiguration", JsAbilityManager::UpdateConfiguration);
     HILOG_INFO("JsAbilityManagerInit end");
     return engine->CreateUndefined();
 }

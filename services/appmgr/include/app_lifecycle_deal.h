@@ -37,7 +37,7 @@ public:
      *
      * @return
      */
-    void LaunchApplication(const AppLaunchData &launchData_);
+    void LaunchApplication(const AppLaunchData &launchData_, const Configuration &config);
 
     /**
      * AddAbilityStageInfo, call ScheduleAbilityStageInfo() through proxy project,
@@ -132,6 +132,13 @@ public:
     sptr<IAppScheduler> GetApplicationClient() const;
 
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName);
+
+    /**
+     * UpdateConfiguration, ANotify application update system environment changes.
+     *
+     * @param config, System environment change parameters.
+     */
+    void UpdateConfiguration(const Configuration &config);
 
 private:
     sptr<IAppScheduler> appThread_ = nullptr;

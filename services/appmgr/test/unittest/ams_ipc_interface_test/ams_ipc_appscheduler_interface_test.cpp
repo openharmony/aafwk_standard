@@ -198,10 +198,11 @@ HWTEST_F(AmsIpcAppSchedulerInterfaceTest, Interface_006, TestSize.Level1)
     launchData.SetProfile(profile);
     launchData.SetProcessInfo(processInfo);
 
-    EXPECT_CALL(*mockApplication, ScheduleLaunchApplication(_))
+    Configuration config;
+    EXPECT_CALL(*mockApplication, ScheduleLaunchApplication(_, _))
         .Times(1)
         .WillOnce(Invoke(mockApplication.GetRefPtr(), &MockApplication::LaunchApplication));
-    client->ScheduleLaunchApplication(launchData);
+    client->ScheduleLaunchApplication(launchData, config);
     mockApplication->Wait();
 
     bool isEqual = mockApplication->CompareAppLaunchData(launchData);

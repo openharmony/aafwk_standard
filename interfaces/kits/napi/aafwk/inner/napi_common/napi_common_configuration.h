@@ -12,19 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OHOS_AAFWK_CONFIGURATION_HOLDER_H
-#define OHOS_AAFWK_CONFIGURATION_HOLDER_H
 
+#ifndef OHOS_APPEXECFWK_NAPI_COMMON_CONFIGURATION_H
+#define OHOS_APPEXECFWK_NAPI_COMMON_CONFIGURATION_H
+
+#include "napi_common_data.h"
 #include "configuration.h"
 
 namespace OHOS {
-namespace AAFwk {
-class ConfigurationHolder {
-public:
-    virtual ~ConfigurationHolder() {};
-    virtual void UpdateConfiguration(const AppExecFwk::Configuration &config) = 0;
-    virtual int GetId() = 0;
-};
-}  // namespace AAFwk
+namespace AppExecFwk {
+EXTERN_C_START
+
+bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config);
+
+EXTERN_C_END
+}  // namespace AppExecFwk
 }  // namespace OHOS
-#endif  // OHOS_AAFWK_CONFIGURATION_HOLDER_H
+#endif  // OHOS_APPEXECFWK_NAPI_COMMON_CONFIGURATION_H

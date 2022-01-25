@@ -676,7 +676,6 @@ public:
     int CheckPermission(const std::string &bundleName, const std::string &permission);
     void UpdateLockScreenState(bool isLockScreen);
 
-    std::shared_ptr<AppExecFwk::Configuration> GetConfiguration();
 
     void OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag);
     void OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Want &want);
@@ -937,7 +936,6 @@ private:
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
     std::shared_ptr<AmsConfigurationParameter> amsConfigResolver_;
-    std::shared_ptr<AppExecFwk::Configuration> configuration_;
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
 
     // new ams here

@@ -252,6 +252,13 @@ public:
      * @param runtime
      */
     const std::unique_ptr<AbilityRuntime::Runtime>& GetRuntime();
+	
+	 /*
+     *
+     * @brief Will be called the application ends
+     *
+     */
+    virtual void SetConfiguration(const Configuration &config);
 
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName, std::string &flag);
 
@@ -262,6 +269,7 @@ private:
     std::shared_ptr<AbilityRuntime::Context> abilityRuntimeContext_ = nullptr;
     std::unordered_map<std::string, std::shared_ptr<AbilityRuntime::AbilityStage>> abilityStages_;
     std::unique_ptr<AbilityRuntime::Runtime> runtime_;
+    std::shared_ptr<Configuration> configuration_ = nullptr;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

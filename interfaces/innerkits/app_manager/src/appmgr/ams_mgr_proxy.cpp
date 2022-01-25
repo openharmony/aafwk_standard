@@ -485,5 +485,31 @@ void AmsMgrProxy::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifi
         APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
     }
 }
+
+void AmsMgrProxy::UpdateConfiguration(const Configuration &config)
+{
+    APP_LOGI("UpdateConfiguration start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_SYNC);
+    if (!WriteInterfaceToken(data)) {
+        return;
+    }
+    if (!data.WriteParcelable(&config)) {
+        APP_LOGE("parcel config failed");
+        return;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        APP_LOGE("Remote() is NULL");
+        return;
+    }
+    int32_t ret =
+        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::UPDATE_CONFIGURATION), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+    }
+    APP_LOGI("UpdateConfiguration end");
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

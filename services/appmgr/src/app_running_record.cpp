@@ -227,7 +227,7 @@ void AppRunningRecord::ForceKillApp([[maybe_unused]] const std::string &reason) 
 void AppRunningRecord::ScheduleAppCrash([[maybe_unused]] const std::string &description) const
 {}
 
-void AppRunningRecord::LaunchApplication()
+void AppRunningRecord::LaunchApplication(const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (appLifeCycleDeal_ == nullptr) {
@@ -249,7 +249,7 @@ void AppRunningRecord::LaunchApplication()
     launchData.SetUId(mainUid_);
 
     APP_LOGI("ScheduleLaunchApplication app:%{public}s", GetName().c_str());
-    appLifeCycleDeal_->LaunchApplication(launchData);
+    appLifeCycleDeal_->LaunchApplication(launchData, config);
 }
 
 void AppRunningRecord::AddAbilityStage()
@@ -281,8 +281,9 @@ void AppRunningRecord::AddAbilityStageBySpecifiedAbility(const std::string &bund
 
 void AppRunningRecord::AddAbilityStageDone()
 {
-    APP_LOGI("Add ability stage done.");
-    eventHandler_->RemoveEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, appRecordId_);
+    APP_LOGI("Add ability stage done. bundle %{public}s and eventId %{public}d", mainBundleName_.c_str(),
+        static_cast<int>(eventId_));
+    eventHandler_->RemoveEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, eventId_);
     // Should proceed to the next notification
 
     if (isSpecifiedAbility_) {
@@ -755,6 +756,7 @@ void AppRunningRecord::SendEvent(uint32_t msg, int64_t timeOut)
 
     appEventId_++;
     eventId_ = appEventId_;
+    APP_LOGI("eventId %{public}d", static_cast<int>(eventId_));
     eventHandler_->SendEvent(msg, appEventId_, timeOut);
 }
 
@@ -889,6 +891,16 @@ void AppRunningRecord::ScheduleAcceptWantDone()
 const AAFwk::Want &AppRunningRecord::GetSpecifiedWant() const
 {
     return SpecifiedWant_;
+}
+
+void AppRunningRecord::UpdateConfiguration(const Configuration &config)
+{
+    APP_LOGI("call %{public}s", __func__);
+    if (!appLifeCycleDeal_) {
+        APP_LOGI("appLifeCycleDeal_ is null");
+        return;
+    }
+    appLifeCycleDeal_->UpdateConfiguration(config);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

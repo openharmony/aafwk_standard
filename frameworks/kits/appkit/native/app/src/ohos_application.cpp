@@ -23,6 +23,7 @@
 #include "iservice_registry.h"
 #include "runtime.h"
 #include "system_ability_definition.h"
+#include "ability_thread.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -370,6 +371,25 @@ void OHOSApplication::UnregisterElementsCallbacks(const std::shared_ptr<Elements
 void OHOSApplication::OnConfigurationUpdated(const Configuration &config)
 {
     APP_LOGI("OHOSApplication::OnConfigurationUpdated: called");
+    if (!abilityRecordMgr_ || !configuration_) {
+        APP_LOGI("abilityRecordMgr_ or configuration_ is null");
+        return;
+    }
+
+    // Update own object configuration_
+    std::vector<std::string> changeKeyV;
+    configuration_->CompareDifferent(changeKeyV, config);
+    configuration_->Merge(changeKeyV, config);
+
+    // Notify all abilities
+    APP_LOGI("Number of ability to be notified : [%{public}d]", static_cast<int>(abilityRecordMgr_->GetRecordCount()));
+    for (const auto &abilityToken : abilityRecordMgr_->GetAllTokens()) {
+        auto abilityRecord = abilityRecordMgr_->GetAbilityItem(abilityToken);
+        if (abilityRecord && abilityRecord->GetAbilityThread()) {
+            abilityRecord->GetAbilityThread()->ScheduleUpdateConfiguration(config);
+        }
+    }
+
     for (auto callback : elementsCallbacks_) {
         if (callback != nullptr) {
             callback->OnConfigurationUpdated(nullptr, config);
@@ -532,6 +552,13 @@ std::shared_ptr<AbilityRuntime::Context> OHOSApplication::GetAppContext() const
 const std::unique_ptr<AbilityRuntime::Runtime>& OHOSApplication::GetRuntime()
 {
     return runtime_;
+}
+
+void OHOSApplication::SetConfiguration(const Configuration &config)
+{
+    if (!configuration_) {
+        configuration_ = std::make_shared<Configuration>(config);
+    }
 }
 
 void OHOSApplication::ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName, std::string &flag)
