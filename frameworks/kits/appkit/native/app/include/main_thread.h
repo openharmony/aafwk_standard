@@ -378,6 +378,13 @@ private:
 
     /**
      *
+     * @brief Task in event handler timeout detected.
+     *
+     */
+    void TaskTimeoutDetected();
+
+    /**
+     *
      * @brief Check whether the OHOSApplication is ready.
      *
      * @return if the OHOSApplication is ready, return true. else return false.
