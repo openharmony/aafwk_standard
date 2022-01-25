@@ -3134,11 +3134,11 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
 {
     if (!currentMissionListManager_) {
         HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
-        return 0;
+        return INNER_ERR;
     }
     currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    return 0;
+    return ERR_OK;
 }
 
 int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
@@ -3151,11 +3151,14 @@ int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, i
     HILOG_INFO("get local mission snapshot.");
     if (!currentMissionListManager_) {
         HILOG_ERROR("snapshot: currentMissionListManager_ is nullptr.");
-        return -1;
+        return INNER_ERR;
     }
     auto token = GetAbilityTokenByMissionId(missionId);
-    currentMissionListManager_->GetMissionSnapshot(missionId, token, missionSnapshot);
-    return 0;
+    bool result = currentMissionListManager_->GetMissionSnapshot(missionId, token, missionSnapshot);
+    if (!result) {
+        return INNER_ERR;
+    }
+    return ERR_OK;
 }
 
 int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
