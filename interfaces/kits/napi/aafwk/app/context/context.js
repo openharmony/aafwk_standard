@@ -115,6 +115,10 @@ class Context {
     get eventHub() {
         return this.__context_impl__.eventHub
     }
+
+    get stageMode() {
+        return true;
+    }
 }
 
 export default Context
