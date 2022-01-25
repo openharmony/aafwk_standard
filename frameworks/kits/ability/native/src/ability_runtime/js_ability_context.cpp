@@ -396,7 +396,7 @@ NativeValue* JsAbilityContext::OnRequestPermissionsFromUser(NativeEngine& engine
         HILOG_ERROR("%{public}s called, params do not meet specification.", __func__);
     }
 
-    NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[ARGC_TWO];
+    NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[ARGC_ONE];
     NativeValue* result = nullptr;
     auto uasyncTask = CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, nullptr, &result);
     std::shared_ptr<AsyncTask> asyncTask = std::move(uasyncTask);
