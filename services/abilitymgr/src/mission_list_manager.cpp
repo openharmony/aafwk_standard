@@ -1163,7 +1163,6 @@ void MissionListManager::HandleLoadTimeout(const std::shared_ptr<AbilityRecord> 
         DelayedStartLauncher();
         return;
     }
-
     // other
     LoadAndForeGroundCommon(ability);
 }
@@ -1196,7 +1195,7 @@ void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<Ability
     LoadAndForeGroundCommon(ability);
 }
 
-void MissionListManager::LoadAndForeGroundCommon(const std::shared_ptr<AbilityRecord> &timeOutAbilityRecord) 
+void MissionListManager::LoadAndForeGroundCommon(const std::shared_ptr<AbilityRecord> &timeOutAbilityRecord)
 {
     HILOG_INFO("LoadAndForeGroundCommon step1");
     if (timeOutAbilityRecord == nullptr) {
@@ -1213,7 +1212,6 @@ void MissionListManager::LoadAndForeGroundCommon(const std::shared_ptr<AbilityRe
     }
     
     if (callerList.size() == 0) {
-        // system service    
         DelayedStartLauncher();
         return;
     }
@@ -1268,7 +1266,7 @@ void MissionListManager::DelCurListAbilityAddToDefaultList(const std::shared_ptr
     } else {
         HILOG_INFO("DelCurListAbilityAddToDefaultList add defaultStandardList");
         defaultStandardList_->AddMissionToTop(selMisson);
-    }  
+    }
 }
 
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByCaller(
