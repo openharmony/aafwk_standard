@@ -20,19 +20,19 @@
 
 #include "hilog_wrapper.h"
 #include "napi_common_util.h"
+#include "napi_base_context.h"
 #include "napi_remote_object.h"
 #include "securec.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 
-napi_value thread_local g_classContext;
 napi_value thread_local g_dataAbilityHelper;
 using NAPICreateJsRemoteObject = napi_value (*)(napi_env env, const sptr<IRemoteObject> target);
 
 napi_value *GetGlobalClassContext(void)
 {
-    return &g_classContext;
+    return AbilityRuntime::GetFAModeContextClassObject();
 }
 
 napi_value *GetGlobalDataAbilityHelper(void)
@@ -1575,7 +1575,7 @@ napi_value GetContextAsync(
             napi_get_undefined(env, &undefined);
             result[PARAM0] = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
-                napi_new_instance(env, g_classContext, 0, nullptr, &result[PARAM1]);
+                napi_new_instance(env, *GetGlobalClassContext(), 0, nullptr, &result[PARAM1]);
             } else {
                 result[PARAM1] = WrapUndefinedToJS(env);
             }
@@ -1623,7 +1623,7 @@ napi_value GetContextPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
             AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             napi_value result = nullptr;
             if (asyncCallbackInfo->errCode == NAPI_ERR_NO_ERROR) {
-                napi_new_instance(env, g_classContext, 0, nullptr, &result);
+                napi_new_instance(env, *GetGlobalClassContext(), 0, nullptr, &result);
                 napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
             } else {
                 result = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
@@ -1666,7 +1666,7 @@ napi_value GetContextWrap(napi_env env, napi_callback_info info, AsyncCallbackIn
     }
 
     napi_value result = nullptr;
-    napi_new_instance(env, g_classContext, 0, nullptr, &result);
+    napi_new_instance(env, *GetGlobalClassContext(), 0, nullptr, &result);
     HILOG_INFO("%{public}s, end.", __func__);
     return result;
 }
