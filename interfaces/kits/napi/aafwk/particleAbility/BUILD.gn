@@ -23,18 +23,19 @@ ohos_shared_library("particleability") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/aafwk/standard/services/common/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
   ]
 
   sources = [
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_operation.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/js_utils.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
     "native_module.cpp",
     "particle_ability.cpp",
   ]
