@@ -66,7 +66,7 @@ public:
 
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &token, int startId));
 
-    int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE );
+    int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE);
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
