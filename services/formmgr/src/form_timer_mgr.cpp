@@ -849,7 +849,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
     std::shared_ptr<WantAgent> wantAgent = GetUpdateAtWantAgent(findedItem.updateAtTime);
-    if (wantAgent) {
+    if (wantAgent == nullptr) {
         APP_LOGE("%{public}s, failed to create wantAgent.", __func__);
         return false;
     }
@@ -891,8 +891,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime)
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_UPDATE_AT_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
-    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
+    return WantAgentHelper::GetWantAgent(wantAgentInfo);
 }
 
 /**
