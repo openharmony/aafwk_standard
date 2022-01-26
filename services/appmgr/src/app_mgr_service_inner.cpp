@@ -1188,7 +1188,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.accessTokenId = (*bundleInfoIter).applicationInfo.accessTokenId;
     startMsg.apl = bundleMgr_->GetAppPrivilegeLevel(bundleName);
     APP_LOGD("StartProcess come, accessTokenId: %{public}d, apl: %{public}s",
-        startMsg.accessTokenId, startMsg.apl);
+        startMsg.accessTokenId, startMsg.apl.c_str());
 
     bundleMgrResult = bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids);
     if (!bundleMgrResult) {
