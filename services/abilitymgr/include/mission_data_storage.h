@@ -58,11 +58,26 @@ public:
      */
     void DeleteMissionInfo(int missionId);
 
+    /**
+     * @brief Save mission snapshot
+     * @param missionId Indicates this mission id.
+     * @param missionSnapshot the mission snapshot to save
+     */
     void SaveMissionSnapshot(int missionId, const MissionSnapshot& missionSnapshot);
 
-    bool GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot);
+    /**
+     * @brief Delete mission snapshot
+     * @param missionId Indicates this mission id.
+     */
+    void DeleteMissionSnapshot(int32_t missionId);
 
-    bool WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data);
+    /**
+     * @brief Get the Mission Snapshot object
+     * @param missionId
+     * @param missionSnapshot
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    bool GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot);
 
 private:
     std::string GetMissionDataDirPath();
@@ -72,6 +87,8 @@ private:
     std::string GetMissionSnapshotPath(int missionId);
 
     bool CheckFileNameValid(const std::string &fileName);
+
+    bool WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data);
 
 private:
     int userId_ = 0;

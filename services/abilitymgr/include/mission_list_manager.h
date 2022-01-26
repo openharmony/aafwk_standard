@@ -279,8 +279,9 @@ public:
      * @param missionId mission id
      * @param abilityToken abilityToken to get current mission snapshot
      * @param missionSnapshot result of snapshot
+     * @return Returns true on success, false on failure.
      */
-    void GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
+    bool GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
         MissionSnapshot& missionSnapshot);
     void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 private:
