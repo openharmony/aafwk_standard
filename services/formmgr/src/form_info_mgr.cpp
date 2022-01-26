@@ -22,6 +22,7 @@
 #include "extension_form_profile.h"
 #include "form_bms_helper.h"
 #include "form_info_storage_mgr.h"
+#include "form_util.h"
 #include "json_serializer.h"
 
 namespace OHOS {
@@ -37,14 +38,15 @@ ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundle
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    std::shared_ptr<BundleMgrClient> client = DelayedSingleton<BundleMgrClient>::GetInstance();
-    if (client == nullptr) {
-        APP_LOGE("failed to get BundleMgrClient.");
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        APP_LOGE("GetBundleMgr, failed to get IBundleMgr.");
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
 
     BundleInfo bundleInfo;
-    if (!client->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo)) {
+    if (!iBundleMgr->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO,
+        bundleInfo, FormUtil::GetCurrentAccountId())) {
         APP_LOGE("failed to get bundle info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
@@ -312,7 +314,7 @@ ErrCode FormInfoMgr::GetFormsInfoByModule(const std::string &bundleName, const s
     std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
     auto bundleFormInfoIter = bundleFormInfoMap_.find(bundleName);
     if (bundleFormInfoIter == bundleFormInfoMap_.end()) {
-        APP_LOGE("no forms found.");
+        APP_LOGE("no forms found for %{public}s.", bundleName.c_str());
         return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
     }
 
