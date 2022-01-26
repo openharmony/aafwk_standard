@@ -57,6 +57,8 @@ bool MissionInfoMgr::Init(int userId)
         return false;
     }
 
+    missionInfoList_.clear();
+    missionIdMap_.clear();
     if (!LoadAllMissionInfo()) {
         return false;
     }
@@ -179,6 +181,7 @@ bool MissionInfoMgr::DeleteAllMissionInfos(const std::shared_ptr<MissionListener
 
 int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &missionInfos)
 {
+    HILOG_INFO("GetMissionInfos, numMax:%{public}d", numMax);
     if (numMax < 0) {
         return -1;
     }
@@ -196,6 +199,7 @@ int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &mi
 
 int MissionInfoMgr::GetMissionInfoById(int32_t missionId, MissionInfo &missionInfo)
 {
+    HILOG_INFO("GetMissionInfoById, missionId:%{public}d", missionId);
     if (missionIdMap_.find(missionId) == missionIdMap_.end()) {
         HILOG_ERROR("missionId %{public}d not exists, get mission info failed", missionId);
         return -1;
@@ -211,6 +215,7 @@ int MissionInfoMgr::GetMissionInfoById(int32_t missionId, MissionInfo &missionIn
         HILOG_ERROR("no such mission:%{public}d", missionId);
         return -1;
     }
+    HILOG_INFO("GetMissionInfoById, find missionId missionId:%{public}d", missionId);
     missionInfo = (*it).missionInfo;
     return 0;
 }
@@ -340,6 +345,7 @@ void MissionInfoMgr::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handl
 bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
     MissionSnapshot& missionSnapshot) const
 {
+    HILOG_ERROR("snapshot: UpdateMissionSnapshot, missionId:%{public}d", missionId);
     auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
         return missionId == info.missionInfo.id;
     });
@@ -374,6 +380,7 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
 bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
     MissionSnapshot& missionSnapshot) const
 {
+    HILOG_ERROR("mission_list_info GetMissionSnapshot, missionId:%{public}d", missionId);
     auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
         return missionId == info.missionInfo.id;
     });
@@ -387,6 +394,7 @@ bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObj
     }
     if (taskDataPersistenceMgr_->GetMissionSnapshot(missionId, missionSnapshot)) {
         missionSnapshot.topAbility = it->missionInfo.want.GetElement();
+        HILOG_ERROR("mission_list_info GetMissionSnapshot, find snapshot OK, missionId:%{public}d", missionId);
         return true;
     }
     HILOG_INFO("snapshot: storage mission snapshot not exists, create new snapshot");

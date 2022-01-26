@@ -907,6 +907,7 @@ private:
     int32_t GetAbilityInfoFromExtension(const Want &want, AppExecFwk::AbilityInfo& abilityInfo);
     int32_t InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
         AppExecFwk::AbilityInfo &abilityInfo);
+    int32_t ShowPickerDialog(const Want& want, int32_t userId);
 
     // multi user
     void StartFreezingScreen();
@@ -914,7 +915,25 @@ private:
     void UserStarted(int32_t userId);
     void SwitchToUser(int32_t userId);
     void StartLauncherAbility(int32_t userId);
-    int32_t ShowPickerDialog(const Want& want, int32_t userId);
+    void SwitchToUser(int32_t oldUserId, int32_t userId);
+    void SwitchManagers(int32_t userId);
+    void StartUserApps(int32_t userId);
+    void StartSystemAbilityByUser(int32_t userId);
+    void PauseOldUser(int32_t userId);
+    void PauseOldStackManager(int32_t userId);
+    void PauseOldMissionListManager(int32_t userId);
+    bool IsSystemUI(const std::string &bundleName) const;
+
+    bool VerificationAllToken(const sptr<IRemoteObject> &token);
+    bool CheckDataAbilityRequest(AbilityRequest &abilityRequest);
+    std::shared_ptr<AbilityStackManager> GetStackManagerByUserId(int32_t userId);
+    std::shared_ptr<MissionListManager> GetListManagerByUserId(int32_t userId);
+    std::shared_ptr<AbilityConnectManager> GetConnectManagerByUserId(int32_t userId);
+    std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByUserId(int32_t userId);
+    std::shared_ptr<AbilityStackManager> GetStackManagerByToken(const sptr<IRemoteObject> &token);
+    std::shared_ptr<MissionListManager> GetListManagerByToken(const sptr<IRemoteObject> &token);
+    std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
+    std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
@@ -933,6 +952,7 @@ private:
     std::shared_ptr<AppScheduler> appScheduler_;
     std::unordered_map<int, std::shared_ptr<DataAbilityManager>> dataAbilityManagers_;
     std::shared_ptr<DataAbilityManager> dataAbilityManager_;
+    std::shared_ptr<DataAbilityManager> systemDataAbilityManager_;
     std::unordered_map<int, std::shared_ptr<PendingWantManager>> pendingWantManagers_;
     std::shared_ptr<PendingWantManager> pendingWantManager_;
     std::shared_ptr<KernalSystemAppManager> systemAppManager_;
