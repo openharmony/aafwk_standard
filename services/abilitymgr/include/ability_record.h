@@ -733,6 +733,8 @@ public:
 
     void SetUid(int32_t uid);
     int32_t GetUid();
+    void SetSwitchingPause(bool state);
+    bool IsSwitchingPause();
 
     /**
      * get the type of ability.
@@ -813,6 +815,7 @@ public:
     std::weak_ptr<MissionList> missionList_;
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
+    bool isSwitchingPause_ = false;
     int32_t restartCount_ = -1;
     int32_t restratMax_ = -1;
     std::string specifiedFlag_;

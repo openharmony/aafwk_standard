@@ -58,6 +58,13 @@ const std::string REQ_PERMISSION = "ohos.permission.LOCATION_IN_BACKGROUND";
 constexpr int32_t SYSTEM_UID = 1000;
 constexpr int32_t USER_SCALE = 200000;
 #define ENUM_TO_STRING(s) #s
+
+constexpr int32_t BASE_USER_RANGE = 200000;
+
+int32_t GetUserIdByUid(int32_t uid)
+{
+    return uid / BASE_USER_RANGE;
+}
 }  // namespace
 
 using OHOS::AppExecFwk::Constants::PERMISSION_GRANTED;
@@ -169,7 +176,9 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         return false;
     }
 
-    bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
+    auto userId = GetUserIdByUid(abilityInfo.applicationInfo.uid);
+    bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName,
+        BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId);
     if (!bundleMgrResult) {
         APP_LOGE("GetBundleInfo is fail");
         return false;
@@ -1178,10 +1187,12 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
         return;
     }
 
+    auto userId = GetUserIdByUid(uid);
     AppSpawnStartMsg startMsg;
     BundleInfo bundleInfo;
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
-    bool bundleMgrResult = bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfos);
+    bool bundleMgrResult = bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
+        bundleInfos, userId);
     if (!bundleMgrResult) {
         APP_LOGE("GetBundleInfo is fail");
         return;

@@ -26,22 +26,6 @@ namespace AAFwk {
 using namespace OHOS::AppExecFwk;
 namespace {
 const int64_t USER_SWITCH_TIMEOUT = 3 * 1000; // 3s
-
-class Holder {
-public:
-    Holder()
-    {
-        identity_ = IPCSkeleton::ResetCallingIdentity();
-    }
-
-    ~Holder()
-    {
-        IPCSkeleton::SetCallingIdentity(identity_);
-    }
-
-private:
-    std::string identity_;
-};
 }
 
 UserItem::UserItem(int32_t id) : userId_(id)
@@ -256,12 +240,11 @@ void UserController::SetCurrentUserId(int32_t userId)
 
 void UserController::MoveUserToForeground(int32_t oldUserId, int32_t newUserId)
 {
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (!ams) {
+    auto manager = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (!manager) {
         return;
     }
-    ams->SwitchToUser(newUserId);
-    ams->StartLauncherAbility(newUserId);
+    manager->SwitchToUser(oldUserId, newUserId);
     BroacastUserBackground(oldUserId);
     BroacastUserForeground(newUserId);
 }
@@ -283,11 +266,11 @@ void UserController::UserBootDone(std::shared_ptr<UserItem> &item)
         return;
     }
     item->SetState(UserState::STATE_STARTED);
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (!ams) {
+    auto manager = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (!manager) {
         return;
     }
-    ams->UserStarted(userId);
+    manager->UserStarted(userId);
 }
 
 void UserController::BroacastUserStarted(int32_t userId)
@@ -479,9 +462,9 @@ void UserController::HandleUserSwitchTimeout(int32_t oldUserId, int32_t newUserI
 void UserController::HandleContinueUserSwitch(int32_t oldUserId, int32_t newUserId,
     std::shared_ptr<UserItem> &usrItem)
 {
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    if (ams) {
-        ams->StopFreezingScreen();
+    auto manager = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (manager) {
+        manager->StopFreezingScreen();
     }
     SendUserSwitchDone(newUserId);
 }

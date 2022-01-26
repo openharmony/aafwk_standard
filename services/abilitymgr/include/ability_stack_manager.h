@@ -437,6 +437,10 @@ public:
 
     int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
     void UpdateLockScreenState(bool isLockScreen);
+
+    bool IsStarted();
+    void PauseManager();
+    void ResumeManager();
 private:
     /**
      * dispatch ability life cycle .
