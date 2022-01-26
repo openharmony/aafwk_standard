@@ -905,7 +905,9 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
     std::lock_guard<std::mutex> lock(formHostRecordMutex_);
     std::vector<FormHostRecord>::iterator itHostRecord;
     for (itHostRecord = clientRecords_.begin(); itHostRecord != clientRecords_.end(); itHostRecord++) {
-        if (itHostRecord->IsEnableRefresh(formId)) {
+        bool enableRefresh = itHostRecord->IsEnableRefresh(formId);
+        APP_LOGI("formId:%{public}" PRId64 " enableRefresh:%{public}d", formId, enableRefresh);
+        if (enableRefresh) {
             // update form
             itHostRecord->OnUpdate(formId, formRecord);
             // set needRefresh
