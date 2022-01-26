@@ -31,6 +31,8 @@ struct AppSpawnStartMsg {
     std::vector<int32_t> gids;
     std::string procName;
     std::string soPath;
+    uint32_t accessTokenId;
+    std::string apl;
 };
 
 using AppSpawnMsg = AppSpawn::ClientSocket::AppProperty;
