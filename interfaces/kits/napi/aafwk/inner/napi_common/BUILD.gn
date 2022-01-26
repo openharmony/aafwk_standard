@@ -41,6 +41,7 @@ ohos_shared_library("napi_common") {
   external_deps = [
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
+    "ability_runtime:napi_base_context",
     "ability_runtime:want",
     "appexecfwk_standard:libeventhandler",
     "bundle_framework:appexecfwk_base",
