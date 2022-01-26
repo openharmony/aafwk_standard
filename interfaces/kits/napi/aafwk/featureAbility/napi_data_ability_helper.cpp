@@ -87,6 +87,7 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
     size_t argc = 1;
     napi_value argv[1] = {nullptr};
     napi_value thisVar = nullptr;
+    auto& dataAbilityHelperStatus = GetDataAbilityHelperStatus();
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
     NAPI_ASSERT(env, argc > 0, "Wrong number of arguments");
     std::string strUri = NapiValueToStringUtf8(env, argv[0]);
@@ -106,6 +107,7 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
         DataAbilityHelper::Creator(ability->GetContext(), std::make_shared<Uri>(strUri));
     if (dataAbilityHelper == nullptr) {
         HILOG_INFO("%{public}s, dataAbilityHelper is nullptr", __func__);
+        dataAbilityHelperStatus = false;
         return nullptr;
     }
     HILOG_INFO("dataAbilityHelper = %{public}p", dataAbilityHelper.get());
@@ -139,6 +141,7 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
         nullptr,
         nullptr);
 
+    dataAbilityHelperStatus = true;
     HILOG_INFO("%{public}s,called end", __func__);
     return thisVar;
 }

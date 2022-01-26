@@ -47,6 +47,8 @@ AmsMgrStub::AmsMgrStub()
         &AmsMgrStub::HandleKillProcessByAbilityToken;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_PROCESSES_BY_USERID)] =
         &AmsMgrStub::HandleKillProcessesByUserId;
+    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_PROCESS_WITH_ACCOUNT)] =
+        &AmsMgrStub::HandleKillProcessWithAccount;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_APPLICATION)] = &AmsMgrStub::HandleKillApplication;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::ABILITY_ATTACH_TIMEOUT)] =
         &AmsMgrStub::HandleAbilityAttachTimeOut;
@@ -181,6 +183,25 @@ ErrCode AmsMgrStub::HandleKillProcessesByUserId(MessageParcel &data, MessageParc
     int32_t userId = data.ReadInt32();
 
     KillProcessesByUserId(userId);
+    return NO_ERROR;
+}
+
+ErrCode AmsMgrStub::HandleKillProcessWithAccount(MessageParcel &data, MessageParcel &reply)
+{
+    APP_LOGI("enter");
+
+    BYTRACE(BYTRACE_TAG_APP);
+
+    std::string bundleName = data.ReadString();
+    int accountId = data.ReadInt32();
+
+    APP_LOGI("bundleName = %{public}s, accountId = %{public}d", bundleName.c_str(), accountId);
+
+    int32_t result = KillProcessWithAccount(bundleName, accountId);
+    reply.WriteInt32(result);
+
+    APP_LOGI("end");
+
     return NO_ERROR;
 }
 

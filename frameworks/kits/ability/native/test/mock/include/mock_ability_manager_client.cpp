@@ -74,7 +74,7 @@ void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32
     return;
 }
 
-ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode)
+ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, int32_t userId)
 {
     return -1;
 }
@@ -96,7 +96,7 @@ ErrCode AbilityManagerClient::TerminateAbilityResult(const sptr<IRemoteObject> &
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     return -1;
 }

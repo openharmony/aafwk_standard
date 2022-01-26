@@ -42,6 +42,7 @@
 #include "wants_info.h"
 #include "want_receiver_stub.h"
 #include "want_sender_stub.h"
+#include "os_account_manager.h"
 
 using namespace std::placeholders;
 using namespace testing::ext;

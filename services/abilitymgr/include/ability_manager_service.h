@@ -44,6 +44,7 @@
 namespace OHOS {
 namespace AAFwk {
 enum class ServiceRunningState { STATE_NOT_START, STATE_RUNNING };
+const int32_t BASE_USER_RANGE = 200000;
 using OHOS::AppExecFwk::IAbilityController;
 
 class PendingWantManager;
@@ -67,20 +68,26 @@ public:
      *
      * @param want, the want of the ability to start.
      * @param requestCode, Ability request code.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * StartAbility with want, send want to ability manager service.
      *
      * @param want, the want of the ability to start.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int StartAbility(
-        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+        const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Starts a new ability with specific start settings.
@@ -88,11 +95,16 @@ public:
      * @param want Indicates the ability to start.
      * @param abilityStartSetting Indicates the setting ability used to start.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want,
+        const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Starts a new ability with specific start options.
@@ -100,11 +112,16 @@ public:
      * @param want, the want of the ability to start.
      * @param startOptions Indicates the options used to start.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -140,10 +157,14 @@ public:
      * @param want, Special want for service type's ability.
      * @param connect, Callback used to notify caller the result of connecting or disconnecting.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ConnectAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
+        const Want &want,
+        const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
      * ContinueMission, continue ability from mission center.
@@ -355,7 +376,7 @@ public:
      * @param want, Special want for service type's ability.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want) override;
+    virtual int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Get the list of the missions that the user has recently launched,
@@ -692,7 +713,12 @@ public:
     void NotifyBmsAbilityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime);
 
-    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int callerUid = -1);
+    int StartAbilityInner(
+        const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int requestCode,
+        int callerUid = DEFAULT_INVAL_VALUE,
+        int32_t userId = DEFAULT_INVAL_VALUE);
 
     int CheckPermission(const std::string &bundleName, const std::string &permission);
     void UpdateLockScreenState(bool isLockScreen);
@@ -712,7 +738,11 @@ public:
      *
      */
     int GenerateAbilityRequest(
-        const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken);
+        const Want &want,
+        int requestCode,
+        AbilityRequest &request,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId);
 
     /**
      * Get mission id by target ability token.
@@ -889,11 +919,14 @@ private:
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
     int StartRemoteAbility(const Want &want, int requestCode);
     int ConnectLocalAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken);
+        const Want &want, 
+        const int32_t userId, 
+        const sptr<IAbilityConnection> &connect, 
+        const sptr<IRemoteObject> &callerToken);
     int DisconnectLocalAbility(const sptr<IAbilityConnection> &connect);
     int ConnectRemoteAbility(const Want &want, const sptr<IRemoteObject> &connect);
     int DisconnectRemoteAbility(const sptr<IRemoteObject> &connect);
-    int PreLoadAppDataAbilities(const std::string &bundleName);
+    int PreLoadAppDataAbilities(const std::string &bundleName, const int32_t userId);
     void UpdateCallerInfo(Want& want);
 
     bool CheckIfOperateRemote(const Want &want);
@@ -963,6 +996,8 @@ private:
     std::shared_ptr<MissionListManager> GetListManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
+	
+	int32_t GetValidUserId(const Want &want, const int32_t userId);
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;

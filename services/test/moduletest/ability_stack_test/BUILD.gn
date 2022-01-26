@@ -89,6 +89,7 @@ ohos_moduletest("ability_stack_module_test") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
+    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",

@@ -98,7 +98,7 @@ public:
      * @param requestCode Ability request code.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE);
+    ErrCode StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE, int32_t userId = DEFAULT_INVAL_VALUE);
 
     /**
      * StartAbility with want, send want to ability manager service.
@@ -109,7 +109,10 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode StartAbility(
-        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
+        const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE,
+        int32_t userId = DEFAULT_INVAL_VALUE);
 
     /**
      * Starts a new ability with specific start settings.
@@ -119,8 +122,12 @@ public:
      * @param abilityStartSetting Indicates the setting ability used to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE);
+    ErrCode StartAbility(
+        const Want &want,
+        const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE,
+        int32_t userId = DEFAULT_INVAL_VALUE);
 
     /**
      * Starts a new ability with specific start options.
@@ -131,8 +138,12 @@ public:
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode StartAbility(const Want &want, const StartOptions &startOptions, const sptr<IRemoteObject> &callerToken,
-        int requestCode = DEFAULT_INVAL_VALUE);
+    ErrCode StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE,
+        int32_t userId = DEFAULT_INVAL_VALUE);
 
     /**
      * TerminateAbility with want, return want from ability manager service.
@@ -182,7 +193,10 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode ConnectAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken);
+        const Want &want,
+        const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE);
 
     /**
      * DisconnectAbility, disconnect session with service ability.

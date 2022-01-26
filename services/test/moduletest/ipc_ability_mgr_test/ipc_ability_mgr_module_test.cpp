@@ -99,10 +99,10 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_001, TestSize.Level1)
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
         const Want want;
 
-        EXPECT_CALL(*mockAbilityMgr, StartAbility(_, _))
+        EXPECT_CALL(*mockAbilityMgr, StartAbility(_, _, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->StartAbility(want, 0);
+        abilityMgrClient->StartAbility(want, -1, 0);
         mockAbilityMgr->Wait();
     }
 
@@ -230,10 +230,10 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_006, TestSize.Level1)
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
         Want want;
 
-        EXPECT_CALL(*mockAbilityMgr, ConnectAbility(_, _, _))
+        EXPECT_CALL(*mockAbilityMgr, ConnectAbility(_, _, _, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->ConnectAbility(want, nullptr, nullptr);
+        abilityMgrClient->ConnectAbility(want, nullptr, nullptr, -1);
         mockAbilityMgr->Wait();
     }
 
@@ -427,10 +427,10 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_013, TestSize.Level1)
         sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
         const Want want;
 
-        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_))
+        EXPECT_CALL(*mockAbilityMgr, StopServiceAbility(_, _))
             .Times(1)
             .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->StopServiceAbility(want);
+        abilityMgrClient->StopServiceAbility(want, -1);
         mockAbilityMgr->Wait();
     }
 

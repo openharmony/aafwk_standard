@@ -36,6 +36,7 @@
 #include "ability_context.h"
 #include "mock_compled_callback.h"
 #include "mock_ability_mgr_service.h"
+#include "os_account_manager.h"
 
 using namespace OHOS::Notification::WantAgent;
 using namespace OHOS::AppExecFwk;
