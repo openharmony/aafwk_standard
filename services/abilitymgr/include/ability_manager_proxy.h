@@ -39,9 +39,13 @@ public:
      *
      * @param want, the want of the ability to start.
      * @param requestCode, Ability request code.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * StartAbility with want, send want to ability manager service.
@@ -49,21 +53,30 @@ public:
      * @param want, the want of the ability to start.
      * @param callerToken, caller ability token.
      * @param requestCode the resultCode of the ability to start.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int StartAbility(
-        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+        const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Starts a new ability with specific start settings.
      *
      * @param want Indicates the ability to start.
-     * @param requestCode the resultCode of the ability to start.
+     * @param callerToken caller ability token.
      * @param abilityStartSetting Indicates the setting ability used to start.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want,
+        const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Starts a new ability with specific start options.
@@ -71,11 +84,16 @@ public:
      * @param want, the want of the ability to start.
      * @param startOptions Indicates the options used to start.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @param requestCode the resultCode of the ability to start.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+    virtual int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -111,10 +129,14 @@ public:
      * @param want, Special want for service type's ability.
      * @param connect, Callback used to notify caller the result of connecting or disconnecting.
      * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ConnectAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
+        const Want &want,
+        const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
      * DisconnectAbility, connect session with service ability.
@@ -226,7 +248,7 @@ public:
      * @param want, Special want for service type's ability.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
-    virtual int StopServiceAbility(const Want &want) override;
+    virtual int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
      * Obtains information about ability stack that are running on the device.

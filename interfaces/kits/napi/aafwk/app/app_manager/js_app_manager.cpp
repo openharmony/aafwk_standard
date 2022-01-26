@@ -34,6 +34,7 @@ namespace AbilityRuntime {
 namespace {
 constexpr int32_t INDEX_ZERO = 0;
 constexpr int32_t INDEX_ONE = 1;
+constexpr int32_t INDEX_TWO = 2;
 constexpr int32_t ERROR_CODE_ONE = 1;
 constexpr size_t ARGC_ZERO = 0;
 constexpr size_t ARGC_ONE = 1;
@@ -80,6 +81,12 @@ public:
     {
         JsAppManager* me = CheckParamsAndGetThis<JsAppManager>(engine, info);
         return (me != nullptr) ? me->OnIsRunningInStabilityTest(*engine, *info) : nullptr;
+    }
+
+    static NativeValue* KillProcessWithAccount(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsAppManager* me = CheckParamsAndGetThis<JsAppManager>(engine, info);
+        return (me != nullptr) ? me->OnKillProcessWithAccount(*engine, *info) : nullptr;
     }
 
 private:
@@ -263,6 +270,41 @@ private:
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
         return result;
     }
+
+    NativeValue* OnKillProcessWithAccount(NativeEngine &engine, NativeCallbackInfo &info)
+    {
+        HILOG_INFO("%{public}s is called", __FUNCTION__);
+        if (info.argc == 0) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+        std::string bundleName;
+        if (!ConvertFromJsValue(engine, info.argv[0], bundleName)) {
+            HILOG_ERROR("Parse bundleName failed");
+            return engine.CreateUndefined();
+        }
+        int accountId = -1;
+        if (!ConvertFromJsValue(engine, info.argv[1], accountId)) {
+            HILOG_ERROR("Parse userId failed");
+            return engine.CreateUndefined();
+        }
+
+        AsyncTask::CompleteCallback complete =
+            [appManager = appManager_, bundleName, accountId](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                auto errcode = appManager->GetAmsMgr()->KillProcessWithAccount(bundleName, accountId);
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Kill processes failed."));
+                }
+            };
+
+        NativeValue* lastParam = (info.argc == ARGC_TWO) ? nullptr : info.argv[INDEX_TWO];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
 };
 } // namespace
 
@@ -316,6 +358,8 @@ NativeValue* JsAppManagerInit(NativeEngine* engine, NativeValue* exportObj)
         JsAppManager::GetProcessRunningInfos);
     BindNativeFunction(*engine, *object, "isRunningInStabilityTest",
         JsAppManager::IsRunningInStabilityTest);
+    BindNativeFunction(*engine, *object, "killProcessWithAccount",
+        JsAppManager::KillProcessWithAccount);
     HILOG_INFO("JsAppManagerInit end");
     return engine->CreateUndefined();
 }

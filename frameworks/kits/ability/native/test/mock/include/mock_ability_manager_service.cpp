@@ -33,7 +33,7 @@ MockAbilityManagerService::MockAbilityManagerService() : abilityScheduler_(nullp
 MockAbilityManagerService::~MockAbilityManagerService()
 {}
 
-int MockAbilityManagerService::StartAbility(const Want &want, int requestCode)
+int MockAbilityManagerService::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     AbilityLifeCycleState state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     switch (requestCode) {
@@ -89,7 +89,7 @@ int MockAbilityManagerService::TerminateAbility(
 }
 
 int MockAbilityManagerService::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     GTEST_LOG_(INFO) << "MockAbilityManagerService::ConnectAbility";
     return ERR_OK;
@@ -143,7 +143,7 @@ int MockAbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> 
     return ERR_OK;
 }
 
-int MockAbilityManagerService::StopServiceAbility(const Want &want)
+int MockAbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
 {
     GTEST_LOG_(INFO) << "MockAbilityManagerService::StopServiceAbility";
     return ERR_OK;
@@ -184,7 +184,8 @@ bool MockAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &toke
     return true;
 }
 
-int MockAbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
+int MockAbilityManagerService::CompelVerifyPermission(
+    const std::string &permission, int pid, int uid, std::string &message)
 {
     return 0;
 }
@@ -197,6 +198,5 @@ int MockAbilityManagerService::PowerOn()
 {
     return 0;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

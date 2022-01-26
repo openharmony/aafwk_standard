@@ -154,6 +154,20 @@ void AmsMgrScheduler::KillProcessesByUserId(int32_t userId)
     amsHandler_->PostTask(killProcessesByUserIdFunc, TASK_KILL_PROCESSES_BY_USERID);
 }
 
+int32_t AmsMgrScheduler::KillProcessWithAccount(const std::string &bundleName, const int accountId)
+{
+    APP_LOGI("enter");
+    APP_LOGI("bundleName = %{public}s, accountId = %{public}d", bundleName.c_str(), accountId);
+
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+
+    APP_LOGI("end");
+
+    return amsMgrServiceInner_->KillApplicationByUserId(bundleName, accountId);
+}
+
 void AmsMgrScheduler::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {
     APP_LOGI("AmsMgrScheduler AttachTimeOut begin");

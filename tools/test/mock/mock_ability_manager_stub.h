@@ -41,13 +41,14 @@ const std::string STRING_STATE_OFF_INVALID = "invalid_off";
 
 class MockAbilityManagerStub : public AbilityManagerStub {
 public:
-    int StartAbility(const Want &want, int requestCode = -1);
+    int StartAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1);
 
-    MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD4(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken,
+        int32_t userId, int requestCode));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant));
     MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &token));
-    MOCK_METHOD3(ConnectAbility,
-        int(const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken));
+    MOCK_METHOD4(ConnectAbility, int(const Want &want, const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken, int32_t userId));
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &connect));
     MOCK_METHOD3(AcquireDataAbility,
         sptr<IAbilityScheduler>(const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken));
@@ -65,7 +66,7 @@ public:
 
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &token, int startId));
 
-    int StopServiceAbility(const Want &want);
+    int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE );
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
@@ -100,8 +101,8 @@ public:
     MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
     MOCK_METHOD0(GetMissionLockModeState, int());
     MOCK_METHOD1(UpdateConfiguration, int(const AppExecFwk::Configuration &));
-    MOCK_METHOD4(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
-                                   const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
     MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
     MOCK_METHOD2(MoveMissionToSplitScreenStack, int(const MissionOption &primary, const MissionOption &secondary));
     MOCK_METHOD2(
@@ -139,6 +140,17 @@ public:
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
 
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+
+    virtual int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE)
+    {
+        return 0;
+    }
+
     virtual int StartUser(int userId) override
     {
         return 0;
@@ -167,11 +179,6 @@ public:
         return 0;
     }
 
-    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode)
-    {
-        return 0;
-    }
     virtual int StartAbilityByCall(
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
     {

@@ -30,6 +30,16 @@ class ServiceExtensionContext extends ExtensionContext {
         return this.__context_impl__.connectAbility(want, options);
     }
 
+    startAbilityWithAccount(want, accountId, options, callback) {
+        console.log("startAbilityWithAccount");
+        return this.__context_impl__.startAbilityWithAccount(want, accountId, options, callback);
+    }
+
+    connectAbilityWithAccount(want, accountId, options) {
+        console.log("connectAbilityWithAccount");
+        return this.__context_impl__.connectAbilityWithAccount(want, accountId, options);
+    }
+
     disconnectAbility(connection, callback) {
         console.log("disconnectAbility");
         return this.__context_impl__.disconnectAbility(connection, callback);

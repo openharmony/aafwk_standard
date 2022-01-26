@@ -413,8 +413,9 @@ int AbilityManagerStub::StartAbilityInner(MessageParcel &data, MessageParcel &re
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
+    int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
-    int32_t result = StartAbility(*want, requestCode);
+    int32_t result = StartAbility(*want, userId, requestCode);
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;
@@ -428,8 +429,9 @@ int AbilityManagerStub::StartAbilityAddCallerInner(MessageParcel &data, MessageP
         return ERR_INVALID_VALUE;
     }
     auto callerToken = data.ReadParcelable<IRemoteObject>();
+    int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
-    int32_t result = StartAbility(*want, callerToken, requestCode);
+    int32_t result = StartAbility(*want, callerToken, userId, requestCode);
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;
@@ -444,7 +446,8 @@ int AbilityManagerStub::ConnectAbilityInner(MessageParcel &data, MessageParcel &
     }
     auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
     auto token = data.ReadParcelable<IRemoteObject>();
-    int32_t result = ConnectAbility(*want, callback, token);
+    int32_t userId = data.ReadInt32();
+    int32_t result = ConnectAbility(*want, callback, token, userId);
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;
@@ -466,7 +469,8 @@ int AbilityManagerStub::StopServiceAbilityInner(MessageParcel &data, MessageParc
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    int32_t result = StopServiceAbility(*want);
+    int32_t userId = data.ReadInt32();
+    int32_t result = StopServiceAbility(*want, userId);
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;
@@ -503,8 +507,9 @@ int AbilityManagerStub::StartAbilityForSettingsInner(MessageParcel &data, Messag
         return ERR_INVALID_VALUE;
     }
     auto callerToken = data.ReadParcelable<IRemoteObject>();
+    int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
-    int32_t result = StartAbility(*want, *abilityStartSetting, callerToken, requestCode);
+    int32_t result = StartAbility(*want, *abilityStartSetting, callerToken, userId, requestCode);
     reply.WriteInt32(result);
     delete want;
     delete abilityStartSetting;
@@ -525,8 +530,9 @@ int AbilityManagerStub::StartAbilityForOptionsInner(MessageParcel &data, Message
         return ERR_INVALID_VALUE;
     }
     auto callerToken = data.ReadParcelable<IRemoteObject>();
+    int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
-    int32_t result = StartAbility(*want, *startOptions, callerToken, requestCode);
+    int32_t result = StartAbility(*want, *startOptions, callerToken, userId, requestCode);
     reply.WriteInt32(result);
     delete want;
     delete startOptions;

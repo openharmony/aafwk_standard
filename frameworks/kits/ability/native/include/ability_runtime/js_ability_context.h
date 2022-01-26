@@ -39,9 +39,12 @@ public:
     static void Finalizer(NativeEngine* engine, void* data, void* hint);
 
     static NativeValue* StartAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StartAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartAbilityByCall(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StartAbilityForResultWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* ConnectAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* DisconnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* TerminateSelf(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* TerminateSelfWithResult(NativeEngine* engine, NativeCallbackInfo* info);
@@ -56,10 +59,13 @@ public:
 
 private:
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStartAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartAbilityByCall(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartAbilityForResult(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStartAbilityForResultWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnTerminateSelfWithResult(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnConnectAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnDisconnectAbility(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnTerminateSelf(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
