@@ -758,7 +758,7 @@ public:
 
     void SetUid(int32_t uid);
     int32_t GetUid();
-	void SetSwitchingPause(bool state);
+    void SetSwitchingPause(bool state);
     bool IsSwitchingPause();
 
     // new version
@@ -855,7 +855,7 @@ private:
     std::weak_ptr<MissionList> missionList_;
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
-	bool isSwitchingPause_ = false;
+    bool isSwitchingPause_ = false;
 	
 	// new version
     std::shared_ptr<CallContainer> callContainer_ = nullptr;
