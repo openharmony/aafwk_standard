@@ -12,9 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var Callee = requireNapi("application.Callee")
 
 class Ability {
-    constructor() {}
+    constructor() {
+        this.callee = new Callee("rpc.application.callee");
+        console.log("Ability::constructor callee is " + typeof this.callee + " " + this.callee);
+    }
     onCreate(want) {}
     onDestroy() {}
     onWindowStageCreate(windowStage) {}
@@ -22,6 +26,10 @@ class Ability {
     onForeground(want) {}
     onBackground() {}
     onWindowStageRestore(windowStage) {}
+    onCallRequest() {
+        console.log("Ability::onCallRequest callee is " + typeof this.callee + " " + this.callee);
+        return this.callee;
+    }
     onContinue(wantParams) {}
     onNewWant(want) {}
 }

@@ -699,18 +699,7 @@ public:
     void SetShowOnLockScreen(bool isAllow) override;
 
     friend DataAbilityHelper;
-
-public:
     static int ABILITY_CONTEXT_DEFAULT_REQUEST_CODE;
-
-private:
-    /**
-     * @brief Get Current Ability Type
-     *
-     * @return Current Ability Type
-     */
-    AppExecFwk::AbilityType GetAbilityInfoType();
-    void GetPermissionDes(const std::string &permissionName, std::string &des);
 
 protected:
     sptr<IRemoteObject> GetToken() override;
@@ -721,8 +710,16 @@ protected:
     std::string callingBundleName_;
     std::string callingAbilityName_;
     std::map<sptr<AAFwk::IAbilityConnection>, sptr<IRemoteObject>> abilityConnectionMap_;
-};
 
+private:
+    /**
+     * @brief Get Current Ability Type
+     *
+     * @return Current Ability Type
+     */
+    AppExecFwk::AbilityType GetAbilityInfoType();
+    void GetPermissionDes(const std::string &permissionName, std::string &des);
+};
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_CONTEXT_H

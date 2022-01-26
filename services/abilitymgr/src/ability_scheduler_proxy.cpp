@@ -980,5 +980,39 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
         HILOG_ERROR("NotifyContinuationResult fail to SendRequest. err: %d", err);
     }
 }
+
+sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
+{
+    HILOG_INFO("AbilitySchedulerProxy::CallRequest start");
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return nullptr;
+    }
+    
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::REQUEST_CALL_REMOTE, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("CallRequest fail to SendRequest. err: %d", err);
+        return nullptr;
+    }
+    
+    int32_t result = reply.ReadInt32();
+    if (result != ERR_OK) {
+        HILOG_ERROR("CallRequest failed, err %{public}d", result);
+        return nullptr;
+    }
+
+    auto call = reply.ReadParcelable<IRemoteObject>();
+    if (!call) {
+        HILOG_ERROR("CallRequest error");
+        return nullptr;
+    }
+
+    HILOG_INFO("AbilitySchedulerProxy::CallRequest end");
+    return call;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

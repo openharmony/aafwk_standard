@@ -133,6 +133,10 @@ public:
     {}
     virtual void ContinueAbility(const std::string& deviceId) override
     {}
+    virtual sptr<IRemoteObject> CallRequest() override
+    {
+        return sptr<IRemoteObject>(nullptr);
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -19,6 +19,7 @@
 #include "ability_context.h"
 
 #include "context_impl.h"
+#include "local_call_container.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -101,6 +102,25 @@ public:
         return contentStorage_;
     }
 
+    /**
+     * call function by callback object
+     *
+     * @param want Request info for ability.
+     * @param callback Indicates the callback object.
+     *
+     * @return Returns zero on success, others on failure.
+     */
+    ErrCode StartAbility(const AAFwk::Want& want, const std::shared_ptr<CallerCallBack> &callback) override;
+
+    /**
+     * caller release by callback object
+     *
+     * @param callback Indicates the callback object.
+     *
+     * @return Returns zero on success, others on failure.
+     */
+    ErrCode ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback) override;
+
 private:
     sptr<IRemoteObject> token_;
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
@@ -108,6 +128,7 @@ private:
     std::map<int, RuntimeTask> resultCallbacks_;
     std::map<int, PermissionRequestTask> permissionRequestCallbacks_;
     void* contentStorage_ = nullptr;
+    sptr<LocalCallContainer> localCallContainer_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

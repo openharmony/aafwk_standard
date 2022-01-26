@@ -213,6 +213,13 @@ public:
      */
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord, int32_t currentUserId);
 
+    /**
+     * @brief handle when call contection died
+     *
+     * @param callRecord the died call contection
+     */
+    void OnCallConnectDied(const std::shared_ptr<CallRecord> &callRecord);
+
      /**
      * Get mission id by target ability token.
      *
@@ -268,6 +275,21 @@ public:
 
     void OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag);
 
+    /**
+     * resolve the call ipc of ability for schudeling oncall.
+     *
+     * @param abilityRequest, target ability request.
+     */
+    int ResolveLocked(const AbilityRequest &abilityRequest);
+
+    /**
+     * release the connection of this call.
+     *
+     * @param connect, caller callback ipc.
+     * @param element, target ability name.
+     */
+    int ReleaseLocked(const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element);
+    
     /**
      * @brief register snapshotHandler
      * @param handler the snapshotHandler
@@ -340,6 +362,11 @@ private:
 
     void HandleLoadTimeout(const std::shared_ptr<AbilityRecord> &ability);
     void HandleForgroundNewTimeout(const std::shared_ptr<AbilityRecord> &ability);
+
+    // new version for call inner function.
+    int ResolveAbility(const std::shared_ptr<AbilityRecord> &targetAbility, const AbilityRequest &abilityRequest);
+    std::shared_ptr<AbilityRecord> GetAbilityRecordByName(const AppExecFwk::ElementName &element);
+    int CallAbilityLocked(const AbilityRequest &abilityRequest);
 
 private:
     int userId_;

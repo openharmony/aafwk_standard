@@ -753,6 +753,23 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId)
     return abms->MoveMissionToFront(missionId);
 }
 
+ErrCode AbilityManagerClient::StartAbilityByCall(
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callToken)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    HILOG_DEBUG("AbilityManagerClient::StartAbilityByCall called.");
+    return abms->StartAbilityByCall(want, connect, callToken);
+}
+
+ErrCode AbilityManagerClient::ReleaseAbility(
+    const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->ReleaseAbility(connect, element);
+}
+
 ErrCode AbilityManagerClient::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);

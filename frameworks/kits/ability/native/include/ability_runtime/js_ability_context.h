@@ -39,6 +39,7 @@ public:
     static void Finalizer(NativeEngine* engine, void* data, void* hint);
 
     static NativeValue* StartAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StartAbilityByCall(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* DisconnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
@@ -55,6 +56,7 @@ public:
 
 private:
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStartAbilityByCall(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartAbilityForResult(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnTerminateSelfWithResult(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info);

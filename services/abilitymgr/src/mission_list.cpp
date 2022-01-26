@@ -204,6 +204,20 @@ std::shared_ptr<AbilityRecord> MissionList::GetAbilityRecordByCaller(
     return nullptr;
 }
 
+std::shared_ptr<AbilityRecord> MissionList::GetAbilityRecordByName(const AppExecFwk::ElementName &element)
+{
+    for (auto mission : missions_) {
+        if (mission) {
+            const AppExecFwk::AbilityInfo &abilityInfo = mission->GetAbilityRecord()->GetAbilityInfo();
+            AppExecFwk::ElementName localElement(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+            if (localElement == element) {
+                return mission->GetAbilityRecord();
+            }
+        }
+    }
+    return nullptr;
+}
+
 sptr<IRemoteObject> MissionList::GetAbilityTokenByMissionId(int32_t missionId)
 {
     for (auto mission : missions_) {

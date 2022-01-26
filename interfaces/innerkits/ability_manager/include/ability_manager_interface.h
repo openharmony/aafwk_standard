@@ -544,6 +544,24 @@ public:
     virtual int CleanAllMissions() = 0;
 
     virtual int MoveMissionToFront(int32_t missionId) = 0;
+	
+	/**
+     * Start Ability, connect session with common ability.
+     *
+     * @param want, Special want for service type's ability.
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartAbilityByCall(
+        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) = 0;
+
+    /**
+     * Release Ability, disconnect session with common ability.
+     *
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ReleaseAbility(const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element) = 0;
 
     virtual int StartUser(int userId) = 0;
 
@@ -832,6 +850,11 @@ public:
         START_CONTINUATION = 1101,
 
         NOTIFY_CONTINUATION_RESULT = 1102,
+		
+		// ipc id for call ability
+        START_CALL_ABILITY,
+
+        RELEASE_CALL_ABILITY,
 
         NOTIFY_COMPLETE_CONTINUATION = 1103,
 

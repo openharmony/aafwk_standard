@@ -58,6 +58,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_EXECUTEBATCH] = &AbilitySchedulerStub::ExecuteBatchInner;
     requestFuncMap_[TOP_ACTIVE_ABILITY_CHANGED] = &AbilitySchedulerStub::TopActiveAbilityChangedInner;
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilitySchedulerStub::NotifyContinuationResultInner;
+    requestFuncMap_[REQUEST_CALL_REMOTE] = &AbilitySchedulerStub::CallRequestInner;
     requestFuncMap_[CONTINUE_ABILITY] = &AbilitySchedulerStub::ContinueAbilityInner;
 }
 
@@ -573,6 +574,31 @@ int AbilitySchedulerStub::NotifyContinuationResultInner(MessageParcel &data, Mes
 {
     int32_t result = data.ReadInt32();
     NotifyContinuationResult(result);
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("AbilitySchedulerStub::CallRequestInner start");
+
+    sptr<IRemoteObject> call = CallRequest();
+    if (!call) {
+        HILOG_ERROR("call request return nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!reply.WriteInt32(NO_ERROR)) {
+        HILOG_ERROR("GetAllStackInfo result error");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!reply.WriteParcelable(call)) {
+        HILOG_ERROR("call request write failed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    HILOG_INFO("AbilitySchedulerStub::CallRequestInner end");
+
     return NO_ERROR;
 }
 
