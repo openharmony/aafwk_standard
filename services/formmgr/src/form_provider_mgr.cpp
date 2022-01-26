@@ -314,7 +314,7 @@ ErrCode FormProviderMgr::UpdateForm(const int64_t formId,
     FormDataMgr::GetInstance().UpdateFormProviderInfo(formId, formRecord.formProviderInfo);
     // check if cache data size is less than 1k or not
     std::string jsonData = formRecord.formProviderInfo.GetFormDataString(); // get json data
-    APP_LOGD("%{public}s , jsonData is %{public}s.",  __func__, jsonData.c_str());
+    APP_LOGD("%{public}s screenOn:%{public}d jsonData:%{public}s.", __func__, screenOnFlag, jsonData.c_str());
     if (jsonData.size() <= Constants::MAX_FORM_DATA_SIZE) {
         APP_LOGI("%{public}s, updateJsForm, data is less than 1k, cache data.", __func__);
         FormCacheMgr::GetInstance().AddData(formId, jsonData);
