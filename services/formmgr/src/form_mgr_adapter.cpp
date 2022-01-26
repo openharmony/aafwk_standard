@@ -37,6 +37,7 @@
 #include "form_refresh_connection.h"
 #include "form_supply_callback.h"
 #include "form_timer_mgr.h"
+#include "form_util.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
@@ -1031,7 +1032,8 @@ ErrCode FormMgrAdapter::GetBundleInfo(const AAFwk::Want &want, BundleInfo &bundl
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
 
-    if (iBundleMgr->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo) != true) {
+    if (!iBundleMgr->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
+        bundleInfo, FormUtil::GetCurrentAccountId())) {
         APP_LOGE("GetBundleInfo, failed to get bundle info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
@@ -1625,7 +1627,8 @@ bool FormMgrAdapter::UpdateProviderInfoToHost(const int64_t matchedFormId, const
 bool FormMgrAdapter::CheckIsSystemAppByBundleName(const sptr<IBundleMgr> &iBundleMgr, const std::string &bundleName)
 {
     BundleInfo bundleInfo;
-    if (iBundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo)) {
+    if (iBundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT,
+        bundleInfo, FormUtil::GetCurrentAccountId())) {
         APP_LOGD("%{public}s, get bundle uid success", __func__);
         if (!iBundleMgr->CheckIsSystemAppByUid(bundleInfo.uid)) {
             APP_LOGW("%{public}s fail, form provider is not system app, bundleName: %{public}s",
