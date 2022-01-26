@@ -77,7 +77,7 @@ public:
     bool SaveMissionSnapshot(int missionId, const MissionSnapshot& snapshot);
 
     /**
-     * @brief get the mission snapshot object
+     * @brief Get the mission snapshot object
      * @param missionId id of mission
      * @param missionSnapshot
      * @return return true if update mission snapshot success, else false
