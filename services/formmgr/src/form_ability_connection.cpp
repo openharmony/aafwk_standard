@@ -44,8 +44,10 @@ void FormAbilityConnection::OnAbilityConnectDone(
 
     if (isFreeInstall_) {
         // Handle free install for form provider app
+        APP_LOGI("%{public}s current is Free Install.", __func__);
     }
 }
+
 /**
  * @brief OnAbilityDisconnectDone, AbilityMs notify caller ability the result of disconnect.
  * @param element service ability's ElementName.
@@ -54,8 +56,9 @@ void FormAbilityConnection::OnAbilityConnectDone(
 void FormAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
     APP_LOGD("%{public}s, element:%{public}s, resultCode:%{public}d", __func__, element.GetURI().c_str(), resultCode);
-    if (connectId_ > 0) {
+    if (connectId_ != 0) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId_);
+        connectId_ = 0;
     } else {
         APP_LOGE("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
     }
@@ -67,12 +70,14 @@ void FormAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementNam
  */
 void FormAbilityConnection::OnConnectDied(const wptr<IRemoteObject> &remoteObject)
 {
-    if (connectId_ > 0) {
+    if (connectId_ != 0) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId_);
+        connectId_ = 0;
     } else {
         APP_LOGE("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
     }
 }
+
 /**
  * @brief Set connectId.
  * @param connectId The ability connection id.
@@ -82,6 +87,7 @@ void FormAbilityConnection::SetConnectId(long connectId)
     APP_LOGI("%{public}s, connectId_: %{public}ld", __func__, connectId);
     connectId_ = connectId;
 }
+
 /**
  * @brief Get connectId.
  * @return The ability connection id.
@@ -90,6 +96,7 @@ long FormAbilityConnection::GetConnectId()
 {
     return connectId_;
 }
+
 /**
  * @brief Get the provider Key
  *
