@@ -23,6 +23,7 @@
 #include "form_constants.h"
 #include "form_util.h"
 #include "ohos_account_kits.h"
+#include "os_account_manager.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -181,6 +182,33 @@ std::vector<std::string> FormUtil::StringSplit(const std::string &in, const std:
         std::sregex_token_iterator(in.begin(), in.end(), reg, -1),
         std::sregex_token_iterator()
     };
+}
+
+/**
+ * @brief get current active account id.
+ * @return int current active account id.
+ */
+int FormUtil::GetCurrentAccountId()
+{
+    std::vector<AccountSA::OsAccountInfo> osAccountInfos;
+    ErrCode ret = AccountSA::OsAccountManager::QueryAllCreatedOsAccounts(osAccountInfos);
+    if (ret != ERR_OK) {
+        APP_LOGE("QueryAllCreatedOsAccounts failed.");
+        return 0;
+    }
+
+    if (osAccountInfos.empty()) {
+        APP_LOGE("osAccountInfos is empty, no accounts.");
+        return 0;
+    }
+
+    for (const auto& account : osAccountInfos) {
+        if (account.GetIsActived()) {
+            return account.GetLocalId();
+        }
+    }
+    APP_LOGE("GetCurrentAccountId failed, no Actived now.");
+    return 0;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
