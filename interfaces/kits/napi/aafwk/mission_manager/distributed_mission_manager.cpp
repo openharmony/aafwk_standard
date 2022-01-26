@@ -632,9 +632,6 @@ void UvWorkNotifyMissionChanged(uv_work_t *work, int status)
     napi_get_reference_value(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback, &callback);
 
     napi_call_function(registerMissonCB->cbBase.cbInfo.env, undefined, callback, 1, &result, &callResult);
-    if (registerMissonCB->cbBase.cbInfo.callback != nullptr) {
-        napi_delete_reference(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback);
-    }
     delete registerMissonCB;
     registerMissonCB = nullptr;
     delete work;
@@ -707,9 +704,6 @@ void UvWorkNotifySnapshot(uv_work_t *work, int status)
     napi_get_reference_value(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback, &callback);
 
     napi_call_function(registerMissonCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[0], &callResult);
-    if (registerMissonCB->cbBase.cbInfo.callback != nullptr) {
-        napi_delete_reference(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback);
-    }
     delete registerMissonCB;
     registerMissonCB = nullptr;
     delete work;
@@ -783,9 +777,6 @@ void UvWorkNotifyNetDisconnect(uv_work_t *work, int status)
     napi_get_reference_value(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback, &callback);
 
     napi_call_function(registerMissonCB->cbBase.cbInfo.env, undefined, callback, ARGS_TWO, &result[0], &callResult);
-    if (registerMissonCB->cbBase.cbInfo.callback != nullptr) {
-        napi_delete_reference(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->cbBase.cbInfo.callback);
-    }
     delete registerMissonCB;
     registerMissonCB = nullptr;
     delete work;
