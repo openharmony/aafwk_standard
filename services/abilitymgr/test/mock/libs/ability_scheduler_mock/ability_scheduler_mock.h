@@ -141,6 +141,11 @@ public:
         return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     }
 
+    virtual sptr<IRemoteObject> CallRequest()
+    {
+        return sptr<IRemoteObject>(nullptr);
+    }
+
     int code_ = 0;
 };
 }  // namespace AAFwk

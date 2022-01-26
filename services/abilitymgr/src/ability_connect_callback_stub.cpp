@@ -98,6 +98,7 @@ AbilityConnectionStub::~AbilityConnectionStub()
 int AbilityConnectionStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
+    HILOG_DEBUG("AbilityConnectionStub::OnRemoteRequest OnAbilityConnectDone called.");
     std::u16string descriptor = AbilityConnectionStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {

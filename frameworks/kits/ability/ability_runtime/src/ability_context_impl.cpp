@@ -250,6 +250,26 @@ ErrCode AbilityContextImpl::RestoreWindowStage(void* contentStorage)
     return err;
 }
 
+ErrCode AbilityContextImpl::StartAbility(
+    const AAFwk::Want& want, const std::shared_ptr<CallerCallBack> &callback)
+{
+    if (!localCallContainer_) {
+        localCallContainer_ = new (std::nothrow)LocalCallContainer();
+    }
+
+    return localCallContainer_->StartAbilityInner(want, callback, token_);
+}
+
+ErrCode AbilityContextImpl::ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback)
+{
+    if (!localCallContainer_) {
+        HILOG_ERROR("%{public}s false.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+
+    return localCallContainer_->Release(callback);
+}
+
 ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
 {
     HILOG_INFO("%{public}s begin. label = %{public}s", __func__, label.c_str());
