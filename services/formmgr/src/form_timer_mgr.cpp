@@ -848,7 +848,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
     std::shared_ptr<WantAgent> wantAgent = GetUpdateAtWantAgent(findedItem.updateAtTime);
-    if (wantAgent) {
+    if (wantAgent == nullptr) {
         APP_LOGE("%{public}s, failed to create wantAgent.", __func__);
         return false;
     }
