@@ -95,6 +95,12 @@ public:
      * @return string list.
      */
     static std::vector<std::string> StringSplit(const std::string &in, const std::string &delim);
+
+    /**
+     * @brief get current active account id.
+     * @return int current active account id.
+     */
+    static int GetCurrentAccountId();
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
