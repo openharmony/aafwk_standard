@@ -89,7 +89,9 @@ void MissionDataStorage::DeleteMissionInfo(int missionId)
     bool removeMissionFile = OHOS::HiviewDFX::FileUtil::RemoveFile(filePath);
     if (!removeMissionFile) {
         HILOG_ERROR("remove mission file %{public}s failed.", filePath.c_str());
+        return;
     }
+    DeleteMissionSnapshot(missionId);
 }
 
 std::string MissionDataStorage::GetMissionDataDirPath()
@@ -145,6 +147,20 @@ void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSna
         missionSnapshot.snapshot->GetHeight(), data);
     if (!saveMissionFile) {
         HILOG_ERROR("snapshot: save mission snapshot failed, path = %{public}s.", filePath.c_str());
+    }
+}
+
+void MissionDataStorage::DeleteMissionSnapshot(int32_t missionId)
+{
+    std::string filePath = GetMissionSnapshotPath(missionId);
+    std::string dirPath = OHOS::HiviewDFX::FileUtil::ExtractFilePath(filePath);
+    if (!OHOS::HiviewDFX::FileUtil::FileExists(filePath)) {
+        HILOG_WARN("snapshot: remove snapshot file %{public}s failed, file not exists", filePath.c_str());
+        return;
+    }
+    bool removeResult = OHOS::HiviewDFX::FileUtil::RemoveFile(filePath);
+    if (!removeResult) {
+        HILOG_ERROR("snapshot: remove snapshot file %{public}s failed.", filePath.c_str());
     }
 }
 
