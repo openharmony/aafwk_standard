@@ -107,6 +107,10 @@ public:
         Uri urivalue("");
         return urivalue;
     }
+    virtual sptr<IRemoteObject> CallRequest() override
+    {
+        return sptr<IRemoteObject>(nullptr);
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

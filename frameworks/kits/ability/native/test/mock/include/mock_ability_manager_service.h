@@ -141,6 +141,7 @@ public:
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
 
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
+    MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
 
     int RemoveMission(int id) override;
 
@@ -246,6 +247,18 @@ public:
     virtual bool IsRunningInStabilityTest() override
     {
         return true;
+    }
+
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken, int requestCode) override
+    {
+        return 0;
+    }
+
+    virtual int ReleaseAbility(
+        const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element) override
+    {
+        return 0;
     }
 
     enum RequestCode {

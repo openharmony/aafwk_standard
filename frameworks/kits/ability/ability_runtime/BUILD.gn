@@ -38,6 +38,8 @@ ohos_shared_library("ability_context_native") {
     "${SO_DIR}/src/ability_context_impl.cpp",
     "${SO_DIR}/src/connection_manager.cpp",
     "${SO_DIR}/src/js_extension_context.cpp",
+    "${SO_DIR}/src/local_call_container.cpp",
+    "${SO_DIR}/src/local_call_record.cpp",
   ]
 
   deps = [

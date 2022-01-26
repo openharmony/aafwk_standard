@@ -166,6 +166,23 @@ public:
     {
         return 0;
     }
+
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken, int requestCode)
+    {
+        return 0;
+    }
+    virtual int StartAbilityByCall(
+        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    {
+        return 0;
+    }
+    virtual int ReleaseAbility(const sptr<IAbilityConnection> &connect,
+        const AppExecFwk::ElementName &element)
+    {
+        return 0;
+    }
+
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot)
     {
         return 0;

@@ -146,6 +146,14 @@ public:
         const std::shared_ptr<AbilityRecord> &caller, int requestCode);
 
     /**
+     * @brief Get the Ability Record By elementName
+     *
+     * @param element
+     * @return std::shared_ptr<AbilityRecord> the ability record which find
+     */
+    std::shared_ptr<AbilityRecord> GetAbilityRecordByName(const AppExecFwk::ElementName &element);
+
+    /**
      * Get ability token by target mission id.
      *
      * @param missionId target missionId.

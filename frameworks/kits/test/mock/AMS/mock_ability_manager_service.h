@@ -119,6 +119,7 @@ public:
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
+    MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
 
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
@@ -188,6 +189,17 @@ public:
     }
     virtual int UnRegisterMissionListener(const std::string &deviceId,
         const sptr<IRemoteMissionListener> &listener) override
+    {
+        return 0;
+    }
+
+    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken, int requestCode) override
+    {
+        return 0;
+    }
+    virtual int ReleaseAbility(const sptr<IAbilityConnection> &connect,
+        const AppExecFwk::ElementName &element) override
     {
         return 0;
     }

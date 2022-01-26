@@ -22,6 +22,7 @@
 #include <memory>
 #include <vector>
 
+#include "ability_connect_callback_interface.h"
 #include "ability_info.h"
 #include "ability_start_setting.h"
 #include "ability_token_stub.h"
@@ -29,10 +30,12 @@
 #include "app_scheduler.h"
 #include "application_info.h"
 #include "ability_record_info.h"
+#include "call_container.h"
 #include "lifecycle_deal.h"
 #include "lifecycle_state_info.h"
 #include "want.h"
 #include "window_info.h"
+#include "uri.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -43,6 +46,7 @@ class MissionRecord;
 class ConnectionRecord;
 class Mission;
 class MissionList;
+class CallContainer;
 
 const std::string ABILITY_TOKEN_NAME = "AbilityToken";
 const std::string LINE_SEPARATOR = "\n";
@@ -112,6 +116,10 @@ private:
  * @class AbilityRequest
  * Wrap parameters of starting ability.
  */
+enum AbilityCallType {
+    INVALID_TYPE = 0,
+    CALL_REQUEST_TYPE,
+};
 struct AbilityRequest {
     Want want;
     AppExecFwk::AbilityInfo abilityInfo;
@@ -119,7 +127,13 @@ struct AbilityRequest {
     int32_t uid = 0;
     int requestCode = -1;
     bool restart = false;
-    sptr<IRemoteObject> callerToken;
+
+    // call ability
+    int callerUid = -1;
+    AbilityCallType callType = AbilityCallType::INVALID_TYPE;
+    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IAbilityConnection> connect = nullptr;
+
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
     int32_t compatibleVersion = 0;
     std::string specifiedFlag;
@@ -138,6 +152,11 @@ struct AbilityRequest {
         return false;
     }
 
+    bool IsCallType(const AbilityCallType & type) const
+    {
+        return (callType == type);
+    }
+
     void Dump(std::vector<std::string> &state)
     {
         std::string dumpInfo = "      want [" + want.ToUri() + "]";
@@ -151,6 +170,12 @@ struct AbilityRequest {
     }
 };
 
+// new version
+enum ResolveResultType {
+    OK_NO_REMOTE_OBJ = 0,
+    OK_HAS_REMOTE_OBJ,
+    NG_INNER_ERROR,
+};
 /**
  * @class AbilityRecord
  * AbilityRecord records ability info and states and used to schedule ability life.
@@ -736,38 +761,53 @@ public:
     void SetSwitchingPause(bool state);
     bool IsSwitchingPause();
 
+    // new version
+    ResolveResultType Resolve(const AbilityRequest &abilityRequest);
+    bool Release(const sptr<IAbilityConnection> & connect);
+    bool IsNeedToCallRequest() const;
+    bool IsStartedByCall() const;
+    void SetStartedByCall(const bool isFlag);
+    bool CallRequest();
+    bool IsStartToBackground() const;
+    void SetStartToBackground(const bool flag);
+
+    void SetSpecifiedFlag(const std::string &flag);
+    std::string GetSpecifiedFlag() const;
+
+protected:
+    void SendEvent(uint32_t msg, uint32_t timeOut);
+
+    sptr<Token> token_ = {};                               // used to interact with kit and wms
+    std::unique_ptr<LifecycleDeal> lifecycleDeal_ = {};    // life manager used to schedule life
+    AbilityState currentState_ = AbilityState::INITIAL;    // current life state
+    Want want_ = {};                                       // want to start this ability
+    LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
+    static int64_t g_abilityRecordEventId_;
+    int64_t eventId_ = 0;                                  // post event id
+
+private:
     /**
      * get the type of ability.
      *
      */
     void GetAbilityTypeString(std::string &typeStr);
     void OnSchedulerDied(const wptr<IRemoteObject> &remote);
-    void SendEvent(uint32_t msg, uint32_t timeOut);
-
-    void SetSpecifiedFlag(const std::string &flag);
-    std::string GetSpecifiedFlag() const;
 
     static int64_t abilityRecordId;
     int recordId_ = 0;                                // record id
-    Want want_ = {};                                       // want to start this ability
     AppExecFwk::AbilityInfo abilityInfo_ = {};             // the ability info get from BMS
     AppExecFwk::ApplicationInfo applicationInfo_ = {};     // the ability info get from BMS
-    sptr<Token> token_ = {};                               // used to interact with kit and wms
     std::weak_ptr<MissionRecord> missionRecord_ = {};      // mission of this ability
     std::weak_ptr<AbilityRecord> preAbilityRecord_ = {};   // who starts this ability record
     std::weak_ptr<AbilityRecord> nextAbilityRecord_ = {};  // ability that started by this ability
     std::weak_ptr<AbilityRecord> backAbilityRecord_ = {};  // who back to this ability record
-    std::unique_ptr<LifecycleDeal> lifecycleDeal_ = {};    // life manager used to schedule life
     int64_t startTime_ = 0;                           // records first time of ability start
     bool isReady_ = false;                            // is ability thread attached?
     bool isWindowAttached_ = false;                   // Is window of this ability attached?
     bool isLauncherAbility_ = false;                  // is launcher?
-    int64_t eventId_ = 0;                             // post event id
-    static int64_t g_abilityRecordEventId_;
+
     sptr<IAbilityScheduler> scheduler_ = {};       // kit scheduler
     bool isTerminating_ = false;              // is terminating ?
-    LifeCycleStateInfo lifeCycleStateInfo_;   // target life state info
-    AbilityState currentState_ = AbilityState::INITIAL;  // current life state
     std::shared_ptr<WindowInfo> windowInfo_;  // add window info
     bool isCreateByConnect_ = false;          // is created by connect ability mode?
     bool isToEnd_ = false;                    // is to end ?
@@ -816,6 +856,12 @@ public:
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
     bool isSwitchingPause_ = false;
+	
+	// new version
+    std::shared_ptr<CallContainer> callContainer_ = nullptr;
+    bool isStartedByCall_ = false;
+    bool isStartToBackground_ = false;
+
     int32_t restartCount_ = -1;
     int32_t restratMax_ = -1;
     std::string specifiedFlag_;

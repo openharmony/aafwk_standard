@@ -395,7 +395,10 @@ public:
      */
     bool CheckObsPermission();
 
-    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+    sptr<IRemoteObject> CallRequest();
+    
+    std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 private:
     /**
      * @description: Create the abilityname.
