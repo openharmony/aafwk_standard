@@ -1385,6 +1385,12 @@ public:
      * @return None.
      */
     void SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener);
+	
+	/**
+     * @brief request a remote object of callee from this ability.
+     * @return Returns the remote object of callee.
+     */
+    virtual sptr<IRemoteObject> CallRequest();
 
 protected:
     /**

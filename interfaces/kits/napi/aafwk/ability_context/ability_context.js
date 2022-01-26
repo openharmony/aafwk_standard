@@ -14,6 +14,7 @@
  */
 
 var Context = requireNapi("application.Context")
+var Caller = requireNapi("application.Caller")
 
 class AbilityContext extends Context {
     constructor(obj) {
@@ -24,6 +25,22 @@ class AbilityContext extends Context {
 
     startAbility(want, options, callback) {
         return this.__context_impl__.startAbility(want, options, callback)
+    }
+
+    startAbilityByCall(want) {
+        if (typeof want !== 'object' || want == null) {
+            console.log("AbilityContext::startAbilityByCall input param error");
+            return null;
+        }
+
+        let callee = this.__context_impl__.startAbilityByCall(want);
+        if (typeof callee === 'object' && callee != null) {
+            console.log("AbilityContext::startAbilityByCall");
+            return new Caller(callee);
+         } else {
+            console.log("AbilityContext::startAbilityByCall Obtain remoteObject falied");
+            return null;
+        }
     }
 
     startAbilityForResult(want, callback) {

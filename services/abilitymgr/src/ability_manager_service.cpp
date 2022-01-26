@@ -2079,6 +2079,14 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
     }
 }
 
+void AbilityManagerService::OnCallConnectDied(std::shared_ptr<CallRecord> callRecord)
+{
+    CHECK_POINTER(callRecord);
+    if (currentMissionListManager_) {
+        currentMissionListManager_->OnCallConnectDied(callRecord);
+    }
+}
+
 void AbilityManagerService::GetMaxRestartNum(int &max)
 {
     if (amsConfigResolver_) {
@@ -2918,6 +2926,104 @@ void AbilityManagerService::StartingSettingsDataAbility()
     // start settings data ability
     Uri uri(abilityUri);
     (void)AcquireDataAbility(uri, true, nullptr);
+}
+
+int AbilityManagerService::StartAbilityByCall(
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("call ability.");
+    CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
+
+    AbilityRequest abilityRequest;
+    abilityRequest.callType = AbilityCallType::CALL_REQUEST_TYPE;
+    abilityRequest.callerUid = IPCSkeleton::GetCallingUid();
+    abilityRequest.callerToken = callerToken;
+    abilityRequest.startSetting = nullptr;
+    abilityRequest.want = want;
+    abilityRequest.connect = connect;
+    int result = GenerateAbilityRequest(want, -1, abilityRequest, callerToken);
+    if (result != ERR_OK) {
+        HILOG_ERROR("Generate ability request error.");
+        return result;
+    }
+
+    if (!abilityRequest.IsNewVersion()) {
+        HILOG_ERROR("target ability compatible version is lower than 8.");
+        return RESOLVE_CALL_ABILITY_VERSION_ERR;
+    }
+
+    result = CheckCallPermissions(abilityRequest);
+    if (result != ERR_OK) {
+        HILOG_ERROR("CheckCallPermissions fail, result: %{public}d", result);
+        return RESOLVE_CALL_NO_PERMISSIONS;
+    }
+
+    return currentMissionListManager_->ResolveLocked(abilityRequest);
+}
+
+int AbilityManagerService::ReleaseAbility(
+    const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element)
+{
+    HILOG_DEBUG("Release called ability.");
+
+    CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
+
+    std::string elementName = element.GetURI();
+    HILOG_DEBUG("try to release called ability, name: %{public}s.", elementName.c_str());
+
+    return currentMissionListManager_->ReleaseLocked(connect, element);
+}
+
+int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityRequest)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+
+    auto abilityInfo = abilityRequest.abilityInfo;
+    auto callerUid = abilityRequest.callerUid;
+    auto targetUid = abilityInfo.applicationInfo.uid;
+
+    if (AbilityUtil::ROOT_UID == callerUid) {
+        HILOG_DEBUG("uid is root,ability cannot be called.");
+        return RESOLVE_CALL_NO_PERMISSIONS;
+    }
+
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+
+    auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
+    if (callerUid != SYSTEM_UID && !isSystemApp) {
+        HILOG_DEBUG("caller is common app.");
+        std::string bundleName;
+        bool result = bms->GetBundleNameForUid(callerUid, bundleName);
+        if (!result) {
+            HILOG_ERROR("GetBundleNameForUid frome bms fail.");
+            return RESOLVE_CALL_NO_PERMISSIONS;
+        }
+        if (bundleName != abilityInfo.bundleName && callerUid != targetUid) {
+            HILOG_ERROR("the bundlename of caller is different from target one, caller: %{public}s "
+                        "target: %{public}s",
+                bundleName.c_str(),
+                abilityInfo.bundleName.c_str());
+            return RESOLVE_CALL_NO_PERMISSIONS;
+        }
+    } else {
+        HILOG_DEBUG("caller is systemapp or system ability.");
+    }
+
+    HILOG_DEBUG("the caller has permission to resolve the callproxy of common ability.");
+
+    // check whether the target ability is singleton mode and page type.
+    if (abilityInfo.type == AppExecFwk::AbilityType::PAGE &&
+        abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON) {
+        HILOG_DEBUG("called ability is common ability and singleton.");
+    } else {
+        HILOG_ERROR("called ability is not common ability or singleton.");
+        return RESOLVE_CALL_ABILITY_TYPE_ERR;
+    }
+
+    return ERR_OK;
 }
 
 int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)

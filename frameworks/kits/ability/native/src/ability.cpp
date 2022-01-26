@@ -3254,5 +3254,14 @@ void Ability::DoOnForeground(const Want& want)
 
     }
 }
+
+/**
+ * @brief request a remote object of callee from this ability.
+ * @return Returns the remote object of callee.
+ */
+sptr<IRemoteObject> Ability::CallRequest()
+{
+    return nullptr;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -54,7 +54,7 @@ void AbilityContextTest::SetUpTestCase(void)
 {
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase start";
     OHOS::sptr<OHOS::IRemoteObject> bundleObject = new (std::nothrow) BundleMgrService();
-    OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) OHOS::AAFwk::MockAbilityManagerService();
+    OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) AAFwk::MockAbilityManagerService();
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase bundleObject->" << bundleObject.GetRefPtr();
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase abilityObject->" << abilityObject.GetRefPtr();
 

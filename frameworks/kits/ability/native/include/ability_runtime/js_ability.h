@@ -58,6 +58,8 @@ public:
     void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
 
+    sptr<IRemoteObject> CallRequest() override;
+
 protected:
     void DoOnForeground(const Want &want) override;
 

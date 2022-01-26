@@ -1548,5 +1548,17 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
     abilityContextImpl->SetAbilityInfo(abilityInfo);
     return abilityContextImpl;
 }
+
+sptr<IRemoteObject> AbilityThread::CallRequest()
+{
+    APP_LOGI("AbilityThread::CallRequest start");
+
+    if (!currentAbility_) {
+        APP_LOGI("ability is nullptr.");
+        return nullptr;
+    }
+
+    return currentAbility_->CallRequest();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

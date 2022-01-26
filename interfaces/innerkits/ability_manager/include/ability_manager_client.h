@@ -597,6 +597,24 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode MoveMissionToFront(int32_t missionId);
+	
+	/**
+     * Start Ability, connect session with common ability.
+     *
+     * @param want, Special want for service type's ability.
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbilityByCall(
+        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callToken);
+
+    /**
+     * Release Ability, disconnect session with common ability.
+     *
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ReleaseAbility(const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element);
 
     ErrCode GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 

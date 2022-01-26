@@ -34,6 +34,8 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/ability_token_stub.cpp",
     "${services_path}/abilitymgr/src/ams_configuration_parameter.cpp",
+    "${services_path}/abilitymgr/src/call_container.cpp",
+    "${services_path}/abilitymgr/src/call_record.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/connection_record.cpp",
     "${services_path}/abilitymgr/src/data_ability_caller_recipient.cpp",

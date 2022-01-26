@@ -123,6 +123,8 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLEAN_MISSION] = &AbilityManagerStub::CleanMissionInner;
     requestFuncMap_[CLEAN_ALL_MISSIONS] = &AbilityManagerStub::CleanAllMissionsInner;
     requestFuncMap_[MOVE_MISSION_TO_FRONT] = &AbilityManagerStub::MoveMissionToFrontInner;
+    requestFuncMap_[START_CALL_ABILITY] = &AbilityManagerStub::StartAbilityByCallInner;
+    requestFuncMap_[RELEASE_CALL_ABILITY] = &AbilityManagerStub::ReleaseInner;
     requestFuncMap_[SET_MISSION_LABEL] = &AbilityManagerStub::SetMissionLabelInner;
     requestFuncMap_[START_USER] = &AbilityManagerStub::StartUserInner;
     requestFuncMap_[STOP_USER] = &AbilityManagerStub::StopUserInner;
@@ -1102,6 +1104,52 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
         HILOG_ERROR("MoveMissionToFront failed.");
         return ERR_INVALID_VALUE;
     }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply)
+{
+    
+    HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner begin.");
+    Want *want = data.ReadParcelable<Want>();
+    if (want == nullptr) {
+        HILOG_ERROR("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
+    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    int32_t result = StartAbilityByCall(*want, callback, callerToken);
+
+    HILOG_DEBUG("resolve call ability ret = %d", result);
+
+    reply.WriteInt32(result);
+    delete want;
+    
+    HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner end.");
+
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
+    if (callback == nullptr) {
+        HILOG_ERROR("callback is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto element = data.ReadParcelable<AppExecFwk::ElementName>();
+    if (element == nullptr) {
+        HILOG_ERROR("callback stub receive element is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    int32_t result = ReleaseAbility(callback, *element);
+
+    HILOG_DEBUG("release call ability ret = %d", result);
+
+    reply.WriteInt32(result);
+
     return NO_ERROR;
 }
 

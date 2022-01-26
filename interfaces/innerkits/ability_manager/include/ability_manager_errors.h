@@ -329,6 +329,32 @@ enum {
      * Result(2097217) for clear the application data fail.
      */
     CLEAR_APPLICATION_DATA_FAIL,
+	
+	// for call ability
+    /**
+     * Result(2097218) for resolve ability failed, there is no permissions
+     */
+    RESOLVE_CALL_NO_PERMISSIONS,
+
+    /**
+     * Result(2097219) for resolve ability failed, target ability not page or singleton
+     */
+    RESOLVE_CALL_ABILITY_TYPE_ERR,
+    
+    /**
+     * Result(2097220) for resolve ability failed, resolve failed.
+     */
+    RESOLVE_CALL_ABILITY_INNER_ERR,
+
+    /**
+     * Result(2097221) for resolve ability failed, resolve failed.
+     */
+    RESOLVE_CALL_ABILITY_VERSION_ERR,
+
+    /**
+     * Result(2097222) for release ability failed, release failed.
+     */
+    RELEASE_CALL_ABILITY_INNER_ERR,
 
     /**
      * Result(2097216) for register remote mission listener fail.
