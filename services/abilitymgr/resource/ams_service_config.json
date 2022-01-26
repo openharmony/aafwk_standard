@@ -9,7 +9,8 @@
         "startup_mms":true,
         "mission_save_time" : 43200000,
         "root_launcher_restart_max":15,
-        "use_new_mission":true
+        "use_new_mission":true,
+        "app_not_response_process_timeout_time" : 5000
     },
     "memorythreshold":{
         "home_application": "20"

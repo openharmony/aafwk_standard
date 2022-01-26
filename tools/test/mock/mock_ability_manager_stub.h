@@ -174,6 +174,10 @@ public:
     {
         return 0;
     }
+    virtual bool SendANRProcessID(int pid)
+    {
+        return true;
+    }
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override
     {

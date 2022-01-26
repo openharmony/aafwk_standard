@@ -470,5 +470,10 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
     JsRuntime::RemoveTask(name);
     return engine.CreateUndefined();
 }
+
+std::string JsRuntime::BuildNativeAndJsBackStackTrace()
+{
+    return nativeEngine_->BuildNativeAndJsBackStackTrace();
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

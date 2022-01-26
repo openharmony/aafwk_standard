@@ -104,6 +104,8 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client/include",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher/include",
   ]
 
   configs = [ ":appkit_config" ]
@@ -144,6 +146,8 @@ ohos_shared_library("appkit_native") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client:libfaultloggerd",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",

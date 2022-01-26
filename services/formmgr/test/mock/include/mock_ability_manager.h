@@ -760,6 +760,11 @@ public:
     {
         return 0;
     }
+    virtual bool SendANRProcessID(int pid)
+    {
+        return true;
+    }
+
 private:
     Semaphore sem_;
 };

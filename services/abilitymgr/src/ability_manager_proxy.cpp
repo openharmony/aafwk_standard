@@ -2228,5 +2228,26 @@ bool AbilityManagerProxy::IsRunningInStabilityTest()
     }
     return reply.ReadBool();
 }
+
+bool AbilityManagerProxy::SendANRProcessID(int pid)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return false;
+    }
+    if (!data.WriteInt32(pid)) {
+        HILOG_ERROR("pid WriteInt32 fail.");
+        return false;
+    }
+    error = Remote()->SendRequest(IAbilityManager::SEND_APP_NOT_RESPONSE_PROCESS_ID, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("SendANRProcessID error: %d", error);
+        return false;
+    }
+    return reply.ReadBool();
+}
 }  // namespace AAFwk
 }  // namespace OHOS
