@@ -242,7 +242,10 @@ bool JsRuntime::Initialize(const Options& options)
     // Create event handler for runtime
     eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(options.eventRunner);
     idleTask_ = [this]() {
-        nativeEngine_->Loop(LOOP_NOWAIT);
+        // fix 10 loop task
+        for (int i = 0; i < 10; i++) {
+            nativeEngine_->Loop(LOOP_NOWAIT);
+        }
         eventHandler_->PostIdleTask(idleTask_);
     };
     eventHandler_->PostIdleTask(idleTask_);
