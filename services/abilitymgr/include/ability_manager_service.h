@@ -741,6 +741,12 @@ public:
 
     bool IsAbilityControllerForeground(const std::string &bundleName);
 
+    /**
+     * Send not response process ID to ability manager service.
+     * @param pid The not response process ID.
+     */
+    virtual bool SendANRProcessID(int pid) override;
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;

@@ -559,6 +559,12 @@ public:
 
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) override;
 
+    /**
+     * Send not response process ID to ability manager service.
+     * @param pid The not response process ID.
+     */
+    virtual bool SendANRProcessID(int pid) override;
+    
 private:
     template <typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);
