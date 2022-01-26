@@ -46,8 +46,8 @@ class AbilityContext extends Context {
         return this.__context_impl__.terminateSelfWithResult(abilityResult, callback)
     }
 
-    requestPermissionsFromUser(permissions, requestCode, resultCallback) {
-        return this.__context_impl__.requestPermissionsFromUser(permissions, requestCode, resultCallback)
+    requestPermissionsFromUser(permissions, resultCallback) {
+        return this.__context_impl__.requestPermissionsFromUser(permissions, resultCallback)
     }
 
     restoreWindowStage(contentStorage) {
