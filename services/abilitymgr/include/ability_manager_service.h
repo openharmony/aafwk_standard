@@ -919,9 +919,9 @@ private:
     sptr<AppExecFwk::IBundleMgr> GetBundleManager();
     int StartRemoteAbility(const Want &want, int requestCode);
     int ConnectLocalAbility(
-        const Want &want, 
-        const int32_t userId, 
-        const sptr<IAbilityConnection> &connect, 
+        const Want &want,
+        const int32_t userId,
+        const sptr<IAbilityConnection> &connect,
         const sptr<IRemoteObject> &callerToken);
     int DisconnectLocalAbility(const sptr<IAbilityConnection> &connect);
     int ConnectRemoteAbility(const Want &want, const sptr<IRemoteObject> &connect);
@@ -996,8 +996,8 @@ private:
     std::shared_ptr<MissionListManager> GetListManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
-	
-	int32_t GetValidUserId(const Want &want, const int32_t userId);
+
+    int32_t GetValidUserId(const Want &want, const int32_t userId);
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;

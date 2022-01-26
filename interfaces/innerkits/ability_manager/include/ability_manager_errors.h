@@ -369,7 +369,7 @@ enum {
     /**
      * Result() for invalid userid.
      */
-    INVALID_USERID_VALUE, 
+    INVALID_USERID_VALUE,
 };
 
 enum {

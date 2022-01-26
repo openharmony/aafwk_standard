@@ -234,7 +234,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return ERR_INVALID_VALUE;
     }
 
-    //check userId
     int32_t userIdValid = GetValidUserId(want, userId);
 
     bool isMultiOsAccountEnable = false;
@@ -242,7 +241,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     HILOG_INFO("%{public}s  isMultiOsAccountEnable = %{public}d", __func__, isMultiOsAccountEnable);
     if (!isMultiOsAccountEnable) {
         if (userIdValid != GetUserId()) {
-            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__, 
+            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__,
                 userIdValid, GetUserId());
             return INVALID_USERID_VALUE;
         }
@@ -331,7 +330,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return ERR_INVALID_VALUE;
     }
 
-    //check userId
     int32_t userIdValid = GetValidUserId(want, userId);
 
     bool isMultiOsAccountEnable = false;
@@ -339,7 +337,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     HILOG_INFO("%{public}s  isMultiOsAccountEnable = %{public}d", __func__, isMultiOsAccountEnable);
     if (!isMultiOsAccountEnable) {
         if (userIdValid != GetUserId()) {
-            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__, 
+            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__,
                 userIdValid, GetUserId());
             return INVALID_USERID_VALUE;
         }
@@ -418,7 +416,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     if (callerToken != nullptr && !VerificationToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-    //check userId
+
     int32_t userIdValid = GetValidUserId(want, userId);
 
     bool isMultiOsAccountEnable = false;
@@ -426,7 +424,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     HILOG_INFO("%{public}s  isMultiOsAccountEnable = %{public}d", __func__, isMultiOsAccountEnable);
     if (!isMultiOsAccountEnable) {
         if (userIdValid != GetUserId()) {
-            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__, 
+            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__,
                 userIdValid, GetUserId());
             return INVALID_USERID_VALUE;
         }
@@ -878,7 +876,6 @@ int AbilityManagerService::ConnectAbility(
         return ConnectRemoteAbility(want, connect->AsObject());
     }
 
-    //check userId
     int32_t userIdValid = GetValidUserId(want, userId);
 
     bool isMultiOsAccountEnable = false;
@@ -886,7 +883,7 @@ int AbilityManagerService::ConnectAbility(
     HILOG_INFO("%{public}s  isMultiOsAccountEnable = %{public}d", __func__, isMultiOsAccountEnable);
     if (!isMultiOsAccountEnable) {
         if (userIdValid != GetUserId()) {
-            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__, 
+            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__,
                 userIdValid, GetUserId());
             return INVALID_USERID_VALUE;
         }
@@ -2251,7 +2248,6 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Stop service ability.");
 
-    //check userId
     int32_t userIdValid = GetValidUserId(want, userId);
 
     bool isMultiOsAccountEnable = false;
@@ -2259,7 +2255,7 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     HILOG_INFO("%{public}s  isMultiOsAccountEnable = %{public}d", __func__, isMultiOsAccountEnable);
     if (!isMultiOsAccountEnable) {
         if (userIdValid != GetUserId()) {
-            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__, 
+            HILOG_ERROR("%{public}s userId(%{public}d) Unequal CurrentUserId(%{public}d).", __func__,
                 userIdValid, GetUserId());
             return INVALID_USERID_VALUE;
         }
@@ -3633,7 +3629,7 @@ int32_t AbilityManagerService::GetValidUserId(const Want &want, const int32_t us
     if (DEFAULT_INVAL_VALUE == userId) {
         // calling userid = calling uid / 200000
         userIdValid = IPCSkeleton::GetCallingUid() / BASE_USER_RANGE;
-        HILOG_INFO("%{public}s  userIdValid = %{public}d, CallingUid = %{public}d", __func__, userIdValid, 
+        HILOG_INFO("%{public}s userIdValid = %{public}d, CallingUid = %{public}d", __func__, userIdValid,
             IPCSkeleton::GetCallingUid());
     } else {
         userIdValid = userId;
