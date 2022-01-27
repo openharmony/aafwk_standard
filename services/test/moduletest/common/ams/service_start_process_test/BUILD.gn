@@ -26,7 +26,10 @@ ohos_moduletest("AmsServiceStartModuleTest") {
     "ams_service_start_process_module_test.cpp",
   ]
 
-  deps = [ "${services_path}/test/moduletest/common/ams:appmgr_mst_source" ]
+  deps = [
+    "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
+  ]
 
   external_deps = [ "ipc:ipc_core" ]
 }
@@ -34,5 +37,7 @@ ohos_moduletest("AmsServiceStartModuleTest") {
 group("moduletest") {
   testonly = true
 
-  deps = [ ":AmsServiceStartModuleTest" ]
+  deps = [
+    ":AmsServiceStartModuleTest",
+  ]
 }

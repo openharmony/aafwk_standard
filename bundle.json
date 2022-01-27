@@ -196,6 +196,7 @@
           "test": [
             "//foundation/aafwk/standard/frameworks/kits/content/cpp/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/ability/native/test:unittest",
+            "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test:moduletest",
             "//foundation/aafwk/standard/frameworks/kits/test:moduletest",
             "//foundation/aafwk/standard/services/test:moduletest",
             "//foundation/aafwk/standard/services:unittest",

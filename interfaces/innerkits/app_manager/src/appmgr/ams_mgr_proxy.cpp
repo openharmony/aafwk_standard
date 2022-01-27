@@ -550,5 +550,37 @@ void AmsMgrProxy::UpdateConfiguration(const Configuration &config)
     }
     APP_LOGI("UpdateConfiguration end");
 }
+
+int AmsMgrProxy::GetConfiguration(Configuration &config)
+{
+    APP_LOGI("GetConfiguration start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_SYNC);
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("parcel data failed");
+        return ERR_INVALID_DATA;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        APP_LOGE("Remote() is NULL");
+        return ERR_INVALID_DATA;
+    }
+    int32_t ret =
+        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::GET_CONFIGURATION), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        return ERR_INVALID_DATA;
+    }
+
+    std::unique_ptr<Configuration> info(reply.ReadParcelable<Configuration>());
+    if (!info) {
+        APP_LOGE("read configuration failed.");
+        return ERR_UNKNOWN_OBJECT;
+    }
+    config = *info;
+    APP_LOGI("GetConfiguration end");
+    return NO_ERROR;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

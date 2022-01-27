@@ -25,6 +25,15 @@
 
 namespace OHOS {
 namespace AAFwk {
+const std::map<AppState, std::string> appStateToStrMap_ = {
+    std::map<AppState, std::string>::value_type(AppState::BEGIN, "BEGIN"),
+    std::map<AppState, std::string>::value_type(AppState::READY, "READY"),
+    std::map<AppState, std::string>::value_type(AppState::FOREGROUND, "FOREGROUND"),
+    std::map<AppState, std::string>::value_type(AppState::BACKGROUND, "BACKGROUND"),
+    std::map<AppState, std::string>::value_type(AppState::SUSPENDED, "SUSPENDED"),
+    std::map<AppState, std::string>::value_type(AppState::TERMINATED, "TERMINATED"),
+    std::map<AppState, std::string>::value_type(AppState::END, "END"),
+};
 AppScheduler::AppScheduler() : appMgrClient_(std::make_unique<AppExecFwk::AppMgrClient>())
 {}
 
@@ -281,12 +290,39 @@ int AppScheduler::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessI
     return static_cast<int>(appMgrClient_->GetAllRunningProcesses(info));
 }
 
+int AppScheduler::GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    return static_cast<int>(appMgrClient_->GetProcessRunningInfosByUserId(info, userId));
+}
+
+std::string AppScheduler::ConvertAppState(const AppState &state)
+{
+    auto it = appStateToStrMap_.find(state);
+    if (it != appStateToStrMap_.end()) {
+        return it->second;
+    }
+    return "INVALIDSTATE";
+}
+
 int AppScheduler::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     auto ret = static_cast<int>(appMgrClient_->UpdateConfiguration(config));
     if (ret != ERR_OK) {
         HILOG_ERROR("UpdateConfiguration failed.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
+
+int AppScheduler::GetConfiguration(AppExecFwk::Configuration &config)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    auto ret = static_cast<int>(appMgrClient_->GetConfiguration(config));
+    if (ret != ERR_OK) {
+        HILOG_ERROR("GetConfiguration failed.");
         return INNER_ERR;
     }
 

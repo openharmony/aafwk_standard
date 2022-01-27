@@ -123,6 +123,7 @@ ErrCode AppMgrService::Init()
         APP_LOGE("init failed without inner service");
         return ERR_INVALID_OPERATION;
     }
+    appMgrServiceInner_->Init();
     handler_ = std::make_shared<AMSEventHandler>(runner_, appMgrServiceInner_);
     if (!handler_) {
         APP_LOGE("init failed without handler");
@@ -280,6 +281,14 @@ int32_t AppMgrService::GetAllRunningProcesses(std::vector<RunningProcessInfo> &i
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->GetAllRunningProcesses(info);
+}
+
+int32_t AppMgrService::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
+{
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    return appMgrServiceInner_->GetProcessRunningInfosByUserId(info, userId);
 }
 
 void AppMgrService::SetAppFreezingTime(int time)

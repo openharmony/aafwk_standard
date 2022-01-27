@@ -250,14 +250,16 @@ public:
      *
      * @param info dump result.
      */
-    void Dump(std::vector<std::string> &info);
+    void Dump(std::vector<std::string>& info);
 
     /**
      * @brief dump mission list
      *
      * @param info dump result.
      */
-    void DumpMissionList(std::vector<std::string> &info);
+    void DumpMissionList(std::vector<std::string> &info, bool isClient, const std::string &args = "");
+
+    void DumpMissionListByRecordId(std::vector<std::string> &info, bool isClient, int32_t abilityRecordId);
 
     /**
      * @brief dump mission by id

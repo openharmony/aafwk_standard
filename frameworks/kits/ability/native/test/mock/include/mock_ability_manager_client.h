@@ -127,6 +127,7 @@ public:
     };
     virtual void NotifyContinuationResult(const int32_t result) {};
     virtual void ContinueAbility(const std::string& deviceId) {};
+    virtual void DumpAbilityInfo(std::vector<std::string> &info) {};
     virtual sptr<IRemoteObject> CallRequest()
     {
         return sptr<IRemoteObject>(nullptr);

@@ -34,10 +34,15 @@ class MockServiceAbilityManagerService : public AbilityManagerStub,
 public:
     MockServiceAbilityManagerService();
     ~MockServiceAbilityManagerService();
-    int StartAbility(const Want &want, int requestCode = -1) override;
-    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1) override;
+    int StartAbility(const Want &want, int requestCode = DEFAULT_INVAL_VALUE) override;
     int StartAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
+        const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = DEFAULT_INVAL_VALUE) override;
+    int StartAbility(const Want &want, const StartOptions &startOptions, const sptr<IRemoteObject> &callerToken,
+        int requestCode = DEFAULT_INVAL_VALUE) override;
+
+    int StartAbilityByCall(
+        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken);
+
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
     int MinimizeAbility(const sptr<IRemoteObject> &token) override
@@ -58,6 +63,8 @@ public:
     int ScheduleCommandAbilityDone(const sptr<IRemoteObject> &token) override;
 
     void DumpState(const std::string &args, std::vector<std::string> &info) override;
+    void DumpSysState(
+        const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID) override;
 
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
     int StopServiceAbility(const Want &want) override;
@@ -165,7 +172,8 @@ public:
         return 0;
     }
 
-    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
+    int GetMissionSnapshot(
+        const std::string& deviceId, const int32_t missionId, MissionSnapshot& snapshot) override
     {
         return 0;
     }
@@ -210,6 +218,52 @@ public:
     }
 
     int StopUser(int accountId, const sptr<IStopUserCallback> &callback)
+    {
+        return 0;
+    }
+
+    int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label)
+    {
+        return 0;
+    }
+
+    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override
+    {
+        return 0;
+    }
+
+    int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override
+    {
+        return 0;
+    }
+
+    int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) override
+    {
+        return 0;
+    }
+
+    int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info) override
+    {
+        return 0;
+    }
+
+    int SetAbilityController(
+        const sptr<AppExecFwk::IAbilityController> &abilityController, bool imAStabilityTest) override
+    {
+        return 0;
+    }
+
+    bool IsRunningInStabilityTest() override
+    {
+        return true;
+    }
+
+    bool SendANRProcessID(int pid) override
+    {
+        return true;
+    }
+
+    int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override
     {
         return 0;
     }

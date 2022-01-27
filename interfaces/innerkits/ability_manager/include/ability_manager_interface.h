@@ -255,6 +255,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual void DumpState(const std::string &args, std::vector<std::string> &state) = 0;
+    virtual void DumpSysState(
+        const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID) = 0;
 
     /**
      * Destroys this Service ability if the number of times it
@@ -892,6 +894,7 @@ public:
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
         DUMP_STATE = 2001,
+		DUMPSYS_STATE = 2002,
     };
 };
 }  // namespace AAFwk

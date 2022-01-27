@@ -122,6 +122,16 @@ public:
     virtual int GetAllRunningProcesses(std::vector<RunningProcessInfo> &info) = 0;
 
     /**
+     * GetProcessRunningInfosByUserId, call GetProcessRunningInfosByUserId() through proxy project.
+     * Obtains information about application processes that are running on the device.
+     *
+     * @param info, app name in Application record.
+     * @param userId, user Id in Application record.
+     * @return ERR_OK ,return back success，others fail.
+     */
+    virtual int GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId) = 0;
+
+    /**
      * SetAppSuspendTimes, Setting the Freezing Time of APP Background.
      *
      * @param time, The timeout recorded when the application enters the background .
@@ -190,6 +200,7 @@ public:
         APP_CLEAR_UP_APPLICATION_DATA,
         APP_IS_BACKGROUND_RUNNING_RESTRICTED,
         APP_GET_ALL_RUNNING_PROCESSES,
+        APP_GET_RUNNING_PROCESSES_BY_USER_ID,
         APP_SET_APP_FREEZING_TIME,
         APP_GET_APP_FREEZING_TIME,
         APP_GET_SYSTEM_MEMORY_ATTR,
