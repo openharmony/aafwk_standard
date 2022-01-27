@@ -1648,7 +1648,6 @@ void AbilityManagerService::DumpSysMissionListInner(
         return;
     }
 
-    HILOG_INFO("argListsize = %{public}d", argList.size());
     if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpMissionList(info, isClient, argList[1]);
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {

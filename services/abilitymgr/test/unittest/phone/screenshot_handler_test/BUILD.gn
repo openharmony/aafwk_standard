@@ -70,7 +70,5 @@ ohos_unittest("ability_screenshot_handler_test") {
 group("unittest") {
   testonly = true
 
-  deps = [
-    ":ability_screenshot_handler_test",
-  ]
+  deps = [ ":ability_screenshot_handler_test" ]
 }

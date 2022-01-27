@@ -39,7 +39,5 @@ ohos_moduletest("AmsServiceAppSpawnClientModuleTest") {
 group("moduletest") {
   testonly = true
 
-  deps = [
-    ":AmsServiceAppSpawnClientModuleTest",
-  ]
+  deps = [ ":AmsServiceAppSpawnClientModuleTest" ]
 }

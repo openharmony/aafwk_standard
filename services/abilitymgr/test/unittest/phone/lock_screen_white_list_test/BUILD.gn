@@ -70,7 +70,5 @@ ohos_unittest("lock_screen_white_list_test") {
 group("unittest") {
   testonly = true
 
-  deps = [
-    ":lock_screen_white_list_test",
-  ]
+  deps = [ ":lock_screen_white_list_test" ]
 }

@@ -37,7 +37,5 @@ ohos_moduletest("AmsServiceStartModuleTest") {
 group("moduletest") {
   testonly = true
 
-  deps = [
-    ":AmsServiceStartModuleTest",
-  ]
+  deps = [ ":AmsServiceStartModuleTest" ]
 }

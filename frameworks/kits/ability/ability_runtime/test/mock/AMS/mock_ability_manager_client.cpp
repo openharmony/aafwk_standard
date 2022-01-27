@@ -105,23 +105,23 @@ void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32
     abms->AddWindowInfo(token, windowToken);
 }
 
-ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode)
+ErrCode AbilityManagerClient::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     if (remoteObject_ == nullptr) {
         return ABILITY_SERVICE_NOT_CONNECTED;
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StartAbility(want, requestCode);
+    return abms->StartAbility(want, userId, requestCode);
 }
 
 ErrCode AbilityManagerClient::StartAbility(
-    const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode)
 {
     if (remoteObject_ == nullptr) {
         return ABILITY_SERVICE_NOT_CONNECTED;
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StartAbility(want, callerToken, requestCode);
+    return abms->StartAbility(want, callerToken, userId, requestCode);
 }
 
 ErrCode AbilityManagerClient::StartAbilityByCall(
@@ -173,14 +173,14 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &caller
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     if (remoteObject_ == nullptr) {
         remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->ConnectAbility(want, connect, callerToken);
+    return abms->ConnectAbility(want, connect, callerToken, userId);
 }
 
 ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &connect)
