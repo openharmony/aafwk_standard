@@ -74,7 +74,6 @@ protected:
     uint32_t callbackId_ = 0;
 
     std::unordered_map<std::string, NativeReference*> modules_;
-    std::function<void()> idleTask_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
