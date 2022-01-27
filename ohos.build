@@ -11,7 +11,8 @@
         "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
         "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
         "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-        "//foundation/aafwk/standard/frameworks/kits/appkit:appexec"
+        "//foundation/aafwk/standard/frameworks/kits/appkit:appexec",
+        "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc:ams_system_test_app"
       ],
       "inner_kits": [
         {
@@ -187,7 +188,8 @@
         "//foundation/aafwk/standard/services:fms_services_target",
         "//foundation/aafwk/standard/interfaces/innerkits:fms_innerkits_target",
         "//foundation/aafwk/standard/frameworks/kits/fmskit:fmskit_native",
-        "//foundation/aafwk/standard/interfaces/kits/napi:form_napi_packages"
+        "//foundation/aafwk/standard/interfaces/kits/napi:form_napi_packages",
+        "//foundation/aafwk/standard/test/resource/formsystemtestability:fms_system_test_app"
       ],
       "inner_kits": [
         {
@@ -225,7 +227,8 @@
         }
       ],
       "test_list": [
-        "//foundation/aafwk/standard/services/formmgr/test:unittest"
+        "//foundation/aafwk/standard/services/formmgr/test:unittest",
+        "//foundation/aafwk/standard/test/systemtest:systemtest"
       ]
     }
   },
