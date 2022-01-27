@@ -120,9 +120,10 @@ ohos_shared_library("static_subscriber_ipc") {
 
 ohos_shared_library("abilitykit_native") {
   include_dirs = [
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
     "//base/global/i18n_standard/frameworks/intl/include",
   ]
 
@@ -208,15 +209,15 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_util.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/js_utils.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
 
-    #"//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_rdb_predicates.cpp",
+    #"//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/napi_rdb_predicates.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_caller_complex.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_window_stage.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_dataability/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/native_rdb/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
   ]
   configs = [ ":ability_config" ]
   public_configs = [
