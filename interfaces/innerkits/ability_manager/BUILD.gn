@@ -114,6 +114,7 @@ ohos_shared_library("ability_manager") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "os_account_standard:os_account_innerkits",
   ]
 
   subsystem_name = "aafwk"

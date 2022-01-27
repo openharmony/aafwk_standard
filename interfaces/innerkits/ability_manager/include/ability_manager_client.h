@@ -39,6 +39,7 @@ public:
     AbilityManagerClient();
     virtual ~AbilityManagerClient();
     static std::shared_ptr<AbilityManagerClient> GetInstance();
+    static int GetCurrentAccountId();
 
     /**
      * AttachAbilityThread, ability call this interface after loaded.
