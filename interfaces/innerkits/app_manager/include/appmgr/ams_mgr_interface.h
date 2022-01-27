@@ -119,6 +119,16 @@ public:
     virtual void KillProcessesByUserId(int32_t userId) = 0;
 
     /**
+     * KillProcessWithAccount, call KillProcessWithAccount() through proxy object,
+     * kill the process.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @param accountId, account ID.
+     * @return ERR_OK, return back success, others fail.
+     */
+    virtual int KillProcessWithAccount(const std::string &bundleName, const int accountId) = 0;
+
+    /**
      * KillApplication, call KillApplication() through proxy object, kill the application.
      *
      * @param  bundleName, bundle name in Application record.
@@ -176,6 +186,7 @@ public:
         ABILITY_BEHAVIOR_ANALYSIS,
         KILL_PEOCESS_BY_ABILITY_TOKEN,
         KILL_PROCESSES_BY_USERID,
+        KILL_PROCESS_WITH_ACCOUNT,
         KILL_APPLICATION,
         ABILITY_ATTACH_TIMEOUT,
         COMPEL_VERIFY_PERMISSION,

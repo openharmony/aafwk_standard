@@ -90,6 +90,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
   deps = [
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
+    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",

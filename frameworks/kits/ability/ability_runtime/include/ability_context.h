@@ -51,6 +51,21 @@ public:
      * @brief Starts a new ability.
      * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
      * to start a specific ability. The system locates the target ability from installed abilities based on the value
+     * of the want parameter and then starts it. You can specify the ability to start using the want parameter.
+     *
+     * @param want Indicates the Want containing information about the target ability to start.
+     * @param accountId ability caller accountId.
+     * @param requestCode Indicates the request code returned after the ability using the AbilityInfo.AbilityType.PAGE
+     * template is started. You can define the request code to identify the results returned by abilities. The value
+     * ranges from 0 to 65535. This parameter takes effect only on abilities using the AbilityInfo.AbilityType.PAGE
+     * template.
+     */
+    virtual ErrCode StartAbilityWithAccount(const AAFwk::Want &want, int accountId, int requestCode) = 0;
+
+    /**
+     * @brief Starts a new ability.
+     * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
+     * to start a specific ability. The system locates the target ability from installed abilities based on the value
      * of the want parameter and the value of the start options and then starts it. You can specify the ability to
      * start using the two parameters.
      *
@@ -64,9 +79,35 @@ public:
      */
     virtual ErrCode StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions, int requestCode) = 0;
 
+    /**
+     * @brief Starts a new ability.
+     * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
+     * to start a specific ability. The system locates the target ability from installed abilities based on the value
+     * of the want parameter and the value of the start options and then starts it. You can specify the ability to
+     * start using the two parameters.
+     *
+     * @param want Indicates the Want containing application side information about the target ability to start.
+     * @param accountId caller userId.
+     * @param startOptions Indicates the StartOptions containing service side information about the target ability to
+     * start.
+     * @param requestCode Indicates the request code returned after the ability using the AbilityInfo.AbilityType.PAGE
+     * template is started. You can define the request code to identify the results returned by abilities. The value
+     * ranges from 0 to 65535. This parameter takes effect only on abilities using the AbilityInfo.AbilityType.PAGE
+     * template.
+     */
+    virtual ErrCode StartAbilityWithAccount(
+        const AAFwk::Want &want, int accountId, const AAFwk::StartOptions &startOptions, int requestCode) = 0;
+
     virtual ErrCode StartAbilityForResult(const AAFwk::Want &Want, int requestCode, RuntimeTask &&task) = 0;
 
+    virtual ErrCode StartAbilityForResultWithAccount(
+        const AAFwk::Want &Want, int accountId, int requestCode, RuntimeTask &&task) = 0;
+
     virtual ErrCode StartAbilityForResult(const AAFwk::Want &Want, const AAFwk::StartOptions &startOptions,
+        int requestCode, RuntimeTask &&task) = 0;
+
+    virtual ErrCode StartAbilityForResultWithAccount(
+        const AAFwk::Want &Want, int accountId, const AAFwk::StartOptions &startOptions,
         int requestCode, RuntimeTask &&task) = 0;
 
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
@@ -84,6 +125,16 @@ public:
     */
     virtual bool ConnectAbility(const AAFwk::Want &want,
         const sptr<AbilityConnectCallback> &connectCallback) = 0;
+
+    /**
+     * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
+     * @param accountId caller userId.
+     * @param want Indicates the want containing information about the ability to connect
+     * @param conn Indicates the callback object when the target ability is connected.
+     * @return True means success and false means failure
+     */
+    virtual bool ConnectAbilityWithAccount(const AAFwk::Want &want, int accountId,
+                                const sptr<AbilityConnectCallback> &connectCallback) = 0;
 
     /**
     * @brief Disconnects the current ability from an ability

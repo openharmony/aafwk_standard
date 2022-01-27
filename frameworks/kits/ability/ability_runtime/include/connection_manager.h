@@ -85,6 +85,18 @@ public:
         const AAFwk::Want &want, const sptr<AbilityConnectCallback> &connectCallback);
 
     /**
+     * @brief connect ability connection by user.
+     *
+     * @param connectCaller The connection caller.
+     * @param connectReceiver The connection receiver.
+     * @param accountId caller user.
+     * @param connectCallback The connection callback.
+     * @return Returns the result of connecting ability connection.
+     */
+    ErrCode ConnectAbilityWithAccount(const sptr<IRemoteObject> &connectCaller,
+        const AAFwk::Want &want, int accountId, const sptr<AbilityConnectCallback> &connectCallback);
+
+    /**
      * @brief disconnect ability connection.
      *
      * @param connectCaller The connection caller.

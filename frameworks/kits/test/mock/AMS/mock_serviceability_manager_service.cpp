@@ -31,7 +31,7 @@ MockServiceAbilityManagerService::MockServiceAbilityManagerService()
 MockServiceAbilityManagerService::~MockServiceAbilityManagerService()
 {}
 
-int MockServiceAbilityManagerService::StartAbility(const Want &want, int requestCode)
+int MockServiceAbilityManagerService::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbility";
     if (abilityScheduler_ != nullptr) {
@@ -46,7 +46,7 @@ int MockServiceAbilityManagerService::StartAbility(const Want &want, int request
 }
 
 int MockServiceAbilityManagerService::StartAbility(
-    const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode)
 {
     return 0;
 }
@@ -67,7 +67,7 @@ int MockServiceAbilityManagerService::TerminateAbility(
 }
 
 int MockServiceAbilityManagerService::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::connectAbility";
     if (abilityScheduler_ != nullptr) {
@@ -158,7 +158,7 @@ int MockServiceAbilityManagerService::TerminateAbilityByCaller(const sptr<IRemot
     return 0;
 }
 
-int MockServiceAbilityManagerService::StopServiceAbility(const Want &want)
+int MockServiceAbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
 {
     GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StopServiceAbility";
     if (abilityScheduler_ != nullptr) {

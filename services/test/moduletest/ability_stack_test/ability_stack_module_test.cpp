@@ -34,7 +34,7 @@
 #include "mock_bundle_mgr.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
-
+#include "os_account_manager.h"
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
 using namespace testing;

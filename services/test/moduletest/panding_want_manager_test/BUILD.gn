@@ -49,6 +49,7 @@ ohos_moduletest("PandingWantMgrTest") {
   deps = [
     "${innerkits_path}/base:base",
     "${innerkits_path}/want:want",
+    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",

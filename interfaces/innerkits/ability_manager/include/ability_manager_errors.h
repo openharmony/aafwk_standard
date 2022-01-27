@@ -365,6 +365,11 @@ enum {
      * Result(2097217) for unregister remote mission listener fail.
      */
     UNREGISTER_REMOTE_MISSION_LISTENER_FAIL,
+
+    /**
+     * Result() for invalid userid.
+     */
+    INVALID_USERID_VALUE,
 };
 
 enum {
