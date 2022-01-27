@@ -40,7 +40,5 @@ ohos_moduletest("AmsServiceEventDriveModuleTest") {
 group("moduletest") {
   testonly = true
 
-  deps = [
-    ":AmsServiceEventDriveModuleTest",
-  ]
+  deps = [ ":AmsServiceEventDriveModuleTest" ]
 }
