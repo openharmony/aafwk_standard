@@ -515,5 +515,37 @@ void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleNam
         }
     }
 }
+
+void PendingWantManager::Dump(std::vector<std::string> &info)
+{
+    std::string dumpInfo = "    PendingWantRecords:";
+    info.push_back(dumpInfo);
+
+    for (const auto &item : wantRecords_) {
+        const auto &pendingKey = item.first;
+        dumpInfo = "        PendWantRecord ID #" + std::to_string(pendingKey->GetUserId()) +
+            "  type #" + std::to_string(pendingKey->GetType());
+        info.push_back(dumpInfo);
+        dumpInfo = "        bundle name [" + pendingKey->GetBundleName() + "]";
+        info.push_back(dumpInfo);
+        dumpInfo = "        result who [" + pendingKey->GetRequestWho() + "]";
+        info.push_back(dumpInfo);
+        dumpInfo = "        request code #" + std::to_string(pendingKey->GetRequestCode()) +
+            "  flags #" + std::to_string(pendingKey->GetFlags());
+        info.push_back(dumpInfo);
+        dumpInfo = "        resolved type [" + pendingKey->GetRequestResolvedType() + "]";
+        info.push_back(dumpInfo);
+        dumpInfo = "        Wants:";
+        info.push_back(dumpInfo);
+        auto Wants = pendingKey->GetAllWantsInfos();
+        for (const auto &Want : Wants) {
+            dumpInfo = "  	    uri [" + Want.want.GetElement().GetDeviceID() + "//" +
+                Want.want.GetElement().GetBundleName() + "/" + Want.want.GetElement().GetAbilityName() + "]";
+            info.push_back(dumpInfo);
+            dumpInfo = "  	    resolved types [" + Want.resolvedTypes + "]";
+            info.push_back(dumpInfo);
+        }
+    }
+}
 }  // namespace AAFwk
 }  // namespace OHOS

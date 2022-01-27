@@ -105,26 +105,35 @@ void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32
     abms->AddWindowInfo(token, windowToken);
 }
 
-ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode)
+ErrCode AbilityManagerClient::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     if (remoteObject_ == nullptr) {
         return ABILITY_SERVICE_NOT_CONNECTED;
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StartAbility(want, requestCode);
+    return abms->StartAbility(want, userId, requestCode);
 }
 
 ErrCode AbilityManagerClient::StartAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode)
 {
-    HILOG_INFO("AbilityManagerClient::StartAbility start");
     if (remoteObject_ == nullptr) {
-        HILOG_INFO("AbilityManagerClient::StartAbility fail because remoteobject is null");
         return ABILITY_SERVICE_NOT_CONNECTED;
     }
-    HILOG_INFO("AbilityManagerClient::StartAbility start2");
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->StartAbility(want, connect, callerToken);
+    return abms->StartAbility(want, callerToken, userId, requestCode);
+}
+
+ErrCode AbilityManagerClient::StartAbilityByCall(
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("AbilityManagerClient::StartAbilityByCall start");
+    if (remoteObject_ == nullptr) {
+        HILOG_INFO("AbilityManagerClient::StartAbilityByCall fail because remoteobject is null");
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StartAbilityByCall(want, connect, callerToken);
 }
 
 ErrCode AbilityManagerClient::ReleaseAbility(
@@ -164,14 +173,14 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &caller
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     if (remoteObject_ == nullptr) {
         remoteObject_ =
             OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->ConnectAbility(want, connect, callerToken);
+    return abms->ConnectAbility(want, connect, callerToken, userId);
 }
 
 ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &connect)

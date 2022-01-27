@@ -211,10 +211,12 @@ public:
     {
         return true;
     }
+    virtual void DumpSysState(
+        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int UserID) override
+    {}
 public:
     std::string powerState_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 

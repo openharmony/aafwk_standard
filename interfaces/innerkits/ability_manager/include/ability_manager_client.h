@@ -234,7 +234,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode DumpState(const std::string &args, std::vector<std::string> &state);
-
+    ErrCode DumpSysState(
+        const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID);
     /**
      * Connect ability manager service.
      *

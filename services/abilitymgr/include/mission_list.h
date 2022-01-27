@@ -173,7 +173,8 @@ public:
      *
      * @param info dump result.
      */
-    void DumpList(std::vector<std::string> &info);
+    void DumpList(std::vector<std::string> &info, bool isClient);
+    void DumpStateByRecordId(std::vector<std::string> &info, bool isClient, int32_t abilityRecordId);
 
     std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
 private:

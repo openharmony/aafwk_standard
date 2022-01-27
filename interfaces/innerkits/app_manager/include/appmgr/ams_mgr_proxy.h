@@ -169,6 +169,8 @@ public:
     virtual void UpdateConfiguration(const Configuration &config) override;
 
     virtual void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response) override;
+
+    virtual int GetConfiguration(Configuration &config) override;
 private:
     bool WriteInterfaceToken(MessageParcel &data);
 

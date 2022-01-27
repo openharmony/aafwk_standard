@@ -31,25 +31,32 @@ MockServiceAbilityManagerService::MockServiceAbilityManagerService()
 MockServiceAbilityManagerService::~MockServiceAbilityManagerService()
 {}
 
-int MockServiceAbilityManagerService::StartAbility(const Want &want, int requestCode)
+int MockServiceAbilityManagerService::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     return 0;
 }
 
 int MockServiceAbilityManagerService::StartAbility(
-    const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode)
+    const Want &want, const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode)
 {
     return 0;
 }
 
-int MockServiceAbilityManagerService::StartAbility(
+int MockServiceAbilityManagerService::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
-    GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbility";
+    GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbilityByCall";
     if (!connect) {
-        GTEST_LOG_(INFO) << "MockAbilityManagerService::TerminateAbility connect is null";
+        GTEST_LOG_(INFO) << "MockAbilityManagerService::StartAbilityByCall connect is null";
         return -1;
     }
+    return 0;
+}
+
+int MockServiceAbilityManagerService::StartAbility(
+    const Want &want, const StartOptions &startOptions,
+    const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode)
+{
     return 0;
 }
 
@@ -60,7 +67,7 @@ int MockServiceAbilityManagerService::TerminateAbility(
 }
 
 int MockServiceAbilityManagerService::ConnectAbility(
-    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     return -1;
 }
@@ -77,6 +84,10 @@ int MockServiceAbilityManagerService::AttachAbilityThread(
 }
 
 void MockServiceAbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
+{}
+
+void MockServiceAbilityManagerService::DumpSysState(
+    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID)
 {}
 
 int MockServiceAbilityManagerService::AbilityTransitionDone(
@@ -121,7 +132,7 @@ int MockServiceAbilityManagerService::ReleaseAbility(const sptr<IAbilityConnecti
     return 0;
 }
 
-int MockServiceAbilityManagerService::StopServiceAbility(const Want &want)
+int MockServiceAbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
 {
     return 0;
 }

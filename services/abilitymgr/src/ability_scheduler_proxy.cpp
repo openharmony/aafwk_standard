@@ -981,6 +981,28 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
     }
 }
 
+void AbilitySchedulerProxy::DumpAbilityInfo(std::vector<std::string> &info)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("DumpAbilityRunner fail to write token");
+        return;
+    }
+
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::DUMP_ABILITY_RUNNER_INNER, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("DumpAbilityRunner fail to SendRequest. err: %d", err);
+    }
+
+    int32_t stackNum = reply.ReadInt32();
+    for (int i = 0; i < stackNum; i++) {
+        std::string stac = Str16ToStr8(reply.ReadString16());
+        info.emplace_back(stac);
+    }
+}
+
 sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
 {
     HILOG_INFO("AbilitySchedulerProxy::CallRequest start");

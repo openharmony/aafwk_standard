@@ -129,6 +129,10 @@ int MockAbilityManagerService::AttachAbilityThread(
 void MockAbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
 {}
 
+void MockAbilityManagerService::DumpSysState(
+    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID)
+{}
+
 int MockAbilityManagerService::AbilityTransitionDone(
     const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
@@ -235,6 +239,5 @@ int MockAbilityManagerService::PowerOn()
 {
     return 0;
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS

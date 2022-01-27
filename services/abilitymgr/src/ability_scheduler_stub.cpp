@@ -60,6 +60,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilitySchedulerStub::NotifyContinuationResultInner;
     requestFuncMap_[REQUEST_CALL_REMOTE] = &AbilitySchedulerStub::CallRequestInner;
     requestFuncMap_[CONTINUE_ABILITY] = &AbilitySchedulerStub::ContinueAbilityInner;
+    requestFuncMap_[DUMP_ABILITY_RUNNER_INNER] = &AbilitySchedulerStub::DumpAbilityInfoInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -577,6 +578,24 @@ int AbilitySchedulerStub::NotifyContinuationResultInner(MessageParcel &data, Mes
     return NO_ERROR;
 }
 
+int AbilitySchedulerStub::DumpAbilityInfoInner(MessageParcel &data, MessageParcel &reply)
+{
+
+    std::vector<std::string> infos;
+
+    DumpAbilityInfo(infos);
+
+    for (const auto & infostep:infos) {
+        HILOG_INFO("DumpAbilityInfoInner infos = %{public}s", infostep.c_str());
+    }
+
+    reply.WriteInt32(infos.size());
+    for (auto stack : infos) {
+        reply.WriteString16(Str8ToStr16(stack));
+    }
+
+    return NO_ERROR;
+}
 int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &reply)
 {
     HILOG_INFO("AbilitySchedulerStub::CallRequestInner start");

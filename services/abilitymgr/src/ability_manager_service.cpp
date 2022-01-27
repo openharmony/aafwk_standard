@@ -89,6 +89,22 @@ const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerServic
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--mission-infos", KEY_DUMP_MISSION_INFOS),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-S", KEY_DUMP_MISSION_INFOS),
 };
+
+const std::map<std::string, AbilityManagerService::DumpsysKey> AbilityManagerService::dumpsysMap = {
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--all", KEY_DUMPSYS_ALL),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-a", KEY_DUMPSYS_ALL),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--mission-list", KEY_DUMPSYS_MISSION_LIST),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-l", KEY_DUMPSYS_MISSION_LIST),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--ability", KEY_DUMPSYS_ABILITY),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-i", KEY_DUMPSYS_ABILITY),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--extension", KEY_DUMPSYS_SERVICE),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-e", KEY_DUMPSYS_SERVICE),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--pending", KEY_DUMPSYS_PENDING),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-p", KEY_DUMPSYS_PENDING),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--process", KEY_DUMPSYS_PROCESS),
+    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-r", KEY_DUMPSYS_PROCESS),
+};
+
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<AbilityManagerService>::GetInstance().get());
 
@@ -103,6 +119,7 @@ AbilityManagerService::AbilityManagerService()
         DelayedSingleton<AppScheduler>::GetInstance().get(), [](AppScheduler *x) { x->DecStrongRef(x); });
     appScheduler_ = appScheduler;
     DumpFuncInit();
+    DumpSysFuncInit();
 }
 
 AbilityManagerService::~AbilityManagerService()
@@ -1584,6 +1601,186 @@ void AbilityManagerService::DumpFuncInit()
     dumpFuncMap_[KEY_DUMP_MISSION_INFOS] = &AbilityManagerService::DumpMissionInfosInner;
 }
 
+void AbilityManagerService::DumpSysFuncInit()
+{
+    dumpsysFuncMap_[KEY_DUMPSYS_ALL] = &AbilityManagerService::DumpSysInner;
+    dumpsysFuncMap_[KEY_DUMPSYS_MISSION_LIST] = &AbilityManagerService::DumpSysMissionListInner;
+    dumpsysFuncMap_[KEY_DUMPSYS_ABILITY] = &AbilityManagerService::DumpSysAbilityInner;
+    dumpsysFuncMap_[KEY_DUMPSYS_SERVICE] = &AbilityManagerService::DumpSysStateInner;
+    dumpsysFuncMap_[KEY_DUMPSYS_PENDING] = &AbilityManagerService::DumpSysPendingInner;
+    dumpsysFuncMap_[KEY_DUMPSYS_PROCESS] = &AbilityManagerService::DumpSysProcess;
+}
+
+void AbilityManagerService::DumpSysInner(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+    DumpSysMissionListInner(args, info, isClient, isUserID, userId);
+    DumpSysStateInner(args, info, isClient, isUserID, userId);
+    DumpSysPendingInner(args, info, isClient, isUserID, userId);
+    DumpSysProcess(args, info, isClient, isUserID, userId);
+}
+
+void AbilityManagerService::DumpSysMissionListInner(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::shared_ptr<MissionListManager> targetManager;
+    if (isUserID) {
+        auto it = missionListManagers_.find(userId);
+        if (it == missionListManagers_.end()) {
+            info.push_back("error: No user found'.");
+            return;
+        }
+        targetManager = it->second;
+    } else {
+        targetManager = currentMissionListManager_;
+    }
+
+    CHECK_POINTER(targetManager);
+
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+
+    if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
+        targetManager->DumpMissionList(info, isClient, argList[1]);
+    } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
+        targetManager->DumpMissionList(info, isClient);
+    } else {
+        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+    }
+}
+void AbilityManagerService::DumpSysAbilityInner(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::shared_ptr<MissionListManager> targetManager;
+    if (isUserID) {
+        auto it = missionListManagers_.find(userId);
+        if (it == missionListManagers_.end()) {
+            info.push_back("error: No user found'.");
+            return;
+        }
+        targetManager = it->second;
+    } else {
+        targetManager = currentMissionListManager_;
+    }
+
+    CHECK_POINTER(targetManager);
+
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+    if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
+        HILOG_INFO("argList = %{public}s", argList[1].c_str());
+        targetManager->DumpMissionListByRecordId(info, isClient, std::stoi(argList[1]));
+    } else {
+        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+    }
+}
+
+void AbilityManagerService::DumpSysStateInner(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::shared_ptr<AbilityConnectManager> targetManager;
+
+    if (isUserID) {
+        auto it = connectManagers_.find(userId);
+        if (it == connectManagers_.end()) {
+            info.push_back("error: No user found'.");
+            return;
+        }
+        targetManager = it->second;
+    } else {
+        targetManager = connectManager_;
+    }
+
+    CHECK_POINTER(targetManager);
+
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+
+    if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
+        targetManager->DumpState(info, isClient, argList[1]);
+    } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
+        targetManager->DumpState(info, isClient);
+    } else {
+        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+    }
+}
+
+void AbilityManagerService::DumpSysPendingInner(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    if (isUserID) {
+        auto it = pendingWantManagers_.find(userId);
+        if (it != pendingWantManagers_.end()) {
+            it->second->Dump(info);
+            return;
+        }
+        info.push_back("error: No user found'.");
+        return;
+    }
+
+    CHECK_POINTER(pendingWantManager_);
+    pendingWantManager_->Dump(info);
+}
+
+void AbilityManagerService::DumpSysProcess(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+    std::vector<AppExecFwk::RunningProcessInfo> ProcessInfos;
+    int ret = 0;
+    if (isUserID) {
+        ret = GetProcessRunningInfosByUserId(ProcessInfos, userId);
+    } else {
+        ret = GetProcessRunningInfos(ProcessInfos);
+    }
+
+    if (ret != ERR_OK || ProcessInfos.size() == 0) {
+        return;
+    }
+
+    std::string dumpInfo = "  AppRunningRecords:";
+    info.push_back(dumpInfo);
+    auto processInfoID = 0;
+    auto hasProcessName = (argList.size() == MIN_DUMP_ARGUMENT_NUM ? true : false);
+    for (const auto& ProcessInfo : ProcessInfos) {
+        if (hasProcessName && argList[1] != ProcessInfo.processName_) {
+            continue;
+        }
+
+        dumpInfo = "    AppRunningRecord ID #" + std::to_string(processInfoID);
+        processInfoID++;
+        info.push_back(dumpInfo);
+        dumpInfo = "      process name [" + ProcessInfo.processName_ + "]";
+        info.push_back(dumpInfo);
+        dumpInfo = "      pid #" + std::to_string(ProcessInfo.pid_) +
+            "  uid #" + std::to_string(ProcessInfo.uid_);
+        info.push_back(dumpInfo);
+        auto appState = static_cast<AppState>(ProcessInfo.state_);
+        if (appScheduler_) {
+            dumpInfo = "      state #" + appScheduler_->ConvertAppState(appState);
+        }
+        info.push_back(dumpInfo);
+    }
+}
+
 void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::string> &info)
 {
     if (useNewMission_) {
@@ -1615,7 +1812,7 @@ void AbilityManagerService::DumpWindowModeInner(const std::string &args, std::ve
 void AbilityManagerService::DumpMissionListInner(const std::string &args, std::vector<std::string> &info)
 {
     if (currentMissionListManager_) {
-        currentMissionListManager_->DumpMissionList(info);
+        currentMissionListManager_->DumpMissionList(info, false, "");
     }
 }
 
@@ -1682,9 +1879,9 @@ void AbilityManagerService::DumpStateInner(const std::string &args, std::vector<
         return;
     }
     if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
-        connectManager_->DumpState(info, argList[1]);
+        connectManager_->DumpState(info, false, argList[1]);
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
-        connectManager_->DumpState(info);
+        connectManager_->DumpState(info, false);
     } else {
         info.emplace_back("error: invalid argument, please see 'ability dump -h'.");
     }
@@ -1742,6 +1939,30 @@ void AbilityManagerService::DumpState(const std::string &args, std::vector<std::
         auto dumpFunc = itFunc->second;
         if (dumpFunc != nullptr) {
             (this->*dumpFunc)(args, info);
+            return;
+        }
+    }
+    info.push_back("error: invalid argument, please see 'ability dump -h'.");
+}
+
+void AbilityManagerService::DumpSysState(
+    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
+{
+    std::vector<std::string> argList;
+    SplitStr(args, " ", argList);
+    if (argList.empty()) {
+        return;
+    }
+    auto it = dumpsysMap.find(argList[0]);
+    if (it == dumpsysMap.end()) {
+        return;
+    }
+    DumpsysKey key = it->second;
+    auto itFunc = dumpsysFuncMap_.find(key);
+    if (itFunc != dumpsysFuncMap_.end()) {
+        auto dumpsysFunc = itFunc->second;
+        if (dumpsysFunc != nullptr) {
+            (this->*dumpsysFunc)(args, info, isClient, isUserID, userId);
             return;
         }
     }
@@ -2117,7 +2338,7 @@ void AbilityManagerService::StartingMmsAbility()
     AppExecFwk::AbilityInfo mmsInfo;
     Want mmsWant;
     mmsWant.SetElementName(AbilityConfig::MMS_BUNDLE_NAME, AbilityConfig::MMS_ABILITY_NAME);
- 
+
     auto userId = GetUserId();
     int attemptNums = 1;
     while (!(iBundleManager_->QueryAbilityInfo(mmsWant,
@@ -2334,6 +2555,11 @@ void AbilityManagerService::GetMaxRestartNum(int &max)
     if (amsConfigResolver_) {
         max = amsConfigResolver_->GetMaxRestartNum();
     }
+}
+
+bool AbilityManagerService::IsUseNewMission()
+{
+    return useNewMission_;
 }
 
 int AbilityManagerService::KillProcess(const std::string &bundleName)
@@ -3373,6 +3599,12 @@ int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<
 int AbilityManagerService::GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info)
 {
     return DelayedSingleton<AppScheduler>::GetInstance()->GetProcessRunningInfos(info);
+}
+
+int AbilityManagerService::GetProcessRunningInfosByUserId(
+    std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId)
+{
+    return DelayedSingleton<AppScheduler>::GetInstance()->GetProcessRunningInfosByUserId(info, userId);
 }
 
 void AbilityManagerService::ClearUserData(int32_t userId)

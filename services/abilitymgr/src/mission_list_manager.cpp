@@ -566,7 +566,7 @@ int MissionListManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
         MoveToBackgroundTask(abilityRecord);
         return ERR_OK;
     }
-    
+
     if (abilityRecord->IsNeedToCallRequest()) {
         abilityRecord->CallRequest();
     }
@@ -1564,44 +1564,79 @@ void MissionListManager::Dump(std::vector<std::string> &info)
     info.push_back(dumpInfo);
 }
 
-void MissionListManager::DumpMissionList(std::vector<std::string> &info)
+void MissionListManager::DumpMissionListByRecordId(
+    std::vector<std::string> &info, bool isClient, int32_t abilityRecordId)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::string dumpInfo = "User ID #" + std::to_string(userId_);
     info.push_back(dumpInfo);
-    dumpInfo = " current mission lists:{";
-    info.push_back(dumpInfo);
     for (const auto& missionList : currentMissionLists_) {
-        if (missionList) {
-            missionList->DumpList(info);
+        if (missionList && missionList != launcherList_) {
+            HILOG_INFO("missionList begain to call DumpMissionListByRecordId %{public}s", __func__);
+            missionList->DumpStateByRecordId(info, isClient, abilityRecordId);
         }
     }
-    dumpInfo = " }";
-    info.push_back(dumpInfo);
 
-    dumpInfo = " default stand mission list:{";
-    info.push_back(dumpInfo);
     if (defaultStandardList_) {
-        defaultStandardList_->DumpList(info);
+        HILOG_INFO("defaultStandardList begain to call DumpMissionListByRecordId %{public}s", __func__);
+        defaultStandardList_->DumpStateByRecordId(info, isClient, abilityRecordId);
     }
-    dumpInfo = " }";
-    info.push_back(dumpInfo);
 
-    dumpInfo = " default single mission list:{";
-    info.push_back(dumpInfo);
     if (defaultSingleList_) {
-        defaultSingleList_->DumpList(info);
+        HILOG_INFO("defaultSingleList begain to call DumpMissionListByRecordId %{public}s", __func__);
+        defaultSingleList_->DumpStateByRecordId(info, isClient, abilityRecordId);
     }
-    dumpInfo = " }";
-    info.push_back(dumpInfo);
 
-    dumpInfo = " launcher mission list:{";
-    info.push_back(dumpInfo);
     if (launcherList_) {
-        launcherList_->DumpList(info);
+        HILOG_INFO("launcherList begain to call DumpMissionListByRecordId %{public}s", __func__);
+        launcherList_->DumpStateByRecordId(info, isClient, abilityRecordId);
     }
-    dumpInfo = " }";
+}
+void MissionListManager::DumpMissionList(std::vector<std::string> &info, bool isClient, const std::string &args)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    std::string dumpInfo = "User ID #" + std::to_string(userId_);
     info.push_back(dumpInfo);
+    if (args.size() == 0 || args == "NORMAL") {
+        dumpInfo = " current mission lists:{";
+        info.push_back(dumpInfo);
+        for (const auto& missionList : currentMissionLists_) {
+            if (missionList) {
+                missionList->DumpList(info, isClient);
+            }
+        }
+        dumpInfo = " }";
+        info.push_back(dumpInfo);
+    }
+
+    if (args.size() == 0 || args == "DEFAULT_STANDARD") {
+        dumpInfo = " default stand mission list:{";
+        info.push_back(dumpInfo);
+        if (defaultStandardList_) {
+            defaultStandardList_->DumpList(info, isClient);
+        }
+        dumpInfo = " }";
+        info.push_back(dumpInfo);
+    }
+
+    if (args.size() == 0 || args == "DEFAULT_SINGLE") {
+        dumpInfo = " default single mission list:{";
+        info.push_back(dumpInfo);
+        if (defaultSingleList_) {
+            defaultSingleList_->DumpList(info, isClient);
+        }
+        dumpInfo = " }";
+        info.push_back(dumpInfo);
+    }
+    if (args.size() == 0 || args == "LAUNCHER") {
+        dumpInfo = " launcher mission list:{";
+        info.push_back(dumpInfo);
+        if (launcherList_) {
+            launcherList_->DumpList(info, isClient);
+        }
+        dumpInfo = " }";
+        info.push_back(dumpInfo);
+    }
 }
 
 void MissionListManager::DumpMissionInfos(std::vector<std::string> &info)
@@ -1715,7 +1750,7 @@ int MissionListManager::ResolveAbility(
 {
     HILOG_DEBUG("targetAbilityRecord resolve call record.");
     CHECK_POINTER_AND_RETURN(targetAbility, ResolveResultType::NG_INNER_ERROR);
-    
+
     ResolveResultType result = targetAbility->Resolve(abilityRequest);
     switch (result) {
         case ResolveResultType::NG_INNER_ERROR:
@@ -1731,7 +1766,7 @@ int MissionListManager::ResolveAbility(
             return ResolveResultType::OK_HAS_REMOTE_OBJ;
         }
     }
-    
+
     HILOG_DEBUG("targetAbility need to call request after lifecycle.");
     return result;
 }

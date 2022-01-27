@@ -259,6 +259,16 @@ public:
      */
     virtual int32_t GetAllRunningProcesses(std::vector<RunningProcessInfo> &info);
 
+    /**
+     * GetProcessRunningInfosByUserId, Obtains information about application processes that are running on the device.
+     *
+     * @param info, app name in Application record.
+     * @param userId, userId.
+     *
+     * @return ERR_OK ,return back success，others fail.
+     */
+    virtual int32_t GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId);
+
     // Get AppRunningRecord according to appInfo. Create if not exists.
     // Create ability record if not exists and abilityInfo not null.
     // Return AppRunningRecord pointer if success get or create.

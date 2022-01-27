@@ -914,6 +914,46 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
     }
 }
 
+void AbilityRecord::DumpAbilityState(std::vector<std::string> &info, bool isClient)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    std::string dumpInfo = "      AbilityRecord ID #" + std::to_string(recordId_);
+    info.push_back(dumpInfo);
+    dumpInfo = "        app name [" + GetAbilityInfo().applicationName + "]";
+    info.push_back(dumpInfo);
+    dumpInfo = "        main name [" + GetAbilityInfo().name + "]";
+    info.push_back(dumpInfo);
+    dumpInfo = "        bundle name [" + GetAbilityInfo().bundleName + "]";
+    info.push_back(dumpInfo);
+    std::string typeStr;
+    GetAbilityTypeString(typeStr);
+    dumpInfo = "        ability type [" + typeStr + "]";
+    info.push_back(dumpInfo);
+
+    dumpInfo = "        state #" + AbilityRecord::ConvertAbilityState(GetAbilityState()) + "  start time [" +
+               std::to_string(startTime_) + "]";
+    info.push_back(dumpInfo);
+    dumpInfo = "        app state #" + AbilityRecord::ConvertAppState(appState_);
+    info.push_back(dumpInfo);
+    dumpInfo = "        ready #" + std::to_string(isReady_) + "  window attached #" +
+               std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
+    info.push_back(dumpInfo);
+
+    if (isLauncherRoot_ && IsNewVersion()) {
+        dumpInfo = "        can restart num #" + std::to_string(restartCount_);
+        info.push_back(dumpInfo);
+    }
+
+    // add dump client info
+    if (isClient && scheduler_ && isReady_) {
+        scheduler_->DumpAbilityInfo(info);
+        AppExecFwk::Configuration config;
+        if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
+            info.emplace_back("        configuration: " + config.GetName());
+        }
+    }
+}
+
 void AbilityRecord::SetStartTime()
 {
     if (startTime_ == 0) {
@@ -926,20 +966,28 @@ int64_t AbilityRecord::GetStartTime() const
     return startTime_;
 }
 
-void AbilityRecord::DumpService(std::vector<std::string> &info) const
+void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) const
 {
-    info.emplace_back("    AbilityRecord ID #" + std::to_string(GetRecordId()) + "   state #" +
+    info.emplace_back("      AbilityRecord ID #" + std::to_string(GetRecordId()) + "   state #" +
                       AbilityRecord::ConvertAbilityState(GetAbilityState()) + "   start time [" +
                       std::to_string(GetStartTime()) + "]");
-    info.emplace_back("    main name [" + GetAbilityInfo().name + "]");
-    info.emplace_back("    bundle name [" + GetAbilityInfo().bundleName + "]");
-    info.emplace_back("    ability type [SERVICE]");
-    info.emplace_back("    app state #" + AbilityRecord::ConvertAppState(appState_));
-    info.emplace_back("    Connections: " + std::to_string(connRecordList_.size()));
+    info.emplace_back("      main name [" + GetAbilityInfo().name + "]");
+    info.emplace_back("      bundle name [" + GetAbilityInfo().bundleName + "]");
+    info.emplace_back("      ability type [SERVICE]");
+    info.emplace_back("      app state #" + AbilityRecord::ConvertAppState(appState_));
+    info.emplace_back("      Connections: " + std::to_string(connRecordList_.size()));
 
     for (auto &&conn : connRecordList_) {
         if (conn) {
             conn->Dump(info);
+        }
+    }
+    // add dump client info
+    if (isClient && scheduler_ && isReady_) {
+        scheduler_->DumpAbilityInfo(info);
+        AppExecFwk::Configuration config;
+        if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
+            info.emplace_back("      configuration: " + config.GetName());
         }
     }
 }
@@ -1409,7 +1457,7 @@ bool AbilityRecord::CallRequest()
         HILOG_ERROR("call request failed, callstub is nullptr.");
         return false;
     }
-    
+
     // complete call request
     return callContainer_->CallRequestDone(callStub);
 }
@@ -1462,7 +1510,7 @@ bool AbilityRecord::Release(const sptr<IAbilityConnection> & connect)
 {
     HILOG_DEBUG("ability release call record by callback.");
     CHECK_POINTER_RETURN_BOOL(callContainer_);
-    
+
     return callContainer_->RemoveCallRecord(connect);
 }
 

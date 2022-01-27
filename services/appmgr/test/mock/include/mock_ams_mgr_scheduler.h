@@ -46,6 +46,7 @@ public:
     MOCK_METHOD2(StartSpecifiedAbility, void(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo));
     MOCK_METHOD1(RegisterStartSpecifiedAbilityResponse, void(const sptr<IStartSpecifiedAbilityResponse> &response));
     MOCK_METHOD1(UpdateConfiguration, void(const AppExecFwk::Configuration &));
+    MOCK_METHOD1(GetConfiguration, int(AppExecFwk::Configuration &));
 
     MockAmsMgrScheduler() : AmsMgrStub() {};
     virtual ~MockAmsMgrScheduler(){};
