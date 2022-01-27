@@ -127,6 +127,7 @@ void AbilityManagerServiceTest::OnStartAms()
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
 
