@@ -1325,8 +1325,9 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
 
     // generate a new mission and missionList
     AbilityRequest abilityRequest;
+    auto userId = abilityRequest.appInfo.uid / BASE_USER_RANGE;
     int generateAbility = DelayedSingleton<AbilityManagerService>::GetInstance()->GenerateAbilityRequest(
-        innerMissionInfo.missionInfo.want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr);
+        innerMissionInfo.missionInfo.want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr, userId);
     if (generateAbility != ERR_OK) {
         HILOG_ERROR("cannot find generate ability request, missionId: %{public}d", missionId);
         return nullptr;

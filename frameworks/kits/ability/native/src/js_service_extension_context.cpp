@@ -23,6 +23,7 @@
 #include "js_runtime_utils.h"
 #include "napi/native_api.h"
 #include "napi_common_want.h"
+#include "napi_common_util.h"
 #include "napi_remote_object.h"
 #include "napi_common_start_options.h"
 #include "start_options.h"
@@ -32,12 +33,14 @@ namespace AbilityRuntime {
 namespace {
 constexpr int32_t INDEX_ZERO = 0;
 constexpr int32_t INDEX_ONE = 1;
+constexpr int32_t INDEX_TWO = 2;
 constexpr int32_t ERROR_CODE_ONE = 1;
 constexpr int32_t ERROR_CODE_TWO = 2;
 constexpr size_t ARGC_ZERO = 0;
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
 constexpr size_t ARGC_THREE = 3;
+constexpr size_t ARGC_FOUR = 4;
 
 class JsServiceExtensionContext final {
 public:
@@ -54,6 +57,18 @@ public:
     {
         JsServiceExtensionContext* me = CheckParamsAndGetThis<JsServiceExtensionContext>(engine, info);
         return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
+    }
+
+    static NativeValue* StartAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsServiceExtensionContext* me = CheckParamsAndGetThis<JsServiceExtensionContext>(engine, info);
+        return (me != nullptr) ? me->OnStartAbilityWithAccount(*engine, *info) : nullptr;
+    }
+
+    static NativeValue* ConnectAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsServiceExtensionContext* me = CheckParamsAndGetThis<JsServiceExtensionContext>(engine, info);
+        return (me != nullptr) ? me->OnConnectAbilityWithAccount(*engine, *info) : nullptr;
     }
 
     static NativeValue* TerminateAbility(NativeEngine* engine, NativeCallbackInfo* info)
@@ -122,6 +137,70 @@ private:
                     task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
                 }
             };
+
+        NativeValue* lastParam = (info.argc == unwrapArgc) ? nullptr : info.argv[unwrapArgc];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
+
+    NativeValue* OnStartAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info)
+    {
+        HILOG_INFO("OnStartAbilityWithAccount is called");
+        // only support two or three or four params
+        if (info.argc != ARGC_TWO && info.argc != ARGC_THREE && info.argc != ARGC_FOUR) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        decltype(info.argc) unwrapArgc = 0;
+        AAFwk::Want want;
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), want);
+        HILOG_INFO("%{public}s bundlename:%{public}s abilityname:%{public}s",
+            __func__,
+            want.GetBundle().c_str(),
+            want.GetElement().GetAbilityName().c_str());
+        unwrapArgc++;
+
+        int32_t accountId = 0;
+        if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[INDEX_ONE]), accountId)) {
+            HILOG_INFO("%{public}s called, the second parameter is invalid.", __func__);
+            return engine.CreateUndefined();
+        }
+        HILOG_INFO("%{public}d accountId:", accountId);
+        unwrapArgc++;
+
+        AAFwk::StartOptions startOptions;
+        if (info.argc > ARGC_TWO && info.argv[INDEX_TWO]->TypeOf() == NATIVE_OBJECT) {
+            HILOG_INFO("OnStartAbilityWithAccount start options is used.");
+            AppExecFwk::UnwrapStartOptions(reinterpret_cast<napi_env>(&engine),
+                reinterpret_cast<napi_value>(info.argv[INDEX_TWO]), startOptions);
+            unwrapArgc++;
+        }
+
+        AsyncTask::CompleteCallback complete =
+            [weak = context_, want, accountId, startOptions, unwrapArgc](
+                NativeEngine& engine, AsyncTask& task, int32_t status) {
+                    HILOG_INFO("startAbility begin");
+                    auto context = weak.lock();
+                    if (!context) {
+                        HILOG_WARN("context is released");
+                        task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "Context is released"));
+                        return;
+                    }
+
+                    ErrCode errcode = ERR_OK;
+                    (unwrapArgc == ARGC_TWO) ? errcode = context->StartAbilityWithAccount(want, accountId) :
+                    errcode = context->StartAbilityWithAccount(want, accountId, startOptions);
+                    if (errcode == 0) {
+                        task.Resolve(engine, engine.CreateUndefined());
+                    } else {
+                        task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
+                    }
+                };
 
         NativeValue* lastParam = (info.argc == unwrapArgc) ? nullptr : info.argv[unwrapArgc];
         NativeValue* result = nullptr;
@@ -217,6 +296,68 @@ private:
         return engine.CreateNumber(connectId);
     }
 
+    NativeValue* OnConnectAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info)
+    {
+        HILOG_INFO("OnConnectAbilityWithAccount is called");
+        // only support three params
+        if (info.argc != ARGC_THREE) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        // unwrap want
+        AAFwk::Want want;
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), want);
+        HILOG_INFO("%{public}s bundlename:%{public}s abilityname:%{public}s",
+            __func__,
+            want.GetBundle().c_str(),
+            want.GetElement().GetAbilityName().c_str());
+
+        int32_t accountId = 0;
+        if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[INDEX_ONE]), accountId)) {
+            HILOG_INFO("%{public}s called, the second parameter is invalid.", __func__);
+            return engine.CreateUndefined();
+        }
+
+        // unwarp connection
+        sptr<JSServiceExtensionConnection> connection = new JSServiceExtensionConnection();
+        connection->SetNativeEngine(&engine);
+        connection->SetJsConnectionObject(info.argv[1]);
+        int64_t connectId = serialNumber_;
+        ConnecttionKey key;
+        key.id = serialNumber_;
+        key.want = want;
+        connects_.emplace(key, connection);
+        if (serialNumber_ < INT64_MAX) {
+            serialNumber_++;
+        } else {
+            serialNumber_ = 0;
+        }
+        HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, connection.GetRefPtr());
+        AsyncTask::CompleteCallback complete =
+            [weak = context_, want, accountId, connection, connectId](
+                NativeEngine& engine, AsyncTask& task, int32_t status) {
+                    HILOG_INFO("OnConnectAbilityWithAccount begin");
+                    auto context = weak.lock();
+                    if (!context) {
+                        HILOG_WARN("context is released");
+                        task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "Context is released"));
+                        return;
+                    }
+                    HILOG_INFO("context->ConnectAbilityWithAccount connection:%{public}d", (int32_t)connectId);
+                    if (!context->ConnectAbilityWithAccount(want, accountId, connection)) {
+                        connection->CallJsFailed(ERROR_CODE_ONE);
+                    }
+                    task.Resolve(engine, engine.CreateUndefined());
+                };
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, std::move(complete), &result));
+        return engine.CreateNumber(connectId);
+    }
+
     NativeValue* OnDisconnectAbility(NativeEngine& engine, NativeCallbackInfo& info)
     {
         HILOG_INFO("OnDisconnectAbility is called");
@@ -294,6 +435,9 @@ NativeValue* CreateJsServiceExtensionContext(NativeEngine& engine, std::shared_p
     BindNativeFunction(engine, *object, "terminateSelf", JsServiceExtensionContext::TerminateAbility);
     BindNativeFunction(engine, *object, "connectAbility", JsServiceExtensionContext::ConnectAbility);
     BindNativeFunction(engine, *object, "disconnectAbility", JsServiceExtensionContext::DisconnectAbility);
+    BindNativeFunction(engine, *object, "startAbilityWithAccount", JsServiceExtensionContext::StartAbilityWithAccount);
+    BindNativeFunction(
+        engine, *object, "connectAbilityWithAccount", JsServiceExtensionContext::ConnectAbilityWithAccount);
 
     return objValue;
 }

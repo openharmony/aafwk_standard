@@ -28,7 +28,7 @@ ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want) const
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, ILLEGAL_REQUEST_CODE);
-    HILOG_DEBUG("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
+    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
     }
@@ -40,7 +40,7 @@ ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want, const AAF
     HILOG_DEBUG("%{public}s begin.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_,
         ILLEGAL_REQUEST_CODE);
-    HILOG_DEBUG("%{public}s. End calling ams->StartAbility. ret=%{public}d", __func__, err);
+    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
     }
@@ -57,6 +57,42 @@ bool ServiceExtensionContext::ConnectAbility(
     return ret == ERR_OK;
 }
 
+ErrCode ServiceExtensionContext::StartAbilityWithAccount(const AAFwk::Want &want, int accountId) const
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}d accountId:", accountId);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(
+        want, token_, ILLEGAL_REQUEST_CODE, accountId);
+    HILOG_DEBUG("%{public}s. End calling StartAbilityWithAccount. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        HILOG_ERROR("ServiceContext::StartAbilityWithAccount is failed %{public}d", err);
+    }
+    return err;
+}
+
+ErrCode ServiceExtensionContext::StartAbilityWithAccount(
+    const AAFwk::Want &want, int accountId, const AAFwk::StartOptions &startOptions) const
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_,
+        ILLEGAL_REQUEST_CODE, accountId);
+    HILOG_DEBUG("%{public}s. End calling StartAbilityWithAccount. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        HILOG_ERROR("ServiceContext::StartAbilityWithAccount is failed %{public}d", err);
+    }
+    return err;
+}
+
+bool ServiceExtensionContext::ConnectAbilityWithAccount(
+    const AAFwk::Want &want, int accountId, const sptr<AbilityConnectCallback> &connectCallback) const
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    ErrCode ret =
+        ConnectionManager::GetInstance().ConnectAbilityWithAccount(token_, want, accountId, connectCallback);
+    HILOG_INFO("ServiceExtensionContext::ConnectAbilityWithAccount ErrorCode = %{public}d", ret);
+    return ret == ERR_OK;
+}
+
 ErrCode ServiceExtensionContext::DisconnectAbility(
     const AAFwk::Want &want, const sptr<AbilityConnectCallback> &connectCallback) const
 {
@@ -64,9 +100,9 @@ ErrCode ServiceExtensionContext::DisconnectAbility(
     ErrCode ret =
         ConnectionManager::GetInstance().DisconnectAbility(token_, want.GetElement(), connectCallback);
     if (ret != ERR_OK) {
-        HILOG_ERROR("%{public}s end ams->DisconnectAbility error, ret=%{public}d", __func__, ret);
+        HILOG_ERROR("%{public}s end DisconnectAbility error, ret=%{public}d", __func__, ret);
     }
-    HILOG_INFO("%{public}s end ams->DisconnectAbility", __func__);
+    HILOG_INFO("%{public}s end DisconnectAbility", __func__);
     return ret;
 }
 

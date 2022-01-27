@@ -220,6 +220,16 @@ public:
     virtual int32_t KillApplicationByUid(const std::string &bundleName, const int uid);
 
     /**
+     * KillApplicationByUserId, kill the application by user ID.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @param userId, user ID.
+     *
+     * @return ERR_OK, return back success, others fail.
+     */
+    virtual int32_t KillApplicationByUserId(const std::string &bundleName, const int userId);
+
+    /**
      * ClearUpApplicationData, clear the application data.
      *
      * @param bundleName, bundle name in Application record.
@@ -726,8 +736,6 @@ private:
     void HandleTerminateApplicationTimeOut(const int64_t eventId);
 
     void HandleAddAbilityStageTimeOut(const int64_t eventId);
-
-    int32_t KillApplicationByUserId(const std::string &bundleName, const int userId);
 
     void ClipStringContent(const std::regex &re, const std::string &sorce, std::string &afferCutStr);
 

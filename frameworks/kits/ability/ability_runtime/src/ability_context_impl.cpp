@@ -79,12 +79,33 @@ ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCod
     return err;
 }
 
+ErrCode AbilityContextImpl::StartAbilityWithAccount(const AAFwk::Want &want, int accountId, int requestCode)
+{
+    HILOG_DEBUG("AbilityContextImpl::StartAbilityWithAccount. Start calling StartAbility.");
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode, accountId);
+    HILOG_INFO("AbilityContextImpl::StartAbilityWithAccount. End calling StartAbility. ret=%{public}d", err);
+    return err;
+}
+
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions,
     int requestCode)
 {
     HILOG_DEBUG("AbilityContextImpl::StartAbility. Start calling StartAbility.");
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, requestCode);
     HILOG_INFO("AbilityContextImpl::StartAbility. End calling StartAbility. ret=%{public}d", err);
+    return err;
+}
+
+ErrCode AbilityContextImpl::StartAbilityWithAccount(
+    const AAFwk::Want &want, int accountId, const AAFwk::StartOptions &startOptions, int requestCode)
+{
+    HILOG_DEBUG("AbilityContextImpl::StartAbilityWithAccount. Start calling StartAbility.");
+    HILOG_INFO(
+        "%{public}s called, bundleName=%{public}s, abilityName=%{public}s, accountId=%{public}d",
+        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), accountId);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(
+        want, startOptions, token_, requestCode, accountId);
+    HILOG_INFO("AbilityContextImpl::StartAbilityWithAccount. End calling StartAbility. ret=%{public}d", err);
     return err;
 }
 
@@ -97,6 +118,17 @@ ErrCode AbilityContextImpl::StartAbilityForResult(const AAFwk::Want &want, int r
     return err;
 }
 
+ErrCode AbilityContextImpl::StartAbilityForResultWithAccount(
+    const AAFwk::Want &want, const int accountId, int requestCode, RuntimeTask &&task)
+{
+    HILOG_DEBUG("%{public}s. Start calling StartAbilityForResultWithAccount. accountId:%{public}d",
+        __func__, accountId);
+    resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode, accountId);
+    HILOG_INFO("%{public}s. End calling StartAbilityForResultWithAccount. ret=%{public}d", __func__, err);
+    return err;
+}
+
 ErrCode AbilityContextImpl::StartAbilityForResult(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions,
     int requestCode, RuntimeTask &&task)
 {
@@ -104,6 +136,18 @@ ErrCode AbilityContextImpl::StartAbilityForResult(const AAFwk::Want &want, const
     resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, requestCode);
     HILOG_INFO("%{public}s. End calling StartAbilityForResult. ret=%{public}d", __func__, err);
+    return err;
+}
+
+ErrCode AbilityContextImpl::StartAbilityForResultWithAccount(
+    const AAFwk::Want &want, int accountId, const AAFwk::StartOptions &startOptions,
+    int requestCode, RuntimeTask &&task)
+{
+    HILOG_DEBUG("%{public}s. Start calling StartAbilityForResultWithAccount.", __func__);
+    resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(
+        want, startOptions, token_, requestCode, accountId);
+    HILOG_INFO("%{public}s. End calling StartAbilityForResultWithAccount. ret=%{public}d", __func__, err);
     return err;
 }
 
@@ -129,6 +173,16 @@ bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
     HILOG_DEBUG("%{public}s begin.", __func__);
     ErrCode ret =
         ConnectionManager::GetInstance().ConnectAbility(token_, want, connectCallback);
+    HILOG_INFO("AbilityContextImpl::ConnectAbility ErrorCode = %{public}d", ret);
+    return ret == ERR_OK;
+}
+
+bool AbilityContextImpl::ConnectAbilityWithAccount(const AAFwk::Want &want, int accountId,
+    const sptr<AbilityConnectCallback> &connectCallback)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode ret =
+        ConnectionManager::GetInstance().ConnectAbilityWithAccount(token_, want, accountId, connectCallback);
     HILOG_INFO("AbilityContextImpl::ConnectAbility ErrorCode = %{public}d", ret);
     return ret == ERR_OK;
 }

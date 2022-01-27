@@ -18,7 +18,7 @@
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
-int MockAbilityManagerStub::StartAbility(const Want &want, int requestCode)
+int MockAbilityManagerStub::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
 
@@ -63,7 +63,7 @@ void MockAbilityManagerStub::DumpState(const std::string &args, std::vector<std:
     }
 }
 
-int MockAbilityManagerStub::StopServiceAbility(const Want &want)
+int MockAbilityManagerStub::StopServiceAbility(const Want &want, int32_t userId)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
 

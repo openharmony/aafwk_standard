@@ -35,8 +35,20 @@ class MockAbilityManagerService : public AbilityManagerStub,
 public:
     MockAbilityManagerService();
     ~MockAbilityManagerService();
-    int StartAbility(const Want &want, int requestCode = -1) override;
-    int StartAbility(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1) override;
+    int StartAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1) override;
+    int StartAbility(const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = -1) override;
+    int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE) override
+    {
+        return 0;
+    }
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
     int MinimizeAbility(const sptr<IRemoteObject> &token) override
@@ -44,7 +56,10 @@ public:
         return 0;
     }
     int ConnectAbility(
-        const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override;
+        const Want &want,
+        const sptr<IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE) override;
     int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
 
     sptr<IAbilityScheduler> AcquireDataAbility(const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken);
@@ -63,7 +78,7 @@ public:
     void DumpState(const std::string &args, std::vector<std::string> &info) override;
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override;
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
-    int StopServiceAbility(const Want &want) override;
+    int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
 
@@ -84,8 +99,8 @@ public:
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
-    MOCK_METHOD4(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
-                                   const sptr<IRemoteObject> &callerToken, int requestCode));
+    MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
     MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
     MOCK_METHOD2(MoveMissionToSplitScreenStack, int(const MissionOption &primary, const MissionOption &secondary));
     MOCK_METHOD2(
@@ -193,11 +208,6 @@ public:
         return 0;
     }
 
-    virtual int StartAbility(const Want &want, const StartOptions &startOptions,
-        const sptr<IRemoteObject> &callerToken, int requestCode) override
-    {
-        return 0;
-    }
     virtual int ReleaseAbility(const sptr<IAbilityConnection> &connect,
         const AppExecFwk::ElementName &element) override
     {
