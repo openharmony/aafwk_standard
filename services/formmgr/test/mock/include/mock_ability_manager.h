@@ -35,11 +35,21 @@ public:
     {
         return 0;
     }
-    virtual int StartAbility(const AAFwk::Want &want, int requestCode = -1)
+    virtual int StartAbility(const AAFwk::Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1)
     {
         return 0;
     }
-    virtual int StartAbility(const AAFwk::Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1)
+    virtual int StartAbility(const AAFwk::Want &want, const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1)
+    {
+        return 0;
+    }
+    int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
@@ -48,8 +58,8 @@ public:
     {
         return 0;
     }
-    virtual int ConnectAbility(
-        const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    virtual int ConnectAbility(const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken, int32_t userId = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
@@ -176,7 +186,7 @@ public:
     {
         return 0;
     }
-    virtual int StopServiceAbility(const AAFwk::Want &want)
+    virtual int StopServiceAbility(const AAFwk::Want &want, int32_t userId = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
@@ -361,11 +371,21 @@ public:
     {
         return 0;
     }
-    virtual int StartAbility(const AAFwk::Want &want, int requestCode = -1)
+    virtual int StartAbility(const AAFwk::Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1)
     {
         return 0;
     }
-    virtual int StartAbility(const AAFwk::Want &want, const sptr<IRemoteObject> &callerToken, int requestCode = -1)
+    virtual int StartAbility(const AAFwk::Want &want, const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1)
+    {
+        return 0;
+    }
+    int StartAbility(
+        const Want &want,
+        const StartOptions &startOptions,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
@@ -378,8 +398,8 @@ public:
     {
         return 0;
     }
-    virtual int ConnectAbility(
-        const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
+    virtual int ConnectAbility(const AAFwk::Want &want, const sptr<AAFwk::IAbilityConnection> &connect,
+        const sptr<IRemoteObject> &callerToken, int32_t userId = DEFAULT_INVAL_VALUE)
     {
         connect->OnAbilityConnectDone(want.GetElement(), new (std::nothrow) MockFormProviderClient(), 0);
         return 0;
@@ -430,7 +450,7 @@ public:
     {
         return 0;
     }
-    virtual int StopServiceAbility(const AAFwk::Want &want)
+    virtual int StopServiceAbility(const AAFwk::Want &want, int32_t userId = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
@@ -590,8 +610,12 @@ public:
     {
         return 0;
     }
-    int StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
-        const sptr<IRemoteObject> &callerToken, int requestCode = 0)
+    int StartAbility(
+        const Want &want,
+        const AbilityStartSetting &abilityStartSetting,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        int requestCode = DEFAULT_INVAL_VALUE)
     {
         return 0;
     }
