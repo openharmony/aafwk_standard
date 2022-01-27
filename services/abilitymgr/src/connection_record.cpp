@@ -205,7 +205,7 @@ std::string ConnectionRecord::ConvertConnectionState(const ConnectionState &stat
 
 void ConnectionRecord::Dump(std::vector<std::string> &info) const
 {
-    info.emplace_back("     > " + GetAbilityRecord()->GetAbilityInfo().bundleName + "/" +
+    info.emplace_back("       > " + GetAbilityRecord()->GetAbilityInfo().bundleName + "/" +
                       GetAbilityRecord()->GetAbilityInfo().name + "   connectionState #" +
                       ConvertConnectionState(GetConnectState()));
 }

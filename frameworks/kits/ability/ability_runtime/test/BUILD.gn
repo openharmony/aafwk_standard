@@ -12,8 +12,8 @@
 # limitations under the License.
 
 import("//build/test.gni")
-
-module_output_path = "aafwk_standard/aafwk_L2"
+import("//foundation/aafwk/standard/aafwk.gni")
+module_output_path = "ability_runtime/ability_call_test"
 
 ###############################################################################
 #1. intent(c++) get/set test without transport
@@ -24,7 +24,13 @@ config("module_private_config") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  include_dirs = [ "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
+  include_dirs = [
+    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS",
+    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/Ability/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/BMS/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "//foundation/distributedschedule/safwk/services/safwk/include",
+  ]
 }
 
 ohos_moduletest("ability_caller_fw_module_test") {
@@ -41,14 +47,13 @@ ohos_moduletest("ability_caller_fw_module_test") {
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-
-    #"//foundation/appexecfwk/standard/kits:appkit_native",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -65,7 +70,7 @@ ohos_moduletest("ability_caller_fw_module_test") {
 }
 
 ################################################################################
-group("abilityruntimemoduletest") {
+group("moduletest") {
   testonly = true
 
   deps = []

@@ -533,6 +533,34 @@ int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInf
     return ERR_OK;
 }
 
+int32_t AppMgrServiceInner::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
+{
+    auto bundleMgr_ = remoteClientManager_->GetBundleManager();
+    if (bundleMgr_ == nullptr) {
+        APP_LOGE("GetBundleManager fail");
+        return ERR_DEAD_OBJECT;
+    }
+
+    for (const auto &item : appRunningManager_->GetAppRunningRecordMap()) {
+        const auto &appRecord = item.second;
+        if (USER_SCALE == 0) {
+            APP_LOGE("USER_SCALE is not zero");
+            return ERR_WOULD_BLOCK;
+        }
+        int32_t userIdTemp = static_cast<int32_t>(appRecord->GetUid() / USER_SCALE);
+        if (userIdTemp == userId) {
+            RunningProcessInfo runningProcessInfo;
+            runningProcessInfo.processName_ = appRecord->GetProcessName();
+            runningProcessInfo.pid_ = appRecord->GetPriorityObject()->GetPid();
+            runningProcessInfo.uid_ = appRecord->GetUid();
+            runningProcessInfo.state_ = static_cast<AppProcessState>(appRecord->GetState());
+            appRecord->GetBundleNames(runningProcessInfo.bundleNames);
+            info.emplace_back(runningProcessInfo);
+        }
+    }
+    return ERR_OK;
+}
+
 int32_t AppMgrServiceInner::KillProcessByPid(const pid_t pid) const
 {
     int32_t ret = -1;

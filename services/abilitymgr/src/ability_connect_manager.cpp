@@ -921,7 +921,7 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
     RemoveServiceAbility(abilityRecord);
 }
 
-void AbilityConnectManager::DumpState(std::vector<std::string> &info, const std::string &args) const
+void AbilityConnectManager::DumpState(std::vector<std::string> &info, bool isClient, const std::string &args) const
 {
     if (!args.empty()) {
         auto it = std::find_if(serviceMap_.begin(), serviceMap_.end(), [&args](const auto &service) {
@@ -929,15 +929,20 @@ void AbilityConnectManager::DumpState(std::vector<std::string> &info, const std:
         });
         if (it != serviceMap_.end()) {
             info.emplace_back("uri [ " + it->first + " ]");
-            it->second->DumpService(info);
+            it->second->DumpService(info, isClient);
         } else {
             info.emplace_back(args + ": Nothing to dump.");
         }
     } else {
-        info.emplace_back("serviceAbilityRecords:");
+        auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+        if (abilityMgr && abilityMgr->IsUseNewMission()) {
+            info.emplace_back("  ExtensionRecords:");
+        } else {
+            info.emplace_back("  serviceAbilityRecords:");
+        }
         for (auto &&service : serviceMap_) {
-            info.emplace_back("  uri [" + service.first + "]");
-            service.second->DumpService(info);
+            info.emplace_back("    uri [" + service.first + "]");
+            service.second->DumpService(info, isClient);
         }
     }
 }

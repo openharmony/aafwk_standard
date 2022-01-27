@@ -184,6 +184,8 @@ public:
      */
     virtual void UpdateConfiguration(const Configuration &config) override;
 
+    virtual int GetConfiguration(Configuration& config) override;
+
 private:
     /**
      * @brief Judge whether the application service is ready.

@@ -229,7 +229,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual void DumpState(const std::string &args, std::vector<std::string> &state) override;
-
+    virtual void DumpSysState(
+        const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID) override;
     /**
      * Destroys this Service ability if the number of times it
      * has been started equals the number represented by

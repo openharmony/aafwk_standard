@@ -28,7 +28,10 @@ ohos_moduletest("AmsServiceAppSpawnClientModuleTest") {
     "ams_service_app_spawn_client_module_test.cpp",
   ]
 
-  deps = [ "${services_path}/test/moduletest/common/ams:appmgr_mst_source" ]
+  deps = [
+    "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
+  ]
 
   external_deps = [ "ipc:ipc_core" ]
 }
@@ -36,5 +39,7 @@ ohos_moduletest("AmsServiceAppSpawnClientModuleTest") {
 group("moduletest") {
   testonly = true
 
-  deps = [ ":AmsServiceAppSpawnClientModuleTest" ]
+  deps = [
+    ":AmsServiceAppSpawnClientModuleTest",
+  ]
 }

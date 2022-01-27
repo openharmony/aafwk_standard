@@ -217,6 +217,35 @@ AppMgrResultCode AppMgrClient::GetAllRunningProcesses(std::vector<RunningProcess
     return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
 }
 
+AppMgrResultCode AppMgrClient::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service != nullptr) {
+        int32_t result = service->GetProcessRunningInfosByUserId(info, userId);
+        if (result == ERR_OK) {
+            return AppMgrResultCode::RESULT_OK;
+        }
+        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    }
+    return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+}
+
+AppMgrResultCode AppMgrClient::GetConfiguration(Configuration& config)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service != nullptr) {
+        sptr<IAmsMgr> amsService = service->GetAmsMgr();
+        if (amsService != nullptr) {
+            int32_t result = amsService->GetConfiguration(config);
+            if (result == ERR_OK) {
+                return AppMgrResultCode::RESULT_OK;
+            }
+        }
+        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    }
+    return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+}
+
 AppMgrResultCode AppMgrClient::SetAppFreezingTime(int time)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);

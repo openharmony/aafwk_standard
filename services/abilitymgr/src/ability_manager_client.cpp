@@ -213,6 +213,15 @@ ErrCode AbilityManagerClient::DumpState(const std::string &args, std::vector<std
     return ERR_OK;
 }
 
+ErrCode AbilityManagerClient::DumpSysState(
+    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    abms->DumpSysState(args, state, isClient, isUserID, UserID);
+    return ERR_OK;
+}
+
 ErrCode AbilityManagerClient::Connect()
 {
     std::lock_guard<std::mutex> lock(mutex_);

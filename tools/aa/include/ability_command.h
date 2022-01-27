@@ -30,6 +30,7 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  start                       start ability with options\n"
                              "  stop-service                stop service with options\n"
                              "  dump                        dump the ability stack info\n"
+                             "  dumpsys                     dump the ability info\n"
                              "  force-stop <bundle-name>    force stop the process with bundle name\n";
 
 const std::string HELP_MSG_SCREEN =
@@ -60,6 +61,18 @@ const std::string HELP_MSG_DUMP = "usage: aa dump <options>\n"
                                   "  -u, --ui                     dump the ability list of system ui stack\n"
                                   "  -e, --serv                   dump the service abilities\n"
                                   "  -d, --data                   dump the data abilities\n";
+
+const std::string HELP_MSG_DUMPSYS = "usage: aa dumpsys <options>\n"
+                                  "options list:\n"
+                                  "  -h, --help                   list available commands\n"
+                                  "  -a, --all                    dump all abilities\n"
+                                  "  -l, --mission-list           dump mission list\n"
+                                  "  -i, --ability                dump abilityRecordId\n"
+                                  "  -e, --extension              dump elementName\n"
+                                  "  -p, --pending                dump pendingWantRecordId\n"
+                                  "  -r, --process                dump process\n"
+                                  "  -u, --userId                 userId\n"
+                                  "  -c, --client                 client\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 
@@ -99,10 +112,12 @@ private:
     ErrCode RunAsStartAbility();
     ErrCode RunAsStopService();
     ErrCode RunAsDumpCommand();
+    ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
 
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
+    ErrCode RunAsDumpSysCommandOptopt();
 };
 
 }  // namespace AAFwk

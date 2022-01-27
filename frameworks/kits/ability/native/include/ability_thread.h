@@ -394,6 +394,13 @@ public:
      * @return Returns true on success, others on failure.
      */
     bool CheckObsPermission();
+	
+	/**
+     * @brief Dump ability runner info.
+     *
+     * @param runnerInfo ability runner info.
+     */
+    void DumpAbilityInfo(std::vector<std::string> &info);
 
     sptr<IRemoteObject> CallRequest();
     

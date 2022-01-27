@@ -43,6 +43,9 @@ public:
     MOCK_METHOD1(ScheduleDisconnectAbilityDone, int(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(ScheduleCommandAbilityDone, int(const sptr<IRemoteObject> &));
     MOCK_METHOD2(DumpState, void(const std::string &args, std::vector<std::string> &state));
+    MOCK_METHOD5(
+        DumpSysState,
+        void(const std::string &args, std::vector<std::string>& info, bool isClient, bool isUserID, int UserID));
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int startId));
     MOCK_METHOD2(StopServiceAbility, int(const Want &, int32_t userId));
     MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
@@ -167,10 +170,6 @@ public:
     {
         return 0;
     }
-    virtual bool SendANRProcessID(int pid)
-    {
-        return true;
-    }
 
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override
@@ -179,6 +178,11 @@ public:
     }
 
     virtual bool IsRunningInStabilityTest() override
+    {
+        return true;
+    }
+
+    virtual bool SendANRProcessID(int pid) override
     {
         return true;
     }

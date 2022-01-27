@@ -158,6 +158,8 @@ public:
     int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo, int32_t callerUid);
     void ClearPendingWantRecord(const std::string &bundleName);
 
+    void Dump(std::vector<std::string> &info);
+
 private:
     sptr<IWantSender> GetWantSenderLocked(const int32_t callingUid, const int32_t uid, const int32_t userId,
         WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken);

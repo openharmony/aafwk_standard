@@ -50,6 +50,7 @@ ohos_unittest("ability_screenshot_handler_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
@@ -69,5 +70,7 @@ ohos_unittest("ability_screenshot_handler_test") {
 group("unittest") {
   testonly = true
 
-  deps = [ ":ability_screenshot_handler_test" ]
+  deps = [
+    ":ability_screenshot_handler_test",
+  ]
 }
