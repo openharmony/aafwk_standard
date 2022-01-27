@@ -176,6 +176,8 @@ public:
      */
     virtual void UpdateConfiguration(const Configuration &config) = 0;
 
+    virtual int GetConfiguration(Configuration &config) = 0;
+
     enum class Message {
         LOAD_ABILITY = 0,
         TERMINATE_ABILITY,
@@ -196,6 +198,7 @@ public:
         START_SPECIFIED_ABILITY,
         REGISTER_START_SPECIFIED_ABILITY_RESPONSE,
         UPDATE_CONFIGURATION,
+        GET_CONFIGURATION,
     };
 };
 }  // namespace AppExecFwk

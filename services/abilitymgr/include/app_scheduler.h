@@ -245,6 +245,8 @@ public:
 
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
     int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
+    int GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId);
+    std::string ConvertAppState(const AppState &state);
 
     /**
      *  ANotify application update system environment changes.
@@ -253,6 +255,8 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int UpdateConfiguration(const AppExecFwk::Configuration &config);
+
+    int GetConfiguration(AppExecFwk::Configuration &config);
 
 protected:
     /**

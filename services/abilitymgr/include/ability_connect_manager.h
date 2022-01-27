@@ -224,7 +224,7 @@ public:
      */
     void OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
-    void DumpState(std::vector<std::string> &info, const std::string &args = "") const;
+    void DumpState(std::vector<std::string> &info, bool isClient, const std::string &args = "") const;
 
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;

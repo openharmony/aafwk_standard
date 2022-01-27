@@ -44,6 +44,7 @@ public:
     MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
     MOCK_METHOD1(NotifyContinuationResult, void(const int32_t result));
     MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
+    MOCK_METHOD1(DumpAbilityInfo, void(std::vector<std::string> &info));
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {
         std::vector<std::string> types;

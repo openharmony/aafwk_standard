@@ -66,6 +66,8 @@ AmsMgrStub::AmsMgrStub()
         &AmsMgrStub::HandleRegisterStartSpecifiedAbilityResponse;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::UPDATE_CONFIGURATION)] =
         &AmsMgrStub::HandleUpdateConfiguration;
+    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::GET_CONFIGURATION)] =
+        &AmsMgrStub::HandleGetConfiguration;
 }
 
 AmsMgrStub::~AmsMgrStub()
@@ -300,6 +302,21 @@ int32_t AmsMgrStub::HandleUpdateConfiguration(MessageParcel &data, MessageParcel
         return NO_ERROR;
     }
     return UNKNOWN_ERROR;
+}
+
+int32_t AmsMgrStub::HandleGetConfiguration(MessageParcel &data, MessageParcel &reply)
+{
+    Configuration config;
+    int ret = GetConfiguration(config);
+    if (ret != ERR_OK) {
+        APP_LOGE("GetConfiguration error");
+        return ERR_INVALID_VALUE;
+    }
+    if (!reply.WriteParcelable(&config)) {
+        APP_LOGE("GetConfiguration error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

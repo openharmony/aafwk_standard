@@ -253,7 +253,7 @@ std::string MissionList::GetTypeName()
     }
 }
 
-void MissionList::Dump(std::vector<std::string> &info)
+void MissionList::Dump(std::vector<std::string>& info)
 {
     std::string dumpInfo = "  MissionList Type #" + GetTypeName();
     info.push_back(dumpInfo);
@@ -264,20 +264,40 @@ void MissionList::Dump(std::vector<std::string> &info)
     }
 }
 
-void MissionList::DumpList(std::vector<std::string> &info)
+void MissionList::DumpStateByRecordId(std::vector<std::string> &info, bool isClient, int32_t abilityRecordId)
+{
+    for (const auto& mission : missions_) {
+        if (mission) {
+            auto abilityRecord = mission->GetAbilityRecord();
+            if (abilityRecord) {
+                if (abilityRecord->GetRecordId() == abilityRecordId) {
+                    HILOG_INFO("record begain to call DumpAbilityState %{public}s", __func__);
+                    abilityRecord->DumpAbilityState(info, isClient);
+                    return;
+                }
+            }
+        }
+    }
+}
+void MissionList::DumpList(std::vector<std::string> &info, bool isClient)
 {
     std::string dumpInfo = "  MissionList Type #" + GetTypeName();
     info.push_back(dumpInfo);
-    dumpInfo = "   Mission IDs [";
+
     for (const auto& mission : missions_) {
         if (mission) {
-            dumpInfo += " ";
-            dumpInfo += "#";
-            dumpInfo += std::to_string(mission->GetMissionId());
+            dumpInfo = "    Mission ID #" + std::to_string(mission->GetMissionId());
+            dumpInfo += "  mission name #[" + mission->GetMissionName() + "]" +
+                "  lockedState #" + std::to_string(mission->IsLockedState());
+            info.push_back(dumpInfo);
+
+            auto abilityRecord = mission->GetAbilityRecord();
+            if (abilityRecord) {
+                HILOG_INFO("record begain to call DumpAbilityState %{public}s", __func__);
+                abilityRecord->DumpAbilityState(info, isClient);
+            }
         }
     }
-    dumpInfo += " ]";
-    info.push_back(dumpInfo);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

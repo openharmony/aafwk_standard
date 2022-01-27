@@ -27,7 +27,10 @@ ohos_moduletest("AmsAppMgrServiceModuleTest") {
     "ams_app_mgr_service_module_test.cpp",
   ]
 
-  deps = [ "${services_path}/test/moduletest/common/ams:appmgr_mst_source" ]
+  deps = [
+    "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
+  ]
 
   external_deps = [ "ipc:ipc_core" ]
 }

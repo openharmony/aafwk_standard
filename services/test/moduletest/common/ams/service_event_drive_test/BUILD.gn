@@ -29,7 +29,10 @@ ohos_moduletest("AmsServiceEventDriveModuleTest") {
     "ams_service_event_drive_module_test.cpp",
   ]
 
-  deps = [ "${services_path}/test/moduletest/common/ams:appmgr_mst_source" ]
+  deps = [
+    "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
+    "//base/global/i18n_standard/frameworks/intl:intl_util",
+  ]
 
   external_deps = [ "ipc:ipc_core" ]
 }

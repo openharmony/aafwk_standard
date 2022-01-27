@@ -264,5 +264,19 @@ void AmsMgrScheduler::UpdateConfiguration(const Configuration &config)
     amsHandler_->PostTask(task);
     APP_LOGI("AmsMgrScheduler UpdateConfiguration end");
 }
+
+int AmsMgrScheduler::GetConfiguration(Configuration& config)
+{
+    APP_LOGI("AmsMgrScheduler GetConfiguration begin");
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    if (!amsMgrServiceInner_->GetConfiguration()) {
+        return ERR_INVALID_OPERATION;
+    }
+    config = *(amsMgrServiceInner_->GetConfiguration());
+    APP_LOGI("AmsMgrScheduler GetConfiguration end");
+    return ERR_OK;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

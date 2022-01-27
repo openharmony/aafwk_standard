@@ -66,6 +66,7 @@ private:
     int DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StopServiceAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DumpStateInner(MessageParcel &data, MessageParcel &reply);
+    int DumpSysStateInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForSettingsInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForOptionsInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFloatingStackInner(MessageParcel &data, MessageParcel &reply);
