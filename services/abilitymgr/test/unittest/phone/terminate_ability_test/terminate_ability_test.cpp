@@ -137,6 +137,7 @@ void TerminateAbilityTest::OnStartAms()
         EXPECT_TRUE(g_aams->eventLoop_);
 
         g_aams->handler_ = std::make_shared<AbilityEventHandler>(g_aams->eventLoop_, g_aams);
+        g_aams->connectManager_ = std::make_shared<AbilityConnectManager>();
         EXPECT_TRUE(g_aams->handler_);
         EXPECT_TRUE(g_aams->connectManager_);
 
