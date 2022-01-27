@@ -515,11 +515,8 @@ int FormMgrProxy::MessageEvent(const int64_t formId, const Want &want, const spt
 
     MessageParcel reply;
     MessageOption option;
-    int error = Remote()->SendRequest(
-        static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_MESSAGE_EVENT),
-        data,
-        reply,
-        option);
+    int error = Remote()->SendRequest(static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_MESSAGE_EVENT),
+        data, reply, option);
     if (error != ERR_OK) {
         APP_LOGE("%{public}s, failed to SendRequest: %{public}d", __func__, error);
         return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
