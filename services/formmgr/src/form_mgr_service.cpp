@@ -286,12 +286,10 @@ int FormMgrService::DumpFormTimerByFormId(const std::int64_t formId, std::string
 int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (!CheckFormPermission()) {
         APP_LOGE("%{public}s fail, request form permission denied", __func__);
         return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
     }
-
     return FormMgrAdapter::GetInstance().MessageEvent(formId, want, callerToken);
 }
 
@@ -377,12 +375,12 @@ ErrCode FormMgrService::Init()
 
     if (formSysEventReceiver_ == nullptr) {
         EventFwk::MatchingSkills matchingSkills;
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED);
-        
         // init TimerReceiver
         EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
         formSysEventReceiver_ = std::make_shared<FormSysEventReceiver>(subscribeInfo);
