@@ -489,6 +489,7 @@ ErrCode AbilityManagerShellCommand::RunAsStartAbility()
 {
     Want want;
     std::string windowMode;
+    int account = AbilityManagerClient::GetCurrentAccountId();
     ErrCode result = MakeWantFromCmd(want, windowMode);
     if (result == OHOS::ERR_OK) {
         int windowModeKey = std::atoi(windowMode.c_str());
@@ -496,10 +497,10 @@ ErrCode AbilityManagerShellCommand::RunAsStartAbility()
             auto setting = AbilityStartSetting::GetEmptySetting();
             if (setting != nullptr) {
                 setting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY, windowMode);
-                result = AbilityManagerClient::GetInstance()->StartAbility(want, *(setting.get()), nullptr, -1);
+                result = AbilityManagerClient::GetInstance()->StartAbility(want, *(setting.get()), nullptr, account);
             }
         } else {
-            result = AbilityManagerClient::GetInstance()->StartAbility(want);
+            result = AbilityManagerClient::GetInstance()->StartAbility(want, DEFAULT_INVAL_VALUE, account);
         }
         if (result == OHOS::ERR_OK) {
             HILOG_INFO("%{public}s", STRING_START_ABILITY_OK.c_str());

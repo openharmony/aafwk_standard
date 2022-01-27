@@ -21,6 +21,7 @@
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#include "os_account_manager.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 #include "shared_memory.h"
@@ -55,6 +56,29 @@ std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
         }
     }
     return instance_;
+}
+
+int AbilityManagerClient::GetCurrentAccountId()
+{
+    std::vector<AccountSA::OsAccountInfo> osAccountInfos;
+    ErrCode ret = AccountSA::OsAccountManager::QueryAllCreatedOsAccounts(osAccountInfos);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("QueryAllCreatedOsAccounts failed.");
+        return 0;
+    }
+
+    if (osAccountInfos.empty()) {
+        HILOG_ERROR("osAccountInfos is empty, no accounts.");
+        return 0;
+    }
+
+    for (const auto& account : osAccountInfos) {
+        if (account.GetIsActived()) {
+            return account.GetLocalId();
+        }
+    }
+    HILOG_ERROR("GetCurrentAccountId failed, no Actived now.");
+    return 0;
 }
 
 AbilityManagerClient::AbilityManagerClient()
