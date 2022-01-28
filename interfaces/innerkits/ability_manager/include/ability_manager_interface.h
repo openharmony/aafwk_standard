@@ -896,15 +896,15 @@ public:
 
         START_ABILITY_FOR_OPTIONS,
 
+        // ipc id for call ability
+        START_CALL_ABILITY,
+
+        RELEASE_CALL_ABILITY,
+
         // ipc id for continue ability(1101)
         START_CONTINUATION = 1101,
 
         NOTIFY_CONTINUATION_RESULT = 1102,
-		
-		// ipc id for call ability
-        START_CALL_ABILITY,
-
-        RELEASE_CALL_ABILITY,
 
         NOTIFY_COMPLETE_CONTINUATION = 1103,
 

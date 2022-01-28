@@ -32,12 +32,6 @@ public:
     explicit JSAbilityMonitor(const std::string &abilityName);
     ~JSAbilityMonitor() = default;
 
-    static void Finalizer(NativeEngine *engine, void *data, void *hint)
-    {
-        HILOG_INFO("JsAbilityContext::Finalizer is called");
-        std::unique_ptr<JSAbilityMonitor>(static_cast<JSAbilityMonitor *>(data));
-    }
-
     void onAbilityCreate();
     void onAbilityForeground();
     void onAbilityBackground();
