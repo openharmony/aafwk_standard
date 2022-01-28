@@ -31,7 +31,8 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  stop-service                stop service with options\n"
                              "  dump                        dump the ability stack info\n"
                              "  dumpsys                     dump the ability info\n"
-                             "  force-stop <bundle-name>    force stop the process with bundle name\n";
+                             "  force-stop <bundle-name>    force stop the process with bundle name\n"
+                             "  test                        start the test framework with options\n";
 
 const std::string HELP_MSG_SCREEN =
     "usage: aa screen <options>\n"
@@ -74,6 +75,14 @@ const std::string HELP_MSG_DUMPSYS = "usage: aa dumpsys <options>\n"
                                   "  -u, --userId                 userId\n"
                                   "  -c, --client                 client\n";
 
+const std::string HELP_MSG_TEST =
+    "usage: aa test <options>\n"
+    "options list:\n"
+    "  -h, --help                                                                            \
+    list available commands\n"
+    "  -p <bundle-name> -s unittest <test-runner> -s class <test-class> [-w <wait-time>]    \
+    start the test framework with options\n";
+
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 
 const std::string HELP_MSG_NO_ABILITY_NAME_OPTION = "error: -a <ability-name> is expected";
@@ -94,6 +103,13 @@ const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off scree
 
 const std::string STRING_FORCE_STOP_OK = "force stop process successfully.";
 const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
+
+const std::string STRING_START_USER_TEST_OK = "start user test successfully.";
+const std::string STRING_START_USER_TEST_NG = "error: failed to start user test.";
+
+const int USER_TEST_COMMAND_START_INDEX = 2;
+const int USER_TEST_COMMAND_PARAMS_NUM = 2;
+const int TIME_RATE_MS = 1000;
 }  // namespace
 
 class AbilityManagerShellCommand : public ShellCommand {
@@ -118,8 +134,12 @@ private:
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
     ErrCode RunAsDumpSysCommandOptopt();
-};
 
+    ErrCode RunAsTestCommand();
+    bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
+    ErrCode TestCommandError(const std::string &info);
+    ErrCode StartUserTest(const std::map<std::string, std::string> &params);
+};
 }  // namespace AAFwk
 }  // namespace OHOS
 

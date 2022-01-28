@@ -550,6 +550,16 @@ public:
      */
     int32_t GetForegroundApplications(std::vector<AppStateData> &list);
 
+    /**
+     * Start user test process.
+     * @param want, want object.
+     * @param observer, test observer remote object.
+     * @param bundleInfo, bundle info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const AppExecFwk::BundleInfo &bundleInfo);
+
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 
     void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response);
@@ -772,6 +782,9 @@ private:
     void OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord);
 
     void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
+
+    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &info, const std::string &processName);
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 

@@ -39,6 +39,7 @@ public:
 private:
     void FirstStepInit();
     void SecondStepInit();
+    void ThirdStepInit();
     int TerminateAbilityInner(MessageParcel &data, MessageParcel &reply);
     int TerminateAbilityByCallerInner(MessageParcel &data, MessageParcel &reply);
     int MinimizeAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -142,6 +143,13 @@ private:
     int SendANRProcessIDInner(MessageParcel &data, MessageParcel &reply);
 
     int SetAbilityControllerInner(MessageParcel &data, MessageParcel &reply);
+
+    int StartUserTestInner(MessageParcel &data, MessageParcel &reply);
+    int FinishUserTestInner(MessageParcel &data, MessageParcel &reply);
+    int GetCurrentTopAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int DelegatorDoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply);
+    int DelegatorDoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply);
+
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);

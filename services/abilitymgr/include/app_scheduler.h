@@ -25,6 +25,7 @@
 #include "appmgr/app_state_callback_host.h"
 #include "appmgr/start_specified_ability_response_stub.h"
 #include "application_info.h"
+#include "bundle_info.h"
 #include "iremote_object.h"
 #include "refbase.h"
 #include "singleton.h"
@@ -245,6 +246,12 @@ public:
 
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
     int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
+
+	/**
+     * Start a user test
+     */
+    int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer, const AppExecFwk::BundleInfo &bundleInfo);
+
     int GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId);
     std::string ConvertAppState(const AppState &state);
 
