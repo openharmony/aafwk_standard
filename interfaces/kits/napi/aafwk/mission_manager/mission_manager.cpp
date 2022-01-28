@@ -122,8 +122,7 @@ private:
             return engine.CreateNumber(missionListenerId_);
         }
 
-        auto mainHandler = GetMainHandler();
-        missionListener_ = new JsMissionListener(&engine, mainHandler);
+        missionListener_ = new JsMissionListener(&engine);
         auto ret = AbilityManagerClient::GetInstance()->RegisterMissionListener(missionListener_);
         if (ret == 0) {
             missionListener_->AddJsListenerObject(missionListenerId_, info.argv[0]);
@@ -475,17 +474,8 @@ private:
         return result;
     }
 
-    std::shared_ptr<EventHandler> GetMainHandler()
-    {
-        if (!mainHandler_) {
-            mainHandler_ = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
-        }
-        return mainHandler_;
-    }
-
     sptr<JsMissionListener> missionListener_ = nullptr;
     uint32_t missionListenerId_ = 0;
-    std::shared_ptr<EventHandler> mainHandler_;
 };
 
 NativeValue* JsMissionManagerInit(NativeEngine* engine, NativeValue* exportObj)

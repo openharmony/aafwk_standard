@@ -22,34 +22,32 @@ namespace OHOS {
 namespace AbilityRuntime {
 void JsMissionListener::OnMissionCreated(int32_t missionId)
 {
-    PostMissionCallback("onMissionCreated", missionId);
+    CallJsMethod("onMissionCreated", missionId);
 }
 
 void JsMissionListener::OnMissionDestroyed(int32_t missionId)
 {
-    PostMissionCallback("onMissionDestroyed", missionId);
+    CallJsMethod("onMissionDestroyed", missionId);
 }
 
 void JsMissionListener::OnMissionSnapshotChanged(int32_t missionId)
 {
-    PostMissionCallback("onMissionSnapshotChanged", missionId);
+    CallJsMethod("onMissionSnapshotChanged", missionId);
 }
 
 void JsMissionListener::OnMissionMovedToFront(int32_t missionId)
 {
-    PostMissionCallback("onMissionMovedToFront", missionId);
+    CallJsMethod("onMissionMovedToFront", missionId);
 }
 
 void JsMissionListener::AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject)
 {
-    std::lock_guard<std::mutex> lock(listenerMutex_);
     jsListenerObjectMap_.emplace(
         listenerId, std::shared_ptr<NativeReference>(engine_->CreateReference(jsListenerObject, 1)));
 }
 
 void JsMissionListener::RemoveJsListenerObject(int32_t listenerId)
 {
-    std::lock_guard<std::mutex> lock(listenerMutex_);
     jsListenerObjectMap_.erase(listenerId);
 }
 
@@ -58,37 +56,29 @@ bool JsMissionListener::IsEmpty()
     return jsListenerObjectMap_.empty();
 }
 
-void JsMissionListener::HandleMissionCallback(const char* methodName, int32_t missionId)
+void JsMissionListener::CallJsMethod(const std::string &methodName, int32_t missionId)
 {
-    NativeValue* argv[] = { CreateJsValue(*engine_, missionId) };
-    CallJsMethod(methodName, argv, 1);
-}
-
-void JsMissionListener::PostMissionCallback(const std::string &methodName, int32_t missionId)
-{
-    if (!mainHandler_) {
-        HILOG_ERROR("mainHandler_ is nullptr");
-        return;
-    }
-
-    wptr<JsMissionListener> wpListener = this;
-    auto task = [wpListener, methodName, missionId]() {
-        auto listener = wpListener.promote();
-        if (listener) {
-            listener->HandleMissionCallback(methodName.c_str(), missionId);
-        }
-    };
-    mainHandler_->PostTask(task);
-}
-
-void JsMissionListener::CallJsMethod(const char* methodName, NativeValue* const* argv, size_t argc)
-{
-    HILOG_INFO("methodName = %{public}s", methodName);
+    HILOG_INFO("methodName = %{public}s", methodName.c_str());
     if (engine_ == nullptr) {
         HILOG_ERROR("engine_ nullptr");
         return;
     }
-    std::lock_guard<std::mutex> lock(listenerMutex_);
+
+    // js callback should run in js thread
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsMissionListener = this, methodName, missionId](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            if (jsMissionListener) {
+                jsMissionListener->CallJsMethodInner(methodName, missionId);
+            }
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        *engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
+}
+
+void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t missionId)
+{
     for (auto &item : jsListenerObjectMap_) {
         NativeValue* value = (item.second)->Get();
         NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
@@ -96,12 +86,13 @@ void JsMissionListener::CallJsMethod(const char* methodName, NativeValue* const*
             HILOG_ERROR("Failed to get object");
             continue;
         }
-        NativeValue* method = obj->GetProperty(methodName);
-        if (method == nullptr) {
-            HILOG_ERROR("Failed to get onMissionCreated from object");
+        NativeValue* method = obj->GetProperty(methodName.c_str());
+        if (method == nullptr || method->TypeOf() == NATIVE_UNDEFINED) {
+            HILOG_ERROR("Failed to get %{public}s from object", methodName.c_str());
             continue;
         }
-        engine_->CallFunction(value, method, argv, argc);
+        NativeValue* argv[] = { CreateJsValue(*engine_, missionId) };
+        engine_->CallFunction(value, method, argv, ArraySize(argv));
     }
 }
 }  // namespace AbilityRuntime
