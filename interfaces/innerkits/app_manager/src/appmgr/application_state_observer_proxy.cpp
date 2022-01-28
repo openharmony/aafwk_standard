@@ -153,5 +153,29 @@ void ApplicationStateObserverProxy::OnProcessDied(const ProcessData &processData
     }
     APP_LOGD("end");
 }
+
+void ApplicationStateObserverProxy::OnApplicationStateChanged(const AppStateData &appStateData)
+{
+    APP_LOGI("begin");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_ASYNC);
+    if (!WriteInterfaceToken(data)) {
+        return;
+    }
+    data.WriteParcelable(&appStateData);
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        APP_LOGE("Remote() is NULL");
+        return;
+    }
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IApplicationStateObserver::Message::TRANSACT_ON_APPLICATION_STATE_CHANGED),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+    }
+    APP_LOGI("end");
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

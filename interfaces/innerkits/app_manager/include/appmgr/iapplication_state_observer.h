@@ -63,12 +63,20 @@ public:
      */
     virtual void OnProcessDied(const ProcessData &processData) = 0;
 
+    /**
+     * Application state changed callback.
+     *
+     * @param appStateData Application state data.
+     */
+    virtual void OnApplicationStateChanged(const AppStateData &appStateData) = 0;
+
     enum class Message {
         TRANSACT_ON_FOREGROUND_APPLICATION_CHANGED = 0,
         TRANSACT_ON_ABILITY_STATE_CHANGED,
         TRANSACT_ON_EXTENSION_STATE_CHANGED,
         TRANSACT_ON_PROCESS_CREATED,
         TRANSACT_ON_PROCESS_DIED,
+        TRANSACT_ON_APPLICATION_STATE_CHANGED,
     };
 };
 }  // namespace AppExecFwk
