@@ -25,7 +25,7 @@ class Caller {
         this.releaseCallback = null;
     }
 
-    call(method, data) {
+    async call(method, data) {
         console.log("Caller call method [" + method + "]");
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller call " + typeof method + " " + typeof data);
@@ -45,31 +45,29 @@ class Caller {
         let option = rpc.MessageOption();
         msgData.writeSequenceable(data);
 
-        this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option)
-            .then(function (err) {
-                expect(err).assertEqual(REQUEST_SUCCESS)
-                console.log("Caller call sendMsg return " + err);
-                let retval = msgReply.readInt();
-                if (retval !== REQUEST_SUCCESS) {
-                    let str = msgReply.readString();
-                    console.log("Caller call sendMsg return [" + retval + "] str [" + str + "]");
-                }
-                console.log("Caller call msgData SendRequest SUCCESS");
-        })
-        .catch(function (e) {
-            console.log("Caller call sendMsg error catch " + e.code);
-        })
-        .finally(() => {
+        let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
+        if (!status) {
+            console.log("Caller call return data " + status);
+            throw new Error("Function execution exception");
+            return ;
+        }
+
+        let retval = msgReply.readInt();
+        let str = msgReply.readString();
+        if (retval === REQUEST_SUCCESS && str === 'object') {
+            console.log("Caller call return data " + str);
+        } else {
+            console.log("Caller call retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
             msgReply.reclaim();
-            console.log("Caller call sendMsg error finally");
-        });
-        
+            throw new Error("Function execution result is abnormal");
+        }
+
         console.log("Caller call msgData SendRequest end");
         return;
     }
 
-    callWithResult(method, data) {
+    async callWithResult(method, data) {
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller callWithResult " + typeof method + ", " + typeof data);
             return undefined;
@@ -86,30 +84,24 @@ class Caller {
         let reply = undefined;
         msgData.writeString(method);
         msgData.writeSequenceable(data);
+        let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
+        if (!status) {
+            console.log("Caller callWithResult return data " + status);
+            return reply;
+        }
 
-        this.__call_obj__.callee.sendRequest(CODE_BASIC, msgData, msgReply, option)
-        .then(function (err) {
-            expect(err).assertEqual(REQUEST_SUCCESS)
-            let retval = msgReply.readInt();
-            let str = msgReply.readString();
-            if (retval === REQUEST_SUCCESS && str === 'object') {
-                // msgReply.readSequenceable(reply);
-                reply = msgReply;
-                console.log("Caller callWithResult return data " + str);
-            } else {
-                console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
-            }
-
-            console.log("Caller callWithResult sendMsg return " + err);
-        })
-        .catch(function (e) {
-            console.log("Caller callWithResult sendMsg error catch " + e);
-        })
-        .finally(() => {
+        let retval = msgReply.readInt();
+        let str = msgReply.readString();
+        if (retval === REQUEST_SUCCESS && str === 'object') {
+            reply = msgReply;
+            console.log("Caller callWithResult return data " + str);
+        } else {
+            console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
             msgReply.reclaim();
-            console.log("Caller call sendMsg error finally");
-        });
+        }
+
+        console.log("Caller callWithResult sendMsg return");
         return reply;
     }
 

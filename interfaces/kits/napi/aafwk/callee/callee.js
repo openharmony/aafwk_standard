@@ -49,14 +49,12 @@ class Callee extends rpc.RemoteObject {
 
             let method = data.readString();
             console.log("Callee onRemoteRequest method [" + method + "]");
-            let msgData;
             let func = this.callList.get(method);
             if (typeof func !== 'function') {
                 console.log("Callee onRemoteRequest error, get func is " + typeof func);
                 return false;
             }
 
-            // data.readSequenceable(msgData);
             let result = func(data);
             if (typeof result === 'object' && result != null) {
                 reply.writeInt(REQUEST_SUCCESS);
