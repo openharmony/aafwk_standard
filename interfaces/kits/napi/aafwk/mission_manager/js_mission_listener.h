@@ -27,8 +27,7 @@ namespace OHOS {
 namespace AbilityRuntime {
 class JsMissionListener : public AAFwk::MissionListenerStub {
 public:
-    JsMissionListener(NativeEngine* engine, std::shared_ptr<OHOS::AppExecFwk::EventHandler> &handler)
-        : engine_(engine), mainHandler_(handler) {}
+    explicit JsMissionListener(NativeEngine* engine) : engine_(engine) {}
     virtual ~JsMissionListener() = default;
 
     void OnMissionCreated(int32_t missionId) override;
@@ -38,14 +37,13 @@ public:
     void AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject);
     void RemoveJsListenerObject(int32_t listenerId);
     bool IsEmpty();
-    void HandleMissionCallback(const char* methodName, int32_t missionId);
+
 private:
-    void PostMissionCallback(const std::string &methodName, int32_t missionId);
-    void CallJsMethod(const char* methodName, NativeValue* const* argv = nullptr, size_t argc = 0);
+    void CallJsMethod(const std::string &methodName, int32_t missionId);
+    void CallJsMethodInner(const std::string &methodName, int32_t missionId);
 
     NativeEngine* engine_ = nullptr;
     std::map<int32_t, std::shared_ptr<NativeReference>> jsListenerObjectMap_;
-    std::mutex listenerMutex_;
     std::shared_ptr<OHOS::AppExecFwk::EventHandler> mainHandler_;
 };
 }  // namespace AbilityRuntime
