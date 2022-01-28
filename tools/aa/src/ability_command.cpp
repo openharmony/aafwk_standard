@@ -20,6 +20,7 @@
 #include "mission_snapshot.h"
 #include "hilog_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
+#include "test_observer.h"
 
 using namespace OHOS::AppExecFwk;
 
@@ -84,6 +85,7 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpCommand, this)},
         {"dumpsys", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
+        {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
     };
 
     return OHOS::ERR_OK;
@@ -1140,6 +1142,104 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
     return result;
 }
 
+ErrCode AbilityManagerShellCommand::RunAsTestCommand()
+{
+    HILOG_INFO("enter");
+    std::map<std::string, std::string> params;
 
+    for (int i = USER_TEST_COMMAND_START_INDEX; i < argc_; i++) {
+        HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
+        std::string opt = argv_[i];
+        if (opt == "-h" || opt == "--help") {
+            resultReceiver_.append(HELP_MSG_TEST);
+            return OHOS::ERR_OK;
+        } else if (opt == "-p" || opt == "-w") {
+            if (i >= argc_ - 1) {
+                return TestCommandError("error: option [" + opt + "] requires a value.\n");
+            }
+            std::string argv = argv_[++i];
+            params[opt] = argv;
+        } else if (opt == "-s") {
+            if (i >= argc_ - USER_TEST_COMMAND_PARAMS_NUM) {
+                return TestCommandError(
+                    "error: option Should be [-s unittest <test-runner>] or [-s class <test-class>].\n");
+            }
+            std::string argKey = argv_[++i];
+            std::string argValue = argv_[++i];
+            if (!(argKey == "unittest" || argKey == "class")) {
+                return TestCommandError("error: option Should be [-s unittest] or [-s class].\n");
+            }
+            params[opt + " " + argKey] = argValue;
+        } else if (opt.at(0) == '-') {
+            return TestCommandError("error: unknown option: " + opt + "\n");
+        }
+    }
+
+    if (!IsTestCommandIntegrity(params)) {
+        return OHOS::ERR_INVALID_VALUE;
+    }
+
+    return StartUserTest(params);
+}
+
+bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::string, std::string> &params)
+{
+    HILOG_INFO("enter");
+
+    std::vector<std::string> opts = {"-p", "-s unittest", "-s class"};
+    for (auto opt : opts) {
+        auto it = params.find(opt);
+        if (it == params.end()) {
+            TestCommandError("error: the option [" + opt + "] is expected.\n");
+            return false;
+        }
+    }
+    return true;
+}
+
+ErrCode AbilityManagerShellCommand::TestCommandError(const std::string &info)
+{
+    resultReceiver_.append(info);
+    resultReceiver_.append(HELP_MSG_TEST);
+    return OHOS::ERR_INVALID_VALUE;
+}
+
+ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, std::string> &params)
+{
+    HILOG_INFO("enter");
+
+    Want want;
+    for (auto param : params) {
+        want.SetParam(param.first, param.second);
+    }
+
+    sptr<TestObserver> observer = new (std::nothrow) TestObserver();
+    if (!observer) {
+        HILOG_ERROR("Failed: the TestObserver is null");
+        return OHOS::ERR_INVALID_VALUE;
+    }
+
+    int result = AbilityManagerClient::GetInstance()->StartUserTest(want, observer->AsObject());
+    if (result != OHOS::ERR_OK) {
+        HILOG_INFO("%{public}s result = %{public}d", STRING_START_USER_TEST_NG.c_str(), result);
+        resultReceiver_ = STRING_START_USER_TEST_NG + "\n";
+        resultReceiver_.append(GetMessageFromCode(result));
+        return result;
+    }
+    HILOG_INFO("%{public}s", STRING_START_USER_TEST_OK.c_str());
+
+    int64_t timeMs = 0;
+    if (!want.GetStringParam("-w").empty()) {
+        int time = std::stoi(want.GetStringParam("-w"));
+        timeMs = time * TIME_RATE_MS;
+    }
+    if (!observer->waitForFinish(timeMs)) {
+        resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
+        return OHOS::ERR_INVALID_VALUE;
+    }
+    resultReceiver_ = STRING_START_USER_TEST_OK + "\n";
+
+    return result;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

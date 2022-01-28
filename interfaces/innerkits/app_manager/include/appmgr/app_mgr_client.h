@@ -18,10 +18,12 @@
 
 #include "iremote_object.h"
 #include "refbase.h"
+#include "want.h"
 
 #include "ability_info.h"
 #include "application_info.h"
 #include "app_mgr_constants.h"
+#include "bundle_info.h"
 #include "iapp_state_callback.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"
@@ -240,6 +242,12 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual AppMgrResultCode UpdateConfiguration(const Configuration &config);
+
+    /**
+     * Start a user test
+     */
+    virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo);
 
     virtual void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 

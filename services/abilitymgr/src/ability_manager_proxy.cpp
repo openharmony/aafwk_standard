@@ -2361,6 +2361,138 @@ bool AbilityManagerProxy::IsRunningInStabilityTest()
     return reply.ReadBool();
 }
 
+int AbilityManagerProxy::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("want write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(observer)) {
+        HILOG_ERROR("observer write failed.");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::START_USER_TEST, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode,
+    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteString(msg)) {
+        HILOG_ERROR("msg write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteInt32(resultCode)) {
+        HILOG_ERROR("resultCode:WriteInt32 fail.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteString(bundleName)) {
+        HILOG_ERROR("bundleName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteParcelable(observer)) {
+        HILOG_ERROR("observer write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::FINISH_USER_TEST, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_CURRENT_TOP_ABILITY, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+
+    token = sptr<IRemoteObject>(reply.ReadParcelable<IRemoteObject>());
+    if (!token) {
+        HILOG_ERROR("read IRemoteObject failed.");
+        return ERR_UNKNOWN_OBJECT;
+    }
+
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::DELEGATOR_DO_ABILITY_FOREGROUND, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+
+    if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::DELEGATOR_DO_ABILITY_BACKGROUND, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+
+    return reply.ReadInt32();
+}
+
 bool AbilityManagerProxy::SendANRProcessID(int pid)
 {
     int error;

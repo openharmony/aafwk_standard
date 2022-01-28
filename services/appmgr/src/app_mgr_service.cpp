@@ -43,6 +43,7 @@ const std::string TASK_ADD_APP_DEATH_RECIPIENT = "AddAppRecipientTask";
 const std::string TASK_CLEAR_UP_APPLICATION_DATA = "ClearUpApplicationDataTask";
 const std::string TASK_STARTUP_RESIDENT_PROCESS = "StartupResidentProcess";
 const std::string TASK_ADD_ABILITY_STAGE_DONE = "AddAbilityStageDone";
+const std::string TASK_START_USER_TEST_PROCESS = "StartUserTestProcess";
 }  // namespace
 
 REGISTER_SYSTEM_ABILITY_BY_ID(AppMgrService, APP_MGR_SERVICE_ID, true);
@@ -376,6 +377,18 @@ int32_t AppMgrService::GetForegroundApplications(std::vector<AppStateData> &list
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->GetForegroundApplications(list);
+}
+
+int AppMgrService::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const AppExecFwk::BundleInfo &bundleInfo)
+{
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    std::function<void()> startUserTestProcessFunc =
+        std::bind(&AppMgrServiceInner::StartUserTestProcess, appMgrServiceInner_, want, observer, bundleInfo);
+    handler_->PostTask(startUserTestProcessFunc, TASK_START_USER_TEST_PROCESS);
+    return ERR_OK;
 }
 
 void AppMgrService::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)

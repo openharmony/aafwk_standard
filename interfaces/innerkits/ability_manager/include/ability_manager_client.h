@@ -685,6 +685,52 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
+
+    /**
+     * @brief start user test.
+     * @param want the want of the ability user test to start.
+     * @param observer test observer callback.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartUserTest(const Want &want, const sptr<IRemoteObject> &observer);
+
+    /**
+     * @brief Finish user test.
+     * @param msg user test message.
+     * @param resultCode user test result Code.
+     * @param bundleName user test bundleName.
+     * @param observer test observer callback.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer);
+
+    /**
+     * GetCurrentTopAbility, get the token of current top ability.
+     *
+     * @param token, the token of current top ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetCurrentTopAbility(sptr<IRemoteObject> &token);
+
+    /**
+     * DelegatorDoAbilityForeground, the delegator calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token);
+
+    /**
+     * DelegatorDoAbilityBackground, the delegator calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token);
+
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;

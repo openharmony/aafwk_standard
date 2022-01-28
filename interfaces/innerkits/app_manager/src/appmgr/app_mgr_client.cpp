@@ -374,6 +374,17 @@ void AppMgrClient::StartupResidentProcess()
     service->StartupResidentProcess();
 }
 
+int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        APP_LOGE("service is nullptr");
+        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    }
+    return service->StartUserTestProcess(want, observer, bundleInfo);
+}
+
 void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);

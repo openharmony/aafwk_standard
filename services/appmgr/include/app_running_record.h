@@ -442,6 +442,8 @@ public:
 
     void GetBundleNames(std::vector<std::string> &bundleNames);
 
+    void SetUserTestInfo(const UserTestRecord &record);
+
     void SetSpecifiedAbilityFlagAndWant(const bool flag, const AAFwk::Want &want, const std::string &moduleName);
     bool IsStartSpecifiedAbility() const;
     void ScheduleAcceptWant(const std::string &moduleName);
@@ -524,6 +526,8 @@ private:
     bool isSpecifiedAbility_ = false;
     AAFwk::Want SpecifiedWant_;
     std::string moduleName_;
+
+    UserTestRecord userTestRecord_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

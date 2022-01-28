@@ -17,6 +17,8 @@
 
 #include <new>
 
+#include "ability_delegator.h"
+#include "ability_delegator_registry.h"
 #include "ability_loader.h"
 #include "ability_thread.h"
 #include "app_loader.h"
@@ -849,6 +851,12 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         }
 
         application_->SetRuntime(std::move(runtime));
+        auto usertestInfo = appLaunchData.GetUserTestInfo();
+        if (usertestInfo.observer) {
+            if (!AbilityDelegatorPrepare(usertestInfo)) {
+                return;
+            }
+        }
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
             return Ability::Create(application->GetRuntime());
         });
@@ -931,6 +939,44 @@ void MainThread::LoadAndRegisterExtension(const std::string &libName,
     AbilityLoader::GetInstance().RegisterExtension(extensionName, [application = application_, libName]() {
         return AbilityRuntime::ExtensionModuleLoader::GetLoader(libName.c_str()).Create(application->GetRuntime());
     });
+}
+
+bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
+{
+    APP_LOGI("MainThread::AbilityDelegatorPrepare");
+    auto args = std::make_shared<AbilityDelegatorArgs>(record.want);
+    if (!args) {
+        APP_LOGE("args is null");
+        return false;
+    }
+    auto testRunner = TestRunner::Create(application_->GetRuntime(), args);
+    if (!testRunner) {
+        APP_LOGE("testRunner is null");
+        return false;
+    }
+
+    auto delegator = std::make_shared<AbilityDelegator>(this, std::move(testRunner), record.observer);
+    if (!delegator) {
+        APP_LOGE("delegator is null");
+        return false;
+    }
+    delegator->Init();
+    AbilityDelegatorRegistry::RegisterInstance(delegator, args);
+
+    delegator->Prepare();
+    return true;
+}
+
+int MainThread::FinishUserTest(const std::string &msg, const int &resultCode,
+    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+{
+    APP_LOGI("MainThread::FinishUserTest");
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(
+        msg, resultCode, bundleName, observer);
+    if (err != ERR_OK) {
+        APP_LOGE("MainThread::FinishUserTest is failed %{public}d", err);
+    }
+    return ERR_OK;
 }
 
 /**

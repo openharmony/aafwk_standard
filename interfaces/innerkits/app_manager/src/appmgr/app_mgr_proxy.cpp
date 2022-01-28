@@ -534,6 +534,37 @@ int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
     return reply.ReadInt32();
 }
 
+int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteParcelable(&want)) {
+        APP_LOGE("want write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteParcelable(observer)) {
+        APP_LOGE("observer write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteParcelable(&bundleInfo)) {
+        APP_LOGE("bundleInfo write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    int32_t ret =
+        Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::START_USER_TEST_PROCESS), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+    return reply.ReadInt32();
+}
+
 void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
 {
     MessageParcel data;
