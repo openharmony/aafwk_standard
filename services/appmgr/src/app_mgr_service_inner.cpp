@@ -1092,6 +1092,18 @@ void AppMgrServiceInner::OnAppStateChanged(
             }
         }
     }
+
+    if (state == ApplicationState::APP_STATE_CREATE || state == ApplicationState::APP_STATE_TERMINATED) {
+        AppStateData data = WrapAppStateData(appRecord, state);
+        APP_LOGI("OnApplicationStateChanged, size:%{public}d, name:%{public}s, uid:%{public}d, state:%{public}d",
+            (int32_t)appStateObservers_.size(), data.bundleName.c_str(), data.uid, data.state);
+        std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
+        for (const auto &observer : appStateObservers_) {
+            if (observer != nullptr) {
+                observer->OnApplicationStateChanged(data);
+            }
+        }
+    }
 }
 
 AppProcessData AppMgrServiceInner::WrapAppProcessData(const std::shared_ptr<AppRunningRecord> &appRecord,
