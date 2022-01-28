@@ -24,6 +24,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "//third_party/jsoncpp/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]
 
   sources = [ "ability_mgr_module_test.cpp" ]
@@ -113,6 +114,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "dsoftbus_standard:softbus_client",
+    "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
