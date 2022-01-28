@@ -26,6 +26,8 @@
 #include "appexecfwk_errors.h"
 #include "bytrace.h"
 #include "iapp_state_callback.h"
+#include "want.h"
+#include "bundle_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -68,6 +70,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleUnregisterApplicationStateObserver;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::GET_FOREGROUND_APPLICATIONS)] =
         &AppMgrStub::HandleGetForegroundApplications;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::START_USER_TEST_PROCESS)] =
+        &AppMgrStub::HandleStartUserTestProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE)] =
         &AppMgrStub::HandleScheduleAcceptWantDone;
 }
@@ -288,6 +292,25 @@ int32_t AppMgrStub::HandleGetForegroundApplications(MessageParcel &data, Message
     if (!reply.WriteInt32(result)) {
         return ERR_INVALID_VALUE;
     }
+    return result;
+}
+
+int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParcel &reply)
+{
+    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    if (want == nullptr) {
+        APP_LOGE("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    BundleInfo *bundleInfo = data.ReadParcelable<BundleInfo>();
+    if (want == nullptr) {
+        APP_LOGE("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto observer = data.ReadParcelable<IRemoteObject>();
+    int32_t result = StartUserTestProcess(*want, observer, *bundleInfo);
+    reply.WriteInt32(result);
+    delete want;
     return result;
 }
 

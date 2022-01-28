@@ -247,7 +247,7 @@ void AppRunningRecord::LaunchApplication(const Configuration &config)
     launchData.SetProcessInfo(processInfo);
     launchData.SetRecordId(appRecordId_);
     launchData.SetUId(mainUid_);
-
+    launchData.SetUserTestInfo(userTestRecord_);
     APP_LOGI("ScheduleLaunchApplication app:%{public}s", GetName().c_str());
     appLifeCycleDeal_->LaunchApplication(launchData, config);
 }
@@ -861,6 +861,11 @@ void AppRunningRecord::GetBundleNames(std::vector<std::string> &bundleNames)
     for (auto &app : appInfos_) {
         bundleNames.emplace_back(app.first);
     }
+}
+
+void AppRunningRecord::SetUserTestInfo(const UserTestRecord &record)
+{
+    userTestRecord_ = record;
 }
 
 void AppRunningRecord::SetSpecifiedAbilityFlagAndWant(

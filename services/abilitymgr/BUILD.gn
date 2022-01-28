@@ -54,6 +54,7 @@ config("abilityms_config") {
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "//foundation/aafwk/standard/tools/aa/include",
     "//foundation/graphic/standard/interfaces/innerkits/wmservice",
     "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",

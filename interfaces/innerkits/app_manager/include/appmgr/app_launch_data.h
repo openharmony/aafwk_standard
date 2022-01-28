@@ -18,14 +18,27 @@
 
 #include <string>
 
+#include "iremote_object.h"
 #include "parcel.h"
 
 #include "application_info.h"
 #include "process_info.h"
 #include "profile.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+struct UserTestRecord : public Parcelable {
+    AAFwk::Want want;
+    sptr<IRemoteObject> observer;
+    UserTestRecord() : observer(nullptr)
+    {}
+
+    bool ReadFromParcel(Parcel &parcel);
+    virtual bool Marshalling(Parcel &parcel) const override;
+    static UserTestRecord *Unmarshalling(Parcel &parcel);
+};
+
 class AppLaunchData : public Parcelable {
 public:
     /**
@@ -62,6 +75,13 @@ public:
      * @param int32_t, the current app User.
      */
     void SetUId(const int32_t);
+
+    /**
+     * @brief set user test info.
+     *
+     * @param UserTestRecord, user test info.
+     */
+    void SetUserTestInfo(const UserTestRecord &record);
 
     /**
      * @brief Obtains the info of the application.
@@ -114,6 +134,16 @@ public:
     }
 
     /**
+     * @brief get user test info.
+     *
+     * @return Returns user test info.
+     */
+    inline const UserTestRecord &GetUserTestInfo() const
+    {
+        return userTestRecord_;
+    }
+
+    /**
      * @brief read this Sequenceable object from a Parcel.
      *
      * @param inParcel Indicates the Parcel object into which the Sequenceable object has been marshaled.
@@ -141,6 +171,7 @@ private:
     ProcessInfo processInfo_;
     int32_t recordId_ = 0;
     int32_t uId_ = 0;
+    UserTestRecord userTestRecord_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

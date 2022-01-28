@@ -17,8 +17,10 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_APP_MGR_CLIENT_H
 
 #include "iremote_proxy.h"
+#include "want.h"
 
 #include "app_mgr_interface.h"
+#include "bundle_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -178,6 +180,16 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int32_t GetForegroundApplications(std::vector<AppStateData> &list) override;
+
+    /**
+     * Start user test process.
+     * @param want, want object.
+     * @param observer, test observer remote object.
+     * @param bundleInfo, bundle info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo) override;
 
     virtual void ScheduleAcceptWantDone(
         const int32_t recordId, const AAFwk::Want &want, const std::string &flag) override;

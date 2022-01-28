@@ -214,6 +214,33 @@ public:
     virtual void DumpSysState(
         const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int UserID) override
     {}
+
+    virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
+    {
+        return 0;
+    }
+
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer) override
+    {
+        return 0;
+    }
+
+    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
+    virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
+    virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
 public:
     std::string powerState_;
 };

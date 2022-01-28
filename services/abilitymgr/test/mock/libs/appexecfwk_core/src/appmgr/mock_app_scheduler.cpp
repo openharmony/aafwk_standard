@@ -179,6 +179,12 @@ void AppScheduler::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token
 void AppScheduler::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {}
 
+int AppScheduler::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer,
+    const AppExecFwk::BundleInfo &bundleInfo)
+{
+    return 0;
+}
+
 int AppScheduler::UpdateConfiguration(const AppExecFwk::Configuration &)
 {
     return 0;

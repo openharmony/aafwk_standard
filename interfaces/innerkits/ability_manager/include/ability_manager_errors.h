@@ -370,6 +370,11 @@ enum {
      * Result() for invalid userid.
      */
     INVALID_USERID_VALUE,
+
+    /**
+     * Result() for start user test fail.
+     */
+    START_USER_TEST_FAIL,
 };
 
 enum {

@@ -35,6 +35,7 @@
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#include "itest_observer.h"
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
 #include "mission/mission_info_converter.h"
@@ -3948,6 +3949,104 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
     }
 
     return found;
+}
+
+int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer)
+{
+    HILOG_DEBUG("enter");
+    if (observer == nullptr) {
+        HILOG_ERROR("observer is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string bundleName = want.GetStringParam("-p");
+    if (bundleName.empty()) {
+        HILOG_ERROR("Invalid bundle name");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, START_USER_TEST_FAIL);
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!bms->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo)) {
+        HILOG_ERROR("Failed to get bundle info.");
+        return GET_BUNDLE_INFO_FAILED;
+    }
+
+    int ret = KillProcess(bundleName);
+    if (ret) {
+        HILOG_ERROR("Failed to kill process.");
+        return ret;
+    }
+
+    return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo);
+}
+
+int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode,
+    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+{
+    HILOG_DEBUG("enter");
+    int ret = KillProcess(bundleName);
+    if (ret) {
+        HILOG_ERROR("Failed to kill process.");
+        return ret;
+    }
+
+    sptr<ITestObserver> observerProxy = iface_cast<ITestObserver>(observer);
+    if (!observerProxy) {
+        HILOG_ERROR("Failed to get ITestObserver proxy");
+        return ERR_INVALID_VALUE;
+    }
+    observerProxy->TestFinished(msg, resultCode);
+    return ERR_OK;
+}
+
+int AbilityManagerService::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+{
+    HILOG_DEBUG("enter");
+
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    std::string bundleName;
+    auto result = bms->GetBundleNameForUid(callerUid, bundleName);
+    if (!result) {
+        HILOG_ERROR("GetBundleNameForUid fail");
+        return GET_BUNDLENAME_BY_UID_FAIL;
+    }
+
+    auto abilityRecord = currentMissionListManager_->GetCurrentTopAbility(bundleName);
+    if (!abilityRecord) {
+        HILOG_ERROR("Failed to get top ability");
+        return ERR_INVALID_VALUE;
+    }
+
+    token = abilityRecord->GetToken();
+    return ERR_OK;
+}
+
+int AbilityManagerService::DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token)
+{
+    HILOG_DEBUG("enter");
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+
+    auto missionId = GetMissionIdByAbilityToken(token);
+    return DelegatorMoveMissionToFront(missionId);
+}
+
+int AbilityManagerService::DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token)
+{
+    HILOG_DEBUG("enter");
+    return MinimizeAbility(token);
+}
+
+int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)
+{
+    HILOG_INFO("enter missionId : %{public}d", missionId);
+    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
+
+    return currentMissionListManager_->MoveMissionToFront(missionId);
 }
 
 int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId)

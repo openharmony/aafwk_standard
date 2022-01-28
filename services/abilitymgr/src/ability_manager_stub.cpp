@@ -138,6 +138,15 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SEND_APP_NOT_RESPONSE_PROCESS_ID] = &AbilityManagerStub::SendANRProcessIDInner;
 }
 
+void AbilityManagerStub::ThirdStepInit()
+{
+    requestFuncMap_[START_USER_TEST] = &AbilityManagerStub::StartUserTestInner;
+    requestFuncMap_[FINISH_USER_TEST] = &AbilityManagerStub::FinishUserTestInner;
+    requestFuncMap_[GET_CURRENT_TOP_ABILITY] = &AbilityManagerStub::GetCurrentTopAbilityInner;
+    requestFuncMap_[DELEGATOR_DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DelegatorDoAbilityForegroundInner;
+    requestFuncMap_[DELEGATOR_DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DelegatorDoAbilityBackgroundInner;
+}
+
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     HILOG_DEBUG("cmd = %{public}d, flags= %{public}d", code, option.GetFlags());
@@ -1379,6 +1388,61 @@ int AbilityManagerStub::IsRunningInStabilityTestInner(MessageParcel &data, Messa
         HILOG_ERROR("IsRunningInStabilityTest failed.");
         return ERR_INVALID_VALUE;
     }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StartUserTestInner(MessageParcel &data, MessageParcel &reply)
+{
+    Want *want = data.ReadParcelable<Want>();
+    if (want == nullptr) {
+        HILOG_ERROR("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto observer = data.ReadParcelable<IRemoteObject>();
+    int32_t result = StartUserTest(*want, observer);
+    reply.WriteInt32(result);
+    delete want;
+    return result;
+}
+
+int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string msg = data.ReadString();
+    int resultCode = data.ReadInt32();
+    std::string bundleName = data.ReadString();
+    auto observer = data.ReadParcelable<IRemoteObject>();
+    int32_t result = FinishUserTest(msg, resultCode, bundleName, observer);
+    reply.WriteInt32(result);
+    return result;
+}
+
+int AbilityManagerStub::GetCurrentTopAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token;
+    auto result = GetCurrentTopAbility(token);
+    if (!reply.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    reply.WriteInt32(result);
+
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::DelegatorDoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    auto result = DelegatorDoAbilityForeground(token);
+    reply.WriteInt32(result);
+
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::DelegatorDoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    auto result = DelegatorDoAbilityBackground(token);
+    reply.WriteInt32(result);
     return NO_ERROR;
 }
 
