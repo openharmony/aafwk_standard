@@ -92,6 +92,7 @@ NativeValue* CreateJsExtensionRunningInfo(NativeEngine &engine, const AAFwk::Ext
     object->SetProperty("extension", reinterpret_cast<NativeValue*>(napiElementName));
     object->SetProperty("pid", CreateJsValue(engine, info.pid));
     object->SetProperty("uid", CreateJsValue(engine, info.uid));
+    object->SetProperty("type", CreateJsValue(engine, info.type));
     object->SetProperty("processName", CreateJsValue(engine, info.processName));
     object->SetProperty("startTime", CreateJsValue(engine, info.startTime));
     object->SetProperty("clientPackage", CreateNativeArray(engine, info.clientPackage));
