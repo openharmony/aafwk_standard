@@ -124,7 +124,7 @@ bool BundleMgrService::GetAllFormsInfo(std::vector<FormInfo> &formInfo)
     form.name = PARAM_FORM_NAME;
     form.updateEnabled = true;
     form.updateDuration = 1;
-    form.scheduledUpateTime = "06:06";
+    form.scheduledUpdateTime = "06:06";
     form.jsComponentName = FORM_JS_COMPOMENT_NAME;
     form.formVisibleNotify = true;
     form.supportDimensions = {1, 2};
@@ -141,7 +141,7 @@ bool BundleMgrService::GetFormsInfoByApp(const std::string &bundleName, std::vec
     form.name = PARAM_FORM_NAME;
     form.updateEnabled = true;
     form.updateDuration = 1;
-    form.scheduledUpateTime = "06:06";
+    form.scheduledUpdateTime = "06:06";
     form.jsComponentName = FORM_JS_COMPOMENT_NAME;
     form.formVisibleNotify = true;
     form.supportDimensions = {1, 2};
@@ -161,7 +161,7 @@ bool BundleMgrService::GetFormsInfoByModule(
     form.name = PARAM_FORM_NAME;
     form.updateEnabled = true;
     form.updateDuration = 1;
-    form.scheduledUpateTime = "06:06";
+    form.scheduledUpdateTime = "06:06";
     form.jsComponentName = FORM_JS_COMPOMENT_NAME;
     form.formVisibleNotify = true;
     form.supportDimensions = {1, 2};
