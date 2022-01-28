@@ -63,6 +63,7 @@ config("abilityms_config") {
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/log/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -106,6 +107,7 @@ ohos_shared_library("abilityms") {
     "ces_standard:cesfwk_innerkits",
     "device_manager_base:devicemanagersdk",
     "dsoftbus_standard:softbus_client",
+    "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "resmgr_standard:global_resmgr",

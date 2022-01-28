@@ -46,6 +46,7 @@
 #include "os_account_manager.h"
 #include "png.h"
 #include "ui_service_mgr_client.h"
+#include "xcollie/watchdog.h"
 
 using OHOS::AppExecFwk::ElementName;
 
@@ -183,6 +184,11 @@ bool AbilityManagerService::Init()
     InitMissionListManager(userId, true);
     kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
     CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
+
+    int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
+    if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
+        HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
+    }
 
     auto startLauncherAbilityTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
     handler_->PostTask(startLauncherAbilityTask, "startLauncherAbility");
@@ -3145,11 +3151,12 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
 }
 
 void AbilityManagerService::NotifyBmsAbilityLifeStatus(
-    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime)
+    const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
 {
     auto bundleManager = GetBundleManager();
     CHECK_POINTER(bundleManager);
-    bundleManager->NotifyAbilityLifeStatus(bundleName, abilityName, launchTime);
+    HILOG_INFO("NotifyBmsAbilityLifeStatus is called, uid :%{public}d", uid);
+    bundleManager->NotifyAbilityLifeStatus(bundleName, abilityName, launchTime, uid);
 }
 
 void AbilityManagerService::StartSystemApplication()
