@@ -25,8 +25,8 @@ ohos_shared_library("abilityDelegatorRegistry") {
   sources = [
     "ability_monitor.cpp",
     "js_ability_delegator.cpp",
-    "js_ability_delegator_utils.cpp",
     "js_ability_delegator_registry.cpp",
+    "js_ability_delegator_utils.cpp",
     "js_ability_monitor.cpp",
     "native_module.cpp",
   ]
