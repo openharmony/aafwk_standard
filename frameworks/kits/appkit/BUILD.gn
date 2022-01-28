@@ -38,6 +38,7 @@ config("appkit_public_config") {
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//base/global/i18n_standard/frameworks/intl/include",
     "//third_party/icu/icu4c/source/common",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include",
   ]
 }
 
@@ -93,6 +94,7 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/frameworks/kits/appkit/native",
     "${aafwk_path}/frameworks/kits/ability/native/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/services/abilitymgr/include",
     "//utils/native/base/include",
@@ -123,6 +125,14 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
 
     #"${aafwk_path}/frameworks/kits/appkit/native/app/main.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_args.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_registry.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/delegator_thread.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/iability_monitor.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/runner_runtime/js_test_runner.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/shell_cmd_result.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/test_runner.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/ability_stage.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
@@ -130,6 +140,7 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/sys_mgr_client.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/watchdog.cpp",
+    "//foundation/aafwk/standard/tools/aa/src/shell_command_result.cpp",
   ]
   cflags = []
   if (target_cpu == "arm") {

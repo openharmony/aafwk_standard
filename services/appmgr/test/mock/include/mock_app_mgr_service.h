@@ -52,6 +52,12 @@ public:
     MOCK_METHOD3(ScheduleAcceptWantDone,
         void(const int32_t recordId, const AAFwk::Want &want, const std::string &flag));
 
+    virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo)
+    {
+        return 0;
+    }
+
     virtual void RegisterAppStateCallback(const sptr<IAppStateCallback> &callback)
     {
         callback_ = callback;

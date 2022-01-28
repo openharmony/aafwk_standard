@@ -861,6 +861,46 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, in
     return abms->GetMissionSnapshot(deviceId, missionId, snapshot);
 }
 
+ErrCode AbilityManagerClient::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->StartUserTest(want, observer);
+}
+
+ErrCode AbilityManagerClient::FinishUserTest(const std::string &msg, const int &resultCode,
+    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->FinishUserTest(msg, resultCode, bundleName, observer);
+}
+
+ErrCode AbilityManagerClient::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetCurrentTopAbility(token);
+}
+
+ErrCode AbilityManagerClient::DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->DelegatorDoAbilityForeground(token);
+}
+
+ErrCode AbilityManagerClient::DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->DelegatorDoAbilityBackground(token);
+}
+
 ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string& label)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);

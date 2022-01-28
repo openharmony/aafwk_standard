@@ -1946,6 +1946,29 @@ void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
     }
 }
 
+std::shared_ptr<AbilityRecord> MissionListManager::GetCurrentTopAbility(const std::string &bundleName)
+{
+    for (auto &missionList : currentMissionLists_) {
+        if (!missionList) {
+            HILOG_WARN("Invalid missionList.");
+            continue;
+        }
+
+        auto abilityRecord = missionList->GetLauncherRoot();
+        if (!abilityRecord) {
+            HILOG_ERROR("Invalid ability record.");
+            return {};
+        }
+
+        auto appInfo = abilityRecord->GetApplicationInfo();
+        if (bundleName.compare(appInfo.bundleName)) {
+            return abilityRecord;
+        }
+    }
+
+    return {};
+}
+
 bool MissionListManager::IsStarted()
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);

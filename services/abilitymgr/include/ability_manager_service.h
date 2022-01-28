@@ -792,6 +792,35 @@ public:
      */
     virtual bool IsRunningInStabilityTest() override;
 
+    virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
+
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+
+    /**
+     * GetCurrentTopAbility, get the token of current top ability.
+     *
+     * @param token, the token of current top ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
+
+    /**
+     * The delegator calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override;
+
+    /**
+     * The delegator calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
+
     bool IsAbilityControllerStart(const Want &want, const std::string &bundleName);
 
     bool IsAbilityControllerForeground(const std::string &bundleName);
@@ -1038,6 +1067,8 @@ private:
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
 
     int32_t GetValidUserId(const Want &want, const int32_t userId);
+
+    int DelegatorMoveMissionToFront(int32_t missionId);
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;

@@ -640,6 +640,35 @@ public:
      */
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) = 0;
 
+    virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) = 0;
+
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer) = 0;
+
+    /**
+     * GetCurrentTopAbility, get the token of current top ability.
+     *
+     * @param token, the token of current top ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) = 0;
+
+    /**
+     * The delegator calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) = 0;
+
+    /**
+     * The delegator calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) = 0;
+
     /**
      * Send not response process ID to ability manager service.
      * @param pid The not response process ID.
@@ -867,15 +896,15 @@ public:
 
         START_ABILITY_FOR_OPTIONS,
 
+        // ipc id for call ability
+        START_CALL_ABILITY,
+
+        RELEASE_CALL_ABILITY,
+
         // ipc id for continue ability(1101)
         START_CONTINUATION = 1101,
 
         NOTIFY_CONTINUATION_RESULT = 1102,
-		
-		// ipc id for call ability
-        START_CALL_ABILITY,
-
-        RELEASE_CALL_ABILITY,
 
         NOTIFY_COMPLETE_CONTINUATION = 1103,
 
@@ -890,6 +919,13 @@ public:
         STOP_SYNC_MISSIONS = 1113,
         REGISTER_SNAPSHOT_HANDLER = 1114,
         GET_MISSION_SNAPSHOT_INFO = 1115,
+
+        // ipc id for user test(1120)
+        START_USER_TEST = 1120,
+        FINISH_USER_TEST = 1121,
+        DELEGATOR_DO_ABILITY_FOREGROUND = 1122,
+        DELEGATOR_DO_ABILITY_BACKGROUND = 1123,
+        GET_CURRENT_TOP_ABILITY         = 1124,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

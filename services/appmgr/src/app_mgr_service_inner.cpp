@@ -1948,6 +1948,65 @@ int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> 
     return ERR_OK;
 }
 
+int AppMgrServiceInner::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo)
+{
+    if (!appRunningManager_) {
+        APP_LOGE("appRunningManager_ is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto processName = bundleInfo.applicationInfo.process.empty() ?
+        bundleInfo.applicationInfo.bundleName : bundleInfo.applicationInfo.process;
+    APP_LOGI("processName = [%{public}s]", processName.c_str());
+
+    // Inspection records
+    auto appRecord = appRunningManager_->CheckAppRunningRecordIsExist(
+        bundleInfo.applicationInfo.name, processName, bundleInfo.applicationInfo.uid, bundleInfo);
+    if (appRecord) {
+        APP_LOGI("processName [%{public}s] Already exists ", processName.c_str());
+        return ERR_INVALID_VALUE;
+    }
+
+    return StartEmptyProcess(want, observer, bundleInfo, processName);
+}
+
+int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &info, const std::string &processName)
+{
+    APP_LOGI("enter bundle [%{public}s | processName [%{public}s]]", info.name.c_str(), processName.c_str());
+    if (!CheckRemoteClient() || !appRunningManager_) {
+        APP_LOGE("Failed to start the process being tested!");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto appInfo = std::make_shared<ApplicationInfo>(info.applicationInfo);
+    auto appRecord = appRunningManager_->CreateAppRunningRecord(appInfo, processName, info);
+    if (!appRecord) {
+        APP_LOGE("start process [%{public}s] failed!", processName.c_str());
+        return ERR_INVALID_VALUE;
+    }
+
+    UserTestRecord testRecord;
+    testRecord.want = want;
+    testRecord.observer = observer;
+    appRecord->SetUserTestInfo(testRecord);
+
+    StartProcess(appInfo->name, processName, appRecord, appInfo->uid, appInfo->bundleName);
+
+    // If it is empty, the startup failed
+    if (!appRecord) {
+        APP_LOGE("start process [%{public}s] failed!", processName.c_str());
+        return ERR_INVALID_VALUE;
+    }
+
+    appRecord->SetEventHandler(eventHandler_);
+    appRecord->AddModules(appInfo, info.hapModuleInfos);
+    APP_LOGI("StartEmptyProcess OK pid : [%{public}d]", appRecord->GetPriorityObject()->GetPid());
+
+    return ERR_OK;
+}
+
 void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {
     APP_LOGD("Start specified ability.");

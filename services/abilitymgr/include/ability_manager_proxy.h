@@ -602,6 +602,35 @@ public:
 
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) override;
 
+    virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
+
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+
+    /**
+     * GetCurrentTopAbility, get the token of current top ability.
+     *
+     * @param token, the token of current top ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
+
+    /**
+     * The delegator calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override;
+
+    /**
+     * The delegator calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
+
     /**
      * Send not response process ID to ability manager service.
      * @param pid The not response process ID.

@@ -282,6 +282,32 @@ public:
         return 0;
     }
 
+    virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
+    {
+        return 0;
+    }
+
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
+        const std::string &bundleName, const sptr<IRemoteObject> &observer) override
+    {
+        return 0;
+    }
+
+    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
+    virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
+    virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
+
     sptr<IAbilityScheduler> abilityScheduler_ = nullptr;  // kit interface used to schedule ability life
     Want want_;
     bool startAbility = false;
