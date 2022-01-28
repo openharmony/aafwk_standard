@@ -21,7 +21,6 @@
 #include "hilog_wrapper.h"
 #include "js_context_utils.h"
 #include "js_data_struct_converter.h"
-#include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "ability_runtime/js_caller_complex.h"
 #include "napi_common_start_options.h"
@@ -442,7 +441,7 @@ NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCall
         want.GetElement().GetAbilityName().c_str());
 
     // unwarp connection
-    sptr<JSAbilityConnection> connection = new JSAbilityConnection(&engine);
+    sptr<JSAbilityConnection> connection = new JSAbilityConnection(engine);
     connection->SetJsConnectionObject(info.argv[1]);
     int64_t connectId = g_serialNumber;
     ConnectionKey key;
@@ -502,7 +501,7 @@ NativeValue* JsAbilityContext::OnConnectAbilityWithAccount(NativeEngine& engine,
     }
 
     // unwarp connection
-    sptr<JSAbilityConnection> connection = new JSAbilityConnection(&engine);
+    sptr<JSAbilityConnection> connection = new JSAbilityConnection(engine);
     connection->SetJsConnectionObject(info.argv[INDEX_TWO]);
     int64_t connectId = g_serialNumber;
     ConnectionKey key;
@@ -832,7 +831,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     return objValue;
 }
 
-JSAbilityConnection::JSAbilityConnection(NativeEngine* engine) : engine_(engine) {}
+JSAbilityConnection::JSAbilityConnection(NativeEngine& engine) : engine_(engine) {}
 
 JSAbilityConnection::~JSAbilityConnection() = default;
 
@@ -877,18 +876,14 @@ void JSAbilityConnection::HandleOnAbilityConnectDone(const AppExecFwk::ElementNa
         return;
     }
     HILOG_INFO("JSAbilityConnection::CallFunction onConnect, success");
-    // two params
-    if (engine_ == nullptr) {
-        HILOG_ERROR("engine_ nullptr");
-        return;
-    }
+
     // wrap RemoteObject
     HILOG_INFO("OnAbilityConnectDone begin NAPI_ohos_rpc_CreateJsRemoteObject");
     napi_value napiRemoteObject = NAPI_ohos_rpc_CreateJsRemoteObject(
-        reinterpret_cast<napi_env>(engine_.get()), remoteObject);
+        reinterpret_cast<napi_env>(&engine_), remoteObject);
     NativeValue* nativeRemoteObject = reinterpret_cast<NativeValue*>(napiRemoteObject);
     NativeValue* argv[] = { ConvertElement(element), nativeRemoteObject };
-    engine_->CallFunction(value, methodOnConnect, argv, ARGC_TWO);
+    engine_.CallFunction(value, methodOnConnect, argv, ARGC_TWO);
     HILOG_INFO("OnAbilityConnectDone end");
 }
 
@@ -948,14 +943,10 @@ void JSAbilityConnection::HandleOnAbilityDisconnectDone(const AppExecFwk::Elemen
         abilityConnects_.erase(item);
         HILOG_INFO("OnAbilityDisconnectDone erase abilityConnects_.size:%{public}zu", abilityConnects_.size());
     }
-    // one params
-    if (engine_ == nullptr) {
-        HILOG_ERROR("engine_ nullptr");
-        return;
-    }
+
     NativeValue* argv[] = { ConvertElement(element) };
     HILOG_INFO("OnAbilityDisconnectDone CallFunction success");
-    engine_->CallFunction(value, method, argv, ARGC_ONE);
+    engine_.CallFunction(value, method, argv, ARGC_ONE);
 }
 
 void JSAbilityConnection::CallJsFailed(int32_t errorCode)
@@ -977,25 +968,22 @@ void JSAbilityConnection::CallJsFailed(int32_t errorCode)
         HILOG_ERROR("Failed to get onFailed from object");
         return;
     }
-    if (engine_ == nullptr) {
-        HILOG_ERROR("engine_ nullptr");
-        return;
-    }
-    NativeValue* argv[] = {engine_->CreateNumber(errorCode)};
+
+    NativeValue* argv[] = {engine_.CreateNumber(errorCode)};
     HILOG_INFO("CallJsFailed CallFunction success");
-    engine_->CallFunction(value, method, argv, ARGC_ONE);
+    engine_.CallFunction(value, method, argv, ARGC_ONE);
     HILOG_INFO("CallJsFailed end");
 }
 
 NativeValue* JSAbilityConnection::ConvertElement(const AppExecFwk::ElementName &element)
 {
-    napi_value napiElementName = OHOS::AppExecFwk::WrapElementName(reinterpret_cast<napi_env>(engine_.get()), element);
+    napi_value napiElementName = OHOS::AppExecFwk::WrapElementName(reinterpret_cast<napi_env>(&engine_), element);
     return reinterpret_cast<NativeValue*>(napiElementName);
 }
 
 void JSAbilityConnection::SetJsConnectionObject(NativeValue* jsConnectionObject)
 {
-    jsConnectionObject_ = std::unique_ptr<NativeReference>(engine_->CreateReference(jsConnectionObject, 1));
+    jsConnectionObject_ = std::unique_ptr<NativeReference>(engine_.CreateReference(jsConnectionObject, 1));
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS
