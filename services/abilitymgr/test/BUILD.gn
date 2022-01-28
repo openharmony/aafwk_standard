@@ -107,6 +107,7 @@ ohos_source_set("abilityms_test_source") {
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/log/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]
 
   external_dependent_files = [
@@ -148,6 +149,7 @@ ohos_source_set("abilityms_test_source") {
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "dsoftbus_standard:softbus_client",
+    "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",

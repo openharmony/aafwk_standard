@@ -28,6 +28,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//third_party/jsoncpp/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]
 
   sources = abilityms_files
@@ -78,6 +79,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "ces_standard:cesfwk_innerkits",
     "device_manager_base:devicemanagersdk",
     "dsoftbus_standard:softbus_client",
+    "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
