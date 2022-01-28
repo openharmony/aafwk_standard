@@ -975,6 +975,15 @@ private:
 
     int CheckCallPermissions(const AbilityRequest &abilityRequest);
 
+
+    int GenerateAbilityRequestLocal(
+        const Want &want,
+        int requestCode,
+        AbilityRequest &request,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t &userId);
+
+    int CheckMultiOsAccount(const int32_t userId);
     /**
      * dumpsys info
      *
