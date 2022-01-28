@@ -714,7 +714,7 @@ public:
 
     void RestartAbility(const sptr<IRemoteObject> &token);
     void NotifyBmsAbilityLifeStatus(
-        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime);
+        const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid);
 
     int StartAbilityInner(
         const Want &want,

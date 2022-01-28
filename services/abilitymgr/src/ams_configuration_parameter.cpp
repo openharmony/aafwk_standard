@@ -87,6 +87,11 @@ int AmsConfigurationParameter::GetANRTimeOutTime() const
     return anrTime_;
 }
 
+int AmsConfigurationParameter::GetAMSTimeOutTime() const
+{
+    return amsTime_;
+}
+
 int AmsConfigurationParameter::GetMaxRestartNum() const
 {
     return maxRestartNum_;
@@ -154,6 +159,8 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
         missionSaveTime_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
         anrTime_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME).get<int>();
+        amsTime_ =
+            Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::AMS_TIMEOUT_TIME).get<int>();
         if (Object.at(AmsConfig::SERVICE_ITEM_AMS).contains(AmsConfig::USE_NEW_MISSION)) {
             useNewMission_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::USE_NEW_MISSION).get<bool>();
         }
