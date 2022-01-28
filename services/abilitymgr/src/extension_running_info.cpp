@@ -29,6 +29,7 @@ bool ExtensionRunningInfo::ReadFromParcel(Parcel &parcel)
     extension = *readExtension;
     pid = parcel.ReadInt32();
     uid = parcel.ReadInt32();
+    type = static_cast<AppExecFwk::ExtensionAbilityType>(parcel.ReadInt32());
     processName = Str16ToStr8(parcel.ReadString16());
     startTime = parcel.ReadInt32();
     int32_t clientPackageSize = parcel.ReadInt32();
@@ -61,6 +62,9 @@ bool ExtensionRunningInfo::Marshalling(Parcel &parcel) const
         return false;
     }
     if (!parcel.WriteInt32(uid)) {
+        return false;
+    }
+    if (!parcel.WriteInt32(static_cast<int32_t>(type))) {
         return false;
     }
     if (!parcel.WriteString16(Str8ToStr16(processName))) {

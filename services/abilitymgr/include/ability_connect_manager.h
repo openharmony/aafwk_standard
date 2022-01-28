@@ -183,7 +183,7 @@ public:
     ConnectListType GetConnectRecordListByCallback(sptr<IAbilityConnection> callback);
     void RemoveAll();
 
-    void GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info);
+    void GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info, const int32_t userId);
 
     void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 

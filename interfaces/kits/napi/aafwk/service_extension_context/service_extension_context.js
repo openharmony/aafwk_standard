@@ -18,6 +18,7 @@ var ExtensionContext = requireNapi("application.ExtensionContext")
 class ServiceExtensionContext extends ExtensionContext {
     constructor(obj) {
         super(obj);
+        this.extensionAbilityInfo = obj.extensionAbilityInfo
     }
 
     startAbility(want, options, callback) {
