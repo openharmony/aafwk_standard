@@ -3152,7 +3152,7 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
 
 void AbilityManagerService::NotifyBmsAbilityLifeStatus(
     const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
-{ 
+{
     auto bundleManager = GetBundleManager();
     CHECK_POINTER(bundleManager);
     HILOG_INFO("NotifyBmsAbilityLifeStatus is called, uid :%{public}d", uid);
