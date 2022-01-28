@@ -19,6 +19,7 @@
 
 #include "hilog_wrapper.h"
 #include "js_extension_context.h"
+#include "js_data_struct_converter.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "napi/native_api.h"
@@ -419,6 +420,60 @@ private:
 };
 } // namespace
 
+NativeValue* CreateJsMetadata(NativeEngine& engine, const AppExecFwk::Metadata &Info)
+{
+    HILOG_INFO("CreateJsMetadata");
+    NativeValue* objValue = engine.CreateObject();
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    object->SetProperty("name", CreateJsValue(engine, Info.name));
+    object->SetProperty("value", CreateJsValue(engine, Info.value));
+    object->SetProperty("resource", CreateJsValue(engine, Info.resource));
+    return objValue;
+}
+
+NativeValue* CreateJsMetadataArray(NativeEngine& engine, const std::vector<AppExecFwk::Metadata> &info)
+{
+    HILOG_INFO("CreateJsMetadataArray");
+    NativeValue* arrayValue = engine.CreateArray(info.size());
+    NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
+    uint32_t index = 0;
+    for (const auto& item : info) {
+        array->SetElement(index++, CreateJsMetadata(engine, item));
+    }
+    return arrayValue;
+}
+
+NativeValue* CreateJsExtensionAbilityInfo(NativeEngine& engine, const AppExecFwk::ExtensionAbilityInfo& info)
+{
+    HILOG_INFO("CreateJsExtensionAbilityInfo");
+    NativeValue* objValue = engine.CreateObject();
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+    object->SetProperty("bundleName", CreateJsValue(engine, info.bundleName));
+    object->SetProperty("moduleName", CreateJsValue(engine, info.moduleName));
+    object->SetProperty("name", CreateJsValue(engine, info.name));
+    object->SetProperty("labelId", CreateJsValue(engine, info.labelId));
+    object->SetProperty("descriptionId", CreateJsValue(engine, info.descriptionId));
+    object->SetProperty("iconId", CreateJsValue(engine, info.iconId));
+    object->SetProperty("isVisible", CreateJsValue(engine, info.visible));
+    object->SetProperty("extensionAbilityType", CreateJsValue(engine, info.type));
+    NativeValue *permissionArrayValue = engine.CreateArray(info.permissions.size());
+    NativeArray *permissionArray = ConvertNativeValueTo<NativeArray>(permissionArrayValue);
+    if (permissionArray != nullptr) {
+        int index = 0;
+        for (auto permission : info.permissions) {
+            permissionArray->SetElement(index++, CreateJsValue(engine, permission));
+        }
+    }
+    object->SetProperty("permissions", permissionArrayValue);
+    object->SetProperty("applicationInfo", CreateJsApplicationInfo(engine, info.applicationInfo));
+    object->SetProperty("metadata", CreateJsMetadataArray(engine, info.metadata));
+    object->SetProperty("enabled", CreateJsValue(engine, info.enabled));
+    object->SetProperty("readPermission", CreateJsValue(engine, info.readPermission));
+    object->SetProperty("writePermission", CreateJsValue(engine, info.writePermission));
+    return objValue;
+}
+
 NativeValue* CreateJsServiceExtensionContext(NativeEngine& engine, std::shared_ptr<ServiceExtensionContext> context)
 {
     HILOG_INFO("CreateJsServiceExtensionContext begin");
@@ -438,6 +493,25 @@ NativeValue* CreateJsServiceExtensionContext(NativeEngine& engine, std::shared_p
     BindNativeFunction(engine, *object, "startAbilityWithAccount", JsServiceExtensionContext::StartAbilityWithAccount);
     BindNativeFunction(
         engine, *object, "connectAbilityWithAccount", JsServiceExtensionContext::ConnectAbilityWithAccount);
+
+    if (context) {
+        HILOG_INFO("Set ExtensionAbilityInfo Property");
+        auto abilityInfo = context->GetAbilityInfo();
+        auto hapModuleInfo = context->GetHapModuleInfo();
+        if (abilityInfo && hapModuleInfo) {
+            auto isExist = [&abilityInfo](const AppExecFwk::ExtensionAbilityInfo &info) {
+                HILOG_INFO("%{public}s, %{public}s", info.bundleName.c_str(), info.name.c_str());
+                return info.bundleName == abilityInfo->bundleName && info.name == abilityInfo->name;
+            };
+            auto infoIter = std::find_if(
+                hapModuleInfo->extensionInfos.begin(), hapModuleInfo->extensionInfos.end(), isExist);
+            if (infoIter == hapModuleInfo->extensionInfos.end()) {
+                HILOG_INFO("Get target fail.");
+                return objValue;
+            }
+            object->SetProperty("extensionAbilityInfo", CreateJsExtensionAbilityInfo(engine, *infoIter));
+        }
+    }
 
     return objValue;
 }

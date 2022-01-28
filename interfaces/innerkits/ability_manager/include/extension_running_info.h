@@ -19,6 +19,7 @@
 #include "parcel.h"
 #include "element_name.h"
 #include "iremote_object.h"
+#include "extension_ability_info.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -31,6 +32,7 @@ public:
     AppExecFwk::ElementName extension;
     int pid;
     int uid;
+    AppExecFwk::ExtensionAbilityType type = AppExecFwk::ExtensionAbilityType::UNSPECIFIED;
     std::string processName;
     int64_t startTime;
     std::vector<std::string> clientPackage;
