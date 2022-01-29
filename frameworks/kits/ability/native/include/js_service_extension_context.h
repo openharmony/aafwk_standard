@@ -32,17 +32,18 @@ NativeValue* CreateJsServiceExtensionContext(NativeEngine& engine, std::shared_p
 
 class JSServiceExtensionConnection : public AbilityConnectCallback {
 public:
+    explicit JSServiceExtensionConnection(NativeEngine& engine);
+    ~JSServiceExtensionConnection();
     void OnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode) override;
     void OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode) override;
     void HandleOnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode);
     void HandleOnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode);
-    void SetNativeEngine(NativeEngine* engine);
     void SetJsConnectionObject(NativeValue* jsConnectionObject);
     void CallJsFailed(int32_t errorCode);
 private:
-    NativeEngine* engine_ = nullptr;
+    NativeEngine& engine_;
     std::unique_ptr<NativeReference> jsConnectionObject_ = nullptr;
 };
 

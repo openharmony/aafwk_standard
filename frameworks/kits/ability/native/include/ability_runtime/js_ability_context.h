@@ -22,9 +22,9 @@
 
 #include "ability_connect_callback.h"
 #include "foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/include/ability_context.h"
+#include "js_runtime.h"
 #include "event_handler.h"
 
-class NativeEngine;
 class NativeObject;
 class NativeReference;
 class NativeValue;
@@ -87,7 +87,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
 
 class JSAbilityConnection : public AbilityConnectCallback {
 public:
-    explicit JSAbilityConnection(NativeEngine* engine);
+    explicit JSAbilityConnection(NativeEngine& engine);
     ~JSAbilityConnection();
     void OnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode) override;
@@ -99,7 +99,7 @@ public:
     void CallJsFailed(int32_t errorCode);
 private:
     NativeValue* ConvertElement(const AppExecFwk::ElementName &element);
-    std::unique_ptr<NativeEngine> engine_;
+    NativeEngine& engine_;
     std::unique_ptr<NativeReference> jsConnectionObject_ = nullptr;
 };
 
