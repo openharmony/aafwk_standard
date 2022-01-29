@@ -39,6 +39,7 @@
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
 #include "mission/mission_info_converter.h"
+#include "mission_info_mgr.h"
 #include "sa_mgr_client.h"
 #include "softbus_bus_center.h"
 #include "string_ex.h"
@@ -2197,6 +2198,7 @@ void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
     auto iterator = missionListManagers_.find(userId);
     if (iterator != missionListManagers_.end()) {
         if (switchUser) {
+            DelayedSingleton<MissionInfoMgr>::GetInstance()->Init(userId);
             currentMissionListManager_ = iterator->second;
         }
     } else {
@@ -3504,8 +3506,13 @@ int AbilityManagerService::StartUser(int userId)
 int AbilityManagerService::StopUser(int userId, const sptr<IStopUserCallback> &callback)
 {
     HILOG_DEBUG("%{public}s", __func__);
+    auto ret = -1;
+    if (userController_) {
+        ret = userController_->StopUser(userId);
+        HILOG_DEBUG("ret = %{public}d", ret);
+    }
     if (callback) {
-        callback->OnStopUserDone(userId, ERR_OK);
+        callback->OnStopUserDone(userId, ret);
     }
     return 0;
 }
