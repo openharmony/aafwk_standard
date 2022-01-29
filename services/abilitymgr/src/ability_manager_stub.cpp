@@ -31,6 +31,7 @@ AbilityManagerStub::AbilityManagerStub()
 {
     FirstStepInit();
     SecondStepInit();
+    ThirdStepInit();
 }
 
 AbilityManagerStub::~AbilityManagerStub()

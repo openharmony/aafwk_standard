@@ -240,8 +240,6 @@ void AbilityDelegator::OnRun()
     APP_LOGI("Call TestRunner::Run(), Start run");
     testRunner_->Run();
     APP_LOGI("Run finished");
-
-    FinishUserTest(0);
 }
 
 bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
