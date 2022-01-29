@@ -244,6 +244,16 @@ void AbilityContextImpl::SetStageContext(const std::shared_ptr<AbilityRuntime::C
     stageContext_ = stageContext;
 }
 
+void AbilityContextImpl::SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config)
+{
+    config_ = config;
+}
+
+std::shared_ptr<AppExecFwk::Configuration> AbilityContextImpl::GetConfiguration() const
+{
+    return config_;
+}
+
 void AbilityContextImpl::MinimizeAbility()
 {
     HILOG_DEBUG("%{public}s begin.", __func__);

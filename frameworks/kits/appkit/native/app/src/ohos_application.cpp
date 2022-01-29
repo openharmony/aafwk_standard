@@ -572,5 +572,10 @@ void OHOSApplication::ScheduleAcceptWant(const AAFwk::Want &want, const std::str
         }
     }
 }
+
+std::shared_ptr<Configuration> OHOSApplication::GetConfiguration()
+{
+    return configuration_;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

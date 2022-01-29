@@ -17,6 +17,7 @@
 #define ABILITY_RUNTIME_ABILITY_CONTEXT_H
 
 #include "foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context.h"
+#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 
 #include "ability_connect_callback.h"
 #include "ability_info.h"
@@ -229,6 +230,10 @@ public:
      * @return Returns ERR_OK if success.
      */
     virtual ErrCode SetMissionLabel(const std::string &label) = 0;
+
+    virtual void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) = 0;
+
+    virtual std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const = 0;
 
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;
