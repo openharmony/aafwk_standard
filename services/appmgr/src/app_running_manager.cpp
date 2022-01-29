@@ -20,19 +20,11 @@
 
 #include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
+#include "os_account_manager.h"
 #include "perf_profile.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-namespace {
-static const int32_t USER_UID_RANGE = 200000;
-
-bool IsUidBelongsToUser(int32_t uid, int32_t userId)
-{
-    return (uid / USER_UID_RANGE) == userId;
-}
-}  // namespace
-
 AppRunningManager::AppRunningManager()
 {}
 AppRunningManager::~AppRunningManager()
@@ -167,11 +159,15 @@ bool AppRunningManager::GetPidsByUserId(int32_t userId, std::list<pid_t> &pids)
     std::lock_guard<std::recursive_mutex> guard(lock_);
     for (const auto &item : appRunningRecordMap_) {
         const auto &appRecord = item.second;
-        if (appRecord && IsUidBelongsToUser(appRecord->GetUid(), userId)) {
-            pid_t pid = appRecord->GetPriorityObject()->GetPid();
-            if (pid > 0) {
-                pids.push_back(pid);
-                appRecord->ScheduleProcessSecurityExit();
+        if (appRecord) {
+            int32_t id = -1;
+            if ((AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(appRecord->GetUid(), id) == 0) &&
+                (id == userId)) {
+                pid_t pid = appRecord->GetPriorityObject()->GetPid();
+                if (pid > 0) {
+                    pids.push_back(pid);
+                    appRecord->ScheduleProcessSecurityExit();
+                }
             }
         }
     }
