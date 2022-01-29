@@ -30,6 +30,8 @@ NativeValue* JsAppManagerInit(NativeEngine* engine, NativeValue* exportObj);
 
 class JSApplicationStateObserver : public ApplicationStateObserverStub {
 public:
+    explicit JSApplicationStateObserver(NativeEngine& engine);
+    ~JSApplicationStateObserver();
     void OnForegroundApplicationChanged(const AppStateData &appStateData) override;
     void OnAbilityStateChanged(const AbilityStateData &abilityStateData) override;
     void OnExtensionStateChanged(const AbilityStateData &abilityStateData) override;
@@ -40,12 +42,11 @@ public:
     void HandleOnExtensionStateChanged(const AbilityStateData &abilityStateData);
     void HandleOnProcessCreated(const ProcessData &processData);
     void HandleOnProcessDied(const ProcessData &processData);
-    void SetNativeEngine(NativeEngine* engine);
     void SetJsObserverObject(NativeValue* jsObserverObject);
     void CallJsFunction(const char* methodName, NativeValue* const* argv, size_t argc);
 
 private:
-    NativeEngine* engine_ = nullptr;
+    NativeEngine& engine_;
     std::unique_ptr<NativeReference> jsObserverObject_ = nullptr;
 };
 
