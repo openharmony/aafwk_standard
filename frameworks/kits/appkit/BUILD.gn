@@ -141,6 +141,7 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/sys_mgr_client.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/watchdog.cpp",
     "//foundation/aafwk/standard/tools/aa/src/shell_command_result.cpp",
+    "//foundation/aafwk/standard/tools/aa/src/test_observer_proxy.cpp",
   ]
   cflags = []
   if (target_cpu == "arm") {

@@ -19,7 +19,7 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:abilitymanager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_context:abilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager:abilitymanager_napi",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_delegator:abilityDelegatorRegistry",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_delegator:abilitydelegatorregistry",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_stage:abilitystage_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_stage_context:abilitystagecontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/appMgr:napi_app_mgr",
