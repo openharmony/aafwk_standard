@@ -31,6 +31,7 @@ class Ability {
         return this.callee;
     }
     onContinue(wantParams) {}
+    onConfigurationUpdated(config) {}
     onNewWant(want) {}
 }
 

@@ -206,6 +206,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/sys_mgr_client.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.cpp",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_configuration.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_util.cpp",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
@@ -248,6 +249,7 @@ ohos_shared_library("abilitykit_native") {
 
   external_deps = [
     "ability_runtime:ability_context_native",
+    "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",
     "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",

@@ -20,6 +20,45 @@
 namespace OHOS {
 namespace AppExecFwk {
 EXTERN_C_START
+
+bool InnerWrapConfigurationString(
+    napi_env env, napi_value jsObject, const std::string &key, const std::string &value)
+{
+    if (!value.empty()) {
+        HILOG_INFO("%{public}s called. key=%{public}s, value=%{public}s", __func__, key.c_str(), value.c_str());
+        napi_value jsValue = WrapStringToJS(env, value);
+        if (jsValue != nullptr) {
+            NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+            return true;
+        }
+    }
+    return false;
+}
+
+napi_value WrapConfiguration(napi_env env, const AppExecFwk::Configuration &configuration)
+{
+    HILOG_INFO("%{public}s called, config size %{public}d", __func__, static_cast<int>(configuration.GetItemSize()));
+    napi_value jsObject = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &jsObject));
+
+    std::vector<std::string> keys = OHOS::AppExecFwk::ConfigurationInner::SystemConfigurationKeyStore;
+    for (auto const &key : keys) {
+        std::string value = configuration.GetItem(key);
+        if (value.empty()) {
+            HILOG_INFO("value is empty");
+            continue;
+        }
+
+        std::size_t pos = key.rfind(DOT_STRING);
+        if (pos != std::string::npos) {
+            InnerWrapConfigurationString(env, jsObject, key.substr(pos+1), value);
+        } else {
+            InnerWrapConfigurationString(env, jsObject, key, value);
+        }
+    }
+    return jsObject;
+}
+
 bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
 {
     HILOG_INFO("%{public}s called.", __func__);

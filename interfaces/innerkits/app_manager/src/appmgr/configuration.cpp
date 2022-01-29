@@ -19,23 +19,10 @@
 
 #include "app_log_wrapper.h"
 #include "string_ex.h"
-namespace ConfigurationInner {
-    const std::string CONNECTION_SYMBOL {"#"};
-    const std::string EMPTY_STRING {""};
-
-    /*
-     * This must be synchronized with the value in GlobalConfigurationKey
-     */
-    const std::vector<std::string> SystemConfigurationKeyStore {
-        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE,
-        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION,
-    };
-}
 
 namespace OHOS {
 namespace AppExecFwk {
 using json = nlohmann::json;
-
 Configuration::Configuration()
 {}
 

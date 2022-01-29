@@ -31,6 +31,7 @@ using AbilityInfo = AppExecFwk::AbilityInfo;
 using OHOSApplication = AppExecFwk::OHOSApplication;
 using Want = AppExecFwk::Want;
 using AbilityStartSetting = AppExecFwk::AbilityStartSetting;
+using Configuration = AppExecFwk::Configuration;
 
 class JsAbility : public Ability {
 public:
@@ -52,6 +53,7 @@ public:
     void OnForeground(const Want &want) override;
     void OnBackground() override;
     bool OnContinue(WantParams &wantParams) override;
+    void OnConfigurationUpdated(const Configuration &configuration) override;
     void OnNewWant(const Want &want) override;
 
     void OnAbilityResult(int requestCode, int resultCode, const Want &resultData) override;
@@ -69,6 +71,7 @@ private:
     void GetPageStackFromWant(const Want &want, std::string &pageStack);
 
     JsRuntime &jsRuntime_;
+    std::shared_ptr<NativeReference> shellContextRef_;
     std::unique_ptr<NativeReference> jsAbilityObj_;
 };
 }  // namespace AbilityRuntime

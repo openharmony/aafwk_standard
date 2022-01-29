@@ -1546,6 +1546,7 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
     abilityContextImpl->SetStageContext(stageContext);
     abilityContextImpl->SetToken(token);
     abilityContextImpl->SetAbilityInfo(abilityInfo);
+    abilityContextImpl->SetConfiguration(application->GetConfiguration());
     return abilityContextImpl;
 }
 
