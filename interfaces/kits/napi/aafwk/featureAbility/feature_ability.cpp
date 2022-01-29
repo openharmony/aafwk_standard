@@ -1281,7 +1281,7 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback));
     NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &uri, &dataAbilityHelperCB->result));
+        env, napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result));
     if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
         result[PARAM1] = dataAbilityHelperCB->result;
     } else {
@@ -1308,7 +1308,7 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
     napi_value result = nullptr;
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
     NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &uri, &dataAbilityHelperCB->result));
+        env, napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result));
     if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
         result = dataAbilityHelperCB->result;
         NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));

@@ -21,20 +21,6 @@ namespace OHOS {
 namespace AbilityRuntime {
 const size_t ExtensionContext::CONTEXT_TYPE_ID(std::hash<const char*> {} ("ExtensionContext"));
 
-void ExtensionContext::SetToken(const sptr<IRemoteObject> &token)
-{
-    if (token == nullptr) {
-        HILOG_DEBUG("ExtensionContext::SetToken failed, application is nullptr");
-        return;
-    }
-    token_ = token;
-}
-
-sptr<IRemoteObject> ExtensionContext::GetToken() const
-{
-    return token_;
-}
-
 void ExtensionContext::SetAbilityInfo(const std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> &abilityInfo)
 {
     if (abilityInfo == nullptr) {
