@@ -64,6 +64,7 @@ ohos_shared_library("runtime") {
   ]
 
   external_deps = [
+    "ability_runtime:app_manager",
     "ability_runtime:want",
     "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",

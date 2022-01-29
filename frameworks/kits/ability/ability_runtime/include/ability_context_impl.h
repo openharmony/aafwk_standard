@@ -19,6 +19,7 @@
 #include "ability_context.h"
 
 #include "context_impl.h"
+#include "configuration.h"
 #include "local_call_container.h"
 
 namespace OHOS {
@@ -111,6 +112,9 @@ public:
         return contentStorage_;
     }
 
+    void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) override;
+
+    std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const override;
     /**
      * call function by callback object
      *
@@ -137,6 +141,7 @@ private:
     std::map<int, RuntimeTask> resultCallbacks_;
     std::map<int, PermissionRequestTask> permissionRequestCallbacks_;
     void* contentStorage_ = nullptr;
+    std::shared_ptr<AppExecFwk::Configuration> config_;
     sptr<LocalCallContainer> localCallContainer_;
 };
 }  // namespace AbilityRuntime

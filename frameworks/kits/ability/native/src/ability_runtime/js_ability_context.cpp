@@ -799,6 +799,34 @@ NativeValue* JsAbilityContext::WrapPermissionRequestResult(NativeEngine& engine,
     return jsPermissionRequestResult;
 }
 
+void JsAbilityContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
+    const std::shared_ptr<AppExecFwk::Configuration> &config)
+{
+    HILOG_INFO("ConfigurationUpdated begin.");
+    if (jsContext == nullptr || config == nullptr) {
+        HILOG_INFO("jsContext is nullptr.");
+        return;
+    }
+
+    NativeValue* value = jsContext->Get();
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(value);
+    if (object == nullptr) {
+        HILOG_INFO("object is nullptr.");
+        return;
+    }
+
+    NativeValue* method = object->GetProperty("onUpdateConfiguration");
+    if (method == nullptr) {
+        HILOG_ERROR("Failed to get onUpdateConfiguration from object");
+        return;
+    }
+    HILOG_INFO("JSAbilityConnection::CallFunction onUpdateConfiguration, success");
+
+    HILOG_INFO("OnAbilityConnectDone begin NAPI_ohos_rpc_CreateJsRemoteObject");
+    NativeValue* argv[] = {CreateJsConfiguration(*engine, *config)};
+    engine->CallFunction(value, method, argv, ARGC_ONE);
+}
+
 NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<AbilityContext> context)
 {
     NativeValue* objValue = CreateJsBaseContext(engine, context);
@@ -812,6 +840,11 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     auto abilityInfo = context->GetAbilityInfo();
     if (abilityInfo != nullptr) {
         object->SetProperty("abilityInfo", CreateJsAbilityInfo(engine, *abilityInfo));
+    }
+
+    auto configuration = context->GetConfiguration();
+    if (configuration != nullptr) {
+        object->SetProperty("configuration", CreateJsConfiguration(engine, *configuration));
     }
 
     BindNativeFunction(engine, *object, "startAbility", JsAbilityContext::StartAbility);

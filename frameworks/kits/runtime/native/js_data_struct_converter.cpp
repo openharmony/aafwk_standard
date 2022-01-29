@@ -166,5 +166,16 @@ NativeValue* CreateJsLaunchParam(NativeEngine& engine, const AAFwk::LaunchParam&
 
     return objValue;
 }
+
+NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Configuration& configuration)
+{
+    NativeValue* objValue = engine.CreateObject();
+    NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    object->SetProperty("language", CreateJsValue(engine, configuration.GetItem("ohos.system.language")));
+    object->SetProperty("orientation", CreateJsValue(engine, configuration.GetItem("ohos.system.orientation")));
+
+    return objValue;
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS
