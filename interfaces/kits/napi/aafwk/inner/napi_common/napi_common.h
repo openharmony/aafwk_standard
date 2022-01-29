@@ -16,6 +16,7 @@
 #ifndef OHOS_APPEXECFWK_NAPI_COMMON_H
 #define OHOS_APPEXECFWK_NAPI_COMMON_H
 
+#include "napi_common_configuration.h"
 #include "napi_common_data.h"
 #include "napi_common_error.h"
 #include "napi_common_util.h"

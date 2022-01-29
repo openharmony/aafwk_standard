@@ -25,6 +25,7 @@
 #include "js_data_struct_converter.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
+#include "napi_common_configuration.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 #include "string_wrapper.h"
@@ -89,10 +90,11 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
     auto context = GetAbilityContext();
     NativeValue *contextObj = CreateJsAbilityContext(engine, context);
-    auto shellContextRef = jsRuntime_.LoadSystemModule("application.AbilityContext", &contextObj, 1);
-    contextObj = shellContextRef->Get();
+    shellContextRef_ = std::shared_ptr<NativeReference>(
+        jsRuntime_.LoadSystemModule("application.AbilityContext", &contextObj, 1).release());
+    contextObj = shellContextRef_->Get();
 
-    context->Bind(jsRuntime_, shellContextRef.release());
+    context->Bind(jsRuntime_, shellContextRef_.get());
     obj->SetProperty("context", contextObj);
 
     auto nativeObj = ConvertNativeValueTo<NativeObject>(contextObj);
@@ -249,6 +251,20 @@ bool JsAbility::OnContinue(WantParams &wantParams)
     }
 
     return *boolResult;
+}
+
+void JsAbility::OnConfigurationUpdated(const Configuration &configuration)
+{
+    Ability::OnConfigurationUpdated(configuration);
+    HILOG_INFO("%{public}s called.", __func__);
+
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    JsAbilityContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetAbilityContext()->GetConfiguration());
+    napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
+        reinterpret_cast<napi_env>(&nativeEngine), configuration);
+    NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
+    CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
 
 void JsAbility::OnNewWant(const Want &want)

@@ -25,6 +25,18 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace ConfigurationInner {
+    const std::string CONNECTION_SYMBOL {"#"};
+    const std::string EMPTY_STRING {""};
+
+    /*
+     * This must be synchronized with the value in GlobalConfigurationKey
+     */
+    const std::vector<std::string> SystemConfigurationKeyStore {
+        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE,
+        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION,
+    };
+}
 class Configuration final: public Parcelable {
 public:
     Configuration();
@@ -152,6 +164,7 @@ public:
      * @param inParcel Indicates the Parcel object into which the Sequenceable object has been marshaled.
      */
     static Configuration *Unmarshalling(Parcel &parcel);
+
 private:
 
     /**
@@ -165,18 +178,19 @@ private:
     bool MakeTheKey(std::string &getKey, int id, const std::string &param) const;
 
     /**
+     * @brief Get all current keys.
+     *
+     * @param keychain Out Ginseng. Contains all current keys.
+     */
+    void GetAllKey(std::vector<std::string> &keychain) const;
+
+    /**
      * @brief Get value by key.
      *
      * @param key the key to get value.
      */
     std::string GetValue(const std::string &key) const;
 
-    /**
-     * @brief Get all current keys.
-     *
-     * @param keychain Out Ginseng. Contains all current keys.
-     */
-    void GetAllKey(std::vector<std::string> &keychain) const;
 private:
     int defaultDisplayId_ {0};
     mutable std::string toStrintg_ {""}; /* For interface GetName(), Assign value only when calling the interface */

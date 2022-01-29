@@ -52,6 +52,9 @@ public:
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
 
+    static void ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
+        const std::shared_ptr<AppExecFwk::Configuration> &config);
+
     std::shared_ptr<AbilityContext> GetAbilityContext()
     {
         return context_.lock();
