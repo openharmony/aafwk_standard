@@ -68,11 +68,14 @@ public:
     void MinimizeAbility() override;
 
     ErrCode TerminateSelf() override;
-    sptr<IRemoteObject> GetAbilityToken() override;
+
+    sptr<IRemoteObject> GetToken() override;
+
     void RequestPermissionsFromUser(const std::vector<std::string> &permissions,
         int requestCode, PermissionRequestTask &&task) override;
     void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
+
     ErrCode RestoreWindowStage(void* contentStorage) override;
 
     /**
@@ -97,7 +100,7 @@ public:
      *
      * @param token The token represents ability.
      */
-    inline void SetToken(const sptr<IRemoteObject> &token)
+    void SetToken(const sptr<IRemoteObject> &token) override
     {
         token_ = token;
     }

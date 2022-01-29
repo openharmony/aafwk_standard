@@ -181,6 +181,24 @@ public:
      * @brief Set application context
      */
     void InitAppContext();
+
+    /**
+     * @brief Set the token witch the app launched.
+     *
+     * @param token The token which the is launched by app.
+     */
+    void SetToken(const sptr<IRemoteObject> &token) override;
+
+    /**
+     * @brief Get the token witch the app launched.
+     *
+     * @return token The token which the is launched by app.
+     */
+    sptr<IRemoteObject> GetToken() override;
+
+protected:
+    sptr<IRemoteObject> token_;
+
 private:
     static const int64_t CONTEXT_CREATE_BY_SYSTEM_APP;
     static const std::string CONTEXT_DATA_APP;
