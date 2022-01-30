@@ -291,6 +291,8 @@ public:
      */
     AbilityState GetAbilityState() const;
 
+    bool IsForeground() const;
+
     /**
      * set ability scheduler for accessing ability thread.
      *
