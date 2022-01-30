@@ -1186,7 +1186,7 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
     itemInfo.SetFormName(formInfo.name);
     itemInfo.SetEnableUpdateFlag(formInfo.updateEnabled);
     itemInfo.SetUpdateDuration(formInfo.updateDuration);
-    itemInfo.SetScheduledUpdateTime(formInfo.scheduledUpateTime);
+    itemInfo.SetScheduledUpdateTime(formInfo.scheduledUpdateTime);
     itemInfo.SetJsComponentName(formInfo.jsComponentName);
     itemInfo.SetFormVisibleNotify(formInfo.formVisibleNotify);
     itemInfo.SetFormSrc(formInfo.src);

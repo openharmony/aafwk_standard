@@ -204,7 +204,7 @@ bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
         FormBmsHelper::GetInstance().NotifyModuleNotRemovable(formRecord.bundleName, formRecord.moduleName);
         FormTimerCfg timerCfg;
         GetTimerCfg(updatedForm.updateEnabled, updatedForm.updateDuration,
-            updatedForm.scheduledUpateTime, timerCfg);
+            updatedForm.scheduledUpdateTime, timerCfg);
         HandleTimerUpdate(formId, formRecord, timerCfg);
         FormDataMgr::GetInstance().SetVersionUpgrade(formId, true);
         return true;
