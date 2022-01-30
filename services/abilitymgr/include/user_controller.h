@@ -24,7 +24,8 @@
 
 namespace OHOS {
 namespace AAFwk {
-const int32_t USER_ID_DEFAULT = 0;
+const int32_t USER_ID_NO_HEAD = 0;
+const int32_t USER_ID_DEFAULT = 100;
 
 enum UserState {
     STATE_BOOTING = 0,
@@ -89,13 +90,13 @@ private:
     bool IsExistOsAccount(int32_t userId);
     std::shared_ptr<UserItem> GetOrCreateUserItem(int32_t userId);
     void SetCurrentUserId(int32_t userId);
-    void BroacastUserStarted(int32_t userId);
+    void BroadcastUserStarted(int32_t userId);
     void MoveUserToForeground(int32_t oldUserId, int32_t newUserId);
     void UserBootDone(std::shared_ptr<UserItem> &item);
-    void BroacastUserBackground(int32_t userId);
-    void BroacastUserForeground(int32_t userId);
-    void BroacastUserStopping(int32_t userId);
-    void BroacastUserStopped(int32_t userId);
+    void BroadcastUserBackground(int32_t userId);
+    void BroadcastUserForeground(int32_t userId);
+    void BroadcastUserStopping(int32_t userId);
+    void BroadcastUserStopped(int32_t userId);
 
     void SendSystemUserStart(int32_t userId);
     void SendSystemUserCurrent(int32_t oldUserId, int32_t newUserId);
