@@ -273,8 +273,8 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
 
     // scheduledUpdateTime
     napi_value scheduledUpdateTime;
-    napi_create_string_utf8(env, formInfo.scheduledUpateTime.c_str(), NAPI_AUTO_LENGTH, &scheduledUpdateTime);
-    HILOG_DEBUG("%{public}s, scheduledUpdateTime=%{public}s.", __func__, formInfo.scheduledUpateTime.c_str());
+    napi_create_string_utf8(env, formInfo.scheduledUpdateTime.c_str(), NAPI_AUTO_LENGTH, &scheduledUpdateTime);
+    HILOG_DEBUG("%{public}s, scheduledUpdateTime=%{public}s.", __func__, formInfo.scheduledUpdateTime.c_str());
     napi_set_named_property(env, result, "scheduledUpdateTime", scheduledUpdateTime);
 
     // defaultDimension
