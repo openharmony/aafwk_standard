@@ -241,11 +241,14 @@ bool JsRuntime::Initialize(const Options& options)
 {
     // Create event handler for runtime
     eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(options.eventRunner);
-    idleTask_ = [this]() {
-        nativeEngine_->Loop(LOOP_NOWAIT);
-        eventHandler_->PostIdleTask(idleTask_);
-    };
-    eventHandler_->PostIdleTask(idleTask_);
+    nativeEngine_->SetPostTask([this](bool needSync) {
+        eventHandler_->PostTask(
+            [this, needSync]() {
+                nativeEngine_->Loop(LOOP_NOWAIT, needSync);
+            },
+            "idleTask");
+    });
+    nativeEngine_->CheckUVLoop();
 
     HandleScope handleScope(*this);
 
@@ -283,6 +286,8 @@ void JsRuntime::Deinitialize()
     }
 
     methodRequireNapiRef_.reset();
+    nativeEngine_->CancelCheckUVLoop();
+    RemoveTask("idleTask");
     nativeEngine_.reset();
 }
 
