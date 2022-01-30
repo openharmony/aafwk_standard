@@ -310,7 +310,7 @@ AbilityState AbilityRecord::GetAbilityState() const
 
 bool AbilityRecord::IsForeground() const
 {
-    return currentState_ == AbilityState::FOREGROUND_NEW || AbilityState::FOREGROUNDING_NEW;
+    return currentState_ == AbilityState::FOREGROUND_NEW || currentState_ == AbilityState::FOREGROUNDING_NEW;
 }
 
 void AbilityRecord::SetAbilityState(AbilityState state)
