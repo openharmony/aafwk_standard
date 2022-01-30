@@ -62,8 +62,8 @@ int MissionListManager::StartAbility(const AbilityRequest &abilityRequest)
         auto state = currentTopAbility->GetAbilityState();
         HILOG_DEBUG("current top: %{public}s, state: %{public}s",
             element.c_str(), AbilityRecord::ConvertAbilityState(state).c_str());
-        if (state != FOREGROUND_NEW) {
-            HILOG_INFO("Top ability is not foreground, so enqueue ability for waiting.");
+        if (state == FOREGROUNDING_NEW) {
+            HILOG_INFO("Top ability is foregrounding, so enqueue ability for waiting.");
             EnqueueWaittingAbility(abilityRequest);
             return START_ABILITY_WAITING;
         }
