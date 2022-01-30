@@ -934,14 +934,24 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
     }
 
     // 4. the ability should find the next ability to foreground
+    std::shared_ptr<AbilityRecord> needTopAbility;
     if (missionList->IsEmpty()) {
         HILOG_DEBUG("missionList is empty, next is launcher");
-        abilityRecord->SetNextAbilityRecord(GetCurrentTopAbilityLocked());
+        needTopAbility = GetCurrentTopAbilityLocked();
     } else {
-        std::shared_ptr<AbilityRecord> needTopAbility = missionList->GetTopAbility();
+        needTopAbility = missionList->GetTopAbility();
+    }
+
+    if (!needTopAbility) {
+        HILOG_DEBUG("needTopAbility is null");
+        return;
+    }
+    std::string element = needTopAbility->GetWant().GetElement().GetURI();
+    HILOG_DEBUG("next top ability is %{public}s", element.c_str());
+
+    if (!needTopAbility->IsForeground()) {
+        HILOG_DEBUG("%{public}s is need to foreground", element.c_str());
         abilityRecord->SetNextAbilityRecord(needTopAbility);
-        std::string element = needTopAbility->GetWant().GetElement().GetURI();
-        HILOG_DEBUG("next top ability is %{public}s", element.c_str());
     }
 }
 
