@@ -80,7 +80,7 @@ void UserController::Init()
 
 int32_t UserController::StartUser(int32_t userId, bool isForeground)
 {
-    if (userId < 0 || userId == USER_ID_DEFAULT) {
+    if (userId < 0 || userId == USER_ID_NO_HEAD) {
         HILOG_ERROR("StartUser userId is invalid:%{public}d", userId);
         return -1;
     }
@@ -127,7 +127,7 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
     }
 
     if (needStart) {
-        BroacastUserStarted(userId);
+        BroadcastUserStarted(userId);
     }
 
     UserBootDone(userItem);
@@ -140,7 +140,7 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
 
 int32_t UserController::StopUser(int32_t userId)
 {
-    if (userId < 0 || userId == USER_ID_DEFAULT) {
+    if (userId < 0 || userId == USER_ID_NO_HEAD || userId == USER_ID_DEFAULT) {
         HILOG_ERROR("userId is invalid:%{public}d", userId);
         return -1;
     }
@@ -155,7 +155,7 @@ int32_t UserController::StopUser(int32_t userId)
         return -1;
     }
 
-    BroacastUserStopping(userId);
+    BroadcastUserStopping(userId);
 
     auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
     if (!appScheduler) {
@@ -178,7 +178,7 @@ int32_t UserController::StopUser(int32_t userId)
     }
     abilityManagerService->ClearUserData(userId);
 
-    BroacastUserStopped(userId);
+    BroadcastUserStopped(userId);
     return 0;
 }
 
@@ -245,8 +245,8 @@ void UserController::MoveUserToForeground(int32_t oldUserId, int32_t newUserId)
         return;
     }
     manager->SwitchToUser(oldUserId, newUserId);
-    BroacastUserBackground(oldUserId);
-    BroacastUserForeground(newUserId);
+    BroadcastUserBackground(oldUserId);
+    BroadcastUserForeground(newUserId);
 }
 
 void UserController::UserBootDone(std::shared_ptr<UserItem> &item)
@@ -273,27 +273,27 @@ void UserController::UserBootDone(std::shared_ptr<UserItem> &item)
     manager->UserStarted(userId);
 }
 
-void UserController::BroacastUserStarted(int32_t userId)
+void UserController::BroadcastUserStarted(int32_t userId)
 {
     // todo: broadcast event user start.
 }
 
-void UserController::BroacastUserBackground(int32_t userId)
+void UserController::BroadcastUserBackground(int32_t userId)
 {
     // todo: broadcast event user switch to bg.
 }
 
-void UserController::BroacastUserForeground(int32_t userId)
+void UserController::BroadcastUserForeground(int32_t userId)
 {
     // todo: broadcast event user switch to fg.
 }
 
-void UserController::BroacastUserStopping(int32_t userId)
+void UserController::BroadcastUserStopping(int32_t userId)
 {
     // todo
 }
 
-void UserController::BroacastUserStopped(int32_t userId)
+void UserController::BroadcastUserStopped(int32_t userId)
 {
     // todo
 }
