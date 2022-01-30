@@ -946,7 +946,7 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         HILOG_DEBUG("needTopAbility is null");
         return;
     }
-    std::string element = needTopAbility->GetWant().GetElement().GetURI();
+    element = needTopAbility->GetWant().GetElement().GetURI();
     HILOG_DEBUG("next top ability is %{public}s", element.c_str());
 
     if (!needTopAbility->IsForeground()) {
