@@ -15,8 +15,10 @@
 
 #include "context_impl.h"
 
+#include "file_util.h"
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
+#include "js_runtime_utils.h"
 #include "locale_config.h"
 #include "os_account_manager.h"
 #include "sys_mgr_client.h"
@@ -60,6 +62,7 @@ std::string ContextImpl::GetBundleCodeDir()
     } else {
         dir = CONTEXT_DATA_STORAGE + CONTEXT_ELS[0] + CONTEXT_BUNDLE;
     }
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetBundleCodeDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -67,6 +70,7 @@ std::string ContextImpl::GetBundleCodeDir()
 std::string ContextImpl::GetCacheDir()
 {
     std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_CACHES;
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetCacheDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -81,6 +85,7 @@ std::string ContextImpl::GetDatabaseDir()
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
     }
     dir =  dir + CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetDatabaseDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -88,6 +93,7 @@ std::string ContextImpl::GetDatabaseDir()
 std::string ContextImpl::GetStorageDir()
 {
     std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_STORAGE;
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetStorageDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -95,6 +101,7 @@ std::string ContextImpl::GetStorageDir()
 std::string ContextImpl::GetTempDir()
 {
     std::string dir = GetBaseDir() + CONTEXT_TEMP;
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetTempDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -102,6 +109,7 @@ std::string ContextImpl::GetTempDir()
 std::string ContextImpl::GetFilesDir()
 {
     std::string dir = GetBaseDir() + CONTEXT_FILES;
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetFilesDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -117,6 +125,7 @@ std::string ContextImpl::GetDistributedFilesDir()
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTEDFILES +
             CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
+    CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetDistributedFilesDir:%{public}s", dir.c_str());
     return dir;
 }
@@ -389,6 +398,18 @@ void ContextImpl::SetToken(const sptr<IRemoteObject> &token)
 sptr<IRemoteObject> ContextImpl::GetToken()
 {
     return token_;
+}
+
+void ContextImpl::CreateDirIfNotExist(const std::string& dirPath) const
+{
+    HILOG_INFO("createDir: create directory if not exists.");
+    if (!OHOS::HiviewDFX::FileUtil::FileExists(dirPath)) {
+        bool createDir = OHOS::HiviewDFX::FileUtil::ForceCreateDirectory(dirPath);
+        if (!createDir) {
+            HILOG_ERROR("createDir: create dir %{public}s failed.", dirPath.c_str());
+            return;
+        }
+    }
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

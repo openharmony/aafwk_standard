@@ -36,6 +36,22 @@ public:
     static NativeValue* GetApplicationContext(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SwitchArea(NativeEngine* engine, NativeCallbackInfo* info);
 
+    NativeValue* OnGetCacheDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetTempDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetFilesDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetDistributedFilesDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetDatabaseDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetStorageDir(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnGetBundleCodeDir(NativeEngine& engine, NativeCallbackInfo& info);
+    
+    static NativeValue* GetCacheDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetTempDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetFilesDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetDistributedFilesDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetDatabaseDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetStorageDir(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetBundleCodeDir(NativeEngine* engine, NativeCallbackInfo* info);
+
     void KeepContext(std::shared_ptr<Context> context)
     {
         keepContext_ = context;
@@ -100,15 +116,140 @@ NativeValue* JsBaseContext::OnSwitchArea(NativeEngine& engine, NativeCallbackInf
 
     NativeValue* thisVar = info.thisVar;
     NativeObject* object = ConvertNativeValueTo<NativeObject>(thisVar);
-    object->SetProperty("cacheDir", CreateJsValue(engine, context->GetCacheDir()));
-    object->SetProperty("tempDir", CreateJsValue(engine, context->GetTempDir()));
-    object->SetProperty("filesDir", CreateJsValue(engine, context->GetFilesDir()));
-    object->SetProperty("distributedFilesDir", CreateJsValue(engine, context->GetDistributedFilesDir()));
-    object->SetProperty("databaseDir", CreateJsValue(engine, context->GetDatabaseDir()));
-    object->SetProperty("storageDir", CreateJsValue(engine, context->GetStorageDir()));
-    object->SetProperty("bundleCodeDir", CreateJsValue(engine, context->GetBundleCodeDir()));
-
+    BindNativeProperty(*object, "cacheDir", GetCacheDir);
+    BindNativeProperty(*object, "tempDir", GetTempDir);
+    BindNativeProperty(*object, "filesDir", GetFilesDir);
+    BindNativeProperty(*object, "distributedFilesDir", GetDistributedFilesDir);
+    BindNativeProperty(*object, "databaseDir", GetDatabaseDir);
+    BindNativeProperty(*object, "storageDir", GetStorageDir);
+    BindNativeProperty(*object, "bundleCodeDir", GetBundleCodeDir);
     return engine.CreateUndefined();
+}
+
+NativeValue* JsBaseContext::GetCacheDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetCacheDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetCacheDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetTempDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetTempDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetTempDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetTempDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetTempDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetFilesDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetFilesDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetFilesDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetFilesDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetDistributedFilesDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetDistributedFilesDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetDistributedFilesDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetDistributedFilesDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetDatabaseDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetDatabaseDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetDatabaseDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetDatabaseDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetStorageDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetStorageDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetStorageDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetStorageDir();
+    return engine.CreateString(path.c_str(), path.length());
+}
+
+NativeValue* JsBaseContext::GetBundleCodeDir(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
+    return me != nullptr ? me->OnGetBundleCodeDir(*engine, *info) : nullptr;
+}
+
+NativeValue* JsBaseContext::OnGetBundleCodeDir(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_WARN("context is already released");
+        return engine.CreateUndefined();
+    }
+    std::string path = context->GetBundleCodeDir();
+    return engine.CreateString(path.c_str(), path.length());
 }
 
 NativeValue* JsBaseContext::OnCreateBundleContext(NativeEngine& engine, NativeCallbackInfo& info)
@@ -184,14 +325,14 @@ NativeValue* CreateJsBaseContext(NativeEngine& engine, std::shared_ptr<Context> 
     if (resourceManager != nullptr) {
         object->SetProperty("resourceManager", CreateJsResourceManager(engine, resourceManager));
     }
-    object->SetProperty("cacheDir", CreateJsValue(engine, context->GetCacheDir()));
-    object->SetProperty("tempDir", CreateJsValue(engine, context->GetTempDir()));
-    object->SetProperty("filesDir", CreateJsValue(engine, context->GetFilesDir()));
-    object->SetProperty("distributedFilesDir", CreateJsValue(engine, context->GetDistributedFilesDir()));
-    object->SetProperty("databaseDir", CreateJsValue(engine, context->GetDatabaseDir()));
-    object->SetProperty("storageDir", CreateJsValue(engine, context->GetStorageDir()));
-    object->SetProperty("bundleCodeDir", CreateJsValue(engine, context->GetBundleCodeDir()));
 
+    BindNativeProperty(*object, "cacheDir", JsBaseContext::GetCacheDir);
+    BindNativeProperty(*object, "tempDir", JsBaseContext::GetTempDir);
+    BindNativeProperty(*object, "filesDir", JsBaseContext::GetFilesDir);
+    BindNativeProperty(*object, "distributedFilesDir", JsBaseContext::GetDistributedFilesDir);
+    BindNativeProperty(*object, "databaseDir", JsBaseContext::GetDatabaseDir);
+    BindNativeProperty(*object, "storageDir", JsBaseContext::GetStorageDir);
+    BindNativeProperty(*object, "bundleCodeDir", JsBaseContext::GetBundleCodeDir);
     BindNativeFunction(engine, *object, "createBundleContext", JsBaseContext::CreateBundleContext);
     BindNativeFunction(engine, *object, "getApplicationContext", JsBaseContext::GetApplicationContext);
     BindNativeFunction(engine, *object, "switchArea", JsBaseContext::SwitchArea);
