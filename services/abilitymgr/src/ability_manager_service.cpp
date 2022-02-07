@@ -2390,7 +2390,9 @@ int AbilityManagerService::GenerateAbilityRequest(
         }
     }
 
-    request.appInfo = request.abilityInfo.applicationInfo;
+    auto appName = request.abilityInfo.applicationInfo.name;
+    auto appFlag = AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION;
+    bms->GetApplicationInfo(appName, appFlag, userId, request.appInfo);
     if (request.appInfo.name.empty() || request.appInfo.bundleName.empty()) {
         HILOG_ERROR("Get app info failed.");
         return RESOLVE_APP_ERR;
