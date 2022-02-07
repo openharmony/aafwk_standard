@@ -1623,7 +1623,7 @@ bool Ability::OnContinue(WantParams &wantParams)
  *
  * @return A string represents page ability stack info, empty if failed;
  */
-const std::string& Ability::GetContentInfo()
+std::string Ability::GetContentInfo()
 {
     if (scene_ == nullptr) {
         return "";
