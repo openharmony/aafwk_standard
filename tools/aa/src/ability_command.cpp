@@ -133,7 +133,7 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
         },
         {
             START_ABILITY_WAITING,
-            "error: start ability waiting.",
+            "start ability successfully. waiting...",
         },
         {
             TERMINATE_LAUNCHER_DENIED,
