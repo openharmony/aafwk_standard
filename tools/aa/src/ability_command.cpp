@@ -508,8 +508,9 @@ ErrCode AbilityManagerShellCommand::RunAsStartAbility()
             resultReceiver_ = STRING_START_ABILITY_OK + "\n";
         } else {
             HILOG_INFO("%{public}s result = %{public}d", STRING_START_ABILITY_NG.c_str(), result);
-            resultReceiver_ = STRING_START_ABILITY_NG + "\n";
-
+            if (result != START_ABILITY_WAITING) {
+                resultReceiver_ = STRING_START_ABILITY_NG + "\n";
+            }
             resultReceiver_.append(GetMessageFromCode(result));
         }
     } else {
