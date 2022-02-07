@@ -136,17 +136,20 @@ int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &tok
         return ERR_OK;
     }
 
-    if (abilityRecord->GetConnectRecordList().empty()) {
-        HILOG_INFO("Service ability has no any connection, and not started , need terminate.");
-        auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
-            HILOG_WARN("Disconnect ability terminate timeout.");
-            connectManager->HandleStopTimeoutTask(abilityRecord);
+    if (!abilityRecord->GetConnectRecordList().empty()) {
+        HILOG_INFO("Target service has been connected. Post disconnect task.");
+        auto connectRecordList = abilityRecord->GetConnectRecordList();
+        auto task = [connectRecordList, connectManager = shared_from_this()]() {
+            connectManager->HandleDisconnectTask(connectRecordList);
         };
-        abilityRecord->Terminate(timeoutTask);
-    } else {
-        HILOG_WARN("Target service has been connected. It cannot be stopped.");
-        return TERMINATE_SERVICE_IS_CONNECTED;
+        eventHandler_->PostTask(task);
     }
+
+    auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
+        HILOG_WARN("Disconnect ability terminate timeout.");
+        connectManager->HandleStopTimeoutTask(abilityRecord);
+    };
+    abilityRecord->Terminate(timeoutTask);
 
     return ERR_OK;
 }
@@ -182,17 +185,20 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
         return ERR_OK;
     }
 
-    if (abilityRecord->GetConnectRecordList().empty()) {
-        HILOG_INFO("Service ability has no any connection, and no started , need terminate.");
-        auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
-            HILOG_WARN("Disconnect ability terminate timeout.");
-            connectManager->HandleStopTimeoutTask(abilityRecord);
+    if (!abilityRecord->GetConnectRecordList().empty()) {
+        HILOG_INFO("Target service has been connected. Post disconnect task.");
+        auto connectRecordList = abilityRecord->GetConnectRecordList();
+        auto task = [connectRecordList, connectManager = shared_from_this()]() {
+            connectManager->HandleDisconnectTask(connectRecordList);
         };
-        abilityRecord->Terminate(timeoutTask);
-    } else {
-        HILOG_WARN("Target service has been connected. It cannot be stopped.");
-        return TERMINATE_SERVICE_IS_CONNECTED;
+        eventHandler_->PostTask(task);
     }
+
+    auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
+        HILOG_WARN("Disconnect ability terminate timeout.");
+        connectManager->HandleStopTimeoutTask(abilityRecord);
+    };
+    abilityRecord->Terminate(timeoutTask);
 
     return ERR_OK;
 }
