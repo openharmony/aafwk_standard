@@ -69,6 +69,14 @@ int MissionListManager::StartAbility(const AbilityRequest &abilityRequest)
         }
     }
 
+    auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
+    if (callerAbility) {
+        std::string element = callerAbility->GetWant().GetElement().GetURI();
+        auto state = callerAbility->GetAbilityState();
+        HILOG_DEBUG("callerAbility is: %{public}s, state: %{public}s",
+            element.c_str(), AbilityRecord::ConvertAbilityState(state).c_str());
+    }
+
     return StartAbility(currentTopAbility, callerAbility, abilityRequest);
 }
 
