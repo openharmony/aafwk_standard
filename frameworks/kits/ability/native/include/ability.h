@@ -1300,7 +1300,7 @@ public:
      *
      * @return A string represents page ability stack info, empty if failed;
      */
-    virtual const std::string& GetContentInfo();
+    virtual std::string GetContentInfo();
 
     /**
      * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
