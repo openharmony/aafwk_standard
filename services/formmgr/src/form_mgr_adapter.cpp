@@ -730,6 +730,10 @@ ErrCode FormMgrAdapter::GetFormConfigInfo(const Want &want, FormItemInfo &formCo
         APP_LOGE("addForm can not find target form info");
         return errCode;
     }
+    if (!formInfo.IsValid()) {
+        APP_LOGE("The form info is invalid");
+        return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
+    }
 
     errCode = GetFormItemInfo(want, bundleInfo, formInfo, formConfigInfo);
     if (errCode != ERR_OK) {
