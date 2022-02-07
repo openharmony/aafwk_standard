@@ -24,7 +24,7 @@ int LocalCallContainer::StartAbilityInner(
     HILOG_DEBUG("start ability by call.");
 
     if (!callback) {
-        HILOG_ERROR("callback）is nullptr.");
+        HILOG_ERROR("callback is nullptr.");
         return ERR_INVALID_VALUE;
     }
 
