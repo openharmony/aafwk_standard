@@ -18,7 +18,6 @@
 #include "ability_runtime/js_ability.h"
 
 #include "ability_runtime/js_ability_context.h"
-#include "ability_runtime/js_window_stage.h"
 #include "ability_start_setting.h"
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
@@ -26,6 +25,7 @@
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "napi_common_configuration.h"
+#include "js_window_stage.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 #include "string_wrapper.h"
@@ -392,7 +392,7 @@ std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
 {
     HandleScope handleScope(jsRuntime_);
     auto &engine = jsRuntime_.GetNativeEngine();
-    NativeValue *jsWindowStage = CreateJsWindowStage(engine, GetScene());
+    NativeValue *jsWindowStage = Rosen::CreateJsWindowStage(engine, GetScene());
     if (jsWindowStage == nullptr) {
         HILOG_ERROR("Failed to create jsWindowSatge object");
         return nullptr;
