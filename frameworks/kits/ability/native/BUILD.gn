@@ -85,7 +85,7 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
-    "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_napi",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_stage_napi",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
@@ -216,7 +216,6 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_caller_complex.cpp",
-    "${SUBSYSTEM_DIR}/src/ability_runtime/js_window_stage.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
   ]
@@ -272,7 +271,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/graphic/standard:libwmclient",
-    "//foundation/windowmanager/interfaces/kits/napi/window_runtime:window_native_kit",
+    "//foundation/windowmanager/interfaces/kits/napi/window_runtime:windowstage_kit",
     "//foundation/windowmanager/wm:libwm",
   ]
 
