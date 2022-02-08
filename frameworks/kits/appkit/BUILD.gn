@@ -222,6 +222,7 @@ ohos_shared_library("app_context") {
     "${aafwk_path}/common/task_dispatcher:appkit_dispatcher_td",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",

@@ -228,6 +228,7 @@ private:
     int GetCurrentAccountId() const;
     void SetFlags(int64_t flags);
     int GetCurrentActiveAccountId() const;
+    void CreateDirIfNotExist(const std::string& dirPath) const;
 
     std::shared_ptr<AppExecFwk::ApplicationInfo> applicationInfo_ = nullptr;
     std::shared_ptr<Context> parentContext_ = nullptr;

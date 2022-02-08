@@ -48,6 +48,20 @@ void BindNativeFunction(NativeEngine& engine, NativeObject& object, const char* 
     object.SetProperty(name, engine.CreateFunction(name, strlen(name), func, nullptr));
 }
 
+void BindNativeProperty(NativeObject& object, const char* name, NativeCallback getter)
+{
+    NativePropertyDescriptor property;
+    property.utf8name = name;
+    property.name = nullptr;
+    property.method = nullptr;
+    property.getter = getter;
+    property.setter = nullptr;
+    property.value = nullptr;
+    property.attributes = napi_default;
+    property.data = nullptr;
+    object.DefineProperty(property);
+}
+
 void* GetNativePointerFromCallbackInfo(NativeEngine* engine, NativeCallbackInfo* info, const char* name)
 {
     if (engine == nullptr || info == nullptr) {
