@@ -894,6 +894,11 @@ public:
     bool StopAbility(const AAFwk::Want &want) override;
 
     /**
+     * @brief Release the window and ability.
+     */
+    void Destroy();
+
+    /**
      * @brief Posts a scheduled Runnable task to a new non-UI thread.
      * The task posted via this method will be executed in a new thread, which allows you to perform certain
      * time-consuming operations. To use this method, you must also override the supportHighPerformanceUI() method.

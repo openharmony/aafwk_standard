@@ -837,7 +837,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
         isStageBased = bundleInfo.hapModuleInfos.back().isStageBasedModel;
     }
-    APP_LOGI("stageBased:%{public}d moduelJson:%{public}d size:%{public}d",
+    APP_LOGI("stageBased:%{public}d moduleJson:%{public}d size:%{public}d",
         isStageBased, moduelJson, (int32_t)bundleInfo.hapModuleInfos.size());
     if (isStageBased) {
         // Create runtime
