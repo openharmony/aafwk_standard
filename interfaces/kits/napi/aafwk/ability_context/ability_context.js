@@ -36,13 +36,13 @@ class AbilityContext extends Context {
         return this.__context_impl__.startAbilityWithAccount(want, accountId, options, callback)
     }
 
-    startAbilityByCall(want) {
+    async startAbilityByCall(want) {
         if (typeof want !== 'object' || want == null) {
             console.log("AbilityContext::startAbilityByCall input param error");
             return null;
         }
 
-        let callee = this.__context_impl__.startAbilityByCall(want);
+        let callee = await this.__context_impl__.startAbilityByCall(want);
         if (typeof callee === 'object' && callee != null) {
             console.log("AbilityContext::startAbilityByCall");
             return new Caller(callee);
