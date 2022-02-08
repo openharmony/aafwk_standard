@@ -250,15 +250,6 @@ void Ability::OnStop()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
-    if (scene_ != nullptr) {
-        scene_ = nullptr;
-        onSceneDestroyed();
-    }
-    if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStop.", __func__);
-        abilityWindow_->OnPostAbilityStop();
-        APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStop.", __func__);
-    }
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnStop error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -270,6 +261,25 @@ void Ability::OnStop()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_STOP);
+    APP_LOGI("%{public}s end.", __func__);
+}
+
+/**
+ * @brief Release the window and ability.
+ */
+void Ability::Destroy()
+{
+    APP_LOGI("%{public}s begin.", __func__);
+    // Release the scene.
+    if (scene_ != nullptr) {
+        scene_ = nullptr;
+        onSceneDestroyed();
+    }
+
+    // Release the window.
+    if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
+        abilityWindow_->OnPostAbilityStop(); // Ability will been released when window destroy.
+    }
     APP_LOGI("%{public}s end.", __func__);
 }
 
