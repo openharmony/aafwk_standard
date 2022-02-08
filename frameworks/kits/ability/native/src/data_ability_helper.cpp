@@ -43,6 +43,17 @@ DataAbilityHelper::DataAbilityHelper(const std::shared_ptr<Context> &context, co
     APP_LOGI("DataAbilityHelper::DataAbilityHelper end");
 }
 
+DataAbilityHelper::DataAbilityHelper(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<Uri> &uri, const sptr<IAbilityScheduler> &dataAbilityProxy, bool tryBind)
+{
+    APP_LOGI("DataAbilityHelper::DataAbilityHelper start");
+    token_ = context->GetToken();
+    uri_ = uri;
+    tryBind_ = tryBind;
+    dataAbilityProxy_ = dataAbilityProxy;
+    APP_LOGI("DataAbilityHelper::DataAbilityHelper end");
+}
+
 DataAbilityHelper::DataAbilityHelper(const std::shared_ptr<Context> &context)
 {
     APP_LOGI("DataAbilityHelper::DataAbilityHelper only with context start");
@@ -144,6 +155,21 @@ std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
 }
 
 /**
+ * @brief Creates a DataAbilityHelper instance with the Uri specified based on the given Context.
+ *
+ * @param context Indicates the Context object on OHOS.
+ * @param uri Indicates the database table or disk file to operate.
+ *
+ * @return Returns the created DataAbilityHelper instance with a specified Uri.
+ */
+std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
+    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, const std::shared_ptr<Uri> &uri)
+{
+    APP_LOGI("DataAbilityHelper::Creator with context uri called.");
+    return DataAbilityHelper::Creator(context, uri, false);
+}
+
+/**
  * @brief You can use this method to specify the Uri of the data to operate and set the binding relationship
  * between the ability using the Data template (Data ability for short) and the associated client process in
  * a DataAbilityHelper instance.
@@ -157,6 +183,59 @@ std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
  */
 std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
     const std::shared_ptr<Context> &context, const std::shared_ptr<Uri> &uri, const bool tryBind)
+{
+    APP_LOGI("DataAbilityHelper::Creator with context uri tryBind called start.");
+    if (context == nullptr) {
+        APP_LOGE("DataAbilityHelper::Creator (context, uri, tryBind) failed, context == nullptr");
+        return nullptr;
+    }
+
+    if (uri == nullptr) {
+        APP_LOGE("DataAbilityHelper::Creator (context, uri, tryBind) failed, uri == nullptr");
+        return nullptr;
+    }
+
+    if (uri->GetScheme() != SchemeOhos) {
+        APP_LOGE("DataAbilityHelper::Creator (context, uri, tryBind) failed, the Scheme is not dataability, Scheme: "
+                 "%{public}s",
+            uri->GetScheme().c_str());
+        return nullptr;
+    }
+
+    APP_LOGI("DataAbilityHelper::Creator before AcquireDataAbility.");
+    sptr<IAbilityScheduler> dataAbilityProxy =
+        AbilityManagerClient::GetInstance()->AcquireDataAbility(*uri.get(), tryBind, context->GetToken());
+    if (dataAbilityProxy == nullptr) {
+        APP_LOGE("DataAbilityHelper::Creator failed get dataAbilityProxy");
+        return nullptr;
+    }
+    APP_LOGI("DataAbilityHelper::Creator after AcquireDataAbility.");
+
+    DataAbilityHelper *ptrDataAbilityHelper =
+        new (std::nothrow) DataAbilityHelper(context, uri, dataAbilityProxy, tryBind);
+    if (ptrDataAbilityHelper == nullptr) {
+        APP_LOGE("DataAbilityHelper::Creator (context, uri, tryBind) failed, create DataAbilityHelper failed");
+        return nullptr;
+    }
+
+    APP_LOGI("DataAbilityHelper::Creator with context uri tryBind called end.");
+    return std::shared_ptr<DataAbilityHelper>(ptrDataAbilityHelper);
+}
+
+/**
+ * @brief You can use this method to specify the Uri of the data to operate and set the binding relationship
+ * between the ability using the Data template (Data ability for short) and the associated client process in
+ * a DataAbilityHelper instance.
+ *
+ * @param context Indicates the Context object on OHOS.
+ * @param uri Indicates the database table or disk file to operate.
+ * @param tryBind Specifies whether the exit of the corresponding Data ability process causes the exit of the
+ * client process.
+ *
+ * @return Returns the created DataAbilityHelper instance.
+ */
+std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
+    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, const std::shared_ptr<Uri> &uri, const bool tryBind)
 {
     APP_LOGI("DataAbilityHelper::Creator with context uri tryBind called start.");
     if (context == nullptr) {

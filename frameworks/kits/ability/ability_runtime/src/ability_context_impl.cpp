@@ -276,7 +276,7 @@ ErrCode AbilityContextImpl::TerminateSelf()
     return err;
 }
 
-sptr<IRemoteObject> AbilityContextImpl::GetAbilityToken()
+sptr<IRemoteObject> AbilityContextImpl::GetToken()
 {
     return token_;
 }
