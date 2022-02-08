@@ -72,7 +72,7 @@ void AbilityConnectionProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementNa
     int error;
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
 
     if (!WriteInterfaceToken(data)) {
         return;
