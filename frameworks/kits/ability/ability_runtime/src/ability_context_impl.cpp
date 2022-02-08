@@ -343,5 +343,21 @@ ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
     }
     return err;
 }
+
+void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    abilityCallback_ = abilityCallback;
+}
+
+int AbilityContextImpl::GetCurrentWindowMode()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    auto abilityCallback = abilityCallback_.lock();
+    if (abilityCallback == nullptr) {
+        return AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED;
+    }
+    return abilityCallback->GetCurrentWindowMode();
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

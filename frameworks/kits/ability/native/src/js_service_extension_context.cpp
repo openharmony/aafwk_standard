@@ -91,7 +91,6 @@ public:
     }
 private:
     std::weak_ptr<ServiceExtensionContext> context_;
-
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
     {
         HILOG_INFO("OnStartAbility is called");

@@ -40,6 +40,7 @@
 #include "form_provider_info.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/key_event.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/pointer_event.h"
+#include "iability_callback.h"
 #include "iremote_object.h"
 #include "pac_map.h"
 #include "want.h"
@@ -76,6 +77,7 @@ class Ability : public IAbilityEvent,
                 public AbilityContext,
                 public FormCallbackInterface,
                 public IAbilityContinuation,
+                public IAbilityCallback,
                 public std::enable_shared_from_this<Ability> {
 public:
     friend class PageAbilityImpl;
@@ -1390,13 +1392,17 @@ public:
      * @return None.
      */
     void SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener);
-	
+
 	/**
      * @brief request a remote object of callee from this ability.
      * @return Returns the remote object of callee.
      */
     virtual sptr<IRemoteObject> CallRequest();
 
+    /**
+     * @brief Called back at ability context.
+     */
+    virtual int GetCurrentWindowMode() override;
 protected:
     /**
      * @brief Acquire a form provider remote object.
@@ -1600,7 +1606,6 @@ private:
      */
     bool ReAcquireForm(const int64_t formId, const Want &want);
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_H

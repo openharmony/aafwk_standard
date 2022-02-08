@@ -81,6 +81,7 @@ private:
     static NativeValue* WrapAbilityResult(NativeEngine& engine, const int& resultCode, const AAFwk::Want& want);
     static NativeValue* WrapPermissionRequestResult(NativeEngine& engine,
         const std::vector<std::string> &permissions, const std::vector<int> &grantResults);
+    void InheritWindowMode(AAFwk::Want &want);
 
     std::weak_ptr<AbilityContext> context_;
     int curRequestCode_ = 0;
