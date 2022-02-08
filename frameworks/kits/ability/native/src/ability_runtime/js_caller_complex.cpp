@@ -128,6 +128,8 @@ private:
         NativeValue* callback = jsreleaseCallBackObj_->Get();
         NativeValue* args[] = { CreateJsValue(releaseCallBackEngine_, str) };
         releaseCallBackEngine_.CallFunction(value, callback, args, 1);
+        HILOG_DEBUG("OnReleaseNotifyTask CallFunction call done");
+        callee_ = nullptr;
         HILOG_DEBUG("OnReleaseNotifyTask end");
     }
 
@@ -234,6 +236,12 @@ NativeValue* CreateJsCallerComplex(
     std::shared_ptr<CallerCallBack> callerCallBack)
 {
     HILOG_DEBUG("JsCallerComplex::%{public}s, begin", __func__);
+    if (callee == nullptr || callerCallBack == nullptr || context == nullptr) {
+        HILOG_ERROR("%{public}s is called, input params error. %{public}s is nullptr", __func__,
+            (callee == nullptr) ? ("callee") : ((context == nullptr) ? ("context") : ("callerCallBack")));
+        return engine.CreateUndefined();
+    }
+
     NativeValue* objValue = engine.CreateObject();
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
 
@@ -260,6 +268,10 @@ NativeValue* CreateJsCallerComplex(
 
 NativeValue* CreateJsCalleeRemoteObject(NativeEngine& engine, sptr<IRemoteObject> callee)
 {
+    if (callee == nullptr) {
+        HILOG_ERROR("%{public}s is called, input params is nullptr", __func__);
+        return engine.CreateUndefined();
+    }
     napi_value napiRemoteObject = NAPI_ohos_rpc_CreateJsRemoteObject(
         reinterpret_cast<napi_env>(&engine), callee);
     NativeValue* nativeRemoteObject = reinterpret_cast<NativeValue*>(napiRemoteObject);

@@ -22,7 +22,7 @@ class Caller {
     constructor(obj) {
         console.log("Caller::constructor obj is " + typeof obj);
         this.__call_obj__ = obj;
-        this.releaseCallback = null;
+        this.releaseCall = false;
     }
 
     async call(method, data) {
@@ -30,6 +30,12 @@ class Caller {
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller call " + typeof method + " " + typeof data);
             throw new Error("function input parameter error");
+            return;
+        }
+
+        if (this.releaseCall) {
+            console.log("Caller call this.callee release");
+            throw new Error("Function inner object error");
             return;
         }
 
@@ -47,7 +53,7 @@ class Caller {
 
         let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
         if (!status) {
-            console.log("Caller call return data " + status);
+            console.log("Caller call return status " + status);
             throw new Error("Function execution exception");
             return ;
         }
@@ -55,7 +61,7 @@ class Caller {
         let retval = msgReply.readInt();
         let str = msgReply.readString();
         if (retval === REQUEST_SUCCESS && str === 'object') {
-            console.log("Caller call return data " + str);
+            console.log("Caller call return str " + str);
         } else {
             console.log("Caller call retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
@@ -71,6 +77,12 @@ class Caller {
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller callWithResult " + typeof method + ", " + typeof data);
             return undefined;
+        }
+
+        if (this.releaseCall) {
+            console.log("Caller callWithResult this.callee release");
+            throw new Error("Function inner object error");
+            return;
         }
 
         if (this.__call_obj__.callee == null) {
@@ -107,6 +119,19 @@ class Caller {
 
     release() {
         console.log("Caller release js called.");
+        if (this.releaseCall == true) {
+            console.log("Caller release remoteObj releaseState is true");
+            throw new Error("Caller release call remoteObj is released");
+            return;
+        }
+
+        if (this.__call_obj__.callee == null) {
+            console.log("Caller release call remoteObj is released");
+            throw new Error("Caller release call remoteObj is released");
+            return;
+        }
+
+        this.releaseCall = true;
         this.__call_obj__.release();
     }
 
@@ -115,6 +140,12 @@ class Caller {
         if (typeof callback !== 'function') {
             console.log("Caller onRelease " + typeof callback);
             throw new Error("function input parameter error");
+            return;
+        }
+
+        if (this.releaseCall == true) {
+            console.log("Caller onRelease remoteObj releaseState is true");
+            throw new Error("Caller onRelease call remoteObj is released");
             return;
         }
 
