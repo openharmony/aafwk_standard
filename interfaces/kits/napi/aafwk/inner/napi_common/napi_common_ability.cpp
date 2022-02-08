@@ -2338,6 +2338,14 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         return;
     }
 
+    // inherit split mode
+    auto windowMode = asyncCallbackInfo->ability->GetCurrentWindowMode();
+    if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
+        windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
+        asyncCallbackInfo->param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
+    }
+    HILOG_INFO("window mode is %{public}d", windowMode);
+
     ErrCode ret = ERR_OK;
     if (asyncCallbackInfo->param.setting == nullptr) {
         HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);

@@ -139,6 +139,9 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     }
 
     application_ = application;
+    if (abilityContext_ != nullptr) {
+        abilityContext_->RegisterAbilityCallback(weak_from_this());
+    }
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -3279,6 +3282,20 @@ void Ability::DoOnForeground(const Want& want)
 sptr<IRemoteObject> Ability::CallRequest()
 {
     return nullptr;
+}
+
+int Ability::GetCurrentWindowMode()
+{
+    APP_LOGI("%{public}s start", __func__);
+    auto windowMode = static_cast<int>(Rosen::WindowMode::WINDOW_MODE_UNDEFINED);
+    if (scene_ == nullptr) {
+        return windowMode;
+    }
+    auto window = scene_->GetMainWindow();
+    if (window != nullptr) {
+        windowMode = static_cast<int>(window->GetMode());
+    }
+    return windowMode;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

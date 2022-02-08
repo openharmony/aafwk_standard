@@ -16,6 +16,7 @@
 #ifndef ABILITY_RUNTIME_ABILITY_CONTEXT_H
 #define ABILITY_RUNTIME_ABILITY_CONTEXT_H
 
+#include "foundation/aafwk/standard/frameworks/kits/ability/native/include/iability_callback.h"
 #include "foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context.h"
 #include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 
@@ -227,6 +228,10 @@ public:
     virtual void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) = 0;
 
     virtual std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const = 0;
+
+    virtual void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) = 0;
+
+    virtual int GetCurrentWindowMode() = 0;
 
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;

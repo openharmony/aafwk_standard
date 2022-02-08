@@ -61,8 +61,15 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         return ERR_NULL_OBJECT;
     }
 
-    ErrCode err = ERR_OK;
+    // inherit split mode
+    auto windowMode = ability->GetCurrentWindowMode();
+    if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
+        windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
+        param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
+    }
+    APP_LOGI("window mode is %{public}d", windowMode);
 
+    ErrCode err = ERR_OK;
     if (param.forResultOption == true) {
         if (param.setting == nullptr) {
             APP_LOGI("%{public}s param.setting == nullptr call StartAbilityForResult.", __func__);
