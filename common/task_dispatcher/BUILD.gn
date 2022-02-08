@@ -13,15 +13,8 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-config("appkit_config") {
-  config("appkit_public_config") {
-    visibility = [ ":*" ]
-    include_dirs = []
-  }
-  include_dirs = []
-}
 
-ohos_shared_library("appkit_dispatcher_td") {
+config("task_dispatcher_public_config") {
   include_dirs = [
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
@@ -32,10 +25,10 @@ ohos_shared_library("appkit_dispatcher_td") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
   ]
+}
 
-  configs = [ ":appkit_config" ]
-
-  public_configs = [ ":appkit_public_config" ]
+ohos_shared_library("task_dispatcher") {
+  public_configs = [ ":task_dispatcher_public_config" ]
 
   sources = [
     "${aafwk_path}/common/task_dispatcher/src/dispatcher/base_task_dispatcher.cpp",
@@ -66,5 +59,6 @@ ohos_shared_library("appkit_dispatcher_td") {
   ]
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 
+  subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }
