@@ -64,6 +64,7 @@ const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
+const std::string PERMISSION_SET_ABILITY_CONTROLLER = "ohos.permission.SET_ABILITY_CONTROLLER";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-a", KEY_DUMP_ALL),
@@ -3846,9 +3847,23 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
     bool imAStabilityTest)
 {
     HILOG_DEBUG("%{public}s, imAStabilityTest: %{public}d", __func__, imAStabilityTest);
+    auto bms = GetBundleManager();
+    if (bms == nullptr) {
+        HILOG_ERROR("bms nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    std::string bundleName;
+    int uid = IPCSkeleton::GetCallingUid();
+    bms->GetBundleNameForUid(uid, bundleName);
+    HILOG_INFO("%{public}s, bundleName: %{public}s, uid = %{public}d", __func__, bundleName.c_str(), uid);
+    if (bms->CheckPermission(bundleName, PERMISSION_SET_ABILITY_CONTROLLER) == 0) {
+        HILOG_ERROR("PERMISSION_SET_ABILITY_CONTROLLER check failed");
+        return CHECK_PERMISSION_FAILED;
+    }
     std::lock_guard<std::recursive_mutex> guard(globalLock_);
     abilityController_ = abilityController;
     controllerIsAStabilityTest_ = imAStabilityTest;
+    HILOG_DEBUG("%{public}s, end", __func__);
     return ERR_OK;
 }
 
