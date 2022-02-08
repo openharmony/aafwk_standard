@@ -159,24 +159,24 @@ int ContextImpl::GetCurrentAccountId() const
 
 int ContextImpl::GetCurrentActiveAccountId() const
 {
-    std::vector<AccountSA::OsAccountInfo> osAccountInfos;
-    ErrCode ret = AccountSA::OsAccountManager::QueryAllCreatedOsAccounts(osAccountInfos);
+    std::vector<int> accountIds;
+    ErrCode ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(accountIds);
     if (ret != ERR_OK) {
         HILOG_ERROR("ContextImpl::GetCurrentActiveAccountId error.");
         return 0;
     }
 
-    if (osAccountInfos.size() == 0) {
+    if (accountIds.size() == 0) {
         HILOG_ERROR("ContextImpl::GetCurrentActiveAccountId error, no accounts.");
         return 0;
     }
 
-    if (osAccountInfos.size() > 1) {
+    if (accountIds.size() > 1) {
         HILOG_ERROR("ContextImpl::GetCurrentActiveAccountId error, no current now.");
         return 0;
     }
 
-    return osAccountInfos[0].GetLocalId();
+    return accountIds[0];
 }
 
 std::shared_ptr<Context> ContextImpl::CreateBundleContext(const std::string &bundleName)
