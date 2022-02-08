@@ -139,10 +139,7 @@ int AbilityConnectManager::TerminateAbilityLocked(const sptr<IRemoteObject> &tok
     if (!abilityRecord->GetConnectRecordList().empty()) {
         HILOG_INFO("Target service has been connected. Post disconnect task.");
         auto connectRecordList = abilityRecord->GetConnectRecordList();
-        auto task = [connectRecordList, connectManager = shared_from_this()]() {
-            connectManager->HandleDisconnectTask(connectRecordList);
-        };
-        eventHandler_->PostTask(task);
+        HandleTerminateDisconnectTask(connectRecordList);
     }
 
     auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
@@ -188,10 +185,7 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
     if (!abilityRecord->GetConnectRecordList().empty()) {
         HILOG_INFO("Target service has been connected. Post disconnect task.");
         auto connectRecordList = abilityRecord->GetConnectRecordList();
-        auto task = [connectRecordList, connectManager = shared_from_this()]() {
-            connectManager->HandleDisconnectTask(connectRecordList);
-        };
-        eventHandler_->PostTask(task);
+        HandleTerminateDisconnectTask(connectRecordList);
     }
 
     auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
@@ -671,6 +665,24 @@ void AbilityConnectManager::HandleDisconnectTask(const ConnectListType &connectl
         auto targetService = connectRecord->GetAbilityRecord();
         if (targetService && connectRecord->GetConnectState() == ConnectionState::DISCONNECTED &&
             targetService->GetConnectRecordList().size() > 1) {
+            HILOG_WARN("This record complete disconnect directly. recordId:%{public}d", connectRecord->GetRecordId());
+            connectRecord->CompleteDisconnect(ERR_OK, false);
+            targetService->RemoveConnectRecordFromList(connectRecord);
+            RemoveConnectionRecordFromMap(connectRecord);
+        };
+    }
+}
+
+void AbilityConnectManager::HandleTerminateDisconnectTask(const ConnectListType& connectlist)
+{
+    HILOG_DEBUG("Disconnect ability when terminate.");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    for (auto& connectRecord : connectlist) {
+        if (!connectRecord) {
+            continue;
+        }
+        auto targetService = connectRecord->GetAbilityRecord();
+        if (targetService) {
             HILOG_WARN("This record complete disconnect directly. recordId:%{public}d", connectRecord->GetRecordId());
             connectRecord->CompleteDisconnect(ERR_OK, false);
             targetService->RemoveConnectRecordFromList(connectRecord);
