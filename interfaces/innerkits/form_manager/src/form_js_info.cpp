@@ -14,6 +14,7 @@
  */
 
 #include "form_js_info.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -43,6 +44,8 @@ bool FormJsInfo::ReadFromParcel(Parcel &parcel)
         return false;
     }
     formProviderData = *bindingData;
+
+    ReadImageData(parcel);
     return true;
 }
 
@@ -123,7 +126,90 @@ bool FormJsInfo::Marshalling(Parcel &parcel) const
         return false;
     }
 
+    if (!WriteImageData(parcel)) {
+        return false;
+    }
     return true;
+}
+
+bool FormJsInfo::WriteImageData(Parcel &parcel) const
+{
+    HILOG_INFO("%{public}s called", __func__);
+    auto imageDateState = formProviderData.GetImageDataState();
+    if (!parcel.WriteInt32(imageDateState)) {
+        return false;
+    }
+    HILOG_INFO("%{public}s imageDateState is %{public}d", __func__, imageDateState);
+    switch (imageDateState) {
+        case FormProviderData::IMAGE_DATA_STATE_ADDED: {
+            auto sharedImageMap = formProviderData.GetImageDataMap();
+            auto size = sharedImageMap.size();
+            if (!parcel.WriteInt32(size)) {
+                return false;
+            }
+            if (size > IMAGE_DATA_THRESHOLD) {
+                HILOG_INFO("%{public}s unexpected image number %{public}zu", __func__, size);
+                break;
+            }
+            auto messageParcel = static_cast<MessageParcel*>(&parcel);
+            for (auto entry : sharedImageMap) {
+                if (!messageParcel->WriteAshmem(entry.second.first)) {
+                    return false;
+                }
+                if (parcel.WriteString16(Str8ToStr16(entry.first))) {
+                    return false;
+                }
+            }
+            break;
+        }
+        case FormProviderData::IMAGE_DATA_STATE_NO_OPERATION:
+            break;
+        case FormProviderData::IMAGE_DATA_STATE_REMOVED:
+            break;
+        default: {
+            HILOG_INFO("%{public}s unexpected imageDateState %{public}d", __func__, imageDateState);
+            break;
+        }
+    }
+    HILOG_INFO("%{public}s end", __func__);
+    return true;
+}
+
+void FormJsInfo::ReadImageData(Parcel &parcel)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    auto imageDateState = parcel.ReadInt32();
+    HILOG_INFO("%{public}s imageDateState is %{public}d", __func__, imageDateState);
+    switch (imageDateState) {
+        case FormProviderData::IMAGE_DATA_STATE_ADDED: {
+            auto size = parcel.ReadInt32();
+            HILOG_INFO("%{public}s image numer is %{public}d",  __func__, size);
+            if (size > IMAGE_DATA_THRESHOLD) {
+                HILOG_WARN("%{public}s unexpected image number %{public}d", __func__, size);
+                break;
+            }
+            auto messageParcel = static_cast<MessageParcel*>(&parcel);
+            for (auto i = 0; i < size; i++) {
+                auto fd = messageParcel->ReadFileDescriptor();
+                auto len = parcel.ReadInt32();
+                auto picName = Str16ToStr8(parcel.ReadString16());
+                HILOG_INFO("picName: %{public}s, fd: %{public}d, size: %{public}d", picName.c_str(), fd, len);
+                std::pair<int, int32_t> imageDataPair = std::make_pair(fd, len);
+                imageDataMap.emplace(picName, imageDataPair);
+            }
+            break;
+        }
+        case FormProviderData::IMAGE_DATA_STATE_NO_OPERATION:
+            break;
+        case FormProviderData::IMAGE_DATA_STATE_REMOVED:
+            break;
+        default: {
+            HILOG_WARN("%{public}s unexpected imageDateState %{public}d", __func__, imageDateState);
+            break;
+        }
+    }
+    HILOG_INFO("%{public}s end", __func__);
+    return;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -17,6 +17,9 @@ class FormBindingData {
     createFormBindingData(obj) {
         this.data = obj;
     }
+    addFormBindingImage(image, obj) {
+        obj.image = image;
+    }
 }
 
 export default FormBindingData

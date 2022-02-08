@@ -76,7 +76,14 @@ public:
      * @param picName Indicates the name of the image to add.
      * @param data Indicates the binary data of the image content.
      */
-    void AddImageData(std::string  picName, char *data);
+    void AddImageData(std::string picName, char *data, int32_t size);
+
+    /**
+     * @brief Adds an image to this {@code FormProviderData} instance.
+     * @param picName Indicates the name of the image to add.
+     * @param fd Indicates the file descriptor of the image content.
+     */
+    void AddImageData(std::string picName, int fd);
 
     /**
      * @brief Removes data of an image with the specified {@code picName} from this {@code FormProviderData} instance.
@@ -88,7 +95,7 @@ public:
      * @brief Obtains the add/remove state stored in this {@code FormProviderData} object.
      * @return Returns the add/remove state of shared image data.
      */
-    int32_t GetImageDataState();
+    int32_t GetImageDataState() const;
 
     /**
      * @brief Updates imageDataState in this {@code FormProviderData} object.
@@ -100,7 +107,7 @@ public:
      * @brief Obtains the imageDataMap stored in this {@code FormProviderData} object.
      * @return Returns the map that contains shared image data.
      */
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> GetImageDataMap();
+    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> GetImageDataMap() const;
 
     /**
      * @brief Updates imageDataMap in this {@code FormProviderData} object.
@@ -149,13 +156,18 @@ public:
      */
     void ClearData();
 
+public:
+    static constexpr int IMAGE_DATA_STATE_REMOVED = -1;
+    static constexpr int IMAGE_DATA_STATE_NO_OPERATION = 0;
+    static constexpr int IMAGE_DATA_STATE_ADDED = 1;
+
 private:
-    bool WriteImageDataToParcel(Parcel &parcel, std::string picName, char *data) const;
+    bool WriteImageDataToParcel(Parcel &parcel, std::string picName, char *data, int32_t size) const;
 
 private:
     nlohmann::json jsonFormProviderData_;
     std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap_;
-    std::map<std::string, char *> rawImageBytesMap_;
+    std::map<std::string, std::pair<char *, int32_t>> rawImageBytesMap_;
     int32_t imageDataState_ = 0;
 };
 }  // namespace AppExecFwk
