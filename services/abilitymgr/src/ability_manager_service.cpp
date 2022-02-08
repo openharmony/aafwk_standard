@@ -3928,7 +3928,6 @@ int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::Extensio
     abilityInfo.writePermission = extensionInfo.writePermission;
     abilityInfo.extensionAbilityType = extensionInfo.type;
     abilityInfo.visible = extensionInfo.visible;
-    abilityInfo.applicationInfo = extensionInfo.applicationInfo;
     abilityInfo.resourcePath = extensionInfo.resourcePath;
     abilityInfo.enabled = extensionInfo.enabled;
     abilityInfo.isModuleJson = true;
@@ -3945,7 +3944,8 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
     std::string abilityName = elementName.GetAbilityName();
     AppExecFwk::BundleMgrClient bundleClient;
     AppExecFwk::BundleInfo bundleInfo;
-    if (!bundleClient.GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo)) {
+    if (!bundleClient.GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo,
+        GetUserId())) {
         HILOG_ERROR("Failed to get bundle info when generate ability request.");
         return RESOLVE_APP_ERR;
     }
@@ -3958,6 +3958,7 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
         found = true;
         HILOG_DEBUG("GetExtensionAbilityInfo, extension ability info found, name=%{public}s", abilityName.c_str());
         abilityInfo.applicationName = bundleInfo.applicationInfo.name;
+        abilityInfo.applicationInfo = bundleInfo.applicationInfo;
         InitAbilityInfoFromExtension(extensionInfo, abilityInfo);
         break;
     }
