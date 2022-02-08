@@ -67,6 +67,7 @@ NativeValue* JsAbilityContext::StartAbilityByCall(NativeEngine* engine, NativeCa
 
 NativeValue* JsAbilityContext::StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info)
 {
+    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnStartAbilityForResult(*engine, *info) : nullptr;
 }
