@@ -148,7 +148,7 @@ ohos_shared_library("appkit_native") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/common/task_dispatcher:appkit_dispatcher_td",
+    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
@@ -218,7 +218,7 @@ ohos_shared_library("app_context") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
 
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/common/task_dispatcher:appkit_dispatcher_td",
+    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
