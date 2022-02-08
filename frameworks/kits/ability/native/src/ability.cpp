@@ -3240,6 +3240,12 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
     APP_LOGI("Ability::GetWindowOption window mode is %{public}d.", windowMode);
     option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
 
+    if (want.GetElement().GetBundleName() == LAUNCHER_BUNDLE_NAME &&
+        want.GetElement().GetAbilityName() == LAUNCHER_ABILITY_NAME) {
+        APP_LOGI("Set window type for launcher");
+        option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_WALLPAPER);
+    }
+
     APP_LOGI("%{public}s end", __func__);
     return option;
 }
