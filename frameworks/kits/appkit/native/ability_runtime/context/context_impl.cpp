@@ -376,5 +376,19 @@ void ContextImpl::InitAppContext()
     std::lock_guard<std::mutex> lock(Context::contextMutex_);
     Context::appContext_ = shared_from_this();
 }
+
+void ContextImpl::SetToken(const sptr<IRemoteObject> &token)
+{
+    if (token == nullptr) {
+        HILOG_DEBUG("ContextImpl::SetToken failed, application is nullptr");
+        return;
+    }
+    token_ = token;
+}
+
+sptr<IRemoteObject> ContextImpl::GetToken()
+{
+    return token_;
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

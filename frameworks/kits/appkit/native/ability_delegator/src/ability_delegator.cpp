@@ -550,7 +550,7 @@ sptr<IRemoteObject> AbilityDelegator::GetAbilityToken(const std::shared_ptr<Abil
         return {};
     }
 
-    return abilityContext->GetAbilityToken();
+    return abilityContext->GetToken();
 }
 
 std::optional<AbilityDelegator::ability_property> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)

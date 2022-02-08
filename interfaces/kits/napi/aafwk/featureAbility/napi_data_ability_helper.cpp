@@ -27,6 +27,7 @@
 #include "data_ability_result.h"
 #include "hilog_wrapper.h"
 #include "message_parcel.h"
+#include "napi_base_context.h"
 #include "napi_data_ability_operation.h"
 #include "napi_data_ability_predicates.h"
 #include "napi_rdb_predicates.h"
@@ -68,6 +69,8 @@ napi_value DataAbilityHelperInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("release", NAPI_Release),
         DECLARE_NAPI_FUNCTION("executeBatch", NAPI_ExecuteBatch),
     };
+
+    napi_value constructor;
     NAPI_CALL(env,
         napi_define_class(env,
             "dataAbilityHelper",
@@ -76,7 +79,8 @@ napi_value DataAbilityHelperInit(napi_env env, napi_value exports)
             nullptr,
             sizeof(properties) / sizeof(*properties),
             properties,
-            GetGlobalDataAbilityHelper()));
+            &constructor));
+    NAPI_CALL(env, SaveGlobalDataAbilityHelper(env, constructor));
     g_dataAbilityHelperList.clear();
     return exports;
 }
@@ -84,27 +88,49 @@ napi_value DataAbilityHelperInit(napi_env env, napi_value exports)
 napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
-    size_t argc = 1;
-    napi_value argv[1] = {nullptr};
+    size_t argc = ARGS_TWO;
+    napi_value argv[ARGS_TWO] = {nullptr};
     napi_value thisVar = nullptr;
     auto& dataAbilityHelperStatus = GetDataAbilityHelperStatus();
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
     NAPI_ASSERT(env, argc > 0, "Wrong number of arguments");
-    std::string strUri = NapiValueToStringUtf8(env, argv[0]);
 
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
+    std::shared_ptr<DataAbilityHelper> dataAbilityHelper = nullptr;
+    bool stageMode = false;
+    napi_status status = OHOS::AbilityRuntime::IsStageContext(env, argv[0], stageMode);
+    if (status != napi_ok) {
+        HILOG_INFO("argv[0] is not a context");
+        auto ability = OHOS::AbilityRuntime::GetCurrentAbility(env);
+        if (ability == nullptr) {
+            HILOG_ERROR("Failed to get native context instance");
+            return nullptr;
+        }
+        std::string strUri = NapiValueToStringUtf8(env, argv[0]);
+        HILOG_INFO("FA Model: ability = %{public}p strUri = %{public}s", ability, strUri.c_str());
+        dataAbilityHelper = DataAbilityHelper::Creator(ability->GetContext(), std::make_shared<Uri>(strUri));
+    } else {
+        HILOG_INFO("argv[0] is a context");
+        if (stageMode) {
+            auto context = OHOS::AbilityRuntime::GetStageModeContext(env, argv[0]);
+            if (context == nullptr) {
+                HILOG_ERROR("Failed to get native context instance");
+                return nullptr;
+            }
+            std::string strUri = NapiValueToStringUtf8(env, argv[PARAM1]);
+            HILOG_INFO("Stage Model: context = %{public}p strUri = %{public}s", context.get(), strUri.c_str());
+            dataAbilityHelper = DataAbilityHelper::Creator(context, std::make_shared<Uri>(strUri));
+        } else {
+            auto ability = OHOS::AbilityRuntime::GetCurrentAbility(env);
+            if (ability == nullptr) {
+                HILOG_ERROR("Failed to get native context instance");
+                return nullptr;
+            }
+            std::string strUri = NapiValueToStringUtf8(env, argv[PARAM1]);
+            HILOG_INFO("FA Model: ability = %{public}p strUri = %{public}s", ability, strUri.c_str());
+            dataAbilityHelper = DataAbilityHelper::Creator(ability->GetContext(), std::make_shared<Uri>(strUri));
+        }
+    }
 
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-
-    HILOG_INFO("ability = %{public}p strUri = %{public}s", ability, strUri.c_str());
-    HILOG_INFO("dataAbilityHelperList.size = %{public}zu", g_dataAbilityHelperList.size());
-    std::shared_ptr<DataAbilityHelper> dataAbilityHelper =
-        DataAbilityHelper::Creator(ability->GetContext(), std::make_shared<Uri>(strUri));
     if (dataAbilityHelper == nullptr) {
         HILOG_INFO("%{public}s, dataAbilityHelper is nullptr", __func__);
         dataAbilityHelperStatus = false;

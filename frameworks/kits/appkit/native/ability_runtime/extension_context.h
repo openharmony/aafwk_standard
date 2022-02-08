@@ -18,7 +18,6 @@
 
 #include "ability_info.h"
 #include "context_impl.h"
-#include "iremote_object.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -30,20 +29,6 @@ class ExtensionContext : public ContextImpl {
 public:
     ExtensionContext() = default;
     virtual ~ExtensionContext() = default;
-
-    /**
-     * @brief Set the token witch the app launched.
-     *
-     * @param token The token which the is launched by app.
-     */
-    void SetToken(const sptr<IRemoteObject> &token);
-
-    /**
-     * @brief Get the token witch the app launched.
-     *
-     * @return token The token which the is launched by app.
-     */
-    sptr<IRemoteObject> GetToken() const;
 
     /**
      * @brief Obtains information about the current ability.
@@ -68,7 +53,6 @@ protected:
         return contextTypeId == CONTEXT_TYPE_ID || Context::IsContext(contextTypeId);
     }
 
-    sptr<IRemoteObject> token_;
 private:
     std::shared_ptr<OHOS::AppExecFwk::AbilityInfo> abilityInfo_;
 };

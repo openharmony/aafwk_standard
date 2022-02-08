@@ -27,8 +27,9 @@
 namespace OHOS {
 namespace AppExecFwk {
 
-napi_value thread_local g_dataAbilityHelper;
+napi_ref thread_local g_dataAbilityHelper;
 bool thread_local g_dataAbilityHelperStatus = false;
+
 using NAPICreateJsRemoteObject = napi_value (*)(napi_env env, const sptr<IRemoteObject> target);
 
 napi_value *GetGlobalClassContext(void)
@@ -36,9 +37,16 @@ napi_value *GetGlobalClassContext(void)
     return AbilityRuntime::GetFAModeContextClassObject();
 }
 
-napi_value *GetGlobalDataAbilityHelper(void)
+napi_status SaveGlobalDataAbilityHelper(napi_env env, napi_value constructor)
 {
-    return &g_dataAbilityHelper;
+    return napi_create_reference(env, constructor, 1, &g_dataAbilityHelper);
+}
+
+napi_value GetGlobalDataAbilityHelper(napi_env env)
+{
+    napi_value constructor;
+    NAPI_CALL(env, napi_get_reference_value(env, g_dataAbilityHelper, &constructor));
+    return constructor;
 }
 
 bool& GetDataAbilityHelperStatus()
@@ -3383,23 +3391,8 @@ napi_value NAPI_AcquireDataAbilityHelperCommon(napi_env env, napi_callback_info 
         return WrapVoidToJS(env);
     }
 
-    napi_value global = nullptr;
-    napi_get_global(env, &global);
-    napi_value abilityObj = nullptr;
-    napi_get_named_property(env, global, "ability", &abilityObj);
-    Ability *ability = nullptr;
-    napi_get_value_external(env, abilityObj, (void **)&ability);
-    if (ability == nullptr) {
-        HILOG_ERROR("%{public}s, ability == nullptr", __func__);
-        if (dataAbilityHelperCB != nullptr) {
-            delete dataAbilityHelperCB;
-            dataAbilityHelperCB = nullptr;
-        }
-        return WrapVoidToJS(env);
-    }
-
     dataAbilityHelperCB->cbBase.cbInfo.env = env;
-    dataAbilityHelperCB->cbBase.ability = ability;
+    dataAbilityHelperCB->cbBase.ability = nullptr; // temporary value assignment
     dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
     dataAbilityHelperCB->cbBase.abilityType = abilityType;
     napi_value ret = AcquireDataAbilityHelperWrap(env, info, dataAbilityHelperCB);
@@ -3431,30 +3424,49 @@ napi_value AcquireDataAbilityHelperWrap(napi_env env, napi_callback_info info, D
         return nullptr;
     }
 
-    size_t requireArgc = ARGS_ONE;
-    size_t argc = ARGS_ONE;
-    napi_value args[ARGS_ONE] = {nullptr};
+    size_t requireArgc = ARGS_TWO;
+    size_t argc = ARGS_TWO;
+    napi_value args[ARGS_TWO] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
         HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
         return nullptr;
     }
 
+    size_t uriIndex = PARAM0;
+    bool stageMode = false;
+    napi_status status = OHOS::AbilityRuntime::IsStageContext(env, args[0], stageMode);
+    if (status != napi_ok) {
+        HILOG_INFO("argv[0] is not a context, FA Model");
+    } else {
+        uriIndex = PARAM1;
+        HILOG_INFO("argv[0] is a context, Stage Model: %{public}d", stageMode);
+    }
+
+    if (!stageMode) {
+        auto ability = OHOS::AbilityRuntime::GetCurrentAbility(env);
+        if (ability == nullptr) {
+            HILOG_ERROR("Failed to get native context instance");
+            return nullptr;
+        }
+        dataAbilityHelperCB->cbBase.ability = ability;
+
+        if (!CheckAbilityType(&dataAbilityHelperCB->cbBase)) {
+            dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
+            HILOG_ERROR("%{public}s ability type invalid.", __func__);
+            return nullptr;
+        }
+    }
+
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, args[uriIndex], &valuetype));
     if (valuetype != napi_string) {
         HILOG_ERROR("%{public}s, Wrong argument type.", __func__);
         return nullptr;
     }
 
-    if (!CheckAbilityType(&dataAbilityHelperCB->cbBase)) {
-        dataAbilityHelperCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
-        HILOG_ERROR("%{public}s ability type invalid.", __func__);
-        return nullptr;
-    }
-
     napi_value result = nullptr;
-    NAPI_CALL(env, napi_new_instance(env, *(GetGlobalDataAbilityHelper()), 1, &args[PARAM0], &result));
+    NAPI_CALL(env, napi_new_instance(env, GetGlobalDataAbilityHelper(env), uriIndex + 1, &args[PARAM0], &result));
 
     if (!IsTypeForNapiValue(env, result, napi_object)) {
         HILOG_ERROR("%{public}s, IsTypeForNapiValue isn`t object", __func__);

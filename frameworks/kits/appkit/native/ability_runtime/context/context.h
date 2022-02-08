@@ -22,7 +22,10 @@
 #include "application_info.h"
 #include "bindable.h"
 #include "hap_module_info.h"
+#include "foundation/communication/ipc/interfaces/innerkits/ipc_core/include/iremote_object.h"
 #include "resource_manager.h"
+
+using IRemoteObject = OHOS::IRemoteObject;
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -136,6 +139,20 @@ public:
      * @return Returns the distributed file.
      */
     virtual std::string GetDistributedFilesDir() = 0;
+
+     /**
+     * @brief Obtains token.
+     *
+     * @return Returns the token.
+     */
+    virtual sptr<IRemoteObject> GetToken() = 0;
+
+    /**
+     * @brief Attachs ability's token.
+     *
+     * @param token The token represents ability.
+     */
+    virtual void SetToken(const sptr<IRemoteObject> &token) = 0;
 
     /**
      * @brief Switch file area
