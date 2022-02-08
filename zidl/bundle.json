@@ -1,6 +1,6 @@
 {
     "name": "@ohos/zidl",
-    "description": "提供自动生成Extension Js服务端及客户端接口文件的能力",
+    "description": "提供自动生成Extension 服务端及客户端接口文件的能力",
     "version": "3.1",
     "license": "Apache License 2.0",
     "publishAs": "code-segment",
@@ -29,10 +29,7 @@
             "third_party": []
         },
         "build": {
-            "sub_component": [
-                "//foundation/aafwk/standard/zidl/test/native:zidl_client_test",
-                "//foundation/aafwk/standard/zidl/test/native:zidl_server_test"
-            ],
+            "sub_component": [],
             "inner_kits": [],
             "test": []
         }
