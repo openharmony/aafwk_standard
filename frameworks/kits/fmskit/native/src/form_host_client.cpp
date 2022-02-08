@@ -157,6 +157,7 @@ bool FormHostClient::ContainsForm(int64_t formId)
 void FormHostClient::OnAcquired(const FormJsInfo &formJsInfo)
 {
     APP_LOGI("%{public}s called.", __func__);
+    APP_LOGI("Imamge number is %{public}zu.", formJsInfo.imageDataMap.size());
     int64_t formId = formJsInfo.formId;
     if (formId < 0) {
         APP_LOGE("%{public}s error, the passed form id can't be negative.", __func__);

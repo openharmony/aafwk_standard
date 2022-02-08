@@ -25,6 +25,7 @@ config("formmgr_sdk_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/appexecfwk/standard/common/log/include",
+    "//foundation/aafwk/standard/services/common/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
