@@ -275,6 +275,7 @@ void Ability::Destroy()
     APP_LOGI("%{public}s begin.", __func__);
     // Release the scene.
     if (scene_ != nullptr) {
+        scene_->GoDestroy();
         scene_ = nullptr;
         onSceneDestroyed();
     }
