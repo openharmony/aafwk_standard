@@ -144,8 +144,8 @@ NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallba
     }
     AAFwk::Want want;
     OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine), reinterpret_cast<napi_value>(info.argv[0]), want);
+    InheritWindowMode(want);
     decltype(info.argc) unwrapArgc = 1;
-    
     HILOG_INFO("abilityName=%{public}s", want.GetElement().GetAbilityName().c_str());
     AAFwk::StartOptions startOptions;
     if (info.argc > ARGC_ONE && info.argv[1]->TypeOf() == NATIVE_OBJECT) {
@@ -154,7 +154,6 @@ NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallba
             reinterpret_cast<napi_value>(info.argv[1]), startOptions);
         unwrapArgc++;
     }
-
     AsyncTask::CompleteCallback complete =
         [weak = context_, want, startOptions, unwrapArgc](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
@@ -163,7 +162,6 @@ NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallba
                 task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
                 return;
             }
-
             auto errcode = (unwrapArgc == 1) ?
                 context->StartAbility(want, -1) : context->StartAbility(want, startOptions, -1);
             if (errcode == 0) {
@@ -189,6 +187,7 @@ NativeValue* JsAbilityContext::OnStartAbilityWithAccount(NativeEngine& engine, N
     }
     AAFwk::Want want;
     OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine), reinterpret_cast<napi_value>(info.argv[0]), want);
+    InheritWindowMode(want);
     decltype(info.argc) unwrapArgc = 1;
     HILOG_INFO("abilityName=%{public}s", want.GetElement().GetAbilityName().c_str());
     int32_t accountId = 0;
@@ -205,7 +204,6 @@ NativeValue* JsAbilityContext::OnStartAbilityWithAccount(NativeEngine& engine, N
             reinterpret_cast<napi_value>(info.argv[ARGC_TWO]), startOptions);
         unwrapArgc++;
     }
-
     AsyncTask::CompleteCallback complete =
         [weak = context_, want, accountId, startOptions, unwrapArgc](
             NativeEngine& engine, AsyncTask& task, int32_t status) {
@@ -246,6 +244,7 @@ NativeValue* JsAbilityContext::OnStartAbilityByCall(NativeEngine& engine, Native
     AAFwk::Want want;
     OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]), want);
+    InheritWindowMode(want);
 
     StartAbilityByCallParameters *calls = new (std::nothrow) StartAbilityByCallParameters();
     if (calls == nullptr) {
@@ -361,6 +360,7 @@ NativeValue* JsAbilityContext::OnStartAbilityForResult(NativeEngine& engine, Nat
         HILOG_ERROR("%s Failed to parse want!", __func__);
         return engine.CreateUndefined();
     }
+    InheritWindowMode(want);
     decltype(info.argc) unwrapArgc = 1;
     AAFwk::StartOptions startOptions;
     if (info.argc > ARGC_ONE && info.argv[1]->TypeOf() == NATIVE_OBJECT) {
@@ -411,6 +411,7 @@ NativeValue* JsAbilityContext::OnStartAbilityForResultWithAccount(NativeEngine& 
         HILOG_ERROR("%s Failed to parse want!", __func__);
         return engine.CreateUndefined();
     }
+    InheritWindowMode(want);
     decltype(info.argc) unwrapArgc = 1;
     int32_t accountId = 0;
     if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
@@ -868,6 +869,23 @@ NativeValue* JsAbilityContext::WrapPermissionRequestResult(NativeEngine& engine,
     permissionRequestResult->SetProperty("permissions", CreateNativeArray(engine, permissions));
     permissionRequestResult->SetProperty("authResults", CreateNativeArray(engine, grantResults));
     return jsPermissionRequestResult;
+}
+
+void JsAbilityContext::InheritWindowMode(AAFwk::Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    // only split mode need inherit
+    auto context = context_.lock();
+    if (!context) {
+        HILOG_ERROR("context is nullptr.");
+        return;
+    }
+    auto windowMode = context->GetCurrentWindowMode();
+    if (windowMode == AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
+        windowMode == AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
+        want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
+    }
+    HILOG_INFO("%{public}s called end. window mode is %{public}d", __func__, windowMode);
 }
 
 void JsAbilityContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
