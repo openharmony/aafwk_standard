@@ -172,16 +172,6 @@
         "//foundation/aafwk/standard/tools/test:unittest"
       ]
     },
-    "zidl": {
-      "module_list": [
-        "//foundation/aafwk/standard/zidl/test/native:zidl_client_test",
-        "//foundation/aafwk/standard/zidl/test/native:zidl_server_test"
-      ],
-      "inner_kits": [
-      ],
-      "test_list": [
-      ]
-    },
     "form_runtime": {
       "module_list": [
         "//foundation/aafwk/standard/sa_profile:form_sa_profile",
