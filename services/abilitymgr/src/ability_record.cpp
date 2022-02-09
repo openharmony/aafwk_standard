@@ -180,8 +180,11 @@ int AbilityRecord::LoadAbility()
         }
     }
     sptr<Token> callerToken_ = nullptr;
-    if (!callerList_.empty()) {
-        callerToken_ = callerList_.back()->GetCaller()->GetToken();
+    if (!callerList_.empty() && callerList_.back()) {
+        auto caller = callerList_.back()->GetCaller();
+        if (caller) {
+            callerToken_ = caller->GetToken();
+        }
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token_, callerToken_, abilityInfo_, applicationInfo_);
