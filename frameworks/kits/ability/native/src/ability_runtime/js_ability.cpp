@@ -452,7 +452,7 @@ void JsAbility::DoOnForeground(const Want &want)
             scene_->GetMainWindow()->SetUIContent(
                 pageStack, &engine, static_cast<NativeValue *>(abilityContext_->GetContentStorage()), true);
             OnSceneRestored();
-            NotityContinuationResult(want, true);
+            WaitingDistributedObjectSyncComplete(want);
         } else {
             OnSceneCreated();
         }

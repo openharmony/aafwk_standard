@@ -21,6 +21,7 @@
 #include "app_log_wrapper.h"
 #include "continuation_handler.h"
 #include "distributed_client.h"
+#include "distributed_objectstore.h"
 #include "operation_builder.h"
 #include "string_ex.h"
 #include "string_wrapper.h"
@@ -162,6 +163,9 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
         APP_LOGE("OnContinue failed.");
         return CONTINUE_ON_CONTINUE_FAILED;
     }
+    auto abilityInfo = abilityInfo_.lock();
+    std::string &bundleName = abilityInfo->bundleName;
+    ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerSync();
 
     status = GetContentInfo(wantParams);
     if (!status) {
