@@ -112,7 +112,6 @@ void AbilityImpl::Stop()
         return;
     }
 
-    APP_LOGI("AbilityImpl::Stop");
     ability_->OnStop();
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (ability_->GetAbilityInfo()->isStageBasedModel)) {
@@ -121,7 +120,8 @@ void AbilityImpl::Stop()
         lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     }
     abilityLifecycleCallbacks_->OnAbilityStop(ability_);
-
+    ability_->Destroy(); // Release window and ability.
+    ability_ = nullptr;
     APP_LOGI("%{public}s end.", __func__);
 }
 
