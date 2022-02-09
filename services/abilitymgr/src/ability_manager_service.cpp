@@ -59,6 +59,7 @@ const int32_t U0_USER_ID = 0;
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
+constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t EXTENSION_SUPPORT_API_VERSION = 8;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
@@ -4075,6 +4076,37 @@ int AbilityManagerService::DelegatorDoAbilityBackground(const sptr<IRemoteObject
 {
     HILOG_DEBUG("enter");
     return MinimizeAbility(token);
+}
+
+int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    HILOG_DEBUG("DoAbilityForeground, sceneFlag:%{public}d", flag);
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    auto missionId = GetMissionIdByAbilityToken(token);
+    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
+
+    abilityRecord->lifeCycleStateInfo_.sceneFlag = flag;
+    int ret = currentMissionListManager_->MoveMissionToFront(missionId, false);
+    abilityRecord->lifeCycleStateInfo_.sceneFlag = SCENE_FLAG_NORMAL;
+    return ret;
+}
+
+int AbilityManagerService::DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    HILOG_DEBUG("DoAbilityBackground, sceneFlag:%{public}d", flag);
+    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+
+    abilityRecord->lifeCycleStateInfo_.sceneFlag = flag;
+    int ret = MinimizeAbility(token);
+    abilityRecord->lifeCycleStateInfo_.sceneFlag = SCENE_FLAG_NORMAL;
+    return ret;
 }
 
 int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)

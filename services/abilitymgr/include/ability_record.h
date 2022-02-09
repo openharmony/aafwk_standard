@@ -781,6 +781,7 @@ public:
 
     void SetSpecifiedFlag(const std::string &flag);
     std::string GetSpecifiedFlag() const;
+    LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
 
 protected:
     void SendEvent(uint32_t msg, uint32_t timeOut);
@@ -789,7 +790,6 @@ protected:
     std::unique_ptr<LifecycleDeal> lifecycleDeal_ = {};    // life manager used to schedule life
     AbilityState currentState_ = AbilityState::INITIAL;    // current life state
     Want want_ = {};                                       // want to start this ability
-    LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
     static int64_t g_abilityRecordEventId_;
     int64_t eventId_ = 0;                                  // post event id
 

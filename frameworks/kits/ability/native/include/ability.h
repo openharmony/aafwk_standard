@@ -1403,6 +1403,8 @@ public:
      * @brief Called back at ability context.
      */
     virtual int GetCurrentWindowMode() override;
+
+    uint32_t sceneFlag_ = 0;
 protected:
     /**
      * @brief Acquire a form provider remote object.

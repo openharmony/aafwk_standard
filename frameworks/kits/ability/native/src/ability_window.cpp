@@ -143,7 +143,7 @@ void AbilityWindow::OnPostAbilityInactive()
  * @brief Called when this ability is background.
  *
  */
-void AbilityWindow::OnPostAbilityBackground()
+void AbilityWindow::OnPostAbilityBackground(uint32_t sceneFlag)
 {
     APP_LOGI("AbilityWindow::OnPostAbilityBackground called.");
     if (!isWindowAttached) {
@@ -152,8 +152,8 @@ void AbilityWindow::OnPostAbilityBackground()
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
-        windowScene_->GoBackground();
+        APP_LOGI("%{public}s begin windowScene_->GoBackground, sceneFlag:%{public}d.", __func__, sceneFlag);
+        windowScene_->GoBackground(sceneFlag);
         APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
@@ -164,7 +164,7 @@ void AbilityWindow::OnPostAbilityBackground()
  * @brief Called when this ability is foreground.
  *
  */
-void AbilityWindow::OnPostAbilityForeground()
+void AbilityWindow::OnPostAbilityForeground(uint32_t sceneFlag)
 {
     APP_LOGI("AbilityWindow::OnPostAbilityForeground called.");
     if (!isWindowAttached) {
@@ -173,8 +173,8 @@ void AbilityWindow::OnPostAbilityForeground()
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoForeground.", __func__);
-        windowScene_->GoForeground();
+        APP_LOGI("%{public}s begin windowScene_->GoForeground, sceneFlag:%{public}d.", __func__, sceneFlag);
+        windowScene_->GoForeground(sceneFlag);
         APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
     }
 
