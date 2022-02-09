@@ -440,17 +440,20 @@ void JsAbility::DoOnForeground(const Want &want)
             HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
             return;
         }
+
         // multi-instance ability continuation
-        HILOG_INFO("lauch reason = %{public}d, contentStorage = %{public}p",
-            launchParam_.launchReason,
-            abilityContext_->GetContentStorage());
+        HILOG_INFO("lauch reason = %{public}d", launchParam_.launchReason);
         if (IsRestoredInContinuation()) {
             std::string pageStack;
             GetPageStackFromWant(want, pageStack);
             HandleScope handleScope(jsRuntime_);
             auto &engine = jsRuntime_.GetNativeEngine();
-            scene_->GetMainWindow()->SetUIContent(
-                pageStack, &engine, static_cast<NativeValue *>(abilityContext_->GetContentStorage()), true);
+            if (abilityContext_->GetContentStorage()) {
+                scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
+                    abilityContext_->GetContentStorage()->Get(), true);
+            } else {
+                HILOG_ERROR("restore: content storage is nullptr");
+            }
             OnSceneRestored();
             NotityContinuationResult(want, true);
         } else {
