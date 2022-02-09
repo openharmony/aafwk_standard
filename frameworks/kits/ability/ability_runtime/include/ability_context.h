@@ -22,6 +22,7 @@
 
 #include "ability_connect_callback.h"
 #include "ability_info.h"
+#include "native_engine/native_reference.h"
 #include "native_engine/native_value.h"
 #include "start_options.h"
 #include "want.h"
@@ -114,7 +115,7 @@ public:
 
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
 
-    virtual ErrCode RestoreWindowStage(void* contentStorage) = 0;
+    virtual ErrCode RestoreWindowStage(NativeEngine& engine, NativeValue* contentStorage) = 0;
 
     virtual void OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData) = 0;
 
@@ -196,7 +197,7 @@ public:
      *
      * @return Returns the ContentStorage.
      */
-    virtual void* GetContentStorage() = 0;
+    virtual std::unique_ptr<NativeReference>& GetContentStorage() = 0;
 
     /**
      * call function by callback object

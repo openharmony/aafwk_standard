@@ -76,7 +76,7 @@ public:
     void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults) override;
 
-    ErrCode RestoreWindowStage(void* contentStorage) override;
+    ErrCode RestoreWindowStage(NativeEngine& engine, NativeValue* contentStorage) override;
 
     /**
      * @brief Set mission label of this ability.
@@ -110,7 +110,7 @@ public:
      *
      * @return Returns the ContentStorage.
      */
-    void* GetContentStorage() override
+    std::unique_ptr<NativeReference>& GetContentStorage() override
     {
         return contentStorage_;
     }
@@ -154,7 +154,7 @@ private:
     std::shared_ptr<AbilityRuntime::Context> stageContext_ = nullptr;
     std::map<int, RuntimeTask> resultCallbacks_;
     std::map<int, PermissionRequestTask> permissionRequestCallbacks_;
-    void* contentStorage_ = nullptr;
+    std::unique_ptr<NativeReference> contentStorage_ = nullptr;
     std::shared_ptr<AppExecFwk::Configuration> config_;
     sptr<LocalCallContainer> localCallContainer_;
     std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback_;
