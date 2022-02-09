@@ -457,8 +457,8 @@ void JsAbility::DoOnForeground(const Want &want)
             OnSceneCreated();
         }
     }
-    HILOG_INFO("%{public}s begin scene_->GoForeground.", __func__);
-    scene_->GoForeground();
+    HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
+    scene_->GoForeground(Ability::sceneFlag_);
     HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);
 }
 }  // namespace AbilityRuntime

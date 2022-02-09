@@ -74,14 +74,16 @@ public:
     /**
      * @brief Called when this ability is background.
      *
+     * @param sceneFlag flag for screen, lock or unlock, power on or off.
      */
-    void OnPostAbilityBackground();
+    void OnPostAbilityBackground(uint32_t sceneFlag);
 
     /**
      * @brief Called when this ability is foreground.
      *
+     * @param sceneFlag flag for screen, lock or unlock, power on or off.
      */
-    void OnPostAbilityForeground();
+    void OnPostAbilityForeground(uint32_t sceneFlag);
 
     /**
      * @brief Called when this ability is stopped.
