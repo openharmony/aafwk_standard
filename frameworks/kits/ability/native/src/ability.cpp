@@ -448,13 +448,15 @@ void Ability::OnBackground()
                 APP_LOGE("Ability::OnBackground error. scene_ == nullptr.");
                 return;
             }
-            scene_->GoBackground();
+            APP_LOGI("GoBackground sceneFlag:%{public}d.", sceneFlag_);
+            scene_->GoBackground(sceneFlag_);
         } else {
             if (abilityWindow_ == nullptr) {
                 APP_LOGE("Ability::OnBackground error. abilityWindow_ == nullptr.");
                 return;
             }
-            abilityWindow_->OnPostAbilityBackground();
+            APP_LOGI("OnPostAbilityBackground sceneFlag:%{public}d.", sceneFlag_);
+            abilityWindow_->OnPostAbilityBackground(sceneFlag_);
         }
         APP_LOGI("%{public}s end OnPostAbilityBackground.", __func__);
     }
@@ -3266,8 +3268,9 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
 void Ability::DoOnForeground(const Want& want)
 {
     if (abilityWindow_ != nullptr) {
-        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground.", __func__);
-        abilityWindow_->OnPostAbilityForeground();
+        APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground, sceneFlag:%{public}d.",
+            __func__, sceneFlag_);
+        abilityWindow_->OnPostAbilityForeground(sceneFlag_);
         APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
     } else {
         APP_LOGI("========================abilityWindow_ != nullptr ======================");

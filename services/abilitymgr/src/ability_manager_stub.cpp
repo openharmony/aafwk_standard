@@ -146,6 +146,8 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[GET_CURRENT_TOP_ABILITY] = &AbilityManagerStub::GetCurrentTopAbilityInner;
     requestFuncMap_[DELEGATOR_DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DelegatorDoAbilityForegroundInner;
     requestFuncMap_[DELEGATOR_DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DelegatorDoAbilityBackgroundInner;
+    requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
+    requestFuncMap_[DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DoAbilityBackgroundInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1443,6 +1445,35 @@ int AbilityManagerStub::DelegatorDoAbilityBackgroundInner(MessageParcel &data, M
 {
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
     auto result = DelegatorDoAbilityBackground(token);
+    reply.WriteInt32(result);
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    return 0;
+}
+
+int AbilityManagerStub::DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    return 0;
+}
+
+int AbilityManagerStub::DoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    int32_t flag = data.ReadUint32();
+    auto result = DoAbilityForeground(token, flag);
+    reply.WriteInt32(result);
+
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::DoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    int32_t flag = data.ReadUint32();
+    auto result = DoAbilityBackground(token, flag);
     reply.WriteInt32(result);
     return NO_ERROR;
 }

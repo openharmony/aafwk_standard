@@ -30,10 +30,11 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
     APP_LOGI("NewAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
-             "isNewWant: %{public}d",
+             "isNewWant: %{public}d, sceneFlag: %{public}d",
         lifecycleState_,
         targetState.state,
-        targetState.isNewWant);
+        targetState.isNewWant,
+        targetState.sceneFlag);
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
@@ -48,6 +49,9 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         CheckAndRestore();
     }
 
+    if (ability_ != nullptr) {
+        ability_->sceneFlag_ = targetState.sceneFlag;
+    }
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {

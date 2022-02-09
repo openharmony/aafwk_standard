@@ -30,10 +30,11 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
 {
     AbilityImpl::SetUseNewMission(targetState.useNewMission);
     APP_LOGI("PageAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
-             "isNewWant: %{public}d",
+             "isNewWant: %{public}d, sceneFlag: %{public}d",
         lifecycleState_,
         targetState.state,
-        targetState.isNewWant);
+        targetState.isNewWant,
+        targetState.sceneFlag);
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
@@ -57,6 +58,9 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
     }
 
     bool ret = false;
+    if (ability_ != nullptr) {
+        ability_->sceneFlag_ = targetState.sceneFlag;
+    }
     if (AbilityImpl::IsUseNewMission()) {
         ret = AbilityTransactionNew(want, targetState);
     } else {

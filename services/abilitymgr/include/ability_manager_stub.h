@@ -36,6 +36,23 @@ public:
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
+    /**
+     * Calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag) override;
+
+    /**
+     * Calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag) override;
 private:
     void FirstStepInit();
     void SecondStepInit();
@@ -149,6 +166,8 @@ private:
     int GetCurrentTopAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DelegatorDoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply);
     int DelegatorDoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply);
+    int DoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply);
+    int DoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply);
 
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
 
