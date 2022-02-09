@@ -137,6 +137,17 @@ public:
      */
     ErrCode ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback) override;
 
+    /**
+     * regist ability callback
+     *
+     * @param abilityCallback Indicates the abilityCallback object.
+     */
+    void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) override;
+
+    /**
+     * get current window mode
+     */
+    int GetCurrentWindowMode() override;
 private:
     sptr<IRemoteObject> token_;
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
@@ -146,6 +157,7 @@ private:
     void* contentStorage_ = nullptr;
     std::shared_ptr<AppExecFwk::Configuration> config_;
     sptr<LocalCallContainer> localCallContainer_;
+    std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
