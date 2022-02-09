@@ -35,6 +35,7 @@
 #include "data_ability_result.h"
 #include "data_uri_utils.h"
 #include "display_type.h"
+#include "distributed_objectstore.h"
 #include "form_host_client.h"
 #include "form_mgr.h"
 #include "form_provider_client.h"
@@ -78,6 +79,7 @@ static std::mutex formLock;
 
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
+constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 3000;
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
 {
@@ -400,8 +402,43 @@ bool Ability::IsRestoredInContinuation() const
     return false;
 }
 
+void Ability::WaitingDistributedObjectSyncComplete(const Want& want)
+{
+    int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
+    std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
+
+    APP_LOGI("continuation WaitingDistributedObjectSyncComplete begin");
+    auto timeout = [self = shared_from_this(), sessionId, originDeviceId]() {
+        APP_LOGI("DistributedObject sync timeout");
+        self->continuationManager_->NotifyCompleteContinuation(
+            originDeviceId, sessionId, false, nullptr);
+    };
+
+    // std::shared_ptr<AppExecFwk::EventHandler> handler = handler_;
+    auto callback = [self = shared_from_this(), sessionId, originDeviceId]() {
+        APP_LOGI("DistributedObject sync complete");
+        if (self->handler_ != nullptr) {
+            self->handler_->RemoveTask("Waiting_Sync_Timeout");
+        }
+        self->continuationManager_->NotifyCompleteContinuation(
+            originDeviceId, sessionId, true, nullptr);
+    };
+
+    std::string &bundleName = abilityInfo_->bundleName;
+    APP_LOGI("continuation TriggerRestore begin");
+    ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerRestore(callback);
+    APP_LOGI("continuation TriggerRestore end");
+
+    if (handler_ != nullptr) {
+        APP_LOGI("continuation set timeout begin");
+        handler_->PostTask(timeout, "Waiting_Sync_Timeout", DISTRIBUTED_OBJECT_TIMEOUT);
+        APP_LOGI("continuation set timeout end");
+    }
+}
+
 void Ability::NotityContinuationResult(const Want& want, bool success)
 {
+    APP_LOGI("NotityContinuationResult begin");
     std::weak_ptr<IReverseContinuationSchedulerReplicaHandler> ReplicaHandler = continuationHandler_;
     reverseContinuationSchedulerReplica_ = sptr<ReverseContinuationSchedulerReplica>(
         new (std::nothrow) ReverseContinuationSchedulerReplica(handler_, ReplicaHandler));
