@@ -241,6 +241,7 @@ ohos_shared_library("app_context") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
+    "resmgr_standard:resmgr_napi_core",
   ]
 
   part_name = "ability_runtime"
