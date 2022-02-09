@@ -361,6 +361,16 @@ public:
     {
         return 0;
     }
+
+    virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag) override
+    {
+        return 0;
+    }
+
+    virtual int DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag) override
+    {
+        return 0;
+    }
 };
 
 class MockAbilityMgrStub : public IRemoteStub<AAFwk::IAbilityManager> {
@@ -854,6 +864,16 @@ public:
     }
     virtual int ReleaseAbility(
         const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element) override
+    {
+        return 0;
+    }
+
+    virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag) override
+    {
+        return 0;
+    }
+
+    virtual int DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag) override
     {
         return 0;
     }

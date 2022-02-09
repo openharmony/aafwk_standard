@@ -668,6 +668,24 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) = 0;
+    
+    /**
+     * Calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag) = 0;
+
+    /**
+     * Calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag) = 0;
 
     /**
      * Send not response process ID to ability manager service.
@@ -835,6 +853,12 @@ public:
 
         // ipc id for set mission label (53)
         SET_MISSION_LABEL,
+
+        // ipc id for ability foreground (54)
+        DO_ABILITY_FOREGROUND,
+
+        // ipc id for ability background (55)
+        DO_ABILITY_BACKGROUND,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

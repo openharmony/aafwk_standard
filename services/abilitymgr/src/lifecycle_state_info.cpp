@@ -44,6 +44,7 @@ bool LifeCycleStateInfo::ReadFromParcel(Parcel &parcel)
     }
     launchParam = *launchInfo;
     useNewMission = parcel.ReadBool();
+    sceneFlag = parcel.ReadUint32();
     return true;
 }
 
@@ -93,6 +94,9 @@ bool LifeCycleStateInfo::Marshalling(Parcel &parcel) const
     }
     // write useNewMission
     if (!parcel.WriteBool(useNewMission)) {
+        return false;
+    }
+    if (!parcel.WriteUint32(sceneFlag)) {
         return false;
     }
     return true;
