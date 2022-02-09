@@ -169,6 +169,7 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
     InnerMissionInfo innerMissionInfo;
     DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(), innerMissionInfo);
     innerMissionInfo.missionInfo.time = Time2str(time(0));
+    innerMissionInfo.missionInfo.runningState = 0;
     DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
 
     auto targetAbilityRecord = mission->GetAbilityRecord();
@@ -1301,8 +1302,8 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
         std::shared_ptr<MissionList> targetMissionList = nullptr;
         switch (missionType) {
             case LAUNCHER:
-                // lanucher list is also in current list, so get lanucher mission list is abnormal.
-                HILOG_ERROR("get lanucher mission list, missionId: %{public}d", missionId);
+                // not support move launcher to front.
+                HILOG_ERROR("get launcher mission list, missionId: %{public}d", missionId);
                 break;
             case CURRENT:
                 targetMissionList = mission->GetMissionList();
@@ -1331,9 +1332,8 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
 
     // generate a new mission and missionList
     AbilityRequest abilityRequest;
-    auto userId = abilityRequest.appInfo.uid / BASE_USER_RANGE;
     int generateAbility = DelayedSingleton<AbilityManagerService>::GetInstance()->GenerateAbilityRequest(
-        innerMissionInfo.missionInfo.want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr, userId);
+        innerMissionInfo.missionInfo.want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr, userId_);
     if (generateAbility != ERR_OK) {
         HILOG_ERROR("cannot find generate ability request, missionId: %{public}d", missionId);
         return nullptr;
