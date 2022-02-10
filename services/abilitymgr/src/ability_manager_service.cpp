@@ -188,6 +188,7 @@ bool AbilityManagerService::Init()
     kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
     CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
 
+    InitU0User();
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
     if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
@@ -214,6 +215,16 @@ bool AbilityManagerService::Init()
     HILOG_INFO("Init success.");
     return true;
 }
+
+void AbilityManagerService::InitU0User()
+{
+    InitConnectManager(U0_USER_ID, false);
+    InitDataAbilityManager(U0_USER_ID, false);
+    InitPendWantManager(U0_USER_ID, false);
+    SetStackManager(U0_USER_ID, false);
+    InitMissionListManager(U0_USER_ID, false);
+}
+
 
 void AbilityManagerService::OnStop()
 {
@@ -257,8 +268,8 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("%{public}s begin.", __func__);
-    if (callerToken != nullptr && !VerificationToken(callerToken)) {
-        HILOG_ERROR("%{public}s VerificationToken failed.", __func__);
+    if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
+        HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         return ERR_INVALID_VALUE;
     }
 
@@ -347,7 +358,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability setting.");
-    if (callerToken != nullptr && !VerificationToken(callerToken)) {
+    if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -427,7 +438,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability options.");
-    if (callerToken != nullptr && !VerificationToken(callerToken)) {
+    if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -502,7 +513,7 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Terminate ability for result: %{public}d", (resultWant != nullptr));
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -658,7 +669,7 @@ void AbilityManagerService::RequestPermission(const Want *resultWant)
 int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode)
 {
     HILOG_INFO("Terminate ability by caller.");
-    if (!VerificationToken(callerToken)) {
+    if (!VerificationAllToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -721,7 +732,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
 int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
     HILOG_INFO("Minimize ability.");
-    if (!VerificationToken(token) && !VerificationAllToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -833,7 +844,7 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
 {
     HILOG_INFO("Move mission to end.");
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
@@ -1434,8 +1445,8 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
     bool isSystem = (IPCSkeleton::GetCallingUid() <= AppExecFwk::Constants::BASE_SYS_UID);
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
-        if (!VerificationToken(callerToken)) {
-            HILOG_INFO("VerificationToken fail");
+        if (!VerificationAllToken(callerToken)) {
+            HILOG_INFO("VerificationAllToken fail");
             return nullptr;
         }
     }
@@ -1506,8 +1517,8 @@ int AbilityManagerService::ReleaseDataAbility(
     bool isSystem = (IPCSkeleton::GetCallingUid() <= AppExecFwk::Constants::BASE_SYS_UID);
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
-        if (!VerificationToken(callerToken)) {
-            HILOG_INFO("VerificationToken fail");
+        if (!VerificationAllToken(callerToken)) {
+            HILOG_INFO("VerificationAllToken fail");
             return ERR_INVALID_STATE;
         }
     }
@@ -1522,7 +1533,7 @@ int AbilityManagerService::AttachAbilityThread(
     HILOG_INFO("Attach ability thread.");
     CHECK_POINTER_AND_RETURN(scheduler, ERR_INVALID_VALUE);
 
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -1964,7 +1975,7 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Ability transition done, state:%{public}d", state);
-    if (!VerificationToken(token) && !VerificationAllToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -2020,7 +2031,7 @@ int AbilityManagerService::ScheduleConnectAbilityDone(
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule connect ability done.");
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -2045,7 +2056,7 @@ int AbilityManagerService::ScheduleDisconnectAbilityDone(const sptr<IRemoteObjec
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule disconnect ability done.");
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -2070,7 +2081,7 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule command ability done.");
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -2094,7 +2105,7 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
 void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
 {
     HILOG_DEBUG("Add window id.");
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
@@ -2430,7 +2441,7 @@ int AbilityManagerService::GetAllStackInfo(StackInfo &stackInfo)
 int AbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId)
 {
     HILOG_INFO("Terminate ability result, startId: %{public}d", startId);
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -3018,11 +3029,11 @@ int AbilityManagerService::ChangeFocusAbility(
     CHECK_POINTER_AND_RETURN(getFocusToken, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
 
-    if (!VerificationToken(lostFocusToken)) {
+    if (!VerificationAllToken(lostFocusToken)) {
         return ERR_INVALID_VALUE;
     }
 
-    if (!VerificationToken(getFocusToken)) {
+    if (!VerificationAllToken(getFocusToken)) {
         return ERR_INVALID_VALUE;
     }
 
@@ -3067,7 +3078,7 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
     CHECK_POINTER_RETURN_BOOL(token);
     CHECK_POINTER_RETURN_BOOL(currentStackManager_);
 
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return false;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
@@ -3138,7 +3149,7 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
     CHECK_POINTER(currentStackManager_);
     CHECK_POINTER(kernalAbilityManager_);
     CHECK_POINTER(systemAppManager_);
-    if (!VerificationToken(token)) {
+    if (!VerificationAllToken(token)) {
         return;
     }
 
@@ -3179,23 +3190,36 @@ void AbilityManagerService::StartSystemApplication()
 
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
-        StartingSystemUiAbility(SatrtUiMode::STARTUIBOTH);
+        StartingSystemUiAbility();
         return;
     }
 
-    if (amsConfigResolver_->GetStatusBarState()) {
-        HILOG_INFO("start status bar");
-        StartingSystemUiAbility(SatrtUiMode::STATUSBAR);
-    }
-
-    if (amsConfigResolver_->GetNavigationBarState()) {
-        HILOG_INFO("start navigation bar");
-        StartingSystemUiAbility(SatrtUiMode::NAVIGATIONBAR);
-    }
+    StartingSystemUiAbility();
 
     // Location may change
     DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
 }
+
+void AbilityManagerService::StartingSystemUiAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    AppExecFwk::AbilityInfo systemUiInfo;
+    if (!iBundleManager_) {
+        HILOG_INFO("bms server is null");
+        return;
+    }
+    Want systemUiWant;
+    systemUiWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_ABILITY_NAME);
+    uint32_t waitCnt = 0;
+    // Wait 10 minutes for the installation to complete.
+    while (!iBundleManager_->QueryAbilityInfo(systemUiWant, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
+        HILOG_INFO("Waiting query system ui info completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+        waitCnt++;
+    }
+    (void)StartAbility(systemUiWant, U0_USER_ID, DEFAULT_INVAL_VALUE);
+}
+
 
 void AbilityManagerService::ConnectBmsService()
 {
@@ -3220,51 +3244,6 @@ void AbilityManagerService::ConnectBmsService()
     }
 
     HILOG_INFO("Connect bms success!");
-}
-
-void AbilityManagerService::StartingSystemUiAbility(const SatrtUiMode &mode)
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    if (!iBundleManager_) {
-        HILOG_INFO("bms service is null");
-        return;
-    }
-
-    AppExecFwk::AbilityInfo statusBarInfo;
-    AppExecFwk::AbilityInfo navigationBarInfo;
-    Want statusBarWant;
-    Want navigationBarWant;
-    statusBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_STATUS_BAR);
-    navigationBarWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
-    uint32_t waitCnt = 0;
-    // Wait 10 minutes for the installation to complete.
-    auto userId = MAIN_USER_ID;
-    while ((!(iBundleManager_->QueryAbilityInfo(statusBarWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, statusBarInfo)) ||
-        !(iBundleManager_->QueryAbilityInfo(navigationBarWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, navigationBarInfo))) &&
-            waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
-        HILOG_INFO("Waiting query system ui info completed.");
-        usleep(REPOLL_TIME_MICRO_SECONDS);
-        waitCnt++;
-    }
-
-    HILOG_INFO("start ui mode : %{public}d", mode);
-    switch (mode) {
-        case SatrtUiMode::STATUSBAR:
-            StartSystemUi(AbilityConfig::SYSTEM_UI_STATUS_BAR);
-            break;
-        case SatrtUiMode::NAVIGATIONBAR:
-            StartSystemUi(AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
-            break;
-        case SatrtUiMode::STARTUIBOTH:
-            StartSystemUi(AbilityConfig::SYSTEM_UI_STATUS_BAR);
-            StartSystemUi(AbilityConfig::SYSTEM_UI_NAVIGATION_BAR);
-            break;
-        default:
-            HILOG_INFO("Input mode error ...");
-            break;
-    }
 }
 
 bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
@@ -3845,10 +3824,6 @@ int32_t AbilityManagerService::GetValidUserId(const Want &want, const int32_t us
 {
     HILOG_DEBUG("%{public}s  userId = %{public}d", __func__, userId);
     int32_t userIdValid = DEFAULT_INVAL_VALUE;
-    if (IsSystemUI(want.GetBundle())) {
-        HILOG_DEBUG("systemUI ability, user is default");
-        return MAIN_USER_ID;
-    }
 
     if (DEFAULT_INVAL_VALUE == userId) {
         userIdValid = IPCSkeleton::GetCallingUid() / BASE_USER_RANGE;
