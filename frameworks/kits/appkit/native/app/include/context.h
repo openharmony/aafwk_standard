@@ -52,6 +52,7 @@ using AbilityStartSetting = AAFwk::AbilityStartSetting;
 constexpr int INVALID_RESOURCE_VALUE = -1;  // GetColor() Failed return Value
 
 class DataAbilityHelper;
+class DataShareHelper;
 class ContinuationConnector;
 class IAbilityManager;
 class TaskDispatcher;
@@ -717,6 +718,7 @@ public:
     virtual void SetShowOnLockScreen(bool isAllow) = 0;
 
     friend DataAbilityHelper;
+    friend DataShareHelper;
     friend ContinuationConnector;
 
 protected:
