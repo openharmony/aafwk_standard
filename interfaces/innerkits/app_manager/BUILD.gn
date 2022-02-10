@@ -59,8 +59,10 @@ ohos_shared_library("app_manager") {
     "src/appmgr/process_data.cpp",
     "src/appmgr/process_info.cpp",
     "src/appmgr/profile.cpp",
+    "src/appmgr/running_process_info.cpp",
     "src/appmgr/start_specified_ability_response_proxy.cpp",
     "src/appmgr/start_specified_ability_response_stub.cpp",
+    "src/appmgr/system_memory_attr.cpp",
   ]
 
   public_configs = [
@@ -96,4 +98,38 @@ ohos_shared_library("app_manager") {
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
+}
+
+ohos_shared_library("configuration") {
+  include_dirs = []
+
+  sources = [ "src/appmgr/configuration.cpp" ]
+
+  public_configs = [ ":appmgr_sdk_config" ]
+
+  defines = [
+    "APP_LOG_TAG = \"Configuration\"",
+    "LOG_DOMAIN = 0xD001100",
+  ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  deps = [
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "bytrace_standard:bytrace_core",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_base"
 }
