@@ -27,7 +27,7 @@ public:
                                     const WantParams &extras, bool serialized, bool sticky, int sendingUser));
 };
 
-class MockCancelListener : public Notification::WantAgent::CancelListener {
+class MockCancelListener : public AbilityRuntime::WantAgent::CancelListener {
 public:
     MOCK_METHOD1(OnCancelled, void(int resultCode));
 };

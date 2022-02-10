@@ -2000,11 +2000,11 @@ bool Ability::DeleteForm(const int64_t formId)
  * @param wantAgent Indicates which ability to start when user click the notification bar.
  * @return the method result code, 0 means succeed
  */
-int Ability::StartBackgroundRunning(const Notification::WantAgent::WantAgent &wantAgent)
+int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent)
 {
     uint32_t defaultBgMode = 0;
     BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
-        std::make_shared<Notification::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 }
 

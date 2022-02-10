@@ -39,7 +39,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-using namespace OHOS::Notification::WantAgent;
+using namespace OHOS::AbilityRuntime::WantAgent;
 /**
  * @class FormTimerMgr
  * form timer task manager.

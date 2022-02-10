@@ -61,9 +61,28 @@
             "//foundation/aafwk/standard/common:common_target",
             "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
             "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-            "//foundation/aafwk/standard/frameworks/kits/appkit:appexec"
+            "//foundation/aafwk/standard/frameworks/kits/appkit:appexec",
+            "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits"
           ],
           "inner_kits": [
+            {
+              "header": {
+                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/wantagent/include/",
+                "header_files": [
+                  "cancel_listener.h",
+                  "completed_callback.h",
+                  "completed_dispatcher.h",
+                  "pending_want.h",
+                  "trigger_info.h",
+                  "want_agent_constant.h",
+                  "want_agent_helper.h",
+                  "want_agent_info.h",
+                  "want_agent_log_wrapper.h",
+                  "want_agent.h"
+                ]
+              },
+              "name": "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits"
+            },
             {
               "header": {
                 "header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
@@ -168,6 +187,7 @@
             "//foundation/aafwk/standard/common/test:moduletest",
             "//foundation/aafwk/standard/frameworks/kits/appkit/native/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/appkit/test:moduletest",
+            "//foundation/aafwk/standard/frameworks/kits/wantagent/test/:unittest",
             "//foundation/aafwk/standard/services/appmgr/test:unittest"
           ]
         }

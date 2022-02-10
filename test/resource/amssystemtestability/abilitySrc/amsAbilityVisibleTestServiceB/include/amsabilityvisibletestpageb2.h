@@ -32,8 +32,8 @@ namespace OHOS {
 namespace AppExecFwk {
 using AbilityConnectionStub = OHOS::AAFwk::AbilityConnectionStub;
 using Uri = OHOS::Uri;
-using CompletedCallback = OHOS::Notification::WantAgent::CompletedCallback;
-using namespace OHOS::Notification::WantAgent;
+using CompletedCallback = OHOS::AbilityRuntime::WantAgent::CompletedCallback;
+using namespace OHOS::WantAgent;
 
 class AbilityConnectCallback : public AbilityConnectionStub {
 public:

@@ -38,7 +38,7 @@
 #include "mock_ability_mgr_service.h"
 #include "os_account_manager.h"
 
-using namespace OHOS::Notification::WantAgent;
+using namespace OHOS::AbilityRuntime::WantAgent;
 using namespace OHOS::AppExecFwk;
 
 using namespace testing;

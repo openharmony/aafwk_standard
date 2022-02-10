@@ -234,19 +234,19 @@ ohos_shared_library("abilitykit_native") {
   configs = [ ":ability_config" ]
   public_configs = [
     ":ability_public_config",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits_public_config",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_public_config",
+    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits_public_config",
   ]
 
   deps = [
     ":static_subscriber_ipc",
     "${INNERKITS_PATH}/base:base",
     "${INNERKITS_PATH}/want:want",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
