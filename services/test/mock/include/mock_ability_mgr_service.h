@@ -29,7 +29,7 @@ public:
         int32_t userId, int requestCode));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant));
-    MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &token));
+    MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &token, bool fromUser));
     MOCK_METHOD4(ConnectAbility, int(const Want &want, const sptr<IAbilityConnection> &connect,
         const sptr<IRemoteObject> &callerToken, int32_t userId));
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &connect));
