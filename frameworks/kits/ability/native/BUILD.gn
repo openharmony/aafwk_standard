@@ -167,6 +167,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/form_runtime/form_extension_provider_client.cpp",
     "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension.cpp",
     "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension_context.cpp",
+    "${SUBSYSTEM_DIR}/src/form_runtime/js_form_extension_util.cpp",
     "${SUBSYSTEM_DIR}/src/js_datashare_ext_ability.cpp",
     "${SUBSYSTEM_DIR}/src/js_datashare_ext_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/js_service_extension.cpp",
