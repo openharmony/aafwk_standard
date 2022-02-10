@@ -1021,7 +1021,7 @@ public:
      * @param wantAgent Indicates which ability to start when user click the notification bar.
      * @return the method result code, 0 means succeed
      */
-    virtual int StartBackgroundRunning(const Notification::WantAgent::WantAgent &wantAgent) final;
+    virtual int StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent) final;
 
     /**
      * @brief Cancel background running of this ability to free up system memory.

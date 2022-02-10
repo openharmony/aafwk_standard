@@ -30,7 +30,6 @@ ohos_shared_library("napi_common") {
   ]
 
   deps = [
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
@@ -44,6 +43,7 @@ ohos_shared_library("napi_common") {
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "eventhandler:libeventhandler",

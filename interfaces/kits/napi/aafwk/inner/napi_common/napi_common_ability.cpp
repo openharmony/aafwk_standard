@@ -3502,7 +3502,7 @@ napi_value AcquireDataAbilityHelperWrap(napi_env env, napi_callback_info info, D
     return result;
 }
 
-napi_value UnwrapParamForWantAgent(napi_env &env, napi_value &args, Notification::WantAgent::WantAgent *&wantAgent)
+napi_value UnwrapParamForWantAgent(napi_env &env, napi_value &args, AbilityRuntime::WantAgent::WantAgent *&wantAgent)
 {
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, args, &valuetype));
@@ -3547,10 +3547,10 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
 
-    Notification::WantAgent::WantAgent wantAgentObj;
+    AbilityRuntime::WantAgent::WantAgent wantAgentObj;
     if (!asyncCallbackInfo->wantAgent) {
         HILOG_WARN("input param without wantAgent");
-        wantAgentObj = Notification::WantAgent::WantAgent();
+        wantAgentObj = AbilityRuntime::WantAgent::WantAgent();
     } else {
         wantAgentObj = *asyncCallbackInfo->wantAgent;
     }

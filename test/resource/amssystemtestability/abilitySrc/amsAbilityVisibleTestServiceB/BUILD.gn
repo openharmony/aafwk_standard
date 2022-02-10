@@ -45,10 +45,10 @@ ohos_shared_library("amsAbilityVisibleTestServiceB") {
   ]
   configs = [ ":amsAbilityVisibleTestServiceBConfig" ]
   deps = [
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
