@@ -760,7 +760,7 @@ NativeValue* JsAbilityContext::OnRestoreWindowStage(NativeEngine& engine, Native
         HILOG_ERROR("OnRestoreWindowStage context is released");
         return engine.CreateUndefined();
     }
-    auto errcode = context->RestoreWindowStage(static_cast<void*>(info.argv[0]));
+    auto errcode = context->RestoreWindowStage(engine, info.argv[0]);
     if (errcode != 0) {
         return CreateJsError(engine, errcode, "RestoreWindowStage failed.");
     }
