@@ -573,7 +573,7 @@ int AbilityManagerProxy::TerminateAbilityResult(const sptr<IRemoteObject> &token
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::MinimizeAbility(const sptr<IRemoteObject> &token)
+int AbilityManagerProxy::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
     int error;
     MessageParcel data;
@@ -584,6 +584,10 @@ int AbilityManagerProxy::MinimizeAbility(const sptr<IRemoteObject> &token)
         return INNER_ERR;
     }
     if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteBool(fromUser)) {
         HILOG_ERROR("data write failed.");
         return ERR_INVALID_VALUE;
     }
