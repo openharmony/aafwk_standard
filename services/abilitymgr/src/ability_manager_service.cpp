@@ -1088,8 +1088,14 @@ sptr<IWantSender> AbilityManagerService::GetWantSender(
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     AppExecFwk::BundleInfo bundleInfo;
     if (!wantSenderInfo.bundleName.empty()) {
-        bool bundleMgrResult =
-            bms->GetBundleInfo(wantSenderInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
+        bool bundleMgrResult = false;
+        if (wantSenderInfo.userId < 0) {
+            bundleMgrResult = bms->GetBundleInfo(wantSenderInfo.bundleName,
+                AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
+        } else {
+            bundleMgrResult = bms->GetBundleInfo(wantSenderInfo.bundleName,
+                AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, wantSenderInfo.userId);
+        }
         if (!bundleMgrResult) {
             HILOG_ERROR("GetBundleInfo is fail.");
             return nullptr;
