@@ -27,7 +27,6 @@
 #include "bytrace.h"
 #include "context_deal.h"
 #include "context_impl.h"
-#include "datashare_ext_ability.h"
 #include "extension_module_loader.h"
 #include "form_extension.h"
 #include "if_system_ability_manager.h"

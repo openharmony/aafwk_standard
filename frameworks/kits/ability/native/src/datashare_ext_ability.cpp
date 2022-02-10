@@ -49,28 +49,6 @@ void DataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &record
     HILOG_INFO("DataShareExtAbility begin init context");
 }
 
-std::shared_ptr<DataShareExtAbilityContext> DataShareExtAbility::CreateAndInitContext(
-    const std::shared_ptr<AbilityLocalRecord> &record,
-    const std::shared_ptr<OHOSApplication> &application,
-    std::shared_ptr<AbilityHandler> &handler,
-    const sptr<IRemoteObject> &token)
-{
-    std::shared_ptr<DataShareExtAbilityContext> context =
-        ExtensionBase<DataShareExtAbilityContext>::CreateAndInitContext(record, application, handler, token);
-    if (record == nullptr) {
-        HILOG_ERROR("DataShareExtAbility::CreateAndInitContext record is nullptr");
-        return context;
-    }
-
-    auto abilityInfo = record->GetAbilityInfo();
-    context->SetAbilityInfo(abilityInfo);
-    context->InitHapModuleInfo(abilityInfo);
-    auto appContext = Context::GetApplicationContext();
-    context->SetApplicationInfo(appContext->GetApplicationInfo());
-    context->SetResourceManager(appContext->GetResourceManager());
-    return context;
-}
-
 std::vector<std::string> DataShareExtAbility::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
     HILOG_INFO("%{public}s begin.", __func__);
