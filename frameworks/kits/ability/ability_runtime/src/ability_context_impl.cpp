@@ -15,6 +15,8 @@
 
 #include "ability_context_impl.h"
 
+#include <native_engine/native_engine.h>
+
 #include "ability_manager_client.h"
 #include "bytrace.h"
 #include "connection_manager.h"
@@ -306,12 +308,11 @@ void AbilityContextImpl::OnRequestPermissionsFromUserResult(
     HILOG_INFO("%{public}s. End calling OnRequestPermissionsFromUserResult.", __func__);
 }
 
-ErrCode AbilityContextImpl::RestoreWindowStage(void* contentStorage)
+ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue* contentStorage)
 {
     HILOG_INFO("%{public}s begin. contentStorage = %{public}p", __func__, contentStorage);
-    ErrCode err = ERR_OK;
-    contentStorage_ = contentStorage;
-    return err;
+    contentStorage_ = std::unique_ptr<NativeReference>(engine.CreateReference(contentStorage, 1));
+    return ERR_OK;
 }
 
 ErrCode AbilityContextImpl::StartAbility(
