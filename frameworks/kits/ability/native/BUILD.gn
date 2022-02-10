@@ -109,7 +109,7 @@ ohos_shared_library("static_subscriber_ipc") {
   ]
 
   external_deps = [
-    "ability_runtime:want",
+    "ability_base:want",
     "ces_standard:cesfwk_innerkits",
     "ipc:ipc_core",
   ]
