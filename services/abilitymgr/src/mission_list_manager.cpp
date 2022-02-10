@@ -94,7 +94,7 @@ int MissionListManager::StartAbility(const std::shared_ptr<AbilityRecord> &curre
     return StartAbilityLocked(currentTopAbility, callerAbility, abilityRequest);
 }
 
-int MissionListManager::MinimizeAbility(const sptr<IRemoteObject> &token)
+int MissionListManager::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
     HILOG_INFO("Minimize ability.");
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
@@ -102,7 +102,7 @@ int MissionListManager::MinimizeAbility(const sptr<IRemoteObject> &token)
     CHECK_POINTER_AND_RETURN_LOG(
         GetAbilityRecordByToken(token), INNER_ERR, "Ability is not in mission list.");
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    return MinimizeAbilityLocked(abilityRecord);
+    return MinimizeAbilityLocked(abilityRecord, fromUser);
 }
 
 int MissionListManager::RegisterMissionListener(const sptr<IMissionListener> &listener)
@@ -510,7 +510,7 @@ void MissionListManager::MoveMissionListToTop(const std::shared_ptr<MissionList>
     currentMissionLists_.push_front(missionList);
 }
 
-int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord)
+int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord, bool fromUser)
 {
     HILOG_INFO("%{public}s, called", __func__);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
@@ -521,6 +521,7 @@ int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecor
         return ERR_OK;
     }
 
+    abilityRecord->SetMinimizeReason(fromUser);
     MoveToBackgroundTask(abilityRecord);
     UpdateMissionTimeStamp(abilityRecord);
     return ERR_OK;
@@ -943,9 +944,10 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         return;
     }
     element = needTopAbility->GetWant().GetElement().GetURI();
-    HILOG_DEBUG("next top ability is %{public}s", element.c_str());
+    HILOG_DEBUG("next top ability is %{public}s, state is %{public}d, minimizeReason is %{public}d",
+        element.c_str(), needTopAbility->GetAbilityState(), needTopAbility->IsMinimizeFromUser());
 
-    if (!needTopAbility->IsForeground()) {
+    if (!needTopAbility->IsForeground() && !needTopAbility->IsMinimizeFromUser()) {
         HILOG_DEBUG("%{public}s is need to foreground", element.c_str());
         abilityRecord->SetNextAbilityRecord(needTopAbility);
     }
