@@ -35,7 +35,10 @@ public:
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD2(StartAbility, int(const Want &, int));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &, int, const Want *));
-    MOCK_METHOD1(MinimizeAbility, int(const sptr<IRemoteObject> &);
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false) override
+    {
+        return 0;
+    }
     MOCK_METHOD3(ConnectAbility, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
 
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &));

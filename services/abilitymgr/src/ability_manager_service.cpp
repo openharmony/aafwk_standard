@@ -718,7 +718,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
     }
 }
 
-int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token)
+int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
     HILOG_INFO("Minimize ability.");
     if (!VerificationToken(token) && !VerificationAllToken(token)) {
@@ -750,7 +750,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token)
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
             return ERR_INVALID_VALUE;
         }
-        return missionListManager->MinimizeAbility(token);
+        return missionListManager->MinimizeAbility(token, fromUser);
     } else {
         auto stackManager = GetStackManagerByUserId(userId);
         if (!stackManager) {

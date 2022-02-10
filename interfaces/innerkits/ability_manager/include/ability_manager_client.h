@@ -180,9 +180,10 @@ public:
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, ability token.
+     * @param fromUser mark the minimize operation source.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode MinimizeAbility(const sptr<IRemoteObject> &token);
+    ErrCode MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false);
 
     /**
      * ConnectAbility, connect session with service ability.

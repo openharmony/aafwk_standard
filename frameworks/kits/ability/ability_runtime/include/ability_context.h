@@ -159,8 +159,9 @@ public:
     /**
      * @brief Minimize the current ability.
      *
+     * @param fromUser mark the minimize operation source.
      */
-    virtual void MinimizeAbility() = 0;
+    virtual void MinimizeAbility(bool fromUser = false) = 0;
 
     virtual ErrCode TerminateSelf() = 0;
 

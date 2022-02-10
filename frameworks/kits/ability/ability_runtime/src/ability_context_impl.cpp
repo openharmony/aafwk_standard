@@ -256,10 +256,10 @@ std::shared_ptr<AppExecFwk::Configuration> AbilityContextImpl::GetConfiguration(
     return config_;
 }
 
-void AbilityContextImpl::MinimizeAbility()
+void AbilityContextImpl::MinimizeAbility(bool fromUser)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->MinimizeAbility(token_);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->MinimizeAbility(token_, fromUser);
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContext::MinimizeAbility is failed %{public}d", err);
     }

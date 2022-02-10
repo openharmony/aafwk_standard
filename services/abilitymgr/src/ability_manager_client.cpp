@@ -165,11 +165,12 @@ ErrCode AbilityManagerClient::TerminateAbilityResult(const sptr<IRemoteObject> &
     return abms->TerminateAbilityResult(token, startId);
 }
 
-ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token)
+ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    HILOG_INFO("%{public}s called, fromUser=%{public}d", __func__, fromUser);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->MinimizeAbility(token);
+    return abms->MinimizeAbility(token, fromUser);
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
