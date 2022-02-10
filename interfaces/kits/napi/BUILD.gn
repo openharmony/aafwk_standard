@@ -17,6 +17,7 @@ group("napi_packages") {
   deps = [
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability:ability_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/abilityManager:abilitymanager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_constant:abilityconstant_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_context:abilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager:abilitymanager_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_delegator:abilitydelegatorregistry",
