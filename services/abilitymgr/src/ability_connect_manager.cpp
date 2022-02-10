@@ -578,8 +578,11 @@ void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &ab
         perToken = iface_cast<Token>(abilityRecord->GetConnectingRecord()->GetToken());
     } else {
         auto callerList = abilityRecord->GetCallerRecordList();
-        if (!callerList.empty()) {
-            perToken = callerList.back()->GetCaller()->GetToken();
+        if (!callerList.empty() && callerList.back()) {
+            auto caller = callerList.back()->GetCaller();
+            if (caller) {
+                perToken = caller->GetToken();
+            }
         }
     }
     DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
