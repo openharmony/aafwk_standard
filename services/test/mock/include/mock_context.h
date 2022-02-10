@@ -92,6 +92,7 @@ public:
         const std::string &name, const TaskPriority &priority) = 0;
     virtual std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) = 0;
     friend DataAbilityHelper;
+    friend DataShareHelper;
     friend ContinuationConnector;
 protected:
     virtual sptr<IRemoteObject> GetToken() = 0;
