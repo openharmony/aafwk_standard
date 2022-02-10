@@ -15,6 +15,8 @@
 
 #include "context_impl.h"
 
+#include <regex>
+
 #include "file_util.h"
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
@@ -26,6 +28,11 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+namespace {
+const std::string ABS_CODE_PATH = "/data/app/el1/bundle/public";
+const std::string LOCAL_CODE_PATH = "/data/storage/el1/bundle";
+const std::string LOCAL_BUNDLES = "/data/bundles";
+}
 const size_t Context::CONTEXT_TYPE_ID(std::hash<const char*> {} ("Context"));
 const int64_t ContextImpl::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
 const std::string ContextImpl::CONTEXT_DATA_APP("/data/app/");
@@ -56,9 +63,14 @@ std::string ContextImpl::GetBundleName() const
 
 std::string ContextImpl::GetBundleCodeDir()
 {
+    auto appInfo = GetApplicationInfo();
+    if (appInfo == nullptr) {
+        return "";
+    }
+
     std::string dir;
     if (IsCreateBySystemApp()) {
-        dir = CONTEXT_DATA_APP + CONTEXT_ELS[0] + CONTEXT_BUNDLE + GetBundleName();
+        dir = std::regex_replace(appInfo->codePath, std::regex(ABS_CODE_PATH), LOCAL_BUNDLES);
     } else {
         dir = CONTEXT_DATA_STORAGE + CONTEXT_ELS[0] + CONTEXT_BUNDLE;
     }
