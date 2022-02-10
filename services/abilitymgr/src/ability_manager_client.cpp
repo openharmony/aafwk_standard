@@ -907,5 +907,21 @@ ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, 
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->SetMissionLabel(token, label);
 }
+
+ErrCode AbilityManagerClient::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->DoAbilityForeground(token, flag);
+}
+
+ErrCode AbilityManagerClient::DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->DoAbilityBackground(token, flag);
+}
 }  // namespace AAFwk
 }  // namespace AAFwk
