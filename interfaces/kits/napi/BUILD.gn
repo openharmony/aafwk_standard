@@ -29,6 +29,8 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/callee:callee_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/caller:caller_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataUriUtils:datauriutils",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/datashare_ext_ability:datashareextability_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/datashare_ext_ability_context:datashareextabilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/extensioncontext:extensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",

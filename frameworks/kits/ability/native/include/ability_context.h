@@ -20,6 +20,7 @@
 
 #include "context_container.h"
 #include "data_ability_helper.h"
+#include "datashare_helper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -699,6 +700,7 @@ public:
     void SetShowOnLockScreen(bool isAllow) override;
 
     friend DataAbilityHelper;
+    friend DataShareHelper;
     static int ABILITY_CONTEXT_DEFAULT_REQUEST_CODE;
 
 protected:

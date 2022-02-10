@@ -871,6 +871,8 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         });
         LoadAndRegisterExtension("system/lib/libservice_extension_module.z.so", "ServiceExtension",
             application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib/libdatashare_ext_ability_module.z.so", "DataShareExtAbility",
+            application_->GetRuntime());
     }
 
     contextDeal->initResourceManager(resourceManager);
