@@ -4089,16 +4089,14 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
     HILOG_DEBUG("DoAbilityForeground, sceneFlag:%{public}d", flag);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
+    std::lock_guard<std::recursive_mutex> guard(globalLock_);
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    auto missionId = GetMissionIdByAbilityToken(token);
-    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
-
     abilityRecord->lifeCycleStateInfo_.sceneFlag = flag;
-    int ret = currentMissionListManager_->MoveMissionToFront(missionId, false);
+    abilityRecord->ProcessForegroundAbility();
     abilityRecord->lifeCycleStateInfo_.sceneFlag = SCENE_FLAG_NORMAL;
-    return ret;
+    return ERR_OK;
 }
 
 int AbilityManagerService::DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag)
