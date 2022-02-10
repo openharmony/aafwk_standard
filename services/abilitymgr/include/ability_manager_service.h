@@ -917,6 +917,11 @@ private:
      */
     bool Init();
     /**
+     * initialization of u0 user.
+     *
+     */
+    void InitU0User();
+    /**
      * starting lanucher ability.
      *
      */
@@ -943,6 +948,12 @@ private:
      *
      */
     void StartingContactsAbility();
+
+    /**
+     * starting system ui ServiceExt abilites.
+     *
+     */
+    void StartingSystemUiAbility();
 
     /**
      * starting mms ability.
