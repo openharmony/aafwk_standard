@@ -43,21 +43,6 @@ public:
     virtual ~DataShareExtAbility() = default;
 
     /**
-     * @brief Create and init context.
-     *
-     * @param record the extension record.
-     * @param application the application info.
-     * @param handler the extension handler.
-     * @param token the remote token.
-     * @return The created context.
-     */
-    virtual std::shared_ptr<DataShareExtAbilityContext> CreateAndInitContext(
-        const std::shared_ptr<AbilityLocalRecord> &record,
-        const std::shared_ptr<OHOSApplication> &application,
-        std::shared_ptr<AbilityHandler> &handler,
-        const sptr<IRemoteObject> &token) override;
-
-    /**
      * @brief Init the extension.
      *
      * @param record the extension record.
