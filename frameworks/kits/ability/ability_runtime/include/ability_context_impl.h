@@ -65,7 +65,7 @@ public:
                            const sptr<AbilityConnectCallback> &connectCallback) override;
     std::shared_ptr<AppExecFwk::HapModuleInfo> GetHapModuleInfo() const override;
     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const override;
-    void MinimizeAbility() override;
+    void MinimizeAbility(bool fromUser = false) override;
 
     ErrCode TerminateSelf() override;
 

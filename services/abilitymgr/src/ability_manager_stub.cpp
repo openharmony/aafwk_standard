@@ -196,7 +196,8 @@ int AbilityManagerStub::TerminateAbilityByCallerInner(MessageParcel &data, Messa
 int AbilityManagerStub::MinimizeAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
     auto token = data.ReadParcelable<IRemoteObject>();
-    int32_t result = MinimizeAbility(token);
+    auto fromUser = data.ReadBool();
+    int32_t result = MinimizeAbility(token, fromUser);
     reply.WriteInt32(result);
     return NO_ERROR;
 }

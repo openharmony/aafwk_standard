@@ -54,9 +54,10 @@ public:
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, ability token.
+     * @param fromUser mark the minimize operation source.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int MinimizeAbility(const sptr<IRemoteObject> &token);
+    int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser);
 
     int RegisterMissionListener(const sptr<IMissionListener> &listener);
 
@@ -326,7 +327,7 @@ private:
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);
     int StartAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);
-    int MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    int MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord, bool fromUser);
     std::shared_ptr<AbilityRecord> GetCurrentTopAbilityLocked() const;
     std::shared_ptr<MissionList> GetTargetMissionList(
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);

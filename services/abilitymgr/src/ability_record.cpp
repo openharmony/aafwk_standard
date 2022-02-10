@@ -1324,6 +1324,16 @@ void AbilityRecord::SetMission(const std::shared_ptr<Mission> &mission)
     mission_ = mission;
 }
 
+void AbilityRecord::SetMinimizeReason(bool fromUser)
+{
+    minimizeReason_ = fromUser;
+}
+
+bool AbilityRecord::IsMinimizeFromUser() const
+{
+    return minimizeReason_;
+}
+
 std::shared_ptr<Mission> AbilityRecord::GetMission() const
 {
     return mission_.lock();
