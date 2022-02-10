@@ -247,6 +247,7 @@ private:
     void GetSrcPath(std::string &srcPath);
     void LoadLibrary();
     void UnloadLibrary();
+    bool CheckCallingPermission(const std::string &permission);
 
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsObj_;
