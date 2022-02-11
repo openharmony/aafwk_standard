@@ -195,8 +195,11 @@ bool MakeFilePath(const std::string& codePath, const std::string& modulePath, st
 {
     std::string path(codePath);
     path.append("/").append(modulePath);
-
-    char resolvedPath[PATH_MAX];
+    if (path.length() > PATH_MAX) {
+        HILOG_ERROR("Path length(%{public}d) longer than MAX(%{public}d)", (int32_t)path.length(), PATH_MAX);
+        return false;
+    }
+    char resolvedPath[PATH_MAX + 1] = { 0 };
     if (realpath(path.c_str(), resolvedPath) != nullptr) {
         fileName = resolvedPath;
         return true;

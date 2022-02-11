@@ -46,9 +46,10 @@ using OHOS::AppExecFwk::ElementName;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
-
-namespace {}  // namespace
+const int INVALID_CALLER_UID_ERR = 29360128;
+}  // namespace
 class PendingWantRecordTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -330,7 +331,7 @@ HWTEST_F(PendingWantRecordTest, PendingWantRecordTest_0800, TestSize.Level1)
         std::make_shared<PendingWantRecord>(pendingManager_, 1, nullptr, key);
     EXPECT_NE(pendingWantRecord, nullptr);
     SenderInfo info;
-    EXPECT_EQ(pendingWantRecord->SenderInner(info), NO_ERROR);
+    EXPECT_EQ(pendingWantRecord->SenderInner(info), INVALID_CALLER_UID_ERR);
     EXPECT_TRUE(info.resolvedType == key->GetRequestResolvedType());
 }
 

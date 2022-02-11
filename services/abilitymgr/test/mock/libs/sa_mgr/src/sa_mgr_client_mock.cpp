@@ -34,6 +34,16 @@ SaMgrClient::~SaMgrClient()
 sptr<IRemoteObject> SaMgrClient::GetSystemAbility(const int32_t systemAbilityId)
 {
     HILOG_INFO("Test GetSystemAbility id : %{public}d", systemAbilityId);
+    if (servicesMap_[systemAbilityId] == nullptr) {
+        OHOS::sptr<ISystemAbilityManager> systemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (systemAbilityManager == nullptr) {
+            HILOG_ERROR("%s:fail to get Registry", __func__);
+            return nullptr;
+        }
+        OHOS::sptr<OHOS::IRemoteObject> object = systemAbilityManager->GetSystemAbility(systemAbilityId);
+        servicesMap_[systemAbilityId] = object;
+    }
     return servicesMap_[systemAbilityId];
 }
 
