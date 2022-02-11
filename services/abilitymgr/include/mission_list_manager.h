@@ -262,7 +262,14 @@ public:
      */
     void DumpMissionList(std::vector<std::string> &info, bool isClient, const std::string &args = "");
 
-    void DumpMissionListByRecordId(std::vector<std::string> &info, bool isClient, int32_t abilityRecordId);
+    /**
+     * @brief dump mission list by id with params
+     *
+     * @param info dump result.
+     * @param params dump params.
+     */
+    void DumpMissionListByRecordId(
+        std::vector<std::string>& info, bool isClient, int32_t abilityRecordId, const std::vector<std::string>& params);
 
     /**
      * @brief dump mission by id

@@ -981,13 +981,18 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
     }
 }
 
-void AbilitySchedulerProxy::DumpAbilityInfo(std::vector<std::string> &info)
+void AbilitySchedulerProxy::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("DumpAbilityRunner fail to write token");
+        return;
+    }
+
+    if (!data.WriteStringVector(params)) {
+        HILOG_ERROR("DumpAbilityRunner fail to write params");
         return;
     }
 

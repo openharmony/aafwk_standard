@@ -670,7 +670,7 @@ public:
      * dump ability state info.
      *
      */
-    void DumpAbilityState(std::vector<std::string> &info, bool isClient);
+    void DumpAbilityState(std::vector<std::string> &info, bool isClient, const std::vector<std::string> &params);
 
     void SetStartTime();
 

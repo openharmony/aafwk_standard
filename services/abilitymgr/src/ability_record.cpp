@@ -922,7 +922,8 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
     }
 }
 
-void AbilityRecord::DumpAbilityState(std::vector<std::string> &info, bool isClient)
+void AbilityRecord::DumpAbilityState(
+    std::vector<std::string> &info, bool isClient, const std::vector<std::string> &params)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::string dumpInfo = "      AbilityRecord ID #" + std::to_string(recordId_);
@@ -954,7 +955,10 @@ void AbilityRecord::DumpAbilityState(std::vector<std::string> &info, bool isClie
 
     // add dump client info
     if (isClient && scheduler_ && isReady_) {
-        scheduler_->DumpAbilityInfo(info);
+        scheduler_->DumpAbilityInfo(params, info);
+        if (!params.empty()) {
+            return;
+        }
         AppExecFwk::Configuration config;
         if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
             info.emplace_back("        configuration: " + config.GetName());
@@ -992,7 +996,8 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) c
     }
     // add dump client info
     if (isClient && scheduler_ && isReady_) {
-        scheduler_->DumpAbilityInfo(info);
+        std::vector<std::string> params;
+        scheduler_->DumpAbilityInfo(params, info);
         AppExecFwk::Configuration config;
         if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
             info.emplace_back("      configuration: " + config.GetName());

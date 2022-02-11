@@ -1223,6 +1223,15 @@ void Ability::Dump(const std::string &extra)
 }
 
 /**
+ * @brief dump ability info
+ *
+ * @param params dump params that indicate different dump targets
+ * @param info dump ability info
+*/
+void Ability::Dump(const std::vector<std::string> &params, std::vector<std::string> &info)
+{}
+
+/**
  * @brief Keeps this Service ability in the background and displays a notification bar.
  * To use this method, you need to request the ohos.permission.KEEP_BACKGROUND_RUNNING permission from the system.
  * The ohos.permission.KEEP_BACKGROUND_RUNNING permission is of the normal level.
