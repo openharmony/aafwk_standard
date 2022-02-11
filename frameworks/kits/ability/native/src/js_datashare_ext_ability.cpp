@@ -16,8 +16,10 @@
 #include "js_datashare_ext_ability.h"
 
 #include "ability_info.h"
+#include "accesstoken_kit.h"
 #include "datashare_stub_impl.h"
 #include "hilog_wrapper.h"
+#include "ipc_skeleton.h"
 #include "js_datashare_ext_ability_context.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
@@ -33,6 +35,7 @@ namespace {
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
 constexpr size_t ARGC_THREE = 3;
+constexpr int INVALID_VALUE = -1;
 #if BINDER_IPC_32BIT
 const std::string LIB_RDB_PATH = "/system/lib/module/data/librdb.z.so";
 const std::string LIB_DATA_ABILITY_PATH = "/system/lib/module/data/libdataability.z.so";
@@ -43,6 +46,8 @@ const std::string LIB_DATA_ABILITY_PATH = "/system/lib64/module/data/libdataabil
 }
 
 using namespace OHOS::AppExecFwk;
+using OHOS::Security::AccessToken::AccessTokenKit;
+
 JsDataShareExtAbility* JsDataShareExtAbility::Create(const std::unique_ptr<Runtime>& runtime)
 {
     return new JsDataShareExtAbility(static_cast<JsRuntime&>(*runtime));
@@ -162,8 +167,8 @@ void JsDataShareExtAbility::UnloadLibrary()
 
 void JsDataShareExtAbility::OnStart(const AAFwk::Want &want)
 {
-    Extension::OnStart(want);
     HILOG_INFO("%{public}s begin.", __func__);
+    Extension::OnStart(want);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
     napi_value napiWant = OHOS::AppExecFwk::WrapWant(env, want);
@@ -175,8 +180,8 @@ void JsDataShareExtAbility::OnStart(const AAFwk::Want &want)
 
 sptr<IRemoteObject> JsDataShareExtAbility::OnConnect(const AAFwk::Want &want)
 {
-    Extension::OnConnect(want);
     HILOG_INFO("%{public}s begin.", __func__);
+    Extension::OnConnect(want);
     sptr<DataShareStubImpl> remoteObject = new (std::nothrow) DataShareStubImpl(
         std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()));
     HILOG_INFO("%{public}s end. ", __func__);
@@ -234,8 +239,8 @@ void JsDataShareExtAbility::GetSrcPath(std::string &srcPath)
 
 std::vector<std::string> JsDataShareExtAbility::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
-    auto ret = DataShareExtAbility::GetFileTypes(uri, mimeTypeFilter);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::GetFileTypes(uri, mimeTypeFilter);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -264,8 +269,8 @@ std::vector<std::string> JsDataShareExtAbility::GetFileTypes(const Uri &uri, con
 
 int JsDataShareExtAbility::OpenFile(const Uri &uri, const std::string &mode)
 {
-    auto ret = DataShareExtAbility::OpenFile(uri, mode);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::OpenFile(uri, mode);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -290,8 +295,8 @@ int JsDataShareExtAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 int JsDataShareExtAbility::OpenRawFile(const Uri &uri, const std::string &mode)
 {
-    auto ret = DataShareExtAbility::OpenRawFile(uri, mode);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::OpenRawFile(uri, mode);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -316,8 +321,14 @@ int JsDataShareExtAbility::OpenRawFile(const Uri &uri, const std::string &mode)
 
 int JsDataShareExtAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    auto ret = DataShareExtAbility::Insert(uri, value);
     HILOG_INFO("%{public}s begin.", __func__);
+    int ret = INVALID_VALUE;
+    if (!CheckCallingPermission(abilityInfo_->writePermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
+        return ret;
+    }
+
+    ret = DataShareExtAbility::Insert(uri, value);
     if (rdbValueBucketNewInstance_ == nullptr) {
         HILOG_ERROR("%{public}s invalid instance of rdb value bucket.", __func__);
         return ret;
@@ -345,8 +356,14 @@ int JsDataShareExtAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
 int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
     const NativeRdb::DataAbilityPredicates &predicates)
 {
-    auto ret = DataShareExtAbility::Update(uri, value, predicates);
     HILOG_INFO("%{public}s begin.", __func__);
+    int ret = INVALID_VALUE;
+    if (!CheckCallingPermission(abilityInfo_->writePermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
+        return ret;
+    }
+
+    ret = DataShareExtAbility::Update(uri, value, predicates);
     if (rdbValueBucketNewInstance_ == nullptr) {
         HILOG_ERROR("%{public}s invalid instance of ValuesBucket.", __func__);
         return ret;
@@ -382,12 +399,14 @@ int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket 
 
 int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    auto ret = DataShareExtAbility::Delete(uri, predicates);
     HILOG_INFO("%{public}s begin.", __func__);
-    if (rdbValueBucketNewInstance_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of ValuesBucket.", __func__);
+    int ret = INVALID_VALUE;
+    if (!CheckCallingPermission(abilityInfo_->writePermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
         return ret;
     }
+
+    ret = DataShareExtAbility::Delete(uri, predicates);
     if (dataAbilityPredicatesNewInstance_ == nullptr) {
         HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
         return ret;
@@ -418,12 +437,14 @@ int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
 std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(const Uri &uri,
     std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    auto ret = DataShareExtAbility::Query(uri, columns, predicates);
     HILOG_INFO("%{public}s begin.", __func__);
-    if (rdbValueBucketNewInstance_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of ValuesBucket.", __func__);
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> ret;
+    if (!CheckCallingPermission(abilityInfo_->readPermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
         return ret;
     }
+
+    ret = DataShareExtAbility::Query(uri, columns, predicates);
     if (dataAbilityPredicatesNewInstance_ == nullptr) {
         HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
         return ret;
@@ -474,8 +495,8 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
 
 std::string JsDataShareExtAbility::GetType(const Uri &uri)
 {
-    auto ret = DataShareExtAbility::GetType(uri);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::GetType(uri);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -497,8 +518,14 @@ std::string JsDataShareExtAbility::GetType(const Uri &uri)
 
 int JsDataShareExtAbility::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
-    auto ret = DataShareExtAbility::BatchInsert(uri, values);
     HILOG_INFO("%{public}s begin.", __func__);
+    int ret = INVALID_VALUE;
+    if (!CheckCallingPermission(abilityInfo_->writePermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
+        return ret;
+    }
+
+    ret = DataShareExtAbility::BatchInsert(uri, values);
     if (rdbValueBucketNewInstance_ == nullptr) {
         HILOG_ERROR("%{public}s invalid instance of rdb value bucket.", __func__);
         return ret;
@@ -537,32 +564,32 @@ int JsDataShareExtAbility::BatchInsert(const Uri &uri, const std::vector<NativeR
 
 bool JsDataShareExtAbility::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
-    DataShareExtAbility::RegisterObserver(uri, dataObserver);
     HILOG_INFO("%{public}s begin.", __func__);
+    DataShareExtAbility::RegisterObserver(uri, dataObserver);
     HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 
 bool JsDataShareExtAbility::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
-    DataShareExtAbility::UnregisterObserver(uri, dataObserver);
     HILOG_INFO("%{public}s begin.", __func__);
+    DataShareExtAbility::UnregisterObserver(uri, dataObserver);
     HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 
 bool JsDataShareExtAbility::NotifyChange(const Uri &uri)
 {
-    auto ret = DataShareExtAbility::NotifyChange(uri);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::NotifyChange(uri);
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
 }
 
 Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
 {
-    auto ret = DataShareExtAbility::NormalizeUri(uri);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::NormalizeUri(uri);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -583,8 +610,8 @@ Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
 
 Uri JsDataShareExtAbility::DenormalizeUri(const Uri &uri)
 {
-    auto ret = DataShareExtAbility::DenormalizeUri(uri);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::DenormalizeUri(uri);
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
 
@@ -606,10 +633,19 @@ Uri JsDataShareExtAbility::DenormalizeUri(const Uri &uri)
 std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> JsDataShareExtAbility::ExecuteBatch(
     const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations)
 {
-    auto ret = DataShareExtAbility::ExecuteBatch(operations);
     HILOG_INFO("%{public}s begin.", __func__);
+    auto ret = DataShareExtAbility::ExecuteBatch(operations);
     HILOG_INFO("%{public}s end.", __func__);
     return ret;
+}
+
+bool JsDataShareExtAbility::CheckCallingPermission(const std::string &permission)
+{
+    if (!permission.empty() && AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), permission)
+        != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return false;
+    }
+    return true;
 }
 } // namespace AbilityRuntime
 } // namespace OHOS
