@@ -49,12 +49,16 @@ void AbilityServiceStartTest::TearDownTestCase()
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
 }
 
-void AbilityServiceStartTest::TearDown()
-{}
-
 void AbilityServiceStartTest::SetUp()
 {
     aams_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
+}
+
+void AbilityServiceStartTest::TearDown()
+{
+    aams_->OnStop();
+    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    aams_ = nullptr;
 }
 
 /*

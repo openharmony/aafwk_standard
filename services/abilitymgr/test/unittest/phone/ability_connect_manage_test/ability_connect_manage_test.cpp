@@ -272,8 +272,8 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_004, TestSize.Level1)
 
     auto result2 = ConnectManager()->TerminateAbility(service->GetToken());
     WaitUntilTaskDone(handler);
-    EXPECT_EQ(OHOS::AAFwk::TERMINATE_SERVICE_IS_CONNECTED, result2);
-    EXPECT_NE(service->GetAbilityState(), TERMINATING);
+    EXPECT_EQ(0, result2);
+    EXPECT_EQ(service->GetAbilityState(), TERMINATING);
 }
 
 /*
@@ -364,8 +364,8 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_007, TestSize.Level1)
 
     auto result2 = ConnectManager()->StopServiceAbility(abilityRequest_);
     WaitUntilTaskDone(handler);
-    EXPECT_EQ(OHOS::AAFwk::TERMINATE_SERVICE_IS_CONNECTED, result2);
-    EXPECT_NE(service->GetAbilityState(), TERMINATING);
+    EXPECT_EQ(0, result2);
+    EXPECT_EQ(service->GetAbilityState(), TERMINATING);
 }
 
 /*
