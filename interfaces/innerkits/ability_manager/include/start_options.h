@@ -22,10 +22,15 @@
 #include "parcel.h"
 namespace OHOS {
 namespace AAFwk {
-class StartOptions : public Parcelable {
+class StartOptions final : public Parcelable, public std::enable_shared_from_this<StartOptions> {
 public:
     static const std::string STRING_DISPLAY_ID;
     const int32_t DEFAULT_DISPLAY_ID {0};
+
+    StartOptions() = default;
+    ~StartOptions() = default;
+    StartOptions(const StartOptions &other);
+    StartOptions &operator=(const StartOptions &other);
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

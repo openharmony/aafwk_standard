@@ -357,6 +357,10 @@ public:
     {
         return 0;
     }
+    virtual int MoveMissionToFront(int32_t missionId, const StartOptions &startOptions) override
+    {
+        return 0;
+    }
     virtual int GetMissionInfos(const std::string& deviceId, int32_t numMax,
         std::vector<MissionInfo> &missionInfos) override
     {

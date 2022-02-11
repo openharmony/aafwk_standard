@@ -23,12 +23,15 @@
 #include "js_mission_listener.h"
 #include "js_runtime_utils.h"
 #include "mission_snapshot.h"
+#include "napi_common_start_options.h"
 #include "pixel_map_napi.h"
+#include "start_options.h"
 
 #include <mutex>
 
 namespace OHOS {
 namespace AbilityRuntime {
+constexpr size_t ARGC_ONE = 1;
 using namespace OHOS::AppExecFwk;
 using AbilityManagerClient = AAFwk::AbilityManagerClient;
 namespace {
@@ -452,14 +455,23 @@ private:
             HILOG_ERROR("Parse missionId failed");
             errCode = ERR_NOT_OK;
         }
+        decltype(info.argc) unwrapArgc = 1;
 
+        AAFwk::StartOptions startOptions;
+        if (info.argc > ARGC_ONE && info.argv[1]->TypeOf() == NATIVE_OBJECT) {
+            HILOG_INFO("OnMoveMissionToFront start options is used.");
+            AppExecFwk::UnwrapStartOptions(reinterpret_cast<napi_env>(&engine),
+                reinterpret_cast<napi_value>(info.argv[1]), startOptions);
+            unwrapArgc++;
+        }
         AsyncTask::CompleteCallback complete =
-            [missionId, errCode](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            [missionId, errCode, startOptions, unwrapArgc](NativeEngine &engine, AsyncTask &task, int32_t status) {
                 if (errCode != 0) {
                     task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
                     return;
                 }
-                auto ret = AbilityManagerClient::GetInstance()->MoveMissionToFront(missionId);
+                auto ret = (unwrapArgc == 1) ? AbilityManagerClient::GetInstance()->MoveMissionToFront(missionId) :
+                    AbilityManagerClient::GetInstance()->MoveMissionToFront(missionId, startOptions);
                 if (ret == 0) {
                     task.Resolve(engine, engine.CreateUndefined());
                 } else {
@@ -467,7 +479,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= unwrapArgc) ? nullptr : info.argv[unwrapArgc];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -504,7 +516,6 @@ NativeValue* JsMissionManagerInit(NativeEngine* engine, NativeValue* exportObj)
     BindNativeFunction(*engine, *object, "unlockMission", JsMissionManager::UnlockMission);
     BindNativeFunction(*engine, *object, "clearMission", JsMissionManager::ClearMission);
     BindNativeFunction(*engine, *object, "clearAllMissions", JsMissionManager::ClearAllMissions);
-    BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
     BindNativeFunction(*engine, *object, "moveMissionToFront", JsMissionManager::MoveMissionToFront);
     return engine->CreateUndefined();
 }

@@ -142,7 +142,7 @@ private:
     int CleanMissionInner(MessageParcel &data, MessageParcel &reply);
     int CleanAllMissionsInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontInner(MessageParcel &data, MessageParcel &reply);
-	
+
 	// for new version ability (call ability)
     int StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply);
     int ReleaseInner(MessageParcel &data, MessageParcel &reply);
@@ -170,6 +170,7 @@ private:
     int DoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply);
 
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
+    int MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

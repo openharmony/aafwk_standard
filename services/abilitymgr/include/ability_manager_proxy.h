@@ -544,7 +544,9 @@ public:
     virtual int CleanAllMissions() override;
 
     virtual int MoveMissionToFront(int32_t missionId) override;
-	
+
+    virtual int MoveMissionToFront(int32_t missionId, const StartOptions &startOptions) override;
+
 	/**
      * Start Ability, connect session with common ability.
      *
@@ -655,7 +657,7 @@ public:
      * @param pid The not response process ID.
      */
     virtual bool SendANRProcessID(int pid) override;
-    
+
 private:
     template <typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);
