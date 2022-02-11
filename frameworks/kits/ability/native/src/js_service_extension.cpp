@@ -123,6 +123,7 @@ void JsServiceExtension::OnStop()
     CallObjectMethod("onDestroy");
     bool ret = ConnectionManager::GetInstance().DisconnectCaller(GetContext()->GetToken());
     if (ret) {
+        ConnectionManager::GetInstance().ReportConnectionLeakEvent(getpid(), gettid());
         HILOG_INFO("The service extension connection is not disconnected.");
     }
     HILOG_INFO("%{public}s end.", __func__);

@@ -17,10 +17,13 @@
 #include "ability_connection.h"
 #include "ability_context.h"
 #include "ability_manager_client.h"
+#include "dfx_dump_catcher.h"
+#include "hichecker.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
+using namespace OHOS::HiviewDFX;
 ConnectionManager& ConnectionManager::GetInstance()
 {
     static ConnectionManager connectionManager;
@@ -236,6 +239,26 @@ bool ConnectionManager::DisconnectReceiver(const AppExecFwk::ElementName &connec
 
     HILOG_DEBUG("%{public}s end, abilityConnectionsSize:%{public}d.", __func__, (int32_t)abilityConnections_.size());
     return isDisconnect;
+}
+
+void ConnectionManager::ReportConnectionLeakEvent(const int pid, const int tid)
+{
+    HILOG_DEBUG("%{public}s begin, pid:%{public}d, tid:%{public}d.", __func__, pid, tid);
+    if (HiChecker::Contains(Rule::RULE_CHECK_ABILITY_CONNECTION_LEAK)) {
+        DfxDumpCatcher dumplog;
+        std::string stackTrace;
+        bool ret = dumplog.DumpCatch(pid, tid, stackTrace);
+        if (ret) {
+            std::string cautionMsg = "TriggerRule:RULE_CHECK_ABILITY_CONNECTION_LEAK-pid=" +
+                std::to_string(pid) + "-tid=" + std::to_string(tid) + ", has leaked connection" +
+                ", Are you missing a call to DisconnectAbility()";
+            HILOG_DEBUG("%{public}s cautionMsg:%{public}s.", __func__, cautionMsg.c_str());
+            Caution caution(Rule::RULE_CHECK_ABILITY_CONNECTION_LEAK, cautionMsg, stackTrace);
+            HiChecker::NotifyAbilityConnectionLeak(caution);
+        } else {
+            HILOG_ERROR("%{public}s dumpCatch stackTrace failed.", __func__);
+        }
+    }
 }
 
 bool ConnectionManager::IsConnectCallerEqual(const sptr<IRemoteObject> &connectCaller,

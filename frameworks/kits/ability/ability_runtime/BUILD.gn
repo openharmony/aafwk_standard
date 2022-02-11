@@ -22,6 +22,7 @@ config("ability_context_public_config") {
     "${SO_DIR}/include",
     "${APPKIT_DIR}/appkit/native/ability_runtime",
     "${APPKIT_DIR}/appkit/native/ability_runtime/context",
+    "//base/hiviewdfx/hichecker/interfaces/native/innerkits/include"
   ]
 
   cflags = []
@@ -48,6 +49,7 @@ ohos_shared_library("ability_context_native") {
     "${INNERKITS_DIR}/want:want",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher"
   ]
 
   external_deps = [
@@ -55,6 +57,7 @@ ohos_shared_library("ability_context_native") {
     "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
+    "hichecker_native:libhichecker",
     "ipc:ipc_core",
     "utils_base:utils",
   ]

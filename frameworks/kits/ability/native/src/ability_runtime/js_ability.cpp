@@ -153,6 +153,7 @@ void JsAbility::OnStop()
     CallObjectMethod("onDestroy");
     bool ret = ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
     if (ret) {
+        ConnectionManager::GetInstance().ReportConnectionLeakEvent(getpid(), gettid());
         HILOG_INFO("The service connection is not disconnected.");
     }
 }
