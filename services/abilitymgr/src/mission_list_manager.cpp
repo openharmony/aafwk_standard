@@ -1574,7 +1574,7 @@ void MissionListManager::Dump(std::vector<std::string> &info)
 }
 
 void MissionListManager::DumpMissionListByRecordId(
-    std::vector<std::string> &info, bool isClient, int32_t abilityRecordId)
+    std::vector<std::string> &info, bool isClient, int32_t abilityRecordId, const std::vector<std::string> &params)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::string dumpInfo = "User ID #" + std::to_string(userId_);
@@ -1582,23 +1582,23 @@ void MissionListManager::DumpMissionListByRecordId(
     for (const auto& missionList : currentMissionLists_) {
         if (missionList && missionList != launcherList_) {
             HILOG_INFO("missionList begain to call DumpMissionListByRecordId %{public}s", __func__);
-            missionList->DumpStateByRecordId(info, isClient, abilityRecordId);
+            missionList->DumpStateByRecordId(info, isClient, abilityRecordId, params);
         }
     }
 
     if (defaultStandardList_) {
         HILOG_INFO("defaultStandardList begain to call DumpMissionListByRecordId %{public}s", __func__);
-        defaultStandardList_->DumpStateByRecordId(info, isClient, abilityRecordId);
+        defaultStandardList_->DumpStateByRecordId(info, isClient, abilityRecordId, params);
     }
 
     if (defaultSingleList_) {
         HILOG_INFO("defaultSingleList begain to call DumpMissionListByRecordId %{public}s", __func__);
-        defaultSingleList_->DumpStateByRecordId(info, isClient, abilityRecordId);
+        defaultSingleList_->DumpStateByRecordId(info, isClient, abilityRecordId, params);
     }
 
     if (launcherList_) {
         HILOG_INFO("launcherList begain to call DumpMissionListByRecordId %{public}s", __func__);
-        launcherList_->DumpStateByRecordId(info, isClient, abilityRecordId);
+        launcherList_->DumpStateByRecordId(info, isClient, abilityRecordId, params);
     }
 }
 void MissionListManager::DumpMissionList(std::vector<std::string> &info, bool isClient, const std::string &args)

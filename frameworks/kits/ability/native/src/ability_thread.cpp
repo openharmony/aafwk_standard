@@ -1559,9 +1559,23 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
     return abilityContextImpl;
 }
 
-void AbilityThread::DumpAbilityInfo(std::vector<std::string> &info)
+void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     APP_LOGI("%{public}s begin.", __func__);
+    if (!params.empty()) {
+        if (abilityImpl_->IsStageBasedModel()) {
+            auto window = currentAbility_->GetWindow();
+            if (window == nullptr) {
+                APP_LOGE("DumpAbilityInfo window == nullptr");
+                return;
+            }
+            window->DumpInfo(params, info);
+        } else {
+            currentAbility_->Dump(params, info);
+        }
+
+        return;
+    }
     std::string dumpInfo = "      event:";
     info.push_back(dumpInfo);
 

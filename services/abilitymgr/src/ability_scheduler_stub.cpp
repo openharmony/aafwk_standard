@@ -580,10 +580,13 @@ int AbilitySchedulerStub::NotifyContinuationResultInner(MessageParcel &data, Mes
 
 int AbilitySchedulerStub::DumpAbilityInfoInner(MessageParcel &data, MessageParcel &reply)
 {
-
     std::vector<std::string> infos;
-
-    DumpAbilityInfo(infos);
+    std::vector<std::string> params;
+    if (!data.ReadStringVector(&params)) {
+        HILOG_INFO("DumpAbilityInfoInner read params error");
+        return NO_ERROR;
+    }
+    DumpAbilityInfo(params, infos);
 
     for (const auto & infostep:infos) {
         HILOG_INFO("DumpAbilityInfoInner infos = %{public}s", infostep.c_str());
