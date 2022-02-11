@@ -39,6 +39,10 @@ std::string InnerMissionInfo::ToJsonStr() const
 
 void InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
 {
+    if (jsonStr.empty()) {
+        HILOG_ERROR("json str is empty.");
+        return;
+    }
     nlohmann::json value = nlohmann::json::parse(jsonStr);
     if (value.is_discarded()) {
         HILOG_ERROR("failed to parse json sting: %{private}s.", jsonStr.c_str());
