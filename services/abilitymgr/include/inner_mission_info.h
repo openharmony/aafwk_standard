@@ -42,7 +42,7 @@ struct InnerMissionInfo {
     bool isSingletonMode;
 
     std::string ToJsonStr() const;
-    void FromJsonStr(const std::string &jsonStr);
+    bool FromJsonStr(const std::string &jsonStr);
     void Dump(std::vector<std::string> &info) const;
 };
 }  // namespace AAFwk

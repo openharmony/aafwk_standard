@@ -58,7 +58,10 @@ bool MissionDataStorage::LoadAllMissionInfo(std::list<InnerMissionInfo> &mission
         }
 
         InnerMissionInfo misssionInfo;
-        misssionInfo.FromJsonStr(content);
+        if (!misssionInfo.FromJsonStr(content)) {
+            HILOG_ERROR("parse mission info failed. file: %{public}s", fileName.c_str());
+            continue;
+        }
         missionInfoList.push_back(misssionInfo);
     }
     return true;
