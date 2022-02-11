@@ -3744,6 +3744,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
         HILOG_INFO("start all");
         StartingLauncherAbility();
         StartingSettingsDataAbility();
+        StartingScreenLockAbility();
         return;
     }
 
@@ -3755,6 +3756,10 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
     if (amsConfigResolver_->GetStartSettingsDataState()) {
         HILOG_INFO("start settingsdata");
         StartingSettingsDataAbility();
+    }
+
+    if (amsConfigResolver_->GetStartScreenLockState()) {
+        StartingScreenLockAbility();
     }
 
     if (amsConfigResolver_->GetPhoneServiceState()) {
@@ -4151,6 +4156,34 @@ int AbilityManagerService::GenerateAbilityRequestLocal(
         }
     }
     return result;
+}
+
+void AbilityManagerService::StartingScreenLockAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+        return;
+    }
+
+    constexpr int maxAttemptNums = 5;
+    auto userId = GetUserId();
+    int attemptNums = 1;
+    AppExecFwk::AbilityInfo screenLockInfo;
+    Want screenLockWant;
+    screenLockWant.SetElementName(AbilityConfig::SCREEN_LOCK_BUNDLE_NAME, AbilityConfig::SCREEN_LOCK_ABILITY_NAME);
+    while (!(iBundleManager_->QueryAbilityInfo(screenLockWant,
+        OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, screenLockInfo)) &&
+        attemptNums <= maxAttemptNums) {
+        HILOG_INFO("Waiting query mms service completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+        attemptNums++;
+    }
+
+    HILOG_INFO("attemptNums : %{public}d", attemptNums);
+    if (attemptNums <= maxAttemptNums) {
+        (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS
