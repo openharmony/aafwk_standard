@@ -909,6 +909,11 @@ private:
      */
     void StartingSettingsDataAbility();
     /**
+     * starting screen lock ability.
+     *
+     */
+    void StartingScreenLockAbility();
+    /**
      * starting phone service ability.
      *
      */
