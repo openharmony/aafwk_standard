@@ -801,18 +801,6 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
         abilityRecord->CallRequest();
         abilityRecord->SetStartToBackground(false);
     }
-
-    auto mission = abilityRecord->GetMission();
-    if (!mission) {
-        HILOG_ERROR("snapshot: GetMission failed");
-        return;
-    }
-    MissionSnapshot snapshot;
-    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(mission->GetMissionId(),
-        abilityRecord->GetToken(), snapshot);
-    if (listenerController_) {
-        listenerController_->NotifyMissionSnapshotChanged(mission->GetMissionId());
-    }
 }
 
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &abilityRecord,
@@ -1151,11 +1139,24 @@ void MissionListManager::MoveToBackgroundTask(const std::shared_ptr<AbilityRecor
     std::string backElement = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("Ability record: %{public}s", backElement.c_str());
     auto self(shared_from_this());
+    UpdateMissionSnapshot(abilityRecord);
     auto task = [abilityRecord, self]() {
         HILOG_WARN("mission list manager move to background timeout.");
         self->CompleteBackground(abilityRecord);
     };
     abilityRecord->BackgroundAbility(task);
+}
+
+void MissionListManager::UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord>& abilityRecord)
+{
+    CHECK_POINTER(abilityRecord);
+    int32_t missionId = abilityRecord->GetMissionId();
+    MissionSnapshot snapshot;
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(missionId, abilityRecord->GetToken(),
+        snapshot);
+    if (listenerController_) {
+        listenerController_->NotifyMissionSnapshotChanged(missionId);
+    }
 }
 
 void MissionListManager::OnTimeOut(uint32_t msgId, int64_t eventId)
