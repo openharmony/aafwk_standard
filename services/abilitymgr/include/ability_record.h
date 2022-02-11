@@ -778,6 +778,8 @@ public:
     bool CallRequest();
     bool IsStartToBackground() const;
     void SetStartToBackground(const bool flag);
+    void SetMinimizeReason(bool fromUser);
+    bool IsMinimizeFromUser() const;
 
     void SetSpecifiedFlag(const std::string &flag);
     std::string GetSpecifiedFlag() const;
@@ -869,6 +871,7 @@ private:
     std::shared_ptr<CallContainer> callContainer_ = nullptr;
     bool isStartedByCall_ = false;
     bool isStartToBackground_ = false;
+    bool minimizeReason_ = false;
 
     int32_t restartCount_ = -1;
     int32_t restratMax_ = -1;

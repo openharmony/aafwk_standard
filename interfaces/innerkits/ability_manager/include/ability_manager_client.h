@@ -180,9 +180,10 @@ public:
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, ability token.
+     * @param fromUser mark the minimize operation source.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode MinimizeAbility(const sptr<IRemoteObject> &token);
+    ErrCode MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false);
 
     /**
      * ConnectAbility, connect session with service ability.
@@ -731,6 +732,24 @@ public:
      */
     ErrCode DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token);
 
+   /**
+     * Calls this interface to move the ability to the foreground.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag);
+
+    /**
+     * Calls this interface to move the ability to the background.
+     *
+     * @param token, ability's token.
+     * @param flag, use for lock or unlock flag and so on.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag);
+    
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
