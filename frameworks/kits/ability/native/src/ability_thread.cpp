@@ -527,12 +527,13 @@ void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int sta
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("AbilityThread::HandleCommandAbility begin");
-    APP_LOGI("AbilityThread::HandleCommandAbility before abilityImpl_->CommandAbility");
+    if (abilityImpl_ == nullptr) {
+        APP_LOGE("AbilityThread::HandleCommandAbility failed. abilityImpl_ == nullptr");
+        return;
+    }
     abilityImpl_->CommandAbility(want, restart, startId);
-    APP_LOGI("AbilityThread::HandleCommandAbility after abilityImpl_->CommandAbility");
     APP_LOGI("AbilityThread::HandleCommandAbility before ScheduleCommandAbilityDone");
     ErrCode err = AbilityManagerClient::GetInstance()->ScheduleCommandAbilityDone(token_);
-    APP_LOGI("AbilityThread::HandleCommandAbility after ScheduleCommandAbilityDone");
     if (err != ERR_OK) {
         APP_LOGE("AbilityThread:: HandleCommandAbility  faile err = %{public}d", err);
     }
@@ -759,7 +760,7 @@ void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycle
  */
 void AbilityThread::ScheduleConnectAbility(const Want &want)
 {
-    APP_LOGI("AbilityThread::ScheduleConnectAbility begin, isExtension_：%{public}d", isExtension_);
+    APP_LOGI("AbilityThread::ScheduleConnectAbility begin, isExtension_:%{public}d", isExtension_);
     wptr<AbilityThread> weak = this;
     auto task = [weak, want]() {
         auto abilityThread = weak.promote();
@@ -792,7 +793,7 @@ void AbilityThread::ScheduleConnectAbility(const Want &want)
  */
 void AbilityThread::ScheduleDisconnectAbility(const Want &want)
 {
-    APP_LOGI("AbilityThread::ScheduleDisconnectAbility begin, isExtension_：%{public}d", isExtension_);
+    APP_LOGI("AbilityThread::ScheduleDisconnectAbility begin, isExtension_:%{public}d", isExtension_);
     wptr<AbilityThread> weak = this;
     auto task = [weak, want]() {
         auto abilityThread = weak.promote();
@@ -1144,7 +1145,7 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Valu
     APP_LOGI("AbilityThread::BatchInsert begin");
     int ret = -1;
     if (abilityImpl_ == nullptr) {
-        APP_LOGE("AbilityThread::BatchInsert​ abilityImpl_ is nullptr");
+        APP_LOGE("AbilityThread::BatchInsert abilityImpl_ is nullptr");
         return ret;
     }
 

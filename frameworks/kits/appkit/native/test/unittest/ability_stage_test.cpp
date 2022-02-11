@@ -21,6 +21,7 @@
 #include "context.h"
 #include "context_impl.h"
 #include "iremote_object.h"
+#include "mock_ability_token.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -41,7 +42,7 @@ public:
     void TearDown();
 };
 
-class MockToken : public OHOS::IRemoteObject {
+class MockToken : public OHOS::AppExecFwk::MockAbilityToken {
 public:
     int32_t GetObjectRefCount() override
     {
@@ -138,8 +139,10 @@ HWTEST_F(AbilityStageTest, AppExecFwk_AbilityStage_AddAbility_001, Function | Me
 HWTEST_F(AbilityStageTest, AppExecFwk_AbilityStage_AddAbility_002, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityStage_AddAbility_002 start";
-    sptr<IRemoteObject> token = new MockToken();
+    sptr<IRemoteObject> token = new (std::nothrow) MockToken();
+    GTEST_LOG_(INFO) << "AppExecFwk_AbilityStage_AddAbility_002 111";
     abilityStage_->AddAbility(token, std::make_shared<AppExecFwk::AbilityLocalRecord>(nullptr, nullptr));
+    GTEST_LOG_(INFO) << "AppExecFwk_AbilityStage_AddAbility_002 222";
     EXPECT_TRUE(abilityStage_->ContainsAbility());
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityStage_AddAbility_002 end";
 }
