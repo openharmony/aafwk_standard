@@ -146,9 +146,10 @@ public:
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, the token of the ability to minimize.
+     * @param fromUser mark the minimize operation source.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int MinimizeAbility(const sptr<IRemoteObject> &token) = 0;
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false) = 0;
 
     /**
      * ConnectAbility, connect session with service ability.

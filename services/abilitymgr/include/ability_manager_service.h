@@ -147,9 +147,10 @@ public:
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, ability token.
+     * @param fromUser mark the minimize operation source.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int MinimizeAbility(const sptr<IRemoteObject> &token) override;
+    virtual int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false) override;
 
     /**
      * ConnectAbility, connect session with service ability.
@@ -917,6 +918,11 @@ private:
      */
     bool Init();
     /**
+     * initialization of u0 user.
+     *
+     */
+    void InitU0User();
+    /**
      * starting lanucher ability.
      *
      */
@@ -943,6 +949,12 @@ private:
      *
      */
     void StartingContactsAbility();
+
+    /**
+     * starting system ui ServiceExt abilites.
+     *
+     */
+    void StartingSystemUiAbility();
 
     /**
      * starting mms ability.

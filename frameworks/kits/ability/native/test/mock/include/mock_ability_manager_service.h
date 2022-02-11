@@ -53,7 +53,7 @@ public:
 
     int TerminateAbility(
         const sptr<IRemoteObject> &token, int resultCode = -1, const Want *resultWant = nullptr) override;
-    int MinimizeAbility(const sptr<IRemoteObject> &token) override
+    int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser) override
     {
         return 0;
     }
