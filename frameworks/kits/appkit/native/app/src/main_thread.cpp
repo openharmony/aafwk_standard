@@ -58,7 +58,7 @@ constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
 const std::string ABS_BUNDLE_CODE_PATH = "/data/app/el1/bundle/public/";
-const std::string LOCAL_BUNDLE_CODE_PATH = "/data/storage/el1/bundle/";
+const std::string LOCAL_BUNDLE_CODE_PATH = "/data/storage/el1/bundle";
 const std::string FILE_SEPARATOR = "/";
 }
 
@@ -854,7 +854,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     if (isStageBased) {
         // Create runtime
         AbilityRuntime::Runtime::Options options;
-        options.codePath = appInfo.codePath;
+        options.codePath = LOCAL_BUNDLE_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
         auto runtime = AbilityRuntime::Runtime::Create(options);
         if (!runtime) {
@@ -927,7 +927,7 @@ void MainThread::ChangeToLocalPath(const std::string &bundleName,
         }
         std::regex pattern(ABS_BUNDLE_CODE_PATH + bundleName + FILE_SEPARATOR);
         localPath.emplace_back(
-            std::regex_replace(item, pattern, LOCAL_BUNDLE_CODE_PATH));
+            std::regex_replace(item, pattern, LOCAL_BUNDLE_CODE_PATH + FILE_SEPARATOR));
     }
 }
 
