@@ -61,6 +61,10 @@ bool AppSpawnMsgWrapper::AssembleMsg(const AppSpawnStartMsg &startMsg)
         APP_LOGE("failed to transform apl!");
         return false;
     }
+    if (strcpy_s(msg_->bundleName, sizeof(msg_->bundleName), startMsg.bundleName.c_str()) != EOK) {
+        APP_LOGE("failed to transform bundleName!");
+        return false;
+    }
 
     isValid_ = true;
     DumpMsg();
