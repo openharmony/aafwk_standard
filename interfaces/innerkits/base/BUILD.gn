@@ -56,5 +56,5 @@ ohos_shared_library("base") {
   ]
 
   subsystem_name = "aafwk"
-  part_name = "ability_runtime"
+  part_name = "ability_base"
 }
