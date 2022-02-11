@@ -900,7 +900,9 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
         APP_LOGE("%{public}s scene_ -> UpdateConfiguration success.", __func__);
     }
 
-    abilityContext_->SetConfiguration(application_->GetConfiguration());
+    if (abilityContext_ != nullptr && application_ != nullptr) {
+        abilityContext_->SetConfiguration(application_->GetConfiguration());
+    }
     // Notify Ability Subclass
     OnConfigurationUpdated(changeConfiguration);
     APP_LOGI("%{public}s Notify Ability Subclass.", __func__);

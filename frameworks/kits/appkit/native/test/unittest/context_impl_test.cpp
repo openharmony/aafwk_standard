@@ -113,7 +113,7 @@ HWTEST_F(ContextImplTest, AppExecFwk_ContextImpl_SetApplicationInfo_001, Functio
 HWTEST_F(ContextImplTest, AppExecFwk_ContextImpl_GetApplicationInfo_001, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_GetApplicationInfo_001 start";
-    EXPECT_NE(contextImpl_->GetApplicationInfo(), nullptr);
+    EXPECT_TRUE(contextImpl_->GetApplicationInfo() == nullptr);
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_GetApplicationInfo_001 end";
 }
 
@@ -127,7 +127,7 @@ HWTEST_F(ContextImplTest, AppExecFwk_ContextImpl_GetApplicationInfo_001, Functio
 HWTEST_F(ContextImplTest, AppExecFwk_ContextImpl_GetApplicationContext_001, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_GetApplicationContext_001 start";
-    EXPECT_EQ(contextImpl_->GetApplicationContext(), nullptr);
+    EXPECT_TRUE(contextImpl_->GetApplicationContext() == nullptr);
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_GetApplicationContext_001 end";
 }
 
@@ -143,7 +143,7 @@ HWTEST_F(ContextImplTest, AppExecFwk_ContextImpl_SetParentContext_001, Function 
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_SetParentContext_001 start";
     std::shared_ptr<AbilityRuntime::ContextImpl> contextImpl_ = std::make_shared<AbilityRuntime::ContextImpl>();
     contextImpl_->SetParentContext(contextImpl_);
-    EXPECT_NE(contextImpl_->GetApplicationContext(), nullptr);
+    EXPECT_TRUE(contextImpl_->GetApplicationContext() == nullptr);
     GTEST_LOG_(INFO) << "AppExecFwk_ContextImpl_SetParentContext_001 end";
 }
 

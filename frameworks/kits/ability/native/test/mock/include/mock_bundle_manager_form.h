@@ -20,7 +20,7 @@
 
 #include "ability_info.h"
 #include "application_info.h"
-#include "foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/bundle_mgr_interface.h"
+#include "bundle_mgr_interface.h"
 #include "gmock/gmock.h"
 #include "iremote_proxy.h"
 #include "iremote_stub.h"
@@ -232,7 +232,6 @@ public:
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"IBundleMgr");
     ~BundleMgrStub() = default;
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
