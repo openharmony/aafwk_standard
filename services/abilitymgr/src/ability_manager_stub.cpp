@@ -125,6 +125,7 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLEAN_MISSION] = &AbilityManagerStub::CleanMissionInner;
     requestFuncMap_[CLEAN_ALL_MISSIONS] = &AbilityManagerStub::CleanAllMissionsInner;
     requestFuncMap_[MOVE_MISSION_TO_FRONT] = &AbilityManagerStub::MoveMissionToFrontInner;
+    requestFuncMap_[MOVE_MISSION_TO_FRONT_BY_OPTIONS] = &AbilityManagerStub::MoveMissionToFrontByOptionsInner;
     requestFuncMap_[START_CALL_ABILITY] = &AbilityManagerStub::StartAbilityByCallInner;
     requestFuncMap_[RELEASE_CALL_ABILITY] = &AbilityManagerStub::ReleaseInner;
     requestFuncMap_[SET_MISSION_LABEL] = &AbilityManagerStub::SetMissionLabelInner;
@@ -1148,9 +1149,25 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
     return NO_ERROR;
 }
 
+int AbilityManagerStub::MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t missionId = data.ReadInt32();
+    StartOptions *startOptions = data.ReadParcelable<StartOptions>();
+    if (startOptions == nullptr) {
+        HILOG_ERROR("startOptions is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    int result = MoveMissionToFront(missionId, *startOptions);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("MoveMissionToFront failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
 int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply)
 {
-    
+
     HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner begin.");
     Want *want = data.ReadParcelable<Want>();
     if (want == nullptr) {
@@ -1166,7 +1183,7 @@ int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParc
 
     reply.WriteInt32(result);
     delete want;
-    
+
     HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner end.");
 
     return NO_ERROR;

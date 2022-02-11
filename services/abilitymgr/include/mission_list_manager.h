@@ -27,6 +27,7 @@
 #include "mission_info.h"
 #include "mission_snapshot.h"
 #include "snapshot.h"
+#include "start_options.h"
 #include "want.h"
 
 namespace OHOS {
@@ -67,9 +68,10 @@ public:
 
     int GetMissionInfo(int32_t missionId, MissionInfo &missionInfo);
 
-    int MoveMissionToFront(int32_t missionId);
+    int MoveMissionToFront(int32_t missionId, std::shared_ptr<StartOptions> startOptions = nullptr);
 
-    int MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher);
+    int MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher,
+        std::shared_ptr<StartOptions> startOptions = nullptr);
 
     /**
      * OnAbilityRequestDone, app manager service call this interface after ability request done.
@@ -294,7 +296,6 @@ public:
      * @param element, target ability name.
      */
     int ReleaseLocked(const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element);
-    
     /**
      * @brief register snapshotHandler
      * @param handler the snapshotHandler
