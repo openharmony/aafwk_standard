@@ -58,7 +58,7 @@ bool AbilityControllerProxy::AllowAbilityStart(const Want &want, const std::stri
     return reply.ReadBool();
 }
 
-bool AbilityControllerProxy::AllowAbilityForeground(const std::string &bundleName)
+bool AbilityControllerProxy::AllowAbilityBackground(const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -73,7 +73,7 @@ bool AbilityControllerProxy::AllowAbilityForeground(const std::string &bundleNam
         return true;
     }
     int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_FOREGROUND),
+        static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_BACKGROUND),
         data, reply, option);
     if (ret != NO_ERROR) {
         APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
