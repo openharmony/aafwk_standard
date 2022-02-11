@@ -741,14 +741,18 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0100, Function | MediumTest
 HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0200, Function | MediumTest | Level3)
 {
     GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackground_0200 start";
-
+    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+    std::shared_ptr<OHOSApplication> application = nullptr;
+    std::shared_ptr<AbilityHandler> handler = nullptr;
+    sptr<IRemoteObject> token = nullptr;
+    ability_->Init(abilityInfo, application, handler, token);
     ability_->OnBackground();
 
     AbilityLifecycleExecutor::LifecycleState state = ability_->GetState();
     std::shared_ptr<LifeCycle> lifeCycle = ability_->GetLifecycle();
 
-    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::UNINITIALIZED, state);
-    EXPECT_EQ(nullptr, lifeCycle);
+    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::BACKGROUND, state);
+    EXPECT_TRUE(lifeCycle);
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_OnBackground_0200 end";
 }
@@ -776,8 +780,9 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnBackground_0300, Function | MediumTest
     std::shared_ptr<LifeCycle> lifeCycle = ability_->GetLifecycle();
     LifeCycle::Event lifeCycleState = lifeCycle->GetLifecycleState();
 
-    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW, state);
-    EXPECT_EQ(LifeCycle::Event::ON_BACKGROUND, lifeCycleState);
+    // Sence is nullptr, so lifecycle schedule failed.
+    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::INITIAL, state);
+    EXPECT_EQ(LifeCycle::Event::UNDEFINED, lifeCycleState);
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_OBackground_0300 end";
 }

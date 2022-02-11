@@ -90,6 +90,10 @@ int SharedMemory::PushSharedMemory(const void *data, const int size)
 
 void* SharedMemory::PopSharedMemory(int shmKey, int size)
 {
+    if (size <= 0) {
+        HILOG_ERROR("size is invalid: %{public}d.", size);
+        return nullptr;
+    }
     void *data = reinterpret_cast<void *>(malloc(size));
     int shmId = shmget(shmKey, 0, 0 | SHM_READ_WRITE_PERMISSIONS);
     if (shmId == -1) {

@@ -66,7 +66,7 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
 void AbilityImpl::Start(const Want &want)
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Start ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -107,7 +107,7 @@ void AbilityImpl::Start(const Want &want)
 void AbilityImpl::Stop()
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Stop ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -133,7 +133,7 @@ void AbilityImpl::Stop()
 void AbilityImpl::Active()
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Active ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -159,7 +159,7 @@ void AbilityImpl::Active()
 void AbilityImpl::Inactive()
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Inactive ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -194,7 +194,8 @@ int AbilityImpl::GetCompatibleVersion()
 void AbilityImpl::AfterUnFocused()
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (!ability_ || !contextDeal_ || !handler_) {
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        APP_LOGE("AbilityImpl::AfterUnFocused failed");
         return;
     }
 
@@ -268,7 +269,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterUnFocused()
 void AbilityImpl::Foreground(const Want &want)
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Foreground ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -293,7 +294,7 @@ void AbilityImpl::Foreground(const Want &want)
 void AbilityImpl::Background()
 {
     APP_LOGI("%{public}s begin.", __func__);
-    if (ability_ == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
         APP_LOGE("AbilityImpl::Background ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
@@ -838,8 +839,6 @@ Uri AbilityImpl::DenormalizeUri(const Uri &uri)
 void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("%{public}s begin.", __func__);
-
-
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::ScheduleUpdateConfiguration ability_ is nullptr");
         return;
