@@ -1019,6 +1019,8 @@ private:
         MissionInfo &missionInfo);
     int32_t GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
         MissionSnapshot& missionSnapshot);
+    int StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect);
+    int ReleaseRemoteAbility(const sptr<IRemoteObject> &connect, const AppExecFwk::ElementName &element);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackListInner(const std::string &args, std::vector<std::string> &info);
