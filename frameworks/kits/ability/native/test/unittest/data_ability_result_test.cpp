@@ -31,7 +31,7 @@ public:
     ~DataAbilityResultTest()
     {}
 
-    std::shared_ptr<DataAbilityResult> Base_ = nullptr;
+    std::shared_ptr<DataAbilityResult> base_ = nullptr;
 
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -47,11 +47,13 @@ void DataAbilityResultTest::TearDownTestCase(void)
 
 void DataAbilityResultTest::SetUp(void)
 {
-    Base_ = std::make_shared<DataAbilityResult>(COUNT_NULL);
+    base_ = std::make_shared<DataAbilityResult>(COUNT_NULL);
 }
 
 void DataAbilityResultTest::TearDown(void)
-{}
+{
+    base_ = nullptr;
+}
 
 /**
  * @tc.number:
@@ -72,10 +74,10 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_DataAbilityResult01
     EXPECT_EQ(SET_COUNT, test3.GetCount());
     EXPECT_EQ(uri.ToString(), test3.GetUri().ToString());
 
-    *Base_ = test3;
-    if (Base_) {
+    *base_ = test3;
+    if (base_) {
         Parcel in;
-        Base_->Marshalling(in);
+        base_->Marshalling(in);
         DataAbilityResult test4(in);
         EXPECT_EQ(SET_COUNT, test4.GetCount());
         EXPECT_EQ(uri.ToString(), test4.GetUri().ToString());
@@ -128,8 +130,8 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0100, Function |
  */
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0200, Function | MediumTest | Level1)
 {
-    EXPECT_EQ(true, Base_->GetUri().ToString().empty());
-    EXPECT_EQ(COUNT_NULL, Base_->GetCount());
+    EXPECT_EQ(true, base_->GetUri().ToString().empty());
+    EXPECT_EQ(COUNT_NULL, base_->GetCount());
 }
 
 /**
@@ -140,8 +142,8 @@ HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_Get0200, Function |
 HWTEST_F(DataAbilityResultTest, AppExecFwk_DataAbilityResult_CreateFromParcel0100, Function | MediumTest | Level1)
 {
     Parcel in;
-    Base_->Marshalling(in);
-    DataAbilityResult *ptr = Base_->CreateFromParcel(in);
+    base_->Marshalling(in);
+    DataAbilityResult *ptr = base_->CreateFromParcel(in);
 
     if (ptr != nullptr) {
         EXPECT_EQ(true, ptr->GetUri().ToString().empty());

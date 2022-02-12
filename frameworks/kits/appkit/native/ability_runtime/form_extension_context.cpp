@@ -15,6 +15,7 @@
 
 #include "form_extension_context.h"
 
+#include "ability_manager_client.h"
 #include "appexecfwk_errors.h"
 #include "form_mgr.h"
 #include "hilog_wrapper.h"
@@ -46,6 +47,28 @@ int FormExtensionContext::UpdateForm(const int64_t formId, const AppExecFwk::For
 
     // update form request to fms
     return AppExecFwk::FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+}
+
+ErrCode FormExtensionContext::StartAbility(const AAFwk::Want &want) const
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, -1);
+    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
+    }
+    return err;
+}
+
+ErrCode FormExtensionContext::StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions) const
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, -1);
+    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
+    if (err != ERR_OK) {
+        HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
+    }
+    return err;
 }
 
 AppExecFwk::AbilityType FormExtensionContext::GetAbilityInfoType() const

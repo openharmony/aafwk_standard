@@ -75,7 +75,6 @@ public:
 
 public:
     std::shared_ptr<PendingWantManager> pendingManager_ {nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
 };
 
 int PendingWantRecordTest::CancelReceiver::performReceiveCount = 0;
@@ -101,17 +100,15 @@ void PendingWantRecordTest::SetUpTestCase()
 void PendingWantRecordTest::TearDownTestCase()
 {
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 void PendingWantRecordTest::SetUp()
 {
-    abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    abilityMs_->OnStart();
 }
 
 void PendingWantRecordTest::TearDown()
-{}
+{
+}
 
 WantSenderInfo PendingWantRecordTest::MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type)
 {

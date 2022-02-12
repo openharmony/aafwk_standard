@@ -74,7 +74,7 @@ HWTEST_F(WatchDogTest, AppExecFwk_WatchDog_GetAppMainThreadState_0200, Function 
     mainthread.detach();
     std::this_thread::sleep_for(std::chrono::milliseconds(USleepTime));
     bool ret = WatchDog::GetAppMainThreadState();
-    EXPECT_TRUE(ret);
+    EXPECT_FALSE(ret);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
