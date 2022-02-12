@@ -180,8 +180,6 @@ public:
     MOCK_METHOD1(HasSystemCapability, bool(const std::string &capName));
     MOCK_METHOD1(GetSystemAvailableCapabilities, bool(std::vector<std::string> &systemCaps));
     MOCK_METHOD0(IsSafeMode, bool());
-    MOCK_METHOD2(CleanBundleCacheFiles,
-        bool(const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback));
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
         bool(const std::string &bundleName, const std::string &permission, const int userId));
@@ -191,7 +189,6 @@ public:
     MOCK_METHOD4(
         DumpInfos, bool(const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &bundleName));
-    MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
     MOCK_METHOD0(GetBundleUserMgr, sptr<IBundleUserMgr>());
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
@@ -200,7 +197,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &abilityInfo, bool isEnabled));
     MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
@@ -264,14 +260,11 @@ public:
     MOCK_METHOD1(HasSystemCapability, bool(const std::string &capName));
     MOCK_METHOD1(GetSystemAvailableCapabilities, bool(std::vector<std::string> &systemCaps));
     MOCK_METHOD0(IsSafeMode, bool());
-    MOCK_METHOD2(CleanBundleCacheFiles,
-        bool(const std::string &bundleName, const sptr<ICleanCacheCallback> &cleanCacheCallback));
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
     MOCK_METHOD3(RequestPermissionFromUser,
         bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &));
-    MOCK_METHOD2(SetApplicationEnabled, bool(const std::string &bundleName, bool isEnable));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
     MOCK_METHOD0(GetBundleUserMgr, sptr<IBundleUserMgr>());
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
@@ -280,7 +273,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD2(SetAbilityEnabled, bool(const AbilityInfo &abilityInfo, bool isEnabled));
     MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
