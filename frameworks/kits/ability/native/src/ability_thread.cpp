@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -680,7 +680,12 @@ void AbilityThread::ScheduleUpdateConfiguration(const Configuration &config)
             APP_LOGE("abilityThread is nullptr, ScheduleUpdateConfiguration failed.");
             return;
         }
-        abilityThread->HandleUpdateConfiguration(config);
+
+        if (abilityThread->isExtension_) {
+            abilityThread->HandleExtensionUpdateConfiguration(config);
+        } else {
+            abilityThread->HandleUpdateConfiguration(config);
+        }
     };
 
     if (abilityHandler_ == nullptr) {
@@ -710,6 +715,20 @@ void AbilityThread::HandleUpdateConfiguration(const Configuration &config)
     abilityImpl_->ScheduleUpdateConfiguration(config);
     APP_LOGI("AbilityThread::HandleUpdateConfiguration after abilityImpl_->ScheduleUpdateConfiguration");
     APP_LOGI("AbilityThread::HandleUpdateConfiguration end");
+}
+
+void AbilityThread::HandleExtensionUpdateConfiguration(const Configuration &config)
+{
+    APP_LOGI("AbilityThread::HandleExtensionUpdateConfiguration begin");
+    if (!extensionImpl_) {
+        APP_LOGE("AbilityThread::HandleExtensionUpdateConfiguration extensionImpl_ is nullptr");
+        return;
+    }
+
+    APP_LOGI("AbilityThread::HandleExtensionUpdateConfiguration before extensionImpl_->ScheduleUpdateConfiguration");
+    extensionImpl_->ScheduleUpdateConfiguration(config);
+    APP_LOGI("AbilityThread::HandleExtensionUpdateConfiguration after extensionImpl_->ScheduleUpdateConfiguration");
+    APP_LOGI("AbilityThread::HandleExtensionUpdateConfiguration end");
 }
 
 /**

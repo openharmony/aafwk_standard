@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -510,7 +510,8 @@ private:
         Profile &appProfile);
     bool CheckForHandleLaunchApplication(const AppLaunchData &appLaunchData);
     bool InitResourceManager(std::shared_ptr<Global::Resource::ResourceManager> &resourceManager,
-        std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, BundleInfo& bundleInfo);
+        std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, BundleInfo& bundleInfo,
+        const Configuration &config);
     std::vector<std::string> fileEntries_;
     std::vector<void *> handleAbilityLib_;  // the handler of ACE Library.
 #endif                                      // ABILITY_LIBRARY_LOADER
