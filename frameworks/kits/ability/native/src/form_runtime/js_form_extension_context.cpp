@@ -23,12 +23,19 @@
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "napi/native_api.h"
+#include "napi_common_start_options.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
 namespace {
+constexpr int32_t INDEX_ZERO = 0;
+constexpr int32_t INDEX_ONE = 1;
+constexpr int32_t ERROR_CODE_ONE = 1;
+constexpr size_t ARGC_ONE = 1;
+constexpr size_t ARGC_TWO = 2;
+constexpr size_t ARGC_THREE = 3;
 const int UPDATE_FORM_PARAMS_SIZE = 2;
 class JsFormExtensionContext final {
 public:
@@ -46,6 +53,13 @@ public:
         JsFormExtensionContext* me = CheckParamsAndGetThis<JsFormExtensionContext>(engine, info);
         return (me != nullptr) ? me->OnUpdateForm(*engine, *info) : nullptr;
     }
+
+    static NativeValue* StartAbility(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsFormExtensionContext* me = CheckParamsAndGetThis<JsFormExtensionContext>(engine, info);
+        return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
+    }
+
 private:
     std::weak_ptr<FormExtensionContext> context_;
 
@@ -96,6 +110,60 @@ private:
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
         return result;
     }
+
+    NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
+    {
+        HILOG_INFO("OnStartAbility is called");
+        // only support one or two or three params
+        if (info.argc != ARGC_ONE && info.argc != ARGC_TWO && info.argc != ARGC_THREE) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        decltype(info.argc) unwrapArgc = 0;
+        AAFwk::Want want;
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), want);
+        HILOG_INFO("%{public}s bundlename:%{public}s abilityname:%{public}s",
+            __func__,
+            want.GetBundle().c_str(),
+            want.GetElement().GetAbilityName().c_str());
+        unwrapArgc++;
+
+        AAFwk::StartOptions startOptions;
+        if (info.argc > ARGC_ONE && info.argv[INDEX_ONE]->TypeOf() == NATIVE_OBJECT) {
+            HILOG_INFO("OnStartAbility start options is used.");
+            AppExecFwk::UnwrapStartOptions(reinterpret_cast<napi_env>(&engine),
+                reinterpret_cast<napi_value>(info.argv[INDEX_ONE]), startOptions);
+            unwrapArgc++;
+        }
+
+        AsyncTask::CompleteCallback complete =
+            [weak = context_, want, startOptions, unwrapArgc](NativeEngine& engine, AsyncTask& task, int32_t status) {
+                HILOG_INFO("startAbility begin");
+                auto context = weak.lock();
+                if (!context) {
+                    HILOG_WARN("context is released");
+                    task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "Context is released"));
+                    return;
+                }
+
+                ErrCode errcode = ERR_OK;
+                (unwrapArgc == 1) ? errcode = context->StartAbility(want) :
+                    errcode = context->StartAbility(want, startOptions);
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
+                }
+            };
+
+        NativeValue* lastParam = (info.argc == unwrapArgc) ? nullptr : info.argv[unwrapArgc];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
 };
 } // namespace
 
@@ -109,6 +177,7 @@ NativeValue* CreateJsFormExtensionContext(NativeEngine& engine, std::shared_ptr<
     object->SetNativePointer(jsContext.release(), JsFormExtensionContext::Finalizer, nullptr);
 
     BindNativeFunction(engine, *object, "updateForm", JsFormExtensionContext::UpdateForm);
+    BindNativeFunction(engine, *object, "startAbility", JsFormExtensionContext::StartAbility);
 
     HILOG_INFO("%{public}s called end.", __func__);
     return objValue;

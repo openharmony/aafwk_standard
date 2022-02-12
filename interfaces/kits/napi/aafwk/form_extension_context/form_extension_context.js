@@ -25,6 +25,10 @@ class FormExtensionContext extends ExtensionContext {
         return this.__context_impl__.updateForm(formId, formBindingData, callback);
     }
 
+    startAbility(want, options, callback) {
+        console.log("startAbility");
+        return this.__context_impl__.startAbility(want, options, callback);
+    }
 }
 
 export default FormExtensionContext
