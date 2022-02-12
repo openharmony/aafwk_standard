@@ -27,8 +27,8 @@ AbilityControllerStub::AbilityControllerStub()
         IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_START)] =
         &AbilityControllerStub::HandleAllowAbilityStart;
     memberFuncMap_[static_cast<uint32_t>(
-        IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_FOREGROUND)] =
-        &AbilityControllerStub::HandleAllowAbilityForeground;
+        IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_BACKGROUND)] =
+        &AbilityControllerStub::HandleAllowAbilityBackground;
 }
 
 AbilityControllerStub::~AbilityControllerStub()
@@ -62,7 +62,7 @@ bool AbilityControllerStub::AllowAbilityStart(const Want &want, const std::strin
     return true;
 }
 
-bool AbilityControllerStub::AllowAbilityForeground(const std::string &bundleName)
+bool AbilityControllerStub::AllowAbilityBackground(const std::string &bundleName)
 {
     return true;
 }
@@ -81,11 +81,11 @@ int32_t AbilityControllerStub::HandleAllowAbilityStart(MessageParcel &data, Mess
     return NO_ERROR;
 }
 
-int32_t AbilityControllerStub::HandleAllowAbilityForeground(MessageParcel &data, MessageParcel &reply)
+int32_t AbilityControllerStub::HandleAllowAbilityBackground(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("HandleAllowAbilityForeground");
+    APP_LOGI("HandleAllowAbilityBackground");
     std::string pkg = data.ReadString();
-    bool ret = AllowAbilityForeground(pkg);
+    bool ret = AllowAbilityBackground(pkg);
     reply.WriteBool(ret);
     return NO_ERROR;
 }

@@ -40,16 +40,16 @@ public:
     virtual bool AllowAbilityStart(const Want &want, const std::string &bundleName) = 0;
 
     /**
-     * The system is scheduling Ability to the foreground.
+     * The system is scheduling Ability to background.
      *
      * @param bundleName The bundleName of ability to return.
-     * @return Return true to allow ability to foreground, or false to reject.
+     * @return Return true to allow ability to background, or false to reject.
      */
-    virtual bool AllowAbilityForeground(const std::string &bundleName) = 0;
+    virtual bool AllowAbilityBackground(const std::string &bundleName) = 0;
 
     enum class Message {
         TRANSACT_ON_ALLOW_ABILITY_START = 0,
-        TRANSACT_ON_ALLOW_ABILITY_FOREGROUND,
+        TRANSACT_ON_ALLOW_ABILITY_BACKGROUND,
     };
 };
 }  // namespace AppExecFwk
