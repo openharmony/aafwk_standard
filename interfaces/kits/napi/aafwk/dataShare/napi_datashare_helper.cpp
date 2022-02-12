@@ -77,7 +77,7 @@ napi_value AcquireDataShareHelperWrap(napi_env env, napi_callback_info info, Dat
     napi_value args[ARGS_THREE] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
     if (argc > requireArgc) {
-        HILOG_ERROR("%{public}s, Wrong argument count %{public}d.", __func__, argc);
+        HILOG_ERROR("%{public}s, Wrong argument count %{public}zu.", __func__, argc);
         return nullptr;
     }
 
@@ -2805,7 +2805,6 @@ napi_value BatchInsertWrap(napi_env env, napi_callback_info info, DSHelperBatchI
     }
 
     batchInsertCB->values = NapiValueObject(env, args[PARAM1]);
-    HILOG_INFO("batchInsertCB size %{public}d", batchInsertCB->values.size());
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
