@@ -74,6 +74,7 @@ class Caller {
     }
 
     async callWithResult(method, data) {
+        console.log("Caller callWithResult method [" + method + "]");
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller callWithResult " + typeof method + ", " + typeof data);
             return undefined;
