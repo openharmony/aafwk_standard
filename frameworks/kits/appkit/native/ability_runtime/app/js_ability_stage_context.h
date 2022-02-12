@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef ABILITY_RUNTIME_JS_EXTENSION_CONTEXT_H
-#define ABILITY_RUNTIME_JS_EXTENSION_CONTEXT_H
+#ifndef ABILITY_RUNTIME_JS_ABILITY_STAGE_CONTEXT_H
+#define ABILITY_RUNTIME_JS_ABILITY_STAGE_CONTEXT_H
 
-#include <memory>
-
-#include "extension_context.h"
+#include "foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context.h"
+#include "configuration.h"
 
 class NativeEngine;
 class NativeReference;
@@ -26,19 +25,24 @@ class NativeValue;
 
 namespace OHOS {
 namespace AbilityRuntime {
-class JsExtensionContext final {
+class JsAbilityStageContext final {
 public:
-    JsExtensionContext(const std::shared_ptr<ExtensionContext>& context) : context_(context) {}
-    ~JsExtensionContext() = default;
+    explicit JsAbilityStageContext(const std::shared_ptr<AbilityRuntime::Context>& context) : context_(context) {}
+    ~JsAbilityStageContext() = default;
 
     static void ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
         const std::shared_ptr<AppExecFwk::Configuration> &config);
 
+    std::shared_ptr<AbilityRuntime::Context> GetContext()
+    {
+        return context_.lock();
+    }
+
 private:
-    std::weak_ptr<ExtensionContext> context_;
+    std::weak_ptr<AbilityRuntime::Context> context_;
 };
 
-NativeValue* CreateJsExtensionContext(NativeEngine& engine, std::shared_ptr<ExtensionContext> context);
+NativeValue* CreateJsAbilityStageContext(NativeEngine& engine, std::shared_ptr<AbilityRuntime::Context> context);
 }  // namespace AbilityRuntime
 }  // namespace OHOS
-#endif  // ABILITY_RUNTIME_JS_EXTENSION_CONTEXT_H
+#endif  // ABILITY_RUNTIME_JS_ABILITY_STAGE_CONTEXT_H

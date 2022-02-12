@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@
 #include "app_log_wrapper.h"
 #include "application_env_impl.h"
 #include "bytrace.h"
+#include "configuration_convertor.h"
 #include "context_deal.h"
 #include "context_impl.h"
 #include "extension_module_loader.h"
@@ -735,7 +736,8 @@ bool MainThread::CheckForHandleLaunchApplication(const AppLaunchData &appLaunchD
 }
 
 bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceManager> &resourceManager,
-    std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, BundleInfo& bundleInfo)
+    std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, BundleInfo& bundleInfo,
+    const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("MainThread::handleLaunchApplication moduleResPaths count: %{public}zu start",
@@ -770,6 +772,9 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     } else {
         APP_LOGI("MainThread::handleLaunchApplication localeInfo is nullptr.");
     }
+
+    std::string colormode = config.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
+    resConfig->SetColorMode(ConvertColorMode(colormode));
 
     APP_LOGI("MainThread::handleLaunchApplication. Start calling UpdateResConfig.");
     resourceManager->UpdateResConfig(*resConfig);
@@ -837,7 +842,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         APP_LOGD("MainThread::handleLaunchApplication GetBundleInfo fail.");
     }
 
-    if (!InitResourceManager(resourceManager, contextDeal, appInfo, bundleInfo)) {
+    if (!InitResourceManager(resourceManager, contextDeal, appInfo, bundleInfo, config)) {
         APP_LOGE("MainThread::handleLaunchApplication InitResourceManager failed");
         return;
     }

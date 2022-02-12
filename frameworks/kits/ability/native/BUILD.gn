@@ -144,6 +144,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_process.cpp",
     "${SUBSYSTEM_DIR}/src/ability_thread.cpp",
     "${SUBSYSTEM_DIR}/src/ability_window.cpp",
+    "${SUBSYSTEM_DIR}/src/configuration_convertor.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_helper.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_operation.cpp",
@@ -288,6 +289,8 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/graphic/standard:libwmclient",
+    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+    "//foundation/windowmanager/dm:libdm",
     "//foundation/windowmanager/interfaces/kits/napi/window_runtime:windowstage_kit",
     "//foundation/windowmanager/wm:libwm",
   ]

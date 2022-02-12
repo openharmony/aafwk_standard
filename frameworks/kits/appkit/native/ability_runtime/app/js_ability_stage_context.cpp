@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-#include "js_extension_context.h"
-
-#include <cstdint>
+#include "js_ability_stage_context.h"
 
 #include "hilog_wrapper.h"
 #include "js_context_utils.h"
@@ -25,7 +23,7 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-void JsExtensionContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
+void JsAbilityStageContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
     const std::shared_ptr<AppExecFwk::Configuration> &config)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -47,14 +45,14 @@ void JsExtensionContext::ConfigurationUpdated(NativeEngine* engine, std::shared_
         return;
     }
 
-    HILOG_INFO("JsExtensionContext call onUpdateConfiguration.");
+    HILOG_INFO("JsAbilityStageContext call onUpdateConfiguration.");
     NativeValue* argv[] = {CreateJsConfiguration(*engine, *config)};
     engine->CallFunction(value, method, argv, 1);
 }
 
-NativeValue* CreateJsExtensionContext(NativeEngine& engine, std::shared_ptr<ExtensionContext> context)
+NativeValue* CreateJsAbilityStageContext(NativeEngine& engine, std::shared_ptr<AbilityRuntime::Context> context)
 {
-    HILOG_INFO("CreateJsExtensionContext begin");
+    HILOG_INFO("%{public}s called.", __func__);
     NativeValue* objValue = CreateJsBaseContext(engine, context);
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
 

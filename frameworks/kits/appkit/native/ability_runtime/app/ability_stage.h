@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@
 
 #include "ability_local_record.h"
 #include "ability_runtime/context/context.h"
+#include "configuration.h"
 #include "want.h"
 
 namespace OHOS {
@@ -49,6 +50,8 @@ public:
     void AddAbility(const sptr<IRemoteObject> &token, std::shared_ptr<AppExecFwk::AbilityLocalRecord> abilityRecord);
     void RemoveAbility(const sptr<IRemoteObject> &token);
     bool ContainsAbility();
+    virtual void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration);
+
 private:
     std::shared_ptr<Context> context_;
     std::map<sptr<IRemoteObject>, std::shared_ptr<AppExecFwk::AbilityLocalRecord>> abilityRecords_;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,6 +73,17 @@ bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
         HILOG_DEBUG("The parsed language part %{public}s", language.c_str());
         if (!config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language)) {
             HILOG_ERROR("language Parsing failed");
+            return false;
+        }
+    }
+
+    int32_t colormode = -1;
+    if (UnwrapInt32ByPropertyName(env, param, "colorMode", colormode)) {
+        HILOG_DEBUG("The parsed colormode part %{public}d", colormode);
+        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE,
+            colormode == static_cast<int32_t>(ConfigurationInner::ColorMode::COLOR_MODE_LIGHT) ?
+            ConfigurationInner::COLOR_MODE_LIGHT : ConfigurationInner::COLOR_MODE_DARK)) {
+            HILOG_ERROR("colormode Parsing failed");
             return false;
         }
     }
