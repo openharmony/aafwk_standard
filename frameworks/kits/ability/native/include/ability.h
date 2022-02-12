@@ -44,6 +44,7 @@
 #include "iremote_object.h"
 #include "pac_map.h"
 #include "want.h"
+#include "want_agent.h"
 #include "window_option.h"
 #include "window_scene.h"
 #include "wm_common.h"
@@ -1005,6 +1006,21 @@ public:
      * </ul>
      */
     bool DeleteForm(const int64_t formId);
+
+    /**
+     * @brief Keep this Service ability in the background and displays a notification bar.
+     *
+     * @param wantAgent Indicates which ability to start when user click the notification bar.
+     * @return the method result code, 0 means succeed
+     */
+    virtual int StartBackgroundRunning(const Notification::WantAgent::WantAgent &wantAgent) final;
+
+    /**
+     * @brief Cancel background running of this ability to free up system memory.
+     *
+     * @return the method result code, 0 means succeed
+     */
+    virtual int StopBackgroundRunning() final;
 
     /**
      * @brief The form callback.
