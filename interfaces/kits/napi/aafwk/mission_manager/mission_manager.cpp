@@ -173,7 +173,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -214,7 +214,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 2) ? nullptr : info.argv[2];
+        NativeValue* lastParam = (info.argc <= 2) ? nullptr : info.argv[2];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -255,7 +255,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 2) ? nullptr : info.argv[2];
+        NativeValue* lastParam = (info.argc <= 2) ? nullptr : info.argv[2];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -307,7 +307,7 @@ private:
                     task.Reject(engine, CreateJsError(engine, ret, "Get mission snapshot failed."));
                 }
             };
-        NativeValue* lastParam = (info.argc == ARG_COUNT_TWO) ? nullptr : info.argv[2];
+        NativeValue* lastParam = (info.argc <= ARG_COUNT_TWO) ? nullptr : info.argv[2];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -342,7 +342,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -377,7 +377,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -412,7 +412,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -467,7 +467,7 @@ private:
                 }
             };
 
-        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* lastParam = (info.argc <= 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
