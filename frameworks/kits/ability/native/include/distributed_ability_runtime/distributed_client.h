@@ -48,6 +48,9 @@ public:
         std::vector<AAFwk::MissionInfo>& missionInfos);
     int32_t GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
         std::unique_ptr<MissionSnapshot>& missionSnapshot);
+    int32_t StartRemoteAbilityByCall(const OHOS::AAFwk::Want& want, const sptr<IRemoteObject>& connect,
+        int32_t callerUid, int32_t callerPid, uint32_t tokenCaller);
+    int32_t ReleaseRemoteAbility(const sptr<IRemoteObject>& connect, const AppExecFwk::ElementName &element);
     enum {
         START_REMOTE_ABILITY = 1,
         CONNECT_REMOTE_ABILITY = 6,
@@ -61,6 +64,8 @@ public:
         START_SYNC_MISSIONS = 92,
         STOP_SYNC_MISSIONS = 98,
         GET_REMOTE_MISSION_SNAPSHOT_INFO = 99,
+        START_REMOTE_ABILITY_BY_CALL = 150,
+        RELEASE_REMOTE_ABILITY = 151,
     };
 private:
     sptr<IRemoteObject> GetDmsProxy();
