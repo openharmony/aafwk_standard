@@ -606,35 +606,32 @@ int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
 
 bool AbilityManagerService::CheckIsRemote(const std::string& deviceId)
 {
-    HILOG_INFO("check is remote, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     if (deviceId.empty()) {
-        HILOG_ERROR("CheckIsRemote: device id is empty.");
+        HILOG_INFO("CheckIsRemote: deviceId is empty.");
         return false;
     }
-
     std::string localDeviceId;
-    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
-        HILOG_ERROR("CheckIsRemote: Check DeviceId failed");
+    if (!GetLocalDeviceId(localDeviceId)) {
+        HILOG_ERROR("CheckIsRemote: get local deviceId failed");
         return false;
     }
+    if (localDeviceId == deviceId) {
+        HILOG_INFO("CheckIsRemote: deviceId is local.");
+        return false;
+    }
+    HILOG_INFO("CheckIsRemote, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     return true;
 }
 
 bool AbilityManagerService::CheckIfOperateRemote(const Want &want)
 {
-    std::string localDeviceId;
     std::string deviceId = want.GetElement().GetDeviceID();
-    HILOG_INFO("get deviceId, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     if (deviceId.empty() || want.GetElement().GetBundleName().empty() ||
         want.GetElement().GetAbilityName().empty()) {
-        HILOG_ERROR("CheckIfOperateRemote: GetDeviceId,or GetBundleName, or GetAbilityName failed");
+        HILOG_DEBUG("CheckIfOperateRemote: DeviceId or BundleName or GetAbilityName empty");
         return false;
     }
-    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
-        HILOG_ERROR("CheckIfOperateRemote: Check DeviceId failed");
-        return false;
-    }
-    return true;
+    return CheckIsRemote(deviceId);
 }
 
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
@@ -3399,12 +3396,33 @@ void AbilityManagerService::StartingSettingsDataAbility()
     (void)AcquireDataAbility(uri, true, nullptr);
 }
 
+int AbilityManagerService::StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect)
+{
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    int32_t callerPid = IPCSkeleton::GetCallingPid();
+    uint32_t tokenCaller = IPCSkeleton::GetCallingTokenID();
+    DistributedClient dmsClient;
+    return dmsClient.StartRemoteAbilityByCall(want, connect, callerUid, callerPid, tokenCaller);
+}
+
+int AbilityManagerService::ReleaseRemoteAbility(const sptr<IRemoteObject> &connect,
+    const AppExecFwk::ElementName &element)
+{
+    DistributedClient dmsClient;
+    return dmsClient.ReleaseRemoteAbility(connect, element);
+}
+
 int AbilityManagerService::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("call ability.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
+
+    if (CheckIfOperateRemote(want)) {
+        HILOG_INFO("start remote ability by call");
+        return StartRemoteAbilityByCall(want, connect->AsObject());
+    }
 
     AbilityRequest abilityRequest;
     abilityRequest.callType = AbilityCallType::CALL_REQUEST_TYPE;
@@ -3443,6 +3461,11 @@ int AbilityManagerService::ReleaseAbility(
 
     std::string elementName = element.GetURI();
     HILOG_DEBUG("try to release called ability, name: %{public}s.", elementName.c_str());
+
+    if (CheckIsRemote(element.GetDeviceID())) {
+        HILOG_INFO("release remote ability");
+        return ReleaseRemoteAbility(connect->AsObject(), element);
+    }
 
     return currentMissionListManager_->ReleaseLocked(connect, element);
 }
