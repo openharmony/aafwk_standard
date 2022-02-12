@@ -38,8 +38,19 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     virtual bool GetApplicationInfos(
         const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos) override;
-    virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override;
+    virtual bool GetBundleInfo(const std::string &bundleName,
+        const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override
+    {
+        return true;
+    }
+    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override
+    {
+        return true;
+    }
+    virtual sptr<IBundleUserMgr> GetBundleUserMgr() override
+    {
+        return nullptr;
+    }
     virtual int GetUidByBundleName(const std::string &bundleName, const int userId) override;
     virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) override;
     virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) override;
@@ -104,7 +115,6 @@ public:
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"IBundleMgr");
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 };
@@ -115,8 +125,19 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     virtual bool GetApplicationInfos(
         const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos) override;
-    virtual bool GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo) override;
-    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos) override;
+    virtual bool GetBundleInfo(const std::string &bundleName,
+        const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override
+    {
+        return true;
+    }
+    virtual bool GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId) override
+    {
+        return true;
+    }
+    virtual sptr<IBundleUserMgr> GetBundleUserMgr() override
+    {
+        return nullptr;
+    }
     virtual int GetUidByBundleName(const std::string &bundleName, const int userId) override;
     virtual std::string GetAppIdByBundleName(const std::string &bundleName, const int userId) override;
     virtual bool GetBundleNameForUid(const int uid, std::string &bundleName) override;

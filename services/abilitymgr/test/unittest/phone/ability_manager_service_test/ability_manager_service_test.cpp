@@ -97,8 +97,8 @@ public:
     static constexpr int TEST_WAIT_TIME = 100000;
 
 public:
+    AbilityRequest abilityRequest_;
     std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
-    AbilityRequest abilityRequest_ {};
     std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
 };
 
@@ -128,12 +128,12 @@ void AbilityManagerServiceTest::OnStartAms()
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
         abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManagers_.emplace(0, abilityMs_->connectManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
 
-        abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
-
         abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        abilityMs_->dataAbilityManagers_.emplace(0, abilityMs_->dataAbilityManager_);
         EXPECT_TRUE(abilityMs_->dataAbilityManager_);
 
         abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
@@ -143,13 +143,16 @@ void AbilityManagerServiceTest::OnStartAms()
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
 
+        abilityMs_->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        abilityMs_->currentMissionListManager_->Init();
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId, true);
+        EXPECT_TRUE(abilityMs_->GetStackManager());
+        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs_->systemAppManager_);
-
         abilityMs_->eventLoop_->Run();
-
         return;
     }
 
@@ -1589,9 +1592,8 @@ HWTEST_F(AbilityManagerServiceTest, startAbility_004, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, startContinuation_001, TestSize.Level1)
 {
     Want want;
-    ElementName element("device", "com.ix.musicService", "MusicService");
+    ElementName element("", "com.ix.musicService", "MusicService");
     want.SetElement(element);
-
     sptr<IRemoteObject> abilityToken = new (std::nothrow) MockAbilityToken();
     auto result = abilityMs_->StartContinuation(want, abilityToken, 0);
     EXPECT_EQ(OHOS::ERR_INVALID_VALUE, result);
@@ -1611,7 +1613,6 @@ HWTEST_F(AbilityManagerServiceTest, startContinuation_002, TestSize.Level1)
     EXPECT_EQ(true, getLocalDeviceId);
     ElementName element(localDeviceId, "com.ix.hiMusic", "MusicAbility");
     want.SetElement(element);
-
     sptr<IRemoteObject> abilityToken = new (std::nothrow) MockAbilityToken();
     auto result = abilityMs_->StartContinuation(want, abilityToken, 0);
     EXPECT_NE(OHOS::ERR_OK, result);
@@ -1675,7 +1676,7 @@ HWTEST_F(AbilityManagerServiceTest, NotifyContinuationResult_001, TestSize.Level
     int32_t missionId = 0;
     int32_t isSuccess = 0;
     auto result = abilityMs_->NotifyContinuationResult(missionId, isSuccess);
-    EXPECT_EQ(OHOS::ERR_INVALID_VALUE, result);
+    EXPECT_EQ(OHOS::ERR_OK, result);
 }
 
 /**
@@ -1963,10 +1964,12 @@ HWTEST_F(AbilityManagerServiceTest, systemDialog_002, TestSize.Level1)
     Want want;
     ElementName elementdialog("device", AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_DIALOG_NAME);
     want.SetElement(elementdialog);
+    EXPECT_TRUE(abilityMs_->GetStackManager());
     auto result = StartAbility(want);
     EXPECT_EQ(OHOS::ERR_OK, result);
     auto stackManager = abilityMs_->GetStackManager();
     auto dialogAbility = stackManager->GetCurrentTopAbility();
+    EXPECT_TRUE(dialogAbility);
     auto dialogtoken = dialogAbility->GetToken();
     EXPECT_TRUE(dialogAbility->GetAbilityInfo().bundleName == AbilityConfig::SYSTEM_UI_BUNDLE_NAME);
 

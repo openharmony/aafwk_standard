@@ -23,7 +23,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 using namespace OHOS::AAFwk;
-
 int BundleMgrProxy::QueryWantAbility(
     const AAFwk::Want &__attribute__((unused)) want, std::vector<AbilityInfo> &__attribute__((unused)) abilityInfos)
 {
@@ -144,6 +143,11 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
     return true;
 }
 
+bool BundleMgrService::QueryAbilityInfo(const Want &want, int32_t flags, int32_t userId, AbilityInfo &abilityInfo)
+{
+    return QueryAbilityInfo(want, abilityInfo);
+}
+
 bool BundleMgrService::QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo)
 {
     return false;
@@ -155,13 +159,15 @@ bool BundleMgrService::GetApplicationInfo(
     if (appName.empty()) {
         return false;
     }
+    appInfo.name = "Helloworld";
+    appInfo.bundleName = "com.ix.hiworld";
     return true;
 }
 
 bool BundleMgrService::CheckIsSystemAppByUid(const int uid)
 {
     int maxSysUid {MAX_SYS_UID};
-    int baseSysUid{ROOT_UID};
+    int baseSysUid {ROOT_UID};
     if (uid >= baseSysUid && uid <= maxSysUid) {
         return true;
     }
@@ -208,6 +214,5 @@ bool BundleMgrService::NotifyAbilityLifeStatus(
     GTEST_LOG_(INFO) << "BundleMgrService::NotifyAbilityLifeStatus()";
     return true;
 }
-
 }  // namespace AppExecFwk
 }  // namespace OHOS

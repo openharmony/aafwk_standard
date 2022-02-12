@@ -279,7 +279,6 @@ sptr<AppExecFwk::IBundleMgr> ContextImpl::GetBundleManager() const
     }
     HILOG_DEBUG("ContextImpl::GetBundleManager before iface_cast<bundleObj>");
     sptr<AppExecFwk::IBundleMgr> bms = iface_cast<AppExecFwk::IBundleMgr>(bundleObj);
-    HILOG_DEBUG("ContextImpl::GetBundleManager after iface_cast<bundleObj>");
     HILOG_DEBUG("ContextImpl::GetBundleManager end");
     return bms;
 }

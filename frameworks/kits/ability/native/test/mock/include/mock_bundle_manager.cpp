@@ -36,14 +36,6 @@ bool BundleMgrProxy::GetApplicationInfos(
 {
     return true;
 }
-bool BundleMgrProxy::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
-{
-    return true;
-}
-bool BundleMgrProxy::GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos)
-{
-    return true;
-}
 int BundleMgrProxy::GetUidByBundleName(const std::string &bundleName, const int userId)
 {
     return 0;
@@ -279,14 +271,6 @@ bool BundleMgrService::GetApplicationInfo(
 }
 bool BundleMgrService::GetApplicationInfos(
     const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos)
-{
-    return true;
-}
-bool BundleMgrService::GetBundleInfo(const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo)
-{
-    return true;
-}
-bool BundleMgrService::GetBundleInfos(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos)
 {
     return true;
 }

@@ -35,9 +35,9 @@ ohos_shared_library("formmanager") {
   ]
 
   external_deps = [
+    "ability_base:want",
     "ability_runtime:ability_manager",
     "ability_runtime:runtime",
-    "ability_runtime:want",
     "hiviewdfx_hilog_native:libhilog",
   ]
 
