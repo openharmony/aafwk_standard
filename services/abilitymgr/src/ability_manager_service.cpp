@@ -1014,7 +1014,7 @@ int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemot
         return ERR_INVALID_VALUE;
     }
     DistributedClient dmsClient;
-    auto result =  dmsClient.StartContinuation(want, missionId, appUid, status);
+    auto result = dmsClient.StartContinuation(want, missionId, appUid, status);
     if (result != ERR_OK) {
         HILOG_ERROR("StartContinuation failed, result = %{public}d, notify caller", result);
         NotifyContinuationResult(missionId, result);
@@ -2628,7 +2628,6 @@ sptr<AppExecFwk::IBundleMgr> AbilityManagerService::GetBundleManager()
         }
         iBundleManager_ = iface_cast<AppExecFwk::IBundleMgr>(bundleObj);
     }
-
     return iBundleManager_;
 }
 
@@ -3310,13 +3309,16 @@ int AbilityManagerService::GetMissionSaveTime() const
 int32_t AbilityManagerService::GetMissionIdByAbilityToken(const sptr<IRemoteObject> &token)
 {
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    if (!abilityRecord) {
+        HILOG_ERROR("abilityRecord is Null.");
+        return -1;
+    }
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto missionListManager = GetListManagerByUserId(userId);
     if (!missionListManager) {
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
         return -1;
     }
-
     return missionListManager->GetMissionIdByAbilityToken(token);
 }
 
@@ -3742,6 +3744,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
         HILOG_INFO("start all");
         StartingLauncherAbility();
         StartingSettingsDataAbility();
+        StartingScreenLockAbility();
         return;
     }
 
@@ -3753,6 +3756,10 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
     if (amsConfigResolver_->GetStartSettingsDataState()) {
         HILOG_INFO("start settingsdata");
         StartingSettingsDataAbility();
+    }
+
+    if (amsConfigResolver_->GetStartScreenLockState()) {
+        StartingScreenLockAbility();
     }
 
     if (amsConfigResolver_->GetPhoneServiceState()) {
@@ -3941,15 +3948,18 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
     ElementName elementName = want.GetElement();
     std::string bundleName = elementName.GetBundleName();
     std::string abilityName = elementName.GetAbilityName();
-    AppExecFwk::BundleMgrClient bundleClient;
     AppExecFwk::BundleInfo bundleInfo;
-    if (!bundleClient.GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo,
-        GetUserId())) {
-        HILOG_ERROR("Failed to get bundle info when generate ability request.");
-        return RESOLVE_APP_ERR;
+    AppExecFwk::BundleMgrClient bundleClient;
+    auto bundleFlag = AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO;
+    if (!bundleClient.GetBundleInfo(bundleName, bundleFlag, bundleInfo, GetUserId())) {
+        auto bms = GetBundleManager();
+        CHECK_POINTER_AND_RETURN(bms, RESOLVE_APP_ERR);
+        if (!bms->GetBundleInfo(bundleName, bundleFlag, bundleInfo, GetUserId())) {
+            HILOG_ERROR("Failed to get bundle info when generate ability request.");
+            return RESOLVE_APP_ERR;
+        }
     }
     bool found = false;
-
     for (auto &extensionInfo: bundleInfo.extensionInfos) {
         if (extensionInfo.name != abilityName) {
             continue;
@@ -3961,7 +3971,6 @@ int32_t AbilityManagerService::GetAbilityInfoFromExtension(const Want &want, App
         InitAbilityInfoFromExtension(extensionInfo, abilityInfo);
         break;
     }
-
     return found;
 }
 
@@ -4147,6 +4156,34 @@ int AbilityManagerService::GenerateAbilityRequestLocal(
         }
     }
     return result;
+}
+
+void AbilityManagerService::StartingScreenLockAbility()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    if (!iBundleManager_) {
+        HILOG_INFO("bms service is null");
+        return;
+    }
+
+    constexpr int maxAttemptNums = 5;
+    auto userId = GetUserId();
+    int attemptNums = 1;
+    AppExecFwk::AbilityInfo screenLockInfo;
+    Want screenLockWant;
+    screenLockWant.SetElementName(AbilityConfig::SCREEN_LOCK_BUNDLE_NAME, AbilityConfig::SCREEN_LOCK_ABILITY_NAME);
+    while (!(iBundleManager_->QueryAbilityInfo(screenLockWant,
+        OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, screenLockInfo)) &&
+        attemptNums <= maxAttemptNums) {
+        HILOG_INFO("Waiting query mms service completed.");
+        usleep(REPOLL_TIME_MICRO_SECONDS);
+        attemptNums++;
+    }
+
+    HILOG_INFO("attemptNums : %{public}d", attemptNums);
+    if (attemptNums <= maxAttemptNums) {
+        (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS

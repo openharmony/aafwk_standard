@@ -10,49 +10,13 @@
         "//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
         "//foundation/aafwk/standard/interfaces/kits/napi:napi_packages",
         "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
+        "//foundation/aafwk/standard/common:common_target",
         "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
         "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
         "//foundation/aafwk/standard/frameworks/kits/appkit:appexec",
         "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc:ams_system_test_app"
       ],
       "inner_kits": [
-        {
-          "header": {
-            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
-            "header_files": [
-              "ohos/aafwk/base/array_wrapper.h",
-              "ohos/aafwk/base/base_def.h",
-              "ohos/aafwk/base/base_interfaces.h",
-              "ohos/aafwk/base/base_object.h",
-              "ohos/aafwk/base/base_types.h",
-              "ohos/aafwk/base/bool_wrapper.h",
-              "ohos/aafwk/base/byte_wrapper.h",
-              "ohos/aafwk/base/double_wrapper.h",
-              "ohos/aafwk/base/float_wrapper.h",
-              "ohos/aafwk/base/int_wrapper.h",
-              "ohos/aafwk/base/light_refbase.h",
-              "ohos/aafwk/base/long_wrapper.h",
-              "ohos/aafwk/base/short_wrapper.h",
-              "ohos/aafwk/base/string_wrapper.h"
-            ]
-          },
-          "name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
-        },
-        {
-          "header": {
-            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
-            "header_files": [
-              "ohos/aafwk/content/want.h",
-              "ohos/aafwk/content/skills.h",
-              "ohos/aafwk/content/want_params.h",
-              "ohos/aafwk/content/match_type.h",
-              "ohos/aafwk/content/operation.h",
-              "ohos/aafwk/content/patterns_matcher.h",
-              "ohos/aafwk/content/pac_map.h"
-            ]
-          },
-          "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
-        },
         {
           "header": {
             "header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
@@ -220,6 +184,62 @@
       "test_list": [
         "//foundation/aafwk/standard/services/formmgr/test:unittest",
         "//foundation/aafwk/standard/test/systemtest:systemtest"
+      ]
+    },
+    "ability_base": {
+      "module_list": [
+        "//foundation/aafwk/standard/interfaces/innerkits:base_innerkits_target"
+      ],
+      "inner_kits": [
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
+            "header_files": [
+              "ohos/aafwk/base/array_wrapper.h",
+              "ohos/aafwk/base/base_def.h",
+              "ohos/aafwk/base/base_interfaces.h",
+              "ohos/aafwk/base/base_object.h",
+              "ohos/aafwk/base/base_types.h",
+              "ohos/aafwk/base/bool_wrapper.h",
+              "ohos/aafwk/base/byte_wrapper.h",
+              "ohos/aafwk/base/double_wrapper.h",
+              "ohos/aafwk/base/float_wrapper.h",
+              "ohos/aafwk/base/int_wrapper.h",
+              "ohos/aafwk/base/light_refbase.h",
+              "ohos/aafwk/base/long_wrapper.h",
+              "ohos/aafwk/base/short_wrapper.h",
+              "ohos/aafwk/base/string_wrapper.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
+            "header_files": [
+              "ohos/aafwk/content/want.h",
+              "ohos/aafwk/content/skills.h",
+              "ohos/aafwk/content/want_params.h",
+              "ohos/aafwk/content/match_type.h",
+              "ohos/aafwk/content/operation.h",
+              "ohos/aafwk/content/patterns_matcher.h",
+              "ohos/aafwk/content/pac_map.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+            "header_files": [
+              "configuration.h",
+              "global_configuration_key.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration"
+        }
+      ],
+      "test_list": [
       ]
     }
   },

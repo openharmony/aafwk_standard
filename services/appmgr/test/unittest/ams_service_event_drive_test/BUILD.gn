@@ -32,6 +32,7 @@ ohos_unittest("AmsServiceEventDriveTest") {
   ]
 
   sources = [
+    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/system_memory_attr.cpp",
     "${services_path}/appmgr/src/ability_running_record.cpp",
     "${services_path}/appmgr/src/app_death_recipient.cpp",
     "${services_path}/appmgr/src/app_mgr_service.cpp",
@@ -41,7 +42,6 @@ ohos_unittest("AmsServiceEventDriveTest") {
     "${services_path}/appmgr/src/app_spawn_client.cpp",
     "${services_path}/appmgr/src/app_spawn_msg_wrapper.cpp",
     "${services_path}/appmgr/src/app_spawn_socket.cpp",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/src/system_memory_attr.cpp",
   ]
 
   sources += [ "ams_service_event_drive_test.cpp" ]

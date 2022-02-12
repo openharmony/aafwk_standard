@@ -82,7 +82,7 @@ public:
     void OnStartabilityAms();
     std::shared_ptr<AbilityRecord> GetAbilityRecord() const;
     void ResetAbilityRecord();
-    void startAbility();
+    void StartAbility();
 
 public:
     std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
@@ -104,6 +104,8 @@ void AbilityMsAppmsTest::OnStartabilityAms()
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
         abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        abilityMs_->dataAbilityManagers_.emplace(0, abilityMs_->dataAbilityManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
 
@@ -139,22 +141,20 @@ void AbilityMsAppmsTest::TearDownTestCase(void)
 
 void AbilityMsAppmsTest::SetUp(void)
 {
-    sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
     DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
     DelayedSingleton<AppScheduler>::GetInstance();
-
     callback_ = std::make_shared<AppStateCallbackS>();
-
     DelayedSingleton<AppScheduler>::GetInstance()->Init(callback_);
     abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
     OnStartabilityAms();
-    startAbility();
+    StartAbility();
     GTEST_LOG_(INFO) << "SetUp";
 }
 
 void AbilityMsAppmsTest::TearDown(void)
 {
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
     DelayedSingleton<AbilityManagerService>::DestroyInstance();
     GTEST_LOG_(INFO) << "TearDown";
 }
@@ -180,7 +180,7 @@ void AbilityMsAppmsTest::ResetAbilityRecord()
     abilityRecord_->Init();
 }
 
-void AbilityMsAppmsTest::startAbility()
+void AbilityMsAppmsTest::StartAbility()
 {
     Want want;
     AbilityInfo abilityInfo;
@@ -276,11 +276,13 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_004, TestSize.Level1)
     sptr<AbilityScheduler> scheduler = new AbilityScheduler();
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
     sptr<Token> token = nullptr;
-
     auto checkStateFun = [&scheduler, &token, &abilityRecord]() {
         auto stackManager = DelayedSingleton<AbilityManagerService>::GetInstance()->GetStackManager();
+        EXPECT_TRUE(stackManager);
         abilityRecord = stackManager->GetCurrentTopAbility();
+        EXPECT_TRUE(abilityRecord);
         token = abilityRecord->GetToken();
+        EXPECT_TRUE(token);
         DelayedSingleton<AbilityManagerService>::GetInstance()->AttachAbilityThread(scheduler, token);
     };
 
@@ -315,7 +317,9 @@ HWTEST_F(AbilityMsAppmsTest, AaFwk_AbilityMS_AppMS_005, TestSize.Level1)
     auto checkSourceActivtingState = [&stackManager, &sourceAbilityRecord, &scheduler, &sourcetoken]() {
         stackManager = DelayedSingleton<AbilityManagerService>::GetInstance()->GetStackManager();
         sourceAbilityRecord = stackManager->GetCurrentTopAbility();
+        EXPECT_TRUE(sourceAbilityRecord);
         sourcetoken = sourceAbilityRecord->GetToken();
+        EXPECT_TRUE(sourcetoken);
         DelayedSingleton<AbilityManagerService>::GetInstance()->AttachAbilityThread(scheduler, sourcetoken);
         auto sourceAbilityInfo = sourceAbilityRecord->GetAbilityInfo();
         EXPECT_EQ(sourceAbilityInfo.bundleName, "com.ix.hiworld");

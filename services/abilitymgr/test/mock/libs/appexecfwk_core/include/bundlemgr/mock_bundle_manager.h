@@ -217,7 +217,6 @@ public:
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"IBundleMgr");
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 };
@@ -228,6 +227,7 @@ public:
     ~BundleMgrService();
 
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
+    bool QueryAbilityInfo(const Want &want, int32_t flags, int32_t userId, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
     bool GetApplicationInfo(
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
