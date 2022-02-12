@@ -4072,13 +4072,33 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
 {
     HILOG_DEBUG("DoAbilityForeground, sceneFlag:%{public}d", flag);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
+    if (!VerificationToken(token) && !VerificationAllToken(token)) {
+        HILOG_ERROR("%{public}s token error.", __func__);
+        return ERR_INVALID_VALUE;
+    }
 
     std::lock_guard<std::recursive_mutex> guard(globalLock_);
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+    int result = AbilityUtil::JudgeAbilityVisibleControl(abilityRecord->GetAbilityInfo());
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
+        return result;
+    }
+
+    auto type = abilityRecord->GetAbilityInfo().type;
+    if (type != AppExecFwk::AbilityType::PAGE) {
+        HILOG_ERROR("Cannot minimize except page ability.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
+        HILOG_ERROR("IsAbilityControllerForeground false.");
+        return ERR_WOULD_BLOCK;
+    }
 
     abilityRecord->lifeCycleStateInfo_.sceneFlag = flag;
-    abilityRecord->ProcessForegroundAbility();
+    abilityRecord->ForegroundAbility();
     abilityRecord->lifeCycleStateInfo_.sceneFlag = SCENE_FLAG_NORMAL;
     return ERR_OK;
 }
