@@ -1580,14 +1580,38 @@ void AbilityThread::DumpAbilityInfo(std::vector<std::string> &info)
 
 sptr<IRemoteObject> AbilityThread::CallRequest()
 {
-    APP_LOGI("AbilityThread::CallRequest start");
+    APP_LOGI("AbilityThread::CallRequest begin");
 
     if (!currentAbility_) {
         APP_LOGI("ability is nullptr.");
         return nullptr;
     }
 
-    return currentAbility_->CallRequest();
+    sptr<IRemoteObject> retval = nullptr;
+    std::weak_ptr<OHOS::AppExecFwk::Ability> weakAbility = currentAbility_;
+    auto syncTask = [ability = weakAbility, &retval] () {
+        auto currentAbility = ability.lock();
+        if (currentAbility == nullptr) {
+            APP_LOGE("ability is nullptr.");
+            return;
+        }
+
+        APP_LOGD("AbilityThread::CallRequest syncTask CallRequest begin");
+        retval = currentAbility->CallRequest();
+        APP_LOGD("AbilityThread::CallRequest syncTask CallRequest end %{public}p", retval.GetRefPtr());
+    };
+
+    if (abilityHandler_ == nullptr) {
+        APP_LOGE("ability Handler is nullptr.");
+        return nullptr;
+    }
+
+    APP_LOGD("AbilityThread::CallRequest post sync task");
+
+    abilityHandler_->PostSyncTask(syncTask);
+
+    APP_LOGI("AbilityThread::CallRequest end");
+    return retval;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
