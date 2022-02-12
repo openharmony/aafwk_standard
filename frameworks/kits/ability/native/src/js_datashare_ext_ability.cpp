@@ -641,10 +641,13 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> JsDataShareExtAbilit
 
 bool JsDataShareExtAbility::CheckCallingPermission(const std::string &permission)
 {
+    HILOG_INFO("%{public}s begin, permission:%{public}s", __func__, permission.c_str());
     if (!permission.empty() && AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), permission)
         != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        HILOG_ERROR("%{public}s permission not granted.", __func__);
         return false;
     }
+    HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 } // namespace AbilityRuntime

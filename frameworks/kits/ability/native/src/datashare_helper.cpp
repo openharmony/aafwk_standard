@@ -30,6 +30,7 @@ namespace OHOS {
 namespace AppExecFwk {
 namespace {
 const std::string SCHEME_DATASHARE = "datashare";
+constexpr int INVALID_VALUE = -1;
 }  // namespace
 
 std::mutex DataShareHelper::oplock_;
@@ -91,7 +92,6 @@ void DataShareHelper::AddDataShareDeathRecipient(const sptr<IRemoteObject> &toke
 void DataShareHelper::OnSchedulerDied(const wptr<IRemoteObject> &remote)
 {
     APP_LOGI("'%{public}s start':", __func__);
-    std::lock_guard<std::mutex> guard(lock_);
     auto object = remote.promote();
     object = nullptr;
     dataShareProxy_ = nullptr;
@@ -147,19 +147,19 @@ std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
 std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
     const std::shared_ptr<Context> &context, const AAFwk::Want &want, const std::shared_ptr<Uri> &uri)
 {
-    APP_LOGI("DataShareHelper::Creator with context uri called start.");
+    APP_LOGI("DataShareHelper::Creator with context, want and uri called start.");
     if (context == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, context == nullptr");
+        APP_LOGE("DataShareHelper::Creator failed, context == nullptr");
         return nullptr;
     }
 
     if (uri == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, uri == nullptr");
+        APP_LOGE("DataShareHelper::Creator failed, uri == nullptr");
         return nullptr;
     }
 
     if (uri->GetScheme() != SCHEME_DATASHARE) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, the Scheme is not datashare, Scheme: %{public}s",
+        APP_LOGE("DataShareHelper::Creator failed, the Scheme is not datashare, Scheme: %{public}s",
             uri->GetScheme().c_str());
         return nullptr;
     }
@@ -179,11 +179,11 @@ std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
 
     DataShareHelper *ptrDataShareHelper = new (std::nothrow) DataShareHelper(context, want, uri, dataShareProxy);
     if (ptrDataShareHelper == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, create DataShareHelper failed");
+        APP_LOGE("DataShareHelper::Creator failed, create DataShareHelper failed");
         return nullptr;
     }
 
-    APP_LOGI("DataShareHelper::Creator with context uri called end.");
+    APP_LOGI("DataShareHelper::Creator with context, want and uri called end.");
     return std::shared_ptr<DataShareHelper>(ptrDataShareHelper);
 }
 
@@ -202,19 +202,19 @@ std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
     const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, const AAFwk::Want &want,
     const std::shared_ptr<Uri> &uri)
 {
-    APP_LOGI("DataShareHelper::Creator with context uri called start.");
+    APP_LOGI("DataShareHelper::Creator with runtime context, want and uri called start.");
     if (context == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, context == nullptr");
+        APP_LOGE("DataShareHelper::Creator failed, context == nullptr");
         return nullptr;
     }
 
     if (uri == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, uri == nullptr");
+        APP_LOGE("DataShareHelper::Creator failed, uri == nullptr");
         return nullptr;
     }
 
     if (uri->GetScheme() != SCHEME_DATASHARE) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, the Scheme is not datashare, Scheme: %{public}s",
+        APP_LOGE("DataShareHelper::Creator failed, the Scheme is not datashare, Scheme: %{public}s",
             uri->GetScheme().c_str());
         return nullptr;
     }
@@ -234,11 +234,11 @@ std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
 
     DataShareHelper *ptrDataShareHelper = new (std::nothrow) DataShareHelper(context, want, uri, dataShareProxy);
     if (ptrDataShareHelper == nullptr) {
-        APP_LOGE("DataShareHelper::Creator (context, uri) failed, create DataShareHelper failed");
+        APP_LOGE("DataShareHelper::Creator failed, create DataShareHelper failed");
         return nullptr;
     }
 
-    APP_LOGI("DataShareHelper::Creator with context uri called end.");
+    APP_LOGI("DataShareHelper::Creator with runtime context, want and uri called end.");
     return std::shared_ptr<DataShareHelper>(ptrDataShareHelper);
 }
 
@@ -251,7 +251,6 @@ std::shared_ptr<DataShareHelper> DataShareHelper::Creator(
 bool DataShareHelper::Release()
 {
     APP_LOGI("DataShareHelper::Release start.");
-    std::lock_guard<std::mutex> guard(lock_);
     if (uri_ == nullptr) {
         APP_LOGE("DataShareHelper::Release failed, uri_ is nullptr");
         return false;
@@ -279,7 +278,6 @@ bool DataShareHelper::Release()
 std::vector<std::string> DataShareHelper::GetFileTypes(Uri &uri, const std::string &mimeTypeFilter)
 {
     APP_LOGI("DataShareHelper::GetFileTypes start.");
-    std::lock_guard<std::mutex> guard(lock_);
     std::vector<std::string> matchedMIMEs;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
@@ -296,6 +294,8 @@ std::vector<std::string> DataShareHelper::GetFileTypes(Uri &uri, const std::stri
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -333,8 +333,7 @@ std::vector<std::string> DataShareHelper::GetFileTypes(Uri &uri, const std::stri
 int DataShareHelper::OpenFile(Uri &uri, const std::string &mode)
 {
     APP_LOGI("DataShareHelper::OpenFile start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int fd = -1;
+    int fd = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return fd;
@@ -350,6 +349,8 @@ int DataShareHelper::OpenFile(Uri &uri, const std::string &mode)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -387,8 +388,7 @@ int DataShareHelper::OpenFile(Uri &uri, const std::string &mode)
 int DataShareHelper::OpenRawFile(Uri &uri, const std::string &mode)
 {
     APP_LOGI("DataShareHelper::OpenRawFile start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int fd = -1;
+    int fd = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return fd;
@@ -404,6 +404,8 @@ int DataShareHelper::OpenRawFile(Uri &uri, const std::string &mode)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -437,8 +439,7 @@ int DataShareHelper::OpenRawFile(Uri &uri, const std::string &mode)
 int DataShareHelper::Insert(Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     APP_LOGI("DataShareHelper::Insert start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int index = -1;
+    int index = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return index;
@@ -454,6 +455,8 @@ int DataShareHelper::Insert(Uri &uri, const NativeRdb::ValuesBucket &value)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -489,8 +492,7 @@ int DataShareHelper::Update(
     Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataShareHelper::Update start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int index = -1;
+    int index = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return index;
@@ -506,6 +508,8 @@ int DataShareHelper::Update(
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -539,8 +543,7 @@ int DataShareHelper::Update(
 int DataShareHelper::Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataShareHelper::Delete start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int index = -1;
+    int index = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return index;
@@ -556,6 +559,8 @@ int DataShareHelper::Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &pr
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -591,7 +596,6 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareHelper::Query(
     Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     APP_LOGI("DataShareHelper::Query start.");
-    std::lock_guard<std::mutex> guard(lock_);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset = nullptr;
 
     if (!CheckUriParam(uri)) {
@@ -609,6 +613,8 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareHelper::Query(
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -642,7 +648,6 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareHelper::Query(
 std::string DataShareHelper::GetType(Uri &uri)
 {
     APP_LOGI("DataShareHelper::GetType start.");
-    std::lock_guard<std::mutex> guard(lock_);
     std::string type;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
@@ -659,6 +664,8 @@ std::string DataShareHelper::GetType(Uri &uri)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -692,8 +699,7 @@ std::string DataShareHelper::GetType(Uri &uri)
 int DataShareHelper::BatchInsert(Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     APP_LOGI("DataShareHelper::BatchInsert start.");
-    std::lock_guard<std::mutex> guard(lock_);
-    int ret = -1;
+    int ret = INVALID_VALUE;
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
         return ret;
@@ -709,6 +715,8 @@ int DataShareHelper::BatchInsert(Uri &uri, const std::vector<NativeRdb::ValuesBu
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -914,6 +922,8 @@ void DataShareHelper::NotifyChange(const Uri &uri)
             dataShareConnection_->ConnectDataShareExtAbility(want_, token_);
         }
         dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -947,7 +957,6 @@ void DataShareHelper::NotifyChange(const Uri &uri)
 Uri DataShareHelper::NormalizeUri(Uri &uri)
 {
     APP_LOGI("DataShareHelper::NormalizeUri start.");
-    std::lock_guard<std::mutex> guard(lock_);
     Uri urivalue("");
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
@@ -964,6 +973,8 @@ Uri DataShareHelper::NormalizeUri(Uri &uri)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -999,7 +1010,6 @@ Uri DataShareHelper::NormalizeUri(Uri &uri)
 Uri DataShareHelper::DenormalizeUri(Uri &uri)
 {
     APP_LOGI("DataShareHelper::DenormalizeUri start.");
-    std::lock_guard<std::mutex> guard(lock_);
     Uri urivalue("");
     if (!CheckUriParam(uri)) {
         APP_LOGE("%{public}s called. CheckUriParam uri failed", __func__);
@@ -1016,6 +1026,8 @@ Uri DataShareHelper::DenormalizeUri(Uri &uri)
         if (isSystemCaller_ && dataShareProxy_) {
             AddDataShareDeathRecipient(dataShareProxy_->AsObject());
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
@@ -1073,6 +1085,8 @@ std::vector<std::shared_ptr<DataAbilityResult>> DataShareHelper::ExecuteBatch(
             APP_LOGE("DataShareHelper::ExecuteBatch failed dataShareProxy_ == nullptr");
             return results;
         }
+    } else {
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy_ == nullptr) {
