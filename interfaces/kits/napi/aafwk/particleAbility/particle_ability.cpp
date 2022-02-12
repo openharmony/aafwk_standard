@@ -183,6 +183,34 @@ napi_value NAPI_PAAcquireDataAbilityHelper(napi_env env, napi_callback_info info
 }
 
 /**
+ * @brief ParticleAbility NAPI method : startBackgroundRunning.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_PAStartBackgroundRunning(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    return NAPI_StartBackgroundRunningCommon(env, info);
+}
+
+/**
+ * @brief ParticleAbility NAPI method : cancelBackgroundRunning.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_PACancelBackgroundRunning(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    return NAPI_CancelBackgroundRunningCommon(env, info);
+}
+
+/**
  * @brief ParticleAbility NAPI module registration.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -205,6 +233,8 @@ napi_value ParticleAbilityInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("connectAbility", NAPI_PAConnectAbility),
         DECLARE_NAPI_FUNCTION("disconnectAbility", NAPI_PADisConnectAbility),
         DECLARE_NAPI_FUNCTION("acquireDataAbilityHelper", NAPI_PAAcquireDataAbilityHelper),
+        DECLARE_NAPI_FUNCTION("startBackgroundRunning", NAPI_PAStartBackgroundRunning),
+        DECLARE_NAPI_FUNCTION("cancelBackgroundRunning", NAPI_PACancelBackgroundRunning),
     };
     napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties);
 
