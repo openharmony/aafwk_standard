@@ -76,7 +76,7 @@ static void WaitUntilTaskFinished()
     const uint32_t maxRetryTime = 1000;
     const uint32_t sleepTime = 1000;
     uint32_t count = 0;
-    auto handler = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    auto handler = g_aams->GetEventHandler();
     std::atomic<bool> taskCalled(false);
     auto f = [&taskCalled]() { taskCalled.store(true); };
     if (handler->PostTask(f)) {
@@ -193,8 +193,12 @@ void TerminateAbilityTest::SetUp(void)
 
 void TerminateAbilityTest::TearDown(void)
 {
-    g_aams->OnStop();
+    g_aams->eventLoop_->Stop();
+    g_aams->eventLoop_.reset();
+    g_aams->handler_.reset();
+    g_aams->state_ = ServiceRunningState::STATE_NOT_START;
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    g_aams = nullptr;
 }
 
 bool TerminateAbilityTest::StartAbility(
@@ -360,7 +364,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_004, TestSize.Level1
     EXPECT_TRUE(launcherAbilityRecord);
 
     // last launcherAbilityRecord
-    EXPECT_EQ(g_aams->TerminateAbility(launcherToken, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
+    EXPECT_EQ(g_aams->TerminateAbility(launcherToken, -1, nullptr), 0);
     WaitUntilTaskFinished();
 }
 
@@ -405,7 +409,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_005, TestSize.Level1
 
     EXPECT_NE(launcherAbilityRecord->GetAbilityState(), OHOS::AAFwk::AbilityState::BACKGROUND);
     // clear launcherAbilityRecord
-    EXPECT_EQ(g_aams->TerminateAbility(launcherToken, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
+    EXPECT_EQ(g_aams->TerminateAbility(launcherToken, -1, nullptr), 0);
     WaitUntilTaskFinished();
 }
 
@@ -478,7 +482,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_007, TestSize.Level1
     EXPECT_TRUE(serverResult == nullptr);
 
     // clear launcherAbilityRecord
-    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
+    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, nullptr), 0);
     WaitUntilTaskFinished();
 }
 
@@ -562,7 +566,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_009, TestSize.Level1
     // caller is active
     EXPECT_NE(launcherAbilityRecordA->GetAbilityState(), OHOS::AAFwk::AbilityState::BACKGROUND);
     // clear launcherAbilityRecord
-    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, nullptr), TERMINATE_LAUNCHER_DENIED);
+    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, nullptr), ERR_INVALID_VALUE);
 }
 
 /*
@@ -660,7 +664,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_011, TestSize.Level1
     PacMap saveData;
     EXPECT_NE(g_aams->AbilityTransitionDone(launcherTokenA, OHOS::AAFwk::AbilityState::ACTIVE, saveData), 0);
     EXPECT_EQ(g_aams->TerminateAbility(launcherTokenC, -1, &want), 0);
-    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, &want), TERMINATE_LAUNCHER_DENIED);
+    EXPECT_EQ(g_aams->TerminateAbility(launcherTokenA, -1, &want), 0);
     WaitUntilTaskFinished();
 }
 

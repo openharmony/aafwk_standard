@@ -126,23 +126,31 @@ void AbilityDumpTest::OnStartAms()
 
         g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
         g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        g_abilityMs->connectManagers_.emplace(0, g_abilityMs->connectManager_);
         EXPECT_TRUE(g_abilityMs->handler_);
         EXPECT_TRUE(g_abilityMs->connectManager_);
 
         g_abilityMs->connectManager_->SetEventHandler(g_abilityMs->handler_);
 
         g_abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        g_abilityMs->dataAbilityManagers_.emplace(0, g_abilityMs->dataAbilityManager_);
         EXPECT_TRUE(g_abilityMs->dataAbilityManager_);
 
         g_abilityMs->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(g_abilityMs->amsConfigResolver_);
         g_abilityMs->amsConfigResolver_->Parse();
 
+        g_abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        g_abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        g_abilityMs->currentMissionListManager_->Init();
+
         g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_abilityMs->pendingWantManager_);
 
         int userId = g_abilityMs->GetUserId();
         g_abilityMs->SetStackManager(userId, true);
+        EXPECT_TRUE(g_abilityMs->GetStackManager());
+        g_abilityMs->stackManagers_.emplace(0, g_abilityMs->GetStackManager());
         g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(g_abilityMs->systemAppManager_);
 
@@ -173,14 +181,17 @@ void AbilityDumpTest::SetUp()
     OnStartAms();
     WaitUntilTaskFinished();
     g_appTestService->Start();
-
     StartAbilityes();
 }
 
 void AbilityDumpTest::TearDown()
 {
-    g_abilityMs->OnStop();
+    g_abilityMs->eventLoop_->Stop();
+    g_abilityMs->eventLoop_.reset();
+    g_abilityMs->handler_.reset();
+    g_abilityMs->state_ = ServiceRunningState::STATE_NOT_START;
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    g_abilityMs = nullptr;
 }
 
 void AbilityDumpTest::StartAbilityes()

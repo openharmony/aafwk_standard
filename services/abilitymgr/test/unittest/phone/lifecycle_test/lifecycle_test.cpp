@@ -98,34 +98,32 @@ void LifecycleTest::OnStartabilityAms()
         }
 
         abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
-
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
-
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
         abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManagers_.emplace(0, abilityMs_->connectManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
-
         abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
-
         abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        abilityMs_->dataAbilityManagers_.emplace(0, abilityMs_->dataAbilityManager_);
         EXPECT_TRUE(abilityMs_->dataAbilityManager_);
-
         abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(abilityMs_->amsConfigResolver_);
         abilityMs_->amsConfigResolver_->Parse();
-
+        abilityMs_->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        abilityMs_->currentMissionListManager_->Init();
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId, true);
+        EXPECT_TRUE(abilityMs_->GetStackManager());
+        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs_->systemAppManager_);
-
         abilityMs_->eventLoop_->Run();
-
         return;
     }
 
@@ -154,7 +152,10 @@ void LifecycleTest::SetUp(void)
 
 void LifecycleTest::TearDown(void)
 {
-    abilityMs_->OnStop();
+    abilityMs_->eventLoop_->Stop();
+    abilityMs_->eventLoop_.reset();
+    abilityMs_->handler_.reset();
+    abilityMs_->state_ = ServiceRunningState::STATE_NOT_START;
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
     launcherAbilityRecord_.reset();
     launcherToken_ = nullptr;
@@ -163,7 +164,7 @@ void LifecycleTest::TearDown(void)
     launcherScheduler_ = nullptr;
     nextScheduler_ = nullptr;
     command_.reset();
-    abilityMs_.reset();
+    abilityMs_ = nullptr;
     startLancherFlag_ = false;
 }
 
@@ -210,9 +211,9 @@ bool LifecycleTest::StartNextAbility()
     auto stackManager = abilityMs_->GetStackManager();
     EXPECT_TRUE(stackManager);
     if (stackManager) {
-        GTEST_LOG_(ERROR) << "top BundleName ："
+        GTEST_LOG_(ERROR) << "top BundleName :"
                           << stackManager->GetCurrentTopAbility()->GetWant().GetElement().GetBundleName();
-        GTEST_LOG_(ERROR) << "top AbilityName ："
+        GTEST_LOG_(ERROR) << "top AbilityName :"
                           << stackManager->GetCurrentTopAbility()->GetWant().GetElement().GetAbilityName();
         stackManager->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     }
