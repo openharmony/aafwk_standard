@@ -19,6 +19,7 @@
 #include "ability_info.h"
 #include "extension_context.h"
 #include "form_provider_info.h"
+#include "start_options.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -42,6 +43,19 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int UpdateForm(const int64_t formId, const AppExecFwk::FormProviderData &formProviderData);
+
+    /**
+     * @brief Starts a new ability.
+     * An ability using the AbilityInfo.AbilityType.SERVICE or AbilityInfo.AbilityType.PAGE template uses this method
+     * to start a specific ability. The system locates the target ability from installed abilities based on the value
+     * of the want parameter and then starts it. You can specify the ability to start using the want parameter.
+     *
+     * @param want Indicates the Want containing information about the target ability to start.
+     *
+     * @return errCode ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbility(const AAFwk::Want &want) const;
+    ErrCode StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions) const;
 
     /**
      * @brief Obtains information about the current ability.
