@@ -55,6 +55,7 @@ ohos_unittest("want_receiver_proxy_test") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
