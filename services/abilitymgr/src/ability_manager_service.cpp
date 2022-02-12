@@ -581,9 +581,11 @@ int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
     HILOG_INFO("%{public}s", __func__);
     want.DumpInfo(0);
     int32_t callerUid = IPCSkeleton::GetCallingUid();
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
     HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, callerUid = %{public}d", callerUid);
-    int result = dmsClient.StartRemoteAbility(want, callerUid, requestCode);
+    HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, AccessTokenID = %{public}d", accessToken);
+    int result = dmsClient.StartRemoteAbility(want, callerUid, requestCode, accessToken);
     if (result != ERR_NONE) {
         HILOG_ERROR("AbilityManagerService::StartRemoteAbility failed, result = %{public}d", result);
     }
@@ -958,8 +960,10 @@ int AbilityManagerService::ConnectRemoteAbility(const Want &want, const sptr<IRe
     HILOG_INFO("%{public}s begin ConnectAbilityRemote", __func__);
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     int32_t callerPid = IPCSkeleton::GetCallingPid();
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
-    return dmsClient.ConnectRemoteAbility(want, connect, callerUid, callerPid);
+    HILOG_INFO("AbilityManagerService::Try to ConnectRemoteAbility, AccessTokenID = %{public}d", accessToken);
+    return dmsClient.ConnectRemoteAbility(want, connect, callerUid, callerPid, accessToken);
 }
 
 int AbilityManagerService::DisconnectLocalAbility(const sptr<IAbilityConnection> &connect)
@@ -1008,13 +1012,15 @@ int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemot
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
 
     int32_t appUid = IPCSkeleton::GetCallingUid();
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
+    HILOG_INFO("AbilityManagerService::Try to StartContinuation, AccessTokenID = %{public}d", accessToken);
     int32_t missionId = GetMissionIdByAbilityToken(abilityToken);
     if (missionId == -1) {
         HILOG_ERROR("AbilityManagerService::StartContinuation failed to get missionId.");
         return ERR_INVALID_VALUE;
     }
     DistributedClient dmsClient;
-    auto result = dmsClient.StartContinuation(want, missionId, appUid, status);
+    auto result =  dmsClient.StartContinuation(want, missionId, appUid, status, accessToken);
     if (result != ERR_OK) {
         HILOG_ERROR("StartContinuation failed, result = %{public}d, notify caller", result);
         NotifyContinuationResult(missionId, result);
