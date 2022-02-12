@@ -31,14 +31,15 @@ class DistributedClient {
 public:
     DistributedClient() = default;
     virtual ~DistributedClient() = default;
-    int32_t StartRemoteAbility(const OHOS::AAFwk::Want& want, int32_t callerUid, int32_t requestCode);
+    int32_t StartRemoteAbility(const OHOS::AAFwk::Want& want, int32_t callerUid, int32_t requestCode,
+        uint32_t accessToken);
     int32_t ContinueMission(const std::string& srcDeviceId, const std::string& dstDeviceId,
         int32_t missionId, const sptr<IRemoteObject>& callback, const OHOS::AAFwk::WantParams& wantParams);
     int32_t StartContinuation(const OHOS::AAFwk::Want& want, int32_t missionId, int32_t callerUid,
-        int32_t status);
+        int32_t status, uint32_t accessToken);
     int32_t NotifyCompleteContinuation(const std::u16string &devId, int32_t sessionId, bool isSuccess);
-    int32_t ConnectRemoteAbility(const OHOS::AAFwk::Want& want,
-        const sptr<IRemoteObject>& connect, int32_t callerUid, int32_t callerPid);
+    int32_t ConnectRemoteAbility(const OHOS::AAFwk::Want& want, const sptr<IRemoteObject>& connect,
+        int32_t callerUid, int32_t callerPid, uint32_t accessToken);
     int32_t DisconnectRemoteAbility(const sptr<IRemoteObject>& connect);
     int32_t StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag);
     int32_t StopSyncRemoteMissions(const std::string& devId);

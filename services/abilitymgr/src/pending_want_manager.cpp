@@ -235,7 +235,8 @@ int32_t PendingWantManager::DeviceIdDetermine(
         return result;
     }
     DistributedClient dmsClient;
-    result = dmsClient.StartRemoteAbility(want, callerUid, requestCode);
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
+    result = dmsClient.StartRemoteAbility(want, callerUid, requestCode, accessToken);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s: StartRemoteAbility Error! result = %{public}d", __func__, result);
     }
