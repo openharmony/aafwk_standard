@@ -1,0 +1,67 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+
+config("upms_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "include" ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+}
+
+group("upms_target") {
+  deps = [
+    ":libupms",
+    ":upms.rc",
+  ]
+}
+
+ohos_prebuilt_etc("upms.rc") {
+  relative_install_dir = "init"
+  source = "upms.cfg"
+  part_name = "ability_runtime"
+  subsystem_name = "aafwk"
+}
+
+#build so
+ohos_shared_library("libupms") {
+  configs = [ "${services_path}/common:common_config" ]
+  public_configs = [ ":upms_config" ]
+
+  sources = [
+    "src/uri_permission_manager_service.cpp",
+    "src/uri_permission_manager_stub_impl.cpp",
+  ]
+
+  deps = [
+    "${innerkits_path}/uri_permission:uri_permission_mgr",
+    "${innerkits_path}/want:want",
+  ]
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "dmsfwk_standard:zuri",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_runtime"
+}
