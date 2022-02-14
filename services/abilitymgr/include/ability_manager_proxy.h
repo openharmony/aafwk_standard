@@ -519,7 +519,7 @@ public:
 
     virtual void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess) override;
 
-    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) override;
+    virtual int NotifyContinuationResult(int32_t missionId, int32_t result) override;
 
     virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override;
 

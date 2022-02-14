@@ -1721,7 +1721,7 @@ void AbilityManagerProxy::NotifyCompleteContinuation(const std::string &deviceId
     }
 }
 
-int AbilityManagerProxy::NotifyContinuationResult(int32_t missionId, const int32_t result)
+int AbilityManagerProxy::NotifyContinuationResult(int32_t missionId, int32_t result)
 {
     MessageParcel data;
     MessageParcel reply;

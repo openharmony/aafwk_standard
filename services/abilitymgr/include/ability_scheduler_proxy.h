@@ -297,7 +297,7 @@ public:
      * @param The continuation result.
      * @return
      */
-    void NotifyContinuationResult(const int32_t result) override;
+    void NotifyContinuationResult(int32_t result) override;
 
 	/**
      * Dump Ability Runner info.
