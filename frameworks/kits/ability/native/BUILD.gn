@@ -76,6 +76,7 @@ config("ability_public_config") {
     "//third_party/libuv/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/ohos/aafwk/base",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/remote_register_service",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/distributed",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
