@@ -24,12 +24,14 @@
 #include "ability_runtime/js_ability.h"
 #include "abs_shared_result_set.h"
 #include "app_log_wrapper.h"
+#include "background_task_mgr_helper.h"
 #include "bytrace.h"
 #include "connection_manager.h"
 #include "context_impl.h"
 #include "continuation_manager.h"
 #include "continuation_register_manager.h"
 #include "continuation_register_manager_proxy.h"
+#include "continuous_task_param.h"
 #include "data_ability_operation.h"
 #include "data_ability_predicates.h"
 #include "data_ability_result.h"
@@ -1943,6 +1945,30 @@ bool Ability::DeleteForm(const int64_t formId)
     APP_LOGI("%{public}s called.", __func__);
     // delete form with formId
     return DeleteForm(formId, DELETE_FORM);
+}
+
+/**
+ * @brief Keep this Service ability in the background and displays a notification bar.
+ *
+ * @param wantAgent Indicates which ability to start when user click the notification bar.
+ * @return the method result code, 0 means succeed
+ */
+int Ability::StartBackgroundRunning(const Notification::WantAgent::WantAgent &wantAgent)
+{
+    uint32_t defaultBgMode = 0;
+    BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
+        std::make_shared<Notification::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
+    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
+}
+
+/**
+ * @brief Cancel background running of this ability to free up system memory.
+ *
+ * @return the method result code, 0 means succeed
+ */
+int Ability::StopBackgroundRunning()
+{
+    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
 }
 
 /**

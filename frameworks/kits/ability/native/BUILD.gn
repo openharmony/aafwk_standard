@@ -233,6 +233,7 @@ ohos_shared_library("abilitykit_native") {
   configs = [ ":ability_config" ]
   public_configs = [
     ":ability_public_config",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits_public_config",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_public_config",
   ]
 
@@ -240,6 +241,7 @@ ohos_shared_library("abilitykit_native") {
     ":static_subscriber_ipc",
     "${INNERKITS_PATH}/base:base",
     "${INNERKITS_PATH}/want:want",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
@@ -254,6 +256,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
+    "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
     "//third_party/icu/icu4c:shared_icuuc",
   ]
 
