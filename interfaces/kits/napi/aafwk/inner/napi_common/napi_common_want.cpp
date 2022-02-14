@@ -686,7 +686,8 @@ bool InnerUnwrapWantParams(napi_env env, const std::string &key, napi_value para
     return false;
 }
 
-bool BlackListFilter(const std::string &strProName) {
+bool BlackListFilter(const std::string &strProName)
+{
     if (strProName == Want::PARAM_RESV_WINDOW_MODE) {
         return true;
     }
@@ -719,7 +720,7 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
 
         std::string strProName = UnwrapStringFromJS(env, jsProName);
         /* skip reserved param */
-        if(BlackListFilter(strProName)) {
+        if (BlackListFilter(strProName)) {
             HILOG_INFO("%{public}s is filtered.", strProName.c_str());
             continue;
         }
