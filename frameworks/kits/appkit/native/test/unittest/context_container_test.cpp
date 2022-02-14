@@ -52,18 +52,18 @@ void ContextContainerTest::TearDownTestCase(void)
 
 void ContextContainerTest::SetUp(void)
 {
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new (std::nothrow) BundleMgrService();
-
     OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
-    OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->RegisterSystemAbility(
-        OHOS::ABILITY_MGR_SERVICE_ID, bundleObject);
+        OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
     context_ = std::make_shared<AbilityContext>();
     contextDeal_ = std::make_shared<ContextDeal>();
 }
 
 void ContextContainerTest::TearDown(void)
-{}
+{
+    OHOS::DelayedSingleton<SysMrgClient>::DestroyInstance();
+    context_ = nullptr;
+    contextDeal_ = nullptr;
+}
 
 /**
  * @tc.number: AppExecFwk_ContextContainer_GetBundleName_0100

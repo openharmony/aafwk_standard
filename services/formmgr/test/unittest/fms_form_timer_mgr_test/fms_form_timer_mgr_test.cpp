@@ -539,9 +539,6 @@ HWTEST_F(FmsFormTimerMgrTest, Fms_FormTimerMgr_0027, Function | MediumTest | Lev
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0027 start";
     bool isAddOk4 = FormTimerMgr::GetInstance().AddFormTimer(PARAM_FORM_ID_VALUE_6,  10, 30, 0);
     EXPECT_EQ(isAddOk4, true);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(Constants::MIN_PERIOD));
-
     GTEST_LOG_(INFO) << "Fms_FormTimerMgr_0027 end";
 }
 }
