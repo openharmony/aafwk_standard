@@ -125,6 +125,7 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
+    "//foundation/distributeddatamgr/objectstore/interfaces/innerkits/",
     "//base/global/i18n_standard/frameworks/intl/include",
   ]
 
@@ -268,6 +269,7 @@ ohos_shared_library("abilitykit_native") {
     "access_token:libaccesstoken_sdk",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_innerkits",
+    "distributeddataobject:distributeddataobject_impl",
     "form_runtime:fmskit_native",
     "form_runtime:form_manager",
     "ipc:ipc_core",

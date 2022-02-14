@@ -455,7 +455,7 @@ void JsAbility::DoOnForeground(const Want &want)
                 HILOG_ERROR("restore: content storage is nullptr");
             }
             OnSceneRestored();
-            NotityContinuationResult(want, true);
+            WaitingDistributedObjectSyncComplete(want);
         } else {
             OnSceneCreated();
         }
