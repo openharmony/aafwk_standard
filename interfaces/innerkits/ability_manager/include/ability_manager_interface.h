@@ -544,7 +544,7 @@ public:
 
     virtual void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess) = 0;
 
-    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) = 0;
+    virtual int NotifyContinuationResult(int32_t missionId, int32_t result) = 0;
 
     virtual int LockMissionForCleanup(int32_t missionId) = 0;
 

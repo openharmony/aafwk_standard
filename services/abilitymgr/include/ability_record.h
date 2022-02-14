@@ -755,7 +755,7 @@ public:
     void SetLaunchReason(const LaunchReason &reason);
     void SetLastExitReason(const LastExitReason &reason);
     void ContinueAbility(const std::string& deviceId);
-    void NotifyContinuationResult(const int32_t result);
+    void NotifyContinuationResult(int32_t result);
     std::shared_ptr<MissionList> GetOwnedMissionList() const;
 
     void SetUseNewMission();
