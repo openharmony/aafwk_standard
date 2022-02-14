@@ -215,7 +215,7 @@ public:
      * @param result, continuation result.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int NotifyContinuationResult(int32_t missionId, const int32_t result) override;
+    virtual int NotifyContinuationResult(int32_t missionId, int32_t result) override;
 
     /**
      * RegisterMissionListener, register remote device mission listener.

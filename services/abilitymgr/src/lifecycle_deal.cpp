@@ -160,7 +160,7 @@ void LifecycleDeal::ContinueAbility(const std::string& deviceId)
     abilityScheduler_->ContinueAbility(deviceId);
 }
 
-void LifecycleDeal::NotifyContinuationResult(const int32_t result)
+void LifecycleDeal::NotifyContinuationResult(int32_t result)
 {
     HILOG_INFO("NotifyContinuationResult.");
     auto abilityScheduler = GetScheduler();

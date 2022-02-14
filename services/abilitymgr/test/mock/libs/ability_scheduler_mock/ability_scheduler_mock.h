@@ -41,7 +41,7 @@ public:
     MOCK_METHOD3(ScheduleCommandAbility, void(const Want &, bool, int));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
-    MOCK_METHOD1(NotifyContinuationResult, void(const int32_t result));
+    MOCK_METHOD1(NotifyContinuationResult, void(int32_t result));
     MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
     MOCK_METHOD1(DumpAbilityInfo, void(std::vector<std::string> &info));
 

@@ -918,7 +918,7 @@ void AbilityImpl::ContinueAbility(const std::string& deviceId)
     ability_->ContinueAbilityWithStack(deviceId);
 }
 
-void AbilityImpl::NotifyContinuationResult(const int32_t result)
+void AbilityImpl::NotifyContinuationResult(int32_t result)
 {
     if (ability_ == nullptr) {
         APP_LOGE("AbilityImpl::NotifyContinuationResult ability_ is nullptr");
