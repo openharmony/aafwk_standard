@@ -288,10 +288,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    result = CheckStaticCfgPermission(abilityInfo);
-    if (result != ERR_OK) {
-        return result;
-    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -381,10 +377,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    result = CheckStaticCfgPermission(abilityInfo);
-    if (result != ERR_OK) {
-        return result;
-    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -467,10 +459,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    result = CheckStaticCfgPermission(abilityInfo);
-    if (result != ERR_OK) {
-        return result;
-    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -940,10 +928,6 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    result = CheckStaticCfgPermission(abilityInfo);
-    if (result != ERR_OK) {
-        return result;
-    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -1521,10 +1505,6 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         abilityRequest.appInfo.name.c_str(),
         abilityRequest.appInfo.bundleName.c_str(),
         abilityRequest.abilityInfo.name.c_str());
-
-    if (CheckStaticCfgPermission(abilityRequest.abilityInfo) != ERR_OK) {
-        return nullptr;
-    }
 
     CHECK_POINTER_AND_RETURN(dataAbilityManager_, nullptr);
     return dataAbilityManager_->Acquire(abilityRequest, tryBind, callerToken, isSystem);
@@ -4279,24 +4259,25 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
         abilityInfo.extensionAbilityType == AppExecFwk::ExtensionAbilityType::DATASHARE) ||
         (abilityInfo.type == AppExecFwk::AbilityType::DATA)) {
         // just need check the read permission and write permission of extension ability or data ability
-        if (!abilityInfo.readPermission.empty() &&
-            AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.readPermission)
-            != AppExecFwk::Constants::PERMISSION_GRANTED) {
-            HILOG_ERROR("verify access token failed, read permission: %{public}s",
-                abilityInfo.readPermission.c_str());
-            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        if (!abilityInfo.readPermission.empty()) {
+            int checkReadPermission = AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.readPermission);
+            if (checkReadPermission == ERR_OK) {
+                return AppExecFwk::Constants::PERMISSION_GRANTED;
+            }
+            HILOG_WARN("verify access token fail, read permission: %{public}s", abilityInfo.readPermission.c_str());
         }
-        if (!abilityInfo.writePermission.empty() &&
-            AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.writePermission)
-            != AppExecFwk::Constants::PERMISSION_GRANTED) {
-            HILOG_ERROR("verify access token failed, write permission: %{public}s",
-                abilityInfo.writePermission.c_str());
-            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        if (!abilityInfo.writePermission.empty()) {
+            int checkWritePermission = AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.writePermission);
+            if (checkWritePermission == ERR_OK) {
+                return AppExecFwk::Constants::PERMISSION_GRANTED;
+            }
+            HILOG_WARN("verify access token fail, write permission: %{public}s", abilityInfo.writePermission.c_str());
         }
+
         if (!abilityInfo.readPermission.empty() || !abilityInfo.writePermission.empty()) {
             // 'readPermission' and 'writePermission' take precedence over 'permission'
             // when 'readPermission' or 'writePermission' is not empty, no need check 'permission'
-            return ERR_OK;
+            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
         }
     }
 
@@ -4308,7 +4289,7 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
     for (auto permission : abilityInfo.permissions) {
         if (AccessTokenKit::VerifyAccessToken(tokenId, permission)
             != AppExecFwk::Constants::PERMISSION_GRANTED) {
-            HILOG_ERROR("verify access token failed, permission: %{public}s", permission.c_str());
+            HILOG_ERROR("verify access token fail, permission: %{public}s", permission.c_str());
             return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
         }
     }
@@ -4327,7 +4308,7 @@ void AbilityManagerService::StartupResidentProcess()
                 AppExecFwk::AbilityInfo abilityInfo;
                 Want want;
                 want.SetElementName(hapModuleInfo.bundleName, hapModuleInfo.mainElementName);
-                (void)StartAbility(want, 0, DEFAULT_INVAL_VALUE); // user 0
+                (void)StartAbility(want, USER_ID_NO_HEAD, DEFAULT_INVAL_VALUE); // user 0
             }
         }
     }
