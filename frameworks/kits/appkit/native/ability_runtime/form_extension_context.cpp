@@ -55,7 +55,7 @@ ErrCode FormExtensionContext::StartAbility(const AAFwk::Want &want) const
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, -1);
     HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
-        HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
+        HILOG_ERROR("FormExtensionContext::StartAbility is failed %{public}d", err);
     }
     return err;
 }
@@ -66,7 +66,7 @@ ErrCode FormExtensionContext::StartAbility(const AAFwk::Want &want, const AAFwk:
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_, -1);
     HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
-        HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
+        HILOG_ERROR("FormExtensionContext::StartAbility is failed %{public}d", err);
     }
     return err;
 }
@@ -75,7 +75,7 @@ AppExecFwk::AbilityType FormExtensionContext::GetAbilityInfoType() const
 {
     std::shared_ptr<AppExecFwk::AbilityInfo> info = GetAbilityInfo();
     if (info == nullptr) {
-        HILOG_ERROR("ServiceContext::GetAbilityInfoType info == nullptr");
+        HILOG_ERROR("FormExtensionContext::GetAbilityInfoType info == nullptr");
         return AppExecFwk::AbilityType::UNKNOWN;
     }
 
