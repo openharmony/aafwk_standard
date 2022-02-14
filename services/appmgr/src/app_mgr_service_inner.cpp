@@ -1721,9 +1721,23 @@ void AppMgrServiceInner::StartResidentProcess(const std::vector<BundleInfo> &inf
     }
 
     for (auto &bundle : infos) {
-        auto processName =
-            bundle.applicationInfo.process.empty() ? bundle.applicationInfo.bundleName : bundle.applicationInfo.process;
+        auto processName = bundle.applicationInfo.process.empty() ?
+            bundle.applicationInfo.bundleName : bundle.applicationInfo.process;
         APP_LOGI("processName = [%{public}s]", processName.c_str());
+
+        bool allElementNameEmpty = true;
+        for (auto hapModuleInfo : bundle.hapModuleInfos) {
+            if (!hapModuleInfo.mainElementName.empty()) {
+                // already start main element and process, no need start process again
+                allElementNameEmpty = false;
+                break;
+            }
+        }
+        if (!allElementNameEmpty) {
+            APP_LOGW("processName [%{public}s] Already exists ", processName.c_str());
+            continue;
+        }
+
         // Inspection records
         auto appRecord = appRunningManager_->CheckAppRunningRecordIsExist(
             bundle.applicationInfo.name, processName, bundle.applicationInfo.uid, bundle);
