@@ -70,7 +70,7 @@ declare namespace particleAbility {
    * @permission ohos.permission.KEEP_BACKGROUND_RUNNING
    * @param id Identifies the notification bar information.
    * @param request Indicates the notificationRequest instance containing information for displaying a notification bar.
-   * @deprecated
+   * @FAModelOnly
    */
   function startBackgroundRunning(id: number, request: NotificationRequest, callback: AsyncCallback<void>): void;
   function startBackgroundRunning(id: number, request: NotificationRequest): Promise<void>;
@@ -80,7 +80,7 @@ declare namespace particleAbility {
    *
    * @since 7
    * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
-   * @deprecated
+   * @FAModelOnly
    */
   function cancelBackgroundRunning(callback: AsyncCallback<void>): void;
   function cancelBackgroundRunning(): Promise<void>;
