@@ -145,13 +145,14 @@ int MissionListManager::GetMissionInfo(int32_t missionId, MissionInfo &missionIn
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionInfoById(missionId, missionInfo);
 }
 
-int MissionListManager::MoveMissionToFront(int32_t missionId)
+int MissionListManager::MoveMissionToFront(int32_t missionId, std::shared_ptr<StartOptions> startOptions)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
-    return MoveMissionToFront(missionId, true);
+    return MoveMissionToFront(missionId, true, startOptions);
 }
 
-int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher)
+int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromLauncher,
+    std::shared_ptr<StartOptions> startOptions)
 {
     HILOG_INFO("move mission to front:%{public}d.", missionId);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
@@ -177,7 +178,11 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
         HILOG_ERROR("get target ability record failed, missionId: %{public}d", missionId);
         return MOVE_MISSION_FAILED;
     }
-
+    if (startOptions != nullptr) {
+        Want want(targetAbilityRecord->GetWant());
+        want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions->GetWindowMode());
+        targetAbilityRecord->SetWant(want);
+    }
     // schedule target ability to foreground.
     targetAbilityRecord->ProcessForegroundAbility();
     HILOG_DEBUG("SetMovingState, missionId: %{public}d", missionId);

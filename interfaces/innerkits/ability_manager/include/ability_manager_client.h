@@ -609,11 +609,13 @@ public:
     /**
      * @brief Move a mission to front.
      * @param missionId Id of target mission.
+     * @param startOptions Special startOptions for target mission.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode MoveMissionToFront(int32_t missionId);
-	
+    ErrCode MoveMissionToFront(int32_t missionId, const StartOptions &startOptions);
+
 	/**
      * Start Ability, connect session with common ability.
      *

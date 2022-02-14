@@ -772,6 +772,14 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId)
     return abms->MoveMissionToFront(missionId);
 }
 
+ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId, const StartOptions &startOptions)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->MoveMissionToFront(missionId, startOptions);
+}
+
 ErrCode AbilityManagerClient::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callToken)
 {

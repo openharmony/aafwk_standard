@@ -3272,6 +3272,13 @@ void Ability::DoOnForeground(const Want& want)
     if (abilityWindow_ != nullptr) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityForeground, sceneFlag:%{public}d.",
             __func__, sceneFlag_);
+        auto window = abilityWindow_->GetWindow();
+        if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
+            auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
+                AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
+            window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+            APP_LOGI("set window mode = %{public}d.", windowMode);
+        }
         abilityWindow_->OnPostAbilityForeground(sceneFlag_);
         APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityForeground.", __func__);
     } else {

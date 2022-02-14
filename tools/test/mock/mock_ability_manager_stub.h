@@ -135,6 +135,7 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+    MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
     MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
 
