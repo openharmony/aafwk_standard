@@ -33,6 +33,7 @@ struct AppSpawnStartMsg {
     std::string soPath;
     uint32_t accessTokenId;
     std::string apl;
+    std::string bundleName;
 };
 
 using AppSpawnMsg = AppSpawn::ClientSocket::AppProperty;

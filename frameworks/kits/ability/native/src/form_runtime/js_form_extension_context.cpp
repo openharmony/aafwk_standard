@@ -18,6 +18,7 @@
 #include <cinttypes>
 #include <cstdint>
 
+#include "form_runtime/js_form_extension_util.h"
 #include "hilog_wrapper.h"
 #include "js_extension_context.h"
 #include "js_runtime.h"
@@ -76,17 +77,27 @@ private:
 
         AppExecFwk::FormProviderData formProviderData;
         std::string formDataStr = "{}";
+        std::map<std::string, int> rawImageDataMap;
         NativeObject* nativeObject = ConvertNativeValueTo<NativeObject>(info.argv[1]);
         if (nativeObject != nullptr) {
             NativeValue* nativeDataValue = nativeObject->GetProperty("data");
             if (nativeDataValue == nullptr || !ConvertFromJsValue(engine, nativeDataValue, formDataStr)) {
                 HILOG_ERROR("%{public}s called. nativeDataValue is nullptr or ConvertFromJsValue failed", __func__);
             }
+            nativeDataValue = nativeObject->GetProperty("image");
+            if (nativeDataValue != nullptr) {
+                UnwrapRawImageDataMap(engine, nativeDataValue, rawImageDataMap);
+            }
         } else {
             HILOG_ERROR("%{public}s called. nativeObject is nullptr", __func__);
         }
 
         formProviderData = AppExecFwk::FormProviderData(formDataStr);
+        HILOG_INFO("Image number is %{public}zu", rawImageDataMap.size());
+        for (auto entry : rawImageDataMap) {
+            formProviderData.AddImageData(entry.first, entry.second);
+        }
+
         AsyncTask::CompleteCallback complete =
             [weak = context_, formId, formProviderData](NativeEngine& engine, AsyncTask& task, int32_t status) {
                 auto context = weak.lock();

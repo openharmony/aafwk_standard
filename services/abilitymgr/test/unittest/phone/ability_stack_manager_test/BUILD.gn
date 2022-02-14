@@ -60,6 +60,7 @@ ohos_unittest("ability_stack_manager_test") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "device_manager_base:devicemanagersdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

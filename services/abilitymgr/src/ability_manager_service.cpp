@@ -14,6 +14,7 @@
  */
 
 #include "ability_manager_service.h"
+#include "accesstoken_kit.h"
 
 #include <fstream>
 #include <functional>
@@ -50,6 +51,7 @@
 #include "xcollie/watchdog.h"
 
 using OHOS::AppExecFwk::ElementName;
+using OHOS::Security::AccessToken::AccessTokenKit;
 
 namespace OHOS {
 namespace AAFwk {
@@ -286,6 +288,10 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != ERR_OK) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -375,6 +381,10 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != ERR_OK) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -457,6 +467,10 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != ERR_OK) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -592,35 +606,32 @@ int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
 
 bool AbilityManagerService::CheckIsRemote(const std::string& deviceId)
 {
-    HILOG_INFO("check is remote, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     if (deviceId.empty()) {
-        HILOG_ERROR("CheckIsRemote: device id is empty.");
+        HILOG_INFO("CheckIsRemote: deviceId is empty.");
         return false;
     }
-
     std::string localDeviceId;
-    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
-        HILOG_ERROR("CheckIsRemote: Check DeviceId failed");
+    if (!GetLocalDeviceId(localDeviceId)) {
+        HILOG_ERROR("CheckIsRemote: get local deviceId failed");
         return false;
     }
+    if (localDeviceId == deviceId) {
+        HILOG_INFO("CheckIsRemote: deviceId is local.");
+        return false;
+    }
+    HILOG_INFO("CheckIsRemote, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     return true;
 }
 
 bool AbilityManagerService::CheckIfOperateRemote(const Want &want)
 {
-    std::string localDeviceId;
     std::string deviceId = want.GetElement().GetDeviceID();
-    HILOG_INFO("get deviceId, deviceId = %{public}s", AnonymizeDeviceId(deviceId).c_str());
     if (deviceId.empty() || want.GetElement().GetBundleName().empty() ||
         want.GetElement().GetAbilityName().empty()) {
-        HILOG_ERROR("CheckIfOperateRemote: GetDeviceId,or GetBundleName, or GetAbilityName failed");
+        HILOG_DEBUG("CheckIfOperateRemote: DeviceId or BundleName or GetAbilityName empty");
         return false;
     }
-    if (!GetLocalDeviceId(localDeviceId) || localDeviceId == deviceId) {
-        HILOG_ERROR("CheckIfOperateRemote: Check DeviceId failed");
-        return false;
-    }
-    return true;
+    return CheckIsRemote(deviceId);
 }
 
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
@@ -927,6 +938,10 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != ERR_OK) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -1485,6 +1500,10 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         abilityRequest.appInfo.name.c_str(),
         abilityRequest.appInfo.bundleName.c_str(),
         abilityRequest.abilityInfo.name.c_str());
+
+    if (CheckStaticCfgPermission(abilityRequest.abilityInfo) != ERR_OK) {
+        return nullptr;
+    }
 
     CHECK_POINTER_AND_RETURN(dataAbilityManager_, nullptr);
     return dataAbilityManager_->Acquire(abilityRequest, tryBind, callerToken, isSystem);
@@ -3377,12 +3396,33 @@ void AbilityManagerService::StartingSettingsDataAbility()
     (void)AcquireDataAbility(uri, true, nullptr);
 }
 
+int AbilityManagerService::StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect)
+{
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    int32_t callerPid = IPCSkeleton::GetCallingPid();
+    uint32_t tokenCaller = IPCSkeleton::GetCallingTokenID();
+    DistributedClient dmsClient;
+    return dmsClient.StartRemoteAbilityByCall(want, connect, callerUid, callerPid, tokenCaller);
+}
+
+int AbilityManagerService::ReleaseRemoteAbility(const sptr<IRemoteObject> &connect,
+    const AppExecFwk::ElementName &element)
+{
+    DistributedClient dmsClient;
+    return dmsClient.ReleaseRemoteAbility(connect, element);
+}
+
 int AbilityManagerService::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("call ability.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
+
+    if (CheckIfOperateRemote(want)) {
+        HILOG_INFO("start remote ability by call");
+        return StartRemoteAbilityByCall(want, connect->AsObject());
+    }
 
     AbilityRequest abilityRequest;
     abilityRequest.callType = AbilityCallType::CALL_REQUEST_TYPE;
@@ -3421,6 +3461,11 @@ int AbilityManagerService::ReleaseAbility(
 
     std::string elementName = element.GetURI();
     HILOG_DEBUG("try to release called ability, name: %{public}s.", elementName.c_str());
+
+    if (CheckIsRemote(element.GetDeviceID())) {
+        HILOG_INFO("release remote ability");
+        return ReleaseRemoteAbility(connect->AsObject(), element);
+    }
 
     return currentMissionListManager_->ReleaseLocked(connect, element);
 }
@@ -3890,7 +3935,7 @@ bool AbilityManagerService::IsRunningInStabilityTest()
 
 bool AbilityManagerService::IsAbilityControllerStart(const Want &want, const std::string &bundleName)
 {
-    if (abilityController_ != nullptr) {
+    if (abilityController_ != nullptr && controllerIsAStabilityTest_) {
         HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
         bool isStart = abilityController_->AllowAbilityStart(want, bundleName);
         if (!isStart) {
@@ -3903,9 +3948,9 @@ bool AbilityManagerService::IsAbilityControllerStart(const Want &want, const std
 
 bool AbilityManagerService::IsAbilityControllerForeground(const std::string &bundleName)
 {
-    if (abilityController_ != nullptr) {
+    if (abilityController_ != nullptr && controllerIsAStabilityTest_) {
         HILOG_DEBUG("%{public}s, controllerIsAStabilityTest_: %{public}d", __func__, controllerIsAStabilityTest_);
-        bool isResume = abilityController_->AllowAbilityForeground(bundleName);
+        bool isResume = abilityController_->AllowAbilityBackground(bundleName);
         if (!isResume) {
             HILOG_INFO("Not finishing terminate ability because controller resuming: %{public}s", bundleName.c_str());
             return false;
@@ -4204,6 +4249,51 @@ void AbilityManagerService::StartingScreenLockAbility()
     if (attemptNums <= maxAttemptNums) {
         (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
     }
+}
+
+int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
+{
+    auto tokenId = IPCSkeleton::GetCallingTokenID();
+
+    if ((abilityInfo.type == AppExecFwk::AbilityType::EXTENSION &&
+        abilityInfo.extensionAbilityType == AppExecFwk::ExtensionAbilityType::DATASHARE) ||
+        (abilityInfo.type == AppExecFwk::AbilityType::DATA)) {
+        // just need check the read permission and write permission of extension ability or data ability
+        if (!abilityInfo.readPermission.empty() &&
+            AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.readPermission)
+            != AppExecFwk::Constants::PERMISSION_GRANTED) {
+            HILOG_ERROR("verify access token failed, read permission: %{public}s",
+                abilityInfo.readPermission.c_str());
+            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        }
+        if (!abilityInfo.writePermission.empty() &&
+            AccessTokenKit::VerifyAccessToken(tokenId, abilityInfo.writePermission)
+            != AppExecFwk::Constants::PERMISSION_GRANTED) {
+            HILOG_ERROR("verify access token failed, write permission: %{public}s",
+                abilityInfo.writePermission.c_str());
+            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        }
+        if (!abilityInfo.readPermission.empty() || !abilityInfo.writePermission.empty()) {
+            // 'readPermission' and 'writePermission' take precedence over 'permission'
+            // when 'readPermission' or 'writePermission' is not empty, no need check 'permission'
+            return ERR_OK;
+        }
+    }
+
+    // verify permission if 'permission' is not empty
+    if (abilityInfo.permissions.empty()) {
+        return ERR_OK;
+    }
+
+    for (auto permission : abilityInfo.permissions) {
+        if (AccessTokenKit::VerifyAccessToken(tokenId, permission)
+            != AppExecFwk::Constants::PERMISSION_GRANTED) {
+            HILOG_ERROR("verify access token failed, permission: %{public}s", permission.c_str());
+            return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+        }
+    }
+
+    return ERR_OK;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
