@@ -206,7 +206,7 @@ void Ability::OnStart(const Want &want)
         }
 
         int defualtDisplayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
-        int displayId = want.GetIntParam(StartOptions::STRING_DISPLAY_ID, defualtDisplayId);
+        int displayId = want.GetIntParam(Want::PARAM_RESV_DISPLAY_ID, defualtDisplayId);
         APP_LOGI("Ability::OnStart bundleName:%{public}s, abilityName:%{public}s, windowType:%{public}d, "
             "displayId:%{public}d",
             abilityInfo_->bundleName.c_str(),

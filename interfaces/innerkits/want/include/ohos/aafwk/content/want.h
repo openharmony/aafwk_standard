@@ -789,6 +789,7 @@ public:
 
     // reserved param definition
     static const std::string PARAM_RESV_WINDOW_MODE;
+    static const std::string PARAM_RESV_DISPLAY_ID;
     static const std::string PARAM_RESV_CALLER_TOKEN;
     static const std::string PARAM_RESV_CALLER_UID;
     static const std::string PARAM_RESV_CALLER_PID;
