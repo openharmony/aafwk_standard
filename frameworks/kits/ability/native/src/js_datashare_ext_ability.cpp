@@ -213,7 +213,7 @@ NativeValue* JsDataShareExtAbility::CallObjectMethod(const char* name, NativeVal
         return nullptr;
     }
     HILOG_INFO("JsDataShareExtAbility::CallFunction(%{public}s), success", name);
-    return nativeEngine.CallFunction(value, method, argv, argc);
+    return handleScope.Escape(nativeEngine.CallFunction(value, method, argv, argc));
 }
 
 void JsDataShareExtAbility::GetSrcPath(std::string &srcPath)
@@ -338,6 +338,10 @@ int JsDataShareExtAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
     napi_value napiUri = nullptr;
     napi_create_string_utf8(env, uri.ToString().c_str(), NAPI_AUTO_LENGTH, &napiUri);
     napi_value napiValue = rdbValueBucketNewInstance_(env, const_cast<OHOS::NativeRdb::ValuesBucket&>(value));
+    if (napiValue == nullptr) {
+        HILOG_ERROR("%{public}s failed to make new instance of rdbValueBucket.", __func__);
+        return ret;
+    }
 
     NativeValue* nativeUri = reinterpret_cast<NativeValue*>(napiUri);
     NativeValue* nativeValue = reinterpret_cast<NativeValue*>(napiValue);
@@ -377,10 +381,18 @@ int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket 
     napi_value napiUri = nullptr;
     napi_create_string_utf8(env, uri.ToString().c_str(), NAPI_AUTO_LENGTH, &napiUri);
     napi_value napiValue = rdbValueBucketNewInstance_(env, const_cast<OHOS::NativeRdb::ValuesBucket&>(value));
+    if (napiValue == nullptr) {
+        HILOG_ERROR("%{public}s failed to make new instance of rdbValueBucket.", __func__);
+        return ret;
+    }
 
     OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
+    if (napiPredicates == nullptr) {
+        HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        return ret;
+    }
 
     NativeValue* nativeUri = reinterpret_cast<NativeValue*>(napiUri);
     NativeValue* nativeValue = reinterpret_cast<NativeValue*>(napiValue);
@@ -419,6 +431,10 @@ int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
     OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
+    if (napiPredicates == nullptr) {
+        HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        return ret;
+    }
 
     NativeValue* nativeUri = reinterpret_cast<NativeValue*>(napiUri);
     NativeValue* nativePredicates = reinterpret_cast<NativeValue*>(napiPredicates);
@@ -471,6 +487,10 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
     OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
+    if (napiPredicates == nullptr) {
+        HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        return ret;
+    }
 
     NativeValue* nativeUri = reinterpret_cast<NativeValue*>(napiUri);
     NativeValue* nativeColumns = reinterpret_cast<NativeValue*>(napiColumns);
@@ -479,6 +499,11 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
     NativeValue* nativeResult = CallObjectMethod("query", argv, ARGC_THREE);
     if (nativeResult == nullptr) {
         HILOG_ERROR("%{public}s call query with return null.", __func__);
+        return ret;
+    }
+
+    if (rdbResultSetProxyGetNativeObject_ == nullptr) {
+        HILOG_ERROR("%{public}s rdbResultSetProxyGetNativeObject_ is null.", __func__);
         return ret;
     }
 
@@ -545,6 +570,10 @@ int JsDataShareExtAbility::BatchInsert(const Uri &uri, const std::vector<NativeR
     int32_t index = 0;
     for (const auto &value : values) {
         napi_value result = rdbValueBucketNewInstance_(env, const_cast<OHOS::NativeRdb::ValuesBucket&>(value));
+        if (result == nullptr) {
+            HILOG_ERROR("%{public}s failed to make new instance of rdbValueBucket.", __func__);
+            return ret;
+        }
         napi_set_element(env, napiValues, index++, result);
     }
 
@@ -641,10 +670,13 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> JsDataShareExtAbilit
 
 bool JsDataShareExtAbility::CheckCallingPermission(const std::string &permission)
 {
+    HILOG_INFO("%{public}s begin, permission:%{public}s", __func__, permission.c_str());
     if (!permission.empty() && AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), permission)
         != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        HILOG_ERROR("%{public}s permission not granted.", __func__);
         return false;
     }
+    HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 } // namespace AbilityRuntime

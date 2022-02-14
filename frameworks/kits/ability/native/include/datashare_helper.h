@@ -264,7 +264,6 @@ private:
     std::shared_ptr<Uri> uri_ = nullptr;
     sptr<IDataShare> dataShareProxy_ = nullptr;
     bool isSystemCaller_ = false;
-    std::mutex lock_;
     static std::mutex oplock_;
     sptr<IRemoteObject::DeathRecipient> callerDeathRecipient_ = nullptr;
     std::map<sptr<AAFwk::IDataAbilityObserver>, sptr<IDataShare>> registerMap_;
