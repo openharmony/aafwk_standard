@@ -86,6 +86,7 @@ protected:
     std::shared_ptr<AppMgrServiceInner> serviceInner_;
     sptr<MockAbilityToken> mock_token_ = nullptr;
     sptr<BundleMgrService> mockBundleMgr = nullptr;
+    std::shared_ptr<EventRunner> runner_ = nullptr;
     std::shared_ptr<AMSEventHandler> handler_ = nullptr;
     sptr<MockAppStateCallback> mockAppStateCallbackStub_ = nullptr;
 };
@@ -103,13 +104,17 @@ void AmsAppLifeCycleTest::SetUp()
     mockBundleMgr = new (std::nothrow) BundleMgrService();
     serviceInner_->SetBundleManager(mockBundleMgr);
 
-    auto runner = EventRunner::Create("AmsAppLifeCycleTest");
-    handler_ = std::make_shared<AMSEventHandler>(runner, serviceInner_);
+    runner_ = EventRunner::Create("AmsAppLifeCycleTest");
+    handler_ = std::make_shared<AMSEventHandler>(runner_, serviceInner_);
     serviceInner_->SetEventHandler(handler_);
 }
 
 void AmsAppLifeCycleTest::TearDown()
-{}
+{
+    serviceInner_ = nullptr;
+    handler_ = nullptr;
+    runner_.reset();
+}
 
 std::shared_ptr<AppRunningRecord> AmsAppLifeCycleTest::StartProcessAndLoadAbility(const sptr<IRemoteObject> &token,
     const sptr<IRemoteObject> &preToken, const std::shared_ptr<AbilityInfo> &abilityInfo,
@@ -1481,68 +1486,6 @@ HWTEST_F(AmsAppLifeCycleTest, KillApplication_001, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: Schedule
  * FunctionPoints: Kill application
- * CaseDescription: Verify if AppMgrService Kill by appname successfully.
- */
-HWTEST_F(AmsAppLifeCycleTest, KillApplication_002, TestSize.Level1)
-{
-    const pid_t NEW_PID = 123;
-    auto abilityInfo = GetAbilityInfoByIndex("0");
-    auto appInfo = GetApplication();
-    sptr<IRemoteObject> token = GetMockToken();
-
-    std::shared_ptr<MockAppSpawnClient> mockClientPtr = std::make_shared<MockAppSpawnClient>();
-    EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(NEW_PID), Return(ERR_OK)));
-
-    serviceInner_->SetAppSpawnClient(mockClientPtr);
-
-    serviceInner_->LoadAbility(token, nullptr, abilityInfo, appInfo);
-    BundleInfo bundleInfo;
-    bundleInfo.appId = "com.ohos.test.helloworld_code123";
-    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(
-        appInfo->name, appInfo->name, appInfo->uid, bundleInfo);
-    EXPECT_EQ(appRecord->GetPriorityObject()->GetPid(), NEW_PID);
-
-    pid_t pid = fork();
-    if (pid > 0) {
-        appRecord->GetPriorityObject()->SetPid(pid);
-    }
-
-    sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
-    sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
-    appRecord->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleProcessSecurityExit()).Times(1);
-
-    int ret = serviceInner_->KillApplication(abilityInfo->applicationName);
-    EXPECT_EQ(ERR_OK, ret);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Kill application
- * CaseDescription: Verify if AppMgrService Kill by pid successfully.
- */
-HWTEST_F(AmsAppLifeCycleTest, KillProcessByPid001, TestSize.Level1)
-{
-    pid_t pid = fork();
-
-    if (pid > 0) {
-        int32_t ret = serviceInner_->KillProcessByPid(pid);
-        EXPECT_EQ(ERR_OK, ret);
-    }
-
-    if (pid == 0) {
-        int32_t ret = serviceInner_->KillProcessByPid(pid);
-        EXPECT_EQ(-1, ret);
-    }
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Kill application
  * CaseDescription: Verify if AppMgrService Kill by pid fail.
  */
 HWTEST_F(AmsAppLifeCycleTest, KillProcessByPid002, TestSize.Level1)
@@ -1892,33 +1835,6 @@ HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_001, TestSize.Level1)
     appRecord->SetApplicationClient(client);
 
     serviceInner_->ClearUpApplicationData(appRecord->GetBundleName(), appRecord->GetUid(), NEW_PID);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: ClearUpApplicationData
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: test application state is APP_STATE_BACKGROUND(apprecord is nullptr)
- */
-HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_002, TestSize.Level1)
-{
-    auto abilityInfo = GetAbilityInfoByIndex("110");
-    auto appInfo = GetApplication();
-    sptr<IRemoteObject> token = GetMockToken();
-
-    int32_t pid = fork();
-
-    if (pid > 0) {
-        auto appRecord = StartProcessAndLoadAbility(token, nullptr, abilityInfo, appInfo, pid);
-
-        EXPECT_CALL(*mockBundleMgr, CleanBundleDataFiles(_, _)).Times(1).WillOnce(Return(101));
-        appRecord->SetUid(101);
-        sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
-        sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
-        appRecord->SetApplicationClient(client);
-        serviceInner_->ClearUpApplicationData(appRecord->GetBundleName(), appRecord->GetUid(), pid);
-    }
 }
 
 /*
