@@ -1442,6 +1442,21 @@ int AbilityManagerService::MoveMissionToFront(int32_t missionId)
     return currentMissionListManager_->MoveMissionToFront(missionId);
 }
 
+int AbilityManagerService::MoveMissionToFront(int32_t missionId, const StartOptions &startOptions)
+{
+    HILOG_INFO("request MoveMissionToFront, missionId:%{public}d", missionId);
+    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
+    CHECK_POINTER_AND_RETURN(iBundleManager_, ERR_NO_INIT);
+
+    if (!CheckCallerIsSystemAppByIpc()) {
+        HILOG_ERROR("caller is not system app");
+        return CALLER_ISNOT_SYSTEMAPP;
+    }
+
+    auto options = std::make_shared<StartOptions>(startOptions);
+    return currentMissionListManager_->MoveMissionToFront(missionId, options);
+}
+
 std::shared_ptr<AbilityRecord> AbilityManagerService::GetServiceRecordByElementName(const std::string &element)
 {
     return connectManager_->GetServiceRecordByElementName(element);

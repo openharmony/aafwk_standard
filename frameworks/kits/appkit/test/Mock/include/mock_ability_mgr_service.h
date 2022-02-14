@@ -73,6 +73,7 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
+    MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
 
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
@@ -108,7 +109,6 @@ private:
     bool DumpStateCalled_ = false;
     Semaphore sem_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_KITS_APPKIT_TEST_MOCK_ABILITY_MGR_SERVICE_H
