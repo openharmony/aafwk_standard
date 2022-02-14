@@ -500,6 +500,17 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
 
 int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
+    return TerminateAbilityWithFlag(token, resultCode, resultWant, true);
+}
+
+int AbilityManagerService::CloseAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
+{
+    return TerminateAbilityWithFlag(token, resultCode, resultWant, false);
+}
+
+int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &token, int resultCode,
+    const Want *resultWant, bool flag)
+{
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Terminate ability for result: %{public}d", (resultWant != nullptr));
     if (!VerificationToken(token)) {
@@ -554,7 +565,7 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
             return ERR_INVALID_VALUE;
         }
-        return missionListManager->TerminateAbility(abilityRecord, resultCode, resultWant);
+        return missionListManager->TerminateAbility(abilityRecord, resultCode, resultWant, flag);
     } else {
         auto stackManager = GetStackManagerByUserId(userId);
         if (!stackManager) {

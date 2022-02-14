@@ -815,7 +815,7 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
 }
 
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &abilityRecord,
-    int resultCode, const Want *resultWant)
+    int resultCode, const Want *resultWant, bool flag)
 {
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("Terminate ability, ability is %{public}s", element.c_str());
@@ -837,7 +837,7 @@ int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &a
         abilityRecord->SaveResultToCallers(resultCode, resultWant);
     }
 
-    return TerminateAbilityLocked(abilityRecord);
+    return TerminateAbilityLocked(abilityRecord, flag);
 }
 
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &caller, int requestCode)
@@ -857,15 +857,15 @@ int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &c
         return result;
     }
 
-    return TerminateAbility(targetAbility, DEFAULT_INVAL_VALUE, nullptr);
+    return TerminateAbility(targetAbility, DEFAULT_INVAL_VALUE, nullptr, true);
 }
 
-int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord)
+int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord, bool flag)
 {
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("Terminate ability locked, ability is %{public}s", element.c_str());
     // remove AbilityRecord out of stack
-    RemoveTerminatingAbility(abilityRecord);
+    RemoveTerminatingAbility(abilityRecord, flag);
     abilityRecord->SendResultToCallers();
 
     // 1. if the ability was foregorund, first should find wether there is other ability foregorund
@@ -901,7 +901,7 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
  *
  * @param abilityRecord the ability that was terminating
  */
-void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
+void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityRecord> &abilityRecord, bool flag)
 {
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("RemoveTerminatingAbility, ability is %{public}s", element.c_str());
@@ -924,9 +924,9 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         HILOG_DEBUG("ability state is %{public}d, just return", abilityRecord->GetAbilityState());
         return;
     }
-    // 3. if run on a laptop, noting to do
-    if (IsPC()) {
-        HILOG_DEBUG("Run on a laptop, no need to schedule next ability.");
+    // 3. if close ability, noting to do
+    if (!flag) {
+        HILOG_DEBUG("close ability schedule.");
         return;
     }
 
@@ -1070,7 +1070,7 @@ int MissionListManager::ClearMissionLocked(int missionId, std::shared_ptr<Missio
     }
 
     abilityRecord->SetTerminatingState();
-    auto ret = TerminateAbilityLocked(abilityRecord);
+    auto ret = TerminateAbilityLocked(abilityRecord, false);
     if (ret != ERR_OK) {
         HILOG_ERROR("clear mission error: %{public}d.", ret);
         return REMOVE_MISSION_FAILED;
@@ -1861,33 +1861,6 @@ std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const std
     }
 
     return defaultStandardList_->GetMissionBySpecifiedFlag(flag);
-}
-
-bool MissionListManager::IsPC()
-{
-    if (MissionDmInitCallback::isInit_) {
-        return isPC_;
-    }
-    std::string pkgName = "ohos.aafwk.aafwk_standard";
-    auto callback = std::make_shared<MissionDmInitCallback>();
-    int32_t ret = DistributedHardware::DeviceManager::GetInstance().InitDeviceManager(pkgName, callback);
-    if (ret != ERR_OK) {
-        HILOG_WARN("DeviceManager initialization failed.");
-        return false;
-    }
-    DistributedHardware::DmDeviceInfo deviceInfo;
-    ret = DistributedHardware::DeviceManager::GetInstance().GetLocalDeviceInfo(pkgName, deviceInfo);
-    if (ret != ERR_OK) {
-        HILOG_WARN("Failed to get local device info.");
-        return false;
-    }
-    MissionDmInitCallback::isInit_ = true;
-    if (deviceInfo.deviceTypeId != DistributedHardware::DmDeviceType::DEVICE_TYPE_PC) {
-        HILOG_WARN("The device is not a laptop.");
-        return false;
-    }
-    isPC_ = true;
-    return isPC_;
 }
 
 bool MissionListManager::MissionDmInitCallback::isInit_ = false;
