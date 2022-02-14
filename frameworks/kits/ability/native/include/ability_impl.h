@@ -349,7 +349,7 @@ public:
      *
      * @return
      */
-    virtual void NotifyContinuationResult(const int32_t result);
+    virtual void NotifyContinuationResult(int32_t result);
 
     bool IsStageBasedModel() const;
 

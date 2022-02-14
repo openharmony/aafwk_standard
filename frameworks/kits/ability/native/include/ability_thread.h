@@ -313,7 +313,7 @@ public:
      *
      * @param result: Continuation result
      */
-    void NotifyContinuationResult(const int32_t result);
+    void NotifyContinuationResult(int32_t result);
 
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used

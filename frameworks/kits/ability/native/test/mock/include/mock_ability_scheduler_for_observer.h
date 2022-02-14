@@ -58,7 +58,7 @@ public:
     MOCK_METHOD2(ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
     MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operation));
-    MOCK_METHOD1(NotifyContinuationResult, void(const int32_t result));
+    MOCK_METHOD1(NotifyContinuationResult, void(int32_t result));
     MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
     MOCK_METHOD1(DumpAbilityInfo, void(std::vector<std::string> &info));
 

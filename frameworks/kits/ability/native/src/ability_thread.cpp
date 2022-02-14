@@ -1212,7 +1212,7 @@ void AbilityThread::ContinueAbility(const std::string& deviceId)
     abilityImpl_->ContinueAbility(deviceId);
 }
 
-void AbilityThread::NotifyContinuationResult(const int32_t result)
+void AbilityThread::NotifyContinuationResult(int32_t result)
 {
     APP_LOGI("NotifyContinuationResult, result:%{public}d", result);
     if (abilityImpl_ == nullptr) {

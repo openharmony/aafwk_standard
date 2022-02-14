@@ -1051,7 +1051,7 @@ void AbilityManagerService::NotifyCompleteContinuation(const std::string &device
     dmsClient.NotifyCompleteContinuation(Str8ToStr16(deviceId), sessionId, isSuccess);
 }
 
-int AbilityManagerService::NotifyContinuationResult(int32_t missionId, const int32_t result)
+int AbilityManagerService::NotifyContinuationResult(int32_t missionId, int32_t result)
 {
     HILOG_INFO("Notify Continuation Result : %{public}d.", result);
 

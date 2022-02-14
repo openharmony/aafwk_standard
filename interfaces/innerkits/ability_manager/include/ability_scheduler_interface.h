@@ -273,7 +273,7 @@ public:
     virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) = 0;
     virtual void ContinueAbility(const std::string& deviceId) = 0;
-    virtual void NotifyContinuationResult(const int32_t result) = 0;
+    virtual void NotifyContinuationResult(int32_t result) = 0;
 	
     virtual void DumpAbilityInfo(std::vector<std::string>& info) = 0;
 
