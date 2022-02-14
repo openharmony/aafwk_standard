@@ -32,21 +32,6 @@ StartOptions &StartOptions::operator=(const StartOptions &other)
     return *this;
 }
 
-StartOptions::StartOptions(const StartOptions &other)
-{
-    windowMode_ = other.windowMode_;
-    displayId_ = other.displayId_;
-}
-
-StartOptions &StartOptions::operator=(const StartOptions &other)
-{
-    if (this != &other) {
-        windowMode_ = other.windowMode_;
-        displayId_ = other.displayId_;
-    }
-    return *this;
-}
-
 bool StartOptions::ReadFromParcel(Parcel &parcel)
 {
     SetWindowMode(parcel.ReadInt32());
