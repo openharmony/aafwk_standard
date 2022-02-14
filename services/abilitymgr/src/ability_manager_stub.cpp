@@ -176,7 +176,13 @@ int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
     int resultCode = data.ReadInt32();
     Want *resultWant = data.ReadParcelable<Want>();
-    int32_t result = TerminateAbility(token, resultCode, resultWant);
+    bool flag = data.ReadBool();
+    int32_t result;
+    if (flag) {
+        result = TerminateAbility(token, resultCode, resultWant);
+    } else {
+        result = CloseAbility(token, resultCode, resultWant);
+    }
     reply.WriteInt32(result);
     if (resultWant != nullptr) {
         delete resultWant;
