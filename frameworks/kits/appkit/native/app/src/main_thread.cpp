@@ -1294,7 +1294,7 @@ void MainThread::HandleConfigurationUpdated(const Configuration &config)
     APP_LOGI("MainThread::HandleConfigurationUpdated called end.");
 }
 
-void MainThread::TaskTimeoutDetected()
+void MainThread::TaskTimeoutDetected(const std::shared_ptr<EventRunner> &runner)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("MainThread::TaskTimeoutDetected called start.");
@@ -1303,14 +1303,14 @@ void MainThread::TaskTimeoutDetected()
         APP_LOGI("MainThread::TaskTimeoutDetected delivery timeout");
     };
     auto distributeTimeoutCallback = []() {
-        APP_LOGI("MainThread::TaskTimeoutDetected delivery timeout");
+        APP_LOGI("MainThread::TaskTimeoutDetected distribute timeout");
     };
 
-    if (mainHandler_ != nullptr) {
-        mainHandler_->SetDeliveryTimeout(DELIVERY_TIME);
+    if (runner !=nullptr && mainHandler_ != nullptr) {
+        runner->SetDeliveryTimeout(DELIVERY_TIME);
         mainHandler_->SetDeliveryTimeoutCallback(deliveryTimeoutCallback);
 
-        mainHandler_->SetDistributeTimeout(DISTRIBUTE_TIME);
+        runner->SetDistributeTimeout(DISTRIBUTE_TIME);
         mainHandler_->SetDistributeTimeoutCallback(distributeTimeoutCallback);
     }
     APP_LOGI("MainThread::TaskTimeoutDetected called end.");
@@ -1341,7 +1341,7 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     if (!watchDogHandler_->PostTask(taskWatchDog)) {
         APP_LOGE("MainThread::Init WatchDog postTask task failed");
     }
-    TaskTimeoutDetected();
+    TaskTimeoutDetected(runner);
     /*
     watchDogHandler_->Init(mainHandler_, watchDogHandler_);
     APP_LOGI("MainThread:Init before CreateRunner.");
