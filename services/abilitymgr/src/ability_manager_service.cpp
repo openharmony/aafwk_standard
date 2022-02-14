@@ -3214,8 +3214,7 @@ void AbilityManagerService::StartSystemApplication()
 
     StartingSystemUiAbility();
 
-    // Location may change
-    DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
+    StartupResidentProcess();
 }
 
 void AbilityManagerService::StartingSystemUiAbility()
@@ -4294,6 +4293,25 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
     }
 
     return ERR_OK;
+}
+
+void AbilityManagerService::StartupResidentProcess()
+{
+    // Location may change
+    std::vector<AppExecFwk::BundleInfo> bundleInfos;
+    (void)iBundleManager_->QueryKeepAliveBundleInfos(bundleInfos);
+    for (auto bundleInfo : bundleInfos) {
+        for (auto hapModuleInfo : bundleInfo.hapModuleInfos) {
+            if (!hapModuleInfo.mainElementName.empty()) {
+                AppExecFwk::AbilityInfo abilityInfo;
+                Want want;
+                want.SetElementName(hapModuleInfo.bundleName, hapModuleInfo.mainElementName);
+                (void)StartAbility(want, 0, DEFAULT_INVAL_VALUE); // user 0
+            }
+        }
+    }
+
+    DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

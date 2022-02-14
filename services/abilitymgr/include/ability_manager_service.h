@@ -1107,6 +1107,8 @@ private:
 
     int DelegatorMoveMissionToFront(int32_t missionId);
 
+    void StartupResidentProcess();
+
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
     std::map<uint32_t, DumpFuncType> dumpFuncMap_;
 
