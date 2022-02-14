@@ -43,7 +43,7 @@ public:
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD1(NotifyContinuationResult, void(int32_t result));
     MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
-    MOCK_METHOD1(DumpAbilityInfo, void(std::vector<std::string> &info));
+    MOCK_METHOD2(DumpAbilityInfo, void(const std::vector<std::string> &params, std::vector<std::string> &info));
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
     {

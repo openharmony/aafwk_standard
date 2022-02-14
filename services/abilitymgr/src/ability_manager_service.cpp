@@ -1720,9 +1720,10 @@ void AbilityManagerService::DumpSysAbilityInner(
     if (argList.empty()) {
         return;
     }
-    if (argList.size() == MIN_DUMP_ARGUMENT_NUM) {
+    if (argList.size() >= MIN_DUMP_ARGUMENT_NUM) {
         HILOG_INFO("argList = %{public}s", argList[1].c_str());
-        targetManager->DumpMissionListByRecordId(info, isClient, std::stoi(argList[1]));
+        std::vector<std::string> params(argList.begin() + MIN_DUMP_ARGUMENT_NUM, argList.end());
+        targetManager->DumpMissionListByRecordId(info, isClient, std::stoi(argList[1]), params);
     } else {
         info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
     }

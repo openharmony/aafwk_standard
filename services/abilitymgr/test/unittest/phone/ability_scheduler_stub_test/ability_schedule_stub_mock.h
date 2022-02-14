@@ -133,7 +133,7 @@ public:
     {}
     virtual void ContinueAbility(const std::string& deviceId) override
     {}
-    virtual void DumpAbilityInfo(std::vector<std::string> &info) override
+    virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) override
     {}
     virtual sptr<IRemoteObject> CallRequest() override
     {

@@ -264,7 +264,8 @@ void MissionList::Dump(std::vector<std::string>& info)
     }
 }
 
-void MissionList::DumpStateByRecordId(std::vector<std::string> &info, bool isClient, int32_t abilityRecordId)
+void MissionList::DumpStateByRecordId(
+    std::vector<std::string> &info, bool isClient, int32_t abilityRecordId, const std::vector<std::string> &params)
 {
     for (const auto& mission : missions_) {
         if (mission) {
@@ -272,7 +273,7 @@ void MissionList::DumpStateByRecordId(std::vector<std::string> &info, bool isCli
             if (abilityRecord) {
                 if (abilityRecord->GetRecordId() == abilityRecordId) {
                     HILOG_INFO("record begain to call DumpAbilityState %{public}s", __func__);
-                    abilityRecord->DumpAbilityState(info, isClient);
+                    abilityRecord->DumpAbilityState(info, isClient, params);
                     return;
                 }
             }
@@ -294,7 +295,8 @@ void MissionList::DumpList(std::vector<std::string> &info, bool isClient)
             auto abilityRecord = mission->GetAbilityRecord();
             if (abilityRecord) {
                 HILOG_INFO("record begain to call DumpAbilityState %{public}s", __func__);
-                abilityRecord->DumpAbilityState(info, isClient);
+                std::vector<std::string> params;
+                abilityRecord->DumpAbilityState(info, isClient, params);
             }
         }
     }
