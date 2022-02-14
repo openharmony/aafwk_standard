@@ -58,6 +58,7 @@ struct AsyncCallbackInfo {
     napi_async_work asyncWork = nullptr;
     napi_deferred deferred = nullptr;
     Ability *ability = nullptr;
+    Notification::WantAgent::WantAgent *wantAgent = nullptr;
     CallAbilityParam param;
     CallbackInfo aceCallback;
     bool native_result;

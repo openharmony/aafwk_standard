@@ -16,6 +16,7 @@ import { AsyncCallback } from './basic';
 import { StartAbilityParameter } from './ability/startAbilityParameter';
 import { Want } from './ability/want';
 import { ConnectOptions } from './ability/connectOptions';
+import { NotificationRequest } from './notification/notificationRequest';
 
 /**
  * A Particle Ability represents an ability with service.
@@ -60,5 +61,30 @@ declare namespace particleAbility {
     */
    function disconnectAbility(connection: number, callback:AsyncCallback<void>): void;
    function disconnectAbility(connection: number): Promise<void>;
+
+  /**
+   * Keep this Service ability in the background and display a notification bar.
+   *
+   * @since 7
+   * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+   * @permission ohos.permission.KEEP_BACKGROUND_RUNNING
+   * @param id Identifies the notification bar information.
+   * @param request Indicates the notificationRequest instance containing information for displaying a notification bar.
+   * @FAModelOnly
+   * @deprecated
+   */
+  function startBackgroundRunning(id: number, request: NotificationRequest, callback: AsyncCallback<void>): void;
+  function startBackgroundRunning(id: number, request: NotificationRequest): Promise<void>;
+ 
+  /**
+   * Cancel background running of this ability to free up system memory.
+   *
+   * @since 7
+   * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+   * @FAModelOnly
+   * @deprecated
+   */
+  function cancelBackgroundRunning(callback: AsyncCallback<void>): void;
+  function cancelBackgroundRunning(): Promise<void>;
 }
 export default particleAbility;
