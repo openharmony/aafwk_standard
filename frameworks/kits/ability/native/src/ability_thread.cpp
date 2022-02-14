@@ -45,6 +45,7 @@ constexpr static char BASE_SERVICE_EXTENSION[] = "ServiceExtension";
 constexpr static char FORM_EXTENSION[] = "FormExtension";
 constexpr static char STATIC_SUBSCRIBER_EXTENSION[] = "StaticSubscriberExtension";
 constexpr static char DATA_SHARE_EXT_ABILITY[] = "DataShareExtAbility";
+constexpr static char WORK_SCHEDULER_EXTENSION[] = "WorkSchedulerExtension";
 
 /**
  * @brief Default constructor used to create a AbilityThread instance.
@@ -113,6 +114,9 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         }
         if (abilityInfo->extensionAbilityType == ExtensionAbilityType::DATASHARE) {
             abilityName = DATA_SHARE_EXT_ABILITY;
+        }
+        if (abilityInfo->extensionAbilityType == ExtensionAbilityType::WORK_SCHEDULER) {
+            abilityName = WORK_SCHEDULER_EXTENSION;
         }
         APP_LOGI("CreateAbilityName extension type, abilityName:%{public}s", abilityName.c_str());
     } else {
@@ -1580,14 +1584,38 @@ void AbilityThread::DumpAbilityInfo(std::vector<std::string> &info)
 
 sptr<IRemoteObject> AbilityThread::CallRequest()
 {
-    APP_LOGI("AbilityThread::CallRequest start");
+    APP_LOGI("AbilityThread::CallRequest begin");
 
     if (!currentAbility_) {
         APP_LOGI("ability is nullptr.");
         return nullptr;
     }
 
-    return currentAbility_->CallRequest();
+    sptr<IRemoteObject> retval = nullptr;
+    std::weak_ptr<OHOS::AppExecFwk::Ability> weakAbility = currentAbility_;
+    auto syncTask = [ability = weakAbility, &retval] () {
+        auto currentAbility = ability.lock();
+        if (currentAbility == nullptr) {
+            APP_LOGE("ability is nullptr.");
+            return;
+        }
+
+        APP_LOGD("AbilityThread::CallRequest syncTask CallRequest begin");
+        retval = currentAbility->CallRequest();
+        APP_LOGD("AbilityThread::CallRequest syncTask CallRequest end %{public}p", retval.GetRefPtr());
+    };
+
+    if (abilityHandler_ == nullptr) {
+        APP_LOGE("ability Handler is nullptr.");
+        return nullptr;
+    }
+
+    APP_LOGD("AbilityThread::CallRequest post sync task");
+
+    abilityHandler_->PostSyncTask(syncTask);
+
+    APP_LOGI("AbilityThread::CallRequest end");
+    return retval;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

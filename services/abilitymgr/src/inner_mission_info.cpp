@@ -37,19 +37,16 @@ std::string InnerMissionInfo::ToJsonStr() const
     return value.dump();
 }
 
-void InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
+bool InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
 {
-    if (jsonStr.empty()) {
-        HILOG_ERROR("json str is empty.");
-        return;
-    }
-    nlohmann::json value = nlohmann::json::parse(jsonStr);
+    // Do not throw exceptions in nlohmann::json::parse
+    nlohmann::json value = nlohmann::json::parse(jsonStr, nullptr, false);
     if (value.is_discarded()) {
         HILOG_ERROR("failed to parse json sting: %{private}s.", jsonStr.c_str());
-        return;
+        return false;
     }
 
-    auto CheckJsonNode = [value] (const std::string &node, JsonType jsonType) -> bool {
+    auto CheckJsonNode = [&value] (const std::string &node, JsonType jsonType) -> bool {
         if (value.find(node) == value.end()) {
             HILOG_ERROR("node %{private}s not exists.", node.c_str());
             return false;
@@ -66,36 +63,50 @@ void InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
         }
         return false;
     };
-    if (CheckJsonNode("MissionName", JsonType::STRING)) {
-        missionName = value["MissionName"];
+    if (!CheckJsonNode("MissionName", JsonType::STRING)) {
+        return false;
     }
-    if (CheckJsonNode("IsSingleton", JsonType::BOOLEAN)) {
-        isSingletonMode = value["IsSingleton"];
+    missionName = value["MissionName"].get<std::string>();
+    if (!CheckJsonNode("IsSingleton", JsonType::BOOLEAN)) {
+        return false;
     }
-    if (CheckJsonNode("MissionId", JsonType::NUMBER)) {
-        missionInfo.id = value["MissionId"];
+    isSingletonMode = value["IsSingleton"].get<bool>();
+    if (!CheckJsonNode("MissionId", JsonType::NUMBER)) {
+        return false;
     }
-    if (CheckJsonNode("RunningState", JsonType::NUMBER)) {
-        missionInfo.runningState = value["RunningState"];
+    missionInfo.id = value["MissionId"].get<int32_t>();
+    if (!CheckJsonNode("RunningState", JsonType::NUMBER)) {
+        return false;
     }
-    if (CheckJsonNode("LockedState", JsonType::BOOLEAN)) {
-        missionInfo.lockedState = value["LockedState"];
+    missionInfo.runningState = value["RunningState"].get<int32_t>();
+    if (!CheckJsonNode("LockedState", JsonType::BOOLEAN)) {
+        return false;
     }
-    if (CheckJsonNode("Continuable", JsonType::BOOLEAN)) {
-        missionInfo.continuable = value["Continuable"];
+    missionInfo.lockedState = value["LockedState"].get<bool>();
+    if (!CheckJsonNode("Continuable", JsonType::BOOLEAN)) {
+        return false;
     }
-    if (CheckJsonNode("Time", JsonType::STRING)) {
-        missionInfo.time = value["Time"];
+    missionInfo.continuable = value["Continuable"].get<bool>();
+    if (!CheckJsonNode("Time", JsonType::STRING)) {
+        return false;
     }
-    if (CheckJsonNode("Label", JsonType::STRING)) {
-        missionInfo.label = value["Label"];
+    missionInfo.time = value["Time"].get<std::string>();
+    if (!CheckJsonNode("Label", JsonType::STRING)) {
+        return false;
     }
-    if (CheckJsonNode("IconPath", JsonType::STRING)) {
-        missionInfo.iconPath = value["IconPath"];
+    missionInfo.label = value["Label"].get<std::string>();
+    if (!CheckJsonNode("IconPath", JsonType::STRING)) {
+        return false;
     }
-    if (CheckJsonNode("Want", JsonType::STRING)) {
-        missionInfo.want = *(Want::ParseUri(value["Want"]));
+    missionInfo.iconPath = value["IconPath"].get<std::string>();
+    if (!CheckJsonNode("Want", JsonType::STRING)) {
+        return false;
     }
+    Want* want = Want::ParseUri(value["Want"].get<std::string>());
+    if (want) {
+        missionInfo.want = *want;
+    }
+    return true;
 }
 
 void InnerMissionInfo::Dump(std::vector<std::string> &info) const

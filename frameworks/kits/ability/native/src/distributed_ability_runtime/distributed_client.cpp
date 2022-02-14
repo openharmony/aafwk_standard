@@ -346,5 +346,59 @@ bool DistributedClient::ReadMissionInfosFromParcel(Parcel& parcel,
     HILOG_INFO("info size is:%{public}zu", missionInfos.size());
     return true;
 }
+
+int32_t DistributedClient::StartRemoteAbilityByCall(const OHOS::AAFwk::Want& want,
+    const sptr<IRemoteObject>& connect, int32_t callerUid, int32_t callerPid, uint32_t tokenCaller)
+{
+    HILOG_INFO("called");
+    if (connect == nullptr) {
+        HILOG_ERROR("StartRemoteAbilityByCall connect is null");
+        return ERR_NULL_OBJECT;
+    }
+
+    sptr<IRemoteObject> remote = GetDmsProxy();
+    if (remote == nullptr) {
+        HILOG_ERROR("StartRemoteAbilityByCall remote is null");
+        return ERR_NULL_OBJECT;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(DMS_PROXY_INTERFACE_TOKEN)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+    PARCEL_WRITE_HELPER(data, Parcelable, &want);
+    PARCEL_WRITE_HELPER(data, RemoteObject, connect);
+    PARCEL_WRITE_HELPER(data, Int32, callerUid);
+    PARCEL_WRITE_HELPER(data, Int32, callerPid);
+    PARCEL_WRITE_HELPER(data, Uint32, tokenCaller);
+    MessageParcel reply;
+    PARCEL_TRANSACT_SYNC_RET_INT(remote, START_REMOTE_ABILITY_BY_CALL, data, reply);
+}
+
+int32_t DistributedClient::ReleaseRemoteAbility(const sptr<IRemoteObject>& connect,
+    const AppExecFwk::ElementName &element)
+{
+    HILOG_INFO("called");
+    if (connect == nullptr) {
+        HILOG_ERROR("ReleaseRemoteAbility connect is null");
+        return ERR_NULL_OBJECT;
+    }
+
+    sptr<IRemoteObject> remote = GetDmsProxy();
+    if (remote == nullptr) {
+        HILOG_ERROR("ReleaseRemoteAbility remote is null");
+        return ERR_NULL_OBJECT;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(DMS_PROXY_INTERFACE_TOKEN)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+    PARCEL_WRITE_HELPER(data, RemoteObject, connect);
+    if (!data.WriteParcelable(&element)) {
+        HILOG_ERROR("ReleaseRemoteAbility write element error.");
+        return ERR_INVALID_VALUE;
+    }
+    MessageParcel reply;
+    PARCEL_TRANSACT_SYNC_RET_INT(remote, RELEASE_REMOTE_ABILITY, data, reply);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

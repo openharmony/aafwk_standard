@@ -46,17 +46,17 @@ public:
     virtual bool AllowAbilityStart(const Want &want, const std::string &bundleName) override;
 
     /**
-     * The system is scheduling Ability to the foreground.
+     * The system is scheduling Ability to background.
      *
      * @param bundleName The bundleName of ability to return.
-     * @return Return true to allow ability to foreground, or false to reject.
+     * @return Return true to allow ability to background, or false to reject.
      */
-    virtual bool AllowAbilityForeground(const std::string &bundleName) override;
+    virtual bool AllowAbilityBackground(const std::string &bundleName) override;
 
 private:
     int32_t HandleAllowAbilityStart(MessageParcel &data, MessageParcel &reply);
 
-    int32_t HandleAllowAbilityForeground(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleAllowAbilityBackground(MessageParcel &data, MessageParcel &reply);
 
     using AbilityControllerFunc = int32_t (AbilityControllerStub::*)(MessageParcel &data,
         MessageParcel &reply);
