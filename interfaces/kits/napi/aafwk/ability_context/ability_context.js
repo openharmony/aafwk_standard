@@ -52,12 +52,12 @@ class AbilityContext extends Context {
         }
     }
 
-    startAbilityForResult(want, callback) {
-        return this.__context_impl__.startAbilityForResult(want, callback)
+    startAbilityForResult(want, options, callback) {
+        return this.__context_impl__.startAbilityForResult(want, options, callback)
     }
 
-    startAbilityForResultWithAccount(want, accountId, callback) {
-        return this.__context_impl__.startAbilityForResultWithAccount(want, accountId, callback)
+    startAbilityForResultWithAccount(want, accountId, options, callback) {
+        return this.__context_impl__.startAbilityForResultWithAccount(want, accountId, options, callback)
     }
 
     connectAbility(want, options) {
