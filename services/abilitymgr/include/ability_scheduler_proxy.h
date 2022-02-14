@@ -305,7 +305,7 @@ public:
      * @param
      * @return Ability Runner info.
      */
-    void DumpAbilityInfo(std::vector<std::string> &info) override;
+    void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) override;
     sptr<IRemoteObject> CallRequest() override;
 
 private:

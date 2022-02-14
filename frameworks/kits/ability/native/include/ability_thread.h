@@ -400,7 +400,7 @@ public:
      *
      * @param runnerInfo ability runner info.
      */
-    void DumpAbilityInfo(std::vector<std::string> &info);
+    void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info);
 
     sptr<IRemoteObject> CallRequest();
     
