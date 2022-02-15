@@ -78,7 +78,6 @@ void AbilityWithApplicationsTest::SetUp()
 void AbilityWithApplicationsTest::TearDown()
 {
     abilityMs_->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 void AbilityWithApplicationsTest::OnStartabilityAms()

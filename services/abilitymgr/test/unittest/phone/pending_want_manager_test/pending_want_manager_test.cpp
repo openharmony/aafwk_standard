@@ -132,7 +132,6 @@ void PendingWantManagerTest::SetUp()
 void PendingWantManagerTest::TearDown()
 {
     abilityMs_->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 WantSenderInfo PendingWantManagerTest::MakeWantSenderInfo(Want &want, int32_t flags, int32_t userId, int32_t type)
