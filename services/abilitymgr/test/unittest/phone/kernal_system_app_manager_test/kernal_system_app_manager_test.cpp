@@ -74,15 +74,12 @@ void KernalSystemAppManagerTest::SetUpTestCase()
     int systemAbilityId = 401;
     OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
         systemAbilityId, new (std::nothrow) AppExecFwk::BundleMgrService());
-    DelayedSingleton<AbilityManagerService>::GetInstance();
     DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
 }
 
 void KernalSystemAppManagerTest::TearDownTestCase()
 {
     OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-
     OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
 }
 

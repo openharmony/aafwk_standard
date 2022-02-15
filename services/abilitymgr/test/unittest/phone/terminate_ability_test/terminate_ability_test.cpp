@@ -193,12 +193,7 @@ void TerminateAbilityTest::SetUp(void)
 
 void TerminateAbilityTest::TearDown(void)
 {
-    g_aams->eventLoop_->Stop();
-    g_aams->eventLoop_.reset();
-    g_aams->handler_.reset();
-    g_aams->state_ = ServiceRunningState::STATE_NOT_START;
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-    g_aams = nullptr;
+    g_aams->OnStop();
 }
 
 bool TerminateAbilityTest::StartAbility(

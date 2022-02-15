@@ -137,7 +137,6 @@ void AbilityStackManagerTest::TearDown()
 {
     stackManager_.reset();
     abilityMs_->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 void AbilityStackManagerTest::init()

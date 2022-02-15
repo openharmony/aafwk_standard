@@ -98,7 +98,7 @@ void PandingWantManagerTest::SetUpTestCase(void)
 
 void PandingWantManagerTest::TearDownTestCase(void)
 {
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    abilityManager->OnStop();
     if (appClient) {
         delete appClient;
         appClient = nullptr;

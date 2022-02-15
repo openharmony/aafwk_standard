@@ -186,12 +186,7 @@ void AbilityDumpTest::SetUp()
 
 void AbilityDumpTest::TearDown()
 {
-    g_abilityMs->eventLoop_->Stop();
-    g_abilityMs->eventLoop_.reset();
-    g_abilityMs->handler_.reset();
-    g_abilityMs->state_ = ServiceRunningState::STATE_NOT_START;
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
-    g_abilityMs = nullptr;
+    g_abilityMs->OnStop();
 }
 
 void AbilityDumpTest::StartAbilityes()
