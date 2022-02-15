@@ -98,8 +98,8 @@ public:
 
 public:
     AbilityRequest abilityRequest_;
-    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
     std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
 };
 
 int AbilityManagerServiceTest::StartAbility(const Want &want)
@@ -161,9 +161,7 @@ void AbilityManagerServiceTest::OnStartAms()
 
 void AbilityManagerServiceTest::OnStopAms()
 {
-    abilityMs_->eventLoop_.reset();
-    abilityMs_->handler_.reset();
-    abilityMs_->state_ = ServiceRunningState::STATE_NOT_START;
+    abilityMs_->OnStop();
 }
 
 void AbilityManagerServiceTest::SetUpTestCase()
@@ -179,7 +177,6 @@ void AbilityManagerServiceTest::TearDownTestCase()
 
 void AbilityManagerServiceTest::SetUp()
 {
-    abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     OnStartAms();
     WaitUntilTaskFinished();
     if (abilityRecord_ == nullptr) {
@@ -188,13 +185,11 @@ void AbilityManagerServiceTest::SetUp()
         abilityRequest_.abilityInfo.type = AbilityType::DATA;
         abilityRecord_ = AbilityRecord::CreateAbilityRecord(abilityRequest_);
     }
-
 }
 
 void AbilityManagerServiceTest::TearDown()
 {
     OnStopAms();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
 }
 
 /*
