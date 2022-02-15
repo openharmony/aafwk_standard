@@ -67,6 +67,7 @@ const std::string Want::MIME_TYPE("mime-type");
 const std::string Want::WANT_HEADER("#Intent;");
 
 const std::string Want::PARAM_RESV_WINDOW_MODE("ohos.aafwk.param.windowMode");
+const std::string Want::PARAM_RESV_DISPLAY_ID("ohos.aafwk.param.displayId");
 const std::string Want::PARAM_RESV_CALLER_TOKEN("ohos.aafwk.param.callerToken");
 const std::string Want::PARAM_RESV_CALLER_UID("ohos.aafwk.param.callerUid");
 const std::string Want::PARAM_RESV_CALLER_PID("ohos.aafwk.param.callerPid");

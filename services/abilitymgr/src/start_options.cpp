@@ -17,9 +17,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-
-const std::string StartOptions::STRING_DISPLAY_ID = "ohos.aafwk.displayId";
-
 StartOptions::StartOptions(const StartOptions &other)
 {
     windowMode_ = other.windowMode_;

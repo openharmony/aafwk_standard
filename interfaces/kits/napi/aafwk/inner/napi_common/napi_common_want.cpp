@@ -686,6 +686,17 @@ bool InnerUnwrapWantParams(napi_env env, const std::string &key, napi_value para
     return false;
 }
 
+bool BlackListFilter(const std::string &strProName)
+{
+    if (strProName == Want::PARAM_RESV_WINDOW_MODE) {
+        return true;
+    }
+    if (strProName == Want::PARAM_RESV_DISPLAY_ID) {
+        return true;
+    }
+    return false;
+}
+
 bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantParams)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -709,7 +720,8 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
 
         std::string strProName = UnwrapStringFromJS(env, jsProName);
         /* skip reserved param */
-        if (strProName == Want::PARAM_RESV_WINDOW_MODE) {
+        if (BlackListFilter(strProName)) {
+            HILOG_INFO("%{public}s is filtered.", strProName.c_str());
             continue;
         }
         HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
