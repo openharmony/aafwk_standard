@@ -86,8 +86,7 @@ public:
 
 public:
     std::shared_ptr<AbilityRecord> abilityRecord_ {nullptr};
-    std::shared_ptr<AppStateCallbackS> callback_ {nullptr};
-    std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
 };
 
 void AbilityMsAppmsTest::OnStartabilityAms()
@@ -135,18 +134,20 @@ void AbilityMsAppmsTest::OnStartabilityAms()
 }
 
 void AbilityMsAppmsTest::SetUpTestCase(void)
-{}
-void AbilityMsAppmsTest::TearDownTestCase(void)
-{}
-
-void AbilityMsAppmsTest::SetUp(void)
 {
     DelayedSingleton<SaMgrClient>::GetInstance()->RegisterSystemAbility(
         OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
-    DelayedSingleton<AppScheduler>::GetInstance();
-    callback_ = std::make_shared<AppStateCallbackS>();
-    DelayedSingleton<AppScheduler>::GetInstance()->Init(callback_);
-    abilityMs_ = DelayedSingleton<AbilityManagerService>::GetInstance();
+    DelayedSingleton<AppScheduler>::GetInstance()->Init(std::make_shared<AppStateCallbackS>());
+}
+
+void AbilityMsAppmsTest::TearDownTestCase(void)
+{
+    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
+    DelayedSingleton<AppScheduler>::DestroyInstance();
+}
+
+void AbilityMsAppmsTest::SetUp(void)
+{
     OnStartabilityAms();
     StartAbility();
     GTEST_LOG_(INFO) << "SetUp";
@@ -154,8 +155,7 @@ void AbilityMsAppmsTest::SetUp(void)
 
 void AbilityMsAppmsTest::TearDown(void)
 {
-    OHOS::DelayedSingleton<SaMgrClient>::DestroyInstance();
-    DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    abilityMs_->OnStop();
     GTEST_LOG_(INFO) << "TearDown";
 }
 

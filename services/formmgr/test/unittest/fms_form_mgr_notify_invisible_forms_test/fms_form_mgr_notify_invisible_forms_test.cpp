@@ -56,7 +56,7 @@ public:
 protected:
     sptr<OHOS::AppExecFwk::MockFormHostClient> token_;
     sptr<BundleMgrService> mockBundleMgr_;
-    std::shared_ptr<FormMgrService> formMgrService_ = DelayedSingleton<FormMgrService>::GetInstance();
+    std::shared_ptr<FormMgrService> formMgrService_;
 };
 void FmsFormMgrNotifyInvisibleFormsTest::SetUpTestCase(void)
 {}
@@ -67,7 +67,6 @@ void FmsFormMgrNotifyInvisibleFormsTest::TearDownTestCase(void)
 void FmsFormMgrNotifyInvisibleFormsTest::SetUp(void)
 {
     formMgrService_ = std::make_shared<FormMgrService>();
-
     formMgrService_->OnStart();
 
     // mock BundleMgr
@@ -100,7 +99,12 @@ void FmsFormMgrNotifyInvisibleFormsTest::SetUp(void)
 }
 
 void FmsFormMgrNotifyInvisibleFormsTest::TearDown(void)
-{}
+{
+    formMgrService_->OnStop();
+    formMgrService_ = nullptr;
+    mockBundleMgr_ = nullptr;
+    token_ = nullptr;
+}
 
 /**
  * @tc.number: FmsFormMgrNotifyInvisibleFormsTest_NotifyInvisibleForms_002
