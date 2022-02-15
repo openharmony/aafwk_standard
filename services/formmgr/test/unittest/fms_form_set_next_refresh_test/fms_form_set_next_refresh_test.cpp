@@ -49,35 +49,32 @@ public:
     {}
     ~FmsFormSetNextRefreshTest()
     {}
-    std::shared_ptr<FormMgrService> formSetNextRefresh_ = DelayedSingleton<FormMgrService>::GetInstance();
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
 protected:
-    sptr<BundleMgrService> mockBundleMgr_;
+    std::shared_ptr<FormMgrService> formSetNextRefresh_;
 };
+
 void FmsFormSetNextRefreshTest::SetUpTestCase(void)
-{}
+{
+    FormBmsHelper::GetInstance().SetBundleManager(new BundleMgrService());
+}
 
 void FmsFormSetNextRefreshTest::TearDownTestCase(void)
 {}
 
 void FmsFormSetNextRefreshTest::SetUp(void)
 {
-    formSetNextRefresh_ = std::make_shared<FormMgrService>();
-
+    formSetNextRefresh_ = DelayedSingleton<FormMgrService>::GetInstance();
     formSetNextRefresh_->OnStart();
-
-    // mock BundleMgr
-    mockBundleMgr_ = new (std::nothrow) BundleMgrService();
-    ASSERT_TRUE(mockBundleMgr_ != nullptr);
-    FormBmsHelper::GetInstance().SetBundleManager(mockBundleMgr_);
 }
 
 void FmsFormSetNextRefreshTest::TearDown(void)
-{}
-
+{
+    formSetNextRefresh_->OnStop();
+}
 
 /**
  * @tc.number: FmsFormSetNextRefreshTest_SetNextRefreshTime_001

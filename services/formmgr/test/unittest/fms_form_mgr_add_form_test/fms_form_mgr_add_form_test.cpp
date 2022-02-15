@@ -70,13 +70,14 @@ public:
 
 protected:
     sptr<MockFormHostClient> token_;
-    sptr<BundleMgrService> mockBundleMgr_;
-    sptr<MockAbilityMgrService> mockAbilityMgrServ_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
 };
 
 void FmsFormMgrAddFormTest::SetUpTestCase()
-{}
+{
+    FormBmsHelper::GetInstance().SetBundleManager(new BundleMgrService());
+    FormAmsHelper::GetInstance().SetAbilityManager(new MockAbilityMgrService());
+}
 
 void FmsFormMgrAddFormTest::TearDownTestCase()
 {}
@@ -84,13 +85,6 @@ void FmsFormMgrAddFormTest::TearDownTestCase()
 void FmsFormMgrAddFormTest::SetUp()
 {
     formyMgrServ_->OnStart();
-    mockBundleMgr_ = new (std::nothrow) BundleMgrService();
-    EXPECT_TRUE(mockBundleMgr_ != nullptr);
-    FormBmsHelper::GetInstance().SetBundleManager(mockBundleMgr_);
-
-    mockAbilityMgrServ_ = new (std::nothrow) MockAbilityMgrService();
-    FormAmsHelper::GetInstance().SetAbilityManager(mockAbilityMgrServ_);
-
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install

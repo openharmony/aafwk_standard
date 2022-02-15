@@ -62,11 +62,12 @@ public:
 protected:
     sptr<MockFormHostClient> token_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
-    sptr<BundleMgrService> mockBundleMgr_;
 };
 
 void FmsFormMgrReleaseFormTest::SetUpTestCase()
-{}
+{
+    FormBmsHelper::GetInstance().SetBundleManager(new BundleMgrService());
+}
 
 void FmsFormMgrReleaseFormTest::TearDownTestCase()
 {}
@@ -74,9 +75,6 @@ void FmsFormMgrReleaseFormTest::TearDownTestCase()
 void FmsFormMgrReleaseFormTest::SetUp()
 {
     formyMgrServ_->OnStart();
-    mockBundleMgr_ = new (std::nothrow) BundleMgrService();
-    ASSERT_TRUE(mockBundleMgr_ != nullptr);
-    FormBmsHelper::GetInstance().SetBundleManager(mockBundleMgr_);
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
