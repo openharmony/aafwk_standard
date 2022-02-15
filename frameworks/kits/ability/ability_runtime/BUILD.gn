@@ -47,17 +47,17 @@ ohos_shared_library("ability_context_native") {
     "${APPKIT_DIR}/appkit:app_context",
     "${INNERKITS_DIR}/ability_manager:ability_manager",
     "${INNERKITS_DIR}/want:want",
+    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher",
     "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher"
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base"
   ]
 
   external_deps = [
     "ability_runtime:app_manager",
     "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",
-    "hiviewdfx_hilog_native:libhilog",
     "hichecker_native:libhichecker",
+    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "utils_base:utils",
   ]
