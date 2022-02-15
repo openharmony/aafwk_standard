@@ -47,7 +47,7 @@ public:
     std::shared_ptr<AMSEventHandler> GetAmsEventHandler();
 
 protected:
-    std::shared_ptr<AppMgrService> appMgrService_;
+    std::shared_ptr<AppMgrService> appMgrService_ = std::make_shared<AppMgrService>();
 };
 
 void AmsServiceEventDriveTest::SetUpTestCase()
@@ -58,11 +58,13 @@ void AmsServiceEventDriveTest::TearDownTestCase()
 
 void AmsServiceEventDriveTest::SetUp()
 {
-    appMgrService_ = std::make_shared<AppMgrService>();
+    appMgrService_->OnStart();
 }
 
 void AmsServiceEventDriveTest::TearDown()
-{}
+{
+    appMgrService_->OnStop();
+}
 
 /*
  * Feature: AppMgrService
@@ -284,6 +286,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_009, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_009 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -307,6 +310,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_010, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_010 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -330,6 +334,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_011, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_011 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -353,6 +358,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_012, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_012 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -376,6 +382,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_013, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_013 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -399,6 +406,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_014, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_014 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -422,6 +430,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_015, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_015 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -443,6 +452,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_016, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_016 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -856,6 +866,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_035, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_035 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -928,6 +939,7 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_038, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_038 start");
 
+    appMgrService_->OnStop();
     std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
     appMgrService_->SetInnerService(innerService);
 
@@ -970,7 +982,6 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_039, TestSize.Level1)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if QueryServiceState act normal after AppMgrService stopped
  */
-/*
 HWTEST_F(AmsServiceEventDriveTest, EventDrive_040, TestSize.Level1)
 {
     APP_LOGI("AppMgrService::EventDrive_040 start 1");
@@ -990,7 +1001,6 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_040, TestSize.Level1)
 
     APP_LOGI("AppMgrService::EventDrive_040 end");
 }
-*/
 
 /*
  * Feature: AppMgrService
