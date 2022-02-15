@@ -392,8 +392,10 @@ private:
      *
      * @brief Task in event handler timeout detected.
      *
+     * @param runner the runner belong to the mainthread.
+     *
      */
-    void TaskTimeoutDetected();
+    void TaskTimeoutDetected(const std::shared_ptr<EventRunner>& runner);
 
     /**
      *
