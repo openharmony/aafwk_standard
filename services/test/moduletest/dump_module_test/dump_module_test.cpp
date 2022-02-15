@@ -183,7 +183,6 @@ void DumpModuleTest::SetUp()
 void DumpModuleTest::TearDown()
 {
     g_abilityMs->OnStop();
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
     GTEST_LOG_(INFO) << "TearDown OK";
 }
 
