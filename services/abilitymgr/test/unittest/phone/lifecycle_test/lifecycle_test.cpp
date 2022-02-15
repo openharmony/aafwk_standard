@@ -80,7 +80,7 @@ public:
 public:
     int startLancherFlag_ = false;
 
-    std::shared_ptr<OHOS::AAFwk::AbilityManagerService> abilityMs_ {nullptr};
+    std::shared_ptr<AbilityManagerService> abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     std::shared_ptr<OHOS::AAFwk::AbilityRecord> launcherAbilityRecord_ {nullptr};  // launcher ability
     OHOS::sptr<OHOS::IRemoteObject> launcherToken_ {nullptr};                      // token of launcher ability
     std::shared_ptr<OHOS::AAFwk::AbilityRecord> nextAbilityRecord_ {nullptr};      // ability being launched
@@ -143,7 +143,6 @@ void LifecycleTest::TearDownTestCase(void)
 
 void LifecycleTest::SetUp(void)
 {
-    abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
     OnStartabilityAms();
     WaitUntilTaskFinished();
     StartLauncherAbility();
@@ -152,11 +151,7 @@ void LifecycleTest::SetUp(void)
 
 void LifecycleTest::TearDown(void)
 {
-    abilityMs_->eventLoop_->Stop();
-    abilityMs_->eventLoop_.reset();
-    abilityMs_->handler_.reset();
-    abilityMs_->state_ = ServiceRunningState::STATE_NOT_START;
-    OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+    abilityMs_->OnStop();
     launcherAbilityRecord_.reset();
     launcherToken_ = nullptr;
     nextAbilityRecord_.reset();
@@ -164,7 +159,6 @@ void LifecycleTest::TearDown(void)
     launcherScheduler_ = nullptr;
     nextScheduler_ = nullptr;
     command_.reset();
-    abilityMs_ = nullptr;
     startLancherFlag_ = false;
 }
 
