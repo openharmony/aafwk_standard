@@ -932,5 +932,14 @@ ErrCode AbilityManagerClient::DoAbilityBackground(const sptr<IRemoteObject> &tok
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->DoAbilityBackground(token, flag);
 }
+
+ErrCode AbilityManagerClient::SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+    bool imAStabilityTest)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->SetAbilityController(abilityController, imAStabilityTest);
+}
 }  // namespace AAFwk
 }  // namespace AAFwk
