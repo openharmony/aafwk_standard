@@ -15,8 +15,6 @@
 
 #include "ability_connection.h"
 
-#include <unistd.h>
-
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
 
