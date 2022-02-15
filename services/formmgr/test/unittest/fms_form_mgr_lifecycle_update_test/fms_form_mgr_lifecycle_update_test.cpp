@@ -56,26 +56,21 @@ public:
     void InitFormItemInfo(int64_t formId, FormItemInfo &formItemInfo) const;
 
 protected:
-    sptr<BundleMgrService> mockBundleMgr_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
     sptr<MockFormHostClient> token_;
 };
 
 void FmsFormMgrLifecycleUpdateTest::SetUpTestCase()
-{}
+{
+    FormBmsHelper::GetInstance().SetBundleManager(new BundleMgrService());
+}
 
 void FmsFormMgrLifecycleUpdateTest::TearDownTestCase()
 {}
 
 void FmsFormMgrLifecycleUpdateTest::SetUp()
 {
-    // APP_LOGI("fms_form_mgr_enable_update_test_001 setup");
     formyMgrServ_->OnStart();
-
-    // mock BundleMgr
-    mockBundleMgr_ = new (std::nothrow) BundleMgrService();
-    ASSERT_TRUE(mockBundleMgr_ != nullptr);
-    FormBmsHelper::GetInstance().SetBundleManager(mockBundleMgr_);
 
     // token
     token_ = new (std::nothrow) MockFormHostClient();
