@@ -189,7 +189,8 @@ int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int 
     return TerminateAbility(token, resultCode, resultWant, true);
 }
 
-int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant, bool flag)
+int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token,
+    int resultCode, const Want *resultWant, bool flag)
 {
     int error;
     MessageParcel data;
