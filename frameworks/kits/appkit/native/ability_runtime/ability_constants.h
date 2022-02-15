@@ -26,4 +26,4 @@ const std::string FILE_SEPARATOR = "/";
 }  // namespace Constants
 }  // namespace AbilityRuntime
 }  // namespace OHOS
-#endif  // EXTENSION_CONTEXT_H
+#endif  // FOUNDATION_AAFWK_ABILITY_CONSTANTS_H
