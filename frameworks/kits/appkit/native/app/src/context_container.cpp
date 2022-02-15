@@ -16,6 +16,7 @@
 
 #include <regex>
 
+#include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_errors.h"
 #include "app_log_wrapper.h"
@@ -25,9 +26,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 constexpr int CURRENT_USERID = -2;
-const std::string ABS_BUNDLE_CODE_PATH = "/data/app/el1/bundle/public";
-const std::string LOCAL_BUNDLES_PATH = "/data/bundles";
-const std::string FILE_SEPARATOR = "/";
 /**
  * Attaches a Context object to the current ability.
  * Generally, this method is called after Ability is loaded to provide the application context for the current ability.
@@ -679,12 +677,12 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
     APP_LOGI(
         "ContextContainer::InitResourceManager moduleResPaths count: %{public}zu", bundleInfo.moduleResPaths.size());
     std::vector<std::string> moduleResPaths;
-    std::regex pattern(ABS_BUNDLE_CODE_PATH);
+    std::regex pattern(AbilityRuntime::Constants::ABS_CODE_PATH);
     for (auto item : bundleInfo.moduleResPaths) {
         if (item.empty()) {
             continue;
         }
-        moduleResPaths.emplace_back(std::regex_replace(item, pattern, LOCAL_BUNDLES_PATH));
+        moduleResPaths.emplace_back(std::regex_replace(item, pattern, AbilityRuntime::Constants::LOCAL_BUNDLES));
     }
 
     for (auto moduleResPath : moduleResPaths) {
