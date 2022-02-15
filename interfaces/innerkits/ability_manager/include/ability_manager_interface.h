@@ -150,8 +150,8 @@ public:
      * @param resultWant, the Want of the ability to return.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int CloseAbility(
-        const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE, const Want *resultWant = nullptr) = 0;
+    virtual int CloseAbility(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr) = 0;
 
     /**
      * MinimizeAbility, minimize the special ability.
