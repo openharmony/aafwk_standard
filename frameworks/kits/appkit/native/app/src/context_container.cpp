@@ -687,7 +687,7 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
 
     for (auto moduleResPath : moduleResPaths) {
         if (!moduleResPath.empty()) {
-            APP_LOGI("ContextContainer::InitResourceManager length: %{public}zu, moduleResPath: %{public}s",
+            APP_LOGI("ContextContainer::InitResourceManager length: %{public}zu, moduleResPath : %{public}s",
                 moduleResPath.length(),
                 moduleResPath.c_str());
             if (!resourceManager->AddResource(moduleResPath.c_str())) {
