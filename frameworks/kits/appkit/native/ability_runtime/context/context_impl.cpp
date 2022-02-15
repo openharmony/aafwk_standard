@@ -17,6 +17,7 @@
 
 #include <regex>
 
+#include "ability_constants.h"
 #include "file_util.h"
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
@@ -28,11 +29,8 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-namespace {
-const std::string ABS_CODE_PATH = "/data/app/el1/bundle/public";
-const std::string LOCAL_CODE_PATH = "/data/storage/el1/bundle";
-const std::string LOCAL_BUNDLES = "/data/bundles";
-}
+using namespace OHOS::AbilityRuntime::Constants;
+
 const size_t Context::CONTEXT_TYPE_ID(std::hash<const char*> {} ("Context"));
 const int64_t ContextImpl::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
 const std::string ContextImpl::CONTEXT_DATA_APP("/data/app/");
