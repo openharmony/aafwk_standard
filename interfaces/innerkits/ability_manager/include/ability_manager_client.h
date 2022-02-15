@@ -751,7 +751,16 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag);
-    
+
+    /**
+     * Set ability controller.
+     *
+     * @param abilityController, The ability controller.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
+        bool imAStabilityTest);
+
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
