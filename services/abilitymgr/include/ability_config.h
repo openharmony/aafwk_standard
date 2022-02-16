@@ -25,8 +25,8 @@ const std::string NAME_ABILITY_MGR_SERVICE = "AbilityManagerService";
 const std::string NAME_BUNDLE_MGR_SERVICE = "BundleMgrService";
 const std::string SCHEME_DATA_ABILITY = "dataability";
 const std::string SYSTEM_UI_BUNDLE_NAME = "com.ohos.systemui";
-const std::string SYSTEM_UI_STATUS_BAR = "com.ohos.systemui.statusbar.MainAbility";
-const std::string SYSTEM_UI_NAVIGATION_BAR = "com.ohos.systemui.navigationbar.MainAbility";
+const std::string SYSTEM_UI_STATUS_BAR = "com.ohos.systemui.statusbar.ServiceExtAbility";
+const std::string SYSTEM_UI_NAVIGATION_BAR = "com.ohos.systemui.navigationbar.ServiceExtAbility";
 const std::string SYSTEM_DIALOG_NAME = "com.ohos.systemui.systemdialog.MainAbility";
 const std::string SYSTEM_UI_ABILITY_NAME = "com.ohos.systemui.ServiceExtAbility";
 
