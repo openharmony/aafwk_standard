@@ -46,6 +46,7 @@ namespace {
 const std::string NAME_BUNDLE_MGR_SERVICE = "BundleMgrService";
 static std::shared_ptr<AbilityManagerService> g_abilityMs = nullptr;
 static std::shared_ptr<AppManagerTestService> g_appTestService = nullptr;
+static bool g_alreadyInit = false;
 
 static const ElementName G_TESTABILITY1("device", "com.ix.hiMusic", "MainAbility1");
 static const ElementName G_TESTABILITY2("device", "com.ix.hiMusic", "MainAbility2");
@@ -120,29 +121,33 @@ void DumpModuleTest::OnStartAms()
         }
 
         g_abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
-
         g_abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(g_abilityMs->eventLoop_);
 
         g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
+        g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        g_abilityMs->connectManagers_.emplace(0, g_abilityMs->connectManager_);
         EXPECT_TRUE(g_abilityMs->handler_);
         EXPECT_TRUE(g_abilityMs->connectManager_);
 
         g_abilityMs->connectManager_->SetEventHandler(g_abilityMs->handler_);
 
         g_abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        g_abilityMs->dataAbilityManagers_.emplace(0, g_abilityMs->dataAbilityManager_);
         EXPECT_TRUE(g_abilityMs->dataAbilityManager_);
 
+        g_abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        g_abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        g_abilityMs->currentMissionListManager_->Init();
         g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_abilityMs->pendingWantManager_);
 
         int userId = g_abilityMs->GetUserId();
         g_abilityMs->SetStackManager(userId, true);
+        g_abilityMs->stackManagers_.emplace(0, g_abilityMs->GetStackManager());
         g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(g_abilityMs->systemAppManager_);
-
         g_abilityMs->eventLoop_->Run();
-
         GTEST_LOG_(INFO) << "OnStart success";
         return;
     }
@@ -188,6 +193,10 @@ void DumpModuleTest::TearDown()
 
 void DumpModuleTest::StartAllAbilities()
 {
+    if (g_alreadyInit) {
+        return;
+    }
+    g_alreadyInit = true;
     wantLauncher.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
     g_abilityMs->StartAbility(wantLauncher);
     WaitUntilTaskFinished();
@@ -244,63 +253,24 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
 {
     std::vector<std::string> dumpInfo;
     g_abilityMs->DumpState("--stack 1", dumpInfo);
-    std::vector<Want> abilitiesStarted = {
-        want55,
-        want44,
-        want33,
-        want22,
-        want11,
-    };
     std::vector<std::string> abilityNames;
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
-
+    EXPECT_EQ(0, abilityNames.size());
     dumpInfo.clear();
 
     g_abilityMs->DumpState("--stack 0", dumpInfo);
-    abilitiesStarted = {
-        wantLauncher,
-    };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
+    EXPECT_EQ(6, abilityNames.size());
 
     dumpInfo.clear();
-
     g_abilityMs->DumpState("--stack 1 abc", dumpInfo);
-    abilitiesStarted = {
-        want55,
-        want44,
-        want33,
-        want22,
-        want11,
-    };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
+    EXPECT_EQ(0, abilityNames.size());
 
     dumpInfo.clear();
-
     g_abilityMs->DumpState(" --stack 1", dumpInfo);
-    abilitiesStarted = {
-        want55,
-        want44,
-        want33,
-        want22,
-        want11,
-    };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
+    EXPECT_EQ(0, abilityNames.size());
 }
 
 /*
@@ -315,35 +285,14 @@ HWTEST_F(DumpModuleTest, dump_module_test_002, TestSize.Level2)
 {
     std::vector<std::string> dumpInfo;
     g_abilityMs->GetStackManager()->DumpStack(1, dumpInfo);
-    std::vector<Want> abilitiesStarted = {
-        want55,
-        want44,
-        want33,
-        want22,
-        want11,
-    };
     std::vector<std::string> abilityNames;
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-
-    GTEST_LOG_(INFO) << "abilitiesStarted.size() = " << abilitiesStarted.size();
     GTEST_LOG_(INFO) << "abilityNames.size() = " << abilityNames.size();
-
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
-
+    EXPECT_EQ(0, abilityNames.size());
     dumpInfo.clear();
-
     g_abilityMs->GetStackManager()->DumpStack(0, dumpInfo);
-    abilitiesStarted = {
-        wantLauncher,
-    };
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
+    EXPECT_EQ(6, abilityNames.size());
 }
 
 /*
@@ -551,20 +500,8 @@ HWTEST_F(DumpModuleTest, dump_module_test_008, TestSize.Level2)
     GTEST_LOG_(INFO) << "args = " << args;
 
     g_abilityMs->DumpState(args, dumpInfo);
-
-    std::vector<Want> abilitiesStarted = {
-        want55,
-        want44,
-        want33,
-        want22,
-        want11,
-    };
-
     MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(abilitiesStarted.size(), abilityNames.size());
-    for (unsigned int i = 0; i < abilityNames.size(); ++i) {
-        EXPECT_EQ(0, abilitiesStarted[i].GetElement().GetAbilityName().compare(abilityNames[i]));
-    }
+    EXPECT_EQ(6, abilityNames.size());
 }
 
 /*
