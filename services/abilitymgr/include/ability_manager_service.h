@@ -1105,7 +1105,7 @@ private:
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
 
-    int32_t GetValidUserId(const Want &want, const int32_t userId);
+    int32_t GetValidUserId(const int32_t userId);
 
     int DelegatorMoveMissionToFront(int32_t missionId);
 
