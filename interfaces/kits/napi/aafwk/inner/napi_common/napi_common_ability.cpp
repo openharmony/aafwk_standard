@@ -3547,7 +3547,14 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
 
-    asyncCallbackInfo->errCode = asyncCallbackInfo->ability->StartBackgroundRunning(*asyncCallbackInfo->wantAgent);
+    Notification::WantAgent::WantAgent wantAgentObj;
+    if (!asyncCallbackInfo->wantAgent) {
+        HILOG_WARN("input param without wantAgent");
+        wantAgentObj = Notification::WantAgent::WantAgent();
+    } else {
+        wantAgentObj = *asyncCallbackInfo->wantAgent;
+    }
+    asyncCallbackInfo->errCode = asyncCallbackInfo->ability->StartBackgroundRunning(wantAgentObj);
 
     HILOG_INFO("%{public}s end.", __func__);
 }
