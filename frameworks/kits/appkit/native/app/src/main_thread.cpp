@@ -16,7 +16,9 @@
 #include "main_thread.h"
 
 #include <new>
+#include <regex>
 
+#include "ability_constants.h"
 #include "ability_delegator.h"
 #include "ability_delegator_registry.h"
 #include "ability_loader.h"
@@ -51,6 +53,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+using namespace OHOS::AbilityRuntime::Constants;
 std::shared_ptr<OHOSApplication> MainThread::applicationForAnr_ = nullptr;
 namespace {
 constexpr int32_t DELIVERY_TIME = 200;
@@ -737,7 +740,9 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("MainThread::handleLaunchApplication moduleResPaths count: %{public}zu start",
         bundleInfo.moduleResPaths.size());
-    for (auto moduleResPath : bundleInfo.moduleResPaths) {
+    std::vector<std::string> resPaths;
+    ChangeToLocalPath(bundleInfo.name, bundleInfo.moduleResPaths, resPaths);
+    for (auto moduleResPath : resPaths) {
         if (!moduleResPath.empty()) {
             APP_LOGI("MainThread::handleLaunchApplication length: %{public}zu, moduleResPath: %{public}s",
                 moduleResPath.length(),
@@ -786,7 +791,10 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         APP_LOGE("MainThread::handleLaunchApplication CheckForHandleLaunchApplication failed");
         return;
     }
-    LoadAbilityLibrary(appLaunchData.GetApplicationInfo().moduleSourceDirs);
+    std::vector<std::string> localPaths;
+    ChangeToLocalPath(appLaunchData.GetApplicationInfo().bundleName,
+        appLaunchData.GetApplicationInfo().moduleSourceDirs, localPaths);
+    LoadAbilityLibrary(localPaths);
     LoadAppLibrary();
 
     ApplicationInfo appInfo = appLaunchData.GetApplicationInfo();
@@ -845,7 +853,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     if (isStageBased) {
         // Create runtime
         AbilityRuntime::Runtime::Options options;
-        options.codePath = appInfo.codePath;
+        options.codePath = LOCAL_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
         auto runtime = AbilityRuntime::Runtime::Create(options);
         if (!runtime) {
@@ -909,6 +917,19 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     }
 
     APP_LOGI("MainThread::handleLaunchApplication called end.");
+}
+
+void MainThread::ChangeToLocalPath(const std::string &bundleName,
+    const std::vector<std::string> &sourceDirs, std::vector<std::string> &localPath)
+{
+    for (auto item : sourceDirs) {
+        if (item.empty()) {
+            continue;
+        }
+        std::regex pattern(ABS_CODE_PATH + FILE_SEPARATOR + bundleName + FILE_SEPARATOR);
+        localPath.emplace_back(
+            std::regex_replace(item, pattern, LOCAL_CODE_PATH + FILE_SEPARATOR));
+    }
 }
 
 void MainThread::HandleAbilityStage(const HapModuleInfo &abilityStage)
