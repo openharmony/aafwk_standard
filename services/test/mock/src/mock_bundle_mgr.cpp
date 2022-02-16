@@ -131,9 +131,8 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
 bool BundleMgrService::GetApplicationInfo(
     const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
 {
-    if (appName.empty()) {
-        return false;
-    }
+    appInfo.name = "test_app";
+    appInfo.bundleName = "com.ix.hiMusic";
     return true;
 }
 
