@@ -89,6 +89,18 @@ public:
         return (me != nullptr) ? me->OnKillProcessWithAccount(*engine, *info) : nullptr;
     }
 
+    static NativeValue* KillProcessesByBundleName(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsAppManager* me = CheckParamsAndGetThis<JsAppManager>(engine, info);
+        return (me != nullptr) ? me->OnkillProcess(*engine, *info) : nullptr;
+    }
+
+    static NativeValue* ClearUpApplicationData(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsAppManager* me = CheckParamsAndGetThis<JsAppManager>(engine, info);
+        return (me != nullptr) ? me->OnClearUpApplicationData(*engine, *info) : nullptr;
+    }
+
 private:
     sptr<OHOS::AppExecFwk::IAppMgr> appManager_ = nullptr;
     sptr<OHOS::AAFwk::IAbilityManager> abilityManager_ = nullptr;
@@ -270,6 +282,80 @@ private:
         return result;
     }
 
+    NativeValue* OnkillProcess(NativeEngine &engine, NativeCallbackInfo &info)
+    {
+        HILOG_INFO("%{public}s is called", __FUNCTION__);
+        if (info.argc == 0) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        std::string bundleName;
+        if (!ConvertFromJsValue(engine, info.argv[0], bundleName)) {
+            HILOG_ERROR("get bundelName failed!");
+            return engine.CreateUndefined();
+        }
+
+        HILOG_INFO("kill process [%{public}s]", bundleName.c_str());
+        AsyncTask::CompleteCallback complete = [bundleName, abilityManager = abilityManager_](NativeEngine& engine,
+            AsyncTask& task, int32_t status) {
+            if (abilityManager == nullptr) {
+                HILOG_WARN("abilityManager nullptr");
+                task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "abilityManager nullptr"));
+                return;
+            }
+            auto errcode = abilityManager->KillProcess(bundleName);
+            if (errcode == 0) {
+                task.Resolve(engine, CreateJsValue(engine, errcode));
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "kill process failed."));
+            }
+        };
+
+        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
+
+    NativeValue* OnClearUpApplicationData(NativeEngine &engine, NativeCallbackInfo &info)
+    {
+        HILOG_INFO("%{public}s is called", __FUNCTION__);
+        if (info.argc == 0) {
+            HILOG_ERROR("Not enough params");
+            return engine.CreateUndefined();
+        }
+
+        std::string bundleName;
+        if (!ConvertFromJsValue(engine, info.argv[0], bundleName)) {
+            HILOG_ERROR("get bundelName failed!");
+            return engine.CreateUndefined();
+        }
+
+        HILOG_INFO("kill process [%{public}s]", bundleName.c_str());
+        AsyncTask::CompleteCallback complete = [bundleName, abilityManager = abilityManager_](NativeEngine& engine,
+            AsyncTask& task, int32_t status) {
+            if (abilityManager == nullptr) {
+                HILOG_WARN("abilityManager nullptr");
+                task.Reject(engine, CreateJsError(engine, ERROR_CODE_ONE, "abilityManager nullptr"));
+                return;
+            }
+            auto errcode = abilityManager->ClearUpApplicationData(bundleName);
+            if (errcode == 0) {
+                task.Resolve(engine, CreateJsValue(engine, errcode));
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "clear up application failed."));
+            }
+        };
+
+        NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
+
     NativeValue* OnKillProcessWithAccount(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
@@ -359,6 +445,10 @@ NativeValue* JsAppManagerInit(NativeEngine* engine, NativeValue* exportObj)
         JsAppManager::IsRunningInStabilityTest);
     BindNativeFunction(*engine, *object, "killProcessWithAccount",
         JsAppManager::KillProcessWithAccount);
+    BindNativeFunction(*engine, *object, "killProcessesByBundleName",
+        JsAppManager::KillProcessesByBundleName);
+    BindNativeFunction(*engine, *object, "clearUpApplicationData",
+        JsAppManager::ClearUpApplicationData);
     HILOG_INFO("JsAppManagerInit end");
     return engine->CreateUndefined();
 }
