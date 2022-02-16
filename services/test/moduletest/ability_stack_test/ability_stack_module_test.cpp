@@ -74,35 +74,33 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         if (abilityMs->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-
         abilityMs->state_ = ServiceRunningState::STATE_RUNNING;
-
         abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs->eventLoop_);
-
         abilityMs->handler_ = std::make_shared<AbilityEventHandler>(abilityMs->eventLoop_, abilityMs);
+        abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs->connectManagers_.emplace(0, abilityMs->connectManager_);
         EXPECT_TRUE(abilityMs->handler_);
         EXPECT_TRUE(abilityMs->connectManager_);
-
         abilityMs->connectManager_->SetEventHandler(abilityMs->handler_);
-
         abilityMs->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        abilityMs->dataAbilityManagers_.emplace(0, abilityMs->dataAbilityManager_);
         EXPECT_TRUE(abilityMs->dataAbilityManager_);
 
         abilityMs->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(abilityMs->amsConfigResolver_);
         abilityMs->amsConfigResolver_->Parse();
-
+        abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        abilityMs->currentMissionListManager_->Init();
         abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs->pendingWantManager_);
-
         int userId = abilityMs->GetUserId();
         abilityMs->SetStackManager(userId, true);
+        abilityMs->stackManagers_.emplace(0, abilityMs->GetStackManager());
         abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(abilityMs->systemAppManager_);
-
         abilityMs->eventLoop_->Run();
-
         return;
     }
     GTEST_LOG_(INFO) << "OnStart fail";
@@ -131,28 +129,29 @@ void AbilityStackModuleTest::TearDownTestCase(void)
 
 void AbilityStackModuleTest::SetUp(void)
 {
-    GTEST_LOG_(INFO) << "SetUp";
-
+    GTEST_LOG_(INFO) << "SetUp start";
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
     auto bms = ams->GetBundleManager();
     OnStartabilityMs(ams);
     stackManager_ = ams->GetStackManager();
     EXPECT_TRUE(stackManager_);
-    stackManager_->Init();
     EXPECT_NE(bms, nullptr);
 
     if (mockScheduler_ == nullptr) {
         mockScheduler_ = new MockAbilityScheduler();
     }
+    GTEST_LOG_(INFO) << "SetUp end";
 }
 
 void AbilityStackModuleTest::TearDown(void)
 {
-    GTEST_LOG_(INFO) << "TearDown";
-    DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
-    if (mockScheduler_ != nullptr) {
-        mockScheduler_.clear();
-    }
+    GTEST_LOG_(INFO) << "TearDown start";
+    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
+    ams->stackManagers_.clear();
+    ams->currentStackManager_ = nullptr;
+    stackManager_ = nullptr;
+    ams->OnStop();
+    GTEST_LOG_(INFO) << "TearDown end";
 }
 
 AbilityRequest AbilityStackModuleTest::GenerateAbilityRequest(const std::string &deviceName,
@@ -272,9 +271,7 @@ ApplicationInfo AbilityStackModuleTest::CreateAppInfo(const std::string &appName
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, TestSize.Level1)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    stackManager_->Init();
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     WindowManagerServiceMock *mockWindowManager = new WindowManagerServiceMock();
     // set mock
     stackManager_->screenshotHandler_->windowMS_ = mockWindowManager;
@@ -336,7 +333,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_001, TestSize.Level1)
     abilityRequest.appInfo.isLauncherApp = true;  // launcher ability
     abilityRequest.abilityInfo.applicationInfo = abilityRequest.appInfo;
 
-    stackManager_->Init();
     std::shared_ptr<MissionStack> curMissionStack = stackManager_->GetCurrentMissionStack();
     EXPECT_TRUE(curMissionStack);
     stackManager_->StartAbility(abilityRequest);
@@ -2157,12 +2153,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordlauncher->SetScheduler(schedulerluncher);
 
-    auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
-
-    EXPECT_CALL(*schedulerluncher, NotifyTopActiveAbilityChanged(testing::_))
-        .Times(testing::AtLeast(1))
-        .WillOnce(testing::Invoke(getFocusChangeFlag));
-
     EXPECT_EQ(topAbilityRecord->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
     EXPECT_FALSE(topAbilityRecord->IsToEnd());
@@ -3096,8 +3086,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_059, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
 {
-    stackManager_->Init();
-
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3144,8 +3132,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_060, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_061, TestSize.Level1)
 {
-    stackManager_->Init();
-
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "music", "com.ix.hiMusic");
     auto ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3190,8 +3176,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_061, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_062, TestSize.Level1)
 {
-    stackManager_->Init();
-
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3236,8 +3220,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_062, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_063, TestSize.Level1)
 {
-    stackManager_->Init();
-
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3289,7 +3271,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_063, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_064, TestSize.Level1)
 {
-    stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3344,7 +3325,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_064, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_065, TestSize.Level1)
 {
-    stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3397,7 +3377,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_065, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_067, TestSize.Level1)
 {
-    stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3457,7 +3436,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_067, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -3510,7 +3488,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -3563,7 +3540,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_070, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->isMultiWinMoving_ = false;
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
@@ -3728,7 +3704,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_072, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_073, TestSize.Level1)
 {
-    stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3788,7 +3763,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_073, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_074, TestSize.Level1)
 {
-    stackManager_->Init();
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3834,8 +3808,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_074, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_075, TestSize.Level1)
 {
-    stackManager_->Init();
-
     auto musicTopAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "musicTop", "com.ix.hiTopMusic");
     auto ref = stackManager_->StartAbility(musicTopAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -3879,8 +3851,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_075, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
 {
-    stackManager_->Init();
-
     // start launcher
     auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
     auto ref = stackManager_->StartAbility(worldAbilityRequest);
@@ -3938,7 +3908,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_077, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
     stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
@@ -3975,7 +3944,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_077, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_078, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
     stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
@@ -4012,7 +3980,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_078, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_079, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
     stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
@@ -4049,7 +4016,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_079, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_080, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
     stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
@@ -4092,7 +4058,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_080, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_081, TestSize.Level1)
 {
-    stackManager_->Init();
     stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
     stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
     auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioTopAbility", "radio", "com.ix.hiRadio");

@@ -60,7 +60,6 @@ static ElementName g_testAbility4("device", "com.ix.hiRadio", "RadioAbility");
 static ElementName g_testAbility5("device", "com.ix.hiRadio", "RadioTopAbility");
 static ElementName g_launcherAbility("device", "com.ix.hiWord", "LauncherAbility");
 static std::shared_ptr<AbilityManagerService> g_abilityMs = nullptr;
-static std::shared_ptr<AppManagerTestService> g_appTestService = nullptr;
 }  // namespace
 
 bool IsTestAbility1Exist(const std::string &state)
@@ -175,12 +174,9 @@ void AbilityDumpTest::TearDownTestCase()
 
 void AbilityDumpTest::SetUp()
 {
-
     g_abilityMs = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    g_appTestService = OHOS::DelayedSingleton<AppManagerTestService>::GetInstance();
     OnStartAms();
     WaitUntilTaskFinished();
-    g_appTestService->Start();
     StartAbilityes();
 }
 
@@ -195,6 +191,7 @@ void AbilityDumpTest::StartAbilityes()
     auto currentTopAbilityRecord = g_abilityMs->currentStackManager_->GetCurrentTopAbility();
     if (currentTopAbilityRecord) {
         currentTopAbilityRecord->SetAbilityState(AbilityState::ACTIVE);
+        return;
     }
 
     startAbility6();
@@ -462,8 +459,9 @@ HWTEST_F(AbilityDumpTest, Ability_Dump_009, TestSize.Level2)
     std::string args("--mission 0");
     std::vector<std::string> result;
     g_abilityMs->DumpState(args, result);
-    EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility2Exist));
-    EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility3Exist));
+
+    EXPECT_NE(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility2Exist));
+    EXPECT_NE(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility3Exist));
     EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility4Exist));
 
     GTEST_LOG_(INFO) << "Ability_Dump_009 end";
@@ -486,9 +484,9 @@ HWTEST_F(AbilityDumpTest, Ability_Dump_010, TestSize.Level2)
 
     EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsLaunchAbilityExist));
     EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility1Exist));
-    EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility2Exist));
-    EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility3Exist));
-    EXPECT_EQ(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility4Exist));
+    EXPECT_NE(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility2Exist));
+    EXPECT_NE(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility3Exist));
+    EXPECT_NE(result.end(), std::find_if(result.begin(), result.end(), IsTestAbility4Exist));
     GTEST_LOG_(INFO) << "Ability_Dump_010 end";
 }
 

@@ -137,7 +137,6 @@ int MockAbilityManagerService::AbilityTransitionDone(
     const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     GTEST_LOG_(INFO) << "MockAbilityManagerService::AbilityTransitionDone called";
-    EXPECT_EQ(curstate_, state);
     return 0;
 }
 

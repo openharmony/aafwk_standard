@@ -90,16 +90,7 @@ HWTEST_F(DataAbilityOperationModuleTest, AaFwk_DataAbilityOperation_UpdateBuilde
                                                               ->WithPredicates(predicates)
                                                               ->WithInterruptionAllowed(true)
                                                               ->Build();
-    EXPECT_NE(operation, nullptr);
-
-    bool isUpdateOperation = operation->IsUpdateOperation();
-    EXPECT_TRUE(isUpdateOperation);
-
-    bool isInterruptionAllowed = operation->IsInterruptionAllowed();
-    EXPECT_TRUE(isInterruptionAllowed);
-
-    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket = operation->GetValuesBucket();
-    EXPECT_NE(valuesBucket, nullptr);
+    EXPECT_TRUE(operation == nullptr); // ValuesBucket is empty.
     GTEST_LOG_(INFO) << "AaFwk_DataAbilityOperation_UpdateBuilder_0100";
 }
 
