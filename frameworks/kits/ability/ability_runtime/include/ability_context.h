@@ -165,6 +165,8 @@ public:
 
     virtual ErrCode TerminateSelf() = 0;
 
+    virtual ErrCode CloseAbility() = 0;
+
     /**
      * @brief Requests certain permissions from the system.
      * This method is called for permission request. This is an asynchronous method. When it is executed,
