@@ -14,6 +14,9 @@
  */
 
 #include "ability_connection.h"
+
+#include <unistd.h>
+
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
 
@@ -49,6 +52,7 @@ void AbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &e
     if (resultCode == DIED) {
         bool ret = ConnectionManager::GetInstance().DisconnectReceiver(element);
         if (ret) {
+            ConnectionManager::GetInstance().ReportConnectionLeakEvent(getpid(), gettid());
             HILOG_INFO("The service connection is not disconnected.");
         }
         abilityConnectCallback_->OnAbilityDisconnectDone(element, DIED + 1);
