@@ -250,7 +250,15 @@ void ContextImpl::InitResourceManager(
 
     HILOG_DEBUG(
         "ContextImpl::InitResourceManager moduleResPaths count: %{public}zu", bundleInfo.moduleResPaths.size());
-    for (auto moduleResPath : bundleInfo.moduleResPaths) {
+    std::vector<std::string> moduleResPaths;
+    std::regex pattern(ABS_CODE_PATH);
+    for (auto item : bundleInfo.moduleResPaths) {
+        if (item.empty()) {
+            continue;
+        }
+        moduleResPaths.emplace_back(std::regex_replace(item, pattern, LOCAL_BUNDLES));
+    }
+    for (auto moduleResPath : moduleResPaths) {
         if (!moduleResPath.empty()) {
             HILOG_ERROR("ContextImpl::InitResourceManager length: %{public}zu, moduleResPath: %{public}s",
                 moduleResPath.length(),
