@@ -276,6 +276,17 @@ ErrCode AbilityContextImpl::TerminateSelf()
     return err;
 }
 
+ErrCode AbilityContextImpl::CloseAbility()
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    AAFwk::Want resultWant;
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->CloseAbility(token_, -1, &resultWant);
+    if (err != ERR_OK) {
+        HILOG_ERROR("CloseAbility failed: %{public}d", err);
+    }
+    return err;
+}
+
 sptr<IRemoteObject> AbilityContextImpl::GetToken()
 {
     return token_;
