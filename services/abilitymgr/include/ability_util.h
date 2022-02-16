@@ -179,14 +179,6 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
     HILOG_DEBUG("%{public}s end", __func__);
     return ERR_OK;
 }
-
-inline bool IsSystemUiApp(const AppExecFwk::AbilityInfo &info)
-{
-    if (info.bundleName != AbilityConfig::SYSTEM_UI_BUNDLE_NAME) {
-        return false;
-    }
-    return (info.name == AbilityConfig::SYSTEM_UI_NAVIGATION_BAR || info.name == AbilityConfig::SYSTEM_UI_STATUS_BAR);
-}
 }  // namespace AbilityUtil
 }  // namespace AAFwk
 }  // namespace OHOS

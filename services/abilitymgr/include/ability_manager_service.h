@@ -1051,7 +1051,7 @@ private:
         const sptr<IRemoteObject> &callerToken,
         int32_t &userId);
 
-    int CheckMultiOsAccount(const int32_t userId);
+    bool JudgeMultiUserConcurrency(const AppExecFwk::AbilityInfo &info, const int32_t userId);
     /**
      * dumpsys info
      *
