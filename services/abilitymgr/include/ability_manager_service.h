@@ -144,6 +144,17 @@ public:
     virtual int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override;
 
     /**
+     * CloseAbility, close the special ability.
+     *
+     * @param token, the token of the ability to terminate.
+     * @param resultCode, the resultCode of the ability to terminate.
+     * @param resultWant, the Want of the ability to return.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int CloseAbility(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr) override;
+
+    /**
      * MinimizeAbility, minimize the special ability.
      *
      * @param token, ability token.
@@ -914,6 +925,8 @@ protected:
     void OnAppStateChanged(const AppInfo &info) override;
 
 private:
+    int TerminateAbilityWithFlag(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr, bool flag = true);
     /**
      * initialization of ability manager service.
      *

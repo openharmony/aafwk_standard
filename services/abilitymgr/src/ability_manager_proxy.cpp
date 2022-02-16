@@ -186,6 +186,12 @@ int AbilityManagerProxy::StartAbility(const Want &want, const StartOptions &star
 
 int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
+    return TerminateAbility(token, resultCode, resultWant, true);
+}
+
+int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token,
+    int resultCode, const Want *resultWant, bool flag)
+{
     int error;
     MessageParcel data;
     MessageParcel reply;
@@ -196,6 +202,10 @@ int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int 
     }
     if (!data.WriteParcelable(token) || !data.WriteInt32(resultCode) || !data.WriteParcelable(resultWant)) {
         HILOG_ERROR("data write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteBool(flag)) {
+        HILOG_ERROR("data write flag failed.");
         return INNER_ERR;
     }
     error = Remote()->SendRequest(IAbilityManager::TERMINATE_ABILITY, data, reply, option);
@@ -226,6 +236,11 @@ int AbilityManagerProxy::TerminateAbilityByCaller(const sptr<IRemoteObject> &cal
         return error;
     }
     return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::CloseAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
+{
+    return TerminateAbility(token, resultCode, resultWant, false);
 }
 
 int AbilityManagerProxy::ConnectAbility(

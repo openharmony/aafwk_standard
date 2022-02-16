@@ -29,6 +29,12 @@ public:
         int32_t userId, int requestCode));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant));
+    virtual int CloseAbility(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr) override
+    {
+        return 0;
+    }
+
     virtual int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false) override
     {
         return 0;

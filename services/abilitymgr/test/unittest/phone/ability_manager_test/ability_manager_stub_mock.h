@@ -35,6 +35,11 @@ public:
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD2(StartAbility, int(const Want &, int));
     MOCK_METHOD3(TerminateAbility, int(const sptr<IRemoteObject> &, int, const Want *));
+    virtual int CloseAbility(const sptr<IRemoteObject> &token, int resultCode = DEFAULT_INVAL_VALUE,
+        const Want *resultWant = nullptr) override
+    {
+        return 0;
+    }
     virtual int MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser = false) override
     {
         return 0;
