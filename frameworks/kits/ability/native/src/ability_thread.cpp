@@ -1564,7 +1564,12 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
     APP_LOGI("%{public}s begin.", __func__);
     if (!params.empty()) {
         if (abilityImpl_->IsStageBasedModel()) {
-            auto window = currentAbility_->GetWindow();
+            auto scene = currentAbility_->GetScene();
+            if (scene == nullptr) {
+                APP_LOGE("DumpAbilityInfo scene == nullptr");
+                return;
+            }
+            auto window = scene->GetMainWindow();
             if (window == nullptr) {
                 APP_LOGE("DumpAbilityInfo window == nullptr");
                 return;
