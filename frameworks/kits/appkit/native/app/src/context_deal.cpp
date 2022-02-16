@@ -14,6 +14,10 @@
  */
 
 #include "context_deal.h"
+
+#include <regex>
+
+#include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_interface.h"
 #include "app_log_wrapper.h"
@@ -29,11 +33,16 @@
 #define MODE 0771
 namespace OHOS {
 namespace AppExecFwk {
+using namespace OHOS::AbilityRuntime::Constants;
+
 const std::string ContextDeal::CONTEXT_DEAL_FILE_SEPARATOR("/");
 const std::string ContextDeal::CONTEXT_DEAL_CODE_CACHE("code_cache");
 const std::string ContextDeal::CONTEXT_DEAL_Files("files");
 const std::string ContextDeal::CONTEXT_DEAL_NO_BACKUP_Files("no_backup");
 const std::string ContextDeal::CONTEXT_DEAL_DIRNAME("preferences");
+
+ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
+{}
 
 /**
  * Called when getting the ProcessInfo
@@ -122,7 +131,18 @@ void ContextDeal::SetApplicationContext(const std::shared_ptr<Context> &context)
  */
 std::string ContextDeal::GetBundleCodePath()
 {
-    return (applicationInfo_ != nullptr) ? applicationInfo_->codePath : "";
+    if (applicationInfo_ == nullptr) {
+        return "";
+    }
+
+    std::string dir;
+    if (isCreateBySystemApp_) {
+        dir = std::regex_replace(applicationInfo_->codePath, std::regex(ABS_CODE_PATH), LOCAL_BUNDLES);
+    } else {
+        dir = LOCAL_CODE_PATH;
+    }
+
+    return dir;
 }
 
 /**
@@ -456,7 +476,18 @@ std::string ContextDeal::GetBundleName()
  */
 std::string ContextDeal::GetBundleResourcePath()
 {
-    return (abilityInfo_ != nullptr) ? abilityInfo_->resourcePath : "";
+    if (abilityInfo_ == nullptr) {
+        return "";
+    }
+
+    std::string dir;
+    if (isCreateBySystemApp_) {
+        dir = std::regex_replace(abilityInfo_->resourcePath, std::regex(ABS_CODE_PATH), LOCAL_BUNDLES);
+    } else {
+        std::regex pattern(ABS_CODE_PATH + FILE_SEPARATOR + abilityInfo_->bundleName);
+        dir = std::regex_replace(abilityInfo_->resourcePath, pattern, LOCAL_CODE_PATH);
+    }
+    return dir;
 }
 
 /**

@@ -15,6 +15,9 @@
 
 #include "context_impl.h"
 
+#include <regex>
+
+#include "ability_constants.h"
 #include "file_util.h"
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
@@ -26,6 +29,8 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+using namespace OHOS::AbilityRuntime::Constants;
+
 const size_t Context::CONTEXT_TYPE_ID(std::hash<const char*> {} ("Context"));
 const int64_t ContextImpl::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
 const std::string ContextImpl::CONTEXT_DATA_APP("/data/app/");
@@ -56,9 +61,14 @@ std::string ContextImpl::GetBundleName() const
 
 std::string ContextImpl::GetBundleCodeDir()
 {
+    auto appInfo = GetApplicationInfo();
+    if (appInfo == nullptr) {
+        return "";
+    }
+
     std::string dir;
     if (IsCreateBySystemApp()) {
-        dir = CONTEXT_DATA_APP + CONTEXT_ELS[0] + CONTEXT_BUNDLE + GetBundleName();
+        dir = std::regex_replace(appInfo->codePath, std::regex(ABS_CODE_PATH), LOCAL_BUNDLES);
     } else {
         dir = CONTEXT_DATA_STORAGE + CONTEXT_ELS[0] + CONTEXT_BUNDLE;
     }
@@ -240,7 +250,15 @@ void ContextImpl::InitResourceManager(
 
     HILOG_DEBUG(
         "ContextImpl::InitResourceManager moduleResPaths count: %{public}zu", bundleInfo.moduleResPaths.size());
-    for (auto moduleResPath : bundleInfo.moduleResPaths) {
+    std::vector<std::string> moduleResPaths;
+    std::regex pattern(ABS_CODE_PATH);
+    for (auto item : bundleInfo.moduleResPaths) {
+        if (item.empty()) {
+            continue;
+        }
+        moduleResPaths.emplace_back(std::regex_replace(item, pattern, LOCAL_BUNDLES));
+    }
+    for (auto moduleResPath : moduleResPaths) {
         if (!moduleResPath.empty()) {
             HILOG_ERROR("ContextImpl::InitResourceManager length: %{public}zu, moduleResPath: %{public}s",
                 moduleResPath.length(),
