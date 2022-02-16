@@ -193,6 +193,7 @@ int32_t AmsMgrScheduler::KillApplication(const std::string &bundleName)
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;
     }
+
     return amsMgrServiceInner_->KillApplication(bundleName);
 }
 

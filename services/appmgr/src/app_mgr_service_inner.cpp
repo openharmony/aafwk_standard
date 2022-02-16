@@ -451,7 +451,9 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
 void AppMgrServiceInner::ClearUpApplicationData(const std::string &bundleName, int32_t callerUid, pid_t callerPid)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, Constants::DEFAULT_USERID);
+    auto userId = GetUserIdByUid(callerUid);
+    APP_LOGI("userId:%{public}d", userId);
+    ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, userId);
 }
 
 void AppMgrServiceInner::ClearUpApplicationDataByUserId(

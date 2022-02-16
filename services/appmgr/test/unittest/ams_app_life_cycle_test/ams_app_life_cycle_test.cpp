@@ -1486,6 +1486,67 @@ HWTEST_F(AmsAppLifeCycleTest, KillApplication_001, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: Schedule
  * FunctionPoints: Kill application
+ */
+HWTEST_F(AmsAppLifeCycleTest, KillApplication_002, TestSize.Level1)
+{
+    const pid_t NEW_PID = 123;
+    auto abilityInfo = GetAbilityInfoByIndex("0");
+    auto appInfo = GetApplication();
+    sptr<IRemoteObject> token = GetMockToken();
+
+    std::shared_ptr<MockAppSpawnClient> mockClientPtr = std::make_shared<MockAppSpawnClient>();
+    EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(NEW_PID), Return(ERR_OK)));
+
+    serviceInner_->SetAppSpawnClient(mockClientPtr);
+
+    serviceInner_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    BundleInfo bundleInfo;
+    bundleInfo.appId = "com.ohos.test.helloworld_code123";
+    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(
+        appInfo->name, appInfo->name, appInfo->uid, bundleInfo);
+    EXPECT_EQ(appRecord->GetPriorityObject()->GetPid(), NEW_PID);
+
+    pid_t pid = fork();
+    if (pid > 0) {
+        appRecord->GetPriorityObject()->SetPid(pid);
+    }
+
+    sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
+    sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
+    appRecord->SetApplicationClient(client);
+    EXPECT_CALL(*mockAppScheduler, ScheduleProcessSecurityExit()).Times(1);
+
+    int ret = serviceInner_->KillApplication(abilityInfo->applicationName);
+    EXPECT_EQ(ERR_OK, ret);
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle
+ * SubFunction: Schedule
+ * FunctionPoints: Kill application
+ * CaseDescription: Verify if AppMgrService Kill by pid successfully.
+ */
+HWTEST_F(AmsAppLifeCycleTest, KillProcessByPid001, TestSize.Level1)
+{
+    pid_t pid = fork();
+
+    if (pid > 0) {
+        int32_t ret = serviceInner_->KillProcessByPid(pid);
+        EXPECT_EQ(ERR_OK, ret);
+    }
+
+    if (pid == 0) {
+        int32_t ret = serviceInner_->KillProcessByPid(pid);
+        EXPECT_EQ(-1, ret);
+    }
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle
+ * SubFunction: Schedule
+ * FunctionPoints: Kill application
  * CaseDescription: Verify if AppMgrService Kill by pid fail.
  */
 HWTEST_F(AmsAppLifeCycleTest, KillProcessByPid002, TestSize.Level1)
