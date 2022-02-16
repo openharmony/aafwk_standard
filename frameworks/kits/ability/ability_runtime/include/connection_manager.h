@@ -122,6 +122,14 @@ public:
      * @return Returns whether the ability connection of receiver is disconnect.
      */
     bool DisconnectReceiver(const AppExecFwk::ElementName &connectReceiver);
+
+    /**
+     * @brief Report the ability connection leak event.
+     *
+     * @param pid The process id.
+     * @param tid The thread id.
+     */
+    void ReportConnectionLeakEvent(const int pid, const int tid);
 private:
     ConnectionManager() = default;
     bool IsConnectCallerEqual(const sptr<IRemoteObject> &connectCaller, const sptr<IRemoteObject> &connectCallerOther);
