@@ -69,6 +69,8 @@ public:
 
     ErrCode TerminateSelf() override;
 
+    ErrCode CloseAbility() override;
+
     sptr<IRemoteObject> GetToken() override;
 
     void RequestPermissionsFromUser(const std::vector<std::string> &permissions,
