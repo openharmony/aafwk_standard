@@ -280,7 +280,7 @@ HWTEST_F(AbilityWithApplicationsTest, Teminate_Ability_With_Applications_001, Te
     EXPECT_TRUE(curMission != nullptr);
 
     if (topAbility) {
-        EXPECT_EQ("com.ix.test1", topAbility->GetAbilityInfo().applicationName);
+        EXPECT_EQ("com.ix.test2", topAbility->GetAbilityInfo().applicationName);
         EXPECT_NE(BACKGROUND, topAbility->GetAbilityState());
     }
 
@@ -301,7 +301,7 @@ HWTEST_F(AbilityWithApplicationsTest, Teminate_Ability_With_Applications_001, Te
     }
 
     if (topAbility) {
-        EXPECT_EQ("com.ohos.launcher", topAbility->GetAbilityInfo().applicationName);
+        EXPECT_EQ("com.ix.test1", topAbility->GetAbilityInfo().applicationName);
         EXPECT_NE(ACTIVE, topAbility->GetAbilityState());
     }
 
