@@ -50,9 +50,6 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance()
 
 napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value args)
 {
-    napi_valuetype valuetype = napi_valuetype::napi_null;
-    NAPI_CALL(env, napi_typeof(env, args, &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
     char buf[NapiAbilityMgr::BUFFER_LENGTH_MAX] = {0};
     size_t len = 0;
     napi_get_value_string_utf8(env, args, buf, NapiAbilityMgr::BUFFER_LENGTH_MAX, &len);
@@ -1692,6 +1689,9 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
     HILOG_INFO("argc = [%{public}zu]", argc);
 
     std::string bundleName = "";
+    napi_valuetype valuetype = napi_valuetype::napi_null;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
     ParseBundleName(env, bundleName, argv[0]);
 
     bool callBackMode = false;
@@ -1813,6 +1813,9 @@ napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info)
     HILOG_INFO("argc = [%{public}zu]", argc);
 
     std::string bundleName = "";
+    napi_valuetype valuetype = napi_valuetype::napi_null;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String expected.");
     ParseBundleName(env, bundleName, argv[0]);
 
     bool callBackMode = false;
