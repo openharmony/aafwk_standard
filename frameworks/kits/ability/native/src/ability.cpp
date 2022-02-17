@@ -202,7 +202,7 @@ void Ability::OnStart(const Want &want)
         }
 
         if (abilityInfo_->bundleName == LAUNCHER_BUNDLE_NAME && abilityInfo_->name == LAUNCHER_ABILITY_NAME) {
-            winType = Rosen::WindowType::WINDOW_TYPE_WALLPAPER;
+            winType = Rosen::WindowType::WINDOW_TYPE_DESKTOP;
         }
 
         int defualtDisplayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
@@ -3333,7 +3333,7 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
     if (want.GetElement().GetBundleName() == LAUNCHER_BUNDLE_NAME &&
         want.GetElement().GetAbilityName() == LAUNCHER_ABILITY_NAME) {
         APP_LOGI("Set window type for launcher");
-        option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_WALLPAPER);
+        option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_DESKTOP);
     }
 
     APP_LOGI("%{public}s end", __func__);
