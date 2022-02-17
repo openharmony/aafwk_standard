@@ -666,6 +666,10 @@ public:
      */
     void Dump(std::vector<std::string> &info);
 
+    void DumpSys(std::vector<std::string> &info, bool isClient = false);
+
+    void DumpClientInfo(std::vector<std::string> &info, bool isClient = false);
+
     /**
      * dump ability state info.
      *
@@ -866,7 +870,7 @@ private:
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
     bool isSwitchingPause_ = false;
-	
+
 	// new version
     std::shared_ptr<CallContainer> callContainer_ = nullptr;
     bool isStartedByCall_ = false;

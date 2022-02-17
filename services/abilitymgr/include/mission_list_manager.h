@@ -81,6 +81,8 @@ public:
      */
     void OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state);
 
+    void OnAppStateChanged(const AppInfo &info);
+
     /**
      * attach ability thread ipc object.
      *

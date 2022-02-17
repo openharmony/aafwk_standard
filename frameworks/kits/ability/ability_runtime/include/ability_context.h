@@ -32,6 +32,7 @@ namespace OHOS {
 namespace AbilityRuntime {
 using RuntimeTask = std::function<void(int, const AAFwk::Want&)>;
 using PermissionRequestTask = std::function<void(const std::vector<std::string>&, const std::vector<int>&)>;
+class LocalCallContainer;
 class AbilityContext : public Context {
 public:
     virtual ~AbilityContext() = default;
@@ -228,6 +229,13 @@ public:
      * @return Returns ERR_OK if success.
      */
     virtual ErrCode SetMissionLabel(const std::string &label) = 0;
+
+    /**
+     * @brief Get LocalCallContainer.
+     *
+     * @return Returns the LocalCallContainer.
+     */
+    virtual sptr<LocalCallContainer> GetLocalCallContainer() = 0;
 
     virtual void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) = 0;
 

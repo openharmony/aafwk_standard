@@ -306,6 +306,14 @@ void KernalAbilityManager::DumpState(std::vector<std::string> &info)
     }
 }
 
+void KernalAbilityManager::DumpSysState(std::vector<std::string>& info, bool isClient)
+{
+    info.emplace_back("SystemUIRecords:");
+    for (auto &ability : abilities_) {
+        ability->DumpSys(info, isClient);
+    }
+}
+
 void KernalAbilityManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
