@@ -1313,7 +1313,8 @@ ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
     std::string pid = "";
     int option = -1;
     ErrCode result = OHOS::ERR_OK;
-    option = getopt_long(argc_, argv_, SHORT_OPTIONS_ApplicationNotRespondin.c_str(), LONG_OPTIONS_ApplicationNotRespondin, nullptr);
+    option = getopt_long(argc_, argv_, SHORT_OPTIONS_ApplicationNotRespondin.c_str(),
+        LONG_OPTIONS_ApplicationNotRespondin, nullptr);
     HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
     if (optind < 0 || optind > argc_) {
         return OHOS::ERR_INVALID_VALUE;
