@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstdlib>
+#include <getopt.h>
 
 #include "ability_command.h"
 #include "ability_manager_client.h"
-#include <getopt.h>
-#include <stdlib.h>
 #include "iservice_registry.h"
 #include "mission_snapshot.h"
 #include "hilog_wrapper.h"
@@ -1319,12 +1319,11 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
         return OHOS::ERR_INVALID_VALUE;
     }
     if (option == -1) {
-        if ( strcmp(argv_[optind], cmd_.c_str()) == 0) {
+        if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
             HILOG_INFO("'aa %{public}s' %{public}s", HELP_ApplicationNotRespondin.c_str(), cmd_.c_str());
             result = OHOS::ERR_INVALID_VALUE;
         }
-    }
-    else if (option == '?') {
+    } else if (option == '?') {
         switch (optopt) {
             case 'h': {
                 result = OHOS::ERR_INVALID_VALUE;
@@ -1358,8 +1357,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 break;
             }
         }
-     }
-    else {
+     } else {
         switch (option) {
             case 'h': {
                 result = OHOS::ERR_INVALID_VALUE;
