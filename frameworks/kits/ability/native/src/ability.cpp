@@ -81,7 +81,7 @@ static std::mutex formLock;
 
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
-constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 3000;
+constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
 {
