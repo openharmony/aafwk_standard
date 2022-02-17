@@ -31,13 +31,20 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  stop-service                stop service with options\n"
                              "  dump                        dump the ability info\n"
                              "  force-stop <bundle-name>    force stop the process with bundle name\n"
-                             "  test                        start the test framework with options\n";
+                             "  test                        start the test framework with options\n"
+                             "  anr                         Pass in pid with options\n";
 
 const std::string HELP_MSG_SCREEN =
     "usage: aa screen <options>\n"
     "options list:\n"
     "  -h, --help                                                   list available commands\n"
     "  -p, --power <state>                                          power on or off with a state name\n";
+
+const std::string HELP_ANR =
+    "usage: aa anr <options>\n"
+    "options list:\n"
+    "  -h, --help                   list available commands\n"
+    "  -p, --pid                    anr  SendANRProcessID\n";
 
 const std::string HELP_MSG_START =
     "usage: aa start <options>\n"
@@ -136,6 +143,8 @@ private:
     ErrCode RunAsDumpCommand();
     ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
+    ErrCode RunAsSendANRProcessID();
+    sptr<IAbilityManager> GetAbilityManagerService();
 
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
