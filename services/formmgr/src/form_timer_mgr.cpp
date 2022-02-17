@@ -1143,8 +1143,8 @@ void FormTimerMgr::EnsureInitIntervalTimer()
     APP_LOGI("%{public}s, init base timer task", __func__);
     auto timerOption = std::make_shared<FormTimerOption>();
     timerOption->SetType(TIMER_TYPE_ELAPSED_REALTIME);
-    timerOption->SetRepeat(false);
-    timerOption->SetInterval(0);
+    timerOption->SetRepeat(true);
+    timerOption->SetInterval(static_cast<uint64_t>(Constants::MIN_PERIOD));
     timerOption->SetWantAgent(nullptr);
     timerOption->SetCallbackInfo([]() { FormTimerMgr::GetInstance().OnIntervalTimeOut(); });
 
