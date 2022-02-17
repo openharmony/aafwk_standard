@@ -17,13 +17,13 @@
 
 #include "ability_command.h"
 #include "ability_manager_client.h"
+#include "hilog_wrapper.h"
 #include "iservice_registry.h"
 #include "mission_snapshot.h"
-#include "hilog_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
-#include "test_observer.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
+#include "test_observer.h"
 
 using namespace OHOS::AppExecFwk;
 
@@ -1357,7 +1357,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 break;
             }
         }
-     } else {
+    } else {
         switch (option) {
             case 'h': {
                 result = OHOS::ERR_INVALID_VALUE;
