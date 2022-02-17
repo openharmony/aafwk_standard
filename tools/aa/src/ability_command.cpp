@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "ability_command.h"
+
 #include <cstdlib>
 #include <getopt.h>
-
-#include "ability_command.h"
 #include "ability_manager_client.h"
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
