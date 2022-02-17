@@ -375,9 +375,9 @@ public:
         return true;
     }
 
-    virtual bool SendANRProcessID(int pid) override
+    virtual int SendANRProcessID(int pid) override
     {
-        return true;
+        return 0;
     }
 
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));

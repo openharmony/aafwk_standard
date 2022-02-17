@@ -1376,13 +1376,16 @@ void MainThread::HandleANRProcess(int sigMessage)
 {
     if (sigMessage == SIGUSR1) {
         int rFD = -1;
+        std::string mainThreadStackInfo;
         if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_CRASH))) < 0) {
             APP_LOGE("MainThread::HandleANRProcess request file eescriptor failed");
         }
         auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
-        std::string mainThreadStackInfo = jsRuntime->BuildNativeAndJsBackStackTrace();
-        if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
-            APP_LOGE("MainThread::HandleANRProcess write main thread stack info failed");
+        if (jsRuntime != nullptr) {
+            mainThreadStackInfo= jsRuntime->BuildNativeAndJsBackStackTrace();
+            if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
+                APP_LOGE("MainThread::HandleANRProcess write main thread stack info failed");
+            }
         }
         OHOS::HiviewDFX::DfxDumpCatcher dumplog;
         std::string proStackInfo;
@@ -1417,6 +1420,14 @@ void MainThread::Start()
         APP_LOGE("MainThread::static failed. new MainThread failed");
         return;
     }
+
+    APP_LOGI("MainThread::main Register sig handle start");
+    struct sigaction sigAct;
+    sigemptyset(&sigAct.sa_mask);
+    sigAct.sa_flags = 0;
+    sigAct.sa_handler = &MainThread::HandleANRProcess;
+    sigaction(SIGUSR1, &sigAct, NULL);
+    APP_LOGI("MainThread::main Register sig handle end");
 
     APP_LOGI("MainThread::main called start Init");
     thread->Init(runner, runnerWatchDog);
