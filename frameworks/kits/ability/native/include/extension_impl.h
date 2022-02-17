@@ -17,6 +17,7 @@
 #define FOUNDATION_ABILITYRUNTIME_OHOS_EXTENSION_IMPL_H
 
 #include "extension.h"
+#include "lifecycle_state_info.h"
 
 namespace OHOS {
 class IRemoteObject;

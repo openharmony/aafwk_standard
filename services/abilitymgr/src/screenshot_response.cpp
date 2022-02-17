@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 
-#include <chrono>
-#include <thread>
-#include <string.h>
-#include <memory.h>
 #include "hilog_wrapper.h"
 #include "screenshot_response.h"
 

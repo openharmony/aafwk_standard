@@ -40,7 +40,7 @@ constexpr size_t ARGC_THREE = 3;
 const int UPDATE_FORM_PARAMS_SIZE = 2;
 class JsFormExtensionContext final {
 public:
-    JsFormExtensionContext(const std::shared_ptr<FormExtensionContext>& context) : context_(context) {}
+    explicit JsFormExtensionContext(const std::shared_ptr<FormExtensionContext>& context) : context_(context) {}
     ~JsFormExtensionContext() = default;
 
     static void Finalizer(NativeEngine* engine, void* data, void* hint)

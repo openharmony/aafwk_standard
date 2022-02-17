@@ -97,8 +97,8 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     auto abilityInfo = abilityRequest.abilityInfo;
     auto type = abilityInfo.type;
     if (abilityInfo.applicationInfo.isLauncherApp && type == AppExecFwk::AbilityType::PAGE && currentTopAbilityRecord &&
-        AbilityUtil::IsSystemDialogAbility(
-        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
+        AbilityUtil::IsSystemDialogAbility(currentTopAbilityRecord->GetAbilityInfo().bundleName,
+        currentTopAbilityRecord->GetAbilityInfo().name)) {
         HILOG_ERROR("Page ability is dialog type, cannot return to luncher.");
         return ERR_INVALID_VALUE;
     }

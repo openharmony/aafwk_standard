@@ -26,11 +26,13 @@ public:
     MockSceneCreatedAbility() = default;
     virtual ~MockSceneCreatedAbility() = default;
 
-    void OnSceneCreated() {
+    void OnSceneCreated()
+    {
         ++time;
     }
 
-    int GetTriggerTime() {
+    int GetTriggerTime()
+    {
         return time;
     }
 

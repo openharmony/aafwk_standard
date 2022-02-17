@@ -2950,7 +2950,7 @@ napi_value QueryWrap(napi_env env, napi_callback_info info, DAHelperQueryCB *que
     std::vector<std::string> result;
     bool arrayStringbool = false;
     arrayStringbool = NapiValueToArrayStringUtf8(env, args[PARAM1], result);
-    if (arrayStringbool == false) {
+    if (!arrayStringbool) {
         HILOG_ERROR("%{public}s, The return value of arraystringbool is false", __func__);
     }
     queryCB->columns = result;

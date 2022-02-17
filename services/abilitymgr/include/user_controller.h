@@ -18,7 +18,6 @@
 
 #include <unordered_map>
 #include <memory>
-#include <mutex>
 
 #include "user_event_handler.h"
 

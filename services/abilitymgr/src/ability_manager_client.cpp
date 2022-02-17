@@ -280,7 +280,7 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
     int ret = abms->GetMissionSnapshot(missionId, missionPixelMap);
     if (ret == ERR_OK) {
         HILOG_INFO("missionPixelMap.imageInfo.shmKey: %{public}d", missionPixelMap.imageInfo.shmKey);
-        if (0 == missionPixelMap.imageInfo.size) {
+        if (missionPixelMap.imageInfo.size == 0) {
             HILOG_INFO("size is 0.");
             return -1;
         }
@@ -294,8 +294,8 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
         mediaOption.size.height = missionPixelMap.imageInfo.height;
         mediaOption.pixelFormat = Media::PixelFormat::BGRA_8888;
         mediaOption.editable = true;
-        auto pixel =
-            Media::PixelMap::Create((const uint32_t *)data, missionPixelMap.imageInfo.size / sizeof(uint32_t), mediaOption);
+        auto pixel = Media::PixelMap::Create((const uint32_t *)data,
+            missionPixelMap.imageInfo.size / sizeof(uint32_t), mediaOption);
         if (!pixel) {
             HILOG_INFO(" Media::PixelMap::Create return value is nullptr.");
             return -1;

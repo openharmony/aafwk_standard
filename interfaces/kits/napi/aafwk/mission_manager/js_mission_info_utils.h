@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef OHOS_ABILITY_RUNTIME_JS_MISSION_INFO_UTILS_H
+#define OHOS_ABILITY_RUNTIME_JS_MISSION_INFO_UTILS_H
+
 #include "js_runtime_utils.h"
 #include "mission_info.h"
 #include "mission_snapshot.h"
@@ -22,9 +25,6 @@
 #include "native_engine/native_engine.h"
 #include "ohos/aafwk/content/want_params_wrapper.h"
 #include "want.h"
-
-#ifndef OHOS_ABILITY_RUNTIME_JS_MISSION_INFO_UTILS_H
-#define OHOS_ABILITY_RUNTIME_JS_MISSION_INFO_UTILS_H
 
 namespace OHOS {
 namespace AbilityRuntime {
