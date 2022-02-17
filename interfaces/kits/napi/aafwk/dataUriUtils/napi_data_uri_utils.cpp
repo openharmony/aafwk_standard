@@ -14,8 +14,8 @@
  */
 #include "napi_data_uri_utils.h"
 
+#include <cinttypes>
 #include <cstring>
-#include <inttypes.h>
 #include <vector>
 
 #include "data_uri_utils.h"

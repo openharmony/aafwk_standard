@@ -49,7 +49,7 @@ public:
     MOCK_METHOD1(GetConfiguration, int(AppExecFwk::Configuration &));
 
     MockAmsMgrScheduler() : AmsMgrStub() {};
-    virtual ~MockAmsMgrScheduler(){};
+    virtual ~MockAmsMgrScheduler() {};
     virtual void RegisterAppStateCallback(const sptr<IAppStateCallback> &callback) override
     {
         callback->OnAbilityRequestDone(nullptr, AbilityState::ABILITY_STATE_BACKGROUND);

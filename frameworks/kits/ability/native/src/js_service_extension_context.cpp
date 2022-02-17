@@ -45,7 +45,7 @@ constexpr size_t ARGC_FOUR = 4;
 
 class JsServiceExtensionContext final {
 public:
-    JsServiceExtensionContext(const std::shared_ptr<ServiceExtensionContext>& context) : context_(context) {}
+    explicit JsServiceExtensionContext(const std::shared_ptr<ServiceExtensionContext>& context) : context_(context) {}
     ~JsServiceExtensionContext() = default;
 
     static void Finalizer(NativeEngine* engine, void* data, void* hint)

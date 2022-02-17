@@ -1953,7 +1953,7 @@ nlohmann::json Want::ToJson() const
         entitiesJson.emplace_back(entity);
     }
 
-    nlohmann::json wantJson = nlohmann::json{
+    nlohmann::json wantJson = nlohmann::json {
         {"deviceId", operation_.GetDeviceId()},
         {"bundleName", operation_.GetBundleName()},
         {"abilityName", operation_.GetAbilityName()},

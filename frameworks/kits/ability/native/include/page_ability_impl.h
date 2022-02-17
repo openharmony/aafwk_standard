@@ -67,7 +67,7 @@ public:
       * @return return true if the lifecycle transaction successfully, otherwise return false.
       *
       */
-     bool AbilityTransactionNew(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
+    bool AbilityTransactionNew(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
 
     /**
      * @brief Execution the KeyDown callback of the ability

@@ -15,8 +15,6 @@
 
 #include "form_runtime/js_form_extension.h"
 
-#include <string>
-
 #include "ability_info.h"
 #include "form_provider_data.h"
 #include "form_runtime/form_extension_provider_client.h"

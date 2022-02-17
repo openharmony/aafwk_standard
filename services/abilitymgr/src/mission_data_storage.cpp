@@ -15,8 +15,6 @@
 
 #include "mission_data_storage.h"
 
-#include <cctype>
-
 #include "file_util.h"
 #include "hilog_wrapper.h"
 #include "image_source.h"

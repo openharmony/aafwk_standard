@@ -318,7 +318,7 @@ void GetMissionSnapshotInfoForResult(napi_env env, MissionSnapshot &recentMissio
         napi_value iconResult = nullptr;
         iconResult = Media::PixelMapNapi::CreatePixelMap(env, recentMissionInfos.snapshot);
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", iconResult));
-    }else{
+    } else {
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", NapiGetNull(env)));
     }
 }
@@ -833,7 +833,7 @@ napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info in
         callBackMode = true;
     }
 
-    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo{
+    AsyncMissionInfosCallbackInfo *async_callback_info = new (std::nothrow) AsyncMissionInfosCallbackInfo {
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
@@ -1854,7 +1854,7 @@ auto NAPI_GetAbilityMissionSnapshotAsyncExecute = [](napi_env env, void *data) {
     HILOG_INFO("GetAbilityMissionSnapshotWrap called...");
     AsyncGetMissionSnapshot *async_callback_info = (AsyncGetMissionSnapshot *)data;
     AAFwk::AbilityManagerClient::GetInstance()->GetMissionSnapshot(async_callback_info->missionId,
-    async_callback_info->missionSnapshot);
+        async_callback_info->missionSnapshot);
 };
 
 auto NAPI_GetAbilityMissionSnapshotAsyncCompleteCallback = [](napi_env env, napi_status status, void *data) {
@@ -1955,7 +1955,7 @@ napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
     }
 
     AsyncGetMissionSnapshot *async_callback_info =
-        new (std::nothrow) AsyncGetMissionSnapshot{.env = env, .asyncWork = nullptr, .deferred = nullptr};
+        new (std::nothrow) AsyncGetMissionSnapshot {.env = env, .asyncWork = nullptr, .deferred = nullptr};
     if (async_callback_info == nullptr) {
         return NapiGetNull(env);
     }
