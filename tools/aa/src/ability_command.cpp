@@ -14,9 +14,9 @@
  */
 
 #include "ability_command.h"
-
-#include <getopt.h>
 #include "ability_manager_client.h"
+#include <getopt.h>
+#include <stdlib.h>
 #include "iservice_registry.h"
 #include "mission_snapshot.h"
 #include "hilog_wrapper.h"
@@ -24,7 +24,6 @@
 #include "test_observer.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
-#include <stdlib.h>
 
 using namespace OHOS::AppExecFwk;
 
@@ -1321,7 +1320,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
     }
     if (option == -1) {
         if ( strcmp(argv_[optind], cmd_.c_str()) == 0) {
-            HILOG_INFO("'aa %{public}s' %{public}s", HELP_ANR.c_str(), cmd_.c_str());
+            HILOG_INFO("'aa %{public}s' %{public}s", HELP_ApplicationNotRespondin.c_str(), cmd_.c_str());
             result = OHOS::ERR_INVALID_VALUE;
         }
     }
@@ -1332,7 +1331,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 break;
             }
             case 'p': {
-                HILOG_INFO("'aa anr -p' with no argument.");
+                HILOG_INFO("'aa ApplicationNotRespondin -p' with no argument.");
                 resultReceiver_.append("error: option -p ");
                 resultReceiver_.append("' requires a value.\n");
                 result = OHOS::ERR_INVALID_VALUE;
@@ -1342,7 +1341,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 std::string unknownOption = "";
                 std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                HILOG_INFO("'aa anr' with an unknown option.");
+                HILOG_INFO("'aa ApplicationNotRespondin' with an unknown option.");
 
                 resultReceiver_.append(unknownOptionMsg);
                 result = OHOS::ERR_INVALID_VALUE;
@@ -1352,7 +1351,7 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 std::string unknownOption = "";
                 std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
 
-                HILOG_INFO("'aa anr' with an unknown option.");
+                HILOG_INFO("'aa ApplicationNotRespondin' with an unknown option.");
 
                 resultReceiver_.append(unknownOptionMsg);
                 result = OHOS::ERR_INVALID_VALUE;
@@ -1366,11 +1365,11 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
                 result = OHOS::ERR_INVALID_VALUE;
                 break;
             }
-            case 'p':{
-                HILOG_INFO("aa anr 'aa %{public}s'  -p process.", cmd_.c_str());
-                HILOG_INFO("aa anr 'aa optarg =  %{public}s'.", optarg);
+            case 'p': {
+                HILOG_INFO("aa ApplicationNotRespondin 'aa %{public}s'  -p process.", cmd_.c_str());
+                HILOG_INFO("aa ApplicationNotRespondin 'aa optarg =  %{public}s'.", optarg);
                 pid = optarg;
-                HILOG_INFO("aa anr 'aa pid =  %{public}s'.", pid.c_str());
+                HILOG_INFO("aa ApplicationNotRespondinr 'aa pid =  %{public}s'.", pid.c_str());
                 break;
             }
             case 0: {
@@ -1389,12 +1388,12 @@ ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
     if (result == OHOS::ERR_OK) {
         HILOG_INFO("'aa pid = %{public}d'.", atoi(pid.c_str()));
         abilityMs_ = GetAbilityManagerService();
-        if(abilityMs_ == nullptr){
+        if (abilityMs_ == nullptr) {
             std::cout << "abilityMsObj is nullptr";
         }
         abilityMs_->SendANRProcessID(atoi(pid.c_str()));
-    }else{
-        resultReceiver_.append(HELP_ANR+ "\n");
+    } else {
+        resultReceiver_.append(HELP_ApplicationNotRespondin+ "\n");
         result = OHOS::ERR_INVALID_VALUE;
     }
     return result;

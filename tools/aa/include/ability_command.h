@@ -40,7 +40,7 @@ const std::string HELP_MSG_SCREEN =
     "  -h, --help                                                   list available commands\n"
     "  -p, --power <state>                                          power on or off with a state name\n";
 
-const std::string HELP_ANR =
+const std::string HELP_ApplicationNotRespondin =
     "usage: aa anr <options>\n"
     "options list:\n"
     "  -h, --help                   list available commands\n"
