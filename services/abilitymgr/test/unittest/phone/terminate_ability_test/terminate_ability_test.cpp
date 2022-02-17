@@ -517,7 +517,7 @@ HWTEST_F(TerminateAbilityTest, AAFWK_g_aamsTerminateAbility_008, TestSize.Level1
     // caller is active
     EXPECT_NE(testAbilityRecordA->GetAbilityState(), OHOS::AAFwk::AbilityState::BACKGROUND);
     // clear launcherAbilityRecord
-    EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), 0);
+    EXPECT_EQ(g_aams->TerminateAbility(tokenA, -1, nullptr), ERR_INVALID_VALUE);
     WaitUntilTaskFinished();
 }
 
