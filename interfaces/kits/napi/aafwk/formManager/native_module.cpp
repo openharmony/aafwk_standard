@@ -14,9 +14,9 @@
  */
 #include "napi/native_api.h"
 
+#include <cstdio>
+#include <cstring>
 #include <pthread.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #include "napi/native_node_api.h"

@@ -16,8 +16,9 @@
 #ifndef OHOS_ZIDLTESTSERVICESTUB_H
 #define OHOS_ZIDLTESTSERVICESTUB_H
 
-#include "izidl_test_service.h"
 #include <iremote_stub.h>
+
+#include "izidl_test_service.h"
 
 namespace OHOS {
 class ZidlTestServiceStub : public IRemoteStub<IZidlTestService> {

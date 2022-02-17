@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-#include "mission_listener_stub.h"
-#include "native_engine/native_engine.h"
-
 #ifndef OHOS_ABILITY_RUNTIME_MISSION_MANAGER_H
 #define OHOS_ABILITY_RUNTIME_MISSION_MANAGER_H
+
+#include "mission_listener_stub.h"
+#include "native_engine/native_engine.h"
 
 namespace OHOS {
 namespace AbilityRuntime {

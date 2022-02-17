@@ -166,7 +166,8 @@ int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return 1;
 }
 
-int AbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+int AbilityImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
+    const NativeRdb::DataAbilityPredicates &predicates)
 {
     GTEST_LOG_(INFO) << "Mock AbilityImpl::Update called";
     return 1;

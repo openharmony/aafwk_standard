@@ -23,7 +23,7 @@ namespace AbilityRuntime {
 namespace {
 class FormBindingData {
 public:
-    FormBindingData(const std::shared_ptr<AppExecFwk::FormProviderData>& formProviderData)
+    explicit FormBindingData(const std::shared_ptr<AppExecFwk::FormProviderData>& formProviderData)
         : formProviderData_(formProviderData) {}
     ~FormBindingData() = default;
 

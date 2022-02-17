@@ -16,7 +16,6 @@
 #include "data_ability_result.h"
 
 #include <memory>
-#include <string>
 
 #include "parcel_macro.h"
 

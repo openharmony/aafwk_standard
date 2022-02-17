@@ -14,10 +14,11 @@
  */
 
 #include "shared_memory.h"
-#include <stdlib.h>
-#include <sys/shm.h>
+
 #include <cerrno>
+#include <cstdlib>
 #include <cstring>
+#include <sys/shm.h>
 #include "hilog_wrapper.h"
 #include "securec.h"
 
@@ -77,8 +78,6 @@ int SharedMemory::PushSharedMemory(const void *data, const int size)
         return -1;
     }
 
-    // memcpy(shared, data, size);
-
     if (shmdt(shared) == -1) {
         ReleaseShmId(shmId);
         HILOG_ERROR("shmdt failed: %{public}d.", errno);
@@ -115,7 +114,6 @@ void* SharedMemory::PopSharedMemory(int shmKey, int size)
         HILOG_ERROR("Failed to memory copy, retCode[%{public}d].", retCode);
         return nullptr;
     }
-    // memcpy(data, shared, size);
 
     if (shmdt(shared) == -1) {
         ReleaseShmId(shmId);
