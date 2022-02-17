@@ -1379,6 +1379,7 @@ void MainThread::HandleANRProcess(int sigMessage)
         std::string mainThreadStackInfo;
         if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_CRASH))) < 0) {
             APP_LOGE("MainThread::HandleANRProcess request file eescriptor failed");
+            return;
         }
         auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
         if (jsRuntime != nullptr) {
