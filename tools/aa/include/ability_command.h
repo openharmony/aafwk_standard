@@ -29,8 +29,7 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  help                        list available commands\n"
                              "  start                       start ability with options\n"
                              "  stop-service                stop service with options\n"
-                             "  dump                        dump the ability stack info\n"
-                             "  dumpsys                     dump the ability info\n"
+                             "  dump                        dump the ability info\n"
                              "  force-stop <bundle-name>    force stop the process with bundle name\n"
                              "  test                        start the test framework with options\n";
 
@@ -63,17 +62,24 @@ const std::string HELP_MSG_DUMP = "usage: aa dump <options>\n"
                                   "  -e, --serv                   dump the service abilities\n"
                                   "  -d, --data                   dump the data abilities\n";
 
-const std::string HELP_MSG_DUMPSYS = "usage: aa dumpsys <options>\n"
+const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
                                   "options list:\n"
                                   "  -h, --help                   list available commands\n"
                                   "  -a, --all                    dump all abilities\n"
                                   "  -l, --mission-list           dump mission list\n"
                                   "  -i, --ability                dump abilityRecordId\n"
-                                  "  -e, --extension              dump elementName\n"
+                                  "  -e, --extension              dump elementName (API7 ExtensionRecords,"
+                                                                                   "API8 serviceAbilityRecords)\n"                                                                 
                                   "  -p, --pending                dump pendingWantRecordId\n"
                                   "  -r, --process                dump process\n"
+                                  "  -d, --data                   dump the data abilities\n"
+                                  "  -k, --ui                     dump the kenarl ability list ui stack\n"
                                   "  -u, --userId                 userId\n"
-                                  "  -c, --client                 client\n";
+                                  "  -c, --client                 client\n"
+                                  "  -c, -u are auxiliary parameters and cannot be used alone\n"
+                                  "  The original -s parameter is invalid\n"
+                                  "  The original -m parameter is invalid\n";
+
 
 const std::string HELP_MSG_TEST =
     "usage: aa test <options>\n"
@@ -133,8 +139,6 @@ private:
 
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
-    ErrCode RunAsDumpSysCommandOptopt();
-
     ErrCode RunAsTestCommand();
     bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
     ErrCode TestCommandError(const std::string &info);

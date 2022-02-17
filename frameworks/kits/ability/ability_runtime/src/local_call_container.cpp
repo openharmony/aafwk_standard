@@ -119,6 +119,31 @@ int LocalCallContainer::Release(const std::shared_ptr<CallerCallBack>& callback)
 void LocalCallContainer::DumpCalls(std::vector<std::string> &info) const
 {
     HILOG_DEBUG("LocalCallContainer::DumpCalls called.");
+    info.emplace_back("          caller connections:");
+    for (auto iter = callProxyRecords_.begin(); iter != callProxyRecords_.end(); iter++) {
+        std::string tempstr = "            LocalCallRecord";
+        tempstr += " ID #" + std::to_string (iter->second->GetRecordId()) + "\n";
+        tempstr += "              callee";
+        tempstr += " uri[" + iter->first + "]" + "\n";
+        tempstr += "              callers #" + std::to_string (iter->second->GetCallers().size());
+        bool flag = true;
+        for (auto &callBack:iter->second->GetCallers()) {
+            if (callBack && !callBack->IsCallBack()) {
+                HILOG_INFO("%{public}s call back is not called.", __func__);
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            HILOG_INFO("%{public}s state is REQUESTEND.", __func__);
+            tempstr += "  state #REQUESTEND";
+        } else {
+            HILOG_INFO("%{public}s state is REQUESTING.", __func__);
+            tempstr += "  state #REQUESTING";
+        }
+        info.emplace_back(tempstr);
+    }
+    return;
 }
 
 void LocalCallContainer::OnAbilityConnectDone(

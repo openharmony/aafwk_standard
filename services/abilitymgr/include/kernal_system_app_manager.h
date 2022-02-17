@@ -79,6 +79,8 @@ public:
 
     void DumpState(std::vector<std::string> &info);
 
+    void DumpSysState(std::vector<std::string> &info, bool isClient = false);
+
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
 
     void OnTimeOut(uint32_t msgId, int64_t eventId);
