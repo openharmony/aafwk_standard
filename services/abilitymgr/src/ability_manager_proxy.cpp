@@ -15,10 +15,6 @@
 
 #include "ability_manager_proxy.h"
 
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-
 #include "errors.h"
 #include "string_ex.h"
 

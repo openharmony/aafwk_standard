@@ -16,8 +16,6 @@
 #ifndef FOUNDATION_OHOS_ABILITYRUNTIME_RUNTIME_H
 #define FOUNDATION_OHOS_ABILITYRUNTIME_RUNTIME_H
 
-#include <cstdint>
-#include <memory>
 #include <string>
 
 namespace OHOS {

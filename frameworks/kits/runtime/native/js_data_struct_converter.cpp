@@ -32,8 +32,6 @@ NativeValue* CreateJsWantObject(NativeEngine& engine, const AAFwk::Want& want)
     object->SetProperty("type", CreateJsValue(engine, want.GetType()));
     object->SetProperty("flags", CreateJsValue(engine, want.GetFlags()));
     object->SetProperty("action", CreateJsValue(engine, want.GetAction()));
-    // object->SetProperty("parameters");
-
     object->SetProperty("entities", CreateNativeArray(engine, want.GetEntities()));
     return objValue;
 }

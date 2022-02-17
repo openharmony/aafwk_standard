@@ -15,8 +15,6 @@
 
 #include "ability_thread.h"
 
-#include <functional>
-
 #include "ability_context_impl.h"
 #include "ability_impl_factory.h"
 #include "ability_loader.h"

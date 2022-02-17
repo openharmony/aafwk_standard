@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
+#include "extension_impl.h"
+
 #include "ability_manager_client.h"
 #include "ability_local_record.h"
 #include "bytrace.h"
 #include "extension_context.h"
-#include "extension_impl.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {

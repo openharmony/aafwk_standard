@@ -16,8 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_MOCK_CONTINUATION_ABILITY_H
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_CONTINUATION_ABILITY_H
 
-#include "ability.h"
 #include <gtest/gtest.h>
+
+#include "ability.h"
 
 namespace OHOS {
 namespace AppExecFwk {

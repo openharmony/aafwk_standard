@@ -301,7 +301,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, Test
         imageInfo.format = 10;
         promise->Resolve(imageInfo);
     }).detach();
-    auto ret = stackManager_->GetMissionSnapshot(missionId,missionPixelMap);
+    auto ret = stackManager_->GetMissionSnapshot(missionId, missionPixelMap);
 
     EXPECT_TRUE(missionPixelMap.topAbility.abilityName_ == "LauncherAbility");
     EXPECT_TRUE(missionPixelMap.topAbility.bundleName_ == "com.ix.hiworld");

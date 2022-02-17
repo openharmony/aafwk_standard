@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "ability_local_record.h"
 #include "extension.h"
+
+#include "ability_local_record.h"
 #include "extension_context.h"
 #include "hilog_wrapper.h"
 

@@ -196,7 +196,8 @@ bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject
     return true;
 }
 
-int MockServiceAbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
+int MockServiceAbilityManagerService::CompelVerifyPermission(const std::string &permission,
+    int pid, int uid, std::string &message)
 {
     return 0;
 }

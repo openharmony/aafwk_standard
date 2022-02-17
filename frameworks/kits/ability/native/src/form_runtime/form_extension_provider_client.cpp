@@ -15,7 +15,6 @@
 
 #include "form_runtime/form_extension_provider_client.h"
 
-#include <cinttypes>
 #include "string_ex.h"
 
 #include "app_log_wrapper.h"
