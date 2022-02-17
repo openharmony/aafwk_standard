@@ -239,7 +239,7 @@ std::string MissionList::GetTypeName()
             return "NORMAL";
         }
         case MissionListType::DEFAULT_STANDARD: {
-            return "DEFAULT_STAND";
+            return "DEFAULT_STANDARD";
         }
         case MissionListType::DEFAULT_SINGLE: {
             return "DEFAULT_SINGLE";
@@ -282,12 +282,12 @@ void MissionList::DumpStateByRecordId(
 }
 void MissionList::DumpList(std::vector<std::string> &info, bool isClient)
 {
-    std::string dumpInfo = "  MissionList Type #" + GetTypeName();
+    std::string dumpInfo = "    MissionList Type #" + GetTypeName();
     info.push_back(dumpInfo);
 
     for (const auto& mission : missions_) {
         if (mission) {
-            dumpInfo = "    Mission ID #" + std::to_string(mission->GetMissionId());
+            dumpInfo = "      Mission ID #" + std::to_string(mission->GetMissionId());
             dumpInfo += "  mission name #[" + mission->GetMissionName() + "]" +
                 "  lockedState #" + std::to_string(mission->IsLockedState());
             info.push_back(dumpInfo);

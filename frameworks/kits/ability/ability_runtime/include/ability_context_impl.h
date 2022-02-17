@@ -117,6 +117,16 @@ public:
         return contentStorage_;
     }
 
+    /**
+     * @brief Get LocalCallContainer.
+     *
+     * @return Returns the LocalCallContainer.
+     */
+    sptr<LocalCallContainer> GetLocalCallContainer() override
+    {
+        return localCallContainer_;
+    }
+
     void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) override;
 
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const override;

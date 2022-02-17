@@ -321,6 +321,13 @@ void KernalSystemAppManager::DumpState(std::vector<std::string> &info)
         ability->Dump(info);
     }
 }
+void KernalSystemAppManager::DumpSysState(std::vector<std::string> &info, bool isClient)
+{
+    info.emplace_back("SystemUIRecords:");
+    for (auto &ability : abilities_) {
+        ability->DumpSys(info, isClient);
+    }
+}
 
 void KernalSystemAppManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {

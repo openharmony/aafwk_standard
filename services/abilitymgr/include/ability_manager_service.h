@@ -913,6 +913,8 @@ public:
         KEY_DUMPSYS_SERVICE,
         KEY_DUMPSYS_PENDING,
         KEY_DUMPSYS_PROCESS,
+        KEY_DUMPSYS_DATA,
+        KEY_DUMPSYS_SYSTEM_UI,
     };
 
     friend class AbilityStackManager;
@@ -1071,17 +1073,21 @@ private:
      */
     void DumpSysFuncInit();
     void DumpSysInner(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DumpSysMissionListInner(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DumpSysAbilityInner(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DumpSysStateInner(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DumpSysPendingInner(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DumpSysProcess(
-        const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId);
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
+    void DataDumpSysStateInner(
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
+    void SystemDumpSysStateInner(
+        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
 
     void InitConnectManager(int32_t userId, bool switchUser);
     void InitDataAbilityManager(int32_t userId, bool switchUser);

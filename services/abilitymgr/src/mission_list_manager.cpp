@@ -592,6 +592,63 @@ void MissionListManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, 
     }
 }
 
+void MissionListManager::OnAppStateChanged(const AppInfo &info)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+
+    if (info.state == AppState::TERMINATED || info.state == AppState::END) {
+        for (const auto& abilityRecord : terminateAbilityList_) {
+            if (!abilityRecord) {
+                HILOG_ERROR("abilityRecord is nullptr.");
+                continue;
+            }
+            if (info.processName == abilityRecord->GetAbilityInfo().process ||
+                info.processName == abilityRecord->GetApplicationInfo().bundleName) {
+                abilityRecord->SetAppState(info.state);
+            }
+        }
+    } else {
+        for (const auto& missionList : currentMissionLists_) {
+            auto missions = missionList->GetAllMissions();
+            for (const auto& missionInfo : missions) {
+                if (!missionInfo) {
+                    HILOG_ERROR("missionInfo is nullptr.");
+                    continue;
+                }
+                auto abilityRecord = missionInfo->GetAbilityRecord();
+                if (info.processName == abilityRecord->GetAbilityInfo().process ||
+                    info.processName == abilityRecord->GetApplicationInfo().bundleName) {
+                    abilityRecord->SetAppState(info.state);
+                }
+            }
+        }
+        auto defaultStandardListmissions = defaultStandardList_->GetAllMissions();
+        for (const auto& missionInfo : defaultStandardListmissions) {
+            if (!missionInfo) {
+                HILOG_ERROR("defaultStandardListmissions is nullptr.");
+                continue;
+            }
+            auto abilityRecord = missionInfo->GetAbilityRecord();
+            if (info.processName == abilityRecord->GetAbilityInfo().process ||
+                info.processName == abilityRecord->GetApplicationInfo().bundleName) {
+                abilityRecord->SetAppState(info.state);
+            }
+        }
+        auto defaultSingleListmissions = defaultSingleList_->GetAllMissions();
+        for (const auto& missionInfo : defaultSingleListmissions) {
+            if (!missionInfo) {
+                HILOG_ERROR("defaultSingleListmissions is nullptr.");
+                continue;
+            }
+            auto abilityRecord = missionInfo->GetAbilityRecord();
+            if (info.processName == abilityRecord->GetAbilityInfo().process ||
+                info.processName == abilityRecord->GetApplicationInfo().bundleName) {
+                abilityRecord->SetAppState(info.state);
+            }
+        }
+    }
+}
+
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByToken(
     const sptr<IRemoteObject> &token) const
 {
@@ -1609,47 +1666,49 @@ void MissionListManager::DumpMissionListByRecordId(
 void MissionListManager::DumpMissionList(std::vector<std::string> &info, bool isClient, const std::string &args)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
+
+    if (args.size() != 0 &&
+        args != "NORMAL" &&
+        args != "DEFAULT_STANDARD" &&
+        args != "DEFAULT_SINGLE" &&
+        args != "LAUNCHER") {
+        info.emplace_back("MissionList Type NORMAL|DEFAULT_STANDARD|DEFAULT_SINGLE|LAUNCHER");
+        return;
+    }
+
     std::string dumpInfo = "User ID #" + std::to_string(userId_);
     info.push_back(dumpInfo);
     if (args.size() == 0 || args == "NORMAL") {
-        dumpInfo = " current mission lists:{";
+        dumpInfo = "  Current mission lists:";
         info.push_back(dumpInfo);
         for (const auto& missionList : currentMissionLists_) {
             if (missionList) {
                 missionList->DumpList(info, isClient);
             }
         }
-        dumpInfo = " }";
-        info.push_back(dumpInfo);
     }
 
     if (args.size() == 0 || args == "DEFAULT_STANDARD") {
-        dumpInfo = " default stand mission list:{";
+        dumpInfo = "  default stand mission list:";
         info.push_back(dumpInfo);
         if (defaultStandardList_) {
             defaultStandardList_->DumpList(info, isClient);
         }
-        dumpInfo = " }";
-        info.push_back(dumpInfo);
     }
 
     if (args.size() == 0 || args == "DEFAULT_SINGLE") {
-        dumpInfo = " default single mission list:{";
+        dumpInfo = "  default single mission list:";
         info.push_back(dumpInfo);
         if (defaultSingleList_) {
             defaultSingleList_->DumpList(info, isClient);
         }
-        dumpInfo = " }";
-        info.push_back(dumpInfo);
     }
     if (args.size() == 0 || args == "LAUNCHER") {
-        dumpInfo = " launcher mission list:{";
+        dumpInfo = "  launcher mission list:";
         info.push_back(dumpInfo);
         if (launcherList_) {
             launcherList_->DumpList(info, isClient);
         }
-        dumpInfo = " }";
-        info.push_back(dumpInfo);
     }
 }
 
