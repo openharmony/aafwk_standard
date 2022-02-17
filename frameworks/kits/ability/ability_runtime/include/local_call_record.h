@@ -32,6 +32,7 @@ public:
     virtual ~LocalCallRecord();
 
     void SetRemoteObject(const sptr<IRemoteObject> &call);
+    void SetRemoteObject(const sptr<IRemoteObject> &call, sptr<IRemoteObject::DeathRecipient> callRecipient);
     void AddCaller(const std::shared_ptr<CallerCallBack> &callback);
     bool RemoveCaller(const std::shared_ptr<CallerCallBack> &callback);
     void OnCallStubDied(const wptr<IRemoteObject> &remote);
@@ -41,6 +42,7 @@ public:
     bool IsExistCallBack() const;
     int GetRecordId();
     std::vector<std::shared_ptr<CallerCallBack>> GetCallers();
+    bool IsSameObject(const sptr<IRemoteObject> &remote);
 
 private:
     static int64_t callRecordId;

@@ -50,6 +50,21 @@ void LocalCallRecord::SetRemoteObject(const sptr<IRemoteObject> &call)
     HILOG_DEBUG("SetRemoteObject complete.");
 }
 
+void LocalCallRecord::SetRemoteObject(const sptr<IRemoteObject> &call,
+    sptr<IRemoteObject::DeathRecipient> callRecipient)
+{
+    if (!call) {
+        HILOG_ERROR("remote object is nullptr");
+        return;
+    }
+
+    remoteObject_ = call;
+    callRecipient_ = callRecipient;
+
+    remoteObject_->AddDeathRecipient(callRecipient_);
+    HILOG_DEBUG("SetRemoteObject2 complete.");
+}
+
 void LocalCallRecord::AddCaller(const std::shared_ptr<CallerCallBack> &callback)
 {
     callers_.emplace_back(callback);
@@ -122,6 +137,19 @@ int LocalCallRecord::GetRecordId()
 std::vector<std::shared_ptr<CallerCallBack>> LocalCallRecord::GetCallers()
 {
     return callers_;
+}
+
+bool LocalCallRecord::IsSameObject(const sptr<IRemoteObject> &remote)
+{
+    if (remote == nullptr) {
+        HILOG_ERROR("input remote object is nullptr");
+        return false;
+    }
+
+    bool retval = remoteObject_ == remote;
+    HILOG_DEBUG("LocalCallRecord::%{public}s the input object same as local object is %{public}s.",
+        __func__, retval ? "true" : "false");
+    return retval;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS
