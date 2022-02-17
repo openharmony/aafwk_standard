@@ -160,15 +160,16 @@ static void OnStartAms()
         if (AbilityMgrModuleTest::abilityMgrServ_->state_ == ServiceRunningState::STATE_RUNNING) {
             return;
         }
-
         AbilityMgrModuleTest::abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
         AbilityMgrModuleTest::abilityMgrServ_->eventLoop_ =
             AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_);
 
-        AbilityMgrModuleTest::abilityMgrServ_->handler_ =
-            std::make_shared<AbilityEventHandler>(AbilityMgrModuleTest::abilityMgrServ_->eventLoop_,
-                                                    AbilityMgrModuleTest::abilityMgrServ_);
+        AbilityMgrModuleTest::abilityMgrServ_->handler_ =std::make_shared<AbilityEventHandler>(
+            AbilityMgrModuleTest::abilityMgrServ_->eventLoop_, AbilityMgrModuleTest::abilityMgrServ_);
+        AbilityMgrModuleTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        AbilityMgrModuleTest::abilityMgrServ_->connectManagers_.emplace(0,
+            AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
 
@@ -176,17 +177,25 @@ static void OnStartAms()
             SetEventHandler(AbilityMgrModuleTest::abilityMgrServ_->handler_);
 
         AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManagers_.emplace(0,
+            AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->dataAbilityManager_);
 
         AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_);
         AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_->Parse();
 
+        AbilityMgrModuleTest::abilityMgrServ_->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
+        AbilityMgrModuleTest::abilityMgrServ_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
+        AbilityMgrModuleTest::abilityMgrServ_->currentMissionListManager_->Init();
+
         AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
 
         int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
         AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
+        AbilityMgrModuleTest::abilityMgrServ_->stackManagers_.emplace(0,
+            AbilityMgrModuleTest::abilityMgrServ_->GetStackManager());
         AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
 
@@ -219,7 +228,6 @@ void AbilityMgrModuleTest::SetUp(void)
     scheduler_ = new MockAbilityScheduler();
     if (!doOnce_) {
         doOnce_ = true;
-
         MockAppClent();
     }
     WaitAMS();
@@ -281,7 +289,7 @@ std::shared_ptr<AbilityRecord> AbilityMgrModuleTest::GreatePageAbility(
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     int testRequestCode = 1;
     SetActive();
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     WaitAMS();
 
     auto stack = abilityMgrServ_->GetStackManager();
@@ -550,7 +558,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
 
     EXPECT_TRUE(testResult);
     EXPECT_TRUE(testToken);
@@ -1031,15 +1039,14 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
                            const AbilityInfo &abilityInfo,
                            const ApplicationInfo &appInfo) {
         testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
+        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName;
         return AppMgrResultCode::RESULT_OK;
     };
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
     SetActive();
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     EXPECT_TRUE(testResult);
     EXPECT_TRUE(testToken);
 
@@ -1076,7 +1083,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
         .WillOnce(Invoke(handler));
 
     for (int i = 0; i < 3; ++i) {
-        abilityMgrServ_->StartAbility(want, testRequestCode);
+        abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     }
     EXPECT_EQ(4, testId);
     abilityMgrServ_->RemoveAllServiceRecord();
@@ -1102,14 +1109,13 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
                            const AbilityInfo &abilityInfo,
                            const ApplicationInfo &appInfo) {
         testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
+        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName;
         return AppMgrResultCode::RESULT_OK;
     };
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     WaitAMS();
     EXPECT_TRUE(testResult);
     EXPECT_TRUE(testToken);
@@ -1179,8 +1185,8 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_013, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want1, testRequestCode);
-    abilityMgrServ_->StartAbility(want2, testRequestCode);
+    abilityMgrServ_->StartAbility(want1, 0, testRequestCode);
+    abilityMgrServ_->StartAbility(want2, 0, testRequestCode);
 
     std::shared_ptr<AbilityRecord> record1 =
         abilityMgrServ_->GetServiceRecordByElementName(want1.GetElement().GetURI());
@@ -1212,7 +1218,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1258,7 +1264,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1303,7 +1309,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1321,12 +1327,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
     EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
-    EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
     EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
 
     int result = abilityMgrServ_->TerminateAbility(record->GetToken(), -1);
-    EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
+    EXPECT_EQ(0, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
@@ -1352,7 +1357,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1370,12 +1375,11 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
     EXPECT_TRUE(connectRecord);
     EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
-    EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
     abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
     EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
 
     int result = abilityMgrServ_->StopServiceAbility(want);
-    EXPECT_EQ(TERMINATE_SERVICE_IS_CONNECTED, result);
+    EXPECT_EQ(0, result);
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
@@ -1402,7 +1406,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
     SetActive();
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1472,7 +1476,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
     abilityMgrServ_->RemoveAllServiceRecord();
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
     int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, testRequestCode);
+    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
     EXPECT_TRUE(record);
     EXPECT_FALSE(record->IsCreateByConnect());
@@ -1635,7 +1639,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
     EXPECT_TRUE(scheduler);
     EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
     EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
     EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(2);
     EXPECT_CALL(*scheduler, AsObject()).Times(2);
     abilityMgrServ_->StartAbility(want);

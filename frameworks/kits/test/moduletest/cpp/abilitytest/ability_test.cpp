@@ -54,8 +54,6 @@ public:
     OHOS::sptr<OHOS::IRemoteObject> abilityObject_;
     static constexpr int TEST_WAIT_TIME = 500 * 1000;  // 500 ms
     static const int RESULT_CODE = 1992;
-
-public:
 };
 
 void AbilityBaseTest::SetUpTestCase(void)
@@ -67,19 +65,16 @@ void AbilityBaseTest::TearDownTestCase(void)
 void AbilityBaseTest::SetUp(void)
 {
     abilityObject_ = new MockAbilityManagerService();
-    OHOS::sptr<OHOS::IRemoteObject> bundleObject = new BundleMgrService();
     auto sysMgr = OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance();
-    if (sysMgr == NULL) {
-        GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
-        return;
-    }
-
+    EXPECT_TRUE(sysMgr != nullptr);
     sysMgr->RegisterSystemAbility(OHOS::ABILITY_MGR_SERVICE_ID, abilityObject_);
-    sysMgr->RegisterSystemAbility(OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, bundleObject);
+    sysMgr->RegisterSystemAbility(OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, new BundleMgrService());
 }
 
 void AbilityBaseTest::TearDown(void)
-{}
+{
+    abilityObject_ = nullptr;
+}
 
 /**
  * @tc.number: AaFwk_Ability_AbilityFwk_Start_Test_0100
@@ -506,19 +501,15 @@ void AbilityTerminateTest::TearDownTestCase(void)
 void AbilityTerminateTest::SetUp(void)
 {
     abilityObject_ = new MockAbilityManagerService();
-
     auto sysMgr = OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance();
-
-    if (sysMgr == NULL) {
-        GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
-        return;
-    }
-
+    EXPECT_TRUE(sysMgr != nullptr);
     sysMgr->RegisterSystemAbility(OHOS::ABILITY_MGR_SERVICE_ID, abilityObject_);
 }
 
 void AbilityTerminateTest::TearDown(void)
-{}
+{
+    abilityObject_ = nullptr;
+}
 
 /**
  * @tc.number: AaFwk_Ability_Terminate_test_0100
@@ -891,7 +882,7 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Launch_0100, Function | MediumT
         sptr<AAFwk::IAbilityManager> abms = iface_cast<AAFwk::IAbilityManager>(remoteObject_);
 
         Uri uri("testuri");
-        EXPECT_NE(abms->AcquireDataAbility(uri, false, nullptr), nullptr);
+        EXPECT_TRUE(abms->AcquireDataAbility(uri, false, nullptr) == nullptr);
     }
     GTEST_LOG_(INFO) << "AaFwk_DataAbility_Launch_0100";
 }

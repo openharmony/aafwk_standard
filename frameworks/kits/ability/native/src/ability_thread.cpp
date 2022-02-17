@@ -1260,8 +1260,8 @@ void AbilityThread::AbilityThreadMain(
 {
     APP_LOGI("AbilityThread::AbilityThreadMain begin");
     sptr<AbilityThread> thread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-    if (thread == nullptr) {
-        APP_LOGE("AbilityThread::AbilityThreadMain failed,thread  is nullptr");
+    if (thread == nullptr || abilityRecord == nullptr) {
+        APP_LOGE("AbilityThread::AbilityThreadMain failed, thread is nullptr");
         return;
     }
     thread->InitExtensionFlag(abilityRecord);
@@ -1278,10 +1278,12 @@ void AbilityThread::InitExtensionFlag(const std::shared_ptr<AbilityLocalRecord> 
     APP_LOGI("AbilityThread::InitExtensionFlag start");
     if (abilityRecord == nullptr) {
         APP_LOGE("AbilityThread::InitExtensionFlag abilityRecord null");
+        return;
     }
     std::shared_ptr<AbilityInfo> abilityInfo = abilityRecord->GetAbilityInfo();
     if (abilityInfo == nullptr) {
         APP_LOGE("AbilityThread::InitExtensionFlag abilityInfo null");
+        return;
     }
     APP_LOGI("AbilityThread::InitExtensionFlag:%{public}d", abilityInfo->type);
     if (abilityInfo->type == AppExecFwk::AbilityType::EXTENSION) {
