@@ -534,7 +534,7 @@ void JSApplicationStateObserver::HandleOnExtensionStateChanged(const AbilityStat
 {
     HILOG_INFO("HandleOnExtensionStateChanged begin");
     NativeValue* argv[] = {CreateJsAbilityStateData(engine_, abilityStateData)};
-    CallJsFunction("onExtensionStateChanged", argv, ARGC_ONE);
+    CallJsFunction("onAbilityStateChanged", argv, ARGC_ONE);
 }
 
 void JSApplicationStateObserver::OnProcessCreated(const ProcessData &processData)

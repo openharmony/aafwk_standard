@@ -41,6 +41,8 @@ enum class AbilityState {
     ABILITY_STATE_BACKGROUND,
     ABILITY_STATE_TERMINATED,
     ABILITY_STATE_END,
+    ABILITY_STATE_CONNECTED,
+    ABILITY_STATE_DISCONNECTED,
 };
 
 enum class ExtensionState {

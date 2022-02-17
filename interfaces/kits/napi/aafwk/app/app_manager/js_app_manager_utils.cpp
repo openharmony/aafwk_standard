@@ -66,6 +66,7 @@ NativeValue* CreateJsAbilityStateData(NativeEngine &engine, const AbilityStateDa
     object->SetProperty("pid", CreateJsValue(engine, abilityStateData.pid));
     object->SetProperty("uid", CreateJsValue(engine, abilityStateData.uid));
     object->SetProperty("state", CreateJsValue(engine, abilityStateData.abilityState));
+    object->SetProperty("abilityType", CreateJsValue(engine, abilityStateData.abilityType));
     HILOG_INFO("%{public}s end.", __func__);
     return objValue;
 }
