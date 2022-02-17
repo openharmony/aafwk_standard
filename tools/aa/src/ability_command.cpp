@@ -41,8 +41,8 @@ const struct option LONG_OPTIONS[] = {
     {"debug", no_argument, nullptr, 'D'},
     {nullptr, 0, nullptr, 0},
 };
-const std::string SHORT_OPTIONS_ANR = "hp:";
-const struct option LONG_OPTIONS_ANR[] = {
+const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
+const struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {"help", no_argument, nullptr, 'h'},
     {"pid", required_argument, nullptr, 'p'},
     {nullptr, 0, nullptr, 0},
@@ -95,7 +95,7 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
-        {"anr", std::bind(&AbilityManagerShellCommand::RunAsSendANRProcessID, this)},
+        {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
     };
 
     return OHOS::ERR_OK;
@@ -1307,13 +1307,13 @@ sptr<IAbilityManager> AbilityManagerShellCommand::GetAbilityManagerService()
     return iface_cast<IAbilityManager>(remoteObject);
 }
 
-ErrCode AbilityManagerShellCommand::RunAsSendANRProcessID()
+ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
 {
     static sptr<IAbilityManager> abilityMs_;
     std::string pid = "";
     int option = -1;
     ErrCode result = OHOS::ERR_OK;
-    option = getopt_long(argc_, argv_, SHORT_OPTIONS_ANR.c_str(), LONG_OPTIONS_ANR, nullptr);
+    option = getopt_long(argc_, argv_, SHORT_OPTIONS_ApplicationNotRespondin.c_str(), LONG_OPTIONS_ApplicationNotRespondin, nullptr);
     HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
     if (optind < 0 || optind > argc_) {
         return OHOS::ERR_INVALID_VALUE;
