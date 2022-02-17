@@ -45,7 +45,7 @@ public:
     std::shared_ptr<CallRecord> GetCallRecord(const sptr<IAbilityConnection> & connect) const;
     bool RemoveCallRecord(const sptr<IAbilityConnection> & connect);
     bool CallRequestDone(const sptr<IRemoteObject> & callStub);
-    void Dump(std::vector<std::string> &info, const std::string &args = "") const;
+    void Dump(std::vector<std::string> &info) const;
     bool IsNeedToCallRequest() const;
 
 private:

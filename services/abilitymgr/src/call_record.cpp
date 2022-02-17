@@ -133,7 +133,7 @@ bool CallRecord::SchedulerDisConnectDone()
     const AppExecFwk::AbilityInfo &abilityInfo = tmpService->GetAbilityInfo();
     AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
     connCallback_->OnAbilityDisconnectDone(element,  ERR_OK);
-    
+
     return true;
 }
 
@@ -156,6 +156,24 @@ void CallRecord::OnCallStubDied(const wptr<IRemoteObject> & remote)
 void CallRecord::Dump(std::vector<std::string> &info) const
 {
     HILOG_DEBUG("CallRecord::Dump is called");
+
+    std::string tempstr = "            CallRecord";
+    tempstr += " ID #" + std::to_string (recordId_) + "\n";
+    tempstr += "              caller";
+    auto abilityRecord = Token::GetAbilityRecordByToken(callerToken_);
+    if (abilityRecord) {
+        AppExecFwk::ElementName element(
+            abilityRecord->GetAbilityInfo().deviceId, abilityRecord->GetAbilityInfo().bundleName,
+            abilityRecord->GetAbilityInfo().name);
+        tempstr += " uri [" + element.GetURI() + "]" + "\n";
+    }
+
+    std::string state = (state_ == CallState::INIT ? "INIT" :
+                        state_ == CallState::REQUESTING ? "REQUESTING" : "REQUESTED");
+    tempstr += "              state #" + state;
+    tempstr += " start time [" + std::to_string (startTime_) + "]";
+    info.emplace_back(tempstr);
+    HILOG_DEBUG("CallRecord::Dump is called1");
 }
 
 int32_t CallRecord::GetCallerUid() const

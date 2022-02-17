@@ -47,6 +47,7 @@ public:
     std::shared_ptr<AbilityRecord> GetAbilityRecordByScheduler(const sptr<IAbilityScheduler> &scheduler);
     void Dump(const char *func, int line);
     void DumpState(std::vector<std::string> &info, const std::string &args = "") const;
+    void DumpSysState(std::vector<std::string> &info, bool isClient = false, const std::string &args = "") const;
     void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
 
 private:

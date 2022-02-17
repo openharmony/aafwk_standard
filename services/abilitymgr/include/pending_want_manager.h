@@ -159,6 +159,7 @@ public:
     void ClearPendingWantRecord(const std::string &bundleName);
 
     void Dump(std::vector<std::string> &info);
+    void DumpByRecordId(std::vector<std::string> &info, const std::string &args);
 
 private:
     sptr<IWantSender> GetWantSenderLocked(const int32_t callingUid, const int32_t uid, const int32_t userId,

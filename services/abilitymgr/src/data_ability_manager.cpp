@@ -495,6 +495,48 @@ void DataAbilityManager::DumpState(std::vector<std::string> &info, const std::st
     return;
 }
 
+void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isClient, const std::string &args) const
+{
+    if (!args.empty()) {
+        auto it = std::find_if(dataAbilityRecordsLoaded_.begin(),
+            dataAbilityRecordsLoaded_.end(),
+            [&args](const auto &dataAbilityRecord) { return dataAbilityRecord.first.compare(args) == 0; });
+        if (it != dataAbilityRecordsLoaded_.end()) {
+            info.emplace_back("AbilityName [ " + it->first + " ]");
+            it->second->Dump(info);
+            // add dump client info
+            if (isClient && it->second->GetScheduler() && it->second->GetAbilityRecord()->IsReady()) {
+                std::vector<std::string> params;
+                it->second->GetScheduler()->DumpAbilityInfo(params, info);
+                AppExecFwk::Configuration config;
+                if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
+                    info.emplace_back("          configuration: " + config.GetName());
+                }
+            }
+        } else {
+            info.emplace_back(args + ": Nothing to dump.");
+        }
+    } else {
+        info.emplace_back("  dataAbilityRecords:");
+        for (auto &&dataAbilityRecord : dataAbilityRecordsLoaded_) {
+            info.emplace_back("    uri [" + dataAbilityRecord.first + "]");
+            dataAbilityRecord.second->Dump(info);
+            dataAbilityRecord.second->GetScheduler();
+            // add dump client info
+            if (isClient && dataAbilityRecord.second->GetScheduler()
+                && dataAbilityRecord.second->GetAbilityRecord()->IsReady()) {
+                std::vector<std::string> params;
+                dataAbilityRecord.second->GetScheduler()->DumpAbilityInfo(params, info);
+                AppExecFwk::Configuration config;
+                if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
+                    info.emplace_back("          configuration: " + config.GetName());
+                }
+            }
+        }
+    }
+    return;
+}
+
 void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {
     HILOG_INFO("Get ability running infos");

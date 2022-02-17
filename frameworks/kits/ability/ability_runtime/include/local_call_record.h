@@ -39,6 +39,8 @@ public:
     void InvokeCallBack() const;
     AppExecFwk::ElementName GetElementName() const;
     bool IsExistCallBack() const;
+    int GetRecordId();
+    std::vector<std::shared_ptr<CallerCallBack>> GetCallers();
 
 private:
     static int64_t callRecordId;
