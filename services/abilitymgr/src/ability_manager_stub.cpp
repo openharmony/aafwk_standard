@@ -1505,8 +1505,8 @@ int AbilityManagerStub::DoAbilityBackgroundInner(MessageParcel &data, MessagePar
 int AbilityManagerStub::SendANRProcessIDInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t pid = data.ReadInt32();
-    bool result = SendANRProcessID(pid);
-    if (!reply.WriteBool(result)) {
+    int32_t result = SendANRProcessID(pid);
+    if (!reply.WriteInt32(result)) {
         HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
