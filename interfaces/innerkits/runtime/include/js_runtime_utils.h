@@ -51,7 +51,7 @@ inline NativeValue* CreateJsValue(NativeEngine& engine, const T& value)
     } else if constexpr (std::is_enum_v<ValueType>) {
         return engine.CreateNumber(static_cast<std::make_signed_t<ValueType>>(value));
     }
-    return nullptr;
+    return engine.CreateUndefined();
 }
 
 template<class T>
@@ -101,7 +101,7 @@ NativeValue* CreateNativeArray(NativeEngine& engine, const std::vector<T>& data)
     NativeValue* arrayValue = engine.CreateArray(data.size());
     NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
     uint32_t index = 0;
-    for (const auto& item : data) {
+    for (const T& item : data) {
         array->SetElement(index++, CreateJsValue(engine, item));
     }
     return arrayValue;
