@@ -480,28 +480,6 @@ HWTEST_F(PendingWantTest, PendingWant_2100, Function | MediumTest | Level1)
 }
 
 /*
- * @tc.number    : PendingWant_2200
- * @tc.name      : PendingWant SendAndReturnResult
- * @tc.desc      : SendAndReturnResult
- */
-HWTEST_F(PendingWantTest, PendingWant_2200, Function | MediumTest | Level1)
-{
-    PendingWant pendingWant(nullptr);
-    int requestCode = 10;
-    std::shared_ptr<Want> want = std::make_shared<Want>();
-    ElementName element("device", "bundleName", "abilityName");
-    want->SetElement(element);
-    bool value = true;
-    std::shared_ptr<WantParams> wParams = std::make_shared<WantParams>();
-    std::string key = "key";
-    wParams->SetParam(key, Boolean::Box(value));
-    unsigned int flags = 1;
-    flags |= FLAG_NO_CREATE;
-    AbilityManagerClient::GetInstance()->Connect();
-    EXPECT_EQ(1, pendingWant.SendAndReturnResult(requestCode, want, nullptr, "Permission", nullptr, nullptr));
-}
-
-/*
  * @tc.number    : PendingWant_2300
  * @tc.name      : PendingWant Equals
  * @tc.desc      : Equals
