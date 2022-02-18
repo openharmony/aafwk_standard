@@ -136,89 +136,57 @@ private:
     NativeValue* ReleaseInner(NativeEngine& engine, NativeCallbackInfo& info)
     {
         HILOG_DEBUG("JsCallerComplex::%{public}s, called", __func__);
-        constexpr size_t ARGC_ZERO = 0;
-        constexpr size_t ARGC_ONE = 1;
-        int errCode = 0;
-        AsyncTask::ExecuteCallback execute =
-            [weak = context_, callback = callerCallBackObj_, &errCode] (NativeEngine& engine, AsyncTask& task) {
-                auto context = weak.lock();
-                if (context == nullptr) {
-                    HILOG_ERROR("JsCallerComplex::%{public}s, context is nullptr", "ReleaseInner::ExecuteCallback");
-                    errCode = -1;
-                    return;
-                }
+        if (callerCallBackObj_ == nullptr) {
+            HILOG_ERROR("JsCallerComplex::%{public}s, CallBacker is nullptr", __func__);
+            return CreateJsError(engine, -1, "CallerComplex callback is nullptr.");
+        }
 
-                errCode = context->ReleaseAbility(callback);
-                HILOG_DEBUG("JsCallerComplex::%{public}s %{public}d, end", "ReleaseInner::ExecuteCallback", errCode);
-            };
-        AsyncTask::CompleteCallback complete =
-            [errCode] (NativeEngine& engine, AsyncTask& task, int32_t status) {
-                if (errCode == 0) {
-                    task.Resolve(engine, engine.CreateUndefined());
-                } else {
-                    task.Reject(engine, CreateJsError(engine, errCode, "CallerComplex Release Failed."));
-                }
-                HILOG_DEBUG("JsCallerComplex::%{public}s, end", "ReleaseInner::CompleteCallback");
-            };
+        auto context = context_.lock();
+        if (context == nullptr) {
+            HILOG_ERROR("JsCallerComplex::%{public}s, context is nullptr", __func__);
+            return CreateJsError(engine, -1, "CallerComplex get context failed.");
+        }
 
-        NativeValue* lastParam = ((info.argc == ARGC_ONE) ? info.argv[ARGC_ZERO] : nullptr);
-        NativeValue* retsult = nullptr;
-        AsyncTask::Schedule(
-            engine,
-            CreateAsyncTaskWithLastParam(engine, lastParam, std::move(execute), std::move(complete), &retsult));
+        auto retErr = context->ReleaseAbility(callerCallBackObj_);
+        if (retErr != ERR_OK) {
+            HILOG_ERROR("JsCallerComplex::%{public}s, ReleaseAbility failed %{public}d",
+                __func__, static_cast<int>(retErr));
+            return CreateJsError(engine, -1, "CallerComplex get context failed.");
+        }
 
-        return retsult;
+        return engine.CreateUndefined();
     }
 
     NativeValue* SetOnReleaseCallBackInner(NativeEngine& engine, NativeCallbackInfo& info)
     {
         HILOG_DEBUG("JsCallerComplex::%{public}s, begin", __func__);
-        constexpr size_t ARGC_ONE = 1;
         constexpr size_t ARGC_TWO = 2;
-        bool errCode = true;
         if (info.argc >= ARGC_TWO) {
             HILOG_ERROR("JsCallerComplex::%{public}s, Invalid input params", __func__);
-            return engine.CreateUndefined();
+            return CreateJsError(engine, -1, "CallerComplex on release CallBack input params error.");
         }
         if (!info.argv[0]->IsCallable()) {
             HILOG_ERROR("JsCallerComplex::%{public}s, IsCallable is %{public}s.",
                 __func__, ((info.argv[0]->IsCallable()) ? "true" : "false"));
-            return engine.CreateUndefined();
+            return CreateJsError(engine, -1, "CallerComplex on release CallBack input params not function.");
         }
-        while (errCode) {
-            if (callerCallBackObj_ == nullptr) {
-                HILOG_ERROR("JsCallerComplex::%{public}s, param1 is nullptr", __func__);
-                errCode = false;
-                break;
-            }
-            auto param1 = info.argv[0];
-            if (param1 == nullptr) {
-                HILOG_ERROR("JsCallerComplex::%{public}s, param1 is nullptr", __func__);
-                errCode = false;
-                break;
-            }
-            jsreleaseCallBackObj_ =
-                std::unique_ptr<NativeReference>(releaseCallBackEngine_.CreateReference(param1, 1));
-            auto task = [notify = this] (const std::string &str) { notify->OnReleaseNotify(str); };
-            callerCallBackObj_->SetOnRelease(task);
-            break;
+
+        if (callerCallBackObj_ == nullptr) {
+            HILOG_ERROR("JsCallerComplex::%{public}s, param1 is nullptr", __func__);
+            return CreateJsError(engine, -1, "CallerComplex on release CallBacker is nullptr.");
         }
-        AsyncTask::CompleteCallback complete =
-            [errCode] (NativeEngine& engine, AsyncTask& task, int32_t status) {
-                if (errCode) {
-                    task.Resolve(engine, engine.CreateUndefined());
-                } else {
-                    task.Reject(engine, CreateJsError(engine, -1, "CallerComplex On Release CallBack Failed."));
-                }
-                HILOG_DEBUG("JsCallerComplex::%{public}s, %{public}s end", "ReleaseInner::CompleteCallback",
-                    (errCode ? "true" : "false"));
-            };
-        NativeValue* lastParam = ((info.argc == ARGC_TWO) ? info.argv[ARGC_ONE] : nullptr);
-        NativeValue* retsult = nullptr;
-        AsyncTask::Schedule(engine,
-            CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &retsult));
+
+        auto param1 = info.argv[0];
+        if (param1 == nullptr) {
+            HILOG_ERROR("JsCallerComplex::%{public}s, param1 is nullptr", __func__);
+            return CreateJsError(engine, -1, "CallerComplex on release input params isn`t function.");
+        }
+
+        jsreleaseCallBackObj_ = std::unique_ptr<NativeReference>(releaseCallBackEngine_.CreateReference(param1, 1));
+        auto task = [notify = this] (const std::string &str) { notify->OnReleaseNotify(str); };
+        callerCallBackObj_->SetOnRelease(task);
         HILOG_DEBUG("JsCallerComplex::%{public}s, end", __func__);
-        return retsult;
+        return engine.CreateUndefined();
     }
 
 private:
