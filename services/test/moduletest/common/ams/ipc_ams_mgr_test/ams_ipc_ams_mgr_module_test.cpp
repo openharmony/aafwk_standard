@@ -134,48 +134,6 @@ std::shared_ptr<AMSEventHandler> AmsIpcAmsmgrModuleTest::GetAmsEventHandler()
  * Feature: ApplicationFramework
  * Function: AppManagerService
  * SubFunction: AmsmgrIPCInterface
- * FunctionPoints: test loadAbility API,then check the function whether is good or not
- * EnvConditions: system running normally
- * CaseDescription: excute loadAbility API 1000 times
- */
-HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_001, TestSize.Level3)
-{
-    auto abilityInfo = GetAbilityInfo("0", "MainAbility", "com.ohos.test.helloworld");
-    auto appInfo = GetApplicationInfo("com.ohos.test.helloworld");
-    auto mockAppMgrServiceInner = GetMockAppMgrServiceInner();
-    auto amsEventHandler = GetAmsEventHandler();
-    std::unique_ptr<AmsMgrScheduler> amsMgrScheduler =
-        std::make_unique<AmsMgrScheduler>(mockAppMgrServiceInner, amsEventHandler);
-
-    sptr<MockMockAppMgrService> mockMockAppMgr(new MockMockAppMgrService());
-    sptr<IAppMgr> appMgrClient = iface_cast<IAppMgr>(mockMockAppMgr);
-
-    auto mockHandler = [&]() -> sptr<IAmsMgr> {
-        mockMockAppMgr->Post();
-        return sptr<IAmsMgr>(amsMgrScheduler.get());
-    };
-
-    EXPECT_CALL(*mockMockAppMgr, GetAmsMgr()).Times(1).WillOnce(Invoke(mockHandler));
-
-    auto amsMgrScheduler_ = appMgrClient->GetAmsMgr();
-    mockMockAppMgr->Wait();
-    sptr<OHOS::IRemoteObject> token = new MockAbilityToken();
-
-    for (int i = 0; i < COUNT; i++) {
-        EXPECT_CALL(*mockAppMgrServiceInner, LoadAbility(_, _, _, _))
-            .WillOnce(InvokeWithoutArgs(mockAppMgrServiceInner.get(), &MockAppMgrServiceInner::Post));
-        amsMgrScheduler_->LoadAbility(token_, nullptr, abilityInfo, appInfo);
-        mockAppMgrServiceInner->Wait();
-    }
-
-    mockAppMgrServiceInner.reset();
-    amsMgrScheduler.release();
-}
-
-/*
- * Feature: ApplicationFramework
- * Function: AppManagerService
- * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test terminateAbility API,then check the function whether is good or not
  * EnvConditions: system running normally
  * CaseDescription: excute terminateAbility API 1000 times

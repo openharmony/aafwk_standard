@@ -286,7 +286,7 @@ std::shared_ptr<AbilityRecord> AbilityMgrModuleTest::GreatePageAbility(
     const std::string &abilityName, const std::string &bundleName)
 {
     Want want = CreateWant(abilityName, bundleName);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Return(AppMgrResultCode::RESULT_OK));
     int testRequestCode = 1;
     SetActive();
     abilityMgrServ_->StartAbility(want, 0, testRequestCode);
@@ -330,7 +330,8 @@ void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, spt
                                const sptr<IRemoteObject> &token,
                                const sptr<IRemoteObject> &preToken,
                                const AbilityInfo &abilityInfo,
-                               const ApplicationInfo &appInfo) {
+                               const ApplicationInfo &appInfo,
+                               const Want &want) {
         dataAbilityToken = token;
         testFailed = testFailed || (abilityInfo.type != AbilityType::DATA);
         std::thread(&AbilityManagerService::AttachAbilityThread, abilityMgrServ.get(), mockDataAbilityScheduler, token)
@@ -338,7 +339,7 @@ void AbilityMgrModuleTest::MockDataAbilityLoadHandlerInner(bool &testFailed, spt
         return AppMgrResultCode::RESULT_OK;
     };
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockLoadAbility));
     int counts = 2;
     EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _))
         .Times(counts)
@@ -386,14 +387,15 @@ void AbilityMgrModuleTest::MockServiceAbilityLoadHandlerInner(
     auto mockHandler = [&testResult, &bundleName, &abilityName, &testToken](const sptr<IRemoteObject> &token,
                            const sptr<IRemoteObject> &preToken,
                            const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
+                           const ApplicationInfo &appInfo,
+                           const Want &want) {
         testToken = token;
         testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
                      appInfo.bundleName == bundleName;
         return AppMgrResultCode::RESULT_OK;
     };
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
 }
 
 void AbilityMgrModuleTest::CreateServiceRecord(std::shared_ptr<AbilityRecord> &record, Want &want,
@@ -521,51 +523,6 @@ WantSenderInfo AbilityMgrModuleTest::MakeWantSenderInfo(Want &want, int32_t flag
     wantSenderInfo.flags = flags;
     wantSenderInfo.userId = userId;
     return wantSenderInfo;
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: start ability.
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_001, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-
-    auto stackManager = abilityMgrServ_->GetStackManager();
-    EXPECT_TRUE(stackManager);
-
-    std::string abilityName = "MusicAbility";
-    std::string bundleName = "com.ix.hiMusic";
-    Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
-    sptr<IRemoteObject> testToken;
-
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName &&
-                     appInfo.bundleName == bundleName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
-
-    auto testAbilityRecord = stackManager->GetAbilityRecordByToken(testToken);
-    EXPECT_TRUE(testAbilityRecord);
-    EXPECT_EQ(testAbilityRecord->GetRequestCode(), testRequestCode);
 }
 
 /*
@@ -913,7 +870,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_009, TestSize.Level1)
     const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     abilityMgrServ_->ConnectAbility(want, callback, nullptr);
     std::shared_ptr<AbilityRecord> record =
         abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -977,7 +934,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
 
     abilityMgrServ_->RemoveAllServiceRecord();
 
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(2);
     abilityMgrServ_->ConnectAbility(want1, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want2, callback1, nullptr);
     abilityMgrServ_->ConnectAbility(want1, callback2, nullptr);
@@ -1025,279 +982,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_010, TestSize.Level1)
  * SubFunction: NA
  * FunctionPoints: NA
  * EnvConditions: NA
- * CaseDescription: start ability (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_011, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
-    Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
-    sptr<IRemoteObject> testToken;
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
-    int testRequestCode = 123;
-    SetActive();
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
-
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_FALSE(record->IsCreateByConnect());
-
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
-    EXPECT_TRUE(record->isReady_);
-
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    abilityMgrServ_->OnAbilityRequestDone(
-        record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::INACTIVATING, record->GetAbilityState());
-
-    int testId = 0;
-    auto handler = [&](const Want &want, bool restart, int startid) { testId = startid; };
-    EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _)).Times(1).WillOnce(Invoke(handler));
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE, saveData);
-    EXPECT_EQ(1, testId);
-
-    abilityMgrServ_->ScheduleCommandAbilityDone(record->GetToken());
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::ACTIVE, record->GetAbilityState());
-
-    EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _))
-        .Times(3)
-        .WillOnce(Invoke(handler))
-        .WillOnce(Invoke(handler))
-        .WillOnce(Invoke(handler));
-
-    for (int i = 0; i < 3; ++i) {
-        abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    }
-    EXPECT_EQ(4, testId);
-    abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(scheduler);
-}
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: start ability (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_012, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
-    Want want = CreateWant(abilityName, bundleName);
-    bool testResult = false;
-    sptr<IRemoteObject> testToken;
-    auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                           const sptr<IRemoteObject> &preToken,
-                           const AbilityInfo &abilityInfo,
-                           const ApplicationInfo &appInfo) {
-        testToken = token;
-        testResult = !!testToken && abilityInfo.bundleName == bundleName && abilityInfo.name == abilityName;
-        return AppMgrResultCode::RESULT_OK;
-    };
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    WaitAMS();
-    EXPECT_TRUE(testResult);
-    EXPECT_TRUE(testToken);
-
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_FALSE(record->IsCreateByConnect());
-
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    abilityMgrServ_->AttachAbilityThread(scheduler, record->GetToken());
-    EXPECT_TRUE(record->isReady_);
-
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    abilityMgrServ_->OnAbilityRequestDone(
-        record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::INACTIVATING, record->GetAbilityState());
-
-    int testId = 0;
-    auto handler = [&](const Want &want, bool restart, int startid) { testId = startid; };
-    EXPECT_CALL(*scheduler, ScheduleCommandAbility(_, _, _)).Times(1).WillOnce(Invoke(handler));
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INACTIVE, saveData);
-    EXPECT_EQ(1, testId);
-
-    abilityMgrServ_->ScheduleCommandAbilityDone(record->GetToken());
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::ACTIVE, record->GetAbilityState());
-
-    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
-    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
-    abilityMgrServ_->ConnectAbility(want, callback, nullptr);
-    std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    EXPECT_TRUE(connectRecord);
-    EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
-
-    EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
-    abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), nullptr);
-    EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: start ability (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_013, TestSize.Level1)
-{
-    std::string abilityName1 = "MusicAbility_service_1";
-    std::string bundleName1 = "com.ix.hiMusic_service_1";
-    Want want1 = CreateWant(abilityName1, bundleName1);
-    std::string abilityName2 = "MusicAbility_service_2";
-    std::string bundleName2 = "com.ix.hiMusic_service_2";
-    Want want2 = CreateWant(abilityName2, bundleName2);
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want1, 0, testRequestCode);
-    abilityMgrServ_->StartAbility(want2, 0, testRequestCode);
-
-    std::shared_ptr<AbilityRecord> record1 =
-        abilityMgrServ_->GetServiceRecordByElementName(want1.GetElement().GetURI());
-    EXPECT_TRUE(record1);
-    EXPECT_FALSE(record1->IsCreateByConnect());
-
-    std::shared_ptr<AbilityRecord> record2 =
-        abilityMgrServ_->GetServiceRecordByElementName(want2.GetElement().GetURI());
-    EXPECT_TRUE(record2);
-    EXPECT_FALSE(record2->IsCreateByConnect());
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: TerminateAbility  (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_014, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
-    Want want = CreateWant(abilityName, bundleName);
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_FALSE(record->IsCreateByConnect());
-    record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    record->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    abilityMgrServ_->TerminateAbility(record->GetToken(), -1);
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
-
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
-
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
-    abilityMgrServ_->OnAbilityRequestDone(
-        record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-
-    testing::Mock::AllowLeak(scheduler);
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: TerminateAbility  (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_015, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
-    Want want = CreateWant(abilityName, bundleName);
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_FALSE(record->IsCreateByConnect());
-    record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    record->SetScheduler(scheduler);
-
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    abilityMgrServ_->StopServiceAbility(want);
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
-
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
-
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
-    abilityMgrServ_->OnAbilityRequestDone(
-        record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(scheduler);
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
  * CaseDescription: StopServiceAbility  (serive ability).
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
@@ -1307,7 +991,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_016, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1355,7 +1039,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_017, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     abilityMgrServ_->StartAbility(want, 0, testRequestCode);
     std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
@@ -1403,7 +1087,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     Want want = CreateWant(abilityName, bundleName);
 
     abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _, _)).Times(1);
     int testRequestCode = 123;
     SetActive();
     abilityMgrServ_->StartAbility(want, 0, testRequestCode);
@@ -1457,269 +1141,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     testing::Mock::AllowLeak(scheduler);
     testing::Mock::AllowLeak(stub);
     testing::Mock::AllowLeak(callback);
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: disconnectAbility and terminate (serive ability).
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_019, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbilityService";
-    std::string bundleName = "com.ix.hiservice";
-    Want want = CreateWant(abilityName, bundleName);
-    EXPECT_TRUE(abilityMgrServ_);
-    abilityMgrServ_->RemoveAllServiceRecord();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    int testRequestCode = 123;
-    abilityMgrServ_->StartAbility(want, 0, testRequestCode);
-    std::shared_ptr<AbilityRecord> record = abilityMgrServ_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_FALSE(record->IsCreateByConnect());
-    record->AddStartId();
-    record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    record->SetScheduler(scheduler);
-    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
-    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    EXPECT_CALL(*scheduler, ScheduleConnectAbility(_)).Times(1);
-    abilityMgrServ_->ConnectAbility(want, callback, nullptr);
-    std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    EXPECT_TRUE(connectRecord);
-    EXPECT_EQ((size_t)1, abilityMgrServ_->GetConnectRecordListByCallback(callback).size());
-    EXPECT_CALL(*stub, OnAbilityConnectDone(_, _, _)).Times(1);
-    abilityMgrServ_->ScheduleConnectAbilityDone(record->GetToken(), stub);
-    EXPECT_EQ(ConnectionState::CONNECTED, connectRecord->GetConnectState());
-
-    EXPECT_CALL(*scheduler, ScheduleDisconnectAbility(_)).Times(1);
-    abilityMgrServ_->DisconnectAbility(callback);
-    EXPECT_EQ(OHOS::AAFwk::ConnectionState::DISCONNECTING, connectRecord->GetConnectState());
-
-    EXPECT_CALL(*stub, OnAbilityDisconnectDone(_, _)).Times(1);
-    abilityMgrServ_->ScheduleDisconnectAbilityDone(record->GetToken());
-    EXPECT_EQ((std::size_t)0, record->GetConnectRecordList().size());
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetConnectMap().size());
-    EXPECT_EQ(OHOS::AAFwk::ConnectionState::DISCONNECTED, connectRecord->GetConnectState());
-    EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    abilityMgrServ_->TerminateAbility(record->GetToken(), -1);
-    EXPECT_EQ(OHOS::AAFwk::AbilityState::TERMINATING, record->GetAbilityState());
-
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(1);
-    PacMap saveData;
-    abilityMgrServ_->AbilityTransitionDone(record->GetToken(), AbilityLifeCycleState::ABILITY_STATE_INITIAL, saveData);
-    EXPECT_CALL(*mockAppMgrClient_, TerminateAbility(_)).Times(1);
-    abilityMgrServ_->OnAbilityRequestDone(
-        record->GetToken(), (int32_t)OHOS::AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-
-    testing::Mock::AllowLeak(scheduler);
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
-}
-
-/*
- * Feature: AaFwk
- * Function: ability manager service
- * SubFunction: OnAbilityDied
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: Test service abilities death notification.
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_020, TestSize.Level3)
-{
-    std::string abilityName = "MusicAbility_service";
-    std::string bundleName = "com.ix.hiMusic_service";
-    Want want = CreateWant(abilityName, bundleName);
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-
-    sptr<MockAbilityConnectCallbackStub> stub(new MockAbilityConnectCallbackStub());
-    const sptr<AbilityConnectionProxy> callback(new AbilityConnectionProxy(stub));
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    abilityMgrServ_->ConnectAbility(want, callback, nullptr);
-    EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->connectMap_.size());
-    EXPECT_EQ((std::size_t)1, abilityMgrServ_->connectManager_->serviceMap_.size());
-    std::shared_ptr<AbilityRecord> record =
-        abilityMgrServ_->connectManager_->GetServiceRecordByElementName(want.GetElement().GetURI());
-    EXPECT_TRUE(record);
-    EXPECT_TRUE(record->IsCreateByConnect());
-    std::shared_ptr<ConnectionRecord> connectRecord = record->GetConnectingRecord();
-    EXPECT_TRUE(connectRecord);
-    connectRecord->SetConnectState(ConnectionState::CONNECTED);
-    record->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    EXPECT_CALL(*stub, OnAbilityDisconnectDone(_, _)).Times(1);
-    abilityMgrServ_->OnAbilityDied(record);
-    usleep(100 * 1000);
-
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->GetServiceMap().size());
-    EXPECT_EQ((std::size_t)0, abilityMgrServ_->connectManager_->connectMap_.size());
-
-    abilityMgrServ_->RemoveAllServiceRecord();
-    testing::Mock::AllowLeak(stub);
-    testing::Mock::AllowLeak(callback);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: HandleLoadTimeOut
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService HandleLoadTimeOut
- * EnvConditions: NA
- * CaseDescription: Verify function HandleLoadTimeOut
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_021, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    ClearStack();
-
-    std::string abilityName = "MusicSAbility";
-    std::string bundleName = "com.ix.hiMusic";
-    std::string abilityName2 = "RadioAbility";
-    std::string bundleName2 = "com.ix.hiRadio";
-    Want want = CreateWant(abilityName, bundleName);
-    Want want2 = CreateWant(abilityName2, bundleName2);
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    abilityMgrServ_->StartAbility(want);
-    auto testAbilityRecord = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord);
-    abilityMgrServ_->AttachAbilityThread(scheduler, testAbilityRecord->GetToken());
-    SetActive();
-    abilityMgrServ_->StartAbility(want2);
-    auto testAbilityRecord2 = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord2);
-    auto stackMgr = abilityMgrServ_->GetStackManager();
-    EXPECT_TRUE(stackMgr);
-    stackMgr->CompleteInactive(testAbilityRecord);
-    testAbilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::BACKGROUND);
-    abilityMgrServ_->HandleLoadTimeOut(testAbilityRecord2->GetEventId());
-    testAbilityRecord = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord);
-    EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
-    testing::Mock::AllowLeak(scheduler);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: HandleLoadTimeOut
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService HandleLoadTimeOut
- * EnvConditions: NA
- * CaseDescription: Verify function HandleLoadTimeOut
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_022, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    ClearStack();
-
-    std::string abilityName = "TVAbility";
-    std::string bundleName = COM_IX_TV;
-    std::string abilityName2 = "FilmAbility";
-    std::string bundleName2 = COM_IX_Film;
-    Want want = CreateWant(abilityName, bundleName);
-    Want want2 = CreateWant(abilityName2, bundleName2);
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_TRUE(scheduler);
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(2);
-    EXPECT_CALL(*mockAppMgrClient_, AbilityAttachTimeOut(_)).Times(1);
-    EXPECT_CALL(*mockAppMgrClient_, UpdateAbilityState(_, _)).Times(2);
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(2);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    abilityMgrServ_->StartAbility(want);
-    auto testAbilityRecord = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord);
-    abilityMgrServ_->AttachAbilityThread(scheduler, testAbilityRecord->GetToken());
-    SetActive();
-    abilityMgrServ_->StartAbility(want2);
-    auto testAbilityRecord2 = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord2);
-    auto stackMgr = abilityMgrServ_->GetStackManager();
-    EXPECT_TRUE(stackMgr);
-    stackMgr->CompleteInactive(testAbilityRecord);
-    abilityMgrServ_->HandleLoadTimeOut(testAbilityRecord2->GetEventId());
-    testAbilityRecord = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord);
-    EXPECT_TRUE(testAbilityRecord->GetAbilityInfo().bundleName == bundleName);
-    testing::Mock::AllowLeak(scheduler);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: IsFirstInMission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService IsFirstInMission
- * EnvConditions: NA
- * CaseDescription: Verify function IsFirstInMission
- * Checks whether this ability is the first ability in a mission.
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_023, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    ClearStack();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    Want want = CreateWant("RadioTopAbility", COM_IX_HIRADIO);
-    abilityMgrServ_->StartAbility(want);
-    auto testAbilityRecord = GetTopAbility();
-    EXPECT_TRUE(testAbilityRecord);
-    SetActive();
-    auto resultTvFunction = abilityMgrServ_->IsFirstInMission(testAbilityRecord->GetToken());
-    EXPECT_EQ(resultTvFunction, true);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: MoveMissionToEnd
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService MoveMissionToEnd
- * EnvConditions: NA
- * CaseDescription: Verify function MoveMissionToEnd
- * Multiple MissionRecord in Stack,When this ability is not the first ability in a mission,
- * and MoveMissionToEnd second parameter is true.
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_024, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    ClearStack();
-    auto stackManager = abilityMgrServ_->GetStackManager();
-    EXPECT_TRUE(stackManager);
-    sptr<MockAbilityScheduler> scheduler = new MockAbilityScheduler();
-    EXPECT_CALL(*mockAppMgrClient_, LoadAbility(_, _, _, _)).Times(1);
-    EXPECT_CALL(*scheduler, ScheduleAbilityTransaction(_, _)).Times(1);
-    EXPECT_CALL(*scheduler, AsObject()).Times(2);
-    Want want = CreateWant("PhoneAbility1", COM_IX_PHONE);
-    abilityMgrServ_->StartAbility(want);
-    auto ability = stackManager->GetCurrentTopAbility();
-    EXPECT_TRUE(ability);
-    SetActive();
-    Want want2 = CreateWant("PhoneAbility2", COM_IX_PHONE);
-    abilityMgrServ_->StartAbility(want2);
-    EXPECT_TRUE(scheduler);
-    auto abilityTv = stackManager->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityTv);
-    abilityTv->SetScheduler(scheduler);
-    SetActive();
-    auto resultFunction = abilityMgrServ_->MoveMissionToEnd(abilityTv->GetToken(), true);
-    EXPECT_EQ(resultFunction, ERR_OK);
-    testing::Mock::AllowLeak(scheduler);
 }
 
 /*

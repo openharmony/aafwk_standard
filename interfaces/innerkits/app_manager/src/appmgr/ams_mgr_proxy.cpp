@@ -36,7 +36,8 @@ bool AmsMgrProxy::WriteInterfaceToken(MessageParcel &data)
 }
 
 void AmsMgrProxy::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo)
+    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
+    const std::shared_ptr<AAFwk::Want> &want)
 {
     APP_LOGD("start");
     if (!abilityInfo || !appInfo) {
@@ -54,6 +55,10 @@ void AmsMgrProxy::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     data.WriteParcelable(preToken);
     data.WriteParcelable(abilityInfo.get());
     data.WriteParcelable(appInfo.get());
+    if (!data.WriteParcelable(want.get())) {
+        APP_LOGE("Write data want failed.");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         APP_LOGE("Remote() is NULL");

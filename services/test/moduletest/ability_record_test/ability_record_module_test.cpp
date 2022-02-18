@@ -221,53 +221,6 @@ HWTEST_F(AbilityRecordModuleTest, Init_002, TestSize.Level2)
 
 /*
  * Feature: AbilityRecord
- * Function: LoadAbility
- * SubFunction: N/A
- * FunctionPoints: Load a test ability
- * CaseDescription: Load a test ability and check state in 'AppMgrClient' mocker.
- */
-HWTEST_F(AbilityRecordModuleTest, LoadAbility_001, TestSize.Level3)
-{
-    auto &abilityRequest = MakeDefaultAbilityRequest();
-
-    for (int i = 0; i < COUNT; ++i) {
-        auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-        EXPECT_TRUE(abilityRecord);
-
-        std::unique_ptr<MockAppMgrClient> mockAppMgrClient(new MockAppMgrClient);
-        EXPECT_TRUE(mockAppMgrClient);
-
-        auto mockHandler = [&](const sptr<IRemoteObject> &token,
-                               const sptr<IRemoteObject> &preToken,
-                               const AbilityInfo &abilityInfo,
-                               const ApplicationInfo &appInfo) {
-            if (abilityInfo != abilityRequest.abilityInfo) {
-                return static_cast<AppMgrResultCode>(ERR_INVALID_VALUE);
-            }
-            if (appInfo != abilityRequest.appInfo) {
-                return static_cast<AppMgrResultCode>(ERR_INVALID_VALUE);
-            }
-            return AppExecFwk::RESULT_OK;
-        };
-
-        EXPECT_CALL(*mockAppMgrClient, LoadAbility(_, _, _, _)).Times(1).WillOnce(Invoke(mockHandler));
-
-        auto appScheduler = DelayedSingleton<AppScheduler>::GetInstance();
-        auto backupAppMgrClient = std::move(appScheduler->appMgrClient_);
-        appScheduler->appMgrClient_ = std::move(mockAppMgrClient);
-
-        auto result = abilityRecord->LoadAbility();
-        EXPECT_EQ(result, ERR_OK);
-
-        EXPECT_EQ(abilityRecord->GetAbilityInfo(), abilityRequest.abilityInfo);
-        EXPECT_EQ(abilityRecord->GetApplicationInfo(), abilityRequest.appInfo);
-
-        appScheduler->appMgrClient_ = std::move(backupAppMgrClient);
-    }
-}
-
-/*
- * Feature: AbilityRecord
  * Function: TerminateAbility
  * SubFunction: N/A
  * FunctionPoints: Terminate a ability
