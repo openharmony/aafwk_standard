@@ -63,7 +63,7 @@ public:
      * @param missionId Indicates this mission id.
      * @param missionSnapshot the mission snapshot to save
      */
-    void SaveMissionSnapshot(int missionId, const MissionSnapshot& missionSnapshot);
+    void SaveMissionSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot);
 
     /**
      * @brief Delete mission snapshot
@@ -77,22 +77,32 @@ public:
      * @param missionSnapshot
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    bool GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot);
+    bool GetMissionSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot);
 
 private:
     std::string GetMissionDataDirPath();
 
     std::string GetMissionDataFilePath(int missionId);
 
-    std::string GetMissionSnapshotPath(int missionId);
+    std::string GetMissionSnapshotPath(int32_t missionId);
 
     bool CheckFileNameValid(const std::string &fileName);
 
     bool WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data);
 
+    bool GetCachedSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot);
+
+    bool SaveCachedSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot);
+
+    bool DeleteCachedSnapshot(int32_t missionId);
+
+    void SaveSnapshotFile(int32_t missionId, const MissionSnapshot& missionSnapshot);
+
 private:
     int userId_ = 0;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    std::mutex cachedPixelMapMutex_;
+    std::map<int32_t, std::shared_ptr<Media::PixelMap>> cachedPixelMap_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
