@@ -16,6 +16,7 @@
 #include "extension.h"
 
 #include "ability_local_record.h"
+#include "configuration.h"
 #include "extension_context.h"
 #include "hilog_wrapper.h"
 

@@ -18,7 +18,6 @@
 
 #include <string>
 
-#include "configuration.h"
 #include "iremote_object.h"
 #include "want.h"
 
@@ -28,6 +27,7 @@ struct AbilityInfo;
 class OHOSApplication;
 class AbilityHandler;
 class AbilityLocalRecord;
+class Configuration;
 }
 namespace AbilityRuntime {
 using Want = OHOS::AAFwk::Want;
