@@ -15,6 +15,7 @@
 #include <regex>
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
+#include "ability_delegator_registry.h"
 #include "ability_runtime/js_ability.h"
 
 #include "ability_runtime/js_ability_context.h"
@@ -144,6 +145,12 @@ void JsAbility::OnStart(const Want &want)
         CreateJsLaunchParam(nativeEngine, GetLaunchParam()),
     };
     CallObjectMethod("onCreate", argv, ArraySize(argv));
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformStart");
+        delegator->PostPerformStart(CreateADelegatorAbilityProperty());
+    }
 }
 
 void JsAbility::OnStop()
@@ -151,6 +158,13 @@ void JsAbility::OnStop()
     Ability::OnStop();
 
     CallObjectMethod("onDestroy");
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformStop");
+        delegator->PostPerformStop(CreateADelegatorAbilityProperty());
+    }
+
     bool ret = ConnectionManager::GetInstance().DisconnectCaller(AbilityContext::token_);
     if (ret) {
         ConnectionManager::GetInstance().ReportConnectionLeakEvent(getpid(), gettid());
@@ -169,6 +183,12 @@ void JsAbility::OnSceneCreated()
     }
     NativeValue *argv[] = {jsAppWindowStage->Get()};
     CallObjectMethod("onWindowStageCreate", argv, ArraySize(argv));
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformScenceCreated");
+        delegator->PostPerformScenceCreated(CreateADelegatorAbilityProperty());
+    }
 }
 
 void JsAbility::OnSceneRestored()
@@ -182,6 +202,12 @@ void JsAbility::OnSceneRestored()
     }
     NativeValue *argv[] = {jsAppWindowStage->Get()};
     CallObjectMethod("onWindowStageRestore", argv, ArraySize(argv));
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformScenceRestored");
+        delegator->PostPerformScenceRestored(CreateADelegatorAbilityProperty());
+    }
 }
 
 void JsAbility::onSceneDestroyed()
@@ -189,6 +215,12 @@ void JsAbility::onSceneDestroyed()
     Ability::onSceneDestroyed();
 
     CallObjectMethod("onWindowStageDestroy");
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformScenceDestroyed");
+        delegator->PostPerformScenceDestroyed(CreateADelegatorAbilityProperty());
+    }
 }
 
 void JsAbility::OnForeground(const Want &want)
@@ -211,6 +243,12 @@ void JsAbility::OnForeground(const Want &want)
     obj->SetProperty("lastRequestWant", jsWant);
 
     CallObjectMethod("onForeground", &jsWant, 1);
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformForeground");
+        delegator->PostPerformForeground(CreateADelegatorAbilityProperty());
+    }
 }
 
 void JsAbility::OnBackground()
@@ -218,6 +256,12 @@ void JsAbility::OnBackground()
     Ability::OnBackground();
 
     CallObjectMethod("onBackground");
+
+    auto delegator = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        HILOG_INFO("Call AbilityDelegator::PostPerformBackground");
+        delegator->PostPerformBackground(CreateADelegatorAbilityProperty());
+    }
 }
 
 bool JsAbility::OnContinue(WantParams &wantParams)
@@ -472,6 +516,16 @@ void JsAbility::DoOnForeground(const Want &want)
     HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
     scene_->GoForeground(Ability::sceneFlag_);
     HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);
+}
+
+std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegatorAbilityProperty()
+{
+    auto property = std::make_shared<AppExecFwk::ADelegatorAbilityProperty>();
+    property->token_          = GetAbilityContext()->GetToken();
+    property->name_           = GetAbilityName();
+    property->lifecycleState_ = GetState();
+
+    return property;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

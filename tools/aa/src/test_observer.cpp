@@ -34,15 +34,14 @@ TestObserver::~TestObserver()
 void TestObserver::TestStatus(const std::string &msg, const int &resultCode)
 {
     HILOG_INFO("enter");
-    std::cout << "TestStatus-resultCode: " + std::to_string(resultCode) << std::endl;
-    std::cout << "TestStatus-resultMsg: " + msg << std::endl;
+    std::cout << msg << std::endl;
 }
 
 void TestObserver::TestFinished(const std::string &msg, const int &resultCode)
 {
     HILOG_INFO("enter");
-    std::cout << "TestFinished-resultCode: " + std::to_string(resultCode) << std::endl;
-    std::cout << "TestFinished-resultMsg: " + msg << std::endl;
+    std::cout << "TestFinished-ResultCode: " + std::to_string(resultCode) << std::endl;
+    std::cout << "TestFinished-ResultMsg: " + msg << std::endl;
     isFinished_ = true;
 }
 

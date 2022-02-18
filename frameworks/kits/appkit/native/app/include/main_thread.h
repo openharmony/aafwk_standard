@@ -217,18 +217,6 @@ public:
 
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
 
-    /**
-     * @brief Finish user test.
-     * @param msg user test message.
-     * @param resultCode user test result Code.
-     * @param bundleName user test bundleName.
-     * @param observer test observer callback.
-     *
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer);
-
 private:
     /**
      *
