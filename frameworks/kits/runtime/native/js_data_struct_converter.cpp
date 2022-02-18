@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -170,8 +170,14 @@ NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Confi
     NativeValue* objValue = engine.CreateObject();
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
 
-    object->SetProperty("language", CreateJsValue(engine, configuration.GetItem("ohos.system.language")));
-    object->SetProperty("orientation", CreateJsValue(engine, configuration.GetItem("ohos.system.orientation")));
+    object->SetProperty("language", CreateJsValue(engine,
+        configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE)));
+    object->SetProperty("colorMode", CreateJsValue(engine,
+        configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE)));
+    object->SetProperty("direction", CreateJsValue(engine,
+        configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION)));
+    object->SetProperty("screenDensity", CreateJsValue(engine,
+        configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI)));
 
     return objValue;
 }

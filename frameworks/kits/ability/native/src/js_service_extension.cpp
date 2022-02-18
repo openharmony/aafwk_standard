@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +18,13 @@
 #include "ability_info.h"
 #include "bytrace.h"
 #include "hilog_wrapper.h"
+#include "js_extension_context.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "js_service_extension_context.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
+#include "napi_common_configuration.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 
@@ -79,10 +81,10 @@ void JsServiceExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
     }
     HILOG_INFO("JsServiceExtension::Init CreateJsServiceExtensionContext.");
     NativeValue* contextObj = CreateJsServiceExtensionContext(engine, context);
-    auto shellContextRef = jsRuntime_.LoadSystemModule("application.ServiceExtAbilityContext", &contextObj, ARGC_ONE);
-    contextObj = shellContextRef->Get();
+    shellContextRef_ = jsRuntime_.LoadSystemModule("application.ServiceExtAbilityContext", &contextObj, ARGC_ONE);
+    contextObj = shellContextRef_->Get();
     HILOG_INFO("JsServiceExtension::Init Bind.");
-    context->Bind(jsRuntime_, shellContextRef.release());
+    context->Bind(jsRuntime_, shellContextRef_.get());
     HILOG_INFO("JsServiceExtension::SetProperty.");
     obj->SetProperty("context", contextObj);
 
@@ -268,6 +270,23 @@ void JsServiceExtension::GetSrcPath(std::string &srcPath)
         srcPath.erase(srcPath.rfind('.'));
         srcPath.append(".abc");
     }
+}
+
+void JsServiceExtension::OnConfigurationUpdated(const AppExecFwk::Configuration& configuration)
+{
+    Extension::OnConfigurationUpdated(configuration);
+    HILOG_INFO("%{public}s called.", __func__);
+
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+
+    // Notify extension context
+    JsExtensionContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetContext()->GetConfiguration());
+
+    napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
+        reinterpret_cast<napi_env>(&nativeEngine), configuration);
+    NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
+    CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
 }
 }

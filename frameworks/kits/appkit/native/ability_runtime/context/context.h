@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@
 #include "application_info.h"
 #include "bindable.h"
 #include "hap_module_info.h"
+#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 #include "foundation/communication/ipc/interfaces/innerkits/ipc_core/include/iremote_object.h"
 #include "resource_manager.h"
 
@@ -160,6 +161,13 @@ public:
      * @param mode file area.
      */
     virtual void SwitchArea(int mode) = 0;
+
+    /**
+     * @brief Obtains the configuration of application.
+     *
+     * @return configuration of application.
+     */
+    virtual std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const = 0;
 
     /**
      * @brief Getting derived class

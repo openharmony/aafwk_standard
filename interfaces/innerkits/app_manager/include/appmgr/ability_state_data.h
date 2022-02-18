@@ -54,6 +54,7 @@ struct AbilityStateData : public Parcelable {
     pid_t pid = 0;
     int32_t uid = 0;
     sptr<IRemoteObject> token;
+    int32_t abilityType = 0;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
