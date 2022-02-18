@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2155,6 +2155,10 @@ void AppMgrServiceInner::GetGlobalConfiguration()
     auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
     APP_LOGI("current global language is : %{public}s", language.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+
+    // Assign to default colormode "LIGHT"
+    APP_LOGI("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());
+    configuration_->AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, ConfigurationInner::COLOR_MODE_LIGHT);
 }
 
 std::shared_ptr<AppExecFwk::Configuration> AppMgrServiceInner::GetConfiguration()

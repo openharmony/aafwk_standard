@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -390,6 +390,15 @@ void OHOSApplication::OnConfigurationUpdated(const Configuration &config)
         }
     }
 
+    // Notify AbilityStage
+    APP_LOGI("Number of abilityStage to be notified : [%{public}zu]", abilityStages_.size());
+    for (auto it = abilityStages_.begin(); it != abilityStages_.end(); it++) {
+        auto abilityStage = it->second;
+        if (abilityStage) {
+            abilityStage->OnConfigurationUpdated(config);
+        }
+    }
+
     for (auto callback : elementsCallbacks_) {
         if (callback != nullptr) {
             callback->OnConfigurationUpdated(nullptr, config);
@@ -466,6 +475,7 @@ std::shared_ptr<AbilityRuntime::Context> OHOSApplication::AddAbilityStage(
         std::shared_ptr<AbilityRuntime::ContextImpl> stageContext = std::make_shared<AbilityRuntime::ContextImpl>();
         stageContext->SetParentContext(abilityRuntimeContext_);
         stageContext->InitHapModuleInfo(abilityInfo);
+        stageContext->SetConfiguration(GetConfiguration());
         std::shared_ptr<AppExecFwk::HapModuleInfo> hapModuleInfo = stageContext->GetHapModuleInfo();
         if (hapModuleInfo == nullptr) {
             APP_LOGE("AddAbilityStage:hapModuleInfo is nullptr");
