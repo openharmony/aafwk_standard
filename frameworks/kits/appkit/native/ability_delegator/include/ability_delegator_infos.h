@@ -13,10 +13,21 @@
  * limitations under the License.
  */
 
-class TestRunner {
-    constructor() {}
-    onPrepare() {}
-    onRun() {}
-}
+#ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_DELEGATOR_INFOS_H
+#define FOUNDATION_APPEXECFWK_OHOS_ABILITY_DELEGATOR_INFOS_H
 
-export default TestRunner
+#include <string>
+#include "ability_lifecycle_executor.h"
+#include "iremote_object.h"
+
+namespace OHOS {
+namespace AppExecFwk {
+struct ADelegatorAbilityProperty {
+    sptr<IRemoteObject> token_;
+    std::string name_;
+    AbilityLifecycleExecutor::LifecycleState lifecycleState_ {AbilityLifecycleExecutor::LifecycleState::UNINITIALIZED};
+};
+}  // namespace AppExecFwk
+}  // namespace OHOS
+
+#endif  // FOUNDATION_APPEXECFWK_OHOS_ABILITY_DELEGATOR_INFOS_H

@@ -27,19 +27,18 @@ class NativeValue;
 namespace OHOS {
 namespace AbilityDelegatorJs {
 using namespace OHOS::AppExecFwk;
-using Function = void(*)();
 class AbilityMonitor : public IAbilityMonitor {
 public:
-    AbilityMonitor(const std::string &name, JSAbilityMonitor *jsAbilityMonitor);
+    AbilityMonitor(const std::string &name, const std::shared_ptr<JSAbilityMonitor> &jsAbilityMonitor);
     ~AbilityMonitor() = default;
 
-    void onAbilityStart();
-    void onAbilityForeground();
-    void onAbilityBackground();
-    void onAbilityStop();
-    void onWindowStageCreate();
-    void onWindowStageRestore();
-    void onWindowStageDestroy();
+    void OnAbilityStart() override;
+    void OnAbilityForeground() override;
+    void OnAbilityBackground() override;
+    void OnAbilityStop() override;
+    void OnWindowStageCreate() override;
+    void OnWindowStageRestore() override;
+    void OnWindowStageDestroy() override;
 
 private:
     std::shared_ptr<JSAbilityMonitor> jsMonitor_;

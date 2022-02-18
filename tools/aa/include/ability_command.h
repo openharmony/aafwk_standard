@@ -93,7 +93,7 @@ const std::string HELP_MSG_TEST =
     "options list:\n"
     "  -h, --help                                                                            \
     list available commands\n"
-    "  -p <bundle-name> -s unittest <test-runner> -s class <test-class> [-w <wait-time>]    \
+    "  -p <bundle-name> -s unittest <test-runner> [-s class <test-class>] [-w <wait-time>]   \
     start the test framework with options\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";

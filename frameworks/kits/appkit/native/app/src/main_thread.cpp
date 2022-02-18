@@ -847,6 +847,13 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         return;
     }
 
+    // create contextImpl
+    std::shared_ptr<AbilityRuntime::ContextImpl> contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();
+    contextImpl->SetResourceManager(resourceManager);
+    contextImpl->SetApplicationInfo(std::make_shared<ApplicationInfo>(appInfo));
+    contextImpl->InitAppContext();
+    application_->SetApplicationContext(contextImpl);
+
     bool moduelJson = false;
     bool isStageBased = false;
     if (!bundleInfo.hapModuleInfos.empty()) {
@@ -895,13 +902,6 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     application_->AttachBaseContext(contextDeal);
     application_->SetAbilityRecordMgr(abilityRecordMgr_);
     application_->SetConfiguration(config);
-
-    // create contextImpl
-    std::shared_ptr<AbilityRuntime::ContextImpl> contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();
-    contextImpl->SetResourceManager(resourceManager);
-    contextImpl->SetApplicationInfo(std::make_shared<ApplicationInfo>(appInfo));
-    contextImpl->InitAppContext();
-    application_->SetApplicationContext(contextImpl);
 
     applicationImpl_->SetRecordId(appLaunchData.GetRecordId());
     applicationImpl_->SetApplication(application_);
@@ -988,28 +988,16 @@ bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
         return false;
     }
 
-    auto delegator = std::make_shared<AbilityDelegator>(this, std::move(testRunner), record.observer);
+    auto delegator = std::make_shared<AbilityDelegator>(
+        application_->GetAppContext(), std::move(testRunner), record.observer);
     if (!delegator) {
         APP_LOGE("delegator is null");
         return false;
     }
-    delegator->Init();
     AbilityDelegatorRegistry::RegisterInstance(delegator, args);
 
     delegator->Prepare();
     return true;
-}
-
-int MainThread::FinishUserTest(const std::string &msg, const int &resultCode,
-    const std::string &bundleName, const sptr<IRemoteObject> &observer)
-{
-    APP_LOGI("MainThread::FinishUserTest");
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(
-        msg, resultCode, bundleName, observer);
-    if (err != ERR_OK) {
-        APP_LOGE("MainThread::FinishUserTest is failed %{public}d", err);
-    }
-    return ERR_OK;
 }
 
 /**

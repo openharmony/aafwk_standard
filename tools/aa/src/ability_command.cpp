@@ -1241,7 +1241,7 @@ bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::stri
 {
     HILOG_INFO("enter");
 
-    std::vector<std::string> opts = {"-p", "-s unittest", "-s class"};
+    std::vector<std::string> opts = {"-p", "-s unittest"};
     for (auto opt : opts) {
         auto it = params.find(opt);
         if (it == params.end()) {
@@ -1296,6 +1296,7 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
 
     return result;
 }
+
 sptr<IAbilityManager> AbilityManagerShellCommand::GetAbilityManagerService()
 {
     sptr<ISystemAbilityManager> systemManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
