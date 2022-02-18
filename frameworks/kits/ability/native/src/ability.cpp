@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include "app_log_wrapper.h"
 #include "background_task_mgr_helper.h"
 #include "bytrace.h"
+#include "configuration_convertor.h"
 #include "connection_manager.h"
 #include "context_impl.h"
 #include "continuation_manager.h"
@@ -133,6 +134,11 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
                 continuationHandler_->SetAbilityInfo(abilityInfo_);
             }
         }
+
+        // register displayid change callback
+        APP_LOGI("Ability::Init call RegisterDisplayListener");
+        OHOS::sptr<OHOS::Rosen::DisplayManager::IDisplayListener> thisAbility(this);
+        Rosen::DisplayManager::GetInstance().RegisterDisplayListener(thisAbility);
     }
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
@@ -225,6 +231,31 @@ void Ability::OnStart(const Want &want)
                 OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
             }
             APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
+        }
+
+        // Update resMgr, Configuration
+        APP_LOGI("%{public}s get display by displayId %{public}d.", __func__, displayId);
+        auto display = Rosen::DisplayManager::GetInstance().GetDisplayById(displayId);
+        if (display) {
+            float density = display->GetVirtualPixelRatio();
+            int32_t width = display->GetWidth();
+            int32_t height = display->GetHeight();
+            auto configuration = application_->GetConfiguration();
+            configuration->AddItem(ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
+            configuration->AddItem(ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+
+            std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+            if (resConfig == nullptr) {
+                APP_LOGE("%{public}s error, resConfig is nullptr.", __func__);
+                return;
+            }
+            resConfig->SetScreenDensity(ConvertDensity(density));
+            resConfig->SetDirection(ConvertDirection(height, width));
+            auto resourceManager = GetResourceManager();
+            if (resourceManager != nullptr) {
+                resourceManager->UpdateResConfig(*resConfig);
+                APP_LOGI("%{public}s Notify ResourceManager.", __func__);
+            }
         }
     }
 
@@ -907,29 +938,39 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
     APP_LOGI("%{public}s begin.", __func__);
 
     std::string language;
+    std::string colormode;
     if (setting_) {
         auto displayId = std::atoi(setting_->GetProperty(AbilityStartSetting::WINDOW_DISPLAY_ID_KEY).c_str());
         language = changeConfiguration.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
-        APP_LOGI("displayId :[%{public}d] | language :[%{public}s]", displayId, language.c_str());
+        colormode = changeConfiguration.GetItem(displayId, GlobalConfigurationKey::SYSTEM_COLORMODE);
+        APP_LOGI("displayId: [%{public}d], language: [%{public}s], colormode: [%{public}s]",
+            displayId, language.c_str(), colormode.c_str());
     } else {
         language = changeConfiguration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-        APP_LOGI("language :[%{public}s]", language.c_str());
+        colormode = changeConfiguration.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
+        APP_LOGI("language: [%{public}s], colormode: [%{public}s]", language.c_str(), colormode.c_str());
     }
 
     // Notify ResourceManager
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
-    if (resConfig != nullptr && !language.empty()) {
-        APP_LOGE("make resource mgr date");
-        UErrorCode status = U_ZERO_ERROR;
-        icu::Locale locale = icu::Locale::forLanguageTag(language, status);
-        APP_LOGI("get Locale::forLanguageTag return[%{public}d].", static_cast<int>(status));
-        if (status == U_ZERO_ERROR) {
-            resConfig->SetLocaleInfo(locale);
-            auto resourceManager = GetResourceManager();
-            if (resourceManager != nullptr) {
-                resourceManager->UpdateResConfig(*resConfig);
-                APP_LOGI("%{public}s Notify ResourceManager.", __func__);
+    if (resConfig != nullptr) {
+        APP_LOGI("make resource mgr data");
+
+        if (!language.empty()) {
+            UErrorCode status = U_ZERO_ERROR;
+            icu::Locale locale = icu::Locale::forLanguageTag(language, status);
+            APP_LOGI("get Locale::forLanguageTag return[%{public}d].", static_cast<int>(status));
+            if (status == U_ZERO_ERROR) {
+                resConfig->SetLocaleInfo(locale);
             }
+        }
+
+        resConfig->SetColorMode(ConvertColorMode(colormode));
+
+        auto resourceManager = GetResourceManager();
+        if (resourceManager != nullptr) {
+            resourceManager->UpdateResConfig(*resConfig);
+            APP_LOGI("%{public}s Notify ResourceManager.", __func__);
         }
     }
 
@@ -3381,6 +3422,61 @@ int Ability::GetCurrentWindowMode()
         windowMode = static_cast<int>(window->GetMode());
     }
     return windowMode;
+}
+
+void Ability::OnCreate(Rosen::DisplayId displayId)
+{
+    APP_LOGI("%{public}s called.", __func__);
+}
+
+void Ability::OnDestroy(Rosen::DisplayId displayId)
+{
+    APP_LOGI("%{public}s called.", __func__);
+}
+
+void Ability::OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent changeEvent)
+{
+    APP_LOGI("%{public}s start, displayId: %{public}" PRIu64", changeEvent: %{public}d.", __func__,
+        displayId, changeEvent);
+
+    // Get display
+    auto display = Rosen::DisplayManager::GetInstance().GetDisplayById(displayId);
+    if (!display) {
+        APP_LOGE("Get display by displayId %{public}" PRIu64" failed.", displayId);
+    }
+
+    // Notify ResourceManager
+    float density = display->GetVirtualPixelRatio();
+    int32_t width = display->GetWidth();
+    int32_t height = display->GetHeight();
+    std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    if (resConfig != nullptr) {
+        resConfig->SetScreenDensity(ConvertDensity(density));
+        resConfig->SetDirection(ConvertDirection(height, width));
+
+        auto resourceManager = GetResourceManager();
+        if (resourceManager != nullptr) {
+            resourceManager->UpdateResConfig(*resConfig);
+            APP_LOGI("%{public}s Notify ResourceManager.", __func__);
+        }
+    }
+
+    // Notify ability
+    Configuration newConfig;
+    newConfig.AddItem(ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
+    newConfig.AddItem(ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+
+    std::vector<std::string> changeKeyV;
+    auto configuration = application_->GetConfiguration();
+    configuration->CompareDifferent(changeKeyV, newConfig);
+    int size = changeKeyV.size();
+    APP_LOGI("changeKeyV size :%{public}d", size);
+    if (!changeKeyV.empty()) {
+        configuration->Merge(changeKeyV, newConfig);
+        OnConfigurationUpdated(*configuration);
+    }
+
+    APP_LOGI("%{public}s end", __func__);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

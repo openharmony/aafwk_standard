@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "configuration.h"
 #include "iremote_object.h"
 #include "want.h"
 
@@ -114,6 +115,13 @@ public:
      * You can override this function to implement your own processing logic.
      */
     virtual void OnStop();
+
+    /**
+     * @brief Called when the system configuration is updated.
+     *
+     * @param configuration Indicates the updated configuration information.
+     */
+    virtual void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration);
 
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
 private:

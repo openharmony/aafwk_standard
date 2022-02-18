@@ -239,8 +239,6 @@ public:
 
     virtual void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) = 0;
 
-    virtual std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const = 0;
-
     virtual void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) = 0;
 
     virtual int GetCurrentWindowMode() = 0;

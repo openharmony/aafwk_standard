@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,15 +28,32 @@ namespace AppExecFwk {
 namespace ConfigurationInner {
     const std::string CONNECTION_SYMBOL {"#"};
     const std::string EMPTY_STRING {""};
+    const std::string APPLICATION_DIRECTION {"ohos.application.direction"};
+    const std::string APPLICATION_DENSITYDPI {"ohos.application.densitydpi"};
 
     /*
      * This must be synchronized with the value in GlobalConfigurationKey
      */
     const std::vector<std::string> SystemConfigurationKeyStore {
         OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE,
-        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION,
+        OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE,
+        OHOS::AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION,
+        OHOS::AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI,
     };
-}
+
+    enum class ColorMode : int32_t {
+        COLOR_MODE_UNDEFINED = -1,
+        COLOR_MODE_LIGHT = 0,
+        COLOR_MODE_DARK = 1,
+    };
+
+    const std::string COLOR_MODE_LIGHT {"light"};
+    const std::string COLOR_MODE_DARK {"dark"};
+
+    const std::string DIRECTION_VERTICAL {"vertical"};
+    const std::string DIRECTION_HORIZONTAL {"horizontal"};
+};
+
 class Configuration final: public Parcelable {
 public:
     Configuration();
