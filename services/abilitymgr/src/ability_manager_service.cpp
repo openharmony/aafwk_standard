@@ -3976,6 +3976,9 @@ int32_t AbilityManagerService::GetValidUserId(const int32_t userId)
         validUserId = IPCSkeleton::GetCallingUid() / BASE_USER_RANGE;
         HILOG_DEBUG("%{public}s validUserId = %{public}d, CallingUid = %{public}d", __func__, validUserId,
             IPCSkeleton::GetCallingUid());
+	if (validUserId == U0_USER_ID) {
+            validUserId == GetUserId();
+	}
     } else {
         validUserId = userId;
     }
