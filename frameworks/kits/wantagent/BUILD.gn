@@ -1,0 +1,82 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+
+group("native_wantagent") {
+  deps = [ ":wantagent_innerkits" ]
+}
+
+config("wantagent_innerkits_public_config") {
+  visibility = [ ":*" ]
+
+  include_dirs = [
+    "//base/global/resmgr_standard/interfaces/innerkits/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/wantagent/include",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
+    "//third_party/icu/icu4c/source/common",
+  ]
+}
+
+ohos_shared_library("wantagent_innerkits") {
+  include_dirs = [
+    "//utils/native/base/include",
+    "//foundation/aafwk/standard/services/common/include",
+    "//foundation/distributedschedule/safwk/services/safwk/include",
+  ]
+
+  sources = [
+    "src/completed_dispatcher.cpp",
+    "src/pending_want.cpp",
+    "src/trigger_info.cpp",
+    "src/want_agent.cpp",
+    "src/want_agent_helper.cpp",
+    "src/want_agent_info.cpp",
+    "src/want_agent_log_wrapper.cpp",
+  ]
+
+  configs = [ "//utils/native/base:utils_config" ]
+
+  public_configs = [ ":wantagent_innerkits_public_config" ]
+
+  deps = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "ces_standard:cesfwk_core",
+    "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+  ]
+
+  if (is_double_framework) {
+    cflags = [ "-DCONFIG_DUAL_FRAMEWORK" ]
+  }
+
+  subsystem_name = "aafwk"
+  part_name = "ability_runtime"
+}

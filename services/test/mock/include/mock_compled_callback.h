@@ -19,11 +19,11 @@
 #include "gmock/gmock.h"
 #include "completed_callback.h"
 
-namespace OHOS::Notification::WantAgent {
+namespace OHOS::AbilityRuntime::WantAgent {
 class MockCompletedCallback : public CompletedCallback {
 public:
     MOCK_METHOD4(OnSendFinished, void(const AAFwk::Want &want, int resultCode, const std::string &resultData,
                                     const AAFwk::WantParams &resultExtras));
 };
-}  // namespace OHOS::Notification::WantAgent
+}  // namespace OHOS::WantAgent
 #endif

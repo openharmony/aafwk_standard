@@ -47,6 +47,7 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension:staticsubscriberextension_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/static_subscriber_extension_context:staticsubscriberextensioncontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantagent:wantagent",
   ]
 }
 
