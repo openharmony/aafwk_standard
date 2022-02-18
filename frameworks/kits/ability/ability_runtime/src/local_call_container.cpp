@@ -155,7 +155,9 @@ void LocalCallContainer::OnAbilityConnectDone(
     }
     std::shared_ptr<LocalCallRecord> localCallRecord;
     if (GetCallLocalreocrd(element, localCallRecord)) {
-        localCallRecord->SetRemoteObject(remoteObject);
+        auto callRecipient = new (std::nothrow) CallRecipient(
+            std::bind(&LocalCallContainer::OnCallStubDied, this, std::placeholders::_1));
+        localCallRecord->SetRemoteObject(remoteObject, callRecipient);
     }
 
     if (localCallRecord) {
@@ -163,7 +165,6 @@ void LocalCallContainer::OnAbilityConnectDone(
     }
 
     HILOG_DEBUG("LocalCallContainer::OnAbilityConnectDone end.");
-
     return;
 }
 
@@ -181,6 +182,24 @@ bool LocalCallContainer::GetCallLocalreocrd(
     }
 
     return false;
+}
+
+void LocalCallContainer::OnCallStubDied(const wptr<IRemoteObject> &remote)
+{
+    auto diedRemote = remote.promote();
+    auto isExist = [&diedRemote](auto &record) {
+        return record.second->IsSameObject(diedRemote);
+    };
+
+    auto iter = std::find_if(callProxyRecords_.begin(), callProxyRecords_.end(), isExist);
+    if (iter == callProxyRecords_.end()) {
+        HILOG_ERROR("StubDied object not found from localcallrecord.");
+        return;
+    }
+
+    iter->second->OnCallStubDied(remote);
+    callProxyRecords_.erase(iter);
+    HILOG_DEBUG("LocalCallContainer::OnCallStubDied end.");
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

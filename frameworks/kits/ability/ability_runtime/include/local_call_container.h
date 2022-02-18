@@ -45,6 +45,7 @@ public:
 private:
     bool GetCallLocalreocrd(
         const AppExecFwk::ElementName &elementName, std::shared_ptr<LocalCallRecord> &localCallRecord);
+    void OnCallStubDied(const wptr<IRemoteObject> &remote);
 
 private:
     std::map<std::string, std::shared_ptr<LocalCallRecord>> callProxyRecords_;
