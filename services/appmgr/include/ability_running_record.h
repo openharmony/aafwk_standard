@@ -23,6 +23,7 @@
 #include "ability_info.h"
 #include "application_info.h"
 #include "app_mgr_constants.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -44,6 +45,15 @@ public:
      * @return Returns the ability info.
      */
     const std::shared_ptr<AbilityInfo> &GetAbilityInfo() const;
+
+    /**
+     * @brief Obtains the info of the ability.
+     *
+     * @return Returns the ability want.
+     */
+    const std::shared_ptr<AAFwk::Want> &GetWant() const;
+
+    void SetWant(const std::shared_ptr<AAFwk::Want> &want);
 
     /**
      * @brief Obtains the token of the ability.
@@ -169,6 +179,7 @@ private:
     bool isTerminating_ = false;
     AbilityState state_ = AbilityState::ABILITY_STATE_BEGIN;
     std::shared_ptr<AbilityInfo> info_;
+    std::shared_ptr<AAFwk::Want> want_ = nullptr;
     sptr<IRemoteObject> token_;
     sptr<IRemoteObject> preToken_;
 };

@@ -103,7 +103,7 @@ std::shared_ptr<AppRunningRecord> AmsServiceLoadAbilityProcessTest::StartLoadAbi
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(newPid), Return(ERR_OK)));
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, preToken, abilityInfo, appInfo);
+    service_->LoadAbility(token, preToken, abilityInfo, appInfo, nullptr);
     BundleInfo bundleInfo;
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
 
@@ -264,7 +264,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_003, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(nullptr, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(nullptr, nullptr, abilityInfo, appInfo, nullptr);
 
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
@@ -296,7 +296,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_004, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
     APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_004 end");
@@ -326,7 +326,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_005, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
     APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_005 end");
@@ -357,7 +357,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_006, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
     APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_006 end");
@@ -407,7 +407,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_007, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     EXPECT_EQ(recordMap.size(), (uint32_t)1);
 
     auto record2 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
@@ -469,7 +469,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_008, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(0);
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token2, preToken, abilityInfo2, appInfo);
+    service_->LoadAbility(token2, preToken, abilityInfo2, appInfo, nullptr);
     EXPECT_EQ(recordMap.size(), (uint32_t)1);
     auto record2 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
@@ -511,7 +511,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_001, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(PID), Return(ERR_OK)));
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
 
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)1);
@@ -553,7 +553,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_002, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(Return(ERR_APPEXECFWK_INVALID_PID));
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
 
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
@@ -587,7 +587,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_001, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(PID), Return(ERR_OK)));
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
 
     BundleInfo bundleInfo;
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
@@ -622,7 +622,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_002, TestSize.Level1)
     EXPECT_CALL(*mockClientPtr, StartProcess(_, _)).Times(1).WillOnce(Return(ERR_APPEXECFWK_INVALID_PID));
 
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token, nullptr, abilityInfo, appInfo);
+    service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
 
     BundleInfo bundleInfo;
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
@@ -722,7 +722,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_002, TestSize.Level1)
     sptr<IRemoteObject> token2 = new MockAbilityToken();
     sptr<IRemoteObject> preToken = token;
     service_->SetAppSpawnClient(mockClientPtr);
-    service_->LoadAbility(token2, preToken, abilityInfo, appInfo);
+    service_->LoadAbility(token2, preToken, abilityInfo, appInfo, nullptr);
     EXPECT_EQ(recordMap.size(), (uint32_t)1);
     auto record2 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);

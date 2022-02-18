@@ -51,7 +51,8 @@ AmsMgrScheduler::~AmsMgrScheduler()
 }
 
 void AmsMgrScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo)
+    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
+    const std::shared_ptr<AAFwk::Want> &want)
 {
     if (!abilityInfo || !appInfo) {
         APP_LOGE("param error");
@@ -64,7 +65,7 @@ void AmsMgrScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<I
     }
     PerfProfile::GetInstance().SetAbilityLoadStartTime(GetTickCount());
     std::function<void()> loadAbilityFunc =
-        std::bind(&AppMgrServiceInner::LoadAbility, amsMgrServiceInner_, token, preToken, abilityInfo, appInfo);
+        std::bind(&AppMgrServiceInner::LoadAbility, amsMgrServiceInner_, token, preToken, abilityInfo, appInfo, want);
 
     amsHandler_->PostTask(loadAbilityFunc, TASK_LOAD_ABILITY);
 }

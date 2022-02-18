@@ -115,10 +115,12 @@ public:
      * @param preToken, the token of ability's caller.
      * @param abilityinfo, ability info.
      * @param application, application info.
+     * @param want ability want
      * @return true on success ,false on failure.
      */
     int LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-        const AppExecFwk::AbilityInfo &abilityinfo, const AppExecFwk::ApplicationInfo &application);
+        const AppExecFwk::AbilityInfo &abilityinfo, const AppExecFwk::ApplicationInfo &application,
+        const Want &want);
 
     /**
      * terminate ability with token.
