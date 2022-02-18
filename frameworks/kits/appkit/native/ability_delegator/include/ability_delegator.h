@@ -19,24 +19,21 @@
 #include <list>
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <string>
-#include <tuple>
 #include <vector>
 
+#include "ability_delegator_infos.h"
 #include "iability_monitor.h"
 #include "delegator_thread.h"
 #include "shell_cmd_result.h"
 #include "test_runner.h"
 
-#include "ability_lifecycle_callbacks.h"
 #include "ability_lifecycle_executor.h"
 #include "ability_runtime/context/context.h"
-#include "main_thread.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-class AbilityDelegator : public AbilityLifecycleCallbacks, public std::enable_shared_from_this<AbilityDelegator> {
+class AbilityDelegator : public std::enable_shared_from_this<AbilityDelegator> {
 public:
     enum class AbilityState : uint8_t {
         UNINITIALIZED = 0,
@@ -46,23 +43,10 @@ public:
         STOPED
     };
 
-    using ability_property = std::tuple<sptr<IRemoteObject>, std::shared_ptr<Ability>, AbilityDelegator::AbilityState>;
-    using list_ability_property = std::list<ability_property>;
-
 public:
-    AbilityDelegator(const sptr<MainThread> &mainThread, std::unique_ptr<TestRunner> runner,
+    AbilityDelegator(const std::shared_ptr<AbilityRuntime::Context> &context, std::unique_ptr<TestRunner> runner,
         const sptr<IRemoteObject> &observer);
     ~AbilityDelegator();
-
-    void Init();
-
-    void OnAbilityStart(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilityInactive(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilityBackground(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilityForeground(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilityActive(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilityStop(const std::shared_ptr<Ability> &ability) override;
-    void OnAbilitySaveState(const PacMap &outState) override;
 
     void AddAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
     void RemoveAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
@@ -88,35 +72,29 @@ public:
 
     void Print(const std::string &msg);
 
-    void PrePerformStart(const std::shared_ptr<Ability> &ability);
-    void PostPerformStart(const std::shared_ptr<Ability> &ability);
-    void PrePerformScenceCreated(const std::shared_ptr<Ability> &ability);
-    void PrePerformScenceRestored(const std::shared_ptr<Ability> &ability);
-    void PrePerformScenceDestroyed(const std::shared_ptr<Ability> &ability);
-    void PrePerformForeground(const std::shared_ptr<Ability> &ability);
-    void PrePerformBackground(const std::shared_ptr<Ability> &ability);
-    void PrePerformStop(const std::shared_ptr<Ability> &ability);
+    void PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformScenceCreated(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformScenceRestored(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformScenceDestroyed(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformForeground(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformBackground(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    void PostPerformStop(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    void FinishUserTest(const std::string &msg, const int32_t resultCode);
 
 private:
     AbilityDelegator::AbilityState ConvertAbilityState(const AbilityLifecycleExecutor::LifecycleState lifecycleState);
-    void ProcessAbilityProperties(const std::shared_ptr<Ability> &ability);
-    sptr<IRemoteObject> GetAbilityToken(const std::shared_ptr<Ability> &ability);
-    std::optional<ability_property> DoesPropertyExist(const sptr<IRemoteObject> &token);
-    void FinishUserTest(const int32_t resultCode);
+    void ProcessAbilityProperties(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    std::shared_ptr<ADelegatorAbilityProperty> DoesPropertyExist(const sptr<IRemoteObject> &token);
 
 private:
-    static constexpr size_t FIRST_PROPERTY  {0};
-    static constexpr size_t SECOND_PROPERTY {1};
-    static constexpr size_t THIRD_PROPERTY  {2};
-
-private:
-    sptr<MainThread> mainThread_;
-    std::unique_ptr<TestRunner> testRunner_;
-    std::unique_ptr<DelegatorThread> delegatorThread_;
-    list_ability_property abilityProperties_;
-    std::vector<std::shared_ptr<IAbilityMonitor>> abilityMonitors_;
     std::shared_ptr<AbilityRuntime::Context> appContext_;
+    std::unique_ptr<TestRunner> testRunner_;
     sptr<IRemoteObject> observer_;
+
+    std::unique_ptr<DelegatorThread> delegatorThread_;
+    std::list<std::shared_ptr<ADelegatorAbilityProperty>> abilityProperties_;
+    std::vector<std::shared_ptr<IAbilityMonitor>> abilityMonitors_;
 
     std::mutex mutexMonitor_;
     std::mutex mutexAbilityProperties_;

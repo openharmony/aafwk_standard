@@ -23,67 +23,12 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-AbilityDelegator::AbilityDelegator(const sptr<MainThread> &mainThread, std::unique_ptr<TestRunner> runner,
-    const sptr<IRemoteObject> &observer)
-    : mainThread_(mainThread), testRunner_(std::move(runner)), observer_(observer)
+AbilityDelegator::AbilityDelegator(const std::shared_ptr<AbilityRuntime::Context> &context,
+    std::unique_ptr<TestRunner> runner, const sptr<IRemoteObject> &observer)
+    : appContext_(context), testRunner_(std::move(runner)), observer_(observer)
 {}
 
 AbilityDelegator::~AbilityDelegator()
-{
-    if (mainThread_) {
-        auto app = mainThread_->GetApplication();
-        if (app) {
-            app->UnregisterAbilityLifecycleCallbacks(shared_from_this());
-        }
-    }
-}
-
-void AbilityDelegator::Init()
-{
-    APP_LOGI("Enter");
-
-    if (!mainThread_) {
-        APP_LOGE("Invalid mainThread");
-        return;
-    }
-
-    auto app = mainThread_->GetApplication();
-    if (!app) {
-        APP_LOGE("Invalid application");
-        return;
-    }
-
-    appContext_ = app->GetAppContext();
-    app->RegisterAbilityLifecycleCallbacks(shared_from_this());
-}
-
-void AbilityDelegator::OnAbilityStart(const std::shared_ptr<Ability> &ability)
-{
-    ProcessAbilityProperties(ability);
-}
-
-void AbilityDelegator::OnAbilityInactive(const std::shared_ptr<Ability> &ability)
-{}
-
-void AbilityDelegator::OnAbilityBackground(const std::shared_ptr<Ability> &ability)
-{
-    ProcessAbilityProperties(ability);
-}
-
-void AbilityDelegator::OnAbilityForeground(const std::shared_ptr<Ability> &ability)
-{
-    ProcessAbilityProperties(ability);
-}
-
-void AbilityDelegator::OnAbilityActive(const std::shared_ptr<Ability> &ability)
-{}
-
-void AbilityDelegator::OnAbilityStop(const std::shared_ptr<Ability> &ability)
-{
-    ProcessAbilityProperties(ability);
-}
-
-void AbilityDelegator::OnAbilitySaveState(const PacMap &outState)
 {}
 
 void AbilityDelegator::AddAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor)
@@ -144,7 +89,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<I
         return {};
     }
 
-    return GetAbilityToken(obtainedAbility);
+    return obtainedAbility->token_;
 }
 
 sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
@@ -163,7 +108,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
         return {};
     }
 
-    return GetAbilityToken(obtainedAbility);
+    return obtainedAbility->token_;
 }
 
 std::shared_ptr<AbilityRuntime::Context> AbilityDelegator::GetAppContext() const
@@ -185,7 +130,7 @@ AbilityDelegator::AbilityState AbilityDelegator::GetAbilityState(const sptr<IRem
         return AbilityDelegator::AbilityState::UNINITIALIZED;
     }
 
-    return std::get<THIRD_PROPERTY>(existedProperty.value());
+    return ConvertAbilityState(existedProperty->lifecycleState_);
 }
 
 sptr<IRemoteObject> AbilityDelegator::GetCurrentTopAbility()
@@ -249,8 +194,9 @@ bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
         return false;
     }
 
-    if (AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityForeground(token)) {
-        APP_LOGE("Failed to call DelegatorDoAbilityForeground");
+    auto ret = AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityForeground(token);
+    if (ret) {
+        APP_LOGE("Failed to call DelegatorDoAbilityForeground, reson : %{public}d", ret);
         return false;
     }
 
@@ -264,8 +210,9 @@ bool AbilityDelegator::DoAbilityBackground(const sptr<IRemoteObject> &token)
         return false;
     }
 
-    if (AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityBackground(token)) {
-        APP_LOGE("Failed to call DelegatorDoAbilityBackground");
+    auto ret = AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityBackground(token);
+    if (ret) {
+        APP_LOGE("Failed to call DelegatorDoAbilityBackground, reson : %{public}d", ret);
         return false;
     }
 
@@ -293,6 +240,7 @@ std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std:
 
 void AbilityDelegator::Print(const std::string &msg)
 {
+    APP_LOGI("message to print : %{public}s", msg.data());
     auto testObserver = iface_cast<ITestObserver>(observer_);
     if (!testObserver) {
         APP_LOGW("Invalid testObserver");
@@ -302,12 +250,14 @@ void AbilityDelegator::Print(const std::string &msg)
     testObserver->TestStatus(msg, 0);
 }
 
-void AbilityDelegator::PrePerformStart(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -320,17 +270,20 @@ void AbilityDelegator::PrePerformStart(const std::shared_ptr<Ability> &ability)
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnAbilityStart();
+        if (monitor->Match(ability, true)) {
+            monitor->OnAbilityStart();
+        }
     }
 }
 
-void AbilityDelegator::PostPerformStart(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -343,16 +296,20 @@ void AbilityDelegator::PostPerformStart(const std::shared_ptr<Ability> &ability)
             continue;
         }
 
-        monitor->Match(ability, {});
+        if (monitor->Match(ability)) {
+            monitor->OnWindowStageCreate();
+        }
     }
 }
 
-void AbilityDelegator::PrePerformScenceCreated(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -365,17 +322,20 @@ void AbilityDelegator::PrePerformScenceCreated(const std::shared_ptr<Ability> &a
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnWindowStageCreate();
+        if (monitor->Match(ability)) {
+            monitor->OnWindowStageRestore();
+        }
     }
 }
 
-void AbilityDelegator::PrePerformScenceRestored(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -388,17 +348,20 @@ void AbilityDelegator::PrePerformScenceRestored(const std::shared_ptr<Ability> &
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnWindowStageRestore();
+        if (monitor->Match(ability)) {
+            monitor->OnWindowStageDestroy();
+        }
     }
 }
 
-void AbilityDelegator::PrePerformScenceDestroyed(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -411,17 +374,20 @@ void AbilityDelegator::PrePerformScenceDestroyed(const std::shared_ptr<Ability> 
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnWindowStageDestroy();
+        if (monitor->Match(ability)) {
+            monitor->OnAbilityForeground();
+        }
     }
 }
 
-void AbilityDelegator::PrePerformForeground(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -434,17 +400,20 @@ void AbilityDelegator::PrePerformForeground(const std::shared_ptr<Ability> &abil
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnAbilityForeground();
+        if (monitor->Match(ability)) {
+            monitor->OnAbilityBackground();
+        }
     }
 }
 
-void AbilityDelegator::PrePerformBackground(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
         APP_LOGW("Invalid input parameter");
         return;
     }
+
+    ProcessAbilityProperties(ability);
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
@@ -457,31 +426,9 @@ void AbilityDelegator::PrePerformBackground(const std::shared_ptr<Ability> &abil
             continue;
         }
 
-        monitor->Match(ability, {});
-        monitor->OnAbilityBackground();
-    }
-}
-
-void AbilityDelegator::PrePerformStop(const std::shared_ptr<Ability> &ability)
-{
-    if (!ability) {
-        APP_LOGW("Invalid input parameter");
-        return;
-    }
-
-    std::unique_lock<std::mutex> lck(mutexMonitor_);
-    if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
-        return;
-    }
-
-    for (auto &monitor : abilityMonitors_) {
-        if (!monitor) {
-            continue;
+        if (monitor->Match(ability)) {
+            monitor->OnAbilityStop();
         }
-
-        monitor->Match(ability, {});
-        monitor->OnAbilityStop();
     }
 }
 
@@ -510,74 +457,52 @@ AbilityDelegator::AbilityState AbilityDelegator::ConvertAbilityState(
     return abilityState;
 }
 
-void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<Ability> &ability)
+void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid ability");
+        APP_LOGW("Invalid ability property");
         return;
     }
 
-    auto abilityToken = GetAbilityToken(ability);
-    if (!abilityToken) {
-        APP_LOGE("Invalid ability token");
-        return;
-    }
+    APP_LOGW("ability property : name : %{public}s, state : %{public}d",
+        ability->name_.data(), ability->lifecycleState_);
 
     std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
-    auto existedProperty = DoesPropertyExist(abilityToken);
+    auto existedProperty = DoesPropertyExist(ability->token_);
     if (existedProperty) {
-        abilityProperties_.remove(existedProperty.value());
+        // update
+        existedProperty->lifecycleState_ = ability->lifecycleState_;
+        return;
     }
 
-    auto abilityState = ConvertAbilityState(ability->GetState());
-    if (abilityState == AbilityDelegator::AbilityState::FOREGROUND) {
-        abilityProperties_.emplace_front(abilityToken, ability, abilityState);
-    } else {
-        abilityProperties_.emplace_back(abilityToken, ability, abilityState);
-    }
+    abilityProperties_.emplace_back(ability);
 }
 
-sptr<IRemoteObject> AbilityDelegator::GetAbilityToken(const std::shared_ptr<Ability> &ability)
-{
-    if (!ability) {
-        APP_LOGW("Invalid ability");
-        return {};
-    }
-
-    auto abilityContext = ability->GetAbilityContext();
-    if (!abilityContext) {
-        APP_LOGE("Invalid ability context");
-        return {};
-    }
-
-    return abilityContext->GetToken();
-}
-
-std::optional<AbilityDelegator::ability_property> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)
+std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)
 {
     if (!token) {
         APP_LOGW("Invalid input parameter");
-        return std::nullopt;
+        return {};
     }
 
     for (auto &it : abilityProperties_) {
-        auto tmpToken = std::get<FIRST_PROPERTY>(it);
-        if (token == tmpToken) {
+        if (!it) {
+            APP_LOGW("Invalid ability property");
+            continue;
+        }
+
+        if (token == it->token_) {
+            APP_LOGI("Porperty exists");
             return it;
         }
     }
 
-    return std::nullopt;
+    return {};
 }
 
-void AbilityDelegator::FinishUserTest(const int32_t resultCode)
+void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resultCode)
 {
     APP_LOGI("Enter");
-
-    if (!mainThread_) {
-        APP_LOGE("Invalid mainThread");
-        return;
-    }
 
     if (!observer_) {
         APP_LOGE("Invalid observer");
@@ -591,8 +516,10 @@ void AbilityDelegator::FinishUserTest(const int32_t resultCode)
     }
 
     const auto &bundleName = delegatorArgs->GetTestBundleName();
-
-    mainThread_->FinishUserTest("UserTest finished", resultCode, bundleName, observer_);
+    auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName, observer_);
+    if (err) {
+        APP_LOGE("MainThread::FinishUserTest is failed %{public}d", err);
+    }
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

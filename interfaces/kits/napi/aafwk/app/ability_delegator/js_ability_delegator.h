@@ -39,6 +39,7 @@ public:
     static NativeValue *GetCurrentTopAbility(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *DoAbilityForeground(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *DoAbilityBackground(NativeEngine *engine, NativeCallbackInfo *info);
+    static NativeValue *FinishTest(NativeEngine *engine, NativeCallbackInfo *info);
 
 private:
     NativeValue *OnAddAbilityMonitor(NativeEngine &engine, NativeCallbackInfo &info);
@@ -51,6 +52,7 @@ private:
     NativeValue *OnGetCurrentTopAbility(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnDoAbilityForeground(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnDoAbilityBackground(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue *OnFinishTest(NativeEngine &engine, NativeCallbackInfo &info);
 
 private:
     NativeValue *CreateJsAbilityObject(NativeEngine &engine, const sptr<IRemoteObject> &remoteObject);

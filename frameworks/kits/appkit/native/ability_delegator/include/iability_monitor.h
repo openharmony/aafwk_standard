@@ -17,14 +17,11 @@
 #define FOUNDATION_APPEXECFWK_OHOS_IABILITY_MONITORE_H
 
 #include <condition_variable>
-#include <chrono>
 #include <memory>
 #include <mutex>
 #include <string>
-#include <thread>
 
-#include "ability.h"
-#include "want.h"
+#include "ability_delegator_infos.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -36,10 +33,10 @@ public:
     explicit IAbilityMonitor(const std::string &abilityName);
     virtual ~IAbilityMonitor() = default;
 
-    virtual bool Match(const std::shared_ptr<Ability> &ability, const Want &want);
+    virtual bool Match(const std::shared_ptr<ADelegatorAbilityProperty> &ability, bool isNotify = false);
 
-    virtual std::shared_ptr<Ability> waitForAbility();
-    virtual std::shared_ptr<Ability> waitForAbility(const int64_t timeoutMs);
+    virtual std::shared_ptr<ADelegatorAbilityProperty> waitForAbility();
+    virtual std::shared_ptr<ADelegatorAbilityProperty> waitForAbility(const int64_t timeoutMs);
 
     virtual void OnAbilityStart();
     virtual void OnAbilityForeground();
@@ -52,7 +49,7 @@ public:
 
 private:
     std::string abilityName_;
-    std::shared_ptr<Ability> matchedAbility_;
+    std::shared_ptr<ADelegatorAbilityProperty> matchedAbility_;
 
     std::condition_variable cvMatch_;
     std::mutex mMatch_;
