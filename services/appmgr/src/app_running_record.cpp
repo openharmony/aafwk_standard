@@ -462,6 +462,7 @@ void AppRunningRecord::StateChangedNotifyObserver(
     abilityStateData.abilityState = state;
     abilityStateData.uid = ability->GetAbilityInfo()->applicationInfo.uid;
     abilityStateData.token = ability->GetToken();
+    abilityStateData.abilityType = static_cast<int32_t>(ability->GetAbilityInfo()->type);
 
     if (isAbility && ability->GetAbilityInfo() != nullptr &&
         ability->GetAbilityInfo()->type == AbilityType::EXTENSION) {
