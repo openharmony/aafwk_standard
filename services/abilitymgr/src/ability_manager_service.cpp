@@ -291,6 +291,10 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -384,6 +388,10 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -467,6 +475,10 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -950,6 +962,10 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
+    result = CheckStaticCfgPermission(abilityInfo);
+    if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return result;
+    }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -1531,6 +1547,10 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         abilityRequest.appInfo.name.c_str(),
         abilityRequest.appInfo.bundleName.c_str(),
         abilityRequest.abilityInfo.name.c_str());
+
+    if (CheckStaticCfgPermission(abilityRequest.abilityInfo) != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        return nullptr;
+    }
 
     CHECK_POINTER_AND_RETURN(dataAbilityManager_, nullptr);
     return dataAbilityManager_->Acquire(abilityRequest, tryBind, callerToken, isSystem);
@@ -4327,7 +4347,7 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
 
     // verify permission if 'permission' is not empty
     if (abilityInfo.permissions.empty()) {
-        return ERR_OK;
+        return AppExecFwk::Constants::PERMISSION_GRANTED;
     }
 
     for (auto permission : abilityInfo.permissions) {
@@ -4338,12 +4358,18 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
         }
     }
 
-    return ERR_OK;
+    return AppExecFwk::Constants::PERMISSION_GRANTED;
 }
 
 void AbilityManagerService::StartupResidentProcess()
 {
     // Location may change
+    auto bms = GetBundleManager();
+    if (bms == nullptr) {
+        HILOG_INFO("StartupResidentProcess bms is nullptr");
+        return;
+    }
+
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
     (void)iBundleManager_->QueryKeepAliveBundleInfos(bundleInfos);
     for (auto bundleInfo : bundleInfos) {
