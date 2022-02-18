@@ -67,11 +67,13 @@ public:
      * @param preToken, the unique identification to call the ability.
      * @param abilityInfo, the ability information.
      * @param appInfo, the app information.
+     * @param want the ability want.
      *
      * @return
      */
     virtual void LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-        const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo);
+        const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
+        const std::shared_ptr<AAFwk::Want> &want);
 
     /**
      * TerminateAbility, terminate the token ability.

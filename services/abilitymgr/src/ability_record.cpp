@@ -187,7 +187,7 @@ int AbilityRecord::LoadAbility()
         }
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
-        token_, callerToken_, abilityInfo_, applicationInfo_);
+        token_, callerToken_, abilityInfo_, applicationInfo_, want_);
 }
 
 void AbilityRecord::ForegroundAbility()

@@ -74,13 +74,13 @@ bool AppScheduler::Init(const std::weak_ptr<AppStateCallback> &callback)
 }
 
 int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-    const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo)
+    const AppExecFwk::AbilityInfo &abilityInfo, const AppExecFwk::ApplicationInfo &applicationInfo, const Want &want)
 {
     HILOG_DEBUG("Load ability.");
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     /* because the errcode type of AppMgr Client API will be changed to int,
      * so must to covert the return result  */
-    int ret = static_cast<int>(appMgrClient_->LoadAbility(token, preToken, abilityInfo, applicationInfo));
+    int ret = static_cast<int>(appMgrClient_->LoadAbility(token, preToken, abilityInfo, applicationInfo, want));
     if (ret != ERR_OK) {
         HILOG_ERROR("AppScheduler fail to LoadAbility. ret %d", ret);
         return INNER_ERR;
