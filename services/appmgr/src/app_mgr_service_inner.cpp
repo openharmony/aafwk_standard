@@ -702,10 +702,7 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
         APP_LOGE("token is null!");
         return;
     }
-    if (state > AbilityState::ABILITY_STATE_BACKGROUND || state < AbilityState::ABILITY_STATE_FOREGROUND) {
-        APP_LOGE("state is not foreground or background!");
-        return;
-    }
+    
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
         APP_LOGE("app is not exist!");
@@ -718,6 +715,20 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
     }
     if (state == abilityRecord->GetState()) {
         APP_LOGE("current state is already, no need update!");
+        return;
+    }
+    auto type = abilityRecord->GetAbilityInfo()->type;
+    if (type == AppExecFwk::AbilityType::SERVICE &&
+        (state == AbilityState::ABILITY_STATE_CREATE ||
+        state == AbilityState::ABILITY_STATE_TERMINATED ||
+        state == AbilityState::ABILITY_STATE_CONNECTED ||
+        state == AbilityState::ABILITY_STATE_DISCONNECTED)) {
+        APP_LOGI("StateChangedNotifyObserver service type, state:%{public}d", static_cast<int32_t>(state));
+        appRecord->StateChangedNotifyObserver(abilityRecord, static_cast<int32_t>(state), true);
+        return;
+    }
+    if (state > AbilityState::ABILITY_STATE_BACKGROUND || state < AbilityState::ABILITY_STATE_FOREGROUND) {
+        APP_LOGE("state is not foreground or background!");
         return;
     }
     if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
@@ -1162,9 +1173,11 @@ void AppMgrServiceInner::OnAbilityStateChanged(
 void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
 {
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-    APP_LOGD("bundle:%{public}s, ability:%{public}s, state:%{public}d, pid:%{public}d, uid:%{public}d",
+    APP_LOGD("bundle:%{public}s, ability:%{public}s, state:%{public}d, pid:%{public}d,"
+        "uid:%{public}d, abilityType:%{public}d",
         abilityStateData.bundleName.c_str(), abilityStateData.abilityName.c_str(),
-        abilityStateData.abilityState, abilityStateData.pid, abilityStateData.uid);
+        abilityStateData.abilityState, abilityStateData.pid, abilityStateData.uid,
+        abilityStateData.abilityType);
     for (const auto &observer : appStateObservers_) {
         if (observer != nullptr) {
             if (isAbility) {
