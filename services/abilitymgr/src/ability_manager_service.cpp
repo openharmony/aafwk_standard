@@ -4192,6 +4192,13 @@ int AbilityManagerService::GetCurrentTopAbility(sptr<IRemoteObject> &token)
     }
 
     token = abilityRecord->GetToken();
+    if (!token) {
+        HILOG_ERROR("Failed to get token");
+        return ERR_INVALID_VALUE;
+    }
+
+    HILOG_INFO("bundleName : %{public}s, abilityName : %{public}s",
+        bundleName.data(), abilityRecord->GetAbilityInfo().name.data());
     return ERR_OK;
 }
 
@@ -4201,6 +4208,11 @@ int AbilityManagerService::DelegatorDoAbilityForeground(const sptr<IRemoteObject
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
     auto missionId = GetMissionIdByAbilityToken(token);
+    if (missionId < 0) {
+        HILOG_ERROR("Invalid mission id.");
+        return ERR_INVALID_VALUE;
+    }
+
     return DelegatorMoveMissionToFront(missionId);
 }
 

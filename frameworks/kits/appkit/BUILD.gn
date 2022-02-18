@@ -95,7 +95,6 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/frameworks/kits/appkit/native",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/services/abilitymgr/include",
     "//utils/native/base/include",
@@ -116,6 +115,8 @@ ohos_shared_library("appkit_native") {
   public_configs = [ ":appkit_public_config" ]
 
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/ability_stage.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_manager.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
@@ -124,18 +125,6 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_env_impl.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_impl.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
-
-    #"${aafwk_path}/frameworks/kits/appkit/native/app/main.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_args.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_registry.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/delegator_thread.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/iability_monitor.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/runner_runtime/js_test_runner.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/shell_cmd_result.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/test_runner.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/ability_stage.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/main_thread.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -149,6 +138,7 @@ ohos_shared_library("appkit_native") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    ":appkit_delegator",
     "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
@@ -243,6 +233,66 @@ ohos_shared_library("app_context") {
     "napi:ace_napi",
     "resmgr_standard:resmgr_napi_core",
   ]
+
+  part_name = "ability_runtime"
+}
+
+# build so
+ohos_shared_library("appkit_delegator") {
+  include_dirs = [
+    "${appexecfwk_path}/common/log/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
+    "${aafwk_path}/frameworks/kits/appkit/native",
+    "${aafwk_path}/frameworks/kits/ability/native/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include",
+    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "//utils/native/base/include",
+  ]
+
+  configs = [ ":appkit_config" ]
+
+  public_configs = [ ":appkit_public_config" ]
+
+  sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_args.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/ability_delegator_registry.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/delegator_thread.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/iability_monitor.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/runner_runtime/js_test_runner.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/shell_cmd_result.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/test_runner.cpp",
+    "//foundation/aafwk/standard/tools/aa/src/shell_command_result.cpp",
+    "//foundation/aafwk/standard/tools/aa/src/test_observer_proxy.cpp",
+  ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/appkit:app_context",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/icu/icu4c:shared_icuuc",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_runtime:runtime",
+    "bytrace_standard:bytrace_core",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
+  public_deps = [ "//foundation/ace/napi:ace_napi" ]
 
   part_name = "ability_runtime"
 }

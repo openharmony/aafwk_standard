@@ -48,29 +48,25 @@ NativeValue *CreateJsAbilityDelegator(NativeEngine &engine)
     BindNativeFunction(engine, *object, "doAbilityBackground", JSAbilityDelegator::DoAbilityBackground);
     BindNativeFunction(engine, *object, "print", JSAbilityDelegator::Print);
     BindNativeFunction(engine, *object, "executeShellCommand", JSAbilityDelegator::ExecuteShellCommand);
+    BindNativeFunction(engine, *object, "finishTest", JSAbilityDelegator::FinishTest);
     return objValue;
 }
 
-napi_value WrapStringToJS(napi_env env, const std::string &value)
-{
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, value.c_str(), NAPI_AUTO_LENGTH, &result));
-    return result;
-}
-
-void SetAbilityDelegatorArgumentsPara(napi_env env, const std::map<std::string, std::string> &paras)
+NativeValue *SetAbilityDelegatorArgumentsPara(NativeEngine &engine, const std::map<std::string, std::string> &paras)
 {
     HILOG_INFO("SetAbilityDelegatorArgumentsPara is called");
-    napi_value parameter = nullptr;
-    napi_value result = nullptr;
+    NativeValue *objValue = engine.CreateObject();
+    NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
+    if (object == nullptr) {
+        HILOG_ERROR("Failed to get object");
+        return nullptr;
+    }
 
     auto iter = paras.begin();
     for (; iter != paras.end(); ++iter) {
-        NAPI_CALL_RETURN_VOID(
-            env, napi_set_named_property(env, parameter, iter->first.c_str(), WrapStringToJS(env, iter->second)));
+        object->SetProperty(iter->first.c_str(), CreateJsValue(engine, iter->second));
     }
-    napi_set_named_property(env, result, "parameters", parameter);
-    return;
+    return objValue;
 }
 
 NativeValue *CreateJsAbilityDelegatorArguments(
@@ -86,7 +82,8 @@ NativeValue *CreateJsAbilityDelegatorArguments(
     }
 
     object->SetProperty("bundleName", CreateJsValue(engine, abilityDelegatorArgs->GetTestBundleName()));
-    SetAbilityDelegatorArgumentsPara(reinterpret_cast<napi_env>(&engine), abilityDelegatorArgs->GetTestParam());
+    object->SetProperty("parameters",
+        SetAbilityDelegatorArgumentsPara(engine, abilityDelegatorArgs->GetTestParam()));
     object->SetProperty("testCaseNames", CreateJsValue(engine, abilityDelegatorArgs->GetTestCaseName()));
     object->SetProperty("testRunnerClassName", CreateJsValue(engine, abilityDelegatorArgs->GetTestRunnerClassName()));
 

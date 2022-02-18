@@ -22,11 +22,11 @@
 namespace OHOS {
 namespace AbilityDelegatorJs {
 using namespace OHOS::AbilityRuntime;
-AbilityMonitor::AbilityMonitor(const std::string &name, JSAbilityMonitor *jsAbilityMonitor)
+AbilityMonitor::AbilityMonitor(const std::string &name, const std::shared_ptr<JSAbilityMonitor> &jsAbilityMonitor)
     : IAbilityMonitor(name), jsMonitor_(jsAbilityMonitor)
 {}
 
-void AbilityMonitor::onAbilityStart()
+void AbilityMonitor::OnAbilityStart()
 {
     HILOG_INFO("onAbilityCreate is called");
 
@@ -39,7 +39,7 @@ void AbilityMonitor::onAbilityStart()
     HILOG_INFO("onAbilityCreate is called end");
 }
 
-void AbilityMonitor::onAbilityForeground()
+void AbilityMonitor::OnAbilityForeground()
 {
     HILOG_INFO("onAbilityForeground is called");
 
@@ -52,7 +52,7 @@ void AbilityMonitor::onAbilityForeground()
     HILOG_INFO("onAbilityForeground is called end");
 }
 
-void AbilityMonitor::onAbilityBackground()
+void AbilityMonitor::OnAbilityBackground()
 {
     HILOG_INFO("onAbilityBackground is called");
 
@@ -65,7 +65,7 @@ void AbilityMonitor::onAbilityBackground()
     HILOG_INFO("onAbilityBackground is called end");
 }
 
-void AbilityMonitor::onAbilityStop()
+void AbilityMonitor::OnAbilityStop()
 {
     HILOG_INFO("onAbilityDestroy is called");
 
@@ -78,7 +78,7 @@ void AbilityMonitor::onAbilityStop()
     HILOG_INFO("onAbilityDestroy is called end");
 }
 
-void AbilityMonitor::onWindowStageCreate()
+void AbilityMonitor::OnWindowStageCreate()
 {
     HILOG_INFO("onWindowStageCreate is called");
 
@@ -91,7 +91,7 @@ void AbilityMonitor::onWindowStageCreate()
     HILOG_INFO("onWindowStageCreate is called end");
 }
 
-void AbilityMonitor::onWindowStageRestore()
+void AbilityMonitor::OnWindowStageRestore()
 {
     HILOG_INFO("onWindowStageRestore is called");
 
@@ -104,7 +104,7 @@ void AbilityMonitor::onWindowStageRestore()
     HILOG_INFO("onWindowStageRestore is called end");
 }
 
-void AbilityMonitor::onWindowStageDestroy()
+void AbilityMonitor::OnWindowStageDestroy()
 {
     HILOG_INFO("onWindowStageDestroy is called");
 

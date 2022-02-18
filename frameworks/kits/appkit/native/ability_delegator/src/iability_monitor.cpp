@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "iability_monitor.h"
+#include <chrono>
 #include "app_log_wrapper.h"
+#include "iability_monitor.h"
 
 using namespace std::chrono_literals;
 
@@ -23,14 +23,14 @@ namespace AppExecFwk {
 IAbilityMonitor::IAbilityMonitor(const std::string &abilityName) : abilityName_(abilityName)
 {}
 
-bool IAbilityMonitor::Match(const std::shared_ptr<Ability> &ability, const Want &want)
+bool IAbilityMonitor::Match(const std::shared_ptr<ADelegatorAbilityProperty> &ability, bool isNotify)
 {
-    std::string aName;
-    if (ability) {
-        aName = ability->GetAbilityName();
-    } else {
-        aName = want.GetElement().GetAbilityName();
+    if (!ability) {
+        APP_LOGW("Invalid ability property");
+        return false;
     }
+
+    const auto &aName = ability->name_;
 
     if (abilityName_.empty() || aName.empty()) {
         APP_LOGW("Invalid name");
@@ -42,25 +42,27 @@ bool IAbilityMonitor::Match(const std::shared_ptr<Ability> &ability, const Want 
         return false;
     }
 
-    if (ability) {
+    APP_LOGI("Matched : ability name : %{public}s, isNotify : %{public}s",
+        abilityName_.data(), (isNotify ? "true" : "false"));
+
+    if (isNotify) {
+        APP_LOGI("Matched : notify ability matched");
         {
             std::lock_guard<std::mutex> matchLock(mMatch_);
             matchedAbility_ = ability;
         }
         cvMatch_.notify_one();
-
-        return true;
     }
 
-    return false;
+    return true;
 }
 
-std::shared_ptr<Ability> IAbilityMonitor::waitForAbility()
+std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility()
 {
     return waitForAbility(MAX_TIME_OUT);
 }
 
-std::shared_ptr<Ability> IAbilityMonitor::waitForAbility(const int64_t timeoutMs)
+std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility(const int64_t timeoutMs)
 {
     auto realTime = timeoutMs;
     if (timeoutMs <= 0) {

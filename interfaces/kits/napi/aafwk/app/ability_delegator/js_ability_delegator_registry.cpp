@@ -28,7 +28,6 @@ using namespace OHOS::AppExecFwk;
 using namespace OHOS::AbilityRuntime;
 namespace {
 constexpr int32_t ARGC_ONE = 1;
-
 class JsAbilityDelegatorRegistry {
 public:
     JsAbilityDelegatorRegistry() = default;
@@ -55,16 +54,12 @@ public:
 private:
     NativeValue *OnGetAbilityDelegator(NativeEngine &engine, NativeCallbackInfo &info)
     {
-        HILOG_INFO("%{public}s is called", __FUNCTION__);
-        if (info.argc > ARGC_ONE) {
-            HILOG_ERROR("Params not match");
-            return engine.CreateUndefined();
-        }
+        HILOG_INFO("OnGetAbilityDelegator is called, argc = %{public}d", static_cast<int>(info.argc));
 
         AsyncTask::CompleteCallback complete = [](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            HILOG_INFO("OnGetAbilityDelegator AsyncTask::CompleteCallback");
             task.Resolve(engine, CreateJsAbilityDelegator(engine));
         };
-
         NativeValue *lastParam = (info.argc == ARGC_ONE) ? info.argv[0] : nullptr;
         NativeValue *result = nullptr;
         AsyncTask::Schedule(
@@ -74,11 +69,7 @@ private:
 
     NativeValue *OnGetArguments(NativeEngine &engine, NativeCallbackInfo &info)
     {
-        HILOG_INFO("%{public}s is called", __FUNCTION__);
-        if (info.argc > ARGC_ONE) {
-            HILOG_ERROR("Params not match");
-            return engine.CreateUndefined();
-        }
+        HILOG_INFO("OnGetArguments is called, argc = %{public}d", static_cast<int>(info.argc));
 
         AsyncTask::CompleteCallback complete = [](NativeEngine &engine, AsyncTask &task, int32_t status) {
             std::shared_ptr<AppExecFwk::AbilityDelegatorArgs> abilityDelegatorArgs =

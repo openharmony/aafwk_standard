@@ -17,20 +17,27 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+const std::string AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME {"-p"};
 const std::string AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS {"-s unittest"};
 const std::string AbilityDelegatorArgs::KEY_TEST_CASE {"-s class"};
+const std::string AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT {"-w"};
 
 AbilityDelegatorArgs::AbilityDelegatorArgs()
 {}
 
 AbilityDelegatorArgs::AbilityDelegatorArgs(const AAFwk::Want &want)
 {
-    bundleName_ = want.GetStringParam("-p");
-    params_["-p"] = want.GetStringParam("-p");
-    params_["-s unittest"] = want.GetStringParam("-s unittest");
-    params_["-s class"] = want.GetStringParam("-s class");
-    if (!want.GetStringParam("-w").empty()) {
-        params_["-w"] = want.GetStringParam("-w");
+    bundleName_ = want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME);
+    params_[AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME] =
+        want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME);
+    params_[AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS] =
+        want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS);
+    if (!want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_CASE).empty()) {
+        params_[AbilityDelegatorArgs::KEY_TEST_CASE] = want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_CASE);
+    }
+    if (!want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT).empty()) {
+        params_[AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT] =
+            want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT);
     }
 }
 
