@@ -948,5 +948,13 @@ ErrCode AbilityManagerClient::SetAbilityController(const sptr<AppExecFwk::IAbili
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->SetAbilityController(abilityController, imAStabilityTest);
 }
+
+ErrCode AbilityManagerClient::SendANRProcessID(int pid)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->SendANRProcessID(pid);
+}
 }  // namespace AAFwk
 }  // namespace AAFwk

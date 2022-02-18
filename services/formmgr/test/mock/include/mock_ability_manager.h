@@ -865,9 +865,9 @@ public:
     {
         return 0;
     }
-    virtual bool SendANRProcessID(int pid)
+    virtual int SendANRProcessID(int pid)
     {
-        return true;
+        return 0;
     }
     virtual int StartAbilityByCall(
         const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken) override

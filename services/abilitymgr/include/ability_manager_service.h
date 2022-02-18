@@ -860,8 +860,9 @@ public:
     /**
      * Send not response process ID to ability manager service.
      * @param pid The not response process ID.
+     * @return Returns ERR_OK on success, others on failure.
      */
-    virtual bool SendANRProcessID(int pid) override;
+    virtual int SendANRProcessID(int pid) override;
 
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;

@@ -12,14 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "ability_command.h"
 
+#include <cstdlib>
 #include <getopt.h>
 #include "ability_manager_client.h"
-#include "mission_snapshot.h"
 #include "hilog_wrapper.h"
+#include "iservice_registry.h"
+#include "mission_snapshot.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
+#include "sa_mgr_client.h"
+#include "system_ability_definition.h"
 #include "test_observer.h"
 
 using namespace OHOS::AppExecFwk;
@@ -38,7 +41,12 @@ const struct option LONG_OPTIONS[] = {
     {"debug", no_argument, nullptr, 'D'},
     {nullptr, 0, nullptr, 0},
 };
-
+const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
+const struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
+    {"help", no_argument, nullptr, 'h'},
+    {"pid", required_argument, nullptr, 'p'},
+    {nullptr, 0, nullptr, 0},
+};
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
 const struct option LONG_OPTIONS_DUMP[] = {
     {"help", no_argument, nullptr, 'h'},
@@ -87,6 +95,7 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
+        {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
     };
 
     return OHOS::ERR_OK;
@@ -1285,6 +1294,107 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
     }
     resultReceiver_ = STRING_START_USER_TEST_OK + "\n";
 
+    return result;
+}
+sptr<IAbilityManager> AbilityManagerShellCommand::GetAbilityManagerService()
+{
+    sptr<ISystemAbilityManager> systemManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemManager == nullptr) {
+        HILOG_ERROR("Fail to get registry.");
+        return nullptr;
+    }
+    sptr<IRemoteObject> remoteObject = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
+    return iface_cast<IAbilityManager>(remoteObject);
+}
+
+ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
+{
+    static sptr<IAbilityManager> abilityMs_;
+    std::string pid = "";
+    int option = -1;
+    ErrCode result = OHOS::ERR_OK;
+    option = getopt_long(argc_, argv_, SHORT_OPTIONS_ApplicationNotRespondin.c_str(),
+        LONG_OPTIONS_ApplicationNotRespondin, nullptr);
+    HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
+    if (optind < 0 || optind > argc_) {
+        return OHOS::ERR_INVALID_VALUE;
+    }
+    if (option == -1) {
+        if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
+            HILOG_INFO("'aa %{public}s' %{public}s", HELP_ApplicationNotRespondin.c_str(), cmd_.c_str());
+            result = OHOS::ERR_INVALID_VALUE;
+        }
+    } else if (option == '?') {
+        switch (optopt) {
+            case 'h': {
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            case 'p': {
+                HILOG_INFO("'aa ApplicationNotRespondin -p' with no argument.");
+                resultReceiver_.append("error: option -p ");
+                resultReceiver_.append("' requires a value.\n");
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            case 0: {
+                std::string unknownOption = "";
+                std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+
+                HILOG_INFO("'aa ApplicationNotRespondin' with an unknown option.");
+
+                resultReceiver_.append(unknownOptionMsg);
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            default: {
+                std::string unknownOption = "";
+                std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+
+                HILOG_INFO("'aa ApplicationNotRespondin' with an unknown option.");
+
+                resultReceiver_.append(unknownOptionMsg);
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+        }
+    } else {
+        switch (option) {
+            case 'h': {
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            case 'p': {
+                HILOG_INFO("aa ApplicationNotRespondin 'aa %{public}s'  -p process.", cmd_.c_str());
+                HILOG_INFO("aa ApplicationNotRespondin 'aa optarg =  %{public}s'.", optarg);
+                pid = optarg;
+                HILOG_INFO("aa ApplicationNotRespondinr 'aa pid =  %{public}s'.", pid.c_str());
+                break;
+            }
+            case 0: {
+                HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+            default: {
+                HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                result = OHOS::ERR_INVALID_VALUE;
+                break;
+            }
+        }
+    }
+
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("'aa pid = %{public}d'.", atoi(pid.c_str()));
+        abilityMs_ = GetAbilityManagerService();
+        if (abilityMs_ == nullptr) {
+            std::cout << "abilityMsObj is nullptr";
+        }
+        abilityMs_->SendANRProcessID(atoi(pid.c_str()));
+    } else {
+        resultReceiver_.append(HELP_ApplicationNotRespondin+ "\n");
+        result = OHOS::ERR_INVALID_VALUE;
+    }
     return result;
 }
 }  // namespace AAFwk

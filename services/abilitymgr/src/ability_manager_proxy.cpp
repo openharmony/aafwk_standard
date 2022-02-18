@@ -2592,25 +2592,24 @@ int AbilityManagerProxy::DoAbilityBackground(const sptr<IRemoteObject> &token, u
     return reply.ReadInt32();
 }
 
-bool AbilityManagerProxy::SendANRProcessID(int pid)
+int AbilityManagerProxy::SendANRProcessID(int pid)
 {
-    int error;
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!WriteInterfaceToken(data)) {
-        return false;
+        return INNER_ERR;
     }
     if (!data.WriteInt32(pid)) {
         HILOG_ERROR("pid WriteInt32 fail.");
-        return false;
+        return ERR_INVALID_VALUE;
     }
-    error = Remote()->SendRequest(IAbilityManager::SEND_APP_NOT_RESPONSE_PROCESS_ID, data, reply, option);
+    auto error = Remote()->SendRequest(IAbilityManager::SEND_APP_NOT_RESPONSE_PROCESS_ID, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("SendANRProcessID error: %d", error);
-        return false;
+        return error;
     }
-    return reply.ReadBool();
+    return reply.ReadInt32();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

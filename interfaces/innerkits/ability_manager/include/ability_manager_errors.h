@@ -375,6 +375,11 @@ enum {
      * Result() for start user test fail.
      */
     START_USER_TEST_FAIL,
+
+    /**
+     * Result(2097220) for send usr1 sig to the process of not response fail.
+     */
+    SEND_USR1_SIG_FAIL,
 };
 
 enum {

@@ -4005,7 +4005,7 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
     return ERR_OK;
 }
 
-bool AbilityManagerService::SendANRProcessID(int pid)
+int AbilityManagerService::SendANRProcessID(int pid)
 {
     int anrTimeOut = amsConfigResolver_->GetANRTimeOutTime();
     auto timeoutTask = [pid]() {
@@ -4013,11 +4013,12 @@ bool AbilityManagerService::SendANRProcessID(int pid)
             HILOG_ERROR("Kill app not response process failed");
         }
     };
+    handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
     if (kill(pid, SIGUSR1) != ERR_OK) {
         HILOG_ERROR("Send sig to app not response process failed");
+        return SEND_USR1_SIG_FAIL;
     }
-    handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
-    return true;
+    return ERR_OK;
 }
 
 bool AbilityManagerService::IsRunningInStabilityTest()

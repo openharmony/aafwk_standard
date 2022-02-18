@@ -19,7 +19,9 @@ config("ability_command_config") {
     "include",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//utils/system/safwk/native/include",
+    "//foundation/aafwk/standard/services/abilitymgr/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//third_party/jsoncpp/include",
   ]
 }
@@ -73,12 +75,7 @@ ohos_executable("aa") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
 
-  deps = [
-    ":tools_aa_source_set",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${innerkits_path}/want:want",
-    "//utils/native/base:utils",
-  ]
+  deps = [ ":tools_aa_source_set" ]
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
