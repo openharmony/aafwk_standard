@@ -24,9 +24,10 @@ namespace OHOS {
 namespace AppExecFwk {
 class MockAppMgrService : public AppMgrStub {
 public:
-    MOCK_METHOD4(LoadAbility,
+    MOCK_METHOD5(LoadAbility,
         void(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-            const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo));
+            const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
+            const std::shared_ptr<AAFwk::Want> &want));
     MOCK_METHOD1(TerminateAbility, void(const sptr<IRemoteObject> &token));
     MOCK_METHOD2(UpdateAbilityState, void(const sptr<IRemoteObject> &token, const AbilityState state));
     MOCK_METHOD1(AttachApplication, void(const sptr<IRemoteObject> &app));

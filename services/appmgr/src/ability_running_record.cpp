@@ -36,6 +36,16 @@ const std::shared_ptr<AbilityInfo> &AbilityRunningRecord::GetAbilityInfo() const
     return info_;
 }
 
+const std::shared_ptr<AAFwk::Want> &AbilityRunningRecord::GetWant() const
+{
+    return want_;
+}
+
+void AbilityRunningRecord::SetWant(const std::shared_ptr<AAFwk::Want> &want)
+{
+    want_ = want;
+}
+
 const sptr<IRemoteObject> &AbilityRunningRecord::GetToken() const
 {
     return token_;

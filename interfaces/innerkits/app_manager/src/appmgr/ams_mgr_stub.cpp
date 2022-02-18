@@ -112,7 +112,13 @@ ErrCode AmsMgrStub::HandleLoadAbility(MessageParcel &data, MessageParcel &reply)
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    LoadAbility(token, preToke, abilityInfo, appInfo);
+    std::shared_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
+    if (!want) {
+        APP_LOGE("ReadParcelable want failed");
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    LoadAbility(token, preToke, abilityInfo, appInfo, want);
     return NO_ERROR;
 }
 

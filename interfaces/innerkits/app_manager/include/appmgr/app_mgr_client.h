@@ -38,16 +38,8 @@ public:
     AppMgrClient();
     virtual ~AppMgrClient();
 
-    /**
-     * Load ability.
-     *
-     * @param token, Ability identify.
-     * @param abilityInfo, Ability information.
-     * @param appInfo, Application information.
-     * @return Returns RESULT_OK on success, others on failure.
-     */
     virtual AppMgrResultCode LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-        const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo);
+        const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo, const AAFwk::Want &want);
 
     /**
      * Terminate ability.

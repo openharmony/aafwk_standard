@@ -81,16 +81,18 @@ HWTEST_F(AmsAppMgrClientTest, AppMgrClient_001, TestSize.Level1)
 
     AbilityInfo abilityInfo;
     ApplicationInfo appInfo;
+    Want want;
 
     sptr<IAmsMgr> amsMgrScheduler(new MockAmsMgrScheduler());
 
-    EXPECT_CALL(*(static_cast<MockAmsMgrScheduler *>(amsMgrScheduler.GetRefPtr())), LoadAbility(_, _, _, _)).Times(1);
+    EXPECT_CALL(*(static_cast<MockAmsMgrScheduler *>(amsMgrScheduler.GetRefPtr())),
+        LoadAbility(_, _, _, _, _)).Times(1);
 
     EXPECT_CALL(*(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), GetAmsMgr())
         .Times(1)
         .WillOnce(Return(amsMgrScheduler));
 
-    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->LoadAbility(token_, preToken_, abilityInfo, appInfo));
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->LoadAbility(token_, preToken_, abilityInfo, appInfo, want));
     APP_LOGI("ams_app_mgr_client_test_001 end");
 }
 
@@ -107,8 +109,10 @@ HWTEST_F(AmsAppMgrClientTest, AppMgrClient_002, TestSize.Level1)
     APP_LOGI("ams_app_mgr_client_test_002 start");
     AbilityInfo abilityInfo;
     ApplicationInfo appInfo;
+    Want want;
     EXPECT_EQ(
-        AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED, client_->LoadAbility(token_, preToken_, abilityInfo, appInfo));
+        AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED, client_->LoadAbility(token_, preToken_, abilityInfo,
+        appInfo, want));
     APP_LOGI("ams_app_mgr_client_test_002 end");
 }
 

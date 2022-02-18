@@ -29,7 +29,7 @@ public:
     virtual ~MockAppMgrClient() {};
 
     virtual AppMgrResultCode LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-        const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo)
+        const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo, const AAFwk::Want &want)
     {
         HILOG_INFO("MockAppMgrClient LoadAbility enter.");
         token_ = token;

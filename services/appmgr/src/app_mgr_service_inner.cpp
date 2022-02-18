@@ -87,7 +87,8 @@ AppMgrServiceInner::~AppMgrServiceInner()
 {}
 
 void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
-    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo)
+    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
+    const std::shared_ptr<AAFwk::Want> &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!CheckLoadabilityConditions(token, abilityInfo, appInfo)) {
