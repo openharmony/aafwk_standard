@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -119,6 +119,16 @@ void Extension::SetLaunchWant(const AAFwk::Want &want)
 void Extension::SetLastRequestWant(const AAFwk::Want &want)
 {
     lastRequestWant_ = std::make_shared<AAFwk::Want>(want);
+}
+
+/**
+ * @brief Called when the system configuration is updated.
+ *
+ * @param configuration Indicates the updated configuration information.
+ */
+void Extension::OnConfigurationUpdated(const AppExecFwk::Configuration &configuration)
+{
+    HILOG_INFO("%{public}s called.", __func__);
 }
 }
 }

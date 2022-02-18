@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,8 @@
 #define ABILITY_RUNTIME_JS_ABILITY_STAGE_H
 
 #include "ability_stage.h"
+#include "configuration.h"
+#include "native_engine/native_value.h"
 
 class NativeReference;
 
@@ -37,9 +39,14 @@ public:
 
     std::string OnAcceptWant(const AAFwk::Want &want) override;
 
+    void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
+
 private:
+    NativeValue* CallObjectMethod(const char* name, NativeValue * const * argv = nullptr, size_t argc = 0);
+
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsAbilityStageObj_;
+    std::shared_ptr<NativeReference> shellContextRef_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

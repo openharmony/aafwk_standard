@@ -117,6 +117,7 @@ ohos_shared_library("appkit_native") {
   sources = [
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/ability_stage.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/js_ability_stage_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_manager.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",

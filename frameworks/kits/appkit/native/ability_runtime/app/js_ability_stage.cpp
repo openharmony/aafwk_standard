@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,11 @@
 #include "js_ability_stage.h"
 
 #include "hilog_wrapper.h"
+#include "js_ability_stage_context.h"
 #include "js_context_utils.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
+#include "napi_common_configuration.h"
 #include "napi_common_util.h"
 #include "napi_common_want.h"
 
@@ -87,11 +89,11 @@ void JsAbilityStage::Init(std::shared_ptr<Context> context)
         return;
     }
 
-    NativeValue* contextObj = CreateJsBaseContext(engine, context);
-    auto shellContextRef = jsRuntime_.LoadSystemModule("application.AbilityStageContext", &contextObj, 1);
-    contextObj = shellContextRef->Get();
+    NativeValue* contextObj = CreateJsAbilityStageContext(engine, context);
+    shellContextRef_ = jsRuntime_.LoadSystemModule("application.AbilityStageContext", &contextObj, 1);
+    contextObj = shellContextRef_->Get();
 
-    context->Bind(jsRuntime_, shellContextRef.release());
+    context->Bind(jsRuntime_, shellContextRef_.get());
     obj->SetProperty("context", contextObj);
 
     auto nativeObj = ConvertNativeValueTo<NativeObject>(contextObj);
@@ -172,6 +174,51 @@ std::string JsAbilityStage::OnAcceptWant(const AAFwk::Want &want)
     NativeValue* flagNative = nativeEngine.CallFunction(value, methodOnAcceptWant, argv, 1);
     return AppExecFwk::UnwrapStringFromJS(
         reinterpret_cast<napi_env>(&nativeEngine), reinterpret_cast<napi_value>(flagNative));
+}
+
+void JsAbilityStage::OnConfigurationUpdated(const AppExecFwk::Configuration& configuration)
+{
+    AbilityStage::OnConfigurationUpdated(configuration);
+    HILOG_INFO("%{public}s called.", __func__);
+
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+
+    // Notify Ability stage context
+    JsAbilityStageContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetContext()->GetConfiguration());
+
+    napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
+        reinterpret_cast<napi_env>(&nativeEngine), configuration);
+    NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
+    CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
+}
+
+NativeValue* JsAbilityStage::CallObjectMethod(const char* name, NativeValue * const * argv, size_t argc)
+{
+    HILOG_INFO("JsAbilityStage::CallObjectMethod %{public}s", name);
+
+    if (!jsAbilityStageObj_) {
+        HILOG_WARN("Not found AbilityStage.js");
+        return nullptr;
+    }
+
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+
+    NativeValue* value = jsAbilityStageObj_->Get();
+    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get AbilityStage object");
+        return nullptr;
+    }
+
+    NativeValue* method = obj->GetProperty(name);
+    if (method == nullptr) {
+        HILOG_ERROR("Failed to get '%{public}s' from AbilityStage object", name);
+        return nullptr;
+    }
+
+    return nativeEngine.CallFunction(value, method, argv, argc);
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

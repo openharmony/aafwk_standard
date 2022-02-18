@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -93,6 +93,22 @@ void ExtensionImpl::HandleExtensionTransaction(const Want &want,
         HILOG_INFO("ExtensionImpl::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
     HILOG_INFO("ExtensionImpl::HandleAbilityTransaction end");
+}
+
+void ExtensionImpl::ScheduleUpdateConfiguration(const AppExecFwk::Configuration &config)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+
+    if (extension_ == nullptr) {
+        HILOG_ERROR("ExtensionImpl::ScheduleUpdateConfiguration extension_ is nullptr");
+        return;
+    }
+
+    if (lifecycleState_ != AAFwk::ABILITY_STATE_INITIAL) {
+        extension_->OnConfigurationUpdated(config);
+    }
+
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**

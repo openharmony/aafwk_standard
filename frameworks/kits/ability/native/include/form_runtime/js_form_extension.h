@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_JS_FORM_EXTENSION_H
 #define FOUNDATION_APPEXECFWK_OHOS_JS_FORM_EXTENSION_H
 
+#include "configuration.h"
 #include "form_extension.h"
 
 class NativeReference;
@@ -53,6 +54,9 @@ public:
     void OnVisibilityChange(const std::map<int64_t, int32_t>& formEventsMap) override;
 
     sptr<IRemoteObject> OnConnect(const OHOS::AAFwk::Want& want) override;
+
+    void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
+
 private:
     NativeValue* CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
 
@@ -61,6 +65,7 @@ private:
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsObj_;
     sptr<IRemoteObject> providerRemoteObject_ = nullptr;
+    std::shared_ptr<NativeReference> shellContextRef_ = nullptr;
 };
 } // namespace AbilityRuntime
 } // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -395,7 +395,7 @@ public:
      * @return Returns true on success, others on failure.
      */
     bool CheckObsPermission();
-	
+
 	/**
      * @brief Dump ability runner info.
      *
@@ -404,7 +404,7 @@ public:
     void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info);
 
     sptr<IRemoteObject> CallRequest();
-    
+
     std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 private:
@@ -505,6 +505,13 @@ private:
      * @brief Handle the scheduling update configuration.
      */
     void HandleUpdateConfiguration(const Configuration &config);
+
+    /**
+     * @brief Handle the scheduling update configuration of extension.
+     *
+     * @param config Configuration
+     */
+    void HandleExtensionUpdateConfiguration(const Configuration &config);
 
     std::shared_ptr<AbilityRuntime::AbilityContext> BuildAbilityContext(
         const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<OHOSApplication> &application,

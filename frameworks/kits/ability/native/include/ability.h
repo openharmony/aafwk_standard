@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "context.h"
 #include "continuation_handler.h"
 #include "continuation_state.h"
+#include "display_manager.h"
 #include "dummy_ability_package.h"
 #include "dummy_component_container.h"
 #include "dummy_notification_request.h"
@@ -79,7 +80,8 @@ class Ability : public IAbilityEvent,
                 public FormCallbackInterface,
                 public IAbilityContinuation,
                 public IAbilityCallback,
-                public std::enable_shared_from_this<Ability> {
+                public std::enable_shared_from_this<Ability>,
+                public OHOS::Rosen::DisplayManager::IDisplayListener {
 public:
     friend class PageAbilityImpl;
     friend class NewAbilityImpl;
@@ -1475,6 +1477,15 @@ protected:
      * @param success whether continuation success.
      */
     void NotityContinuationResult(const Want& want, bool success);
+
+    /**
+     * @brief override Rosen::DisplayManager::IDisplayListener virtual callback function
+     *
+     * @param displayId displayId
+     */
+    void OnCreate(Rosen::DisplayId displayId) override;
+    void OnDestroy(Rosen::DisplayId displayId) override;
+    void OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent changeEvent) override;
 
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;

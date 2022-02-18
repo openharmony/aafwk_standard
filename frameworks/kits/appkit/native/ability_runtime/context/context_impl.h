@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 
 #include "context.h"
 
+#include "configuration.h"
 #include "bundle_mgr_interface.h"
 
 namespace OHOS {
@@ -196,6 +197,20 @@ public:
      */
     sptr<IRemoteObject> GetToken() override;
 
+    /**
+     * @brief Get the token witch the app launched.
+     *
+     * @return token The token which the is launched by app.
+     */
+    void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config);
+
+    /**
+     * @brief Get the token witch the app launched.
+     *
+     * @return token The token which the is launched by app.
+     */
+    std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const override;
+
 protected:
     sptr<IRemoteObject> token_;
 
@@ -234,6 +249,7 @@ private:
     std::shared_ptr<Context> parentContext_ = nullptr;
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager_ = nullptr;
     std::shared_ptr<AppExecFwk::HapModuleInfo> hapModuleInfo_ = nullptr;
+    std::shared_ptr<AppExecFwk::Configuration> config_ = nullptr;
     std::string currArea_ = CONTEXT_ELS[EL_DEFAULT];
 };
 }  // namespace AbilityRuntime
