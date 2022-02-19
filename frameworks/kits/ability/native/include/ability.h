@@ -1452,6 +1452,13 @@ protected:
     virtual void DoOnForeground(const Want& want);
 
     /**
+     * @brief requeset focus for current window.
+     *
+     * You can override this function to implement your own processing logic
+     */
+    virtual void RequsetFocus(const Want &want);
+
+    /**
      * @brief Acquire the window option.
      * @return window option.
      */
