@@ -488,12 +488,12 @@ void MissionListManager::MoveNoneTopMissionToDefaultList(const std::shared_ptr<M
 
     while (!missionList->IsEmpty()) {
         auto item = missionList->GetTopMission();
-        if (item == mission) {
+        if (item == nullptr || item == mission) {
             break;
         }
 
         missionList->RemoveMission(item);
-        if (mission->IsSingletonAbility()) {
+        if (item->IsSingletonAbility()) {
             defaultSingleList_->AddMissionToTop(item);
         } else {
             defaultStandardList_->AddMissionToTop(item);
