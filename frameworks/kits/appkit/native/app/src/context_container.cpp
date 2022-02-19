@@ -25,7 +25,8 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-constexpr int CURRENT_USERID = -2;
+// for api7 demo special
+constexpr int CURRENT_USERID = 100;
 /**
  * Attaches a Context object to the current ability.
  * Generally, this method is called after Ability is loaded to provide the application context for the current ability.
