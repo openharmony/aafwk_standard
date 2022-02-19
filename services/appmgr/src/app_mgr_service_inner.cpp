@@ -32,6 +32,7 @@
 #include "common_event_support.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
+#include "ipc_skeleton.h"
 #include "os_account_manager.h"
 #include "permission/permission_kit.h"
 #include "system_ability_definition.h"
@@ -428,6 +429,13 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
         APP_LOGE("GetBundleManager fail");
         return ERR_NO_INIT;
     }
+
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    if (!bundleMgr_->CheckIsSystemAppByUid(callerUid)) {
+        APP_LOGE("caller is not systemApp, callerUid %{public}d", callerUid);
+        return ERR_INVALID_VALUE;
+    }
+
     APP_LOGI("userId value is %{public}d", userId);
     int uid = bundleMgr_->GetUidByBundleName(bundleName, userId);
     APP_LOGI("uid value is %{public}d", uid);
