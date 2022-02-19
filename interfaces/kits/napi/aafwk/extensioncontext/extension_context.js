@@ -18,11 +18,11 @@ class ExtensionContext extends Context {
     constructor(obj) {
         super(obj);
         this.currentHapModuleInfo = obj.currentHapModuleInfo
-        this.configuration = obj.configuration
+        this.config = obj.config
     }
 
     onUpdateConfiguration(config) {
-        this.configuration = config
+        this.config = config
     }
 }
 

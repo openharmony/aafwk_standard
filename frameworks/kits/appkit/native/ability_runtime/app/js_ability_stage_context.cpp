@@ -58,7 +58,7 @@ NativeValue* CreateJsAbilityStageContext(NativeEngine& engine, std::shared_ptr<A
 
     auto configuration = context->GetConfiguration();
     if (configuration) {
-        object->SetProperty("configuration", CreateJsConfiguration(engine, *configuration));
+        object->SetProperty("config", CreateJsConfiguration(engine, *configuration));
     }
 
     return objValue;

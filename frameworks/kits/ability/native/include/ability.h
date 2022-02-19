@@ -497,6 +497,12 @@ public:
     void OnConfigurationUpdatedNotify(const Configuration &configuration);
 
     /**
+     * @brief Update context.config when configuration is updated.
+     *
+     */
+    virtual void UpdateContextConfiguration() {};
+
+    /**
      * @brief Called when the system configuration is updated.
      *
      * @param level Indicates the memory trim level, which shows the current memory usage status.

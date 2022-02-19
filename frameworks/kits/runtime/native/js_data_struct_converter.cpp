@@ -15,6 +15,7 @@
 
 #include "js_data_struct_converter.h"
 
+#include "configuration_convertor.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 
@@ -173,11 +174,13 @@ NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Confi
     object->SetProperty("language", CreateJsValue(engine,
         configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE)));
     object->SetProperty("colorMode", CreateJsValue(engine,
-        configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE)));
+        AppExecFwk::ConvertColorMode(configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE))));
     object->SetProperty("direction", CreateJsValue(engine,
-        configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION)));
+        AppExecFwk::ConvertDirection(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION))));
     object->SetProperty("screenDensity", CreateJsValue(engine,
-        configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI)));
+        AppExecFwk::ConvertDensity(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI))));
+    object->SetProperty("displayId", CreateJsValue(engine,
+        AppExecFwk::ConvertDisplayId(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DISPLAYID))));
 
     return objValue;
 }

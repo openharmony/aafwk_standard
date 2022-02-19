@@ -14,6 +14,8 @@
  */
 
 #include "napi_common_configuration.h"
+
+#include "configuration_convertor.h"
 #include "hilog_wrapper.h"
 #include "napi_common_util.h"
 
@@ -41,21 +43,22 @@ napi_value WrapConfiguration(napi_env env, const AppExecFwk::Configuration &conf
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
-    std::vector<std::string> keys = OHOS::AppExecFwk::ConfigurationInner::SystemConfigurationKeyStore;
-    for (auto const &key : keys) {
-        std::string value = configuration.GetItem(key);
-        if (value.empty()) {
-            HILOG_INFO("value is empty");
-            continue;
-        }
+    napi_value jsValue = nullptr;
+    jsValue = WrapStringToJS(env, configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE));
+    SetPropertyValueByPropertyName(env, jsObject, "language", jsValue);
 
-        std::size_t pos = key.rfind(DOT_STRING);
-        if (pos != std::string::npos) {
-            InnerWrapConfigurationString(env, jsObject, key.substr(pos+1), value);
-        } else {
-            InnerWrapConfigurationString(env, jsObject, key, value);
-        }
-    }
+    jsValue = WrapInt32ToJS(env, ConvertColorMode(configuration.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE)));
+    SetPropertyValueByPropertyName(env, jsObject, "colorMode", jsValue);
+
+    jsValue = WrapInt32ToJS(env, ConvertDirection(configuration.GetItem(ConfigurationInner::APPLICATION_DIRECTION)));
+    SetPropertyValueByPropertyName(env, jsObject, "direction", jsValue);
+
+    jsValue = WrapInt32ToJS(env, ConvertDensity(configuration.GetItem(ConfigurationInner::APPLICATION_DENSITYDPI)));
+    SetPropertyValueByPropertyName(env, jsObject, "screenDensity", jsValue);
+
+    jsValue = WrapInt32ToJS(env, ConvertDisplayId(configuration.GetItem(ConfigurationInner::APPLICATION_DISPLAYID)));
+    SetPropertyValueByPropertyName(env, jsObject, "displayId", jsValue);
+
     return jsObject;
 }
 
@@ -80,10 +83,8 @@ bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
     int32_t colormode = -1;
     if (UnwrapInt32ByPropertyName(env, param, "colorMode", colormode)) {
         HILOG_DEBUG("The parsed colormode part %{public}d", colormode);
-        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE,
-            colormode == static_cast<int32_t>(ConfigurationInner::ColorMode::COLOR_MODE_LIGHT) ?
-            ConfigurationInner::COLOR_MODE_LIGHT : ConfigurationInner::COLOR_MODE_DARK)) {
-            HILOG_ERROR("colormode Parsing failed");
+        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, GetColorModeStr(colormode))) {
+            HILOG_ERROR("colorMode parsing failed");
             return false;
         }
     }

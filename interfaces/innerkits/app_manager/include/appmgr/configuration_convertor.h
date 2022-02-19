@@ -16,19 +16,24 @@
 #ifndef OHOS_AAFWK_INTERFACES_INNERKITS_CONFIGURATION_CONVERTOR_H
 #define OHOS_AAFWK_INTERFACES_INNERKITS_CONFIGURATION_CONVERTOR_H
 
-#include "resource_manager.h"
+#include <string>
+#include "res_common.h"
 
 namespace OHOS::AppExecFwk {
 Global::Resource::ColorMode ConvertColorMode(std::string colormode);
 
 Global::Resource::Direction ConvertDirection(int32_t height, int32_t width);
+Global::Resource::Direction ConvertDirection(std::string direction);
 
 Global::Resource::ScreenDensity ConvertDensity(float density);
+Global::Resource::ScreenDensity ConvertDensity(std::string density);
 
-std::string GetDirectionStr(Global::Resource::Direction direction);
+int32_t ConvertDisplayId(std::string displayId);
+
+std::string GetColorModeStr(int32_t colormode);
+
 std::string GetDirectionStr(int32_t height, int32_t width);
 
-std::string GetDensityStr(Global::Resource::ScreenDensity density);
 std::string GetDensityStr(float density);
 } // namespace OHOS::AppExecFwk
 #endif  // OHOS_AAFWK_INTERFACES_INNERKITS_CONFIGURATION_CONVERTOR_H
