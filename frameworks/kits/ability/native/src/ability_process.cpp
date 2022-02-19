@@ -89,7 +89,7 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
             APP_LOGI("AbilityProcess::StartAbility ability: %{public}p is in the abilityResultMap_", ability);
             map = it->second;
         }
-
+        callback.errCode = err;
         map[param.requestCode] = callback;
         abilityResultMap_[ability] = map;
     } else {
