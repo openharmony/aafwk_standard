@@ -183,7 +183,7 @@ napi_value StartAbilityForResultAsync(napi_env env, AsyncCallbackInfo *asyncCall
             HILOG_INFO("NAPI_StartAbilityForResult, worker pool thread execute.");
             AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             if (asyncCallbackInfo != nullptr) {
-                AbilityProcess::GetInstance()->StartAbility(
+                asyncCallbackInfo->errCode = AbilityProcess::GetInstance()->StartAbility(
                     asyncCallbackInfo->ability, asyncCallbackInfo->param, asyncCallbackInfo->aceCallback);
             } else {
                 HILOG_ERROR("NAPI_StartAbilityForResult, asyncCallbackInfo == nullptr");
@@ -191,8 +191,13 @@ napi_value StartAbilityForResultAsync(napi_env env, AsyncCallbackInfo *asyncCall
             HILOG_INFO("NAPI_StartAbilityForResult, worker pool thread execute end.");
         },
         [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("NAPI_StartAbilityForResult, main event thread complete.");
             AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+            HILOG_INFO("NAPI_StartAbilityForResult, complete. err:%{public}d", asyncCallbackInfo->errCode);
+            if (asyncCallbackInfo->errCode != ERR_OK) {
+                Want resultData; // Callback the errcode when StartAbilityForResult failed.
+                AbilityProcess::GetInstance()->OnAbilityResult(asyncCallbackInfo->ability,
+                    asyncCallbackInfo->param.requestCode, 0, resultData);
+            }
             // remove asynccallback from startabilityforresult
             if (asyncCallbackInfo->cbInfo.callback != nullptr) {
                 napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
@@ -233,7 +238,7 @@ napi_value StartAbilityForResultPromise(napi_env env, AsyncCallbackInfo *asyncCa
             HILOG_INFO("NAPI_StartAbilityForResult, worker pool thread execute.");
             AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
             if (asyncCallbackInfo != nullptr) {
-                AbilityProcess::GetInstance()->StartAbility(
+                asyncCallbackInfo->errCode = AbilityProcess::GetInstance()->StartAbility(
                     asyncCallbackInfo->ability, asyncCallbackInfo->param, asyncCallbackInfo->aceCallback);
             } else {
                 HILOG_ERROR("NAPI_StartAbilityForResult, asyncCallbackInfo == nullptr");
@@ -241,8 +246,13 @@ napi_value StartAbilityForResultPromise(napi_env env, AsyncCallbackInfo *asyncCa
             HILOG_INFO("NAPI_StartAbilityForResult, worker pool thread execute end.");
         },
         [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("NAPI_StartAbilityForResult,  main event thread complete.");
             AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+            HILOG_INFO("NAPI_StartAbilityForResult, complete. err:%{public}d", asyncCallbackInfo->errCode);
+            if (asyncCallbackInfo->errCode != ERR_OK) {
+                Want resultData; // Callback the errcode when StartAbilityForResult failed.
+                AbilityProcess::GetInstance()->OnAbilityResult(asyncCallbackInfo->ability,
+                    asyncCallbackInfo->param.requestCode, 0, resultData);
+            }
             // resolve it when call onAbilityResult
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
@@ -844,7 +854,7 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             // JS Thread
             OnAbilityCallback *onAbilityCB = static_cast<OnAbilityCallback *>(work->data);
             napi_value result[ARGS_TWO] = {0};
-            result[PARAM0] = GetCallbackErrorValue(onAbilityCB->cb.env, NO_ERROR);
+            result[PARAM0] = GetCallbackErrorValue(onAbilityCB->cb.env, onAbilityCB->cb.errCode);
 
             napi_create_object(onAbilityCB->cb.env, &result[PARAM1]);
             // create resultCode
