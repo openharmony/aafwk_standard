@@ -132,7 +132,7 @@ bool MissionDataStorage::CheckFileNameValid(const std::string &fileName)
     return true;
 }
 
-void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
+void MissionDataStorage::SaveSnapshotFile(int32_t missionId, const MissionSnapshot& missionSnapshot)
 {
     std::string filePath = GetMissionSnapshotPath(missionId);
     std::string dirPath = OHOS::HiviewDFX::FileUtil::ExtractFilePath(filePath);
@@ -151,6 +151,48 @@ void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSna
     }
 }
 
+void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
+{
+    HILOG_INFO("snapshot: save snapshot from cache, missionId = %{public}d", missionId);
+    SaveCachedSnapshot(missionId, missionSnapshot);
+    SaveSnapshotFile(missionId, missionSnapshot);
+    HILOG_INFO("snapshot: delete snapshot from cache, missionId = %{public}d", missionId);
+    DeleteCachedSnapshot(missionId);
+}
+
+bool MissionDataStorage::GetCachedSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot)
+{
+    std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
+    auto pixelMap = cachedPixelMap_.find(missionId);
+    if (pixelMap != cachedPixelMap_.end()) {
+        missionSnapshot.snapshot = pixelMap->second;
+        return true;
+    }
+    return false;
+}
+
+bool MissionDataStorage::SaveCachedSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
+{
+    std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
+    auto result = cachedPixelMap_.insert_or_assign(missionId, missionSnapshot.snapshot);
+    if (!result.second) {
+        HILOG_ERROR("snapshot: save snapshot cache failed, missionId = %{public}d", missionId);
+        return false;
+    }
+    return true;
+}
+
+bool MissionDataStorage::DeleteCachedSnapshot(int32_t missionId)
+{
+    std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
+    auto result = cachedPixelMap_.erase(missionId);
+    if (result != 1) {
+        HILOG_ERROR("snapshot: delete snapshot cache failed, missionId = %{public}d", missionId);
+        return false;
+    }
+    return true;
+}
+
 void MissionDataStorage::DeleteMissionSnapshot(int32_t missionId)
 {
     std::string filePath = GetMissionSnapshotPath(missionId);
@@ -165,8 +207,12 @@ void MissionDataStorage::DeleteMissionSnapshot(int32_t missionId)
     }
 }
 
-bool MissionDataStorage::GetMissionSnapshot(int missionId, MissionSnapshot& missionSnapshot)
+bool MissionDataStorage::GetMissionSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot)
 {
+    if (GetCachedSnapshot(missionId, missionSnapshot)) {
+        HILOG_INFO("snapshot: GetMissionSnapshot from cache, missionId = %{public}d", missionId);
+        return true;
+    }
     std::string filePath = GetMissionSnapshotPath(missionId);
     if (!OHOS::HiviewDFX::FileUtil::FileExists(filePath)) {
         HILOG_INFO("snapshot: storage snapshot not exists, missionId = %{public}d", missionId);
@@ -189,7 +235,7 @@ bool MissionDataStorage::GetMissionSnapshot(int missionId, MissionSnapshot& miss
     return true;
 }
 
-std::string MissionDataStorage::GetMissionSnapshotPath(int missionId)
+std::string MissionDataStorage::GetMissionSnapshotPath(int32_t missionId)
 {
     return GetMissionDataDirPath() + "/"
         + MISSION_JSON_FILE_PREFIX + "_" + std::to_string(missionId) + PNG_FILE_SUFFIX;
