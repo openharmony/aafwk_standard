@@ -1188,7 +1188,6 @@ int MissionListManager::SetMissionLockedState(int missionId, bool lockedState)
         HILOG_ERROR("mission is not exist, missionId %{public}d", missionId);
         return MISSION_NOT_FOUND;
     }
-    innerMissionInfo.missionInfo.time = Time2str(time(0));
     innerMissionInfo.missionInfo.lockedState = lockedState;
     DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
     return ERR_OK;
