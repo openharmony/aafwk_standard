@@ -62,6 +62,7 @@ struct CallbackInfo {
     napi_env env;
     napi_ref callback = 0;
     napi_deferred deferred;
+    int errCode = 0;
 };
 
 struct CallAbilityParamData {
