@@ -49,7 +49,7 @@ void AbilitySchedulerProxy::ScheduleAbilityTransaction(const Want &want, const L
     data.WriteParcelable(&stateInfo);
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_ABILITY_TRANSACTION, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleAbilityTransaction fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleAbilityTransaction fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -69,7 +69,7 @@ void AbilitySchedulerProxy::SendResult(int requestCode, int resultCode, const Wa
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SEND_RESULT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("SendResult fail to SendRequest. err: %d", err);
+        HILOG_ERROR("SendResult fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -87,7 +87,7 @@ void AbilitySchedulerProxy::ScheduleConnectAbility(const Want &want)
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_ABILITY_CONNECT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleConnectAbility fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleConnectAbility fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -106,7 +106,7 @@ void AbilitySchedulerProxy::ScheduleDisconnectAbility(const Want &want)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_ABILITY_DISCONNECT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleDisconnectAbility fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleDisconnectAbility fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -134,7 +134,7 @@ void AbilitySchedulerProxy::ScheduleCommandAbility(const Want &want, bool restar
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_ABILITY_COMMAND, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleCommandAbility fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleCommandAbility fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -148,7 +148,7 @@ void AbilitySchedulerProxy::ScheduleSaveAbilityState()
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_SAVE_ABILITY_STATE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleSaveAbilityState fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleSaveAbilityState fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -166,7 +166,7 @@ void AbilitySchedulerProxy::ScheduleRestoreAbilityState(const PacMap &inState)
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_RESTORE_ABILITY_STATE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleRestoreAbilityState fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleRestoreAbilityState fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -184,7 +184,7 @@ void AbilitySchedulerProxy::ScheduleUpdateConfiguration(const AppExecFwk::Config
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_UPDATE_CONFIGURATION, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ScheduleRestoreAbilityState fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ScheduleRestoreAbilityState fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -220,7 +220,7 @@ std::vector<std::string> AbilitySchedulerProxy::GetFileTypes(const Uri &uri, con
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_GETFILETYPES, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %{public}d", err);
     }
 
     if (!reply.ReadStringVector(&types)) {
@@ -265,7 +265,7 @@ int AbilitySchedulerProxy::OpenFile(const Uri &uri, const std::string &mode)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_OPENFILE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("OpenFile fail to SendRequest. err: %d", err);
+        HILOG_ERROR("OpenFile fail to SendRequest. err: %{public}d", err);
         return fd;
     }
 
@@ -314,7 +314,7 @@ int AbilitySchedulerProxy::OpenRawFile(const Uri &uri, const std::string &mode)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_OPENRAWFILE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("OpenFile fail to SendRequest. err: %d", err);
+        HILOG_ERROR("OpenFile fail to SendRequest. err: %{public}d", err);
         return fd;
     }
 
@@ -358,7 +358,7 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_INSERT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("Insert fail to SendRequest. err: %d", err);
+        HILOG_ERROR("Insert fail to SendRequest. err: %{public}d", err);
         return index;
     }
 
@@ -409,7 +409,7 @@ int AbilitySchedulerProxy::Update(const Uri &uri, const NativeRdb::ValuesBucket 
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_UPDATE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("Update fail to SendRequest. err: %d", err);
+        HILOG_ERROR("Update fail to SendRequest. err: %{public}d", err);
         return index;
     }
 
@@ -453,7 +453,7 @@ int AbilitySchedulerProxy::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_DELETE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("Delete fail to SendRequest. err: %d", err);
+        HILOG_ERROR("Delete fail to SendRequest. err: %{public}d", err);
         return index;
     }
 
@@ -502,7 +502,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilitySchedulerProxy::Query(
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_QUERY, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("Query fail to SendRequest. err: %d", err);
+        HILOG_ERROR("Query fail to SendRequest. err: %{public}d", err);
         return nullptr;
     }
     return OHOS::NativeRdb::ISharedResultSet::ReadFromParcel(reply);
@@ -535,7 +535,7 @@ std::string AbilitySchedulerProxy::GetType(const Uri &uri)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_GETTYPE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %{public}d", err);
         return type;
     }
 
@@ -582,7 +582,7 @@ bool AbilitySchedulerProxy::Reload(const Uri &uri, const PacMap &extras)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_RELOAD, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %{public}d", err);
         return ret;
     }
 
@@ -635,7 +635,7 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_BATCHINSERT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %d", err);
+        HILOG_ERROR("GetFileTypes fail to SendRequest. err: %{public}d", err);
         return ret;
     }
 
@@ -671,7 +671,7 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::MULTI_WIN_CHANGED, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %d", err);
+        HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -799,7 +799,7 @@ void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
     }
     int32_t err = Remote()->SendRequest(IAbilityScheduler::TOP_ACTIVE_ABILITY_CHANGED, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("NotifyTopActiveAbilityChanged fail to SendRequest. err: %d", err);
+        HILOG_ERROR("NotifyTopActiveAbilityChanged fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -835,7 +835,7 @@ Uri AbilitySchedulerProxy::NormalizeUri(const Uri &uri)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_NORMALIZEURI, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("NormalizeUri fail to SendRequest. err: %d", err);
+        HILOG_ERROR("NormalizeUri fail to SendRequest. err: %{public}d", err);
         return Uri("");
     }
 
@@ -876,7 +876,7 @@ Uri AbilitySchedulerProxy::DenormalizeUri(const Uri &uri)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_DENORMALIZEURI, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("DenormalizeUri fail to SendRequest. err: %d", err);
+        HILOG_ERROR("DenormalizeUri fail to SendRequest. err: %{public}d", err);
         return Uri("");
     }
 
@@ -958,7 +958,7 @@ void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::CONTINUE_ABILITY, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("ContinueAbility fail to SendRequest. err: %d", err);
+        HILOG_ERROR("ContinueAbility fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -978,7 +978,7 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::NOTIFY_CONTINUATION_RESULT, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("NotifyContinuationResult fail to SendRequest. err: %d", err);
+        HILOG_ERROR("NotifyContinuationResult fail to SendRequest. err: %{public}d", err);
     }
 }
 
@@ -999,7 +999,7 @@ void AbilitySchedulerProxy::DumpAbilityInfo(const std::vector<std::string> &para
 
     int32_t err = Remote()->SendRequest(IAbilityScheduler::DUMP_ABILITY_RUNNER_INNER, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("DumpAbilityRunner fail to SendRequest. err: %d", err);
+        HILOG_ERROR("DumpAbilityRunner fail to SendRequest. err: %{public}d", err);
     }
 
     int32_t stackNum = reply.ReadInt32();
@@ -1023,7 +1023,7 @@ sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
     
     int32_t err = Remote()->SendRequest(IAbilityScheduler::REQUEST_CALL_REMOTE, data, reply, option);
     if (err != NO_ERROR) {
-        HILOG_ERROR("CallRequest fail to SendRequest. err: %d", err);
+        HILOG_ERROR("CallRequest fail to SendRequest. err: %{public}d", err);
         return nullptr;
     }
     
