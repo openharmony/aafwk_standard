@@ -27,6 +27,10 @@
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
 
+#include "systemcapability.h"
+
+const unsigned int SYSCAP_MAX_SIZE = 100;
+
 namespace OHOS {
 namespace AbilityRuntime {
 namespace {
@@ -161,6 +165,35 @@ NativeValue* SetTimeout(NativeEngine* engine, NativeCallbackInfo* info)
     return jsRuntime.SetCallbackTimer(*engine, *info, false);
 }
 
+NativeValue* CanIUse(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    if (engine == nullptr || info == nullptr) {
+        HILOG_ERROR("get syscap failed with engine or callback info is nullptr.");
+        return nullptr;
+    }
+
+    if (info->argc != 1 || info->argv[0]->TypeOf() != NATIVE_STRING) {
+        HILOG_ERROR("Get syscap failed with invalid parameter.");
+        return engine->CreateUndefined();
+    }
+    
+    char syscap[SYSCAP_MAX_SIZE] = { 0 };
+
+    NativeString* str = ConvertNativeValueTo<NativeString>(info->argv[0]);
+    if (str == nullptr) {
+        HILOG_ERROR("Convert to NativeString failed.");
+        return engine->CreateUndefined();
+    }
+    size_t bufferLen = str->GetLength();
+    size_t strLen = 0;
+    str->GetCString(syscap, bufferLen + 1, &strLen);
+        
+    bool ret = HasSystemCapability(syscap);
+    
+    return engine->CreateBoolean(ret);
+}
+
+
 NativeValue* SetInterval(NativeEngine* engine, NativeCallbackInfo* info)
 {
     if (engine == nullptr || info == nullptr) {
@@ -189,6 +222,11 @@ void InitTimerModule(NativeEngine& engine, NativeObject& globalObject)
     BindNativeFunction(engine, globalObject, "setInterval", SetInterval);
     BindNativeFunction(engine, globalObject, "clearTimeout", ClearTimeoutOrInterval);
     BindNativeFunction(engine, globalObject, "clearInterval", ClearTimeoutOrInterval);
+}
+
+void InitSyscapModule(NativeEngine& engine, NativeObject& globalObject)
+{
+    BindNativeFunction(engine, globalObject, "canIUse", CanIUse);
 }
 
 bool MakeFilePath(const std::string& codePath, const std::string& modulePath, std::string& fileName)
@@ -263,6 +301,7 @@ bool JsRuntime::Initialize(const Options& options)
 
     InitConsoleLogModule(*nativeEngine_, *globalObj);
     InitTimerModule(*nativeEngine_, *globalObj);
+    InitSyscapModule(*nativeEngine_, *globalObj);
 
     // Simple hook function 'isSystemplugin'
     BindNativeFunction(*nativeEngine_, *globalObj, "isSystemplugin",
