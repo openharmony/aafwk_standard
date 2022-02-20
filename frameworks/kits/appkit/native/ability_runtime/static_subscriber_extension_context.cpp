@@ -17,8 +17,11 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-    StaticSubscriberExtensionContext::StaticSubscriberExtensionContext() {}
+const size_t StaticSubscriberExtensionContext::CONTEXT_TYPE_ID(
+    std::hash<const char*> {} ("StaticSubscriberExtensionContext"));
 
-    StaticSubscriberExtensionContext::~StaticSubscriberExtensionContext() {}
+StaticSubscriberExtensionContext::StaticSubscriberExtensionContext() {}
+
+StaticSubscriberExtensionContext::~StaticSubscriberExtensionContext() {}
 }  // namespace AbilityRuntime
 }  // namespace OHOS
