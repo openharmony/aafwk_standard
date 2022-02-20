@@ -17,6 +17,7 @@
 
 #include "ability_info.h"
 #include "accesstoken_kit.h"
+#include "dataobs_mgr_client.h"
 #include "datashare_stub_impl.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
@@ -47,6 +48,7 @@ const std::string LIB_DATA_ABILITY_PATH = "/system/lib64/module/data/libdataabil
 
 using namespace OHOS::AppExecFwk;
 using OHOS::Security::AccessToken::AccessTokenKit;
+using DataObsMgrClient = OHOS::AAFwk::DataObsMgrClient;
 
 JsDataShareExtAbility* JsDataShareExtAbility::Create(const std::unique_ptr<Runtime>& runtime)
 {
@@ -595,6 +597,17 @@ bool JsDataShareExtAbility::RegisterObserver(const Uri &uri, const sptr<AAFwk::I
 {
     HILOG_INFO("%{public}s begin.", __func__);
     DataShareExtAbility::RegisterObserver(uri, dataObserver);
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        HILOG_ERROR("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->RegisterObserver(uri, dataObserver);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s obsMgrClient->RegisterObserver error return %{public}d", __func__, ret);
+        return false;
+    }
     HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
@@ -603,6 +616,17 @@ bool JsDataShareExtAbility::UnregisterObserver(const Uri &uri, const sptr<AAFwk:
 {
     HILOG_INFO("%{public}s begin.", __func__);
     DataShareExtAbility::UnregisterObserver(uri, dataObserver);
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        HILOG_ERROR("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->UnregisterObserver(uri, dataObserver);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s obsMgrClient->UnregisterObserver error return %{public}d", __func__, ret);
+        return false;
+    }
     HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
@@ -610,9 +634,20 @@ bool JsDataShareExtAbility::UnregisterObserver(const Uri &uri, const sptr<AAFwk:
 bool JsDataShareExtAbility::NotifyChange(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto ret = DataShareExtAbility::NotifyChange(uri);
+    DataShareExtAbility::NotifyChange(uri);
+    auto obsMgrClient = DataObsMgrClient::GetInstance();
+    if (obsMgrClient == nullptr) {
+        HILOG_ERROR("%{public}s obsMgrClient is nullptr", __func__);
+        return false;
+    }
+
+    ErrCode ret = obsMgrClient->NotifyChange(uri);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s obsMgrClient->NotifyChange error return %{public}d", __func__, ret);
+        return false;
+    }
     HILOG_INFO("%{public}s end.", __func__);
-    return ret;
+    return true;
 }
 
 Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
