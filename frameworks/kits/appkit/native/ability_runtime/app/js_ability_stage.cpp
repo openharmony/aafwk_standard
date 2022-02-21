@@ -111,11 +111,11 @@ void JsAbilityStage::Init(std::shared_ptr<Context> context)
         }, nullptr);
 }
 
-void JsAbilityStage::OnCreate() const
+void JsAbilityStage::OnCreate(const AAFwk::Want &want) const
 {
     HILOG_INFO("JsAbilityStage::OnCreate come");
 
-    AbilityStage::OnCreate();
+    AbilityStage::OnCreate(want);
 
     if (!jsAbilityStageObj_) {
         HILOG_WARN("Not found AbilityStage.js");

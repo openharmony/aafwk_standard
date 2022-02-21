@@ -35,7 +35,7 @@ public:
 
     void Init(std::shared_ptr<Context> context) override;
 
-    void OnCreate() const override;
+    void OnCreate(const AAFwk::Want &want) const override;
 
     std::string OnAcceptWant(const AAFwk::Want &want) override;
 
