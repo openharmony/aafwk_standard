@@ -3478,5 +3478,21 @@ void Ability::OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent cha
 
     APP_LOGI("%{public}s end", __func__);
 }
+
+void Ability::RequsetFocus(const Want &want)
+{
+    APP_LOGI("%{public}s called.", __func__);
+    if (abilityWindow_ == nullptr) {
+        return;
+    }
+    auto window = abilityWindow_->GetWindow();
+    if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
+        auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
+            AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
+        window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+        APP_LOGI("set window mode = %{public}d.", windowMode);
+    }
+    abilityWindow_->OnPostAbilityForeground(sceneFlag_);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
