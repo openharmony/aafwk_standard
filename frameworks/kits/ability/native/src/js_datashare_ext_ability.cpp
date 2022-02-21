@@ -76,8 +76,7 @@ void JsDataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &reco
 
     std::string moduleName(Extension::abilityInfo_->moduleName);
     moduleName.append("::").append(abilityInfo_->name);
-    HILOG_INFO("JsDataShareExtAbility::Init module:%{public}s, srcPath:%{public}s.",
-        moduleName.c_str(), srcPath.c_str());
+    HILOG_INFO("%{public}s module:%{public}s, srcPath:%{public}s.", __func__, moduleName.c_str(), srcPath.c_str());
     HandleScope handleScope(jsRuntime_);
     auto& engine = jsRuntime_.GetNativeEngine();
 
