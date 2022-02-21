@@ -191,7 +191,7 @@ TestApplicationPreRecord AmsAppLifeCycleTest::CreateTestApplicationRecord(
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
 
     std::shared_ptr<AppRunningRecord> appRecord = serviceInner_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, "com.ohos.test.helloworld", bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, "com.ohos.test.helloworld", bundleInfo, hapModuleInfo, nullptr);
 
     appRecord->SetEventHandler(handler_);
     EXPECT_NE(appRecord, nullptr);
@@ -218,7 +218,7 @@ std::shared_ptr<AppRunningRecord> AmsAppLifeCycleTest::CreateTestApplicationAndS
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
 
     std::shared_ptr<AppRunningRecord> appRecord = serviceInner_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, "AmsAppLifeCycleTest", bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, "AmsAppLifeCycleTest", bundleInfo, hapModuleInfo, nullptr);
 
     EXPECT_NE(appRecord, nullptr);
     appRecord->SetEventHandler(handler_);
@@ -854,7 +854,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_029, TestSize.Level1)
     auto appInfo = GetApplication();
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    testAppPreRecord.appRecord_->AddModule(appInfo, newAbilityInfo, newToken, hapModuleInfo);
+    testAppPreRecord.appRecord_->AddModule(appInfo, newAbilityInfo, newToken, hapModuleInfo, nullptr);
     auto moduleRecord =
         testAppPreRecord.appRecord_->GetModuleRecordByModuleName(appInfo->bundleName, hapModuleInfo.moduleName);
     EXPECT_TRUE(moduleRecord);
@@ -1932,16 +1932,16 @@ HWTEST_F(AmsAppLifeCycleTest, CreateAppRunningRecord_001, TestSize.Level1)
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
 
     std::shared_ptr<AppRunningRecord> appRecord = serviceInner_->CreateAppRunningRecord(
-        nullptr, nullptr, appInfo, abilityInfo, "test_app", bundleInfo, hapModuleInfo);
+        nullptr, nullptr, appInfo, abilityInfo, "test_app", bundleInfo, hapModuleInfo, nullptr);
     EXPECT_TRUE(appRecord);
     appRecord = serviceInner_->CreateAppRunningRecord(
-        token, nullptr, nullptr, abilityInfo, "test_app", bundleInfo, hapModuleInfo);
+        token, nullptr, nullptr, abilityInfo, "test_app", bundleInfo, hapModuleInfo, nullptr);
     EXPECT_FALSE(appRecord);
-    appRecord =
-        serviceInner_->CreateAppRunningRecord(token, nullptr, appInfo, nullptr, "test_app", bundleInfo, hapModuleInfo);
+    appRecord = serviceInner_->CreateAppRunningRecord(token, nullptr, appInfo, nullptr, "test_app", bundleInfo,
+        hapModuleInfo, nullptr);
     EXPECT_TRUE(appRecord);
-    appRecord =
-        serviceInner_->CreateAppRunningRecord(token, nullptr, appInfo, abilityInfo, "", bundleInfo, hapModuleInfo);
+    appRecord = serviceInner_->CreateAppRunningRecord(token, nullptr, appInfo, abilityInfo, "", bundleInfo,
+        hapModuleInfo, nullptr);
     EXPECT_FALSE(appRecord);
 }
 
@@ -1964,7 +1964,7 @@ HWTEST_F(AmsAppLifeCycleTest, CheckAppRunningRecordIsExist_001, TestSize.Level1)
     bundleInfo.appId = "com.ohos.test.helloworld_code123";
 
     std::shared_ptr<AppRunningRecord> appRecord = serviceInner_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, appInfo->name, bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, appInfo->name, bundleInfo, hapModuleInfo, nullptr);
     EXPECT_TRUE(appRecord);
 
     auto appRecordProc = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(
