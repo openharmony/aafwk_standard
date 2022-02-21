@@ -59,6 +59,7 @@ using namespace std::chrono;
 const bool CONCURRENCY_MODE_FALSE = false;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
+constexpr int32_t INVALID_USER_ID = -1;
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
@@ -275,7 +276,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
 
-    if (userId != DEFAULT_INVAL_VALUE && !CheckCallerIsSystemAppByIpc()) {
+    if (userId != INVALID_USER_ID && !CheckCallerIsSystemAppByIpc()) {
         HILOG_ERROR("caller is not systemApp");
         return CALLER_ISNOT_SYSTEMAPP;
     }
@@ -296,7 +297,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : validUserId;
+    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
 
@@ -380,7 +381,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability setting.");
 
-    if (userId != DEFAULT_INVAL_VALUE && !CheckCallerIsSystemAppByIpc()) {
+    if (userId != INVALID_USER_ID && !CheckCallerIsSystemAppByIpc()) {
         HILOG_ERROR("caller is not systemApp");
         return CALLER_ISNOT_SYSTEMAPP;
     }
@@ -398,7 +399,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : validUserId;
+    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
 
@@ -473,7 +474,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start ability options.");
 
-    if (userId != DEFAULT_INVAL_VALUE && !CheckCallerIsSystemAppByIpc()) {
+    if (userId != INVALID_USER_ID && !CheckCallerIsSystemAppByIpc()) {
         HILOG_ERROR("caller is not systemApp");
         return CALLER_ISNOT_SYSTEMAPP;
     }
@@ -492,7 +493,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : validUserId;
+    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
 
@@ -946,7 +947,7 @@ int AbilityManagerService::ConnectAbility(
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
 
-    if (userId != DEFAULT_INVAL_VALUE && !CheckCallerIsSystemAppByIpc()) {
+    if (userId != INVALID_USER_ID && !CheckCallerIsSystemAppByIpc()) {
         HILOG_ERROR("caller is not systemApp");
         return CALLER_ISNOT_SYSTEMAPP;
     }
@@ -984,7 +985,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    int32_t validUserId = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : userId;
+    int32_t validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : userId;
     HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
 
@@ -2400,7 +2401,7 @@ int AbilityManagerService::GetUserId()
     if (userController_) {
         return userController_->GetCurrentUserId();
     }
-    return DEFAULT_USER_ID;
+    return U0_USER_ID;
 }
 
 void AbilityManagerService::StartingLauncherAbility()
@@ -2636,7 +2637,7 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : validUserId;
+    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
     HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
 
