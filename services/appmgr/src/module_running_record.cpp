@@ -57,8 +57,8 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningReco
     return nullptr;
 }
 
-std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(
-    const sptr<IRemoteObject> &token, const std::shared_ptr<AbilityInfo> &abilityInfo)
+std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(const sptr<IRemoteObject> &token,
+    const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
     APP_LOGI("Add ability.");
     if (!token || !abilityInfo) {
@@ -70,6 +70,7 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(
         return nullptr;
     }
     auto abilityRecord = std::make_shared<AbilityRunningRecord>(abilityInfo, token);
+    abilityRecord->SetWant(want);
     abilities_.emplace(token, abilityRecord);
     return abilityRecord;
 }

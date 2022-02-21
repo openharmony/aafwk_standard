@@ -271,23 +271,6 @@ public:
      */
     virtual int32_t GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId);
 
-    // Get AppRunningRecord according to appInfo. Create if not exists.
-    // Create ability record if not exists and abilityInfo not null.
-    // Return AppRunningRecord pointer if success get or create.
-    // If error occurs, error code is in |result|
-
-    /**
-     * CreateAppRunningRecord, create application record information.
-     *
-     * @param token, the unique identification to the ability.
-     * @param abilityInfo, ability information.
-     * @param appInfo, app information.
-     * @param processName, the app process name.
-     * @param uid, app uid in Application record.
-     * @param result, If error occurs, error code is in |result|.
-     *
-     * @return AppRunningRecord pointer if success create.
-     */
     std::shared_ptr<AppRunningRecord> CreateAppRunningRecord(
         const sptr<IRemoteObject> &token,
         const sptr<IRemoteObject> &preToken,
@@ -295,7 +278,8 @@ public:
         const std::shared_ptr<AbilityInfo> &abilityInfo,
         const std::string &processName,
         const BundleInfo &bundleInfo,
-        const HapModuleInfo &hapModuleInfo);
+        const HapModuleInfo &hapModuleInfo,
+        const std::shared_ptr<AAFwk::Want> &want);
 
     /**
      * OnStop, Application management service stopped.
@@ -593,7 +577,7 @@ private:
      */
     void StartAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
         const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AppRunningRecord> &appRecord,
-        const HapModuleInfo &hapModuleInfo);
+        const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want);
 
     /**
      * UnsuspendApplication, Application process state switch to unsuspend.

@@ -71,17 +71,8 @@ public:
      */
     std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecordByToken(const sptr<IRemoteObject> &token) const;
 
-    // Add new ability instance to current running abilities list managed by this process
-    /**
-     * AddAbility, Add new ability instance to current running abilities list managed by this process.
-     *
-     * @param token, the unique identification to the ability.
-     * @param abilityInfo, the ability info.
-     *
-     * @return the ability record.
-     */
-    std::shared_ptr<AbilityRunningRecord> AddAbility(
-        const sptr<IRemoteObject> &token, const std::shared_ptr<AbilityInfo> &abilityInfo);
+    std::shared_ptr<AbilityRunningRecord> AddAbility(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AAFwk::Want> &want);
 
     bool IsLastAbilityRecord(const sptr<IRemoteObject> &token);
 
