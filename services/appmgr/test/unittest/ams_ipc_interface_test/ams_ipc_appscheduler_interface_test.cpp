@@ -212,34 +212,6 @@ HWTEST_F(AmsIpcAppSchedulerInterfaceTest, Interface_006, TestSize.Level1)
 
 /*
  * Feature: AppScheduler ZIDL interface
- * Function: ScheduleLaunchAbility
- * SubFunction: NA
- * FunctionPoints: scheduleLaunchAbility interface
- * EnvConditions: Application already running
- * CaseDescription: Test the interface ScheduleLaunchAbility of AppScheduler
- */
-HWTEST_F(AmsIpcAppSchedulerInterfaceTest, Interface_007, TestSize.Level1)
-{
-    APP_LOGD("AppSchedulerInterfaceTest_007 start");
-    sptr<MockApplication> mockApplication(new MockApplication());
-    sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockApplication);
-    std::string abilityName("mockAbilityInfo");
-    AbilityInfo info;
-    info.name = abilityName;
-
-    EXPECT_CALL(*mockApplication, ScheduleLaunchAbility(_, _))
-        .Times(1)
-        .WillOnce(Invoke(mockApplication.GetRefPtr(), &MockApplication::LaunchAbility));
-    client->ScheduleLaunchAbility(info, GetMockToken());
-    mockApplication->Wait();
-
-    bool isEqual = mockApplication->CompareAbilityInfo(info);
-    EXPECT_EQ(true, isEqual);
-    APP_LOGD("AppSchedulerInterfaceTest_007 end");
-}
-
-/*
- * Feature: AppScheduler ZIDL interface
  * Function: ScheduleCleanAbility
  * SubFunction: NA
  * FunctionPoints: scheduleCleanAbility interface

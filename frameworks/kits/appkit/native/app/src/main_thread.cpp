@@ -430,15 +430,8 @@ void MainThread::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
     APP_LOGI("MainThread::ScheduleAbilityStageInfo end.");
 }
 
-/**
- *
- * @brief launch the application.
- *
- * @param info The launchdata of the application witch launced.
- * @param token The launchdata of the application witch launced.
- *
- */
-void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token)
+void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token,
+    const std::shared_ptr<AAFwk::Want> &want)
 {
     APP_LOGI("MainThread::scheduleLaunchAbility called start.");
     APP_LOGI(
@@ -451,6 +444,7 @@ void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemo
     }
     sptr<IRemoteObject> abilityToken = token;
     std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
+    abilityRecord->SetWant(want);
 
     std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
     sptr<IBundleMgr> bundleMgr = contextDeal->GetBundleManager();

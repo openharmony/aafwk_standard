@@ -143,7 +143,8 @@ void AppSchedulerProxy::ScheduleShrinkMemory(const int32_t level)
     }
 }
 
-void AppSchedulerProxy::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token)
+void AppSchedulerProxy::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token,
+    const std::shared_ptr<AAFwk::Want> &want)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -153,6 +154,10 @@ void AppSchedulerProxy::ScheduleLaunchAbility(const AbilityInfo &info, const spt
     }
     data.WriteParcelable(&info);
     data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteParcelable(want.get())) {
+        APP_LOGE("write want fail.");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         APP_LOGE("Remote() is NULL");
