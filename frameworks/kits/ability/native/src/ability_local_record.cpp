@@ -151,5 +151,15 @@ void AbilityLocalRecord::SetCompatibleVersion(int32_t compatibleVersion)
 {
     compatibleVersion_ = compatibleVersion;
 }
+
+void AbilityLocalRecord::SetWant(const std::shared_ptr<AAFwk::Want> &want)
+{
+    want_ = want;
+}
+
+const std::shared_ptr<AAFwk::Want> &AbilityLocalRecord::GetWant()
+{
+    return want_;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
