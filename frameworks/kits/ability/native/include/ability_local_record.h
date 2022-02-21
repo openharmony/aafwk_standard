@@ -23,6 +23,8 @@
 #include "ability_info.h"
 #include "application_info.h"
 #include "refbase.h"
+#include "want.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 class AbilityThread;
@@ -123,6 +125,10 @@ public:
     * @return None.
     */
     void SetCompatibleVersion(int compatibleVersion);
+
+    void SetWant(const std::shared_ptr<AAFwk::Want> &want);
+
+    const std::shared_ptr<AAFwk::Want> &GetWant();
 private:
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
     sptr<IRemoteObject> token_;
@@ -131,6 +137,7 @@ private:
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;  // store abilityImpl
     sptr<AbilityThread> abilityThread_;
     int compatibleVersion_ = 0;
+    std::shared_ptr<AAFwk::Want> want_ = nullptr;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
