@@ -383,7 +383,7 @@ HWTEST_F(AmsAppLifeCycleTest, Init_001, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_, _)).Times(1);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
 
     serviceInner_->AttachApplication(NEW_PID, client);
     EXPECT_NE(record->GetApplicationClient(), nullptr);
@@ -436,7 +436,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_002, TestSize.Level1)
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
 
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_, _)).Times(1);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
 
     serviceInner_->AttachApplication(NEW_PID, client);
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, abilityRecord->GetState());
@@ -470,7 +470,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_004, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_READY);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_READY, testAppRecord.appRecord_->GetState());
@@ -487,7 +487,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_005, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
@@ -504,7 +504,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_006, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_BACKGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
@@ -521,7 +521,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_007, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_SUSPENDED);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
@@ -1033,7 +1033,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_042, TestSize.Level1)
     auto testAppRecord =
         CreateTestApplicationRecord(AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1", -1);
     newAbilityRecord->SetState(AbilityState::ABILITY_STATE_BACKGROUND);
 
@@ -1085,7 +1085,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_044, TestSize.Level1)
     auto testAppRecord =
         CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1", -1);
     newAbilityRecord->SetState(AbilityState::ABILITY_STATE_BACKGROUND);
 
@@ -1138,7 +1138,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_046, TestSize.Level1)
     auto testAppRecord =
         CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_SUSPENDED);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1", -1);
     newAbilityRecord->SetState(AbilityState::ABILITY_STATE_BACKGROUND);
     testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
@@ -1722,7 +1722,7 @@ HWTEST_F(AmsAppLifeCycleTest, Unsuspend_001, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
@@ -1745,7 +1745,7 @@ HWTEST_F(AmsAppLifeCycleTest, Unsuspend_002, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
@@ -1768,7 +1768,7 @@ HWTEST_F(AmsAppLifeCycleTest, Suspend_001, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
@@ -1789,7 +1789,7 @@ HWTEST_F(AmsAppLifeCycleTest, Suspend_002, TestSize.Level1)
 {
     TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
     testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
     EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());

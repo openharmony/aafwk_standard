@@ -204,34 +204,6 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_006, TestSi
  * Feature: ApplicationFramework
  * Function: AppManagerService
  * SubFunction: IApplicationScheduler
- * FunctionPoints: test ScheduleLaunchAbility API,then check the function whether is good or not
- * EnvConditions: system running normally
- * CaseDescription: excute ScheduleLaunchAbility API 10000 times
- */
-HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_007, TestSize.Level3)
-{
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockApplication> mockApplication(new MockApplication());
-        sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockApplication);
-
-        std::string abilityName("mockAbilityInfo");
-        AbilityInfo info;
-        info.name = abilityName;
-
-        EXPECT_CALL(*mockApplication, ScheduleLaunchAbility(_, _))
-            .Times(1)
-            .WillOnce(Invoke(mockApplication.GetRefPtr(), &MockApplication::LaunchAbility));
-        client->ScheduleLaunchAbility(info, GetMockToken());
-        mockApplication->Wait();
-        bool result = mockApplication->CompareAbilityInfo(info);
-        EXPECT_EQ(result, true) << "excute fail, index is " << i;
-    }
-}
-
-/*
- * Feature: ApplicationFramework
- * Function: AppManagerService
- * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleLaunchApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
  * CaseDescription: excute ScheduleLaunchApplication API 10000 times

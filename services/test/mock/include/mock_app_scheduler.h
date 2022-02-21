@@ -34,7 +34,8 @@ public:
     MOCK_METHOD0(ScheduleBackgroundApplication, void());
     MOCK_METHOD0(ScheduleTerminateApplication, void());
     MOCK_METHOD2(ScheduleLaunchApplication, void(const AppExecFwk::AppLaunchData &, const Configuration &config));
-    MOCK_METHOD2(ScheduleLaunchAbility, void(const AppExecFwk::AbilityInfo &, const sptr<IRemoteObject> &));
+    MOCK_METHOD3(ScheduleLaunchAbility, void(const AppExecFwk::AbilityInfo &, const sptr<IRemoteObject> &,
+        const std::shared_ptr<AAFwk::Want> &));
     MOCK_METHOD1(ScheduleCleanAbility, void(const sptr<IRemoteObject> &));
     MOCK_METHOD1(ScheduleProfileChanged, void(const AppExecFwk::Profile &));
     MOCK_METHOD1(ScheduleConfigurationUpdated, void(const AppExecFwk::Configuration &config));

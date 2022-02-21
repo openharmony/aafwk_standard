@@ -170,7 +170,7 @@ std::shared_ptr<AppRunningRecord> AmsAppLifeCycleModuleTest::StartProcessAndLoad
     if (!testProcessInfo.isStart) {
         StartAppProcess(testProcessInfo.pid);
     } else {
-        EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+        EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
     }
 
     serviceInner_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
@@ -204,7 +204,7 @@ void AmsAppLifeCycleModuleTest::ChangeAbilityStateAfterAppStart(
     const sptr<MockAppScheduler> &mockAppScheduler, const pid_t &pid) const
 {
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchApplication(_, _)).Times(1);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
 
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     serviceInner_->AttachApplication(pid, client);
