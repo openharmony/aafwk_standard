@@ -779,7 +779,7 @@ ErrCode FormMgrAdapter::AllotFormById(const FormItemInfo &info,
     // find in db but not in cache
     FormRecord dbRecord;
     ErrCode getDbRet = FormDbCache::GetInstance().GetDBRecord(formId, dbRecord);
-    if (getDbRet == ERR_OK && (record.userId == currentUserId
+    if (getDbRet == ERR_OK && (dbRecord.userId == currentUserId
         || FormDataMgr::GetInstance().IsCallingUidValid(dbRecord.formUserUids))) {
         return AddNewFormRecord(info, formId, callerToken, wantParams, formInfo);
     }

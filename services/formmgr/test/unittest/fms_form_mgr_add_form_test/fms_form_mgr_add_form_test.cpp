@@ -23,6 +23,8 @@
 #include "form_host_interface.h"
 #define private public
 #include "form_mgr.h"
+#include "form_info.h"
+#include "form_info_mgr.h"
 #undef private
 #include "form_mgr_service.h"
 #include "if_system_ability_manager.h"
@@ -545,5 +547,109 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_008, TestSize.Level0)
     FormDataMgr::GetInstance().DeleteHostRecord(token_, tempCount);
     }
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_008 end";
+}
+
+/*
+ * Feature: FormMgrService
+ * Function: FormMgr
+ * SubFunction: AddForm Function
+ * FunctionPoints: FormMgr AddForm interface
+ * EnvConditions: Mobile that can run ohos test framework
+ * CaseDescription: Add form with cache info.
+ */
+HWTEST_F(FmsFormMgrAddFormTest, AddForm_009, TestSize.Level0)
+{
+    GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_009 start";
+
+    int64_t formId = 0x0abcdabc00000000;
+    int callingUid {0};
+    // Set cache
+    FormItemInfo record1;
+    record1.SetFormId(formId);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
+    record1.SetModuleName(PARAM_PROVIDER_MODULE_NAME);
+    record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
+    record1.SetFormName(PARAM_FORM_NAME);
+    record1.SetSpecificationId(PARAM_FORM_DIMENSION_VALUE);
+    record1.SetTemporaryFlag(false);
+
+    FormInfoMgr::GetInstance().GetOrCreateBundleFromInfo(FORM_PROVIDER_BUNDLE_NAME);
+    FormInfo formInfo1;
+    formInfo1.moduleName = PARAM_PROVIDER_MODULE_NAME;
+    formInfo1.name = PARAM_FORM_NAME;
+    formInfo1.abilityName = FORM_PROVIDER_ABILITY_NAME;
+    formInfo1.bundleName = FORM_PROVIDER_BUNDLE_NAME;
+    formInfo1.supportDimensions.push_back(PARAM_FORM_DIMENSION_VALUE);
+    FormInfoMgr::GetInstance().bundleFormInfoMap_[FORM_PROVIDER_BUNDLE_NAME]->formInfos_.push_back(formInfo1);
+
+    FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
+    retFormRec.updateAtHour = 1;
+    retFormRec.updateAtMin = 1;
+    FormDataMgr::GetInstance().UpdateFormRecord(formId, retFormRec);
+    // Set database info
+    FormDBInfo formDBInfo(formId, retFormRec);
+    FormDbCache::GetInstance().SaveFormInfo(formDBInfo);
+    // Set form host record
+    FormDataMgr::GetInstance().AllotFormHostRecord(record1, token_, formId, callingUid);
+
+    FormJsInfo formJsInfo;
+    Want want;
+    want.SetParam(Constants::PARAM_FORM_HOST_BUNDLENAME_KEY, FORM_HOST_BUNDLE_NAME);
+    want.SetParam(Constants::PARAM_MODULE_NAME_KEY, PARAM_PROVIDER_MODULE_NAME);
+    want.SetParam(Constants::PARAM_FORM_NAME_KEY, PARAM_FORM_NAME);
+    want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, PARAM_FORM_DIMENSION_VALUE);
+    want.SetElementName(DEVICE_ID, FORM_PROVIDER_BUNDLE_NAME, FORM_PROVIDER_ABILITY_NAME);
+    want.SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, false);
+    want.SetParam(Constants::ACQUIRE_TYPE, Constants::ACQUIRE_TYPE_CREATE_FORM);
+
+    GTEST_LOG_(INFO) << "formId :"<<formId;
+    EXPECT_EQ(ERR_OK, FormMgr::GetInstance().AddForm(formId, want, token_, formJsInfo));
+    token_->Wait();
+
+    size_t dataCnt{1};
+    size_t formUserUidCnt{1};
+    size_t zero{0};
+    // Cache params updated.
+    FormRecord formInfo;
+    bool ret = FormDataMgr::GetInstance().GetFormRecord(formId, formInfo);
+    EXPECT_TRUE(ret);
+    EXPECT_EQ(formUserUidCnt, formInfo.formUserUids.size());
+    // database info updated.
+    std::vector<FormDBInfo> formDBInfos;
+    FormDbCache::GetInstance().GetAllFormInfo(formDBInfos);
+    EXPECT_EQ(dataCnt, formDBInfos.size());
+    FormDBInfo dbInfo {formDBInfos[0]};
+    EXPECT_EQ(formId, dbInfo.formId);
+    EXPECT_EQ(formUserUidCnt, dbInfo.formUserUids.size());
+    // Form host record not changed.
+    FormDataMgr::GetInstance().ClearFormRecords();
+    FormRecord formInfo2;
+    ret = FormDataMgr::GetInstance().GetFormRecord(formId, formInfo2);
+    EXPECT_FALSE(ret);
+    EXPECT_EQ(zero, formInfo2.formUserUids.size());
+    formDBInfos.clear();
+    FormDbCache::GetInstance().GetAllFormInfo(formDBInfos);
+    EXPECT_EQ(dataCnt, formDBInfos.size());
+    dbInfo = formDBInfos[0];
+    EXPECT_EQ(formId, dbInfo.formId);
+    EXPECT_EQ(formUserUidCnt, dbInfo.formUserUids.size());
+    EXPECT_EQ(ERR_OK, FormMgr::GetInstance().AddForm(formId, want, token_, formJsInfo));
+    token_->Wait();
+    FormRecord formInfo3;
+    ret = FormDataMgr::GetInstance().GetFormRecord(formId, formInfo3);
+    EXPECT_TRUE(ret);
+    EXPECT_EQ(formUserUidCnt, formInfo3.formUserUids.size());
+    formDBInfos.clear();
+    FormDbCache::GetInstance().GetAllFormInfo(formDBInfos);
+    EXPECT_EQ(dataCnt, formDBInfos.size());
+    dbInfo = formDBInfos[0];
+    EXPECT_EQ(formId, dbInfo.formId);
+    EXPECT_EQ(formUserUidCnt, dbInfo.formUserUids.size());
+
+    FormDataMgr::GetInstance().DeleteFormRecord(formId);
+    FormDbCache::GetInstance().DeleteFormInfo(formId);
+    FormDataMgr::GetInstance().DeleteHostRecord(token_, formId);
+
+    GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_009 end";
 }
 }
