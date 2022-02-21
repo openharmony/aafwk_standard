@@ -144,7 +144,6 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_process.cpp",
     "${SUBSYSTEM_DIR}/src/ability_thread.cpp",
     "${SUBSYSTEM_DIR}/src/ability_window.cpp",
-    "${SUBSYSTEM_DIR}/src/configuration_convertor.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_helper.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_impl.cpp",
     "${SUBSYSTEM_DIR}/src/data_ability_operation.cpp",
@@ -264,6 +263,7 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:ability_context_native",
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",

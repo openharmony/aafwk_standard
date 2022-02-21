@@ -30,6 +30,7 @@ namespace ConfigurationInner {
     const std::string EMPTY_STRING {""};
     const std::string APPLICATION_DIRECTION {"ohos.application.direction"};
     const std::string APPLICATION_DENSITYDPI {"ohos.application.densitydpi"};
+    const std::string APPLICATION_DISPLAYID {"ohos.application.displayid"};
 
     /*
      * This must be synchronized with the value in GlobalConfigurationKey
@@ -39,12 +40,7 @@ namespace ConfigurationInner {
         OHOS::AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE,
         OHOS::AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION,
         OHOS::AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI,
-    };
-
-    enum class ColorMode : int32_t {
-        COLOR_MODE_UNDEFINED = -1,
-        COLOR_MODE_LIGHT = 0,
-        COLOR_MODE_DARK = 1,
+        OHOS::AppExecFwk::ConfigurationInner::APPLICATION_DISPLAYID,
     };
 
     const std::string COLOR_MODE_LIGHT {"light"};

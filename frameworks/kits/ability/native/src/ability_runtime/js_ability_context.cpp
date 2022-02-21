@@ -934,7 +934,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
 
     auto configuration = context->GetConfiguration();
     if (configuration != nullptr) {
-        object->SetProperty("configuration", CreateJsConfiguration(engine, *configuration));
+        object->SetProperty("config", CreateJsConfiguration(engine, *configuration));
     }
 
     BindNativeFunction(engine, *object, "startAbility", JsAbilityContext::StartAbility);

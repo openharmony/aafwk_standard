@@ -312,6 +312,14 @@ void JsAbility::OnConfigurationUpdated(const Configuration &configuration)
     CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
 
+void JsAbility::UpdateContextConfiguration()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    JsAbilityContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetAbilityContext()->GetConfiguration());
+}
+
 void JsAbility::OnNewWant(const Want &want)
 {
     HILOG_INFO("%{public}s begin.", __func__);

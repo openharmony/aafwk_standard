@@ -164,6 +164,7 @@ ohos_shared_library("appkit_native") {
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
   ]
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
