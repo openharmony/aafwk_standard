@@ -285,14 +285,18 @@ ErrCode FormProviderMgr::UpdateForm(const int64_t formId, const FormProviderInfo
 ErrCode FormProviderMgr::UpdateForm(const int64_t formId,
     FormRecord &formRecord, const FormProviderData &formProviderData)
 {
-    APP_LOGI("%{public}s start", __func__);
-
+    APP_LOGI("%{public}s start, imageDateState is %{public}d", __func__, formProviderData.GetImageDataState());
     if (formRecord.versionUpgrade) {
         formRecord.formProviderInfo.SetFormData(formProviderData);
         formRecord.formProviderInfo.SetUpgradeFlg(true);
     } else {
         nlohmann::json addJsonData = formProviderData.GetData();
         formRecord.formProviderInfo.MergeData(addJsonData);
+        // merge image
+        auto formData = formRecord.formProviderInfo.GetFormData();
+        formData.SetImageDataState(formProviderData.GetImageDataState());
+        formData.SetImageDataMap(formProviderData.GetImageDataMap());
+        formRecord.formProviderInfo.SetFormData(formData);
     }
 
     // formRecord init
