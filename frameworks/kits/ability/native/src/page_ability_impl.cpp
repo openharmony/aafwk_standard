@@ -36,6 +36,9 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         targetState.isNewWant,
         targetState.sceneFlag);
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
+        if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
+            ability_->RequsetFocus(want);
+        }
         APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
     }
