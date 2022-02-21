@@ -25,8 +25,8 @@ void NAPI_application_DataShareExtAbility_AutoRegister()
 {
     auto moduleManager = NativeModuleManager::GetInstance();
     NativeModule newModuleInfo = {
-        .name = "application.DataShareExtAbility",
-        .fileName = "application/libdatashareextability_napi.so/DataShareExtAbility.js",
+        .name = "application.DataShareExtensionAbility",
+        .fileName = "application/libdatashareextensionability_napi.so/DataShareExtensionAbility.js",
     };
 
     moduleManager->Register(&newModuleInfo);
