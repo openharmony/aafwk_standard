@@ -102,7 +102,8 @@ void JsDataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &reco
     }
     HILOG_INFO("JsDataShareExtAbility::Init CreateJsDataShareExtAbilityContext.");
     NativeValue* contextObj = CreateJsDataShareExtAbilityContext(engine, context);
-    auto contextRef = jsRuntime_.LoadSystemModule("application.DataShareExtAbilityContext", &contextObj, ARGC_ONE);
+    auto contextRef = jsRuntime_.LoadSystemModule("application.DataShareExtensionAbilityContext",
+        &contextObj, ARGC_ONE);
     contextObj = contextRef->Get();
     HILOG_INFO("JsDataShareExtAbility::Init Bind.");
     context->Bind(jsRuntime_, contextRef.release());
