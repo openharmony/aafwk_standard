@@ -174,19 +174,9 @@ public:
      */
     sptr<IAppScheduler> GetApplicationClient() const;
 
-    // Add new module instance to current running modules list managed by this process
-    /**
-     * AddModule, Add new module instance to current running modules list managed by this process.
-     *
-     * @param appInfo, the app info.
-     * @param token, the unique identification to the ability.
-     * @param abilityInfo, the ability info.
-     * @param hapModuleInfo, the hapModule info.
-     *
-     * @return the ability record.
-     */
     void AddModule(const std::shared_ptr<ApplicationInfo> &appInfo, const std::shared_ptr<AbilityInfo> &abilityInfo,
-        const sptr<IRemoteObject> &token, const HapModuleInfo &hapModuleInfo);
+        const sptr<IRemoteObject> &token, const HapModuleInfo &hapModuleInfo,
+        const std::shared_ptr<AAFwk::Want> &want);
 
     void AddModules(const std::shared_ptr<ApplicationInfo> &appInfo, const std::vector<HapModuleInfo> &moduleInfos);
 

@@ -140,14 +140,14 @@ TestApplicationPreRecord AmsWorkFlowTest::CreateTestApplicationRecord(const std:
         appInfo->name, appInfo->name, appInfo->uid, bundleInfo);
     if (!appRecord) {
         appRecord = serviceInner_->CreateAppRunningRecord(
-            token, nullptr, appInfo, abilityInfo, appInfo->name, bundleInfo, hapModuleInfo);
+            token, nullptr, appInfo, abilityInfo, appInfo->name, bundleInfo, hapModuleInfo, nullptr);
         serviceInner_->StartProcess(abilityInfo->applicationName,
             appInfo->name,
             appRecord,
             abilityInfo->applicationInfo.uid,
             abilityInfo->applicationInfo.bundleName);
     } else {
-        appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo);
+        appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, nullptr);
     }
 
     EXPECT_NE(appRecord, nullptr);

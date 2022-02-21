@@ -139,10 +139,10 @@ TestApplicationPreRunningRecord AmsAppServiceFlowModuleTest::TestCreateApplicati
         appInfo->name, appName, appInfo->uid, bundleInfo);
     if (!appRecord) {
         appRecord = serviceInner_->CreateAppRunningRecord(
-            token, nullptr, appInfo, abilityInfo, appName, bundleInfo, hapModuleInfo);
+            token, nullptr, appInfo, abilityInfo, appName, bundleInfo, hapModuleInfo, nullptr);
         appRecord->GetPriorityObject()->SetPid(TestApplicationPreRunningRecord::g_pid++);
     } else {
-        serviceInner_->StartAbility(token, nullptr, abilityInfo, appRecord, hapModuleInfo);
+        serviceInner_->StartAbility(token, nullptr, abilityInfo, appRecord, hapModuleInfo, nullptr);
     }
 
     EXPECT_TRUE(appRecord);

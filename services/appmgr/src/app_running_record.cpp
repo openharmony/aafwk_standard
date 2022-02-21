@@ -383,13 +383,13 @@ void AppRunningRecord::AddModules(
     }
 
     for (auto &iter : moduleInfos) {
-        AddModule(appInfo, nullptr, nullptr, iter);
+        AddModule(appInfo, nullptr, nullptr, iter, nullptr);
     }
 }
 
 void AppRunningRecord::AddModule(const std::shared_ptr<ApplicationInfo> &appInfo,
     const std::shared_ptr<AbilityInfo> &abilityInfo, const sptr<IRemoteObject> &token,
-    const HapModuleInfo &hapModuleInfo)
+    const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
     APP_LOGI("Add module.");
 
@@ -427,7 +427,7 @@ void AppRunningRecord::AddModule(const std::shared_ptr<ApplicationInfo> &appInfo
         APP_LOGE("abilityinfo or token is nullptr");
         return;
     }
-    moduleRecord->AddAbility(token, abilityInfo);
+    moduleRecord->AddAbility(token, abilityInfo, want);
 
     return;
 }
