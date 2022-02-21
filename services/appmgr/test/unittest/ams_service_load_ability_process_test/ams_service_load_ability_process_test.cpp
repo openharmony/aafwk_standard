@@ -787,7 +787,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_001, TestSize.Level1)
 
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(token2, token, abilityInfo2, record, hapModuleInfo);
+    service_->StartAbility(token2, token, abilityInfo2, record, hapModuleInfo, nullptr);
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
@@ -853,7 +853,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_002, TestSize.Level1)
 
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(token2, token, abilityInfo2, nullptr, hapModuleInfo);
+    service_->StartAbility(token2, token, abilityInfo2, nullptr, hapModuleInfo, nullptr);
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
@@ -919,7 +919,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_003, TestSize.Level1)
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(token2, token, abilityInfo2, nullptr, hapModuleInfo);
+    service_->StartAbility(token2, token, abilityInfo2, nullptr, hapModuleInfo, nullptr);
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
@@ -978,7 +978,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_004, TestSize.Level1)
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo);
+    service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo, nullptr);
 
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
@@ -1041,7 +1041,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_005, TestSize.Level1)
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(token2, nullptr, abilityInfo2, record, hapModuleInfo);
+    service_->StartAbility(token2, nullptr, abilityInfo2, record, hapModuleInfo, nullptr);
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
@@ -1103,7 +1103,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_006, TestSize.Level1)
     EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
-    service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo);
+    service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo, nullptr);
     auto record1 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
@@ -1143,7 +1143,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess001, TestSize.Level1)
     hapModuleInfo.moduleName = "module789";
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo, nullptr);
 
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
@@ -1193,7 +1193,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess002, TestSize.Level1)
     hapModuleInfo.moduleName = "module789";
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo, nullptr);
 
     service_->SetAppSpawnClient(nullptr);
     service_->StartProcess(abilityInfo->applicationName,
@@ -1238,7 +1238,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess003, TestSize.Level1)
     hapModuleInfo.moduleName = "module789";
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo, nullptr);
 
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
@@ -1289,7 +1289,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess004, TestSize.Level1)
     hapModuleInfo.moduleName = "module789";
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
-        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo);
+        token, nullptr, appInfo, abilityInfo, GetTestAppName(), bundleInfo, hapModuleInfo, nullptr);
 
     EXPECT_NE(record, nullptr);
     CHECK_POINTER_IS_NULLPTR(record);

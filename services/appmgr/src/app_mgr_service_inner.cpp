@@ -117,15 +117,16 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         appRunningManager_->CheckAppRunningRecordIsExist(appInfo->name, processName, appInfo->uid, bundleInfo);
     if (!appRecord) {
         appRecord =
-            CreateAppRunningRecord(token, preToken, appInfo, abilityInfo, processName, bundleInfo, hapModuleInfo);
+            CreateAppRunningRecord(token, preToken, appInfo, abilityInfo,
+                processName, bundleInfo, hapModuleInfo, want);
         if (!appRecord) {
-            APP_LOGI("CreateAppRunningRecord failed, appRecord is nullptr");
+            APP_LOGE("CreateAppRunningRecord failed, appRecord is nullptr");
             return;
         }
         StartProcess(abilityInfo->applicationName, processName, appRecord,
             abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
     } else {
-        StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo);
+        StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
     PerfProfile::GetInstance().SetAbilityLoadEndTime(GetTickCount());
     PerfProfile::GetInstance().Dump();
@@ -657,7 +658,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByPid(c
 std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(const sptr<IRemoteObject> &token,
     const sptr<IRemoteObject> &preToken, const std::shared_ptr<ApplicationInfo> &appInfo,
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::string &processName, const BundleInfo &bundleInfo,
-    const HapModuleInfo &hapModuleInfo)
+    const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!appRunningManager_) {
@@ -669,7 +670,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
     }
 
     appRecord->SetEventHandler(eventHandler_);
-    appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo);
+    appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
 
     if (preToken) {
         auto abilityRecord = appRecord->GetAbilityRunningRecordByToken(token);
@@ -927,7 +928,7 @@ void AppMgrServiceInner::KillProcessesByUserId(int32_t userId)
 
 void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AppRunningRecord> &appRecord,
-    const HapModuleInfo &hapModuleInfo)
+    const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     APP_LOGI("already create appRecord, just start ability");
@@ -958,7 +959,7 @@ void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sp
     }
 
     auto appInfo = std::make_shared<ApplicationInfo>(abilityInfo->applicationInfo);
-    appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo);
+    appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
     auto moduleRecord = appRecord->GetModuleRecordByModuleName(appInfo->bundleName, hapModuleInfo.moduleName);
     if (!moduleRecord) {
         APP_LOGE("add moduleRecord failed");
