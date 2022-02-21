@@ -606,9 +606,9 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_009, TestSize.Level0)
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().AddForm(formId, want, token_, formJsInfo));
     token_->Wait();
 
-    size_t dataCnt{1};
-    size_t formUserUidCnt{1};
-    size_t zero{0};
+    size_t dataCnt {1};
+    size_t formUserUidCnt {1};
+    size_t zero {0};
     // Cache params updated.
     FormRecord formInfo;
     bool ret = FormDataMgr::GetInstance().GetFormRecord(formId, formInfo);
