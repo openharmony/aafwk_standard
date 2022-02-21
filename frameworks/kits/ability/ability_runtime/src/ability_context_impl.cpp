@@ -164,8 +164,13 @@ ErrCode AbilityContextImpl::TerminateAbilityWithResult(const AAFwk::Want &want, 
 void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const AAFwk::Want &resultData)
 {
     HILOG_DEBUG("%{public}s. Start calling OnAbilityResult.", __func__);
-    resultCallbacks_[requestCode](resultCode, resultData);
-    resultCallbacks_.erase(requestCode);
+    auto callback = resultCallbacks_.find(requestCode);
+    if (callback != resultCallbacks_.end()) {
+        if (callback->second) {
+            callback->second(resultCode, resultData);
+        }
+        resultCallbacks_.erase(requestCode);
+    }
     HILOG_INFO("%{public}s. End calling OnAbilityResult.", __func__);
 }
 
