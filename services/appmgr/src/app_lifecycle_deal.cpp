@@ -47,7 +47,8 @@ void AppLifeCycleDeal::AddAbilityStage(const HapModuleInfo &abilityStage)
 void AppLifeCycleDeal::LaunchAbility(const std::shared_ptr<AbilityRunningRecord> &ability)
 {
     if (appThread_) {
-        appThread_->ScheduleLaunchAbility(*(ability->GetAbilityInfo()), ability->GetToken());
+        appThread_->ScheduleLaunchAbility(*(ability->GetAbilityInfo()), ability->GetToken(),
+            ability->GetWant());
     }
 }
 

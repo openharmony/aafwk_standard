@@ -783,7 +783,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_001, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
 
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
@@ -849,7 +849,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_002, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(0);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
 
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
@@ -916,7 +916,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_003, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(0);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
     service_->StartAbility(token2, token, abilityInfo2, nullptr, hapModuleInfo);
@@ -975,7 +975,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_004, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(0);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
     service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo);
@@ -1038,7 +1038,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_005, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(1);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(1);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
     service_->StartAbility(token2, nullptr, abilityInfo2, record, hapModuleInfo);
@@ -1100,7 +1100,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_006, TestSize.Level1)
     sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
     sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
     record->SetApplicationClient(client);
-    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _)).Times(0);
+    EXPECT_CALL(*mockAppScheduler, ScheduleLaunchAbility(_, _, _)).Times(0);
     HapModuleInfo hapModuleInfo;
     hapModuleInfo.moduleName = "module789";
     service_->StartAbility(nullptr, token, abilityInfo2, nullptr, hapModuleInfo);

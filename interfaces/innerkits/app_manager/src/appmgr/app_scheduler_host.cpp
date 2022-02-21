@@ -122,7 +122,8 @@ int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, Messa
     }
 
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
-    ScheduleLaunchAbility(*abilityInfo, token);
+    std::shared_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
+    ScheduleLaunchAbility(*abilityInfo, token, want);
     return NO_ERROR;
 }
 

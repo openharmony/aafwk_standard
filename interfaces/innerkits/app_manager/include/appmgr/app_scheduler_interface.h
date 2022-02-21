@@ -91,14 +91,8 @@ public:
      */
     virtual void ScheduleAbilityStage(const HapModuleInfo &) = 0;
 
-    /**
-     * ScheduleLaunchAbility, call ScheduleLaunchAbility() through proxy project,
-     * Notify application to launch ability.
-     *
-     * @param The ability info.
-     * @return
-     */
-    virtual void ScheduleLaunchAbility(const AbilityInfo &, const sptr<IRemoteObject> &) = 0;
+    virtual void ScheduleLaunchAbility(const AbilityInfo &, const sptr<IRemoteObject> &,
+        const std::shared_ptr<AAFwk::Want> &want) = 0;
 
     /**
      * ScheduleCleanAbility, call ScheduleCleanAbility() through proxy project,
