@@ -895,6 +895,8 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libworkschedextension.z.so", "WorkSchedulerExtension",
             application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib/libaccessibility_extension_module.z.so", "AccessibilityExtension",
+            application_->GetRuntime());
     }
 
     contextDeal->initResourceManager(resourceManager);
