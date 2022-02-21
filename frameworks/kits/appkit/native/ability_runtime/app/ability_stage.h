@@ -42,12 +42,13 @@ public:
 
     AbilityStage() = default;
     virtual ~AbilityStage() = default;
-    virtual void OnCreate() const;
+    virtual void OnCreate(const AAFwk::Want &want) const;
     virtual void OnDestory() const;
     virtual std::string OnAcceptWant(const AAFwk::Want &want);
     virtual void Init(std::shared_ptr<Context> context);
     std::shared_ptr<Context> GetContext() const;
-    void AddAbility(const sptr<IRemoteObject> &token, std::shared_ptr<AppExecFwk::AbilityLocalRecord> abilityRecord);
+    void AddAbility(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<AppExecFwk::AbilityLocalRecord> &abilityRecord);
     void RemoveAbility(const sptr<IRemoteObject> &token);
     bool ContainsAbility();
     virtual void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration);

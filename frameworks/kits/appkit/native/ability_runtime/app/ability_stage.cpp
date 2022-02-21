@@ -37,7 +37,7 @@ std::shared_ptr<AbilityStage> AbilityStage::Create(
     }
 }
 
-void AbilityStage::OnCreate() const
+void AbilityStage::OnCreate(const AAFwk::Want &want) const
 {
     HILOG_INFO("AbilityStage::OnCreate come");
 }
@@ -58,7 +58,7 @@ void AbilityStage::Init(std::shared_ptr<Context> context)
 }
 
 void AbilityStage::AddAbility(const sptr<IRemoteObject> &token,
-    std::shared_ptr<AppExecFwk::AbilityLocalRecord> abilityRecord)
+    const std::shared_ptr<AppExecFwk::AbilityLocalRecord> &abilityRecord)
 {
     if (token == nullptr) {
         HILOG_ERROR("AbilityStage::AddAbility failed, token is nullptr");
