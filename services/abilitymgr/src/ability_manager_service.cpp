@@ -288,6 +288,10 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
+    userIdValid = abilityInfo.applicationInfo.singleUser ? DEFAULT_USER_ID : userIdValid;
+    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
+        userIdValid, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
