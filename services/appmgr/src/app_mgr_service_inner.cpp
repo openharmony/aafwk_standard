@@ -711,7 +711,7 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
         APP_LOGE("token is null!");
         return;
     }
-    
+
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
         APP_LOGE("app is not exist!");
@@ -2165,7 +2165,7 @@ void AppMgrServiceInner::GetGlobalConfiguration()
     APP_LOGI("current global language is : %{public}s", language.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
 
-    // Assign to default colormode "LIGHT"
+    // Assign to default colormode "light"
     APP_LOGI("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, ConfigurationInner::COLOR_MODE_LIGHT);
 }

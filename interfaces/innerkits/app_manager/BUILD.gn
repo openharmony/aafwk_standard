@@ -101,9 +101,13 @@ ohos_shared_library("app_manager") {
 }
 
 ohos_shared_library("configuration") {
-  include_dirs = []
+  include_dirs =
+      [ "//base/global/resmgr_standard/interfaces/innerkits/include" ]
 
-  sources = [ "src/appmgr/configuration.cpp" ]
+  sources = [
+    "src/appmgr/configuration.cpp",
+    "src/appmgr/configuration_convertor.cpp",
+  ]
 
   public_configs = [ ":appmgr_sdk_config" ]
 

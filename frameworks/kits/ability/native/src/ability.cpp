@@ -243,6 +243,8 @@ void Ability::OnStart(const Want &want)
             auto configuration = application_->GetConfiguration();
             configuration->AddItem(ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
             configuration->AddItem(ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+            configuration->AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(displayId));
+            UpdateContextConfiguration();
 
             std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
             if (resConfig == nullptr) {

@@ -25,8 +25,8 @@ Global::Resource::ColorMode ConvertColorMode(std::string colormode)
     auto resolution = Global::Resource::ColorMode::COLOR_MODE_NOT_SET;
 
     static const std::vector<std::pair<std::string, Global::Resource::ColorMode>> resolutions = {
-        { "DARK", Global::Resource::ColorMode::DARK },
-        { "LIGHT", Global::Resource::ColorMode::LIGHT },
+        { "dark", Global::Resource::ColorMode::DARK },
+        { "light", Global::Resource::ColorMode::LIGHT },
     };
 
     for (const auto& [tempColorMode, value] : resolutions) {
@@ -43,6 +43,25 @@ Global::Resource::Direction ConvertDirection(int32_t height, int32_t width)
 {
     return height >= width ? Global::Resource::Direction::DIRECTION_VERTICAL :
         Global::Resource::Direction::DIRECTION_HORIZONTAL;
+}
+
+Global::Resource::Direction ConvertDirection(std::string direction)
+{
+    auto resolution = Global::Resource::Direction::DIRECTION_NOT_SET;
+
+    static const std::vector<std::pair<std::string, Global::Resource::Direction>> resolutions = {
+        { "vertical", Global::Resource::Direction::DIRECTION_VERTICAL },
+        { "horizontal", Global::Resource::Direction::DIRECTION_HORIZONTAL },
+    };
+
+    for (const auto& [tempDirection, value] : resolutions) {
+        if (tempDirection == direction) {
+            resolution = value;
+            break;
+        }
+    }
+
+    return resolution;
 }
 
 Global::Resource::ScreenDensity ConvertDensity(float density)
@@ -68,13 +87,72 @@ Global::Resource::ScreenDensity ConvertDensity(float density)
     return resolution;
 }
 
-std::string GetDirectionStr(Global::Resource::Direction direction)
+Global::Resource::ScreenDensity ConvertDensity(std::string density)
 {
-    if (direction == Global::Resource::Direction::DIRECTION_VERTICAL) {
-        return ConfigurationInner::DIRECTION_VERTICAL;
+    auto resolution = Global::Resource::ScreenDensity::SCREEN_DENSITY_NOT_SET;
+
+    static const std::vector<std::pair<std::string, Global::Resource::ScreenDensity>> resolutions = {
+        { "sdpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_SDPI },
+        { "mdpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_MDPI },
+        { "ldpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_LDPI },
+        { "xldpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_XLDPI },
+        { "xxldpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_XXLDPI },
+        { "xxxldpi", Global::Resource::ScreenDensity::SCREEN_DENSITY_XXXLDPI },
+    };
+
+    for (const auto& [tempdensity, value] : resolutions) {
+        if (tempdensity == density) {
+            resolution = value;
+            break;
+        }
     }
 
-    return ConfigurationInner::DIRECTION_HORIZONTAL;
+    return resolution;
+}
+
+int32_t ConvertDisplayId(std::string displayId)
+{
+    if (displayId == ConfigurationInner::EMPTY_STRING) {
+        return -1;
+    }
+
+    return std::stoi(displayId);
+}
+
+std::string GetColorModeStr(int32_t colormode)
+{
+    std::string ret("no_color_mode");
+
+    switch (colormode) {
+        case Global::Resource::ColorMode::DARK:
+            ret = ConfigurationInner::COLOR_MODE_DARK;
+            break;
+        case Global::Resource::ColorMode::LIGHT:
+            ret = ConfigurationInner::COLOR_MODE_LIGHT;
+            break;
+        default:
+            break;
+    }
+
+    return ret;
+}
+
+std::string GetDirectionStr(Global::Resource::Direction direction)
+{
+    std::string ret("no_direction");
+
+    switch (direction) {
+        case Global::Resource::Direction::DIRECTION_VERTICAL:
+            ret = ConfigurationInner::DIRECTION_VERTICAL;
+            break;
+        case Global::Resource::Direction::DIRECTION_HORIZONTAL:
+            ret = ConfigurationInner::DIRECTION_HORIZONTAL;
+            break;
+        default:
+            break;
+    }
+
+    return ret;
 }
 
 std::string GetDirectionStr(int32_t height, int32_t width)
