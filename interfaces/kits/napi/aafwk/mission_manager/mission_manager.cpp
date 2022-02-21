@@ -159,7 +159,7 @@ private:
                     return;
                 }
                 if (!missionListener) {
-                    task.Resolve(engine, engine.CreateUndefined());
+                    task.Reject(engine, CreateJsError(engine, ERR_NOT_OK, "Not registered yet."));
                     return;
                 }
                 missionListener->RemoveJsListenerObject(missionListenerId);
