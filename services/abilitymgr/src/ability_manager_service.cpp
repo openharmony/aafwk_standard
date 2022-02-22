@@ -1625,7 +1625,7 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    auto userId = GetUserId();
+    auto userId = GetValidUserId(INVALID_USER_ID);
     AbilityRequest abilityRequest;
     std::string dataAbilityUri = localUri.ToString();
     HILOG_INFO("%{public}s, called. userId %{public}d", __func__, userId);
@@ -1649,8 +1649,13 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    CHECK_POINTER_AND_RETURN(dataAbilityManager_, nullptr);
-    return dataAbilityManager_->Acquire(abilityRequest, tryBind, callerToken, isSystem);
+    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+        userId = U0_USER_ID;
+    }
+
+    std::shared_ptr<DataAbilityManager> dataAbilityManager = GetDataAbilityManagerByUserId(userId);
+    CHECK_POINTER_AND_RETURN(dataAbilityManager, nullptr);
+    return dataAbilityManager->Acquire(abilityRequest, tryBind, callerToken, isSystem);
 }
 
 bool AbilityManagerService::CheckDataAbilityRequest(AbilityRequest &abilityRequest)
@@ -1681,12 +1686,17 @@ int AbilityManagerService::ReleaseDataAbility(
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
         if (!VerificationAllToken(callerToken)) {
-            HILOG_INFO("VerificationAllToken fail");
+            HILOG_ERROR("VerificationAllToken fail");
             return ERR_INVALID_STATE;
         }
     }
 
-    return dataAbilityManager_->Release(dataAbilityScheduler, callerToken, isSystem);
+    std::shared_ptr<DataAbilityManager> dataAbilityManager = GetDataAbilityManager(dataAbilityScheduler);
+    if (!dataAbilityManager) {
+        HILOG_ERROR("dataAbilityScheduler is not exists");
+    }
+
+    return dataAbilityManager->Release(dataAbilityScheduler, callerToken, isSystem);
 }
 
 int AbilityManagerService::AttachAbilityThread(
@@ -3142,6 +3152,23 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
 
     HILOG_ERROR("Failed to verify all token.");
     return false;
+}
+
+const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbilityManager(
+    const sptr<IAbilityScheduler> &scheduler)
+{
+    if (scheduler == nullptr) {
+        HILOG_ERROR("the param ability scheduler is nullptr");
+        return nullptr;
+    }
+
+    for (auto item: dataAbilityManagers_) {
+        if (item.second && item.second->ContainsDataAbility(scheduler)) {
+            return item.second;
+        }
+    }
+
+    return nullptr;
 }
 
 std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUserId(int32_t userId)
