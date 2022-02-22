@@ -281,10 +281,11 @@ void JsServiceExtension::OnConfigurationUpdated(const AppExecFwk::Configuration&
     auto& nativeEngine = jsRuntime_.GetNativeEngine();
 
     // Notify extension context
-    JsExtensionContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetContext()->GetConfiguration());
+    auto fullConfig = GetContext()->GetConfiguration();
+    JsExtensionContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, fullConfig);
 
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
-        reinterpret_cast<napi_env>(&nativeEngine), configuration);
+        reinterpret_cast<napi_env>(&nativeEngine), *fullConfig);
     NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
     CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
