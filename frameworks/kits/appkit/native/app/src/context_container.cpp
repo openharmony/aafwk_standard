@@ -626,7 +626,7 @@ std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundl
     }
 
     BundleInfo bundleInfo;
-    APP_LOGI("ContextContainer::CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId is %{public}d",
+    APP_LOGI("CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId is %{public}d",
         bundleName.length(), bundleName.c_str(), accountId);
     int realAccountId = CURRENT_ACCOUNT_ID;
     if (accountId != DEFAULT_ACCOUNT_ID) {
