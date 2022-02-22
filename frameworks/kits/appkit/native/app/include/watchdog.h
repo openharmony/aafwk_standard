@@ -20,14 +20,14 @@
 #include <mutex>
 #include "event_handler.h"
 #include "inner_event.h"
+#include "application_impl.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 const uint32_t MAIN_THREAD_IS_ALIVE = 0;
 const uint32_t MAIN_THREAD_TIMEOUT_TIME = 3000;
-const uint32_t INI_ZERO = 0;
-const uint32_t INI_TIMER_FIRST_SECOND = 10;
-const uint32_t INI_TIMER_SECOND = 3;
+const uint32_t INI_TIMER_FIRST_SECOND = 10000;
+const uint32_t INI_TIMER_SECOND = 3000;
 const std::string MAIN_THREAD_IS_ALIVE_MSG = "MAIN_THREAD_IS_ALIVE";
 class WatchDog : public EventHandler {
 public:
@@ -42,7 +42,7 @@ public:
      *
      */
     void ProcessEvent(const OHOS::AppExecFwk::InnerEvent::Pointer &event) override;
-    static void Timer(int sig);
+    bool Timer();
 
     /**
      *
@@ -62,6 +62,13 @@ public:
 
     /**
      *
+     * @brief Stop the mainthread function of watchdog.
+     *
+     */
+    void SetApplicationInfo(const std::shared_ptr<ApplicationInfo> &applicationInfo);
+
+    /**
+     *
      * @brief Get the eventHandler of watchdog thread.
      *
      * @return Returns the eventHandler of watchdog thread.
@@ -77,6 +84,9 @@ public:
     static bool GetAppMainThreadState();
 
 private:
+    std::atomic_bool stopWatchDog_ = false;
+    std::shared_ptr<ApplicationInfo> applicationInfo_ = nullptr;
+    std::shared_ptr<std::thread> watchDogThread_ = nullptr;
     std::shared_ptr<EventRunner> watchDogRunner_;
     static bool appMainThreadIsAlive_;
     static std::shared_ptr<EventHandler> appMainHandler_;
