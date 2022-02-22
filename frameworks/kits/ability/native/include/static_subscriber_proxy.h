@@ -28,10 +28,10 @@ public:
 
     virtual ~StaticSubscriberProxy() {}
 
-    ErrCode OnCommonEventTriggered(CommonEventData* data) override;
+    ErrCode OnReceiveEvent(CommonEventData* data) override;
 
 private:
-    static constexpr int COMMAND_ON_COMMON_EVENT_TRIGGERED = MIN_TRANSACTION_ID;
+    static constexpr int COMMAND_ON_RECEIVE_EVENT = MIN_TRANSACTION_ID;
 
     static inline BrokerDelegator<StaticSubscriberProxy> delegator_;
 };
