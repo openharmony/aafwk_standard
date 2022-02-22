@@ -856,6 +856,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     }
     APP_LOGI("stageBased:%{public}d moduleJson:%{public}d size:%{public}d",
         isStageBased, moduelJson, (int32_t)bundleInfo.hapModuleInfos.size());
+
     if (isStageBased) {
         // Create runtime
         AbilityRuntime::Runtime::Options options;
@@ -868,12 +869,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         }
 
         application_->SetRuntime(std::move(runtime));
-        auto usertestInfo = appLaunchData.GetUserTestInfo();
-        if (usertestInfo.observer) {
-            if (!AbilityDelegatorPrepare(usertestInfo)) {
-                return;
-            }
-        }
+
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
             return Ability::Create(application->GetRuntime());
         });
@@ -891,6 +887,24 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libaccessibility_extension_module.z.so", "AccessibilityExtension",
             application_->GetRuntime());
+    }
+
+    auto usertestInfo = appLaunchData.GetUserTestInfo();
+    if (usertestInfo.observer) {
+        if (!isStageBased) {
+            AbilityRuntime::Runtime::Options options;
+            options.codePath = LOCAL_CODE_PATH;
+            options.eventRunner = mainHandler_->GetEventRunner();
+            auto runtime = AbilityRuntime::Runtime::Create(options);
+            if (!runtime) {
+                APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
+                return;
+            }
+            application_->SetRuntime(std::move(runtime));
+        }
+        if (!AbilityDelegatorPrepare(usertestInfo)) {
+            return;
+        }
     }
 
     contextDeal->initResourceManager(resourceManager);
