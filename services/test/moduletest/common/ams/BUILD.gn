@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -77,6 +77,7 @@ ohos_source_set("appmgr_mst_source") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
+    "${innerkits_path}/uri_permission:uri_permission_mgr",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",

@@ -37,6 +37,7 @@
 #include "permission/permission_kit.h"
 #include "system_ability_definition.h"
 #include "locale_config.h"
+#include "uri_permission_manager_client.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -1371,6 +1372,13 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote)
     APP_LOGE("On remote died.");
     auto appRecord = appRunningManager_->OnRemoteDied(remote);
     if (appRecord) {
+        // clear uri permission
+        auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
+        auto appInfo = appRecord->GetApplicationInfo();
+        if (appInfo && upmClient) {
+            upmClient->RemoveUriPermission(appInfo->accessTokenId);
+        }
+
         for (const auto &item : appRecord->GetAbilities()) {
             const auto &abilityRecord = item.second;
             OptimizerAbilityStateChanged(abilityRecord, AbilityState::ABILITY_STATE_TERMINATED);

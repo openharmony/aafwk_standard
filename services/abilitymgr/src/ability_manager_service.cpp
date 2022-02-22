@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,7 @@
 #include "os_account_manager.h"
 #include "png.h"
 #include "ui_service_mgr_client.h"
+#include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
 
 using OHOS::AppExecFwk::ElementName;
@@ -310,6 +311,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
         return result;
     }
+    GrantUriPermission(want, validUserId);
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -530,6 +532,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
+    GrantUriPermission(want, validUserId);
     if (IsSystemUiApp(abilityRequest.abilityInfo)) {
         if (useNewMission_) {
             return kernalAbilityManager_->StartAbility(abilityRequest);
@@ -553,6 +556,66 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
             return ERR_INVALID_VALUE;
         }
         return stackManager->StartAbility(abilityRequest);
+    }
+}
+
+void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
+{
+    HILOG_DEBUG("AbilityManagerService::GrantUriPermission is called.");
+    auto bms = GetBundleManager();
+    if (!bms) {
+        HILOG_ERROR("Get bundle manager service failed.");
+        return;
+    }
+
+    auto bundleName = want.GetBundle();
+    AppExecFwk::BundleInfo bundleInfo;
+    auto bundleFlag = AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO;
+    if (!bms->GetBundleInfo(bundleName, bundleFlag, bundleInfo, validUserId)) {
+        HILOG_ERROR("Not found ExtensionAbilityInfo according to the uri.");
+        return;
+    }
+
+    if (want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) {
+        HILOG_INFO("Want to grant r/w permission of the uri");
+        auto targetTokenId = bundleInfo.applicationInfo.accessTokenId;
+        GrantUriPermission(want, validUserId, targetTokenId);
+    }
+}
+
+void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId, uint32_t targetTokenId)
+{
+    auto bms = GetBundleManager();
+    if (!bms) {
+        HILOG_ERROR("Get bundle manager service failed.");
+        return;
+    }
+    auto uriStr = want.GetUri().ToString();
+    auto uriVec = want.GetStringArrayParam(AbilityConfig::PARAMS_STREAM);
+    uriVec.emplace_back(uriStr);
+    auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
+    auto fromTokenId = IPCSkeleton::GetCallingTokenID();
+    AppExecFwk::ExtensionAbilityInfo info;
+    for (auto str : uriVec) {
+        if (!bms->QueryExtensionAbilityInfoByUri(str, validUserId, info)) {
+            HILOG_WARN("Not found ExtensionAbilityInfo according to the uri.");
+            continue;
+        }
+        if (info.type != AppExecFwk::ExtensionAbilityType::FILESHARE) {
+            HILOG_WARN("The upms only open to FILESHARE.");
+            continue;
+        }
+        if (fromTokenId != info.applicationInfo.accessTokenId) {
+            HILOG_WARN("Only the uri of this application can be authorized.");
+            continue;
+        }
+
+        Uri uri(str);
+        if (want.GetFlags() & Want::FLAG_AUTH_WRITE_URI_PERMISSION) {
+            upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, fromTokenId, targetTokenId);
+        } else {
+            upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, fromTokenId, targetTokenId);
+        }
     }
 }
 
@@ -998,6 +1061,12 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
         return result;
     }
+
+    if (!VerifyUriPermisson(abilityRequest, want)) {
+        HILOG_ERROR("The uri has not granted.");
+        return ERR_INVALID_OPERATION;
+    }
+
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
@@ -4460,6 +4529,29 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
     }
 
     return AppExecFwk::Constants::PERMISSION_GRANTED;
+}
+
+bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want)
+{
+    if (abilityRequest.abilityInfo.extensionAbilityType != AppExecFwk::ExtensionAbilityType::FILESHARE) {
+        HILOG_DEBUG("Only FILESHARE need to Verify uri permission.");
+        return true;
+    }
+    auto uriStr = want.GetUri().ToString();
+    auto uriVec = want.GetStringArrayParam(AbilityConfig::PARAMS_STREAM);
+    uriVec.emplace_back(uriStr);
+    auto targetTokenId = IPCSkeleton::GetCallingTokenID();
+    auto uriPermMgrClient = AAFwk::UriPermissionManagerClient::GetInstance();
+    for (auto str : uriVec) {
+        Uri uri(str);
+        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, targetTokenId)) {
+            return true;
+        }
+        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, targetTokenId)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void AbilityManagerService::StartupResidentProcess()

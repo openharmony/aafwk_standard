@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,6 +63,8 @@ const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
 
 const std::string SCREEN_LOCK_ABILITY_NAME = "com.ohos.screenlock.ServiceExtAbility";
 const std::string SCREEN_LOCK_BUNDLE_NAME = "com.ohos.screenlock";
+
+const std::string PARAMS_STREAM = "ability.params.stream";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS

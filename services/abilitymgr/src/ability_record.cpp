@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,12 @@
 #include "ability_manager_service.h"
 #include "ability_scheduler_stub.h"
 #include "ability_util.h"
+#include "bundle_mgr_client.h"
 #include "bytrace.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
+#include "os_account_manager.h"
+#include "uri_permission_manager_client.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -688,6 +691,7 @@ void AbilityRecord::SendResult()
     CHECK_POINTER(scheduler_);
     CHECK_POINTER(result_);
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
+    GrantUriPermission(result_->resultWant_);
     // reset result to avoid send result next time
     result_.reset();
 }
@@ -1628,6 +1632,37 @@ void AbilityRecord::DumpClientInfo(std::vector<std::string> &info, bool isClient
             info.emplace_back("          configuration: " + config.GetName());
         }
     }
+}
+
+void AbilityRecord::GrantUriPermission(const Want &want)
+{
+    HILOG_DEBUG("AbilityRecord::GrantUriPermission is called.");
+    auto flags = want.GetFlags();
+    if (flags & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) {
+        HILOG_INFO("Want to grant r/w permission of the uri");
+        auto targetTokenId = abilityInfo_.applicationInfo.accessTokenId;
+        auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+        if (abilityMgr) {
+            abilityMgr->GrantUriPermission(want, GetCurrentAccountId(), targetTokenId);
+        }
+    }
+}
+
+int AbilityRecord::GetCurrentAccountId()
+{
+    std::vector<int32_t> osActiveAccountIds;
+    ErrCode ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(osActiveAccountIds);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("QueryActiveOsAccountIds failed.");
+        return DEFAULT_USER_ID;
+    }
+
+    if (osActiveAccountIds.empty()) {
+        HILOG_ERROR("QueryActiveOsAccountIds is empty, no accounts.");
+        return DEFAULT_USER_ID;
+    }
+
+    return osActiveAccountIds.front();
 }
 }  // namespace AAFwk
 }  // namespace OHOS
