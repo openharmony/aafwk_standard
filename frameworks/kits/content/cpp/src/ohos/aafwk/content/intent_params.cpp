@@ -260,6 +260,9 @@ static void SetArray(const InterfaceID &id, const std::vector<T1> &value, sptr<I
 {
     typename std::vector<T1>::size_type size = value.size();
     ao = new (std::nothrow) Array(size, id);
+    if (ao == nullptr) {
+        return;
+    }
     for (typename std::vector<T1>::size_type i = 0; i < size; i++) {
         ao->Set(i, T2::Box(value[i]));
     }
@@ -275,6 +278,9 @@ bool IntentParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
             }
             std::vector<std::u16string>::size_type size = value.size();
             ao = new (std::nothrow) Array(size, g_IID_IString);
+            if (ao == nullptr) {
+                return false;
+            }
             for (std::vector<std::u16string>::size_type i = 0; i < size; i++) {
                 ao->Set(i, String::Box(Str16ToStr8(value[i])));
             }
