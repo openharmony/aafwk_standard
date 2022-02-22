@@ -186,6 +186,10 @@ void JsAbilityStage::OnConfigurationUpdated(const AppExecFwk::Configuration& con
 
     // Notify Ability stage context
     auto fullConfig = GetContext()->GetConfiguration();
+    if (!fullConfig) {
+        HILOG_ERROR("configuration is nullptr.");
+        return;
+    }
     JsAbilityStageContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, fullConfig);
 
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
