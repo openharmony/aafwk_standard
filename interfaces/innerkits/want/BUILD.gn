@@ -46,6 +46,7 @@ wantImpl = "//foundation/aafwk/standard/frameworks/kits/content/cpp/src/ohos/aaf
 
 ohos_shared_library("want") {
   sources = [
+    "${wantImpl}/element_name.cpp",
     "${wantImpl}/extra_params.cpp",
     "${wantImpl}/operation.cpp",
     "${wantImpl}/operation_builder.cpp",
@@ -61,16 +62,11 @@ ohos_shared_library("want") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-
-    #"//foundation/distributeddatamgr/distributeddatamgr:build_module",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/lsamgr:lsamgr",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
-    "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

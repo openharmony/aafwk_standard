@@ -21,10 +21,8 @@
         "ram": "",
         "deps": {
             "components": [
-                "bundle_framework",
                 "hiviewdfx_hilog_native",
                 "ipc",
-                "samgr_standard",
                 "utils_base"
             ],
             "third_party": [
@@ -63,6 +61,7 @@
                     "header": {
                       "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
                       "header_files": [
+                        "ohos/aafwk/content/element_name.h",
                         "ohos/aafwk/content/want.h",
                         "ohos/aafwk/content/skills.h",
                         "ohos/aafwk/content/want_params.h",
