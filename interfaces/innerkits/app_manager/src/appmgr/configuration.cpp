@@ -208,9 +208,20 @@ bool Configuration::ReadFromParcel(Parcel &parcel)
     std::vector<std::string> values;
     keys.clear();
     values.clear();
-    parcel.ReadStringVector(&keys);
-    parcel.ReadStringVector(&values);
-
+    if (!parcel.ReadStringVector(&keys)) {
+        APP_LOGE("ReadStringVector for keys failed.");
+        return false;
+    }
+    if (!parcel.ReadStringVector(&values)) {
+        APP_LOGE("ReadStringVector for values failed.");
+        return false;
+    }
+    int32_t keySize = keys.size();
+    int32_t valueSize = values.size();
+    if (keySize != valueSize || configSize != valueSize) {
+        APP_LOGE("ReadFromParcel failed, invalid size.");
+        return false;
+    }
     std::string key;
     std::string val;
     for (int32_t i = 0; i < configSize; i++) {
