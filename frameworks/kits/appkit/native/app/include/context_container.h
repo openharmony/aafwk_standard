@@ -338,15 +338,15 @@ public:
      * @brief Creates a Context object for an application with the given bundle name.
      *
      * @param bundleName Indicates the bundle name of the application.
-     *
      * @param flag  Indicates the flag for creating a Context object. It can be 0, any of
      * the following values, or any combination of the following values: CONTEXT_IGNORE_SECURITY,
      * CONTEXT_INCLUDE_CODE, and CONTEXT_RESTRICTED. The value 0 indicates that there is no restriction
      * on creating contexts for applications.
+     * @param accountId Indicates the account id.
      *
      * @return Returns a Context object created for the specified application.
      */
-    std::shared_ptr<Context> CreateBundleContext(std::string bundleName, int flag);
+    std::shared_ptr<Context> CreateBundleContext(std::string bundleName, int flag, int accountId = DEFAULT_ACCOUNT_ID);
 
     /**
      * @brief Obtains information about the caller of this ability.
