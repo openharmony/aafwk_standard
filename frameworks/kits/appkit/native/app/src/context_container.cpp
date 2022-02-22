@@ -26,7 +26,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 // for api7 demo special
-constexpr int CURRENT_USERID = 100;
+constexpr int CURRENT_ACCOUNT_ID = 100;
 /**
  * Attaches a Context object to the current ability.
  * Generally, this method is called after Ability is loaded to provide the application context for the current ability.
@@ -608,19 +608,7 @@ void ContextContainer::RequestPermissionsFromUser(std::vector<std::string> &perm
     }
 }
 
-/**
- * @brief Creates a Context object for an application with the given bundle name.
- *
- * @param bundleName Indicates the bundle name of the application.
- *
- * @param flag  Indicates the flag for creating a Context object. It can be 0, any of
- * the following values, or any combination of the following values: CONTEXT_IGNORE_SECURITY,
- * CONTEXT_INCLUDE_CODE, and CONTEXT_RESTRICTED. The value 0 indicates that there is no restriction
- * on creating contexts for applications.
- *
- * @return Returns a Context object created for the specified application.
- */
-std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundleName, int flag)
+std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundleName, int flag, int accountId)
 {
     if (bundleName.empty()) {
         APP_LOGE("ContextContainer::CreateBundleContext bundleName is empty");
@@ -638,10 +626,13 @@ std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundl
     }
 
     BundleInfo bundleInfo;
-    APP_LOGI("ContextContainer::CreateBundleContext length: %{public}zu, bundleName: %{public}s",
-        bundleName.length(),
-        bundleName.c_str());
-    bundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, CURRENT_USERID);
+    APP_LOGI("CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId is %{public}d",
+        bundleName.length(), bundleName.c_str(), accountId);
+    int realAccountId = CURRENT_ACCOUNT_ID;
+    if (accountId != DEFAULT_ACCOUNT_ID) {
+        realAccountId = accountId;
+    }
+    bundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, realAccountId);
 
     if (bundleInfo.name.empty() || bundleInfo.applicationInfo.name.empty()) {
         APP_LOGE("ContextContainer::CreateBundleContext GetBundleInfo is error");
