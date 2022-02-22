@@ -76,8 +76,7 @@ void JsDataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &reco
 
     std::string moduleName(Extension::abilityInfo_->moduleName);
     moduleName.append("::").append(abilityInfo_->name);
-    HILOG_INFO("JsDataShareExtAbility::Init module:%{public}s, srcPath:%{public}s.",
-        moduleName.c_str(), srcPath.c_str());
+    HILOG_INFO("%{public}s module:%{public}s, srcPath:%{public}s.", __func__, moduleName.c_str(), srcPath.c_str());
     HandleScope handleScope(jsRuntime_);
     auto& engine = jsRuntime_.GetNativeEngine();
 
@@ -102,7 +101,8 @@ void JsDataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &reco
     }
     HILOG_INFO("JsDataShareExtAbility::Init CreateJsDataShareExtAbilityContext.");
     NativeValue* contextObj = CreateJsDataShareExtAbilityContext(engine, context);
-    auto contextRef = jsRuntime_.LoadSystemModule("application.DataShareExtAbilityContext", &contextObj, ARGC_ONE);
+    auto contextRef = jsRuntime_.LoadSystemModule("application.DataShareExtensionAbilityContext",
+        &contextObj, ARGC_ONE);
     contextObj = contextRef->Get();
     HILOG_INFO("JsDataShareExtAbility::Init Bind.");
     context->Bind(jsRuntime_, contextRef.release());
