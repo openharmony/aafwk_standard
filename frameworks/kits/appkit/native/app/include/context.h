@@ -50,6 +50,7 @@ using AbilityStartSetting = AAFwk::AbilityStartSetting;
 #define OHOS_REQUEST_PERMISSION_VALUE 1
 
 constexpr int INVALID_RESOURCE_VALUE = -1;  // GetColor() Failed return Value
+constexpr int DEFAULT_ACCOUNT_ID = -1;
 
 class DataAbilityHelper;
 class DataShareHelper;

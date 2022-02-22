@@ -321,9 +321,9 @@ AppExecFwk::AbilityType AbilityContext::GetAbilityInfoType()
     return info->type;
 }
 
-std::shared_ptr<Context> AbilityContext::CreateBundleContext(std::string bundleName, int flag)
+std::shared_ptr<Context> AbilityContext::CreateBundleContext(std::string bundleName, int flag, int accountId)
 {
-    return ContextContainer::CreateBundleContext(bundleName, flag);
+    return ContextContainer::CreateBundleContext(bundleName, flag, accountId);
 }
 
 std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceManager() const
