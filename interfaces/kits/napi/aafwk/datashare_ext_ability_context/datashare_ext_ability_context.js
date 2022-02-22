@@ -15,10 +15,10 @@
 
 var ExtensionContext = requireNapi("application.ExtensionContext")
 
-class DataShareExtAbilityContext extends ExtensionContext {
+class DataShareExtensionAbilityContext extends ExtensionContext {
     constructor(obj) {
         super(obj);
     }
 }
 
-export default DataShareExtAbilityContext
+export default DataShareExtensionAbilityContext
