@@ -49,6 +49,7 @@ public:
     void DumpState(std::vector<std::string> &info, const std::string &args = "") const;
     void DumpSysState(std::vector<std::string> &info, bool isClient = false, const std::string &args = "") const;
     void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
+    bool ContainsDataAbility(const sptr<IAbilityScheduler> &scheduler);
 
 private:
     using DataAbilityRecordPtr = std::shared_ptr<DataAbilityRecord>;

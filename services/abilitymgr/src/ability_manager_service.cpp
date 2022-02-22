@@ -1617,12 +1617,17 @@ int AbilityManagerService::ReleaseDataAbility(
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);
         if (!VerificationAllToken(callerToken)) {
-            HILOG_INFO("VerificationAllToken fail");
+            HILOG_ERROR("VerificationAllToken fail");
             return ERR_INVALID_STATE;
         }
     }
 
-    return dataAbilityManager_->Release(dataAbilityScheduler, callerToken, isSystem);
+    std::shared_ptr<DataAbilityManager> dataAbilityManager = GetDataAbilityManager(dataAbilityScheduler);
+    if (!dataAbilityManager) {
+        HILOG_ERROR("dataAbilityScheduler is not exists");
+    }
+
+    return dataAbilityManager->Release(dataAbilityScheduler, callerToken, isSystem);
 }
 
 int AbilityManagerService::AttachAbilityThread(
@@ -3078,6 +3083,23 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
 
     HILOG_ERROR("Failed to verify all token.");
     return false;
+}
+
+const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbilityManager(
+    const sptr<IAbilityScheduler> &scheduler)
+{
+    if (scheduler == nullptr) {
+        HILOG_ERROR("the param ability scheduler is nullptr");
+        return nullptr;
+    }
+
+    for (auto item: dataAbilityManagers_) {
+        if (item.second && item.second->ContainsDataAbility(scheduler)) {
+            return item.second;
+        }
+    }
+
+    return nullptr;
 }
 
 std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUserId(int32_t userId)

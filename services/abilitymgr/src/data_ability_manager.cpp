@@ -168,6 +168,24 @@ int DataAbilityManager::Release(
     return ERR_OK;
 }
 
+bool DataAbilityManager::ContainsDataAbility(const sptr<IAbilityScheduler> &scheduler)
+{
+    HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
+
+    CHECK_POINTER_AND_RETURN(scheduler, ERR_NULL_OBJECT);
+
+    std::lock_guard<std::mutex> locker(mutex_);
+
+    DataAbilityRecordPtrMap::iterator it;
+    for (it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 int DataAbilityManager::AttachAbilityThread(const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token)
 {
     HILOG_DEBUG("%{public}s(%{public}d)", __PRETTY_FUNCTION__, __LINE__);
