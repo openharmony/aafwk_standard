@@ -566,8 +566,8 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     bool isfirstCommand = false;
     std::string args;
 
-    for (size_t i = 0; i < argList_.size(); i++) {
-        if (argList_[i] == "-c" || argList_[i] == "--client") {
+    for (auto it = argList_.begin(); it != argList_.end(); it++) {
+        if (*it == "-c" || *it == "--client") {
             if (isClient == false) {
                 isClient = true;
             } else {
@@ -575,9 +575,13 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 resultReceiver_.append(HELP_MSG_DUMPSYS);
                 return result;
             }
-
-        } else if (argList_[i] == "-u" || argList_[i] == "--userId") {
-            (void)StrToInt(argList_[i + 1], userID);
+        } else if (*it == "-u" || *it == "--userId") {
+            if (it + 1 == argList_.end()) {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver_.append(HELP_MSG_DUMPSYS);
+                return result;
+            }
+            (void)StrToInt(*(it + 1), userID);
             if (userID == DEFAULT_INVAL_VALUE) {
                 result = OHOS::ERR_INVALID_VALUE;
                 resultReceiver_.append(HELP_MSG_DUMPSYS);
@@ -590,11 +594,10 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 resultReceiver_.append(HELP_MSG_DUMPSYS);
                 return result;
             }
-
-        } else if (argList_[i] == std::to_string(userID)) {
+        } else if (*it == std::to_string(userID)) {
             continue;
         } else {
-            args += argList_[i];
+            args += *it;
             args += " ";
         }
     }
