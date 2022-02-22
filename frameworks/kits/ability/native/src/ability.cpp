@@ -241,8 +241,9 @@ void Ability::OnStart(const Want &want)
             int32_t width = display->GetWidth();
             int32_t height = display->GetHeight();
             auto configuration = application_->GetConfiguration();
-            configuration->AddItem(ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
-            configuration->AddItem(ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+            configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DIRECTION,
+                GetDirectionStr(height, width));
+            configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
             configuration->AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(displayId));
             UpdateContextConfiguration();
 
@@ -3465,8 +3466,8 @@ void Ability::OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent cha
 
     // Notify ability
     Configuration newConfig;
-    newConfig.AddItem(ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
-    newConfig.AddItem(ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+    newConfig.AddItem(displayId, ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
+    newConfig.AddItem(displayId, ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
 
     std::vector<std::string> changeKeyV;
     auto configuration = application_->GetConfiguration();
