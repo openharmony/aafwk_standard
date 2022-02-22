@@ -21,6 +21,7 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
+using namespace OHOS::AppExecFwk;
 NativeValue* CreateJsWantObject(NativeEngine& engine, const AAFwk::Want& want)
 {
     NativeValue* objValue = engine.CreateObject();
@@ -172,15 +173,19 @@ NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Confi
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
 
     object->SetProperty("language", CreateJsValue(engine,
-        configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE)));
+        configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE)));
     object->SetProperty("colorMode", CreateJsValue(engine,
-        AppExecFwk::ConvertColorMode(configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_COLORMODE))));
-    object->SetProperty("direction", CreateJsValue(engine,
-        AppExecFwk::ConvertDirection(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DIRECTION))));
-    object->SetProperty("screenDensity", CreateJsValue(engine,
-        AppExecFwk::ConvertDensity(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DENSITYDPI))));
-    object->SetProperty("displayId", CreateJsValue(engine,
-        AppExecFwk::ConvertDisplayId(configuration.GetItem(AppExecFwk::ConfigurationInner::APPLICATION_DISPLAYID))));
+        ConvertColorMode(configuration.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE))));
+
+    int32_t displayId = ConvertDisplayId(configuration.GetItem(ConfigurationInner::APPLICATION_DISPLAYID));
+
+    std::string direction = configuration.GetItem(displayId, ConfigurationInner::APPLICATION_DIRECTION);
+    object->SetProperty("direction", CreateJsValue(engine, ConvertDirection(direction)));
+
+    std::string density = configuration.GetItem(displayId, ConfigurationInner::APPLICATION_DENSITYDPI);
+    object->SetProperty("screenDensity", CreateJsValue(engine, ConvertDensity(density)));
+
+    object->SetProperty("displayId", CreateJsValue(engine, displayId));
 
     return objValue;
 }
