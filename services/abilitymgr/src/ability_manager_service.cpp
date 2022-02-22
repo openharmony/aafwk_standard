@@ -1556,7 +1556,7 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    auto userId = GetUserId();
+    auto userId = GetValidUserId(INVALID_USER_ID);
     AbilityRequest abilityRequest;
     std::string dataAbilityUri = localUri.ToString();
     HILOG_INFO("%{public}s, called. userId %{public}d", __func__, userId);
@@ -1580,8 +1580,13 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    CHECK_POINTER_AND_RETURN(dataAbilityManager_, nullptr);
-    return dataAbilityManager_->Acquire(abilityRequest, tryBind, callerToken, isSystem);
+    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+        userId = U0_USER_ID;
+    }
+
+    std::shared_ptr<DataAbilityManager> dataAbilityManager = GetDataAbilityManagerByUserId(userId);
+    CHECK_POINTER_AND_RETURN(dataAbilityManager, nullptr);
+    return dataAbilityManage->Acquire(abilityRequest, tryBind, callerToken, isSystem);
 }
 
 bool AbilityManagerService::CheckDataAbilityRequest(AbilityRequest &abilityRequest)
