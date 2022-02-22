@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "app_scheduler.h"
 #include "application_info.h"
 #include "ability_record_info.h"
+#include "bundlemgr/bundle_mgr_interface.h"
 #include "call_container.h"
 #include "lifecycle_deal.h"
 #include "lifecycle_state_info.h"
@@ -806,6 +807,8 @@ private:
      */
     void GetAbilityTypeString(std::string &typeStr);
     void OnSchedulerDied(const wptr<IRemoteObject> &remote);
+    void GrantUriPermission(const Want &want);
+    int GetCurrentAccountId();
 
     static int64_t abilityRecordId;
     int recordId_ = 0;                                // record id
@@ -828,6 +831,7 @@ private:
 
     int requestCode_ = -1;  // requestCode_: >= 0 for-result start mode; <0 for normal start mode in default.
     sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_ = {};  // scheduler binderDied Recipient
+    sptr<AppExecFwk::IBundleMgr> iBundleManager_;
 
     /**
      * result_: ability starts with for-result mode will send result before being terminated.
