@@ -1480,6 +1480,10 @@ void AbilityStackManager::CompleteActive(const std::shared_ptr<AbilityRecord> &a
     auto self(shared_from_this());
     auto startWaittingAbilityTask = [self]() { self->StartWaittingAbility(); };
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler == nullptr) {
+        HILOG_ERROR("handler is nullptr.");
+        return;
+    }
 
     // multi window moving, complete state.
     if (abilityRecord->GetInMovingState()) {
@@ -2735,20 +2739,26 @@ void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abili
             auto stack = mission->GetMissionStack();
             if (IsSplitScreenStack(stack->GetMissionStackId())) {
                 auto friendMission = GetFriendMissionBySplitScreen(stack, mission->GetMissionRecordId());
+                if (friendMission == nullptr) {
+                    HILOG_ERROR("friendMission is null.");
+                    return;
+                }
                 auto friendStack = friendMission->GetMissionStack();
-                if (friendMission && friendStack) {
-                    UpdateMissionOption(friendMission, defaultMissionStack_,
-                        AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
+                if (friendStack == nullptr) {
+                    HILOG_ERROR("friendStack is null.");
+                    return;
+                }
+                UpdateMissionOption(friendMission, defaultMissionStack_,
+                    AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
 
-                    friendStack->RemoveMissionRecord(friendMission->GetMissionRecordId());
-                    defaultMissionStack_->AddMissionRecordToEnd(friendMission);
+                friendStack->RemoveMissionRecord(friendMission->GetMissionRecordId());
+                defaultMissionStack_->AddMissionRecordToEnd(friendMission);
 
-                    auto friendTopAbility = friendMission->GetTopAbilityRecord();
-                    if (friendTopAbility &&
-                        (friendTopAbility->IsAbilityState(ACTIVE) || friendTopAbility->IsAbilityState(ACTIVATING))) {
-                        friendTopAbility->SetMovingBackgroundFlag(true);
-                        friendTopAbility->Inactivate();
-                    }
+                auto friendTopAbility = friendMission->GetTopAbilityRecord();
+                if (friendTopAbility &&
+                    (friendTopAbility->IsAbilityState(ACTIVE) || friendTopAbility->IsAbilityState(ACTIVATING))) {
+                    friendTopAbility->SetMovingBackgroundFlag(true);
+                    friendTopAbility->Inactivate();
                 }
             }
             RemoveMissionRecordById(mission->GetMissionRecordId());
