@@ -86,8 +86,8 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CheckAppRunningRecordIsExis
     if (jointUserId.empty()) {
         for (const auto &item : appRunningRecordMap_) {
             const auto &appRecord = item.second;
-            APP_LOGI("appRecord->GetProcessName() : %{public}s", appRecord->GetProcessName().c_str());
             if (appRecord && appRecord->GetProcessName() == processName && !(appRecord->IsTerminating())) {
+                APP_LOGI("appRecord->GetProcessName() : %{public}s", appRecord->GetProcessName().c_str());
                 auto appInfoList = appRecord->GetAppInfoList();
                 APP_LOGI("appInfoList : %{public}zu", appInfoList.size());
                 auto isExist = [&appName, &uid](const std::shared_ptr<ApplicationInfo> &appInfo) {
@@ -217,15 +217,16 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::OnRemoteDied(const wptr<IRe
             }
             return false;
         });
-    if (iter != appRunningRecordMap_.end()) {
-        auto appRecord = iter->second;
-        appRecord->SetApplicationClient(nullptr);
-        appRunningRecordMap_.erase(iter);
-        if (appRecord) {
-            return appRecord;
-        }
+    if (iter == appRunningRecordMap_.end()) {
+        APP_LOGE("remote is not exist in the map.");
+        return nullptr;
     }
-    return nullptr;
+    auto appRecord = iter->second;
+    if (appRecord != nullptr) {
+        appRecord->SetApplicationClient(nullptr);
+    }
+    appRunningRecordMap_.erase(iter);
+    return appRecord;
 }
 
 const std::map<const int32_t, const std::shared_ptr<AppRunningRecord>> &AppRunningManager::GetAppRunningRecordMap()
