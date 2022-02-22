@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,13 +82,6 @@ public:
      * @return Returns RESULT_OK on success, others on failure.
      */
     virtual AppMgrResultCode ConnectAppMgrService();
-
-    /**
-     * Ability manager resst.
-     *
-     * @return Returns RESULT_OK on success, others on failure.
-     */
-    virtual AppMgrResultCode Reset();
 
     /**
      * AbilityBehaviorAnalysis, ability behavior analysis assistant process optimization.
@@ -175,23 +168,6 @@ public:
      */
     virtual AppMgrResultCode GetConfiguration(Configuration& config);
 
-    /**
-     * SetAppSuspendTimes, Setting the Freezing Time of APP Background.
-     *
-     * @param time, The timeout recorded when the application enters the background .
-     *
-     * @return Success or Failure .
-     */
-    virtual AppMgrResultCode SetAppFreezingTime(int time);
-
-    /**
-     * GetAppFreezingTime, Getting the Freezing Time of APP Background.
-     *
-     * @param time, The timeout recorded when the application enters the background .
-     *
-     * @return Success or Failure .
-     */
-    virtual AppMgrResultCode GetAppFreezingTime(int &time);
     virtual void AbilityAttachTimeOut(const sptr<IRemoteObject> &token);
 
     virtual void PrepareTerminate(const sptr<IRemoteObject> &token);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -226,34 +226,6 @@ int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
-int32_t AppMgrProxy::IsBackgroundRunningRestricted(const std::string &bundleName)
-{
-    APP_LOGD("start");
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        return ERR_FLATTEN_OBJECT;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
-        return ERR_NULL_OBJECT;
-    }
-    if (!data.WriteString(bundleName)) {
-        APP_LOGE("parcel WriteString failed");
-        return ERR_FLATTEN_OBJECT;
-    }
-    int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAppMgr::Message::APP_IS_BACKGROUND_RUNNING_RESTRICTED), data, reply, option);
-    if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
-        return ret;
-    }
-    APP_LOGD("end");
-    return reply.ReadInt32();
-}
-
 int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
     APP_LOGD("start");
@@ -324,46 +296,6 @@ bool AppMgrProxy::SendTransactCmd(IAppMgr::Message code, MessageParcel &data, Me
         return false;
     }
     return true;
-}
-
-void AppMgrProxy::SetAppFreezingTime(int time)
-{
-    APP_LOGD("start");
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-
-    if (!data.WriteInt32(time)) {
-        APP_LOGE("parcel WriteInt32 failed");
-        return;
-    }
-    if (!SendTransactCmd(IAppMgr::Message::APP_SET_APP_FREEZING_TIME, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
-        return;
-    }
-    APP_LOGD("end");
-}
-
-void AppMgrProxy::GetAppFreezingTime(int &time)
-{
-    APP_LOGD("start");
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
-        return;
-    }
-
-    if (!SendTransactCmd(IAppMgr::Message::APP_GET_APP_FREEZING_TIME, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
-        return;
-    }
-    time = reply.ReadInt32();
-    APP_LOGE("get freeze time : %{public}d ", time);
 }
 
 /**

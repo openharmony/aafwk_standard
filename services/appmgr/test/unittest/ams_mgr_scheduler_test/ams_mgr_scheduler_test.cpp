@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -236,32 +236,6 @@ HWTEST_F(AmsMgrSchedulerTest, AmsMgrScheduler_005, TestSize.Level1)
     mockAppMgrServiceInner->Wait();
 
     APP_LOGD("AmsMgrScheduler_005 end.");
-}
-
-/*
- * Feature: AMS
- * Function: AmsMgrScheduler
- * SubFunction: Reset
- * FunctionPoints: Act normal
- * EnvConditions: Mobile that can run ohos test framework.
- * CaseDescription: Verify the function Reset can works.
- */
-HWTEST_F(AmsMgrSchedulerTest, AmsMgrScheduler_006, TestSize.Level1)
-{
-    APP_LOGD("AmsMgrScheduler_006 start.");
-
-    auto mockAppMgrServiceInner = GetMockAppMgrServiceInner();
-    auto amsEventHandler = GetAmsEventHandler();
-    std::unique_ptr<AmsMgrScheduler> amsMgrScheduler =
-        std::make_unique<AmsMgrScheduler>(mockAppMgrServiceInner, amsEventHandler);
-
-    sptr<AppStateCallbackHost> appStateCallbackHost = new AppStateCallbackHost();
-    EXPECT_CALL(*mockAppMgrServiceInner, StopAllProcess())
-        .WillOnce(InvokeWithoutArgs(mockAppMgrServiceInner.get(), &MockAppMgrServiceInner::Post));
-    amsMgrScheduler->Reset();
-    mockAppMgrServiceInner->Wait();
-
-    APP_LOGD("AmsMgrScheduler_006 end.");
 }
 
 /*

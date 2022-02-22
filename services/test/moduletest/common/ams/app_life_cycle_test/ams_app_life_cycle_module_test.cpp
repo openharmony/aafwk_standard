@@ -920,14 +920,6 @@ HWTEST_F(AmsAppLifeCycleModuleTest, StateChange_010, TestSize.Level3)
     std::vector<RunningProcessInfo> allRunningProcessInfo;
     serviceInner_->GetAllRunningProcesses(allRunningProcessInfo);
     EXPECT_EQ(allRunningProcessInfo.size(), size_t(APPLICATION_NUM));
-
-    serviceInner_->StopAllProcess();
-
-    for (int i = 0; i < APPLICATION_NUM; i++) {
-        serviceInner_->OnRemoteDied(mockAppScheduler[i]);  // A faked death recipient.
-        auto record = serviceInner_->GetAppRunningRecordByAppRecordId(recordId[i]);
-        EXPECT_EQ(nullptr, record);
-    }
 }
 
 /*

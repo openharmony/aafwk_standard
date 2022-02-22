@@ -29,7 +29,10 @@ ohos_moduletest("AmsProcessOptimizerModuleTest") {
 
   sources = [ "ams_process_optimizer_uba_module_test.cpp" ]
 
-  deps = [ "${services_path}/test/moduletest/common/ams:appmgr_mst_source" ]
+  deps = [
+    "${services_path}/common:perm_verification",
+    "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
+  ]
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
