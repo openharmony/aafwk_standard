@@ -235,37 +235,6 @@ HWTEST_F(AmsIpcAppmgrModuleTest, ExcuteAppmgrIPCInterface_007, TestSize.Level3)
  * Feature: ApplicationFramework
  * Function: AppManagerService
  * SubFunction: AppmgrIPCInterface
- * FunctionPoints: test IsBackgroundRunningRestricted API,then check the function whether is good or not
- * EnvConditions: system running normally
- * CaseDescription: excute IsBackgroundRunningRestricted API 10000 times
- */
-HWTEST_F(AmsIpcAppmgrModuleTest, ExcuteAppmgrIPCInterface_008, TestSize.Level3)
-{
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockMockAppMgrService> mockMockAppMgr(new MockMockAppMgrService());
-        sptr<IAppMgr> appMgrClient = iface_cast<IAppMgr>(mockMockAppMgr);
-        std::string testBundleName("testApp");
-        bool testResult = false;
-
-        auto mockHandler = [&](const std::string &name) {
-            testResult = (name == testBundleName);
-            mockMockAppMgr->Post();
-            return 0;
-        };
-
-        EXPECT_CALL(*mockMockAppMgr, IsBackgroundRunningRestricted(_)).WillOnce(Invoke(mockHandler));
-
-        appMgrClient->IsBackgroundRunningRestricted(testBundleName);
-        mockMockAppMgr->Wait();
-
-        EXPECT_TRUE(testResult);
-    }
-}
-
-/*
- * Feature: ApplicationFramework
- * Function: AppManagerService
- * SubFunction: AppmgrIPCInterface
  * FunctionPoints: test GetAllRunningProcesses API,then check the function whether is good or not
  * EnvConditions: system running normally
  * CaseDescription: excute GetAllRunningProcesses API 10000 times

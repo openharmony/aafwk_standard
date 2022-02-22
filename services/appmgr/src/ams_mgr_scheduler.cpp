@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,15 +108,6 @@ void AmsMgrScheduler::RegisterAppStateCallback(const sptr<IAppStateCallback> &ca
     std::function<void()> registerAppStateCallbackFunc =
         std::bind(&AppMgrServiceInner::RegisterAppStateCallback, amsMgrServiceInner_, callback);
     amsHandler_->PostTask(registerAppStateCallbackFunc, TASK_REGISTER_APP_STATE_CALLBACK);
-}
-
-void AmsMgrScheduler::Reset()
-{
-    if (!IsReady()) {
-        return;
-    }
-    std::function<void()> resetFunc = std::bind(&AppMgrServiceInner::StopAllProcess, amsMgrServiceInner_);
-    amsHandler_->PostTask(resetFunc, TASK_STOP_ALL_PROCESS);
 }
 
 void AmsMgrScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,

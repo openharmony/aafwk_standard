@@ -37,6 +37,7 @@
 #include "iservice_registry.h"
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
+#include "permission_verification.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
@@ -141,10 +142,6 @@ int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> 
 int FormMgrService::UpdateForm(const int64_t formId,
     const std::string &bundleName, const FormProviderData &formBindingData)
 {
-    if (!CheckFormPermission()) {
-        APP_LOGE("%{public}s fail, update form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
-    }
     return FormMgrAdapter::GetInstance().UpdateForm(formId, bundleName, formBindingData);
 }
 
@@ -394,28 +391,20 @@ ErrCode FormMgrService::Init()
     APP_LOGI("init success");
     return ERR_OK;
 }
-/**
- * @brief Permission check by callingUid.
- * @param formId the id of the form.
- * @return Returns true on success, false on failure.
- */
+
 bool FormMgrService::CheckFormPermission()
 {
-    return true;
-}
-
-bool FormMgrService::CheckFormPermission(const std::string &bundleName) const
-{
-    if (bundleName.empty()) {
-        APP_LOGE("%{public}s fail, bundleName can not be empty", __func__);
-        return false;
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        return true;
     }
-    int result = PermissionKit::VerifyPermission(bundleName, Constants::PERMISSION_REQUIRE_FORM, 0);
-    if (result != PermissionState::PERMISSION_GRANTED) {
-        APP_LOGW("permission = %{public}s, bundleName = %{public}s, result = %{public}d",
-            Constants::PERMISSION_REQUIRE_FORM.c_str(), bundleName.c_str(), result);
+    auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+        AppExecFwk::Constants::PERMISSION_REQUIRE_FORM);
+    if (isCallingPerm) {
+        return true;
     }
-    return result == PermissionState::PERMISSION_GRANTED;
+    APP_LOGE("Permission verification failed");
+    return false;
 }
 
 /**

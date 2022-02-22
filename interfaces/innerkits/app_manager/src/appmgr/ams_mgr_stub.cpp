@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ AmsMgrStub::AmsMgrStub()
         &AmsMgrStub::HandleUpdateExtensionState;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::REGISTER_APP_STATE_CALLBACK)] =
         &AmsMgrStub::HandleRegisterAppStateCallback;
-    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::RESET)] = &AmsMgrStub::HandleReset;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::ABILITY_BEHAVIOR_ANALYSIS)] =
         &AmsMgrStub::HandleAbilityBehaviorAnalysis;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_PEOCESS_BY_ABILITY_TOKEN)] =
@@ -153,13 +152,6 @@ ErrCode AmsMgrStub::HandleRegisterAppStateCallback(MessageParcel &data, MessageP
     sptr<IRemoteObject> obj = data.ReadParcelable<IRemoteObject>();
     sptr<IAppStateCallback> callback = iface_cast<IAppStateCallback>(obj);
     RegisterAppStateCallback(callback);
-    return NO_ERROR;
-}
-
-ErrCode AmsMgrStub::HandleReset(MessageParcel &data, MessageParcel &reply)
-{
-    BYTRACE(BYTRACE_TAG_APP);
-    Reset();
     return NO_ERROR;
 }
 

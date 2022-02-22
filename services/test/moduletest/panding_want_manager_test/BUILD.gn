@@ -51,6 +51,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "${innerkits_path}/base:base",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
+    "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",

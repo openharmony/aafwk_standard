@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include <chrono>
 #include <thread>
 
+#include "ability_manager_service.h"
 #include "ability_util.h"
 #include "hilog_wrapper.h"
 
@@ -555,12 +556,12 @@ void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isCli
     return;
 }
 
-void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm)
 {
     HILOG_INFO("Get ability running infos");
     std::lock_guard<std::mutex> locker(mutex_);
 
-    auto queryInfo = [&info](DataAbilityRecordPtrMap::reference data) {
+    auto queryInfo = [&info, isPerm](DataAbilityRecordPtrMap::reference data) {
         auto dataAbilityRecord = data.second;
         if (!dataAbilityRecord) {
             return;
@@ -571,17 +572,15 @@ void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
             return;
         }
 
-        AbilityRunningInfo runningInfo;
-        AppExecFwk::RunningProcessInfo processInfo;
-        runningInfo.ability = abilityRecord->GetWant().GetElement();
-        DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
-        runningInfo.pid = processInfo.pid_;
-        runningInfo.uid = processInfo.uid_;
-        runningInfo.processName = processInfo.processName_;
-        runningInfo.startTime = abilityRecord->GetStartTime();
-        runningInfo.abilityState = static_cast<int>(abilityRecord->GetAbilityState());
-        info.emplace_back(runningInfo);
+        if (isPerm) {
+            DelayedSingleton<AbilityManagerService>::GetInstance()->GetAbilityRunningInfo(info, abilityRecord);
+        } else {
+            auto callingTokenId = IPCSkeleton::GetCallingTokenID();
+            auto tokenID = abilityRecord->GetApplicationInfo().accessTokenId;
+            if (callingTokenId == tokenID) {
+                DelayedSingleton<AbilityManagerService>::GetInstance()->GetAbilityRunningInfo(info, abilityRecord);
+            }
+        }
     };
 
     std::for_each(dataAbilityRecordsLoading_.begin(), dataAbilityRecordsLoading_.end(), queryInfo);

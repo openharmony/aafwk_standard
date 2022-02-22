@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -268,14 +268,6 @@ int32_t AppMgrService::ClearUpApplicationData(const std::string &bundleName)
     return ERR_OK;
 }
 
-int32_t AppMgrService::IsBackgroundRunningRestricted(const std::string &bundleName)
-{
-    if (!IsReady()) {
-        return ERR_INVALID_OPERATION;
-    }
-    return appMgrServiceInner_->IsBackgroundRunningRestricted(bundleName);
-}
-
 int32_t AppMgrService::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
     if (!IsReady()) {
@@ -290,24 +282,6 @@ int32_t AppMgrService::GetProcessRunningInfosByUserId(std::vector<RunningProcess
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->GetProcessRunningInfosByUserId(info, userId);
-}
-
-void AppMgrService::SetAppFreezingTime(int time)
-{
-    APP_LOGI("set app freeze time %{public}d", time);
-    if (!IsReady()) {
-        return;
-    }
-    appMgrServiceInner_->SetAppFreezingTime(time);
-}
-
-void AppMgrService::GetAppFreezingTime(int &time)
-{
-    if (!IsReady()) {
-        return;
-    }
-    appMgrServiceInner_->GetAppFreezingTime(time);
-    APP_LOGE("get app freeze time %{public}d ", time);
 }
 
 /**

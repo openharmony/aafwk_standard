@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,8 +48,8 @@ public:
     void Dump(const char *func, int line);
     void DumpState(std::vector<std::string> &info, const std::string &args = "") const;
     void DumpSysState(std::vector<std::string> &info, bool isClient = false, const std::string &args = "") const;
-    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info);
     bool ContainsDataAbility(const sptr<IAbilityScheduler> &scheduler);
+    void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm);
 
 private:
     using DataAbilityRecordPtr = std::shared_ptr<DataAbilityRecord>;
