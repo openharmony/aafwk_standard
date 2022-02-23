@@ -713,13 +713,6 @@ public:
     void OnCallConnectDied(std::shared_ptr<CallRecord> callRecord);
     void GetMaxRestartNum(int &max);
     bool IsUseNewMission();
-
-    /**
-     * wait for starting system ui.
-     *
-     */
-    void StartSystemUi(const std::string name);
-
     void HandleLoadTimeOut(int64_t eventId);
     void HandleActiveTimeOut(int64_t eventId);
     void HandleInactiveTimeOut(int64_t eventId);
@@ -1110,7 +1103,7 @@ private:
     void SwitchToUser(int32_t userId);
     void StartLauncherAbility(int32_t userId);
     void SwitchToUser(int32_t oldUserId, int32_t userId);
-    void SwitchManagers(int32_t userId);
+    void SwitchManagers(int32_t userId, bool switchUser = true);
     void StartUserApps(int32_t userId);
     void StartSystemAbilityByUser(int32_t userId);
     void PauseOldUser(int32_t userId);
