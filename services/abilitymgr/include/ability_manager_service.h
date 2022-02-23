@@ -310,6 +310,12 @@ public:
         const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &remoteObject) override;
 
     /**
+     * starting system ui ServiceExt abilites.
+     *
+     */
+    void StartingSystemUiAbility();
+
+    /**
      * ScheduleDisconnectAbilityDone, service ability call this interface while session was disconnected.
      *
      * @param token,.service ability's token.
@@ -967,12 +973,6 @@ private:
      *
      */
     void StartingContactsAbility();
-
-    /**
-     * starting system ui ServiceExt abilites.
-     *
-     */
-    void StartingSystemUiAbility();
 
     /**
      * starting mms ability.
