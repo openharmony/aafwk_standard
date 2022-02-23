@@ -399,5 +399,13 @@ void AppMgrService::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::
     auto task = [=]() { appMgrServiceInner_->ScheduleAcceptWantDone(recordId, want, flag); };
     handler_->PostTask(task);
 }
+
+int AppMgrService::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens)
+{
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    return appMgrServiceInner_->GetAbilityRecordsByProcessID(pid, tokens);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

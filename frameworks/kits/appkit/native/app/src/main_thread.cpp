@@ -1367,6 +1367,7 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
 void MainThread::HandleANRProcess(int sigMessage)
 {
     if (sigMessage == SIGUSR1) {
+        APP_LOGI("MainThread:HandleANRProcess start.");
         int rFD = -1;
         std::string mainThreadStackInfo;
         if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_CRASH))) < 0) {

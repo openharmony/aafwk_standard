@@ -104,6 +104,16 @@ public:
     bool IsMovingState() const;
 
     /**
+     * @brief Set application not response state true
+     */
+    void SetANRState();
+
+    /**
+     * @brief Is application not response state
+     */
+    bool IsANRState() const;
+
+    /**
      * @brief dump mission
      *
      * @param info dump result.
@@ -117,6 +127,7 @@ private:
     std::weak_ptr<MissionList> ownerMissionList_;
     bool lockedState_ = false;
     bool isMovingToFront_ = false;
+    bool isANRState_ = false;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

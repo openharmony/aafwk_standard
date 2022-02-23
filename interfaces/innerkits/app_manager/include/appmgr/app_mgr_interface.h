@@ -201,6 +201,15 @@ public:
 
     virtual void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag) = 0;
 
+    /**
+     *  Get the token of ability records by process ID.
+     *
+     * @param pid The process id.
+     * @param tokens The token of ability records.
+     * @return Returns true on success, others on failure.
+     */
+    virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) = 0;
+
     enum class Message {
         APP_ATTACH_APPLICATION = 0,
         APP_APPLICATION_FOREGROUNDED,
@@ -223,6 +232,7 @@ public:
         GET_FOREGROUND_APPLICATIONS,
         START_USER_TEST_PROCESS,
         SCHEDULE_ACCEPT_WANT_DONE,
+        APP_GET_ABILITY_RECORDS_BY_PROCESS_ID,
     };
 };
 }  // namespace AppExecFwk
