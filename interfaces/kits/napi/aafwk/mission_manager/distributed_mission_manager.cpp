@@ -55,6 +55,7 @@ bool SetStartSyncMissionsContext(const napi_env &env, const napi_value &value,
         HILOG_ERROR("%{public}s, fixConflict error type.", __func__);
         return false;
     }
+    napi_get_value_bool(env, fixConflictValue, &context->fixConflict);
     bool isTag = false;
     napi_has_named_property(env, value, "tag", &isTag);
     if (!isTag) {
@@ -1394,7 +1395,7 @@ napi_value DistributedMissionManagerExport(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("stopSyncRemoteMissions", NAPI_StopSyncRemoteMissions),
         DECLARE_NAPI_FUNCTION("registerMissionListener", NAPI_RegisterMissionListener),
         DECLARE_NAPI_FUNCTION("unRegisterMissionListener", NAPI_UnRegisterMissionListener),
-        DECLARE_NAPI_FUNCTION("continueAbility", NAPI_ContinueAbility),
+        DECLARE_NAPI_FUNCTION("continueMission", NAPI_ContinueAbility),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties));
     return exports;
