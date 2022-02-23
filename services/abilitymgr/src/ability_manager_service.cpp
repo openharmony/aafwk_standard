@@ -3427,8 +3427,8 @@ void AbilityManagerService::StartSystemApplication()
 
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
-        StartingSystemUiAbility();
         StartingSettingsDataAbility();
+        StartingSystemUiAbility();
         return;
     }
 
