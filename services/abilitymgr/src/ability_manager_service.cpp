@@ -65,7 +65,6 @@ static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 constexpr uint32_t SCENE_FLAG_NORMAL = 0;
-const int32_t EXTENSION_SUPPORT_API_VERSION = 8;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
@@ -2626,20 +2625,11 @@ int AbilityManagerService::GenerateAbilityRequest(
             return RESOLVE_ABILITY_ERR;
         }
     }
-    HILOG_DEBUG("Query ability name: %{public}s,", request.abilityInfo.name.c_str());
-    if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE) {
-        AppExecFwk::BundleInfo bundleInfo;
-        bool ret = bms->GetBundleInfo(request.abilityInfo.bundleName,
-            AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId);
-        if (!ret) {
-            HILOG_ERROR("Failed to get bundle info when GenerateAbilityRequest.");
-            return RESOLVE_ABILITY_ERR;
-        }
-        HILOG_INFO("bundleInfo.compatibleVersion:%{public}d", bundleInfo.compatibleVersion);
-        if (bundleInfo.compatibleVersion >= EXTENSION_SUPPORT_API_VERSION) {
-            HILOG_INFO("abilityInfo reset EXTENSION.");
-            request.abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
-        }
+    HILOG_DEBUG("Query ability name: %{public}s, is stage mode: %{public}d",
+        request.abilityInfo.name.c_str(), request.abilityInfo.isStageBasedModel);
+    if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE && request.abilityInfo.isStageBasedModel) {
+        HILOG_INFO("stage mode, abilityInfo SERVICE type reset EXTENSION.");
+        request.abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     }
 
     auto appName = request.abilityInfo.applicationInfo.name;
