@@ -22,8 +22,6 @@ config("base_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//third_party/jsoncpp/include",
     "//utils/native/base/include",
   ]
 }
@@ -49,10 +47,7 @@ ohos_shared_library("base") {
   ]
   configs = [ ":base_config" ]
   public_configs = [ ":base_public_config" ]
-  deps = [
-    "//third_party/jsoncpp:jsoncpp",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//utils/native/base:utils" ]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"

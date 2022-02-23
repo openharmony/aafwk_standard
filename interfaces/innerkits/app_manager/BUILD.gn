@@ -100,6 +100,15 @@ ohos_shared_library("app_manager") {
   part_name = "ability_runtime"
 }
 
+config("configuration_sdk_config") {
+  include_dirs = [
+    "include/appmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//third_party/json/include",
+  ]
+}
+
 ohos_shared_library("configuration") {
   include_dirs =
       [ "//base/global/resmgr_standard/interfaces/innerkits/include" ]
@@ -109,7 +118,7 @@ ohos_shared_library("configuration") {
     "src/appmgr/configuration_convertor.cpp",
   ]
 
-  public_configs = [ ":appmgr_sdk_config" ]
+  public_configs = [ ":configuration_sdk_config" ]
 
   defines = [
     "APP_LOG_TAG = \"Configuration\"",
@@ -120,16 +129,11 @@ ohos_shared_library("configuration") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
-    "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
