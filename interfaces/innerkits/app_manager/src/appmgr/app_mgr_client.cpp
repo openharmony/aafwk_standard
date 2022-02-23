@@ -436,5 +436,16 @@ AppMgrResultCode AppMgrClient::UpdateConfiguration(const Configuration &config)
     amsService->UpdateConfiguration(config);
     return AppMgrResultCode::RESULT_OK;
 }
+
+int AppMgrClient::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        APP_LOGE("service is nullptr");
+        return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+    }
+
+    return service->GetAbilityRecordsByProcessID(pid, tokens);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

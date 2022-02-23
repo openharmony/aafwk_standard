@@ -74,6 +74,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleStartUserTestProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE)] =
         &AppMgrStub::HandleScheduleAcceptWantDone;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::APP_GET_ABILITY_RECORDS_BY_PROCESS_ID)] =
+        &AppMgrStub::HandleGetAbilityRecordsByProcessID;
 }
 
 AppMgrStub::~AppMgrStub()
@@ -340,6 +342,25 @@ int32_t AppMgrStub::HandleScheduleAcceptWantDone(MessageParcel &data, MessagePar
     auto flag = data.ReadString();
 
     ScheduleAcceptWantDone(recordId, *want, flag);
+    return NO_ERROR;
+}
+
+int32_t AppMgrStub::HandleGetAbilityRecordsByProcessID(MessageParcel &data, MessageParcel &reply)
+{
+    BYTRACE(BYTRACE_TAG_APP);
+    int32_t pid = data.ReadInt32();
+    std::vector<sptr<IRemoteObject>> tokens;
+    auto result = GetAbilityRecordsByProcessID(pid, tokens);
+    reply.WriteInt32(tokens.size());
+    for (auto &it : tokens) {
+        if (!reply.WriteRemoteObject(it)) {
+            APP_LOGE("failed to write query result.");
+            return ERR_FLATTEN_OBJECT;
+        }
+    }
+    if (!reply.WriteInt32(result)) {
+        return ERR_INVALID_VALUE;
+    }
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

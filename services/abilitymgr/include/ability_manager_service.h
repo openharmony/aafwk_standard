@@ -1147,6 +1147,8 @@ private:
     void GrantUriPermission(const Want &want, int32_t validUserId);
     bool VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want);
 
+    bool SetANRMissionByProcessID(int pid);
+
     constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
     constexpr static int WAITING_BOOT_ANIMATION_TIMER = 5;
 

@@ -340,5 +340,17 @@ int AppScheduler::GetConfiguration(AppExecFwk::Configuration &config)
 
     return ERR_OK;
 }
+
+int AppScheduler::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    auto ret = static_cast<int>(appMgrClient_->GetAbilityRecordsByProcessID(pid, tokens));
+    if (ret != ERR_OK) {
+        HILOG_ERROR("GetAbilityRecordsByProcessID failed.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
 }  // namespace AAFwk
 }  // namespace OHOS
