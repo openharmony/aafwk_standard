@@ -197,7 +197,7 @@ bool AbilityManagerService::Init()
     kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
     CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
 
-    InitU0User();
+    SwitchManagers(U0_USER_ID, false);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
     if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
@@ -224,16 +224,6 @@ bool AbilityManagerService::Init()
     HILOG_INFO("Init success.");
     return true;
 }
-
-void AbilityManagerService::InitU0User()
-{
-    InitConnectManager(U0_USER_ID, false);
-    InitDataAbilityManager(U0_USER_ID, false);
-    InitPendWantManager(U0_USER_ID, false);
-    SetStackManager(U0_USER_ID, false);
-    InitMissionListManager(U0_USER_ID, false);
-}
-
 
 void AbilityManagerService::OnStop()
 {
@@ -2591,16 +2581,6 @@ void AbilityManagerService::StartingMmsAbility()
     }
 }
 
-void AbilityManagerService::StartSystemUi(const std::string abilityName)
-{
-    HILOG_INFO("Starting system ui app.");
-    Want want;
-    want.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, abilityName);
-    HILOG_INFO("Ability name: %{public}s.", abilityName.c_str());
-    (void)StartAbility(want, USER_ID_DEFAULT, DEFAULT_INVAL_VALUE);
-    return;
-}
-
 int AbilityManagerService::GenerateAbilityRequest(
     const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
@@ -3448,11 +3428,12 @@ void AbilityManagerService::StartSystemApplication()
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartingSystemUiAbility();
+        StartingSettingsDataAbility();
         return;
     }
 
+    StartingSettingsDataAbility();
     StartingSystemUiAbility();
-
     StartupResidentProcess();
 }
 
@@ -3947,14 +3928,14 @@ void AbilityManagerService::SwitchToUser(int32_t oldUserId, int32_t userId)
     StartUserApps(userId);
 }
 
-void AbilityManagerService::SwitchManagers(int32_t userId)
+void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
 {
     HILOG_INFO("%{public}s, SwitchManagers:%{public}d-----begin", __func__, userId);
-    InitConnectManager(userId, true);
-    SetStackManager(userId, true);
-    InitMissionListManager(userId, true);
-    InitDataAbilityManager(userId, true);
-    InitPendWantManager(userId, true);
+    InitConnectManager(userId, switchUser);
+    SetStackManager(userId, switchUser);
+    InitMissionListManager(userId, switchUser);
+    InitDataAbilityManager(userId, switchUser);
+    InitPendWantManager(userId, switchUser);
     HILOG_INFO("%{public}s, SwitchManagers:%{public}d-----end", __func__, userId);
 }
 
@@ -4026,7 +4007,6 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartingLauncherAbility();
-        StartingSettingsDataAbility();
         StartingScreenLockAbility();
         return;
     }
@@ -4034,11 +4014,6 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
     if (amsConfigResolver_->GetStartLauncherState()) {
         HILOG_INFO("start launcher");
         StartingLauncherAbility();
-    }
-
-    if (amsConfigResolver_->GetStartSettingsDataState()) {
-        HILOG_INFO("start settingsdata");
-        StartingSettingsDataAbility();
     }
 
     if (amsConfigResolver_->GetStartScreenLockState()) {
@@ -4127,6 +4102,7 @@ int32_t AbilityManagerService::GetValidUserId(const int32_t userId)
     }
     return validUserId;
 }
+
 int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &abilityController,
     bool imAStabilityTest)
 {
