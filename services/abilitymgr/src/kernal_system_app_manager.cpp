@@ -342,18 +342,18 @@ void KernalSystemAppManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilit
         HILOG_ERROR("System UI on scheduler died, record is not exist.");
         return;
     }
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER(ams);
+    auto abilityms = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityms);
 
-    auto handler = ams->GetEventHandler();
+    auto handler = abilityms->GetEventHandler();
     CHECK_POINTER(handler);
 
     HILOG_INFO("System UI on scheduler died: '%{public}s'", abilityRecord->GetAbilityInfo().name.c_str());
     std::string name = abilityRecord->GetAbilityInfo().name;
     abilityRecord->SetAbilityState(AbilityState::INITIAL);
-    auto timeoutTask = [ams, abilityRecord]() {
+    auto timeoutTask = [abilityms, abilityRecord]() {
         if (abilityRecord) {
-            ams->StartingSystemUiAbility();
+            abilityms->StartingSystemUiAbility();
         }
     };
     handler->PostTask(timeoutTask, "SystemUi_Die_" + name, AbilityManagerService::RESTART_TIMEOUT);
