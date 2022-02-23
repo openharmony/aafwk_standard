@@ -130,7 +130,7 @@ ohos_unittest("intent_parameters_test") {
   ]
 
   external_deps = [
-    "bundle_framework:appexecfwk_base",
+    "ability_base:want",
     "ipc:ipc_core",
   ]
 }
@@ -176,7 +176,7 @@ ohos_unittest("intent_filter_test") {
     "//utils/native/base:utils",
   ]
 
-  external_deps = [ "bundle_framework:appexecfwk_base" ]
+  external_deps = [ "ability_base:want" ]
 }
 
 ohos_unittest("operation_test") {
