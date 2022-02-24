@@ -67,7 +67,6 @@ NativeValue* FormBindingData::OnCreateFormBindingData(NativeEngine& engine, Nati
     } else if ((info.argv[0])->TypeOf() == NATIVE_OBJECT) {
         HILOG_DEBUG("%{public}s called, param type is object.", __func__);
         napi_env napiEnv = reinterpret_cast<napi_env>(&engine);
-
         napi_value globalValue = nullptr;
         napi_get_global(napiEnv, &globalValue);
         napi_value jsonValue;
@@ -93,7 +92,7 @@ NativeValue* FormBindingData::OnCreateFormBindingData(NativeEngine& engine, Nati
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
     formProviderData_->SetDataString(formDataStr);
     object->SetProperty("data", CreateJsValue(engine, formDataStr));
-    HILOG_INFO("%{public}s called end.", __func__);
+    HILOG_INFO("%{public}s called:%{public}s", __func__, formDataStr.c_str());
     return objValue;
 }
 
