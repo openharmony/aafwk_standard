@@ -185,7 +185,6 @@ static void OnStartAms()
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_);
         AbilityMgrModuleTest::abilityMgrServ_->amsConfigResolver_->Parse();
 
-        AbilityMgrModuleTest::abilityMgrServ_->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         AbilityMgrModuleTest::abilityMgrServ_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         AbilityMgrModuleTest::abilityMgrServ_->currentMissionListManager_->Init();
 
