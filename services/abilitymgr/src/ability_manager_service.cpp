@@ -190,8 +190,6 @@ bool AbilityManagerService::Init()
     useNewMission_ = amsConfigResolver_->IsUseNewMission();
 
     SetStackManager(userId, true);
-    systemAppManager_ = std::make_shared<KernalSystemAppManager>(0);
-    CHECK_POINTER_RETURN_BOOL(systemAppManager_);
 
     InitMissionListManager(userId, true);
 
@@ -345,11 +343,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         HILOG_DEBUG("%{public}s StartAbility by MissionList", __func__);
         return missionListManager->StartAbility(abilityRequest);
     } else {
-        if (IsSystemUiApp(abilityRequest.abilityInfo)) {
-            HILOG_DEBUG("%{public}s OldMission Start SystemUiApp", __func__);
-            return systemAppManager_->StartAbility(abilityRequest);
-        }
-
         auto stackManager = GetStackManagerByUserId(validUserId);
         if (!stackManager) {
             HILOG_ERROR("stackManager is nullptr. userId=%{public}d", validUserId);
@@ -436,10 +429,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         }
         return missionListManager->StartAbility(abilityRequest);
     } else {
-        if (IsSystemUiApp(abilityRequest.abilityInfo)) {
-            return systemAppManager_->StartAbility(abilityRequest);
-        }
-
         auto stackManager = GetStackManagerByUserId(validUserId);
         if (!stackManager) {
             HILOG_ERROR("stackManager is nullptr. userId=%{public}d", validUserId);
@@ -1974,7 +1963,6 @@ void AbilityManagerService::DataDumpSysStateInner(
 void AbilityManagerService::SystemDumpSysStateInner(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
-    systemAppManager_->DumpSysState(info, isClient);
 }
 
 void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::string> &info)
@@ -2115,7 +2103,6 @@ void AbilityManagerService::DataDumpStateInner(const std::string &args, std::vec
 
 void AbilityManagerService::SystemDumpStateInner(const std::string &args, std::vector<std::string> &info)
 {
-    systemAppManager_->DumpState(info);
 }
 
 void AbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
@@ -2205,9 +2192,6 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
         }
         return missionListManager->AbilityTransactionDone(token, state, saveData);
     } else {
-        if (IsSystemUiApp(abilityInfo)) {
-            return systemAppManager_->AbilityTransitionDone(token, state);
-        }
         auto stackManager = GetStackManagerByUserId(userId);
         if (!stackManager) {
             HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
@@ -2348,10 +2332,6 @@ void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
                 }
                 missionListManager->OnAbilityRequestDone(token, state);
             } else {
-                if (IsSystemUiApp(abilityRecord->GetAbilityInfo())) {
-                    systemAppManager_->OnAbilityRequestDone(token, state);
-                    break;
-                }
                 auto stackManager = GetStackManagerByUserId(userId);
                 if (!stackManager) {
                     HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
@@ -2372,7 +2352,6 @@ void AbilityManagerService::OnAppStateChanged(const AppInfo &info)
         currentMissionListManager_->OnAppStateChanged(info);
     } else {
         currentStackManager_->OnAppStateChanged(info);
-        systemAppManager_->OnAppStateChanged(info);
     }
     dataAbilityManager_->OnAppStateChanged(info);
 }
@@ -2694,11 +2673,6 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
             return;
         }
     } else {
-        if (systemAppManager_ && abilityRecord->IsKernalSystemAbility()) {
-            systemAppManager_->OnAbilityDied(abilityRecord);
-            return;
-        }
-
         auto manager = GetStackManagerByToken(abilityRecord->GetToken());
         if (manager) {
             manager->OnAbilityDied(abilityRecord);
@@ -2887,9 +2861,6 @@ void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
             }
         }
     } else {
-        if (systemAppManager_) {
-            systemAppManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : stackManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
@@ -2909,9 +2880,6 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
             }
         }
     } else {
-        if (systemAppManager_) {
-            systemAppManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : stackManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
@@ -2948,9 +2916,6 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
             }
         }
     } else {
-        if (systemAppManager_) {
-            systemAppManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : stackManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -2969,9 +2934,6 @@ void AbilityManagerService::HandleBackgroundNewTimeOut(int64_t eventId)
             }
         }
     } else {
-        if (systemAppManager_) {
-            systemAppManager_->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : stackManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -2986,7 +2948,6 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
     CHECK_POINTER_RETURN_BOOL(dataAbilityManager_);
     CHECK_POINTER_RETURN_BOOL(connectManager_);
     CHECK_POINTER_RETURN_BOOL(currentStackManager_);
-    CHECK_POINTER_RETURN_BOOL(systemAppManager_);
     CHECK_POINTER_RETURN_BOOL(currentMissionListManager_);
 
     if (useNewMission_) {
@@ -3012,12 +2973,6 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
 
     if (connectManager_->GetServiceRecordByToken(token)) {
         return true;
-    }
-
-    if (!useNewMission_) {
-        if (systemAppManager_->GetAbilityRecordByToken(token)) {
-            return true;
-        }
     }
 
     HILOG_ERROR("Failed to verify token.");
@@ -3058,12 +3013,6 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
 
     for (auto item: connectManagers_) {
         if (item.second && item.second->GetServiceRecordByToken(token)) {
-            return true;
-        }
-    }
-
-    if (!useNewMission_) {
-        if (systemAppManager_->GetAbilityRecordByToken(token)) {
             return true;
         }
     }
@@ -3322,7 +3271,6 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("%{public}s called", __func__);
     CHECK_POINTER(currentStackManager_);
-    CHECK_POINTER(systemAppManager_);
     if (!VerificationAllToken(token)) {
         return;
     }
