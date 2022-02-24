@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -564,7 +564,7 @@ private:
     bool GetBundleInfo(const std::string &bundelName, BundleInfo &bundleInfo);
 
     void MakeProcessName(std::string &processName, const std::shared_ptr<AbilityInfo> &abilityInfo,
-        const std::shared_ptr<ApplicationInfo> &appInfo);
+        const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
     /**
      * StartAbility, load the ability that needed to be started(Start on the basis of the original process).
      *  Start on a new boot process

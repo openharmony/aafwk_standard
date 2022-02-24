@@ -111,7 +111,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
     }
 
     std::string processName;
-    MakeProcessName(processName, abilityInfo, appInfo);
+    MakeProcessName(processName, abilityInfo, appInfo, hapModuleInfo);
     APP_LOGI("processName = [%{public}s]", processName.c_str());
 
     auto appRecord =
@@ -154,7 +154,7 @@ bool AppMgrServiceInner::CheckLoadabilityConditions(const sptr<IRemoteObject> &t
 }
 
 void AppMgrServiceInner::MakeProcessName(std::string &processName, const std::shared_ptr<AbilityInfo> &abilityInfo,
-    const std::shared_ptr<ApplicationInfo> &appInfo)
+    const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo)
 {
     if (!abilityInfo || !appInfo) {
         return;
@@ -165,6 +165,12 @@ void AppMgrServiceInner::MakeProcessName(std::string &processName, const std::sh
     }
     if (!appInfo->process.empty()) {
         processName = appInfo->process;
+        return;
+    }
+    // check after abilityInfo, because abilityInfo contains extension process.
+    if (hapModuleInfo.isStageBasedModel && !hapModuleInfo.process.empty()) {
+        processName = hapModuleInfo.process;
+        APP_LOGI("Stage mode, Make processName:%{public}s", processName.c_str());
         return;
     }
     processName = appInfo->bundleName;
@@ -2080,7 +2086,7 @@ void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const Ap
         APP_LOGE("abilityInfoPtr is nullptr.");
         return;
     }
-    MakeProcessName(processName, abilityInfoPtr, appInfo);
+    MakeProcessName(processName, abilityInfoPtr, appInfo, hapModuleInfo);
 
     std::vector<HapModuleInfo> hapModules;
     hapModules.emplace_back(hapModuleInfo);
