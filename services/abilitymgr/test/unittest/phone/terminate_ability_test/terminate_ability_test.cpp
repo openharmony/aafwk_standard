@@ -155,7 +155,6 @@ void TerminateAbilityTest::OnStartAms()
         g_aams->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_aams->pendingWantManager_);
 
-        g_aams->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         g_aams->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         g_aams->currentMissionListManager_->Init();
 
