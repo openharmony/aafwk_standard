@@ -149,8 +149,6 @@ void AbilityManagerServiceTest::OnStartAms()
         abilityMs_->SetStackManager(userId, true);
         EXPECT_TRUE(abilityMs_->GetStackManager());
         abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
-        abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(abilityMs_->systemAppManager_);
         abilityMs_->eventLoop_->Run();
         return;
     }

@@ -195,8 +195,6 @@ static void OnStartAms()
         AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
         AbilityMgrModuleTest::abilityMgrServ_->stackManagers_.emplace(0,
             AbilityMgrModuleTest::abilityMgrServ_->GetStackManager());
-        AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->systemAppManager_);
 
         AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
 

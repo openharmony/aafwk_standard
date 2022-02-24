@@ -116,8 +116,6 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
 
         int userId = abilityMs_->GetUserId();
         abilityMs_->SetStackManager(userId, true);
-        abilityMs_->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(abilityMs_->systemAppManager_);
 
         abilityMs_->eventLoop_->Run();
 
