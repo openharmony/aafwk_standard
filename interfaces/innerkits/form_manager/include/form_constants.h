@@ -44,6 +44,9 @@ namespace Constants {
     const std::string ACTION_UPDATEATTIMER = "form_update_at_timer";
     const std::string KEY_WAKEUP_TIME = "wakeUpTime";
     const std::string KEY_ACTION_TYPE = "form_update_action_type";
+    const std::string ABS_CODE_PATH = "/data/app/el1/bundle/public";
+    const std::string LOCAL_CODE_PATH = "/data/storage/el1/bundle";
+    const std::string LOCAL_BUNDLES = "/data/bundles";
     const int TYPE_RESET_LIMIT = 1;
     const int TYPE_STATIC_UPDATE = 2;
     const int TYPE_DYNAMIC_UPDATE = 3;

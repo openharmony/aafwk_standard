@@ -14,6 +14,7 @@
  */
 
 #include <cinttypes>
+#include <regex>
 
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
@@ -1209,7 +1210,9 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         if (formInfo.moduleName == item.moduleName) {
             itemInfo.AddHapSourceDirs(item.moduleSourceDir);
         }
-        itemInfo.AddModuleInfo(item.moduleName, item.moduleSourceDir);
+        auto moduleSourceDir = std::regex_replace(item.moduleSourceDir, std::regex(Constants::ABS_CODE_PATH),
+            Constants::LOCAL_BUNDLES);
+        itemInfo.AddModuleInfo(item.moduleName, moduleSourceDir);
     }
     return ERR_OK;
 }
@@ -1247,7 +1250,7 @@ int FormMgrAdapter::SetNextRefreshTime(const int64_t formId, const int64_t nextT
         APP_LOGE("%{public}s, not self form:%{public}" PRId64 "", __func__, formId);
         return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
     }
-    
+
     // check bundleName
     if (bundleName != formRecord.bundleName) {
         APP_LOGE("%{public}s, not match bundleName:%{public}s", __func__, bundleName.c_str());
