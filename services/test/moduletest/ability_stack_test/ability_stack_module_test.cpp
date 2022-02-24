@@ -90,7 +90,6 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         abilityMs->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(abilityMs->amsConfigResolver_);
         abilityMs->amsConfigResolver_->Parse();
-        abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs->currentMissionListManager_->Init();
         abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
