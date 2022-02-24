@@ -327,22 +327,23 @@ void KernalAbilityManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityR
         HILOG_ERROR("System UI on scheduler died, record is not exist.");
         return;
     }
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER(ams);
+    auto abilityms = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityms);
 
-    auto handler = ams->GetEventHandler();
+    auto handler = abilityms->GetEventHandler();
     CHECK_POINTER(handler);
 
     HILOG_INFO("System UI on scheduler died: '%{public}s'", abilityRecord->GetAbilityInfo().name.c_str());
     std::string name = abilityRecord->GetAbilityInfo().name;
     abilityRecord->SetAbilityState(AbilityState::INITIAL);
-    auto timeoutTask = [ams, abilityRecord]() {
+    auto timeoutTask = [abilityms, abilityRecord]() {
         if (abilityRecord) {
-            ams->StartSystemUi(abilityRecord->GetAbilityInfo().name);
+            abilityms->StartingSystemUiAbility();
         }
     };
     handler->PostTask(timeoutTask, "SystemUi_Die_" + name, AbilityManagerService::RESTART_TIMEOUT);
 }
+
 void KernalAbilityManager::OnTimeOut(uint32_t msgId, int64_t eventId)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
@@ -354,10 +355,10 @@ void KernalAbilityManager::OnTimeOut(uint32_t msgId, int64_t eventId)
     auto abilityRecord = GetAbilityRecordByEventId(eventId);
     CHECK_POINTER(abilityRecord);
 
-    auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER(ams);
+    auto abilityms = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityms);
 
-    auto handler = ams->GetEventHandler();
+    auto handler = abilityms->GetEventHandler();
     CHECK_POINTER(handler);
 
     switch (msgId) {
@@ -366,13 +367,13 @@ void KernalAbilityManager::OnTimeOut(uint32_t msgId, int64_t eventId)
             std::string bundleName = abilityRecord->GetAbilityInfo().bundleName;
             std::string name = abilityRecord->GetAbilityInfo().name;
             RemoveAbilityRecord(abilityRecord);
-            auto task = [ams, bundleName]() {
-                ams->KillProcess(bundleName);
+            auto task = [abilityms, bundleName]() {
+                abilityms->KillProcess(bundleName);
                 HILOG_ERROR("System UI on time out event: KillProcess:%{public}s", bundleName.c_str());
             };
             handler->PostTask(task);
-            auto timeoutTask = [ams, name]() {
-                ams->StartSystemUi(name);
+            auto timeoutTask = [abilityms, name]() {
+                abilityms->StartingSystemUiAbility();
                 HILOG_ERROR("System UI on time out event: restart:%{public}s", name.c_str());
             };
             handler->PostTask(timeoutTask, "SystemUi_Timeout_" + name, AbilityManagerService::RESTART_TIMEOUT);
