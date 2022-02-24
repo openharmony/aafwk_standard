@@ -31,7 +31,6 @@
 #include "data_ability_manager.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
-#include "kernal_ability_manager.h"
 #include "kernal_system_app_manager.h"
 #include "mission_list_manager.h"
 #include "system_ability.h"
