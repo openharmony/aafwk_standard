@@ -194,8 +194,6 @@ bool AbilityManagerService::Init()
     CHECK_POINTER_RETURN_BOOL(systemAppManager_);
 
     InitMissionListManager(userId, true);
-    kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
-    CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
 
     SwitchManagers(U0_USER_ID, false);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
@@ -339,11 +337,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
 
     if (useNewMission_) {
-        if (IsSystemUiApp(abilityRequest.abilityInfo)) {
-            HILOG_DEBUG("%{public}s NewMission Start SystemUiApp", __func__);
-            return kernalAbilityManager_->StartAbility(abilityRequest);
-        }
-
         auto missionListManager = GetListManagerByUserId(validUserId);
         if (missionListManager == nullptr) {
             HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
@@ -436,10 +429,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return ERR_WOULD_BLOCK;
     }
     if (useNewMission_) {
-        if (IsSystemUiApp(abilityRequest.abilityInfo)) {
-            return kernalAbilityManager_->StartAbility(abilityRequest);
-        }
-
         auto missionListManager = GetListManagerByUserId(validUserId);
         if (missionListManager == nullptr) {
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
@@ -523,13 +512,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         return ERR_WOULD_BLOCK;
     }
     GrantUriPermission(want, validUserId);
-    if (IsSystemUiApp(abilityRequest.abilityInfo)) {
-        if (useNewMission_) {
-            return kernalAbilityManager_->StartAbility(abilityRequest);
-        } else {
-            return systemAppManager_->StartAbility(abilityRequest);
-        }
-    }
     abilityRequest.want.SetParam(Want::PARAM_RESV_DISPLAY_ID, startOptions.GetDisplayID());
     abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
     if (useNewMission_) {
@@ -1722,12 +1704,6 @@ int AbilityManagerService::AttachAbilityThread(
             return ERR_INVALID_VALUE;
         }
         returnCode = dataAbilityManager->AttachAbilityThread(scheduler, token);
-    } else if (IsSystemUiApp(abilityInfo)) {
-        if (useNewMission_) {
-            returnCode = kernalAbilityManager_->AttachAbilityThread(scheduler, token);
-        } else {
-            returnCode = systemAppManager_->AttachAbilityThread(scheduler, token);
-        }
     } else {
         if (useNewMission_) {
             auto missionListManager = GetListManagerByUserId(userId);
@@ -1998,11 +1974,7 @@ void AbilityManagerService::DataDumpSysStateInner(
 void AbilityManagerService::SystemDumpSysStateInner(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
-    if (useNewMission_) {
-        kernalAbilityManager_->DumpSysState(info, isClient);
-    } else {
-        systemAppManager_->DumpSysState(info, isClient);
-    }
+    systemAppManager_->DumpSysState(info, isClient);
 }
 
 void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::string> &info)
@@ -2226,9 +2198,6 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
         return dataAbilityManager->AbilityTransitionDone(token, state);
     }
     if (useNewMission_) {
-        if (IsSystemUiApp(abilityInfo)) {
-            return kernalAbilityManager_->AbilityTransitionDone(token, state);
-        }
         auto missionListManager = GetListManagerByUserId(userId);
         if (!missionListManager) {
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
@@ -2372,10 +2341,6 @@ void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
         }
         default: {
             if (useNewMission_) {
-                if (IsSystemUiApp(abilityRecord->GetAbilityInfo())) {
-                    kernalAbilityManager_->OnAbilityRequestDone(token, state);
-                    break;
-                }
                 auto missionListManager = GetListManagerByUserId(userId);
                 if (!missionListManager) {
                     HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
@@ -2405,7 +2370,6 @@ void AbilityManagerService::OnAppStateChanged(const AppInfo &info)
     connectManager_->OnAppStateChanged(info);
     if (useNewMission_) {
         currentMissionListManager_->OnAppStateChanged(info);
-        kernalAbilityManager_->OnAppStateChanged(info);
     } else {
         currentStackManager_->OnAppStateChanged(info);
         systemAppManager_->OnAppStateChanged(info);
@@ -2724,11 +2688,6 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
     CHECK_POINTER(abilityRecord);
 
     if (useNewMission_) {
-        if (kernalAbilityManager_ && abilityRecord->IsKernalSystemAbility()) {
-            kernalAbilityManager_->OnAbilityDied(abilityRecord);
-            return;
-        }
-
         auto manager = GetListManagerByToken(abilityRecord->GetToken());
         if (manager) {
             manager->OnAbilityDied(abilityRecord, GetUserId());
@@ -2922,9 +2881,6 @@ void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle load timeout.");
     if (useNewMission_) {
-        if (kernalAbilityManager_) {
-            kernalAbilityManager_->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : missionListManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
@@ -2947,9 +2903,6 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
     HILOG_DEBUG("Handle active timeout.");
 
     if (useNewMission_) {
-        if (kernalAbilityManager_) {
-            kernalAbilityManager_->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : missionListManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
@@ -2989,9 +2942,6 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle ForegroundNew timeout.");
     if (useNewMission_) {
-        if (kernalAbilityManager_) {
-            kernalAbilityManager_->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : missionListManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -3013,9 +2963,6 @@ void AbilityManagerService::HandleBackgroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle BackgroundNew timeout.");
     if (useNewMission_) {
-        if (kernalAbilityManager_) {
-            kernalAbilityManager_->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
-        }
         for (auto& item : missionListManagers_) {
             if (item.second) {
                 item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -3041,7 +2988,6 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
     CHECK_POINTER_RETURN_BOOL(currentStackManager_);
     CHECK_POINTER_RETURN_BOOL(systemAppManager_);
     CHECK_POINTER_RETURN_BOOL(currentMissionListManager_);
-    CHECK_POINTER_RETURN_BOOL(kernalAbilityManager_);
 
     if (useNewMission_) {
         if (currentMissionListManager_->GetAbilityRecordByToken(token)) {
@@ -3068,11 +3014,7 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
         return true;
     }
 
-    if (useNewMission_) {
-        if (kernalAbilityManager_->GetAbilityRecordByToken(token)) {
-            return true;
-        }
-    } else {
+    if (!useNewMission_) {
         if (systemAppManager_->GetAbilityRecordByToken(token)) {
             return true;
         }
@@ -3120,11 +3062,7 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
         }
     }
 
-    if (useNewMission_) {
-        if (kernalAbilityManager_->GetAbilityRecordByToken(token)) {
-            return true;
-        }
-    } else {
+    if (!useNewMission_) {
         if (systemAppManager_->GetAbilityRecordByToken(token)) {
             return true;
         }
@@ -3384,7 +3322,6 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("%{public}s called", __func__);
     CHECK_POINTER(currentStackManager_);
-    CHECK_POINTER(kernalAbilityManager_);
     CHECK_POINTER(systemAppManager_);
     if (!VerificationAllToken(token)) {
         return;
@@ -3394,14 +3331,6 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     CHECK_POINTER(abilityRecord);
 
-    if (IsSystemUiApp(abilityRecord->GetAbilityInfo())) {
-        if (useNewMission_) {
-            kernalAbilityManager_->RestartAbility(abilityRecord);
-        } else {
-            systemAppManager_->RestartAbility(abilityRecord);
-        }
-        return;
-    }
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
         HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
@@ -3580,10 +3509,8 @@ void AbilityManagerService::StartingSettingsDataAbility()
     Want want;
     want.SetElementName(AbilityConfig::SETTINGS_DATA_BUNDLE_NAME, AbilityConfig::SETTINGS_DATA_ABILITY_NAME);
     uint32_t waitCnt = 0;
-    // Wait 5 minutes for the installation to complete.
-    auto userId = GetUserId();
     while (!iBundleManager_->QueryAbilityInfo(want, OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT,
-        userId, abilityInfo) && waitCnt < MAX_WAIT_SETTINGS_DATA_NUM) {
+        U0_USER_ID, abilityInfo) && waitCnt < MAX_WAIT_SETTINGS_DATA_NUM) {
         HILOG_INFO("Waiting query settings data info completed.");
         usleep(REPOLL_TIME_MICRO_SECONDS);
         waitCnt++;
@@ -3805,7 +3732,6 @@ int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo
     }
 
     currentMissionListManager_->GetAbilityRunningInfos(info);
-    kernalAbilityManager_->GetAbilityRunningInfos(info);
     connectManager_->GetAbilityRunningInfos(info);
     dataAbilityManager_->GetAbilityRunningInfos(info);
 
