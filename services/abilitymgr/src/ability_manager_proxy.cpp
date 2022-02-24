@@ -1103,7 +1103,7 @@ bool AbilityManagerProxy::IsFirstInMission(const sptr<IRemoteObject> &token)
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
+        return false;
     }
     if (!data.WriteParcelable(token)) {
         HILOG_ERROR("token write failed.");

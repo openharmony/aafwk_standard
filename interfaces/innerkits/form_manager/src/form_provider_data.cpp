@@ -57,7 +57,12 @@ FormProviderData::FormProviderData(std::string jsonDataString)
     if (jsonDataString.empty()) {
         jsonDataString = JSON_EMPTY_STRING;
     }
-    jsonFormProviderData_ = nlohmann::json::parse(jsonDataString);
+    nlohmann::json jsonObject = nlohmann::json::parse(jsonDataString, nullptr, false);
+    if (jsonObject.is_discarded()) {
+        HILOG_ERROR("failed to parse jsonDataString: %{public}s.", jsonDataString.c_str());
+        return;
+    }
+    jsonFormProviderData_ = jsonObject;
 }
 
 /**
@@ -164,7 +169,12 @@ void FormProviderData::SetDataString(std::string &jsonDataString)
     if (jsonDataString.empty()) {
         jsonDataString = JSON_EMPTY_STRING;
     }
-    jsonFormProviderData_ = nlohmann::json::parse(jsonDataString);
+    nlohmann::json jsonObject = nlohmann::json::parse(jsonDataString, nullptr, false);
+    if (jsonObject.is_discarded()) {
+        HILOG_ERROR("failed to parse jsonDataString: %{public}s.", jsonDataString.c_str());
+        return;
+    }
+    jsonFormProviderData_ = jsonObject;
 }
 /**
  * @brief Merge new data to FormProviderData.
@@ -230,7 +240,13 @@ void FormProviderData::SetImageDataMap(std::map<std::string, std::pair<sptr<Ashm
  */
 bool FormProviderData::ReadFromParcel(Parcel &parcel)
 {
-    jsonFormProviderData_ = nlohmann::json::parse(Str16ToStr8(parcel.ReadString16()));
+    auto jsonDataString = Str16ToStr8(parcel.ReadString16());
+    nlohmann::json jsonObject = nlohmann::json::parse(jsonDataString, nullptr, false);
+    if (jsonObject.is_discarded()) {
+        HILOG_ERROR("failed to parse jsonDataString: %{public}s.", jsonDataString.c_str());
+        return false;
+    }
+    jsonFormProviderData_ = jsonObject;
 
     imageDataState_ = parcel.ReadInt32();
     HILOG_INFO("%{public}s imageDateState is %{public}d", __func__, imageDataState_);
