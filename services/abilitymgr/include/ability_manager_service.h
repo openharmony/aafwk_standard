@@ -31,7 +31,6 @@
 #include "data_ability_manager.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
-#include "kernal_ability_manager.h"
 #include "kernal_system_app_manager.h"
 #include "mission_list_manager.h"
 #include "system_ability.h"
@@ -1166,7 +1165,6 @@ private:
     bool useNewMission_ {false};
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
-    std::shared_ptr<KernalAbilityManager> kernalAbilityManager_;
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;

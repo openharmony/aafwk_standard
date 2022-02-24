@@ -136,7 +136,6 @@ void DumpModuleTest::OnStartAms()
         g_abilityMs->dataAbilityManagers_.emplace(0, g_abilityMs->dataAbilityManager_);
         EXPECT_TRUE(g_abilityMs->dataAbilityManager_);
 
-        g_abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         g_abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         g_abilityMs->currentMissionListManager_->Init();
         g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();

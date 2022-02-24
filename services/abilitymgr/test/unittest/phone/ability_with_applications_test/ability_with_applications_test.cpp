@@ -111,7 +111,6 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
 
-        abilityMs_->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs_->currentMissionListManager_->Init();
 
