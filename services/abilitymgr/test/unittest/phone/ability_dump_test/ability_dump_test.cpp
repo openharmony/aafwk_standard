@@ -139,7 +139,6 @@ void AbilityDumpTest::OnStartAms()
         EXPECT_TRUE(g_abilityMs->amsConfigResolver_);
         g_abilityMs->amsConfigResolver_->Parse();
 
-        g_abilityMs->kernalAbilityManager_ = std::make_shared<KernalAbilityManager>(0);
         g_abilityMs->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         g_abilityMs->currentMissionListManager_->Init();
 
