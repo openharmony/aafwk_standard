@@ -1393,7 +1393,7 @@ void MissionListManager::DelayedResumeTimeout(const std::shared_ptr<AbilityRecor
     auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
     std::weak_ptr<MissionListManager> wpListMgr = shared_from_this();
-    auto timeoutTask = [wpListMgr,callerAbility]() {
+    auto timeoutTask = [wpListMgr, callerAbility]() {
         HILOG_DEBUG("The caller ability need to resume.");
         auto listMgr = wpListMgr.lock();
         if (listMgr) {
@@ -1447,7 +1447,8 @@ void MissionListManager::MoveToTerminateList(const std::shared_ptr<AbilityRecord
         HILOG_WARN("load timeout will not wait for died event, directly remove.");
         // update running state.
         InnerMissionInfo info;
-        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(selMisson->GetMissionId(), info) == 0) {
+        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+            selMisson->GetMissionId(), info) == 0) {
             info.missionInfo.runningState = -1;
             DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
         }
