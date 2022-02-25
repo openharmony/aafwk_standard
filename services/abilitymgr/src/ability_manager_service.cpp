@@ -2173,15 +2173,12 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
     if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
-
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN_LOG(abilityRecord, ERR_INVALID_VALUE, "Ability record is nullptr.");
-
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     HILOG_DEBUG("state:%{public}d  name:%{public}s", state, abilityInfo.name.c_str());
     auto type = abilityInfo.type;
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-
     // force timeout ability for test
     int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
     if (IsNeedTimeoutForTest(abilityInfo.name,
@@ -2191,7 +2188,6 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
             abilityInfo.name.c_str());
         return ERR_OK;
     }
-
     if (type == AppExecFwk::AbilityType::SERVICE || type == AppExecFwk::AbilityType::EXTENSION) {
         auto connectManager = GetConnectManagerByUserId(userId);
         if (!connectManager) {
