@@ -48,7 +48,6 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/connection_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/data_ability_record.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/kernal_system_app_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/launch_param.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_deal.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",

@@ -144,8 +144,6 @@ void DumpModuleTest::OnStartAms()
         int userId = g_abilityMs->GetUserId();
         g_abilityMs->SetStackManager(userId, true);
         g_abilityMs->stackManagers_.emplace(0, g_abilityMs->GetStackManager());
-        g_abilityMs->systemAppManager_ = std::make_shared<KernalSystemAppManager>(userId);
-        EXPECT_TRUE(g_abilityMs->systemAppManager_);
         g_abilityMs->eventLoop_->Run();
         GTEST_LOG_(INFO) << "OnStart success";
         return;
