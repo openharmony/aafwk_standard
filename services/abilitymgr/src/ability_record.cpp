@@ -170,7 +170,7 @@ int AbilityRecord::LoadAbility()
         return ERR_INVALID_VALUE;
     }
 
-    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ < 0) && IsNewVersion()) {
+    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ <= 0)) {
         HILOG_ERROR("Root launcher restart is out of max count.");
         return ERR_INVALID_VALUE;
     }
@@ -329,7 +329,7 @@ void AbilityRecord::SetAbilityState(AbilityState state)
         }
     }
 
-    if (state == AbilityState::FOREGROUND_NEW) {
+    if (state == AbilityState::FOREGROUND_NEW || state == AbilityState::ACTIVE) {
         SetRestarting(false);
     }
 }
@@ -775,6 +775,14 @@ std::list<std::shared_ptr<CallerRecord>> AbilityRecord::GetCallerRecordList() co
     return callerList_;
 }
 
+std::shared_ptr<AbilityRecord> AbilityRecord::GetCallerRecord() const
+{
+    if (callerList_.empty()) {
+        return nullptr;
+    }
+    return callerList_.back()->GetCaller();
+}
+
 void AbilityRecord::AddWindowInfo(int windowToken)
 {
     windowInfo_ = std::make_shared<WindowInfo>(windowToken);
@@ -920,7 +928,7 @@ void AbilityRecord::Dump(std::vector<std::string> &info)
                std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
     info.push_back(dumpInfo);
 
-    if (isLauncherRoot_ && IsNewVersion()) {
+    if (isLauncherRoot_) {
         dumpInfo = "        can restart num #" + std::to_string(restartCount_);
         info.push_back(dumpInfo);
     }
@@ -957,7 +965,7 @@ void AbilityRecord::DumpAbilityState(
         callContainer_->Dump(info);
     }
 
-    if (isLauncherRoot_ && IsNewVersion()) {
+    if (isLauncherRoot_) {
         dumpInfo = "        can restart num #" + std::to_string(restartCount_);
         info.push_back(dumpInfo);
     }

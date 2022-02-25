@@ -307,6 +307,11 @@ public:
         return 0;
     }
 
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
+    {
+        return 0;
+    }
+
     enum RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,

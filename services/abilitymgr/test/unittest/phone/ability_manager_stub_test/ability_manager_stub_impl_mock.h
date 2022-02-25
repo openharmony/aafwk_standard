@@ -456,6 +456,11 @@ public:
     {
         return 0;
     }
+
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
+    {
+        return 0;
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

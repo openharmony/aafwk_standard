@@ -335,6 +335,15 @@ public:
     ErrCode KillProcess(const std::string &bundleName);
 
     /**
+     * Force ability timeout.
+     *
+     * @param abilityName.
+     * @param state. ability lifecycle state.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ForceTimeoutForTest(const std::string &abilityName, const std::string &state);
+
+    /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
      * clear the application data.
      *

@@ -172,6 +172,8 @@ private:
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply);
 
+    int ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply);
+
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

@@ -354,6 +354,14 @@ ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
     return abms->KillProcess(bundleName);
 }
 
+ErrCode AbilityManagerClient::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->ForceTimeoutForTest(abilityName, state);
+}
+
 ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleName)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
