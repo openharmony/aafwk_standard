@@ -370,7 +370,7 @@ int FormProviderMgr::MessageEvent(const int64_t formId, const FormRecord &record
 void FormProviderMgr::IncreaseTimerRefreshCount(const int64_t formId)
 {
     FormRecord record;
-    if (FormDataMgr::GetInstance().GetFormRecord(formId, record)) {
+    if (!FormDataMgr::GetInstance().GetFormRecord(formId, record)) {
         APP_LOGE("%{public}s failed, not exist such form:%{public}" PRId64 ".", __func__, formId);
         return;
     }
