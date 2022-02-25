@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -234,30 +234,6 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_006, TestSize.Level1)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if post IsBackgroundRunningRestricted task success
  */
-HWTEST_F(AmsServiceEventDriveTest, EventDrive_007, TestSize.Level1)
-{
-    APP_LOGI("ams_service_event_drive_test_007 start");
-
-    std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
-    appMgrService_->SetInnerService(innerService);
-    appMgrService_->OnStart();
-
-    EXPECT_CALL(*innerService, IsBackgroundRunningRestricted(_)).WillOnce(Return(0));
-
-    std::string appName = "appName";
-    EXPECT_EQ(0, appMgrService_->IsBackgroundRunningRestricted(appName));
-
-    APP_LOGI("ams_service_event_drive_test_007 end");
-}
-
-/*
- * Feature: AppMgrService
- * Function: Service
- * SubFunction: EventDrive
- * FunctionPoints: AppMgrService event drive program model
- * EnvConditions: Mobile that can run ohos test framework
- * CaseDescription: Verify if post IsBackgroundRunningRestricted task success
- */
 HWTEST_F(AmsServiceEventDriveTest, EventDrive_008, TestSize.Level1)
 {
     APP_LOGI("ams_service_event_drive_test_008 start");
@@ -416,28 +392,6 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_014, TestSize.Level1)
     appMgrService_->ClearUpApplicationData(appName);
 
     APP_LOGI("ams_service_event_drive_test_014 end");
-}
-
-/*
- * Feature: AppMgrService
- * Function: Service
- * SubFunction: EventDrive
- * FunctionPoints: AppMgrService event drive program model
- * EnvConditions: Mobile that can run ohos test framework
- * CaseDescription: Verify if IsBackgroundRunningRestricted act normal after AppMgrService stopped
- */
-HWTEST_F(AmsServiceEventDriveTest, EventDrive_015, TestSize.Level1)
-{
-    APP_LOGI("ams_service_event_drive_test_015 start");
-
-    appMgrService_->OnStop();
-    std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
-    appMgrService_->SetInnerService(innerService);
-
-    std::string appName = "appName";
-    EXPECT_EQ(OHOS::ERR_INVALID_OPERATION, appMgrService_->IsBackgroundRunningRestricted(appName));
-
-    APP_LOGI("ams_service_event_drive_test_015 end");
 }
 
 /*
@@ -608,28 +562,6 @@ HWTEST_F(AmsServiceEventDriveTest, EventDrive_022, TestSize.Level1)
     appMgrService_->ClearUpApplicationData(appName);
 
     APP_LOGI("ams_service_event_drive_test_022 end");
-}
-
-/*
- * Feature: AppMgrService
- * Function: Service
- * SubFunction: EventDrive
- * FunctionPoints: AppMgrService event drive program model
- * EnvConditions: Mobile that can run ohos test framework
- * CaseDescription: Verify if IsBackgroundRunningRestricted act normal after AppMgrService stopped
- */
-HWTEST_F(AmsServiceEventDriveTest, EventDrive_023, TestSize.Level1)
-{
-    APP_LOGI("ams_service_event_drive_test_023 start");
-    std::shared_ptr<MockAppMgrServiceInner> innerService = std::make_shared<MockAppMgrServiceInner>();
-    appMgrService_->SetInnerService(innerService);
-    appMgrService_->OnStart();
-    appMgrService_->OnStop();
-
-    std::string appName = "appName";
-    EXPECT_EQ(OHOS::ERR_INVALID_OPERATION, appMgrService_->IsBackgroundRunningRestricted(appName));
-
-    APP_LOGI("ams_service_event_drive_test_023 end");
 }
 
 /*

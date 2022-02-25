@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -43,6 +43,7 @@ ohos_unittest("ability_token_proxy_test") {
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
+    "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",

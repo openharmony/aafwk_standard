@@ -56,6 +56,7 @@ ohos_unittest("AmsRecentAppListTest") {
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
+    "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",

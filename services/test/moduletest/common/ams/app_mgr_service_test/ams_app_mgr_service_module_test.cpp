@@ -329,42 +329,6 @@ HWTEST_F(AppMgrServiceModuleTest, ClearUpApplicationData_001, TestSize.Level1)
 
 /*
  * Feature: AppMgrService
- * Function: IsBackgroundRunningRestricted
- * SubFunction: NA
- * FunctionPoints: AppMgrService => AppMgrServiceInner: IsBackgroundRunningRestricted
- * CaseDescription: Check IsBackgroundRunningRestricted.
- */
-HWTEST_F(AppMgrServiceModuleTest, IsBackgroundRunningRestricted_001, TestSize.Level1)
-{
-    EXPECT_TRUE(appMgrService_);
-    EXPECT_TRUE(mockAppMgrServiceInner_);
-
-    std::string testAppName("testApp");
-    bool testResult = false;
-    Semaphore sem(0);
-
-    auto mockHandler = [&testResult, testAppName, &sem](const std::string &appName) {
-        testResult = (appName == testAppName);
-        sem.Post();
-        return ERR_OK;
-    };
-
-    for (int i = 0; i < COUNT; ++i) {
-        testResult = false;
-
-        EXPECT_CALL(*mockAppMgrServiceInner_, IsBackgroundRunningRestricted(_)).Times(1).WillOnce(Invoke(mockHandler));
-
-        auto result = appMgrService_->IsBackgroundRunningRestricted(testAppName);
-
-        sem.Wait();
-
-        EXPECT_TRUE(testResult);
-        EXPECT_EQ(result, ERR_OK);
-    }
-}
-
-/*
- * Feature: AppMgrService
  * Function: GetAllRunningProcesses
  * SubFunction: NA
  * FunctionPoints: AppMgrService => AppMgrServiceInner: GetAllRunningProcesses

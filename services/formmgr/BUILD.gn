@@ -30,6 +30,7 @@ group("fms_target") {
 
 ohos_shared_library("libfms") {
   include_dirs = [
+    "${services_path}/common:perm_verification",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
@@ -90,6 +91,7 @@ ohos_shared_library("libfms") {
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
+    "${services_path}/common:perm_verification",
     "//base/miscservices/time/services:time_service",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",

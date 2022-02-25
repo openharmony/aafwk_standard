@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,11 +55,6 @@ AppMgrResultCode AppMgrClient::RegisterAppStateCallback(const sptr<IAppStateCall
     return AppMgrResultCode::RESULT_OK;
 }
 
-AppMgrResultCode AppMgrClient::Reset()
-{
-    return AppMgrResultCode::RESULT_OK;
-}
-
 AppMgrResultCode AppMgrClient::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token,
     const sptr<IRemoteObject> &preToken, const int32_t visibility, const int32_t perceptibility,
     const int32_t connectionState)
@@ -88,16 +83,6 @@ AppMgrResultCode AppMgrClient::ClearUpApplicationData(const std::string &bundleN
 }
 
 AppMgrResultCode AppMgrClient::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
-{
-    return AppMgrResultCode::RESULT_OK;
-}
-
-AppMgrResultCode AppMgrClient::SetAppFreezingTime(int time)
-{
-    return AppMgrResultCode::RESULT_OK;
-}
-
-AppMgrResultCode AppMgrClient::GetAppFreezingTime(int &time)
 {
     return AppMgrResultCode::RESULT_OK;
 }
