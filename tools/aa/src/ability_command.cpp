@@ -95,6 +95,7 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
+        {"force-timeout", std::bind(&AbilityManagerShellCommand::RunForceTimeoutForTest, this)},
         {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
     };
 
@@ -921,6 +922,36 @@ ErrCode AbilityManagerShellCommand::RunAsForceStop()
     } else {
         HILOG_INFO("%{public}s result = %{public}d", STRING_FORCE_STOP_NG.c_str(), result);
         resultReceiver_ = STRING_FORCE_STOP_NG + "\n";
+        resultReceiver_.append(GetMessageFromCode(result));
+    }
+    return result;
+}
+
+ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    if (argList_.empty()) {
+        resultReceiver_.append(HELP_MSG_FORCE_TIMEOUT + "\n");
+        return OHOS::ERR_INVALID_VALUE;
+    }
+
+    ErrCode result = OHOS::ERR_OK;
+    if (argList_.size() == NUMBER_ONE && argList_[0] == HELP_MSG_FORCE_TIMEOUT_CLEAN) {
+        HILOG_INFO("clear ability timeout flags.");
+        result = AbilityManagerClient::GetInstance()->ForceTimeoutForTest(argList_[0], "");
+    } else if (argList_.size() == NUMBER_TWO) {
+        HILOG_INFO("Ability name : %{public}s, state: %{public}s", argList_[0].c_str(), argList_[1].c_str());
+        result = AbilityManagerClient::GetInstance()->ForceTimeoutForTest(argList_[0], argList_[1]);
+    } else {
+        resultReceiver_.append(HELP_MSG_FORCE_TIMEOUT + "\n");
+        return OHOS::ERR_INVALID_VALUE;
+    }
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("%{public}s", STRING_FORCE_TIMEOUT_OK.c_str());
+        resultReceiver_ = STRING_FORCE_TIMEOUT_OK + "\n";
+    } else {
+        HILOG_INFO("%{public}s result = %{public}d", STRING_FORCE_TIMEOUT_NG.c_str(), result);
+        resultReceiver_ = STRING_FORCE_TIMEOUT_NG + "\n";
         resultReceiver_.append(GetMessageFromCode(result));
     }
     return result;

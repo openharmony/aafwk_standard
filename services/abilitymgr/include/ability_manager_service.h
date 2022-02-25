@@ -20,6 +20,7 @@
 #include <singleton.h>
 #include <thread_ex.h>
 #include <unordered_map>
+#include <map>
 
 #include "ability_connect_manager.h"
 #include "ability_event_handler.h"
@@ -864,6 +865,15 @@ public:
      */
     virtual int SendANRProcessID(int pid) override;
 
+    /**
+     * force timeout ability.
+     *
+     * @param abilityName.
+     * @param state.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;
@@ -1126,6 +1136,7 @@ private:
 
     int DelegatorMoveMissionToFront(int32_t missionId);
 
+    bool IsNeedTimeoutForTest(const std::string &abilityName, const std::string &state) const;
     void StartupResidentProcess();
 
     using DumpFuncType = void (AbilityManagerService::*)(const std::string &args, std::vector<std::string> &info);
@@ -1171,6 +1182,8 @@ private:
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;
     std::recursive_mutex globalLock_;
+
+    std::multimap<std::string, std::string> timeoutMap_;
 };
 
 }  // namespace AAFwk

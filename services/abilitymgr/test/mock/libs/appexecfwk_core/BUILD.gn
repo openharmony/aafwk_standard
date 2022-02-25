@@ -81,6 +81,7 @@ ohos_source_set("appexecfwk_bundlemgr_mock") {
   ]
 
   external_deps = [
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

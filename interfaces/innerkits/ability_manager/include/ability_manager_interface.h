@@ -364,6 +364,15 @@ public:
     virtual int KillProcess(const std::string &bundleName) = 0;
 
     /**
+     * force timeout ability.
+     *
+     * @param abilityName.
+     * @param state.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) = 0;
+
+    /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
      * clear the application data.
      *
@@ -974,6 +983,7 @@ public:
         // ipc id for dumping state (2001)
         DUMP_STATE = 2001,
 		DUMPSYS_STATE = 2002,
+        FORCE_TIMEOUT,
     };
 };
 }  // namespace AAFwk
