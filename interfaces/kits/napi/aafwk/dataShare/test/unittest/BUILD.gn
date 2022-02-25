@@ -30,5 +30,5 @@ ohos_js_unittest("DataShareJsTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":DataShareJsTest" ]
+  # deps = [ ":DataShareJsTest" ]
 }

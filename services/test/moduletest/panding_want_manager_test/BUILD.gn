@@ -93,6 +93,5 @@ ohos_moduletest("PandingWantMgrTest") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":PandingWantMgrTest" ]
+  # deps = [ ":PandingWantMgrTest" ]
 }

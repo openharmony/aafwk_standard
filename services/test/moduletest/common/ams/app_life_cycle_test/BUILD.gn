@@ -32,6 +32,5 @@ ohos_moduletest("AmsAppLifeCycleModuleTest") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":AmsAppLifeCycleModuleTest" ]
+  # deps = [ ":AmsAppLifeCycleModuleTest" ]
 }
