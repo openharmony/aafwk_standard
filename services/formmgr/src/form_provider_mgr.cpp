@@ -113,6 +113,7 @@ ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
 
     // get current userId
     int32_t currentUserId = want.GetIntParam(Constants::PARAM_FORM_USER_ID, DEFAULT_USER_ID);
+    APP_LOGE("%{public}s, current user, userId:%{public}d", __func__, currentUserId);
     if (currentUserId != record.userId) {
         FormDataMgr::GetInstance().SetNeedRefresh(formId, true);
         APP_LOGE("%{public}s, not current user, just set refresh flag, userId:%{public}d", __func__, record.userId);
