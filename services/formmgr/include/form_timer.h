@@ -42,7 +42,7 @@ public:
     bool isUpdateAt;
     int64_t refreshTime;
     bool isEnable = true;
-    bool isCountTimer = false;
+    bool isCountTimer;
     UpdateType type = UpdateType::TYPE_INTERVAL_CHANGE;
 
     FormTimer()
@@ -54,7 +54,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = false;
-        refreshTime = 0;
+        refreshTime = LONG_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -67,7 +67,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = countTimer;
-        refreshTime = 0;
+        refreshTime = LONG_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -80,7 +80,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = true;
-        refreshTime = 0;
+        refreshTime = LONG_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -93,7 +93,7 @@ public:
         period = -1;
         isUpdateAt = true;
         isCountTimer = false;
-        refreshTime = 0;
+        refreshTime = LONG_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
     ~FormTimer(void){
@@ -105,7 +105,7 @@ public:
  */
 class UpdateAtItem {
 public:
-    int updateAtTime = -1;
+    long updateAtTime = -1;
     FormTimer refreshTask;
 };
 /**

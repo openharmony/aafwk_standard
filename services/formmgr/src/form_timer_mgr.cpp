@@ -829,7 +829,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
         return true;
     }
 
-    int nextWakeUpTime = findedItem.updateAtTime;
+    long nextWakeUpTime = findedItem.updateAtTime;
     tmAtTime.tm_sec = 0;
     tmAtTime.tm_hour = findedItem.refreshTask.hour;
     tmAtTime.tm_min = findedItem.refreshTask.min;
