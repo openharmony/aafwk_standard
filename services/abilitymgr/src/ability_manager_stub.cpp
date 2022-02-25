@@ -84,6 +84,7 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
     requestFuncMap_[START_SYNC_MISSIONS] = &AbilityManagerStub::StartSyncRemoteMissionsInner;
     requestFuncMap_[STOP_SYNC_MISSIONS] = &AbilityManagerStub::StopSyncRemoteMissionsInner;
+    requestFuncMap_[FORCE_TIMEOUT] = &AbilityManagerStub::ForceTimeoutForTestInner;
 }
 
 void AbilityManagerStub::SecondStepInit()
@@ -1508,6 +1509,18 @@ int AbilityManagerStub::SendANRProcessIDInner(MessageParcel &data, MessageParcel
     int32_t result = SendANRProcessID(pid);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("reply write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::string abilityName = Str16ToStr8(data.ReadString16());
+    std::string state = Str16ToStr8(data.ReadString16());
+    int result = ForceTimeoutForTest(abilityName, state);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("force ability timeout error");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

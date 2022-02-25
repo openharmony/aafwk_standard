@@ -337,6 +337,15 @@ public:
     virtual int KillProcess(const std::string &bundleName) override;
 
     /**
+     * force timeout ability.
+     *
+     * @param abilityName.
+     * @param state.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+
+    /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
      * clear the application data.
      *

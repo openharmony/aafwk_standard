@@ -885,6 +885,31 @@ int AbilityManagerProxy::KillProcess(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteString16(Str8ToStr16(abilityName))) {
+        HILOG_ERROR("abilityName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteString16(Str8ToStr16(state))) {
+        HILOG_ERROR("abilityName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    int error = Remote()->SendRequest(IAbilityManager::FORCE_TIMEOUT, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
 {
     MessageParcel data;

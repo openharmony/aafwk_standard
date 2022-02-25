@@ -97,6 +97,10 @@ const std::string HELP_MSG_TEST =
     start the test framework with options\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
+const std::string HELP_MSG_FORCE_TIMEOUT =
+    "usage: aa force-timeout <ability-name> <INITIAL|FOREGROUND_NEW|BACKGROUND_NEW|TERMINATING>\n"
+    "usage: aa force-timeout clean.";
+const std::string HELP_MSG_FORCE_TIMEOUT_CLEAN = "clean";
 
 const std::string HELP_MSG_NO_ABILITY_NAME_OPTION = "error: -a <ability-name> is expected";
 const std::string HELP_MSG_NO_BUNDLE_NAME_OPTION = "error: -b <bundle-name> is expected";
@@ -117,12 +121,18 @@ const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off scree
 const std::string STRING_FORCE_STOP_OK = "force stop process successfully.";
 const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
 
+const std::string STRING_FORCE_TIMEOUT_OK = "force ability timeout successfully.";
+const std::string STRING_FORCE_TIMEOUT_NG = "error: failed to force ability timeout.";
+
 const std::string STRING_START_USER_TEST_OK = "start user test successfully.";
 const std::string STRING_START_USER_TEST_NG = "error: failed to start user test.";
 
 const int USER_TEST_COMMAND_START_INDEX = 2;
 const int USER_TEST_COMMAND_PARAMS_NUM = 2;
 const int TIME_RATE_MS = 1000;
+
+const int NUMBER_TWO = 2;
+const int NUMBER_ONE = 1;
 }  // namespace
 
 class AbilityManagerShellCommand : public ShellCommand {
@@ -143,6 +153,7 @@ private:
     ErrCode RunAsDumpCommand();
     ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
+    ErrCode RunForceTimeoutForTest();
     ErrCode RunAsSendAppNotRespondinProcessID();
     sptr<IAbilityManager> GetAbilityManagerService();
 
