@@ -106,6 +106,10 @@ void FormProviderData::AddImageData(std::string picName, char *data, int32_t siz
         return;
     }
 
+    auto iterator = rawImageBytesMap_.find(picName);
+    if (iterator != rawImageBytesMap_.end()) {
+        delete[] iterator->second.first;
+    }
     rawImageBytesMap_[picName] = std::make_pair(data, size);
 
     imageDataState_ = IMAGE_DATA_STATE_ADDED;
@@ -123,12 +127,12 @@ void FormProviderData::AddImageData(std::string picName, int fd)
         return;
     }
 
-    auto size = lseek(fd, 0L, SEEK_END);
+    int32_t size = lseek(fd, 0L, SEEK_END);
     if (size == -1) {
         HILOG_ERROR("Get file size failed, errno is %{public}d", errno);
         return;
     }
-    HILOG_INFO("File size is %{public}lld", size);
+    HILOG_INFO("File size is %{public}d", size);
     if (lseek(fd, 0L, SEEK_SET) == -1) {
         return;
     }
