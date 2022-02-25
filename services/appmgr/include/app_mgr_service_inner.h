@@ -552,6 +552,15 @@ public:
 
     void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag);
 
+    /**
+     *  Get the token of ability records by process ID.
+     *
+     * @param pid The process id.
+     * @param tokens The token of ability records.
+     * @return Returns true on success, others on failure.
+     */
+    int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);

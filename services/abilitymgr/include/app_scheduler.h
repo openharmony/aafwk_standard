@@ -267,6 +267,15 @@ public:
 
     int GetConfiguration(AppExecFwk::Configuration &config);
 
+    /**
+     *  Get the token of ability records by process ID.
+     *
+     * @param pid The process id.
+     * @param tokens The token of ability records.
+     * @return Returns true on success, others on failure.
+     */
+    int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
 protected:
     /**
      * OnAbilityRequestDone, app manager service call this interface after ability request done.

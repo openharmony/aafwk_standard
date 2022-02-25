@@ -2189,5 +2189,19 @@ std::shared_ptr<AppExecFwk::Configuration> AppMgrServiceInner::GetConfiguration(
 {
     return configuration_;
 }
+
+int AppMgrServiceInner::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens)
+{
+    auto appRecord = GetAppRunningRecordByPid(pid);
+    if (!appRecord) {
+        APP_LOGE("no such appRecord");
+        return ERR_NAME_NOT_FOUND;
+    }
+    for (auto &item : appRecord->GetAbilities()) {
+        tokens.emplace_back(item.first);
+    }
+
+    return ERR_OK;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
