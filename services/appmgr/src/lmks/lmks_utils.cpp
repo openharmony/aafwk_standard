@@ -54,14 +54,8 @@ int LmksUtils::RemoveProcess(pid_t pid)
     }
 
     // kill process
-    int ret = kill(pid, SIGKILL);
-    if (ret) {
-        HiLog::Warn(LABEL, "kill pid %{public}d err %{public}s", pid, strerror(errno));
-        return (-errno);
-    } else {
-        HiLog::Info(
-            LABEL, "kill pid %{public}d success, name %{public}s size %{public}d", pid, procName.c_str(), procSize);
-    }
+    HiLog::Info(LABEL, "kill pid %{public}d success, name %{public}s size %{public}d",
+        pid, procName.c_str(), procSize);
 
     return 0;
 }
