@@ -105,6 +105,11 @@ public:
         sem_.Post();
     }
 
+    virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
+    {
+        return 0;
+    }
+
 private:
     bool DumpStateCalled_ = false;
     Semaphore sem_;

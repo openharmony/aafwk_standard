@@ -1655,18 +1655,21 @@ int AbilityManagerService::AttachAbilityThread(
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Attach ability thread.");
     CHECK_POINTER_AND_RETURN(scheduler, ERR_INVALID_VALUE);
-
     if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
-
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     auto type = abilityInfo.type;
-
+    // force timeout ability for test
+    if (IsNeedTimeoutForTest(abilityInfo.name, AbilityRecord::ConvertAbilityState(AbilityState::INITIAL))) {
+        HILOG_WARN("force timeout ability for test, state:INITIAL, ability: %{public}s",
+            abilityInfo.name.c_str());
+        return ERR_OK;
+    }
     int returnCode = -1;
     if (type == AppExecFwk::AbilityType::SERVICE || type == AppExecFwk::AbilityType::EXTENSION) {
         auto connectManager = GetConnectManagerByUserId(userId);
@@ -1699,7 +1702,6 @@ int AbilityManagerService::AttachAbilityThread(
             returnCode = stackManager->AttachAbilityThread(scheduler, token);
         }
     }
-
     return returnCode;
 }
 
@@ -2148,15 +2150,21 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
     if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
-
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN_LOG(abilityRecord, ERR_INVALID_VALUE, "Ability record is nullptr.");
-
     auto abilityInfo = abilityRecord->GetAbilityInfo();
     HILOG_DEBUG("state:%{public}d  name:%{public}s", state, abilityInfo.name.c_str());
     auto type = abilityInfo.type;
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-
+    // force timeout ability for test
+    int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
+    if (IsNeedTimeoutForTest(abilityInfo.name,
+        AbilityRecord::ConvertAbilityState(static_cast<AbilityState>(targetState)))) {
+        HILOG_WARN("force timeout ability for test, state:%{public}s, ability: %{public}s",
+            AbilityRecord::ConvertAbilityState(static_cast<AbilityState>(targetState)).c_str(),
+            abilityInfo.name.c_str());
+        return ERR_OK;
+    }
     if (type == AppExecFwk::AbilityType::SERVICE || type == AppExecFwk::AbilityType::EXTENSION) {
         auto connectManager = GetConnectManagerByUserId(userId);
         if (!connectManager) {
@@ -4347,6 +4355,32 @@ void AbilityManagerService::StartingScreenLockAbility()
     }
 }
 
+int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
+{
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    if (callerUid != AbilityUtil::ROOT_UID) {
+        HILOG_ERROR("calling uid has no permission to force timeout.");
+        return INVALID_DATA;
+    }
+    if (abilityName.empty()) {
+        HILOG_ERROR("abilityName is empty.");
+        return INVALID_DATA;
+    }
+    if (abilityName == "clean") {
+        timeoutMap_.clear();
+        return ERR_OK;
+    }
+    if (state != AbilityRecord::ConvertAbilityState(AbilityState::INITIAL) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND_NEW) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND_NEW) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING)) {
+        HILOG_ERROR("lifecycle state is invalid.");
+        return INVALID_DATA;
+    }
+    timeoutMap_.insert(std::make_pair(state, abilityName));
+    return ERR_OK;
+}
+
 int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
 {
     auto tokenId = IPCSkeleton::GetCallingTokenID();
@@ -4391,6 +4425,16 @@ int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abi
     }
 
     return AppExecFwk::Constants::PERMISSION_GRANTED;
+}
+
+bool AbilityManagerService::IsNeedTimeoutForTest(const std::string &abilityName, const std::string &state) const
+{
+    for (auto iter = timeoutMap_.begin(); iter != timeoutMap_.end(); iter++) {
+        if (iter->first == state && iter->second == abilityName) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want)

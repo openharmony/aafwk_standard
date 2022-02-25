@@ -150,6 +150,7 @@ ohos_source_set("abilityms_test_source") {
     "ces_standard:cesfwk_innerkits",
     "dsoftbus_standard:softbus_client",
     "hicollie_native:libhicollie",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
