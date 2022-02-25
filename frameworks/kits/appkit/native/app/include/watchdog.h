@@ -18,6 +18,7 @@
 
 #include <string>
 #include <mutex>
+#include <thread>
 #include "event_handler.h"
 #include "inner_event.h"
 #include "application_impl.h"

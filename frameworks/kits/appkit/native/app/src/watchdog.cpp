@@ -15,7 +15,6 @@
 
 #include "watchdog.h"
 
-#include <thread>
 #include <unistd.h>
 #include "hisysevent.h"
 #include "app_log_wrapper.h"
