@@ -18,6 +18,7 @@
 #include <csignal>
 #include <securec.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "app_log_wrapper.h"
 #include "application_state_observer_stub.h"
@@ -35,6 +36,8 @@
 #include "ipc_skeleton.h"
 #include "os_account_manager.h"
 #include "permission/permission_kit.h"
+#include "permission_constants.h"
+#include "permission_verification.h"
 #include "system_ability_definition.h"
 #include "locale_config.h"
 #include "uri_permission_manager_client.h"
@@ -358,6 +361,11 @@ int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)
         return ERR_NO_INIT;
     }
 
+    if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
+
     int result = ERR_OK;
     int64_t startTime = SystemTimeMillis();
     std::list<pid_t> pids;
@@ -388,6 +396,12 @@ int32_t AppMgrServiceInner::KillApplicationByUid(const std::string &bundleName, 
         APP_LOGE("appRunningManager_ is nullptr");
         return ERR_NO_INIT;
     }
+
+    if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
+
     int result = ERR_OK;
     int64_t startTime = SystemTimeMillis();
     std::list<pid_t> pids;
@@ -425,6 +439,13 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
         APP_LOGE("appRunningManager_ is nullptr");
         return ERR_NO_INIT;
     }
+
+    if (VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES, userId) ==
+        ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
+
     int result = ERR_OK;
     int64_t startTime = SystemTimeMillis();
     std::list<pid_t> pids;
@@ -468,6 +489,16 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
 void AppMgrServiceInner::ClearUpApplicationData(const std::string &bundleName, int32_t callerUid, pid_t callerPid)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
+        if (!isCallingPerm) {
+            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            return;
+        }
+    }
+
     auto userId = GetUserIdByUid(callerUid);
     APP_LOGI("userId:%{public}d", userId);
     ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, userId);
@@ -512,41 +543,30 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
     NotifyAppStatus(bundleName, EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
 }
 
-int32_t AppMgrServiceInner::IsBackgroundRunningRestricted(const std::string &bundleName)
-{
-    auto bundleMgr_ = remoteClientManager_->GetBundleManager();
-    if (bundleMgr_ == nullptr) {
-        APP_LOGE("GetBundleManager fail");
-        return ERR_DEAD_OBJECT;
-    }
-    return bundleMgr_->CheckPermission(bundleName, REQ_PERMISSION);
-}
-
 int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
-    auto bundleMgr_ = remoteClientManager_->GetBundleManager();
-    if (bundleMgr_ == nullptr) {
-        APP_LOGE("GetBundleManager fail");
-        return ERR_DEAD_OBJECT;
-    }
+    auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+
     // check permission
     for (const auto &item : appRunningManager_->GetAppRunningRecordMap()) {
         const auto &appRecord = item.second;
-        if (USER_SCALE == 0) {
-            APP_LOGE("USER_SCALE is not zero");
-            return ERR_WOULD_BLOCK;
-        }
         int32_t userId = static_cast<int32_t>(appRecord->GetUid() / USER_SCALE);
         bool isExist = false;
         auto errCode = AccountSA::OsAccountManager::IsOsAccountActived(userId, isExist);
         if ((errCode == ERR_OK) && isExist) {
-            RunningProcessInfo runningProcessInfo;
-            runningProcessInfo.processName_ = appRecord->GetProcessName();
-            runningProcessInfo.pid_ = appRecord->GetPriorityObject()->GetPid();
-            runningProcessInfo.uid_ = appRecord->GetUid();
-            runningProcessInfo.state_ = static_cast<AppProcessState>(appRecord->GetState());
-            appRecord->GetBundleNames(runningProcessInfo.bundleNames);
-            info.emplace_back(runningProcessInfo);
+            if (isPerm) {
+                GetRunningProcesses(appRecord, info);
+            } else {
+                auto applicationInfo = appRecord->GetApplicationInfo();
+                if (!applicationInfo) {
+                    continue;
+                }
+                auto callingTokenId = IPCSkeleton::GetCallingTokenID();
+                auto tokenId = applicationInfo->accessTokenId;
+                if (callingTokenId == tokenId) {
+                    GetRunningProcesses(appRecord, info);
+                }
+            }
         }
     }
     return ERR_OK;
@@ -554,30 +574,32 @@ int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInf
 
 int32_t AppMgrServiceInner::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
 {
-    auto bundleMgr_ = remoteClientManager_->GetBundleManager();
-    if (bundleMgr_ == nullptr) {
-        APP_LOGE("GetBundleManager fail");
-        return ERR_DEAD_OBJECT;
+    if (VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_GET_RUNNING_INFO, userId) ==
+        ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
     }
 
     for (const auto &item : appRunningManager_->GetAppRunningRecordMap()) {
         const auto &appRecord = item.second;
-        if (USER_SCALE == 0) {
-            APP_LOGE("USER_SCALE is not zero");
-            return ERR_WOULD_BLOCK;
-        }
         int32_t userIdTemp = static_cast<int32_t>(appRecord->GetUid() / USER_SCALE);
         if (userIdTemp == userId) {
-            RunningProcessInfo runningProcessInfo;
-            runningProcessInfo.processName_ = appRecord->GetProcessName();
-            runningProcessInfo.pid_ = appRecord->GetPriorityObject()->GetPid();
-            runningProcessInfo.uid_ = appRecord->GetUid();
-            runningProcessInfo.state_ = static_cast<AppProcessState>(appRecord->GetState());
-            appRecord->GetBundleNames(runningProcessInfo.bundleNames);
-            info.emplace_back(runningProcessInfo);
+            GetRunningProcesses(appRecord, info);
         }
     }
     return ERR_OK;
+}
+
+void AppMgrServiceInner::GetRunningProcesses(const std::shared_ptr<AppRunningRecord> &appRecord,
+    std::vector<RunningProcessInfo> &info)
+{
+    RunningProcessInfo runningProcessInfo;
+    runningProcessInfo.processName_ = appRecord->GetProcessName();
+    runningProcessInfo.pid_ = appRecord->GetPriorityObject()->GetPid();
+    runningProcessInfo.uid_ = appRecord->GetUid();
+    runningProcessInfo.state_ = static_cast<AppProcessState>(appRecord->GetState());
+    appRecord->GetBundleNames(runningProcessInfo.bundleNames);
+    info.emplace_back(runningProcessInfo);
 }
 
 int32_t AppMgrServiceInner::KillProcessByPid(const pid_t pid) const
@@ -821,17 +843,16 @@ void AppMgrServiceInner::SetBundleManager(sptr<IBundleMgr> bundleManager)
 
 void AppMgrServiceInner::RegisterAppStateCallback(const sptr<IAppStateCallback> &callback)
 {
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t pid = getpid();
+    if (callingPid != pid) {
+        APP_LOGE("%{public}s: Not abilityMgr call.", __func__);
+        return;
+    }
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (callback != nullptr) {
         appStateCallbacks_.push_back(callback);
     }
-}
-
-void AppMgrServiceInner::StopAllProcess()
-{
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    ClearRecentAppList();
-    appRunningManager_->ClearAppRunningRecordMap();
 }
 
 void AppMgrServiceInner::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
@@ -886,6 +907,11 @@ void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &to
         return;
     }
 
+    if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return;
+    }
+
     // befor exec ScheduleProcessSecurityExit return
     // The resident process won't let him die
     if (appRecord->IsKeepAliveApp()) {
@@ -911,6 +937,12 @@ void AppMgrServiceInner::KillProcessesByUserId(int32_t userId)
 {
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is nullptr");
+        return;
+    }
+
+    if (VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES, userId) ==
+        ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
         return;
     }
 
@@ -1540,27 +1572,6 @@ void AppMgrServiceInner::OptimizerAppStateChanged(
     }
 }
 
-void AppMgrServiceInner::SetAppFreezingTime(int time)
-{
-    if (!processOptimizerUBA_) {
-        APP_LOGE("process optimizer is not init");
-        return;
-    }
-
-    std::lock_guard<std::mutex> setFreezeTimeLock(serviceLock_);
-    processOptimizerUBA_->SetAppFreezingTime(time);
-}
-
-void AppMgrServiceInner::GetAppFreezingTime(int &time)
-{
-    if (!processOptimizerUBA_) {
-        APP_LOGE("process optimizer is not init");
-        return;
-    }
-    std::lock_guard<std::mutex> getFreezeTimeLock(serviceLock_);
-    processOptimizerUBA_->GetAppFreezingTime(time);
-}
-
 void AppMgrServiceInner::HandleTimeOut(const InnerEvent::Pointer &event)
 {
     APP_LOGI("handle time out");
@@ -1724,12 +1735,26 @@ void AppMgrServiceInner::GetRunningProcessInfoByToken(
         APP_LOGE("appRunningManager_ is nullptr");
         return;
     }
+
+    auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!isPerm) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return;
+    }
+
     appRunningManager_->GetRunningProcessInfoByToken(token, info);
 }
 
 void AppMgrServiceInner::LoadResidentProcess()
 {
     APP_LOGI("%{public}s called", __func__);
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t pid = getpid();
+    if (callingPid != pid) {
+        APP_LOGE("%{public}s: Not SA call.", __func__);
+        return;
+    }
+
     if (!CheckRemoteClient()) {
         APP_LOGE("GetBundleManager fail");
         return;
@@ -1886,6 +1911,10 @@ void AppMgrServiceInner::NotifyAppStatus(const std::string &bundleName, const st
 int32_t AppMgrServiceInner::RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
     APP_LOGI("%{public}s begin", __func__);
+    if (VerifyObserverPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
     std::lock_guard<std::recursive_mutex> lockRegister(observerLock_);
     if (observer == nullptr) {
         APP_LOGE("Observer nullptr");
@@ -1904,6 +1933,10 @@ int32_t AppMgrServiceInner::RegisterApplicationStateObserver(const sptr<IApplica
 int32_t AppMgrServiceInner::UnregisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
     APP_LOGI("%{public}s begin", __func__);
+    if (VerifyObserverPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
     std::lock_guard<std::recursive_mutex> lockUnregister(observerLock_);
     if (observer == nullptr) {
         APP_LOGE("Observer nullptr");
@@ -1998,6 +2031,12 @@ void AppMgrServiceInner::HandleObserverDiedTask(const sptr<IRemoteObject> &obser
 int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> &list)
 {
     APP_LOGI("%{public}s, begin.", __func__);
+    auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!isPerm) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return ERR_PERMISSION_DENIED;
+    }
+
     appRunningManager_->GetForegroundApplications(list);
     return ERR_OK;
 }
@@ -2128,6 +2167,13 @@ void AppMgrServiceInner::RegisterStartSpecifiedAbilityResponse(const sptr<IStart
         return;
     }
 
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t pid = getpid();
+    if (callingPid != pid) {
+        APP_LOGE("%{public}s: Not abilityMgr call.", __func__);
+        return;
+    }
+
     startSpecifiedAbilityResponse_ = response;
 }
 
@@ -2153,6 +2199,16 @@ void AppMgrServiceInner::HandleStartSpecifiedAbilityTimeOut(const int64_t eventI
 
 void AppMgrServiceInner::UpdateConfiguration(const Configuration &config)
 {
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_UPDATE_CONFIGURATION);
+        if (!isCallingPerm) {
+            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            return;
+        }
+    }
+
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is null");
         return;
@@ -2200,8 +2256,64 @@ int AppMgrServiceInner::GetAbilityRecordsByProcessID(const int pid, std::vector<
     for (auto &item : appRecord->GetAbilities()) {
         tokens.emplace_back(item.first);
     }
-
     return ERR_OK;
+}
+
+int AppMgrServiceInner::VerifyProcessPermission()
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        return ERR_OK;
+    }
+    auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+        AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES);
+    if (isCallingPerm) {
+        APP_LOGE("%{public}s: Permission verification succeeded", __func__);
+        return ERR_OK;
+    }
+    APP_LOGE("%{public}s: Permission verification failed", __func__);
+    return ERR_PERMISSION_DENIED;
+}
+
+int AppMgrServiceInner::VerifyAccountPermission(const std::string &permissionName, const int userId)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        return ERR_OK;
+    }
+
+    const int currentUserId = getuid() / Constants::BASE_USER_RANGE;
+    if (userId != currentUserId) {
+        auto isCallingPermAccount = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_INTERACT_ACROSS_LOCAL_ACCOUNTS);
+        if (!isCallingPermAccount) {
+            APP_LOGE("%{public}s: Permission accounts verification failed", __func__);
+            return ERR_PERMISSION_DENIED;
+        }
+    }
+    auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(permissionName);
+    if (isCallingPerm) {
+        APP_LOGD("%{public}s: Permission verification succeeded", __func__);
+        return ERR_OK;
+    }
+    APP_LOGE("%{public}s: Permission verification failed", __func__);
+    return ERR_PERMISSION_DENIED;
+}
+
+int AppMgrServiceInner::VerifyObserverPermission()
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        return ERR_OK;
+    }
+    auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+        AAFwk::PermissionConstants::PERMISSION_RUNNING_STATE_OBSERVER);
+    if (isCallingPerm) {
+        APP_LOGE("%{public}s: Permission verification succeeded", __func__);
+        return ERR_OK;
+    }
+    APP_LOGE("%{public}s: Permission verification failed", __func__);
+    return ERR_PERMISSION_DENIED;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

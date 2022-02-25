@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -990,80 +990,94 @@ void AbilityConnectManager::DumpState(std::vector<std::string> &info, bool isCli
 }
 
 void AbilityConnectManager::GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info,
-    const int32_t userId)
+    const int32_t userId, bool isPerm)
 {
     HILOG_INFO("Get extension running info.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
-    auto queryInfo = [&info, upperLimit, userId](ServiceMapType::reference service) {
+    auto mgr = shared_from_this();
+    auto queryInfo = [&info, upperLimit, userId, isPerm, mgr](ServiceMapType::reference service) {
         if (static_cast<int>(info.size()) >= upperLimit) {
             return;
         }
         auto abilityRecord = service.second;
         CHECK_POINTER(abilityRecord);
-        ExtensionRunningInfo extensionInfo;
-        AppExecFwk::RunningProcessInfo processInfo;
-        extensionInfo.extension = abilityRecord->GetWant().GetElement();
-        auto bms = AbilityUtil::GetBundleManager();
-        CHECK_POINTER(bms);
-        std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
-        bool queryResult = bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
-            AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos);
-        if (queryResult) {
-            HILOG_INFO("Query Extension Ability Infos Success.");
-            auto abilityInfo = abilityRecord->GetAbilityInfo();
-            auto isExist = [&abilityInfo](const AppExecFwk::ExtensionAbilityInfo &extensionInfo) {
-                HILOG_INFO("%{public}s, %{public}s", extensionInfo.bundleName.c_str(), extensionInfo.name.c_str());
-                return extensionInfo.bundleName == abilityInfo.bundleName && extensionInfo.name == abilityInfo.name
-                    && extensionInfo.applicationInfo.uid == abilityInfo.applicationInfo.uid;
-            };
-            auto infoIter = std::find_if(extensionInfos.begin(), extensionInfos.end(), isExist);
-            if (infoIter != extensionInfos.end()) {
-                HILOG_INFO("Get target success.");
-                extensionInfo.type = (*infoIter).type;
+
+        if (isPerm) {
+            mgr->GetExtensionRunningInfo(abilityRecord, userId, info);
+        } else {
+            auto callingTokenId = IPCSkeleton::GetCallingTokenID();
+            auto tokenID = abilityRecord->GetApplicationInfo().accessTokenId;
+            if (callingTokenId == tokenID) {
+                mgr->GetExtensionRunningInfo(abilityRecord, userId, info);
             }
         }
-        DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
-        extensionInfo.pid = processInfo.pid_;
-        extensionInfo.uid = processInfo.uid_;
-        extensionInfo.processName = processInfo.processName_;
-        extensionInfo.startTime = abilityRecord->GetStartTime();
-        ConnectListType connectRecordList = abilityRecord->GetConnectRecordList();
-        for (auto &connectRecord : connectRecordList) {
-            CHECK_POINTER(connectRecord);
-            auto callerAbilityRecord = Token::GetAbilityRecordByToken(connectRecord->GetToken());
-            CHECK_POINTER(callerAbilityRecord);
-            std::string package = callerAbilityRecord->GetAbilityInfo().bundleName;
-            extensionInfo.clientPackage.emplace_back(package);
-        }
-        info.emplace_back(extensionInfo);
-        // extension type
     };
     std::for_each(serviceMap_.begin(), serviceMap_.end(), queryInfo);
 }
 
-void AbilityConnectManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
+void AbilityConnectManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm)
 {
     HILOG_INFO("Query running ability infos.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
 
-    auto queryInfo = [&info](ServiceMapType::reference service) {
+    auto queryInfo = [&info, isPerm](ServiceMapType::reference service) {
         auto abilityRecord = service.second;
         CHECK_POINTER(abilityRecord);
-        AbilityRunningInfo runningInfo;
-        AppExecFwk::RunningProcessInfo processInfo;
-        runningInfo.ability = abilityRecord->GetWant().GetElement();
-        DelayedSingleton<AppScheduler>::GetInstance()->
-            GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
-        runningInfo.pid = processInfo.pid_;
-        runningInfo.uid = processInfo.uid_;
-        runningInfo.processName = processInfo.processName_;
-        runningInfo.startTime = abilityRecord->GetStartTime();
-        runningInfo.abilityState = static_cast<int>(abilityRecord->GetAbilityState());
-        info.emplace_back(runningInfo);
+
+        if (isPerm) {
+            DelayedSingleton<AbilityManagerService>::GetInstance()->GetAbilityRunningInfo(info, abilityRecord);
+        } else {
+            auto callingTokenId = IPCSkeleton::GetCallingTokenID();
+            auto tokenID = abilityRecord->GetApplicationInfo().accessTokenId;
+            if (callingTokenId == tokenID) {
+                DelayedSingleton<AbilityManagerService>::GetInstance()->GetAbilityRunningInfo(info, abilityRecord);
+            }
+        }
     };
 
     std::for_each(serviceMap_.begin(), serviceMap_.end(), queryInfo);
+}
+
+void AbilityConnectManager::GetExtensionRunningInfo(std::shared_ptr<AbilityRecord> &abilityRecord, const int32_t userId,
+    std::vector<ExtensionRunningInfo> &info)
+{
+    ExtensionRunningInfo extensionInfo;
+    AppExecFwk::RunningProcessInfo processInfo;
+    extensionInfo.extension = abilityRecord->GetWant().GetElement();
+    auto bms = AbilityUtil::GetBundleManager();
+    CHECK_POINTER(bms);
+    std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
+    bool queryResult = bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos);
+    if (queryResult) {
+        HILOG_INFO("Query Extension Ability Infos Success.");
+        auto abilityInfo = abilityRecord->GetAbilityInfo();
+        auto isExist = [&abilityInfo](const AppExecFwk::ExtensionAbilityInfo &extensionInfo) {
+            HILOG_INFO("%{public}s, %{public}s", extensionInfo.bundleName.c_str(), extensionInfo.name.c_str());
+            return extensionInfo.bundleName == abilityInfo.bundleName && extensionInfo.name == abilityInfo.name
+                && extensionInfo.applicationInfo.uid == abilityInfo.applicationInfo.uid;
+        };
+        auto infoIter = std::find_if(extensionInfos.begin(), extensionInfos.end(), isExist);
+        if (infoIter != extensionInfos.end()) {
+            HILOG_INFO("Get target success.");
+            extensionInfo.type = (*infoIter).type;
+        }
+    }
+    DelayedSingleton<AppScheduler>::GetInstance()->
+        GetRunningProcessInfoByToken(abilityRecord->GetToken(), processInfo);
+    extensionInfo.pid = processInfo.pid_;
+    extensionInfo.uid = processInfo.uid_;
+    extensionInfo.processName = processInfo.processName_;
+    extensionInfo.startTime = abilityRecord->GetStartTime();
+    ConnectListType connectRecordList = abilityRecord->GetConnectRecordList();
+    for (auto &connectRecord : connectRecordList) {
+        CHECK_POINTER(connectRecord);
+        auto callerAbilityRecord = Token::GetAbilityRecordByToken(connectRecord->GetToken());
+        CHECK_POINTER(callerAbilityRecord);
+        std::string package = callerAbilityRecord->GetAbilityInfo().bundleName;
+        extensionInfo.clientPackage.emplace_back(package);
+    }
+    info.emplace_back(extensionInfo);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,11 +63,8 @@ private:
     int32_t HandleAbilityCleaned(MessageParcel &data, MessageParcel &reply);
     int32_t HandleGetAmsMgr(MessageParcel &data, MessageParcel &reply);
     int32_t HandleClearUpApplicationData(MessageParcel &data, MessageParcel &reply);
-    int32_t HandleIsBackgroundRunningRestricted(MessageParcel &data, MessageParcel &reply);
     int32_t HandleGetAllRunningProcesses(MessageParcel &data, MessageParcel &reply);
     int32_t HandleGetProcessRunningInfosByUserId(MessageParcel &data, MessageParcel &reply);
-    int32_t HandleSetAppFreezingTime(MessageParcel &data, MessageParcel &reply);
-    int32_t HandleGetAppFreezingTime(MessageParcel &data, MessageParcel &reply);
     int32_t HandleGetSystemMemoryAttr(MessageParcel &data, MessageParcel &reply);
     int32_t HandleAddAbilityStageDone(MessageParcel &data, MessageParcel &reply);
     int32_t HandleStartupResidentProcess(MessageParcel &data, MessageParcel &reply);

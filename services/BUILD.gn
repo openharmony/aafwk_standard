@@ -15,6 +15,7 @@ group("services_target") {
   deps = [
     "abilitymgr:abilityms_target",
     "appmgr:ams_target",
+    "common:perm_verification",
     "dataobsmgr:dataobsms",
     "uripermmgr:upms_target",
   ]

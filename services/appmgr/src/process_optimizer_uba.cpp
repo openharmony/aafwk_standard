@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -383,26 +383,6 @@ UbaServicePtr ProcessOptimizerUBA::GetUbaService()
 
     // try to get uba service here.
     return nullptr;
-}
-
-void ProcessOptimizerUBA::SetAppFreezingTime(int time)
-{
-    auto ubaService = GetUbaService();
-    if (ubaService) {
-        APP_LOGI("ubaService implement.");
-    } else {
-        ProcessOptimizer::SetAppFreezingTime(time);
-    }
-}
-
-void ProcessOptimizerUBA::GetAppFreezingTime(int &time)
-{
-    auto ubaService = GetUbaService();
-    if (ubaService) {
-        APP_LOGI("ubaService implement.");
-    } else {
-        ProcessOptimizer::GetAppFreezingTime(time);
-    }
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,8 +60,6 @@ constexpr int APP_OOM_ADJ_UNKNOWN = 1000;
 constexpr int APP_OOM_ADJ_UNKNOWN_VALUE = 64 * 1024;
 
 constexpr std::string_view SYSTEM_UI_BUNDLE_NAME = "com.ohos.systemui";
-
-constexpr int TIME_ADVANCE_RATE = 1000;
 
 // pressure level low
 constexpr int LMKS_OOM_ADJ_LOW = 800;
@@ -685,27 +683,6 @@ std::string ProcessOptimizer::GetAppSuspendTimerName(const AppPtr &app)
     }
 
     return ret;
-}
-
-void ProcessOptimizer::SetAppFreezingTime(int time)
-{
-    APP_LOGE("input second time:[%{public}d]", time);
-
-    if (time > APP_SUSPEND_TIMEOUT_MAX && time < 0) {
-        APP_LOGE("input time error.");
-        return;
-    }
-
-    suspendTimeout_ = time;
-    // convert seconds to milliseconds
-    suspendTimeout_ *= TIME_ADVANCE_RATE;
-}
-
-void ProcessOptimizer::GetAppFreezingTime(int &time)
-{
-    time = suspendTimeout_ / TIME_ADVANCE_RATE;
-    APP_LOGE("current freez time:[%{public}d]", time);
-    return;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

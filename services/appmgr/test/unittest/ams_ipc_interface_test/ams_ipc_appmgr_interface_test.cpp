@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -211,33 +211,6 @@ HWTEST_F(AmsIpcAppMgrInterfaceTest, ClearUpApplicationData_008, TestSize.Level1)
     appMgrClient->ClearUpApplicationData("PROCESS");
 
     APP_LOGD("ClearUpApplicationData_008 end");
-}
-
-/*
- * Feature: AMS
- * Function: IPC IsBackgroundRunningRestricted
- * SubFunction: appmgr interface
- * FunctionPoints: Check background operation
- * CaseDescription: test IPC can transact data
- */
-HWTEST_F(AmsIpcAppMgrInterfaceTest, IsBackgroundRunningRestricted_009, TestSize.Level1)
-{
-    APP_LOGD("IsBackgroundRunningRestricted_009 start");
-
-    sptr<MockAppMgrService> mockAppMgr(new MockAppMgrService());
-    sptr<IAppMgr> appMgrClient = iface_cast<IAppMgr>(mockAppMgr);
-
-    EXPECT_CALL(*mockAppMgr, IsBackgroundRunningRestricted(_)).Times(1).WillOnce(Return(OHOS::NO_ERROR));
-
-    int32_t ret = appMgrClient->IsBackgroundRunningRestricted("PROCESS");
-
-    EXPECT_EQ(ret, OHOS::NO_ERROR);
-    // Returns 32 when the bundle name is empty
-    EXPECT_CALL(*mockAppMgr, IsBackgroundRunningRestricted(_)).Times(1).WillOnce(Return(32));
-    ret = appMgrClient->IsBackgroundRunningRestricted("");
-
-    EXPECT_EQ(ret, 32);
-    APP_LOGD("IsBackgroundRunningRestricted_009 end");
 }
 
 /*

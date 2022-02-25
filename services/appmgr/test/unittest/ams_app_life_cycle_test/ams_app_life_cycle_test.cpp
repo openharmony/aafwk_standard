@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1896,21 +1896,6 @@ HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_001, TestSize.Level1)
     appRecord->SetApplicationClient(client);
 
     serviceInner_->ClearUpApplicationData(appRecord->GetBundleName(), appRecord->GetUid(), NEW_PID);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle::IsBackgroundRunningRestricted
- * SubFunction: bundleMgr CheckPermission
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: Check if there is background operation permission
- */
-HWTEST_F(AmsAppLifeCycleTest, IsBackgroundRunningRestricted_001, TestSize.Level1)
-{
-    sptr<BundleMgrService> bundleMgr = new BundleMgrService();
-    serviceInner_->SetBundleManager(bundleMgr);
-    EXPECT_CALL(*bundleMgr, CheckPermission(_, _)).Times(1).WillOnce(Return(ERR_OK));
-    EXPECT_EQ(ERR_OK, serviceInner_->IsBackgroundRunningRestricted("bundle"));
 }
 
 /*
