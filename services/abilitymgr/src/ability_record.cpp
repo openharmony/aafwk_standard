@@ -1043,7 +1043,11 @@ void AbilityRecord::GetAbilityRecordInfo(AbilityRecordInfo &recordInfo)
 
 void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
 {
-    HILOG_DEBUG("On scheduler died.");
+    HILOG_WARN("On scheduler died.");
+    auto mission = GetMission();
+    if (mission) {
+        HILOG_WARN("On scheduler died. Is app not response Reason:%{public}d", mission->IsANRState());
+    }
     CHECK_POINTER(scheduler_);
 
     auto object = remote.promote();

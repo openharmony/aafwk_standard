@@ -94,10 +94,21 @@ bool Mission::IsMovingState() const
     return isMovingToFront_;
 }
 
+void Mission::SetANRState()
+{
+    isANRState_ = true;
+}
+
+bool Mission::IsANRState() const
+{
+    return isANRState_;
+}
+
 void Mission::Dump(std::vector<std::string> &info)
 {
     std::string dumpInfo = "    Mission ID #" + std::to_string(missionId_);
-    dumpInfo += "  mission name #[" + missionName_ + "]" + "  lockedState #" + std::to_string(lockedState_);
+    dumpInfo += "  mission name #[" + missionName_ + "]" + "  lockedState #" + std::to_string(lockedState_)
+        + "  ANR State #" + std::to_string(isANRState_);
     info.push_back(dumpInfo);
     if (abilityRecord_) {
         abilityRecord_->Dump(info);

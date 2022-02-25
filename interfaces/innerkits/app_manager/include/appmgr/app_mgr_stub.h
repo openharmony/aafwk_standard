@@ -76,6 +76,7 @@ private:
     int32_t HandleGetForegroundApplications(MessageParcel &data, MessageParcel &reply);
     int32_t HandleStartUserTestProcess(MessageParcel &data, MessageParcel &reply);
     int32_t HandleScheduleAcceptWantDone(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleGetAbilityRecordsByProcessID(MessageParcel &data, MessageParcel &reply);
 
     using AppMgrFunc = int32_t (AppMgrStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, AppMgrFunc> memberFuncMap_;
