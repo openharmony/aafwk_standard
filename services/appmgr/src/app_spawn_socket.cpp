@@ -25,7 +25,8 @@ namespace AppExecFwk {
 AppSpawnSocket::AppSpawnSocket(bool isWebViewSpawn)
 {
     clientSocket_ = isWebViewSpawn ?
-        std::make_unique<AppSpawn::ClientSocket>("WebViewSpawn") : std::make_unique<AppSpawn::ClientSocket>("AppSpawn");
+        std::make_unique<AppSpawn::ClientSocket>("/dev/unix/socket/WebViewSpawn") :
+        std::make_unique<AppSpawn::ClientSocket>("AppSpawn");
 }
 
 AppSpawnSocket::~AppSpawnSocket()
