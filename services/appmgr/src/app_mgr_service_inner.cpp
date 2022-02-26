@@ -568,13 +568,16 @@ int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInf
 {
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
 
+    std::vector<int32_t> ids;
+    auto result = AccountSA::OsAccountManager::QueryActiveOsAccountIds(ids);
+    APP_LOGD("ids size : %{public}d", static_cast<int>(ids.size()));
+
     // check permission
     for (const auto &item : appRunningManager_->GetAppRunningRecordMap()) {
         const auto &appRecord = item.second;
         int32_t userId = static_cast<int32_t>(appRecord->GetUid() / USER_SCALE);
-        bool isExist = false;
-        auto errCode = AccountSA::OsAccountManager::IsOsAccountActived(userId, isExist);
-        if ((errCode == ERR_OK) && isExist) {
+
+        if ((std::find(ids.begin(), ids.end(), userId) != ids.end()) && (result == ERR_OK)) {
             if (isPerm) {
                 GetRunningProcesses(appRecord, info);
             } else {
