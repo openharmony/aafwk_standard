@@ -90,8 +90,6 @@ const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerServic
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-e", KEY_DUMP_SERVICE),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--data", KEY_DUMP_DATA),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-d", KEY_DUMP_DATA),
-    std::map<std::string, AbilityManagerService::DumpKey>::value_type("--ui", KEY_DUMP_SYSTEM_UI),
-    std::map<std::string, AbilityManagerService::DumpKey>::value_type("-u", KEY_DUMP_SYSTEM_UI),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-focus", KEY_DUMP_FOCUS_ABILITY),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-f", KEY_DUMP_FOCUS_ABILITY),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--win-mode", KEY_DUMP_WINDOW_MODE),
@@ -117,8 +115,6 @@ const std::map<std::string, AbilityManagerService::DumpsysKey> AbilityManagerSer
     std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-r", KEY_DUMPSYS_PROCESS),
     std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--data", KEY_DUMPSYS_DATA),
     std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-d", KEY_DUMPSYS_DATA),
-    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("--ui", KEY_DUMPSYS_SYSTEM_UI),
-    std::map<std::string, AbilityManagerService::DumpsysKey>::value_type("-k", KEY_DUMPSYS_SYSTEM_UI),
 };
 
 const bool REGISTER_RESULT =
@@ -1715,7 +1711,6 @@ void AbilityManagerService::DumpFuncInit()
     dumpFuncMap_[KEY_DUMP_WAIT_QUEUE] = &AbilityManagerService::DumpWaittingAbilityQueueInner;
     dumpFuncMap_[KEY_DUMP_SERVICE] = &AbilityManagerService::DumpStateInner;
     dumpFuncMap_[KEY_DUMP_DATA] = &AbilityManagerService::DataDumpStateInner;
-    dumpFuncMap_[KEY_DUMP_SYSTEM_UI] = &AbilityManagerService::SystemDumpStateInner;
     dumpFuncMap_[KEY_DUMP_FOCUS_ABILITY] = &AbilityManagerService::DumpFocusMapInner;
     dumpFuncMap_[KEY_DUMP_WINDOW_MODE] = &AbilityManagerService::DumpWindowModeInner;
     dumpFuncMap_[KEY_DUMP_MISSION_LIST] = &AbilityManagerService::DumpMissionListInner;
@@ -1731,7 +1726,6 @@ void AbilityManagerService::DumpSysFuncInit()
     dumpsysFuncMap_[KEY_DUMPSYS_PENDING] = &AbilityManagerService::DumpSysPendingInner;
     dumpsysFuncMap_[KEY_DUMPSYS_PROCESS] = &AbilityManagerService::DumpSysProcess;
     dumpsysFuncMap_[KEY_DUMPSYS_DATA] = &AbilityManagerService::DataDumpSysStateInner;
-    dumpsysFuncMap_[KEY_DUMPSYS_SYSTEM_UI] = &AbilityManagerService::SystemDumpSysStateInner;
 }
 
 void AbilityManagerService::DumpSysInner(
@@ -1951,11 +1945,6 @@ void AbilityManagerService::DataDumpSysStateInner(
     }
 }
 
-void AbilityManagerService::SystemDumpSysStateInner(
-    const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
-{
-}
-
 void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::string> &info)
 {
     if (useNewMission_) {
@@ -2090,10 +2079,6 @@ void AbilityManagerService::DataDumpStateInner(const std::string &args, std::vec
     } else {
         info.emplace_back("error: invalid argument, please see 'ability dump -h'.");
     }
-}
-
-void AbilityManagerService::SystemDumpStateInner(const std::string &args, std::vector<std::string> &info)
-{
 }
 
 void AbilityManagerService::DumpState(const std::string &args, std::vector<std::string> &info)
