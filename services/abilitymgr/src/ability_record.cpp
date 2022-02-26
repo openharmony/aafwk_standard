@@ -193,7 +193,7 @@ int AbilityRecord::LoadAbility()
         token_, callerToken_, abilityInfo_, applicationInfo_, want_);
 }
 
-void AbilityRecord::ForegroundAbility()
+void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("ForegroundAbility.");
@@ -204,7 +204,9 @@ void AbilityRecord::ForegroundAbility()
     // schedule active after updating AbilityState and sending timeout message to avoid ability async callback
     // earlier than above actions.
     currentState_ = AbilityState::FOREGROUNDING_NEW;
+    lifeCycleStateInfo_.sceneFlag = sceneFlag;
     lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
+    lifeCycleStateInfo_.sceneFlag = 0;
 
     // update ability state to appMgr service when restart
     if (IsNewWant()) {
@@ -216,7 +218,7 @@ void AbilityRecord::ForegroundAbility()
     }
 }
 
-void AbilityRecord::ProcessForegroundAbility()
+void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
 {
     std::string element = GetWant().GetElement().GetURI();
     HILOG_DEBUG("ability record: %{public}s", element.c_str());
@@ -228,7 +230,7 @@ void AbilityRecord::ProcessForegroundAbility()
             DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
-            ForegroundAbility();
+            ForegroundAbility(sceneFlag);
         }
     } else {
         LoadAbility();
