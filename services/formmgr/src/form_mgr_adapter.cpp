@@ -14,6 +14,7 @@
  */
 
 #include <cinttypes>
+#include <regex>
 
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
@@ -1211,7 +1212,9 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         if (formInfo.moduleName == item.moduleName) {
             itemInfo.AddHapSourceDirs(item.moduleSourceDir);
         }
-        itemInfo.AddModuleInfo(item.moduleName, item.moduleSourceDir);
+        auto moduleSourceDir = std::regex_replace(item.moduleSourceDir, std::regex(Constants::ABS_CODE_PATH),
+            Constants::LOCAL_BUNDLES);
+        itemInfo.AddModuleInfo(item.moduleName, moduleSourceDir);
     }
     return ERR_OK;
 }
