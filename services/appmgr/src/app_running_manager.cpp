@@ -378,7 +378,7 @@ void AppRunningManager::GetRunningProcessInfoByToken(
         return;
     }
 
-    info.processName_ = appRecord->GetName();
+    info.processName_ = appRecord->GetProcessName();
     info.pid_ = appRecord->GetPriorityObject()->GetPid();
     info.uid_ = appRecord->GetUid();
     info.bundleNames.emplace_back(appRecord->GetBundleName());
