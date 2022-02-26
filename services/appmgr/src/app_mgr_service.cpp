@@ -240,14 +240,14 @@ void AppMgrService::AddAppDeathRecipient(const pid_t pid) const
     handler_->PostTask(addAppRecipientFunc, TASK_ADD_APP_DEATH_RECIPIENT);
 }
 
-void AppMgrService::StartupResidentProcess()
+void AppMgrService::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
     if (!IsReady()) {
         return;
     }
     APP_LOGI("Notify start resident process");
     std::function <void()> startupResidentProcess =
-        std::bind(&AppMgrServiceInner::LoadResidentProcess, appMgrServiceInner_);
+        std::bind(&AppMgrServiceInner::LoadResidentProcess, appMgrServiceInner_, bundleInfos);
     handler_->PostTask(startupResidentProcess, TASK_STARTUP_RESIDENT_PROCESS);
 }
 

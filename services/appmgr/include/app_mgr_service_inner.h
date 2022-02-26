@@ -476,9 +476,9 @@ public:
     /**
      * Start empty process
      */
-    void LoadResidentProcess();
+    void LoadResidentProcess(const std::vector<BundleInfo> &infos);
 
-    void StartResidentProcess(const std::vector<BundleInfo> &v,  int restartCount);
+    void StartResidentProcess(const std::vector<BundleInfo> &infos,  int restartCount);
 
     bool CheckRemoteClient();
 

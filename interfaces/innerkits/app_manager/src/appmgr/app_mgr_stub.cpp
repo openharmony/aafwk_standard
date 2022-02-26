@@ -233,7 +233,18 @@ int32_t AppMgrStub::HandleAddAbilityStageDone(MessageParcel &data, MessageParcel
 
 int32_t AppMgrStub::HandleStartupResidentProcess(MessageParcel &data, MessageParcel &reply)
 {
-    StartupResidentProcess();
+    BYTRACE(BYTRACE_TAG_APP);
+    std::vector<AppExecFwk::BundleInfo> bundleInfos;
+    int32_t infoSize = data.ReadInt32();
+    for (int32_t i = 0; i < infoSize; i++) {
+        std::unique_ptr<AppExecFwk::BundleInfo> bundleInfo(data.ReadParcelable<AppExecFwk::BundleInfo>());
+        if (!bundleInfo) {
+            APP_LOGE("Read Parcelable infos failed.");
+            return ERR_INVALID_VALUE;
+        }
+        bundleInfos.emplace_back(*bundleInfo);
+    }
+    StartupResidentProcess(bundleInfos);
     return NO_ERROR;
 }
 

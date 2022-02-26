@@ -1763,7 +1763,7 @@ void AppMgrServiceInner::GetRunningProcessInfoByToken(
     appRunningManager_->GetRunningProcessInfoByToken(token, info);
 }
 
-void AppMgrServiceInner::LoadResidentProcess()
+void AppMgrServiceInner::LoadResidentProcess(const std::vector<AppExecFwk::BundleInfo> &infos)
 {
     APP_LOGI("%{public}s called", __func__);
     pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -1773,19 +1773,7 @@ void AppMgrServiceInner::LoadResidentProcess()
         return;
     }
 
-    if (!CheckRemoteClient()) {
-        APP_LOGE("GetBundleManager fail");
-        return;
-    }
-
-    std::vector<BundleInfo> infos;
-    auto funRet = remoteClientManager_->GetBundleManager()->QueryKeepAliveBundleInfos(infos);
-    if (!funRet) {
-        APP_LOGE("QueryKeepAliveBundleInfos fail!");
-        return;
-    }
-
-    APP_LOGI("Get KeepAlive BundleInfo Size : [%{public}d]", static_cast<int>(infos.size()));
+    APP_LOGI("bundle info size: [%{public}d]", static_cast<int>(infos.size()));
     StartResidentProcess(infos, -1);
 }
 
@@ -1806,19 +1794,6 @@ void AppMgrServiceInner::StartResidentProcess(const std::vector<BundleInfo> &inf
         auto processName = bundle.applicationInfo.process.empty() ?
             bundle.applicationInfo.bundleName : bundle.applicationInfo.process;
         APP_LOGI("processName = [%{public}s]", processName.c_str());
-
-        bool allElementNameEmpty = true;
-        for (auto hapModuleInfo : bundle.hapModuleInfos) {
-            if (!hapModuleInfo.mainElementName.empty()) {
-                // already start main element and process, no need start process again
-                allElementNameEmpty = false;
-                break;
-            }
-        }
-        if (!allElementNameEmpty) {
-            APP_LOGW("processName [%{public}s] Already exists ", processName.c_str());
-            continue;
-        }
 
         // Inspection records
         auto appRecord = appRunningManager_->CheckAppRunningRecordIsExist(

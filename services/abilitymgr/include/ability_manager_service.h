@@ -1139,7 +1139,8 @@ private:
     int DelegatorMoveMissionToFront(int32_t missionId);
 
     bool IsNeedTimeoutForTest(const std::string &abilityName, const std::string &state) const;
-    void StartupResidentProcess();
+
+    void StartupResidentProcess(int userId);
 
     int VerifyMissionPermission();
 
@@ -1157,6 +1158,11 @@ private:
     bool VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want);
 
     bool SetANRMissionByProcessID(int pid);
+
+    void StartMainElement(int userId, std::vector<AppExecFwk::BundleInfo> &bundleInfos);
+
+    bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+        const std::string &mainAbility, std::string &uri);
 
     constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
     constexpr static int WAITING_BOOT_ANIMATION_TIMER = 5;
