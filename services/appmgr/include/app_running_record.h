@@ -491,6 +491,7 @@ public:
     void SetStartMsg(const AppSpawnStartMsg &msg);
     AppSpawnStartMsg GetStartMsg();
 
+    void SendEventForSpecifiedAbility(uint32_t msg, int64_t timeOut);
 private:
     /**
      * SearchTheModuleInfoNeedToUpdated, Get an uninitialized abilitystage data.

@@ -100,6 +100,13 @@ public:
     void EnqueueWaittingAbility(const AbilityRequest &abilityRequest);
 
     /**
+     * push front waitting ability to queue.
+     *
+     * @param abilityRequest, the request of ability.
+     */
+    void EnqueueWaittingAbilityToFront(const AbilityRequest &abilityRequest);
+
+    /**
      * start waitting ability.
      */
     void StartWaittingAbility();
@@ -293,6 +300,7 @@ public:
 
     void OnAcceptWantResponse(const AAFwk::Want &want, const std::string &flag);
 
+    void OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Want &want);
     /**
      * resolve the call ipc of ability for schudeling oncall.
      *

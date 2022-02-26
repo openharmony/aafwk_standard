@@ -3662,7 +3662,11 @@ void AbilityManagerService::OnAcceptWantResponse(
 
 void AbilityManagerService::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Want &want)
 {
-    return;
+    HILOG_DEBUG("%{public}s called.", __func__);
+    if (!currentMissionListManager_) {
+        return;
+    }
+    currentMissionListManager_->OnStartSpecifiedAbilityTimeoutResponse(want);
 }
 
 int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
