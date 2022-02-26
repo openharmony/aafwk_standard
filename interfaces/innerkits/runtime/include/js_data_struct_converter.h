@@ -36,6 +36,8 @@ NativeValue* CreateJsLaunchParam(NativeEngine& engine, const AAFwk::LaunchParam&
 NativeValue* CreateJsCustomizeData(NativeEngine& engine, const AppExecFwk::CustomizeData &Info);
 NativeValue* CreateJsCustomizeDataArray(NativeEngine& engine, const std::vector<AppExecFwk::CustomizeData> &info);
 NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Configuration& configuration);
+NativeValue* CreateJsMetadataArray(NativeEngine& engine, const std::vector<AppExecFwk::Metadata> &infos);
+NativeValue* CreateJsMetadata(NativeEngine& engine, const AppExecFwk::Metadata &Info);
 }  // namespace AbilityRuntime
 }  // namespace OHOS
 #endif  // ABILITY_RUNTIME_JS_DATA_STRUCT_CONVERTER_H
