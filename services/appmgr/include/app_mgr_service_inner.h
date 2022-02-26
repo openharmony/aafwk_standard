@@ -759,10 +759,10 @@ private:
 
     void GetRunningProcesses(const std::shared_ptr<AppRunningRecord> &appRecord, std::vector<RunningProcessInfo> &info);
 
-    virtual int32_t StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
-        int32_t ipcFd, int32_t sharedFd, pid_t &renderPid);
+    int StartRenderProcessImpl(const std::shared_ptr<RenderRecord> &renderRecord,
+        const std::shared_ptr<AppRunningRecord> appRecord, pid_t &renderPid);
 
-    virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
+    void OnRenderRemoteDied(const wptr<IRemoteObject> &remote);
 
 private:
     /**
