@@ -391,9 +391,10 @@ public:
      * OnRemoteDied, Equipment death notification.
      *
      * @param remote, Death client.
+     * @param isRenderProcess is render process died.
      * @return
      */
-    void OnRemoteDied(const wptr<IRemoteObject> &remote);
+    void OnRemoteDied(const wptr<IRemoteObject> &remote, bool isRenderProcess = false);
 
     /**
      * AddAppDeathRecipient, Add monitoring death application record.
@@ -526,6 +527,11 @@ public:
      * @return Returns true on success, others on failure.
      */
     int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
+    virtual int32_t StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
+        int32_t ipcFd, int32_t sharedFd, pid_t &renderPid);
+
+    virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
 
 private:
 
@@ -752,6 +758,11 @@ private:
     void GetGlobalConfiguration();
 
     void GetRunningProcesses(const std::shared_ptr<AppRunningRecord> &appRecord, std::vector<RunningProcessInfo> &info);
+
+    virtual int32_t StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
+        int32_t ipcFd, int32_t sharedFd, pid_t &renderPid);
+
+    virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
 
 private:
     /**

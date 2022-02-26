@@ -462,5 +462,48 @@ void AppRunningManager::UpdateConfiguration(const Configuration &config)
         }
     }
 }
+
+std::shared_ptr<AppRunningRecord> AppRunningManager::GetAppRunningRecordByRenderPid(const pid_t pid)
+{
+    std::lock_guard<std::recursive_mutex> guard(lock_);
+    auto iter = std::find_if(appRunningRecordMap_.begin(), appRunningRecordMap_.end(), [&pid](const auto &pair) {
+        auto renderRecord = pair.second->GetRenderRecord();
+        return renderRecord && renderRecord->GetPid() == pid;
+    });
+    return ((iter == appRunningRecordMap_.end()) ? nullptr : iter->second);
+}
+
+void AppRunningManager::OnRemoteRenderDied(const wptr<IRemoteObject> &remote)
+{
+    std::lock_guard<std::recursive_mutex> guard(lock_);
+    if (remote == nullptr) {
+        APP_LOGE("remote is null");
+        return;
+    }
+    sptr<IRemoteObject> object = remote.promote();
+    if (!object) {
+        APP_LOGE("promote failed.");
+        return;
+    }
+
+    const auto &it =
+        std::find_if(appRunningRecordMap_.begin(), appRunningRecordMap_.end(), [&object](const auto &pair) {
+            if (!pair.second) {
+                return false;
+            }
+
+            auto renderRecord = pair.second->GetRenderRecord();
+            if (!renderRecord) {
+                return false;
+            }
+
+            auto scheduler = renderRecord->GetScheduler();
+            return scheduler && scheduler->AsObject() == object;
+        });
+    if (it != appRunningRecordMap_.end()) {
+        auto appRecord = it->second;
+        appRecord->SetRenderRecord(nullptr);
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

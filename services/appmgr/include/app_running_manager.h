@@ -148,6 +148,8 @@ public:
     void ClipStringContent(const std::regex &re, const std::string &sorce, std::string &afferCutStr);
     void HandleAddAbilityStageTimeOut(const int64_t eventId);
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
+    std::shared_ptr<AppRunningRecord> GetAppRunningRecordByRenderPid(const pid_t pid);
+    void OnRemoteRenderDied(const wptr<IRemoteObject> &remote);
 private:
     std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(const int64_t eventId);
 

@@ -21,6 +21,91 @@
 namespace OHOS {
 namespace AppExecFwk {
 int64_t AppRunningRecord::appEventId_ = 0;
+
+RenderRecord::RenderRecord(pid_t hostPid, const std::string& renderParam,
+    int32_t ipcFd, int32_t sharedFd, const std::shared_ptr<AppRunningRecord> &host)
+    : hostPid_(hostPid), renderParam_(renderParam), ipcFd_(ipcFd), sharedFd_(sharedFd), host_(host)
+{}
+
+RenderRecord::~RenderRecord()
+{}
+
+std::shared_ptr<RenderRecord> RenderRecord::CreateRenderRecord(pid_t hostPid, const std::string& renderParam,
+    int32_t ipcFd, int32_t sharedFd, const std::shared_ptr<AppRunningRecord> &host)
+{
+    if (hostPid <= 0 || renderParam.empty() || ipcFd <= 0 || sharedFd <= 0 || !host) {
+        return nullptr;
+    }
+
+    auto renderRecord = std::make_shared<RenderRecord>(hostPid, renderParam, ipcFd, sharedFd, host);
+    if (!renderRecord) {
+        APP_LOGE("create render record failed, hostPid:%{public}d.", hostPid);
+        return nullptr;
+    }
+
+    return renderRecord;
+}
+
+void RenderRecord::SetPid(pid_t pid)
+{
+    pid_ = pid;
+}
+
+pid_t RenderRecord::GetPid()
+{
+    return pid_;
+}
+
+pid_t RenderRecord::GetHostPid()
+{
+    return hostPid_;
+}
+
+std::string RenderRecord::GetRenderParam()
+{
+    return renderParam_;
+}
+
+int32_t RenderRecord::GetIpcFd()
+{
+    return ipcFd_;
+}
+
+int32_t RenderRecord::GetSharedFd()
+{
+    return sharedFd_;
+}
+
+std::shared_ptr<AppRunningRecord> RenderRecord::GetHostRecord()
+{
+    return host_.lock();
+}
+
+sptr<IRenderScheduler> RenderRecord::GetScheduler()
+{
+    return renderScheduler_;
+}
+
+void RenderRecord::SetScheduler(const sptr<IRenderScheduler> &scheduler)
+{
+    renderScheduler_ = scheduler;
+}
+
+void RenderRecord::SetDeathRecipient(const sptr<AppDeathRecipient> recipient)
+{
+    deathRecipient_ = recipient;
+}
+
+void RenderRecord::RegisterDeathRecipient()
+{
+    if (renderScheduler_ && deathRecipient_) {
+        auto obj = renderScheduler_->AsObject();
+        if (obj) {
+            obj->AddDeathRecipient(deathRecipient_);
+        }
+    }
+}
+
 AppRunningRecord::AppRunningRecord(
     const std::shared_ptr<ApplicationInfo> &info, const int32_t recordId, const std::string &processName)
     : appRecordId_(recordId), processName_(processName)
@@ -908,6 +993,26 @@ void AppRunningRecord::UpdateConfiguration(const Configuration &config)
         return;
     }
     appLifeCycleDeal_->UpdateConfiguration(config);
+}
+
+void AppRunningRecord::SetRenderRecord(const std::shared_ptr<RenderRecord> &record)
+{
+    renderRecord_ = record;
+}
+
+std::shared_ptr<RenderRecord> AppRunningRecord::GetRenderRecord()
+{
+    return renderRecord_;
+}
+
+void AppRunningRecord::SetStartMsg(const AppSpawnStartMsg &msg)
+{
+    startMsg_ = msg;
+}
+
+AppSpawnStartMsg AppRunningRecord::GetStartMsg()
+{
+    return startMsg_;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

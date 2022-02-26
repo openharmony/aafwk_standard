@@ -42,7 +42,10 @@ public:
      */
     void SetAppMgrServiceInner(const std::shared_ptr<AppMgrServiceInner> &serviceInner);
 
+    void SetIsRenderProcess(bool isRenderProcess);
+
 private:
+    bool isRenderProcess_ = false;
     std::weak_ptr<AMSEventHandler> handler_;
     std::weak_ptr<AppMgrServiceInner> appMgrServiceInner_;
 };

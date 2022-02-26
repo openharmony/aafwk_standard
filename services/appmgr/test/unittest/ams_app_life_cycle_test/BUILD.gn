@@ -28,6 +28,7 @@ ohos_unittest("AmsAppLifeCycleTest") {
 
   sources = [
     "${services_path}/appmgr/src/ability_running_record.cpp",
+    "${services_path}/appmgr/src/app_death_recipient.cpp",
     "${services_path}/appmgr/src/app_lifecycle_deal.cpp",
     "${services_path}/appmgr/src/app_mgr_service_event_handler.cpp",
     "${services_path}/appmgr/src/app_mgr_service_inner.cpp",

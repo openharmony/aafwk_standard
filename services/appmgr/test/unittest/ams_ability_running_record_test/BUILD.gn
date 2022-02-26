@@ -34,6 +34,7 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
 
   sources = [
     "${services_path}/appmgr/src/ability_running_record.cpp",
+    "${services_path}/appmgr/src/app_death_recipient.cpp",
     "${services_path}/appmgr/src/app_mgr_service_inner.cpp",
     "${services_path}/appmgr/src/app_running_record.cpp",
     "${services_path}/appmgr/src/app_spawn_client.cpp",
