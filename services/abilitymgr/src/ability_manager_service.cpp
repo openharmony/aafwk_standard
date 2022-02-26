@@ -632,7 +632,7 @@ int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &t
 
     if ((resultWant != nullptr) &&
         AbilityUtil::IsSystemDialogAbility(
-        abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
+            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_KEY) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_CALLER_BUNDLENAME) &&
         resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_REQUEST_PERMISSIONS)) {
