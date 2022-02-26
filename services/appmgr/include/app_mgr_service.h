@@ -173,7 +173,7 @@ public:
     /**
      * Start all resident process
      */
-    virtual void StartupResidentProcess() override;
+    virtual void StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos) override;
 
     /**
      * Start user test process.

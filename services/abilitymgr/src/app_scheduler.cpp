@@ -262,10 +262,10 @@ void AppScheduler::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token
     appMgrClient_->GetRunningProcessInfoByToken(token, info);
 }
 
-void AppScheduler::StartupResidentProcess()
+void AppScheduler::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
     CHECK_POINTER(appMgrClient_);
-    appMgrClient_->StartupResidentProcess();
+    appMgrClient_->StartupResidentProcess(bundleInfos);
 }
 
 void AppScheduler::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
