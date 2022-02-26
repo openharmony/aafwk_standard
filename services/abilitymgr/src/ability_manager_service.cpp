@@ -4291,9 +4291,8 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
         return ERR_WOULD_BLOCK;
     }
 
-    abilityRecord->lifeCycleStateInfo_.sceneFlag = flag;
-    abilityRecord->ForegroundAbility();
-    abilityRecord->lifeCycleStateInfo_.sceneFlag = SCENE_FLAG_NORMAL;
+    abilityRecord->lifeCycleStateInfo_.sceneFlagBak = flag;
+    abilityRecord->ProcessForegroundAbility(flag);
     return ERR_OK;
 }
 
