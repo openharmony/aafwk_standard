@@ -731,24 +731,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 // 'aa dumpsys --data'
                 break;
             }
-            case 'k': {
-                if (isfirstCommand == false) {
-                    isfirstCommand = true;
-                    if (isUserID == true) {
-                    result = OHOS::ERR_INVALID_VALUE;
-                    resultReceiver_.append("-k is no userID option\n");
-                    resultReceiver_.append(HELP_MSG_DUMPSYS);
-                    return result;
-                    }
-                } else {
-                    result = OHOS::ERR_INVALID_VALUE;
-                    resultReceiver_.append(HELP_MSG_DUMPSYS);
-                    return result;
-                }
-                // 'aa dumpsys -k'
-                // 'aa dumpsys --UI'
-                break;
-            }
             case 'u': {
                 // 'aa dumpsys -u'
                 // 'aa dumpsys --userId'
@@ -845,11 +827,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommand()
         case 'l': {
             // 'aa dump -l'
             // 'aa dump --stack-list'
-            break;
-        }
-        case 'u': {
-            // 'aa dump -u'
-            // 'aa dump --ui'
             break;
         }
         case 'd': {
