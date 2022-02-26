@@ -3297,7 +3297,7 @@ void AbilityManagerService::StartSystemApplication()
 
     StartingSettingsDataAbility();
     StartingSystemUiAbility();
-    StartupResidentProcess();
+    StartupResidentProcess(U0_USER_ID);
 }
 
 void AbilityManagerService::StartingSystemUiAbility()
@@ -4478,29 +4478,97 @@ bool AbilityManagerService::SetANRMissionByProcessID(int pid)
     return false;
 }
 
-void AbilityManagerService::StartupResidentProcess()
+void AbilityManagerService::StartupResidentProcess(int userId)
 {
     // Location may change
     auto bms = GetBundleManager();
     if (bms == nullptr) {
-        HILOG_INFO("StartupResidentProcess bms is nullptr");
+        HILOG_ERROR("StartupResidentProcess bms is nullptr");
         return;
     }
 
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
-    (void)iBundleManager_->QueryKeepAliveBundleInfos(bundleInfos);
-    for (auto bundleInfo : bundleInfos) {
-        for (auto hapModuleInfo : bundleInfo.hapModuleInfos) {
-            if (!hapModuleInfo.mainElementName.empty()) {
-                AppExecFwk::AbilityInfo abilityInfo;
-                Want want;
-                want.SetElementName(hapModuleInfo.bundleName, hapModuleInfo.mainElementName);
-                (void)StartAbility(want, USER_ID_NO_HEAD, DEFAULT_INVAL_VALUE); // user 0
+    bool getBundleInfos = iBundleManager_->GetBundleInfos(OHOS::AppExecFwk::GET_BUNDLE_DEFAULT, bundleInfos, userId);
+    if (!getBundleInfos) {
+        HILOG_ERROR("get bundle infos failed");
+        return;
+    }
+
+    HILOG_INFO("StartupResidentProcess GetBundleInfos size: %{public}u, userId: %{public}d",
+        bundleInfos.size(), userId);
+
+    StartMainElement(userId, bundleInfos);
+    if (!bundleInfos.empty()) {
+        DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess(bundleInfos);
+    }
+}
+
+void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk::BundleInfo> &bundleInfos)
+{
+    std::set<uint32_t> needEraseIndexSet;
+
+    for (int i = 0; i< bundleInfos.size(); i++) {
+        if (!bundleInfos[i].isKeepAlive) {
+            needEraseIndexSet.insert(i);
+            continue;
+        }
+        for (auto hapModuleInfo : bundleInfos[i].hapModuleInfos) {
+            std::string mainElement;
+            if (!hapModuleInfo.isModuleJson) {
+                // old application model
+                mainElement = hapModuleInfo.mainAbility;
+                if (mainElement.empty()) {
+                    continue;
+                }
+                needEraseIndexSet.insert(i);
+                std::string uriStr;
+                bool getDataAbilityInfo = GetDataAbilityUri(hapModuleInfo.abilityInfos, mainElement, uriStr);
+                if (getDataAbilityInfo) {
+                    // dataability, need use AcquireDataAbility
+                    Uri uri(uriStr);
+                    (void)AcquireDataAbility(uri, true, nullptr);
+                    continue;
+                }
+            } else {
+                // new application model
+                mainElement = hapModuleInfo.mainElementName;
+                if (mainElement.empty()) {
+                    continue;
+                }
+                needEraseIndexSet.insert(i);
             }
+
+            // startAbility
+            AppExecFwk::AbilityInfo abilityInfo;
+            Want want;
+            want.SetElementName(hapModuleInfo.bundleName, mainElement);
+            (void)StartAbility(want, userId, DEFAULT_INVAL_VALUE);
         }
     }
 
-    DelayedSingleton<AppScheduler>::GetInstance()->StartupResidentProcess();
+    // delete item which process has been started.
+    for (auto iter = needEraseIndexSet.rbegin(); iter != needEraseIndexSet.rend(); iter++) {
+        bundleInfos.erase(bundleInfos.begin() + *iter);
+    }
+}
+
+bool AbilityManagerService::GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+    const std::string &mainAbility, std::string &uri)
+{
+    if (abilityInfos.empty() || mainAbility.empty()) {
+        HILOG_ERROR("abilityInfos or mainAbility is empty. mainAbility: %{public}s", mainAbility.c_str());
+        return false;
+    }
+
+    for (auto abilityInfo : abilityInfos) {
+        if (abilityInfo.type == AppExecFwk::AbilityType::DATA &&
+            abilityInfo.name == mainAbility) {
+            uri = abilityInfo.uri;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int AbilityManagerService::VerifyMissionPermission()

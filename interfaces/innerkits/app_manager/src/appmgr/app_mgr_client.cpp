@@ -331,7 +331,7 @@ void AppMgrClient::AddAbilityStageDone(const int32_t recordId)
     service->AddAbilityStageDone(recordId);
 }
 
-void AppMgrClient::StartupResidentProcess()
+void AppMgrClient::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
@@ -339,7 +339,7 @@ void AppMgrClient::StartupResidentProcess()
         return;
     }
 
-    service->StartupResidentProcess();
+    service->StartupResidentProcess(bundleInfos);
 }
 
 int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,

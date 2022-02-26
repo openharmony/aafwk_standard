@@ -351,17 +351,29 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     return;
 }
 
-void AppMgrProxy::StartupResidentProcess()
+void AppMgrProxy::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
+    if (!data.WriteInt32(bundleInfos.size())) {
+        APP_LOGE("write bundle info size failed.");
+        return;
+    }
+
+    for (auto &bundleInfo : bundleInfos) {
+        if (!data.WriteParcelable(&bundleInfo)) {
+            APP_LOGE("write bundle info failed");
+            return;
+        }
+    }
+
     if (!SendTransactCmd(IAppMgr::Message::STARTUP_RESIDENT_PROCESS, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
     return;

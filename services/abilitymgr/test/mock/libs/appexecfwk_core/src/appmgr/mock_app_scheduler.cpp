@@ -161,7 +161,7 @@ void AppScheduler::UpdateExtensionState(const sptr<IRemoteObject> &token, const 
     HILOG_INFO("Test AppScheduler::UpdateExtensionState()");
 }
 
-void AppScheduler::StartupResidentProcess()
+void AppScheduler::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
     HILOG_INFO("Test AppScheduler::StartupResidentProcess()");
 }

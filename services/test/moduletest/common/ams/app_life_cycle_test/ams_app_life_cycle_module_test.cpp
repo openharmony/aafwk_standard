@@ -1401,44 +1401,6 @@ HWTEST_F(AmsAppLifeCycleModuleTest, AbilityBehaviorAnalysis_06, TestSize.Level1)
 
 /*
  * Feature: AbilityMgr
- * Function: LoadResidentProcess
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AmsAppLifeCycleModuleTest, LoadResidentProcess_01, TestSize.Level1)
-{
-    pid_t pid = 123;
-    sptr<IRemoteObject> token = GetAbilityToken();
-    std::string appName = "KeepAliveApp";
-    std::string proc = "KeepAliveApplication";
-    int uid = 2100;
-    BundleInfo info;
-    info.name = proc;
-    info.uid = uid;
-
-    ApplicationInfo appInfo;
-    appInfo.name = "KeepAliveApp";
-    appInfo.bundleName = "KeepAliveApplication";
-    appInfo.uid = uid;
-
-    info.applicationInfo = appInfo;
-    sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
-
-    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, info);
-    EXPECT_FALSE(appRecord);
-
-    StartAppProcess(pid);
-    serviceInner_->LoadResidentProcess();
-    appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, info);
-    EXPECT_TRUE(appRecord);
-    pid_t newPid = appRecord->GetPriorityObject()->GetPid();
-    EXPECT_TRUE(newPid == pid);
-}
-
-/*
- * Feature: AbilityMgr
  * Function: StartResidentProcess
  * SubFunction: NA
  * FunctionPoints: NA

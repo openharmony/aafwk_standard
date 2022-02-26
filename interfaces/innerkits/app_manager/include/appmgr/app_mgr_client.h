@@ -202,9 +202,9 @@ public:
     /**
      * Start a resident process
      */
-    virtual void StartupResidentProcess();
-	
-	 /**
+    virtual void StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos);
+
+     /**
      *  ANotify application update system environment changes.
      *
      * @param config System environment change parameters.

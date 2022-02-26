@@ -1995,59 +1995,6 @@ HWTEST_F(AmsAppLifeCycleTest, GetAbilityRunningRecordByAbilityToken_001, TestSiz
 
 /*
  * Feature: AMS
- * Function: AppLifeCycle::LoadResidentProcess
- * SubFunction: NA
- * FunctionPoints: NA
- * CaseDescription: NA
- */
-HWTEST_F(AmsAppLifeCycleTest, LoadResidentProcess_001, TestSize.Level1)
-{
-    std::string appName = "KeepAliveApp";
-    std::string proc = "KeepAliveApplication";
-    int uid = 2100;
-    int pid = 120;
-    BundleInfo bundleInfo;
-    bundleInfo.appId = "com.ohos.test.helloworld_code123";
-
-    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
-    EXPECT_FALSE(appRecord);
-
-    MockAppSpawnClient *mockClientPtrT = new (std::nothrow) MockAppSpawnClient();
-    EXPECT_TRUE(mockClientPtrT);
-    EXPECT_CALL(*mockClientPtrT, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(pid), Return(ERR_OK)));
-
-    serviceInner_->SetAppSpawnClient(std::unique_ptr<MockAppSpawnClient>(mockClientPtrT));
-
-    serviceInner_->LoadResidentProcess();
-    appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
-    EXPECT_TRUE(appRecord);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle::LoadResidentProcess
- * SubFunction: NA
- * FunctionPoints: NA
- * CaseDescription: NA
- */
-HWTEST_F(AmsAppLifeCycleTest, LoadResidentProcess_002, TestSize.Level1)
-{
-    std::string appName = "KeepAliveApp";
-    std::string proc = "KeepAliveApplication";
-    int uid = 2100;
-    BundleInfo bundleInfo;
-    bundleInfo.appId = "com.ohos.test.helloworld_code123";
-
-    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
-    EXPECT_FALSE(appRecord);
-
-    serviceInner_->LoadResidentProcess();
-    appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
-    EXPECT_FALSE(appRecord);
-}
-
-/*
- * Feature: AMS
  * Function: AppLifeCycle::StartResidentProcess
  * SubFunction: NA
  * FunctionPoints: NA
