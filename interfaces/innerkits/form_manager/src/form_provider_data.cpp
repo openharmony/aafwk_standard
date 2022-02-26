@@ -128,7 +128,7 @@ void FormProviderData::AddImageData(std::string picName, int fd)
     }
 
     int32_t size = lseek(fd, 0L, SEEK_END);
-    if (size == -1) {
+    if (size <= 0) {
         HILOG_ERROR("Get file size failed, errno is %{public}d", errno);
         return;
     }
