@@ -55,6 +55,7 @@ struct LifeCycleStateInfo : public Parcelable {
     LaunchParam launchParam;
     bool useNewMission = false;
     uint32_t sceneFlag = 0;
+    uint32_t sceneFlagBak = 0;
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
