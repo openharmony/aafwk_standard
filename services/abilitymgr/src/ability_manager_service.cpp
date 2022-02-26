@@ -3543,21 +3543,20 @@ int AbilityManagerService::ReleaseAbility(
 int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityRequest)
 {
     HILOG_DEBUG("%{public}s begin", __func__);
-
     auto abilityInfo = abilityRequest.abilityInfo;
     auto callerUid = abilityRequest.callerUid;
     auto targetUid = abilityInfo.applicationInfo.uid;
-
     if (AbilityUtil::ROOT_UID == callerUid) {
         HILOG_DEBUG("uid is root,ability cannot be called.");
         return RESOLVE_CALL_NO_PERMISSIONS;
     }
-
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-
-    auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
-    if (callerUid != SYSTEM_UID && !isSystemApp) {
+    auto isCallerSystemApp = bms->CheckIsSystemAppByUid(callerUid);
+    auto isTargetSystemApp = bms->CheckIsSystemAppByUid(targetUid);
+    HILOG_ERROR("isCallerSystemApp:%{public}d, isTargetSystemApp:%{public}d",
+        isCallerSystemApp, isTargetSystemApp);
+    if (callerUid != SYSTEM_UID && !isCallerSystemApp) {
         HILOG_DEBUG("caller is common app.");
         std::string bundleName;
         bool result = bms->GetBundleNameForUid(callerUid, bundleName);
@@ -3565,7 +3564,7 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
             HILOG_ERROR("GetBundleNameForUid frome bms fail.");
             return RESOLVE_CALL_NO_PERMISSIONS;
         }
-        if (bundleName != abilityInfo.bundleName && callerUid != targetUid) {
+        if (bundleName != abilityInfo.bundleName && callerUid != targetUid && !isTargetSystemApp) {
             HILOG_ERROR("the bundlename of caller is different from target one, caller: %{public}s "
                         "target: %{public}s",
                 bundleName.c_str(),
@@ -3575,9 +3574,7 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
     } else {
         HILOG_DEBUG("caller is systemapp or system ability.");
     }
-
     HILOG_DEBUG("the caller has permission to resolve the callproxy of common ability.");
-
     // check whether the target ability is singleton mode and page type.
     if (abilityInfo.type == AppExecFwk::AbilityType::PAGE &&
         abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON) {
@@ -3586,7 +3583,6 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
         HILOG_ERROR("called ability is not common ability or singleton.");
         return RESOLVE_CALL_ABILITY_TYPE_ERR;
     }
-
     return ERR_OK;
 }
 
