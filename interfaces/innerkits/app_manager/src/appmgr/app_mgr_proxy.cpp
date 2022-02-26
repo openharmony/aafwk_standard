@@ -537,5 +537,73 @@ int AppMgrProxy::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IR
     }
     return reply.ReadInt32();
 }
+
+int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
+    int32_t sharedFd, pid_t &renderPid)
+{
+    if (renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
+        APP_LOGE("Invalid params, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
+            renderParam.c_str(), ipcFd, sharedFd);
+        return -1;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        APP_LOGE("WriteInterfaceToken faild");
+        return ERR_FLATTEN_OBJECT;
+    }
+
+    if (!data.WriteString(renderParam)) {
+        APP_LOGE("want paramSize failed.");
+        return -1;
+    }
+
+    if (!data.WriteFileDescriptor(ipcFd) || !data.WriteFileDescriptor(sharedFd)) {
+        APP_LOGE("want fd failed, ipcFd:%{public}d, sharedFd:%{public}d", ipcFd, sharedFd);
+        return -1;
+    }
+
+    int32_t ret =
+        Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::START_RENDER_PROCESS), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("StartRenderProcess SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+
+    auto result = reply.ReadInt32();
+    renderPid = reply.ReadInt32();
+    if (result != 0) {
+        APP_LOGW("StartRenderProcess failed, result: %{public}d", ret);
+        return ret;
+    }
+    return 0;
+}
+
+void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler)
+{
+    if (!renderScheduler) {
+        APP_LOGE("renderScheduler is null");
+        return;
+    }
+
+    APP_LOGD("AttachRenderProcess start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return;
+    }
+    if (!data.WriteParcelable(renderScheduler)) {
+        APP_LOGE("renderScheduler write failed.");
+        return;
+    }
+
+    if (!SendTransactCmd(IAppMgr::Message::ATTACH_RENDER_PROCESS, data, reply)) {
+        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS faild");
+        return;
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -29,7 +29,7 @@ public:
     /**
      * Constructor.
      */
-    AppSpawnClient();
+    explicit AppSpawnClient(bool isWebViewSpawn = false);
 
     /**
      * Destructor

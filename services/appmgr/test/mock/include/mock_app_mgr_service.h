@@ -48,6 +48,8 @@ public:
     MOCK_METHOD2(GetSystemMemoryAttr, void(SystemMemoryAttr &memoryInfo, std::string &strConfig));
     MOCK_METHOD0(StartupResidentProcess, void());
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
+    MOCK_METHOD4(StartRenderProcess, int(const std::string&, int32_t, int32_t, pid_t&));
+    MOCK_METHOD1(AttachRenderProcess, void(const sptr<IRemoteObject> &renderScheduler));
     MOCK_METHOD1(RegisterApplicationStateObserver, int32_t(const sptr<IApplicationStateObserver> &observer));
     MOCK_METHOD1(UnregisterApplicationStateObserver, int32_t(const sptr<IApplicationStateObserver> &observer));
     MOCK_METHOD3(ScheduleAcceptWantDone,
