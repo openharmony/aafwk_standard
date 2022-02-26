@@ -305,9 +305,15 @@ void JsAbility::OnConfigurationUpdated(const Configuration &configuration)
 
     HandleScope handleScope(jsRuntime_);
     auto& nativeEngine = jsRuntime_.GetNativeEngine();
-    JsAbilityContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, GetAbilityContext()->GetConfiguration());
+    auto fullConfig = GetAbilityContext()->GetConfiguration();
+    if (!fullConfig) {
+        HILOG_ERROR("configuration is nullptr.");
+        return;
+    }
+
+    JsAbilityContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, fullConfig);
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
-        reinterpret_cast<napi_env>(&nativeEngine), configuration);
+        reinterpret_cast<napi_env>(&nativeEngine), *fullConfig);
     NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
     CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
@@ -521,6 +527,14 @@ void JsAbility::DoOnForeground(const Want &want)
             HILOG_INFO("set window mode = %{public}d.", windowMode);
         }
     }
+
+    auto window = scene_->GetMainWindow();
+    if (window) {
+        HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", window->GetWindowId());
+        OHOS::sptr<OHOS::Rosen::IDisplayMoveListener> displayMoveListener(this);
+        window->RegisterDisplayMoveListener(displayMoveListener);
+    }
+
     HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
     scene_->GoForeground(Ability::sceneFlag_);
     HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);

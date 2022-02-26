@@ -672,11 +672,6 @@ void AbilityThread::ScheduleRestoreAbilityState(const PacMap &state)
 void AbilityThread::ScheduleUpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("AbilityThread::ScheduleUpdateConfiguration begin");
-    if (abilityImpl_ == nullptr) {
-        APP_LOGE("AbilityThread::ScheduleUpdateConfiguration abilityImpl_ is nullptr");
-        return;
-    }
-
     wptr<AbilityThread> weak = this;
     auto task = [weak, config]() {
         auto abilityThread = weak.promote();
