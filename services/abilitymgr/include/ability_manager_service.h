@@ -912,7 +912,6 @@ public:
         KEY_DUMP_WAIT_QUEUE,
         KEY_DUMP_SERVICE,
         KEY_DUMP_DATA,
-        KEY_DUMP_SYSTEM_UI,
         KEY_DUMP_FOCUS_ABILITY,
         KEY_DUMP_WINDOW_MODE,
         KEY_DUMP_MISSION_LIST,
@@ -927,7 +926,6 @@ public:
         KEY_DUMPSYS_PENDING,
         KEY_DUMPSYS_PROCESS,
         KEY_DUMPSYS_DATA,
-        KEY_DUMPSYS_SYSTEM_UI,
     };
 
     friend class AbilityStackManager;
@@ -1056,7 +1054,6 @@ private:
     void DumpWaittingAbilityQueueInner(const std::string &args, std::vector<std::string> &info);
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
-    void SystemDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
     void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
@@ -1094,8 +1091,6 @@ private:
     void DumpSysProcess(
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DataDumpSysStateInner(
-        const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
-    void SystemDumpSysStateInner(
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
 
     void InitConnectManager(int32_t userId, bool switchUser);
