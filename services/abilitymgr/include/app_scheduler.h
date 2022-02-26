@@ -244,7 +244,7 @@ public:
     /**
      * Start a resident process
      */
-    void StartupResidentProcess();
+    void StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos);
 
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
     int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);

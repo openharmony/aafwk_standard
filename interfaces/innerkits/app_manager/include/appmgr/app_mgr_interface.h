@@ -139,7 +139,7 @@ public:
     /**
      * Start a resident process
      */
-    virtual void StartupResidentProcess() = 0;
+    virtual void StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos) = 0;
 
     /**
      * Register application or process state observer.

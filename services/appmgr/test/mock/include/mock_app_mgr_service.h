@@ -46,7 +46,7 @@ public:
     MOCK_METHOD1(SetAppFreezingTime, void(int time));
     MOCK_METHOD1(ClearUpApplicationData, int32_t(const std::string &bundleName));
     MOCK_METHOD2(GetSystemMemoryAttr, void(SystemMemoryAttr &memoryInfo, std::string &strConfig));
-    MOCK_METHOD0(StartupResidentProcess, void());
+    MOCK_METHOD1(StartupResidentProcess, void(const std::vector<AppExecFwk::BundleInfo> &bundleInfos));
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
     MOCK_METHOD4(StartRenderProcess, int(const std::string&, int32_t, int32_t, pid_t&));
     MOCK_METHOD1(AttachRenderProcess, void(const sptr<IRemoteObject> &renderScheduler));

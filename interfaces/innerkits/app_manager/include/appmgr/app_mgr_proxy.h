@@ -131,7 +131,7 @@ public:
     /**
      * Start a resident process
      */
-    virtual void StartupResidentProcess() override;
+    virtual void StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos) override;
 
     /**
      * Register application or process state observer.
