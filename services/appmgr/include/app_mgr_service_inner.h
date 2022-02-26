@@ -50,7 +50,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 using OHOS::AAFwk::Want;
-
 class AppMgrServiceInner : public std::enable_shared_from_this<AppMgrServiceInner> {
 public:
     AppMgrServiceInner();
@@ -794,7 +793,8 @@ private:
      * @return
      */
     void NotifyAppStatus(const std::string &bundleName, const std::string &eventData);
-
+    void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
+    void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;

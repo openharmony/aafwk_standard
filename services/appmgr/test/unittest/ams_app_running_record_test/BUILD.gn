@@ -63,6 +63,7 @@ ohos_unittest("AmsAppRunningRecordTest") {
   external_deps = [
     "appspawn:appspawn_socket_client",
     "bytrace_standard:bytrace_core",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

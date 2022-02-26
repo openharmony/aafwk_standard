@@ -133,6 +133,7 @@ ohos_shared_library("libams") {
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hicollie_native:libhicollie",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
