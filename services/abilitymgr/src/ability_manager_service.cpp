@@ -2543,11 +2543,22 @@ int AbilityManagerService::GenerateAbilityRequest(
         want, abilityInfoFlag, userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
-        int ret = GetAbilityInfoFromExtension(want, request.abilityInfo, userId);
-        if (!ret) {
-            HILOG_ERROR("Get ability info failed.");
+        std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
+        bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos);
+        if (extensionInfos.size() <= 0) {
+            HILOG_ERROR("Get extension info failed.");
             return RESOLVE_ABILITY_ERR;
         }
+
+        AppExecFwk::ExtensionAbilityInfo extensionInfo = extensionInfos.front();
+        if (extensionInfo.bundleName.empty() || extensionInfo.name.empty()) {
+            HILOG_ERROR("extensionInfo empty.");
+            return RESOLVE_ABILITY_ERR;
+        }
+        HILOG_DEBUG("QueryExtensionAbilityInfo, extension ability info found, name=%{public}s",
+            extensionInfo.name.c_str());
+        // For compatibility translates to AbilityInfo
+        InitAbilityInfoFromExtension(extensionInfo, request.abilityInfo);
     }
     HILOG_DEBUG("Query ability name: %{public}s, is stage mode: %{public}d",
         request.abilityInfo.name.c_str(), request.abilityInfo.isStageBasedModel);
@@ -2556,26 +2567,16 @@ int AbilityManagerService::GenerateAbilityRequest(
         request.abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     }
 
-    auto appName = request.abilityInfo.applicationInfo.name;
-    auto appFlag = (AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION |
-        AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION |
-        AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_METADATA);
-    bms->GetApplicationInfo(appName, appFlag, userId, request.appInfo);
-    if (request.appInfo.name.empty() || request.appInfo.bundleName.empty()) {
+    if (request.abilityInfo.applicationInfo.name.empty() || request.abilityInfo.applicationInfo.bundleName.empty()) {
         HILOG_ERROR("Get app info failed.");
         return RESOLVE_APP_ERR;
     }
-    HILOG_DEBUG("Query app name: %{public}s,", request.appInfo.name.c_str());
+    request.appInfo = request.abilityInfo.applicationInfo;
+    request.compatibleVersion = request.appInfo.apiCompatibleVersion;
+    request.uid = request.appInfo.uid;
+    HILOG_DEBUG("End, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
+        request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
 
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!bms->GetBundleInfo(request.appInfo.bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT,
-        bundleInfo, userId)) {
-        HILOG_ERROR("Failed to get bundle info when generate ability request.");
-        return RESOLVE_APP_ERR;
-    }
-    request.compatibleVersion = bundleInfo.compatibleVersion;
-    request.uid = bundleInfo.uid;
-    request.abilityInfo.applicationInfo = request.appInfo;
     return ERR_OK;
 }
 
@@ -4052,6 +4053,8 @@ bool AbilityManagerService::IsAbilityControllerForeground(const std::string &bun
 int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
     AppExecFwk::AbilityInfo &abilityInfo)
 {
+    abilityInfo.applicationName = extensionInfo.applicationInfo.name;
+    abilityInfo.applicationInfo = extensionInfo.applicationInfo;
     abilityInfo.bundleName = extensionInfo.bundleName;
     abilityInfo.package = extensionInfo.moduleName;
     abilityInfo.moduleName = extensionInfo.moduleName;
@@ -4077,40 +4080,6 @@ int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::Extensio
     abilityInfo.metadata = extensionInfo.metadata;
     abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     return 0;
-}
-
-int32_t AbilityManagerService::GetAbilityInfoFromExtension(
-    const Want &want, AppExecFwk::AbilityInfo &abilityInfo, const int32_t userId)
-{
-    HILOG_DEBUG("%{public}s, userId : %{public}d", __func__, userId);
-    ElementName elementName = want.GetElement();
-    std::string bundleName = elementName.GetBundleName();
-    std::string abilityName = elementName.GetAbilityName();
-    AppExecFwk::BundleInfo bundleInfo;
-    AppExecFwk::BundleMgrClient bundleClient;
-    auto bundleFlag = AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO;
-
-    if (!bundleClient.GetBundleInfo(bundleName, bundleFlag, bundleInfo, userId)) {
-        auto bms = GetBundleManager();
-        CHECK_POINTER_AND_RETURN(bms, RESOLVE_APP_ERR);
-        if (!bms->GetBundleInfo(bundleName, bundleFlag, bundleInfo, userId)) {
-            HILOG_ERROR("Failed to get bundle info when generate ability request.");
-            return RESOLVE_APP_ERR;
-        }
-    }
-    bool found = false;
-    for (auto &extensionInfo: bundleInfo.extensionInfos) {
-        if (extensionInfo.name != abilityName) {
-            continue;
-        }
-        found = true;
-        HILOG_DEBUG("GetExtensionAbilityInfo, extension ability info found, name=%{public}s", abilityName.c_str());
-        abilityInfo.applicationName = bundleInfo.applicationInfo.name;
-        abilityInfo.applicationInfo = bundleInfo.applicationInfo;
-        InitAbilityInfoFromExtension(extensionInfo, abilityInfo);
-        break;
-    }
-    return found;
 }
 
 int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer)
