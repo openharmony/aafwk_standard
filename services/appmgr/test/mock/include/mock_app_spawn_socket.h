@@ -26,7 +26,7 @@ namespace OHOS {
 namespace AppExecFwk {
 class MockAppSpawnSocket : public AppSpawnSocket {
 public:
-    MockAppSpawnSocket() = default;
+    MockAppSpawnSocket() : AppSpawnSocket(false) {}
     virtual ~MockAppSpawnSocket() = default;
 
     MOCK_METHOD0(OpenAppSpawnConnection, ErrCode());

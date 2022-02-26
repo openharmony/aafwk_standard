@@ -57,9 +57,12 @@ public:
      */
     void SetBundleManager(sptr<IBundleMgr> bundleManager);
 
+    std::shared_ptr<AppSpawnClient> GetWebviewSpawnClient();
+
 private:
     std::shared_ptr<AppSpawnClient> appSpawnClient_;
     sptr<IBundleMgr> bundleManager_;
+    std::shared_ptr<AppSpawnClient> webviewSpawnClient_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

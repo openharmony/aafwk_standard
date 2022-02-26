@@ -25,6 +25,7 @@
 #include "app_mgr_constants.h"
 #include "bundle_info.h"
 #include "iapp_state_callback.h"
+#include "irender_scheduler.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"
 #include "istart_specified_ability_response.h"
@@ -231,6 +232,25 @@ public:
      * @return Returns true on success, others on failure.
      */
     virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
+    /**
+     * Start webview render process, called by webview host.
+     *
+     * @param renderParam, params passed to renderprocess.
+     * @param ipcFd, ipc file descriptior for web browser and render process.
+     * @param sharedFd, shared memory file descriptior.
+     * @param renderPid, created render pid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
+        int32_t sharedFd, pid_t &renderPid);
+
+    /**
+     * Render process call this to attach app manager service.
+     *
+     * @param renderScheduler, scheduler of render process.
+     */
+    virtual void AttachRenderProcess(const sptr<IRenderScheduler> &renderScheduler);
 
 private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);
