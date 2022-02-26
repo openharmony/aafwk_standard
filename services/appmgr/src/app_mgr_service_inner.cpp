@@ -576,7 +576,6 @@ int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInf
     for (const auto &item : appRunningManager_->GetAppRunningRecordMap()) {
         const auto &appRecord = item.second;
         int32_t userId = static_cast<int32_t>(appRecord->GetUid() / USER_SCALE);
-
         if ((std::find(ids.begin(), ids.end(), userId) != ids.end()) && (result == ERR_OK)) {
             if (isPerm) {
                 GetRunningProcesses(appRecord, info);
