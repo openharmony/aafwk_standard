@@ -2536,8 +2536,11 @@ int AbilityManagerService::GenerateAbilityRequest(
     if (want.GetAction().compare(ACTION_CHOOSE) == 0) {
         return ShowPickerDialog(want, userId);
     }
-    bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
-        userId, request.abilityInfo);
+    auto abilityInfoFlag = (AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION |
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_PERMISSION |
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_METADATA);
+    bms->QueryAbilityInfo(
+        want, abilityInfoFlag, userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
         int ret = GetAbilityInfoFromExtension(want, request.abilityInfo, userId);
@@ -2554,7 +2557,9 @@ int AbilityManagerService::GenerateAbilityRequest(
     }
 
     auto appName = request.abilityInfo.applicationInfo.name;
-    auto appFlag = AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION;
+    auto appFlag = (AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION |
+        AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_PERMISSION |
+        AppExecFwk::ApplicationFlag::GET_APPLICATION_INFO_WITH_METADATA);
     bms->GetApplicationInfo(appName, appFlag, userId, request.appInfo);
     if (request.appInfo.name.empty() || request.appInfo.bundleName.empty()) {
         HILOG_ERROR("Get app info failed.");
@@ -2570,7 +2575,7 @@ int AbilityManagerService::GenerateAbilityRequest(
     }
     request.compatibleVersion = bundleInfo.compatibleVersion;
     request.uid = bundleInfo.uid;
-
+    request.abilityInfo.applicationInfo = request.appInfo;
     return ERR_OK;
 }
 
@@ -4069,6 +4074,7 @@ int32_t AbilityManagerService::InitAbilityInfoFromExtension(AppExecFwk::Extensio
     abilityInfo.isModuleJson = true;
     abilityInfo.isStageBasedModel = true;
     abilityInfo.process = extensionInfo.process;
+    abilityInfo.metadata = extensionInfo.metadata;
     abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     return 0;
 }
