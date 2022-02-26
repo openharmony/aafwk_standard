@@ -91,7 +91,7 @@ int MissionListManager::StartAbility(const std::shared_ptr<AbilityRecord> &curre
 {
     auto isSpecified = (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SPECIFIED);
     if (isSpecified) {
-        EnqueueWaittingAbility(abilityRequest);
+        EnqueueWaittingAbilityToFront(abilityRequest);
         DelayedSingleton<AppScheduler>::GetInstance()->StartSpecifiedAbility(
             abilityRequest.want, abilityRequest.abilityInfo);
         return 0;
@@ -200,6 +200,19 @@ void MissionListManager::EnqueueWaittingAbility(const AbilityRequest &abilityReq
 {
     waittingAbilityQueue_.push(abilityRequest);
     return;
+}
+
+void MissionListManager::EnqueueWaittingAbilityToFront(const AbilityRequest &abilityRequest)
+{
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    std::queue<AbilityRequest> abilityQueue;
+    abilityQueue.push(abilityRequest);
+    waittingAbilityQueue_.swap(abilityQueue);
+    while (!abilityQueue.empty()) {
+        AbilityRequest tempAbilityRequest = abilityQueue.front();
+        abilityQueue.pop();
+        waittingAbilityQueue_.push(tempAbilityRequest);
+    }
 }
 
 void MissionListManager::StartWaittingAbility()
@@ -2072,22 +2085,44 @@ void MissionListManager::OnAcceptWantResponse(const AAFwk::Want &want, const std
     auto currentTopAbility = GetCurrentTopAbilityLocked();
     auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
 
-    auto mission = GetMissionBySpecifiedFlag(flag);
-    if (mission) {
-        auto ability = mission->GetAbilityRecord();
-        if (!ability) {
+    if (!flag.empty()) {
+        auto mission = GetMissionBySpecifiedFlag(flag);
+        if (mission) {
+            auto ability = mission->GetAbilityRecord();
+            if (!ability) {
+                return;
+            }
+            ability->SetWant(abilityRequest.want);
+            ability->SetIsNewWant(true);
+
+            auto isCallerFromLauncher = (callerAbility && callerAbility->IsLauncherAbility());
+            MoveMissionToFront(mission->GetMissionId(), isCallerFromLauncher);
             return;
         }
-        ability->SetWant(abilityRequest.want);
-        ability->SetIsNewWant(true);
-
-        auto isCallerFromLauncher = (callerAbility && callerAbility->IsLauncherAbility());
-        MoveMissionToFront(mission->GetMissionId(), isCallerFromLauncher);
-        return;
     }
 
     abilityRequest.specifiedFlag = flag;
     StartAbilityLocked(currentTopAbility, callerAbility, abilityRequest);
+}
+
+void MissionListManager::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Want &want)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    if (waittingAbilityQueue_.empty()) {
+        return;
+    }
+    waittingAbilityQueue_.pop();
+
+    if (waittingAbilityQueue_.empty()) {
+        return;
+    }
+    AbilityRequest abilityRequest = waittingAbilityQueue_.front();
+    waittingAbilityQueue_.pop();
+
+    auto currentTopAbility = GetCurrentTopAbilityLocked();
+    auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
+    StartAbility(currentTopAbility, callerAbility, abilityRequest);
 }
 
 std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const std::string &flag) const
