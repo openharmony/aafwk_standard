@@ -126,6 +126,5 @@ ohos_moduletest("ability_mgr_module_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":ability_mgr_module_test" ]
+  # deps = [ ":ability_mgr_module_test" ]
 }

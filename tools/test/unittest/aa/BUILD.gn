@@ -160,7 +160,7 @@ group("unittest") {
   testonly = true
 
   deps = [
-    ":aa_command_dump_test",
+    # ":aa_command_dump_test",
     ":aa_command_screen_test",
     ":aa_command_start_test",
     ":aa_command_stop_service_test",
