@@ -46,7 +46,8 @@ group("moduletest") {
   deps = [
     "moduletest/ability_mgr_service_test:moduletest",
     "moduletest/ability_record_test:moduletest",
-    "moduletest/ability_stack_test:moduletest",
+
+    # "moduletest/ability_stack_test:moduletest",
     "moduletest/common/ams:moduletest",
     "moduletest/dump_module_test:moduletest",
     "moduletest/ipc_ability_connect_test:moduletest",

@@ -60,6 +60,5 @@ ohos_unittest("AmsMgrSchedulerTest") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":AmsMgrSchedulerTest" ]
+  # deps = [ ":AmsMgrSchedulerTest" ]
 }

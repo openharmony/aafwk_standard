@@ -85,6 +85,5 @@ ohos_unittest("FmsFormMgrDeathCallbackTest") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":FmsFormMgrDeathCallbackTest" ]
+  # deps = [ ":FmsFormMgrDeathCallbackTest" ]
 }
