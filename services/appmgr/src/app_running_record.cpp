@@ -360,7 +360,12 @@ void AppRunningRecord::AddAbilityStageBySpecifiedAbility(const std::string &bund
 {
     HapModuleInfo hapModuleInfo;
     if (GetTheModuleInfoNeedToUpdated(bundleName, hapModuleInfo)) {
-        SendEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT);
+        if (!eventHandler_->HasInnerEvent(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG)) {
+            SendEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG,
+                AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT);
+        } else {
+            APP_LOGI("%{public}s START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG is exist, don't set new event.", __func__);
+        }
         appLifeCycleDeal_->AddAbilityStage(hapModuleInfo);
     }
 }
@@ -369,7 +374,13 @@ void AppRunningRecord::AddAbilityStageDone()
 {
     APP_LOGI("Add ability stage done. bundle %{public}s and eventId %{public}d", mainBundleName_.c_str(),
         static_cast<int>(eventId_));
-    eventHandler_->RemoveEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG, eventId_);
+    if (eventHandler_->HasInnerEvent(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG)) {
+        eventHandler_->RemoveEvent(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG);
+    }
+
+    if (eventHandler_->HasInnerEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG)) {
+        eventHandler_->RemoveEvent(AMSEventHandler::ADD_ABILITY_STAGE_INFO_TIMEOUT_MSG);
+    }
     // Should proceed to the next notification
 
     if (isSpecifiedAbility_) {
@@ -834,6 +845,11 @@ std::shared_ptr<PriorityObject> AppRunningRecord::GetPriorityObject()
     return priorityObject_;
 }
 
+void AppRunningRecord::SendEventForSpecifiedAbility(uint32_t msg, int64_t timeOut)
+{
+    SendEvent(msg, timeOut);
+}
+
 void AppRunningRecord::SendEvent(uint32_t msg, int64_t timeOut)
 {
     if (!eventHandler_) {
@@ -971,13 +987,15 @@ bool AppRunningRecord::IsStartSpecifiedAbility() const
 void AppRunningRecord::ScheduleAcceptWant(const std::string &moduleName)
 {
     SendEvent(
-        AMSEventHandler::START_MULTI_INSTANCES_ABILITY_MSG, AMSEventHandler::START_MULTI_INSTANCES_ABILITY_TIMEOUT);
+        AMSEventHandler::START_SPECIFIED_ABILITY_TIMEOUT_MSG, AMSEventHandler::START_SPECIFIED_ABILITY_TIMEOUT);
     appLifeCycleDeal_->ScheduleAcceptWant(SpecifiedWant_, moduleName);
 }
 
 void AppRunningRecord::ScheduleAcceptWantDone()
 {
-    eventHandler_->RemoveEvent(AMSEventHandler::START_MULTI_INSTANCES_ABILITY_MSG, appRecordId_);
+    APP_LOGI("Schedule accept want done. bundle %{public}s and eventId %{public}d", mainBundleName_.c_str(),
+        static_cast<int>(eventId_));
+    eventHandler_->RemoveEvent(AMSEventHandler::START_SPECIFIED_ABILITY_TIMEOUT_MSG, eventId_);
 }
 
 const AAFwk::Want &AppRunningRecord::GetSpecifiedWant() const

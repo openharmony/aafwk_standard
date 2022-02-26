@@ -132,6 +132,7 @@ ohos_shared_library("libams") {
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "hisysevent_native:libhisysevent",
     "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
