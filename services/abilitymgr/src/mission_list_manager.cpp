@@ -588,7 +588,8 @@ void MissionListManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, 
         CHECK_POINTER(abilityRecord);
         std::string element = abilityRecord->GetWant().GetElement().GetURI();
         HILOG_DEBUG("ability: %{public}s", element.c_str());
-        abilityRecord->ForegroundAbility();
+        abilityRecord->ForegroundAbility(abilityRecord->lifeCycleStateInfo_.sceneFlagBak);
+        abilityRecord->lifeCycleStateInfo_.sceneFlagBak = 0;
     }
 }
 
