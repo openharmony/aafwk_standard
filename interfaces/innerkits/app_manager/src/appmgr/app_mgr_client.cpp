@@ -414,5 +414,37 @@ int AppMgrClient::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<I
 
     return service->GetAbilityRecordsByProcessID(pid, tokens);
 }
+
+int AppMgrClient::StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
+    int32_t sharedFd, pid_t &renderPid)
+{
+    if (!remote_) {
+        ConnectAppMgrService();
+    }
+
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service != nullptr) {
+        return service->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
+    }
+    return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+}
+
+void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderScheduler)
+{
+    if (!renderScheduler) {
+        APP_LOGI("renderScheduler is nullptr");
+        return;
+    }
+
+    if (!remote_) {
+        ConnectAppMgrService();
+    }
+
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service != nullptr) {
+        APP_LOGI("AttachRenderProcess");
+        service->AttachRenderProcess(renderScheduler->AsObject());
+    }
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

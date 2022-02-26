@@ -197,6 +197,11 @@ public:
      */
     int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) override;
 
+    virtual int StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
+        int32_t sharedFd, pid_t &renderPid) override;
+
+    virtual void AttachRenderProcess(const sptr<IRemoteObject> &shceduler) override;
+
 private:
     /**
      * Init, Initialize application services.

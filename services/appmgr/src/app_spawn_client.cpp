@@ -25,9 +25,9 @@ const int32_t CONNECT_RETRY_DELAY = 200 * 1000;  // 200ms
 const int32_t CONNECT_RETRY_MAX_TIMES = 15;
 }  // namespace
 
-AppSpawnClient::AppSpawnClient()
+AppSpawnClient::AppSpawnClient(bool isWebViewSpawn)
 {
-    socket_ = std::make_shared<AppSpawnSocket>();
+    socket_ = std::make_shared<AppSpawnSocket>(isWebViewSpawn);
     state_ = SpawnConnectionState::STATE_NOT_CONNECT;
 }
 

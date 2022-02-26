@@ -58,6 +58,7 @@ constexpr int KILL_PROCESS_DELAYTIME_MICRO_SECONDS = 200;
 const std::string CLASS_NAME = "ohos.app.MainThread";
 const std::string FUNC_NAME = "main";
 const std::string SO_PATH = "system/lib64/libmapleappkit.z.so";
+const std::string RENDER_PARAM = "invalidparam";
 const int32_t SIGNAL_KILL = 9;
 const std::string REQ_PERMISSION = "ohos.permission.LOCATION_IN_BACKGROUND";
 constexpr int32_t SYSTEM_UID = 1000;
@@ -65,6 +66,9 @@ constexpr int32_t USER_SCALE = 200000;
 #define ENUM_TO_STRING(s) #s
 
 constexpr int32_t BASE_USER_RANGE = 200000;
+
+constexpr ErrCode APPMGR_ERR_OFFSET = ErrCodeOffset(SUBSYS_APPEXECFWK, 0x01);
+constexpr ErrCode ERR_ALREADY_EXIST_RENDER = APPMGR_ERR_OFFSET + 100; // error code for already exist render.
 
 int32_t GetUserIdByUid(int32_t uid)
 {
@@ -1315,6 +1319,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.accessTokenId = (*bundleInfoIter).applicationInfo.accessTokenId;
     startMsg.apl = (*bundleInfoIter).applicationInfo.appPrivilegeLevel;
     startMsg.bundleName = bundleName;
+    startMsg.renderParam = RENDER_PARAM;
     APP_LOGD("StartProcess come, accessTokenId: %{public}d, apl: %{public}s, bundleName: %{public}s",
         startMsg.accessTokenId, startMsg.apl.c_str(), bundleName.c_str());
 
@@ -1337,6 +1342,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     APP_LOGI("newPid:%{public}d uid:%{public}d", pid, startMsg.uid);
     appRecord->GetPriorityObject()->SetPid(pid);
     appRecord->SetUid(startMsg.uid);
+    appRecord->SetStartMsg(startMsg);
     OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     appRecord->SetAppMgrServiceInner(weak_from_this());
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
@@ -1405,9 +1411,14 @@ void AppMgrServiceInner::ClearRecentAppList()
     appProcessManager_->ClearRecentAppList();
 }
 
-void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote)
+void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool isRenderProcess)
 {
     APP_LOGE("On remote died.");
+    if (isRenderProcess) {
+        OnRenderRemoteDied(remote);
+        return;
+    }
+
     auto appRecord = appRunningManager_->OnRemoteDied(remote);
     if (appRecord) {
         // clear uri permission
@@ -1426,6 +1437,13 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote)
         OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
         RemoveAppFromRecentListById(appRecord->GetRecordId());
         OnProcessDied(appRecord);
+
+        // kill render if exist.
+        auto renderRecord = appRecord->GetRenderRecord();
+        if (renderRecord && renderRecord->GetPid() > 0) {
+            APP_LOGD("Kill render process when webviehost died.");
+            KillProcessByPid(renderRecord->GetPid());
+        }
     }
 
     if (appRecord && appRecord->IsKeepAliveApp()) {
@@ -2314,6 +2332,123 @@ int AppMgrServiceInner::VerifyObserverPermission()
     }
     APP_LOGE("%{public}s: Permission verification failed", __func__);
     return ERR_PERMISSION_DENIED;
+}
+
+int AppMgrServiceInner::StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
+    int32_t ipcFd, int32_t sharedFd, pid_t &renderPid)
+{
+    APP_LOGI("start render process, webview hostpid:%{public}d", hostPid);
+    if (hostPid <= 0 || renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
+        APP_LOGE("invalid param, hostPid:%{public}d, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
+            hostPid, renderParam.c_str(), ipcFd, sharedFd);
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!appRunningManager_) {
+        APP_LOGE("appRunningManager_ is , not start render process");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto appRecord = GetAppRunningRecordByPid(hostPid);
+    if (!appRecord) {
+        APP_LOGE("no such appRecord, hostpid:%{public}d", hostPid);
+        return ERR_INVALID_VALUE;
+    }
+
+    auto renderRecord = appRecord->GetRenderRecord();
+    if (renderRecord) {
+        APP_LOGW("already exit render process,do not request again, renderPid:%{public}d", renderRecord->GetPid());
+        renderPid = renderRecord->GetPid();
+        return ERR_ALREADY_EXIST_RENDER;
+    }
+
+    renderRecord = RenderRecord::CreateRenderRecord(hostPid, renderParam, ipcFd, sharedFd, appRecord);
+    if (!renderRecord) {
+        APP_LOGE("create render record failed, hostpid:%{public}d", hostPid);
+        return ERR_INVALID_VALUE;
+    }
+
+    return StartRenderProcessImpl(renderRecord, appRecord, renderPid);
+}
+
+void AppMgrServiceInner::AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler)
+{
+    APP_LOGD("attach render process start");
+    if (pid <= 0) {
+        APP_LOGE("invalid render process pid:%{public}d", pid);
+        return;
+    }
+    if (!scheduler) {
+        APP_LOGE("render scheduler is null");
+        return;
+    }
+
+    if (!appRunningManager_) {
+        APP_LOGE("appRunningManager_ is null");
+        return;
+    }
+
+    APP_LOGI("attach render process pid:%{public}d", pid);
+    auto appRecord = appRunningManager_->GetAppRunningRecordByRenderPid(pid);
+    if (!appRecord) {
+        APP_LOGE("no such app Record, pid:%{public}d", pid);
+        return;
+    }
+
+    auto renderRecord = appRecord->GetRenderRecord();
+    if (!renderRecord) {
+        APP_LOGE("no such render Record, pid:%{public}d", pid);
+        return;
+    }
+
+    sptr<AppDeathRecipient> appDeathRecipient = new AppDeathRecipient();
+    appDeathRecipient->SetEventHandler(eventHandler_);
+    appDeathRecipient->SetAppMgrServiceInner(shared_from_this());
+    appDeathRecipient->SetIsRenderProcess(true);
+    renderRecord->SetScheduler(scheduler);
+    renderRecord->SetDeathRecipient(appDeathRecipient);
+    renderRecord->RegisterDeathRecipient();
+
+    // notify fd to render process
+    scheduler->NotifyBrowserFd(renderRecord->GetIpcFd(), renderRecord->GetSharedFd());
+}
+
+int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecord> &renderRecord,
+    const std::shared_ptr<AppRunningRecord> appRecord, pid_t &renderPid)
+{
+    if (!renderRecord || !appRecord) {
+        APP_LOGE("renderRecord or appRecord is nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto webviewSpawnClient = remoteClientManager_->GetWebviewSpawnClient();
+    if (!webviewSpawnClient) {
+        APP_LOGE("webviewSpawnClient is null");
+        return ERR_INVALID_VALUE;
+    }
+
+    AppSpawnStartMsg startMsg = appRecord->GetStartMsg();
+    startMsg.renderParam = renderRecord->GetRenderParam();
+    pid_t pid = 0;
+    ErrCode errCode = webviewSpawnClient->StartProcess(startMsg, pid);
+    if (FAILED(errCode)) {
+        APP_LOGE("failed to spawn new render process, errCode %{public}08x", errCode);
+        return ERR_INVALID_VALUE;
+    }
+    renderPid = pid;
+    appRecord->SetRenderRecord(renderRecord);
+    renderRecord->SetPid(pid);
+    APP_LOGI("start render process successed, hostPid:%{public}d, pid:%{public}d uid:%{public}d",
+        renderRecord->GetHostPid(), pid, startMsg.uid);
+    return 0;
+}
+
+void AppMgrServiceInner::OnRenderRemoteDied(const wptr<IRemoteObject> &remote)
+{
+    APP_LOGE("On render remote died.");
+    if (appRunningManager_) {
+        appRunningManager_->OnRemoteRenderDied(remote);
+    }
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -183,6 +183,25 @@ public:
      */
     virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) = 0;
 
+    /**
+     * Start webview render process, called by webview host.
+     *
+     * @param renderParam, params passed to renderprocess.
+     * @param ipcFd, ipc file descriptior for web browser and render process.
+     * @param sharedFd, shared memory file descriptior.
+     * @param renderPid, created render pid.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
+        int32_t sharedFd, pid_t &renderPid) = 0;
+
+    /**
+     * Render process call this to attach app manager service.
+     *
+     * @param renderScheduler, scheduler of render process.
+     */
+    virtual void AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler) = 0;
+
     enum class Message {
         APP_ATTACH_APPLICATION = 0,
         APP_APPLICATION_FOREGROUNDED,
@@ -203,6 +222,8 @@ public:
         START_USER_TEST_PROCESS,
         SCHEDULE_ACCEPT_WANT_DONE,
         APP_GET_ABILITY_RECORDS_BY_PROCESS_ID,
+        START_RENDER_PROCESS,
+        ATTACH_RENDER_PROCESS,
     };
 };
 }  // namespace AppExecFwk
