@@ -419,7 +419,6 @@ void FormExtensionProviderClient::ClearOwner(const std::shared_ptr<FormExtension
 
 std::shared_ptr<FormExtension> FormExtensionProviderClient::GetOwner()
 {
-    APP_LOGE("%{public}s called.", __func__);
     std::shared_ptr<FormExtension> owner = nullptr;
     {
         std::lock_guard<std::mutex> lock(formExtensionMutex_);
