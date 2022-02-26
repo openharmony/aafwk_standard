@@ -80,6 +80,29 @@ NativeValue* CreateJsAbilityInfo(NativeEngine& engine, const AppExecFwk::Ability
     object->SetProperty("uri", CreateJsValue(engine, abilityInfo.uri));
 
     object->SetProperty("metaData", CreateJsCustomizeDataArray(engine, abilityInfo.metaData.customizeData));
+    object->SetProperty("metadata", CreateJsMetadataArray(engine, abilityInfo.metadata));
+    return objValue;
+}
+
+NativeValue* CreateJsMetadataArray(NativeEngine& engine, const std::vector<AppExecFwk::Metadata> &info)
+{
+    NativeValue* arrayValue = engine.CreateArray(info.size());
+    NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
+    uint32_t index = 0;
+    for (const auto& item : info) {
+        array->SetElement(index++, CreateJsMetadata(engine, item));
+    }
+    return arrayValue;
+}
+
+NativeValue* CreateJsMetadata(NativeEngine& engine, const AppExecFwk::Metadata &Info)
+{
+    NativeValue *objValue = engine.CreateObject();
+    NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    object->SetProperty("name", CreateJsValue(engine, Info.name));
+    object->SetProperty("value", CreateJsValue(engine, Info.value));
+    object->SetProperty("resource", CreateJsValue(engine, Info.resource));
     return objValue;
 }
 
@@ -151,6 +174,10 @@ NativeValue* CreateJsApplicationInfo(NativeEngine& engine, const AppExecFwk::App
     // metaData: Map<string, Array<CustomizeData>>;
     for (auto &item : applicationInfo.metaData) {
         object->SetProperty(item.first.c_str(), CreateJsCustomizeDataArray(engine, item.second));
+    }
+    // metadata: Map<string, Array<Metadata>>;
+    for (auto &item : applicationInfo.metadata) {
+        object->SetProperty(item.first.c_str(), CreateJsMetadataArray(engine, item.second));
     }
 
     return objValue;
