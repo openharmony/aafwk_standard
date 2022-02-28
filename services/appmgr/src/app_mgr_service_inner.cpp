@@ -1907,7 +1907,7 @@ void AppMgrServiceInner::RestartResidentProcess(std::shared_ptr<AppRunningRecord
     }
     std::vector<BundleInfo> infos;
     infos.emplace_back(bundleInfo);
-    APP_LOGI("he resident process [%{public}s] remaining restarts num is [%{public}d]",
+    APP_LOGI("the resident process [%{public}s] remaining restarts num is [%{public}d]",
         appRecord->GetProcessName().c_str(), (int)appRecord->GetRestartResidentProcCount());
     StartResidentProcess(infos, appRecord->GetRestartResidentProcCount());
 }
