@@ -28,6 +28,15 @@ class DataShareExtAbilityContext : public ExtensionContext {
 public:
     DataShareExtAbilityContext();
     virtual ~DataShareExtAbilityContext() = default;
+
+    using SelfType = DataShareExtAbilityContext;
+    static const size_t CONTEXT_TYPE_ID;
+
+protected:
+    bool IsContext(size_t contextTypeId) override
+    {
+        return contextTypeId == CONTEXT_TYPE_ID || ExtensionContext::IsContext(contextTypeId);
+    }
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
