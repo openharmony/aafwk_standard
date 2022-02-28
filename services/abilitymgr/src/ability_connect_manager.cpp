@@ -919,29 +919,10 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
         return;
     }
 
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME) {
-        AbilityRequest requestInfo;
-        requestInfo.want = abilityRecord->GetWant();
-        requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
-        requestInfo.appInfo = abilityRecord->GetApplicationInfo();
-
-        RemoveServiceAbility(abilityRecord);
-        StartAbilityLocked(requestInfo);
-        return;
-    }
-
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME) {
-        AbilityRequest requestInfo;
-        requestInfo.want = abilityRecord->GetWant();
-        requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
-        requestInfo.appInfo = abilityRecord->GetApplicationInfo();
-
-        RemoveServiceAbility(abilityRecord);
-        StartAbilityLocked(requestInfo);
-        return;
-    }
-
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME) {
+    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME ||
+        abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME ||
+        abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME ||
+        abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME) {
         AbilityRequest requestInfo;
         requestInfo.want = abilityRecord->GetWant();
         requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
