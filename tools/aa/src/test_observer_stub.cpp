@@ -30,6 +30,10 @@ TestObserverStub::~TestObserverStub()
 
 int TestObserverStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
+    if (data.ReadInterfaceToken() != GetDescriptor()) {
+        HILOG_ERROR("local descriptor is not equal to remote");
+        return ERR_TRANSACTION_FAILED;
+    }
     switch (code) {
         case static_cast<uint32_t>(ITestObserver::Message::AA_TEST_STATUS): {
             std::string msg = data.ReadString();

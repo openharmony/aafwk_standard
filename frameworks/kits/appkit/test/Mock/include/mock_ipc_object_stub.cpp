@@ -83,6 +83,10 @@ int IPCObjectStub::Dump(int fd, const std::vector<std::u16string> &args)
 
 int IPCObjectStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
+    if (data.ReadInterfaceToken() != GetDescriptor()) {
+        APP_LOGE("local descriptor is not equal to remote");
+        return ERR_TRANSACTION_FAILED;
+    }
     int result = ERR_NONE;
     switch (code) {
 #ifdef CONFIG_IPC_RPC

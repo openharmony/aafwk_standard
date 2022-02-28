@@ -29,7 +29,6 @@ namespace AAFwk {
  */
 class AbilityTokenStub : public IRemoteStub<IAbilityToken> {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"");
     AbilityTokenStub();
 
     virtual ~AbilityTokenStub();
