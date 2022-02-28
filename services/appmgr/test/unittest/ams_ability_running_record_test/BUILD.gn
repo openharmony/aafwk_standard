@@ -60,11 +60,11 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/services/appmgr:libams",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
   ]
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",

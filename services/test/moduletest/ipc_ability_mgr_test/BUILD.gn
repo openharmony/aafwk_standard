@@ -36,7 +36,6 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
     "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -46,6 +45,7 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

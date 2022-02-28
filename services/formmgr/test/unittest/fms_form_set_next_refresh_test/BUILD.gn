@@ -58,7 +58,6 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
     "${aafwk_path}/frameworks/kits/fmskit:fmskit_native",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${services_path}/formmgr:fms_target",
     "//base/miscservices/time/services:time_service",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
@@ -78,6 +77,7 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "form_runtime:form_manager",

@@ -23,7 +23,6 @@ config("module_private_config") {
   include_dirs = [
     "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
     "//EOSP/communication/libsoftbus/../../../foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
@@ -527,7 +526,6 @@ ohos_unittest("ability_impl_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
@@ -538,6 +536,7 @@ ohos_unittest("ability_impl_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "multimodalinput_base:libmmi-client",
@@ -623,7 +622,6 @@ ohos_unittest("form_provider_client_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/graphic/standard:libwmclient",
@@ -632,6 +630,7 @@ ohos_unittest("form_provider_client_test") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -927,6 +926,7 @@ ohos_unittest("ability_permission_test") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "multimodalinput_base:libmmi-client",
@@ -1026,7 +1026,6 @@ ohos_unittest("form_host_client_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/graphic/standard:libwmclient",
@@ -1037,6 +1036,7 @@ ohos_unittest("form_host_client_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_core",
     "form_runtime:fmskit_native",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",

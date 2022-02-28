@@ -90,7 +90,6 @@ ohos_shared_library("abilityms") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
@@ -105,6 +104,7 @@ ohos_shared_library("abilityms") {
   external_deps = [
     "ability_runtime:app_manager",
     "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",

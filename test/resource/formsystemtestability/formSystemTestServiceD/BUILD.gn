@@ -45,11 +45,11 @@ ohos_shared_library("formSystemTestServiceD") {
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/services/bundlemgr:libbms",
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "form_runtime:form_manager",

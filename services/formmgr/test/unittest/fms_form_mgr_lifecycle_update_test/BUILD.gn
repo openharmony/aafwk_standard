@@ -59,7 +59,6 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${services_path}/formmgr:fms_target",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -75,6 +74,7 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
