@@ -38,7 +38,6 @@ ohos_unittest("AmsLmksClientTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
@@ -46,6 +45,7 @@ ohos_unittest("AmsLmksClientTest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

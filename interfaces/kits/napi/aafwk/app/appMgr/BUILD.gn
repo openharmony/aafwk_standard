@@ -34,7 +34,6 @@ ohos_shared_library("napi_app_mgr") {
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/libs/libeventhandler:libeventhandler_target",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
@@ -43,6 +42,7 @@ ohos_shared_library("napi_app_mgr") {
 
   external_deps = [
     "ability_runtime:app_manager",
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

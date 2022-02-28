@@ -39,7 +39,6 @@ ohos_shared_library("abilitymanager") {
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/appexecfwk/standard/libs/libeventhandler:libeventhandler_target",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
@@ -50,6 +49,7 @@ ohos_shared_library("abilitymanager") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
