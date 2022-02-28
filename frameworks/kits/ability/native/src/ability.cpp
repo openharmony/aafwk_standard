@@ -3437,10 +3437,10 @@ void Ability::OnDestroy(Rosen::DisplayId displayId)
     APP_LOGI("%{public}s called.", __func__);
 }
 
-void Ability::OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent changeEvent)
+void Ability::OnChange(Rosen::DisplayId displayId)
 {
-    APP_LOGI("%{public}s start, displayId: %{public}" PRIu64", changeEvent: %{public}d.", __func__,
-        displayId, changeEvent);
+    APP_LOGI("%{public}s start, displayId: %{public}" PRIu64"", __func__,
+        displayId);
 
     // Get display
     auto display = Rosen::DisplayManager::GetInstance().GetDisplayById(displayId);

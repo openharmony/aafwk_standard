@@ -1498,7 +1498,7 @@ protected:
      */
     void OnCreate(Rosen::DisplayId displayId) override;
     void OnDestroy(Rosen::DisplayId displayId) override;
-    void OnChange(Rosen::DisplayId displayId, Rosen::DisplayChangeEvent changeEvent) override;
+    void OnChange(Rosen::DisplayId displayId) override;
 
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
