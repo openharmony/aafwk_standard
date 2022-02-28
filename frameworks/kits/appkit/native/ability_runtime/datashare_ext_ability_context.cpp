@@ -17,6 +17,8 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-    DataShareExtAbilityContext::DataShareExtAbilityContext() {}
+const size_t DataShareExtAbilityContext::CONTEXT_TYPE_ID(std::hash<const char*> {} ("DataShareExtAbilityContext"));
+
+DataShareExtAbilityContext::DataShareExtAbilityContext() {}
 }  // namespace AbilityRuntime
 }  // namespace OHOS
