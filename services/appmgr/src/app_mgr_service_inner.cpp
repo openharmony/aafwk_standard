@@ -680,7 +680,7 @@ bool AppMgrServiceInner::process_exist(pid_t &pid)
 
 bool AppMgrServiceInner::CheckAllProcessExist(std::list<pid_t> &pids)
 {
-    for (auto iter = pids.begin(); iter != pids.end(); ) {
+    for (auto iter = pids.begin(); iter != pids.end();) {
         if (!process_exist(*iter)) {
             iter = pids.erase(iter);
         } else {
@@ -2348,8 +2348,8 @@ void AppMgrServiceInner::SendHiSysEvent(const int32_t innerEventId, const int64_
             break;
     }
 
-    APP_LOGD("SendHiSysEvent, eventName=%{public}s, uidStr=%{public}s, pidStr=%{public}s, \
-        packageName=%{public}s, processName=%{public}s, msg=%{public}s",
+    APP_LOGD("SendHiSysEvent, eventName = %{public}s, uidStr = %{public}s, pidStr = %{public}s, \
+        packageName = %{public}s, processName = %{public}s, msg = %{public}s",
         eventName.c_str(),
         uidStr.c_str(),
         pidStr.c_str(),
