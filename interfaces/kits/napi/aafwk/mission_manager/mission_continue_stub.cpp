@@ -22,10 +22,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-namespace {
-    const std::string TAG = "MissionContinueStub";
-    const std::u16string MISSION_CONTINUE_STUB_TOKEN = u"ohos.DistributedSchedule.IMissionCallback";
-}
 
 MissionContinueStub::MissionContinueStub()
 {}
@@ -36,7 +32,7 @@ MissionContinueStub::~MissionContinueStub()
 int32_t MissionContinueStub::OnRemoteRequest(
     uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
-    if (data.ReadInterfaceToken() != MISSION_CONTINUE_STUB_TOKEN) {
+    if (data.ReadInterfaceToken() != GetDescriptor()) {
         HILOG_ERROR("Local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
@@ -54,5 +50,5 @@ int32_t MissionContinueStub::OnRemoteRequest(
         }
     }
 }
-}  // namespace AAFwk
-}  // namespace OHOS
+} // namespace AAFwk
+} // namespace OHOS

@@ -23,6 +23,10 @@ ErrCode StaticSubscriberProxy::OnCommonEventTriggered(CommonEventData* inData)
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return ERR_INVALID_VALUE;
+    }
+
     data.WriteParcelable(inData);
 
     int32_t st = Remote()->SendRequest(COMMAND_ON_COMMON_EVENT_TRIGGERED, data, reply, option);
