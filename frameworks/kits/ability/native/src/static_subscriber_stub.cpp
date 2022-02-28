@@ -20,6 +20,9 @@ namespace AppExecFwk {
 int StaticSubscriberStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply,
     MessageOption& option)
 {
+    if (data.ReadInterfaceToken() != GetDescriptor()) {
+        return ERR_TRANSACTION_FAILED;
+    }
     switch (code) {
         case COMMAND_ON_COMMON_EVENT_TRIGGERED: {
             CommonEventData* inData = data.ReadParcelable<CommonEventData>();
