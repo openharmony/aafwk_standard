@@ -53,7 +53,6 @@ ohos_unittest("AmsWorkFlowTest") {
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
@@ -68,6 +67,7 @@ ohos_unittest("AmsWorkFlowTest") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",

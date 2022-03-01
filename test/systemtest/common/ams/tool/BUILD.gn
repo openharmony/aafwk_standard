@@ -47,7 +47,6 @@ ohos_shared_library("system_test_ability_util_lib") {
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/jsoncpp:jsoncpp",
@@ -55,6 +54,7 @@ ohos_shared_library("system_test_ability_util_lib") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
