@@ -1130,5 +1130,21 @@ void ContextContainer::SetShowOnLockScreen(bool isAllow)
     baseContext_->SetShowOnLockScreen(isAllow);
     APP_LOGI("ContextContainer::SetShowOnLockScreen called end.");
 }
+
+bool ContextContainer::IsUpdatingConfigurations()
+{
+    if (baseContext_ != nullptr) {
+        return baseContext_->IsUpdatingConfigurations();
+    }
+    return false;
+}
+
+bool ContextContainer::PrintDrawnCompleted()
+{
+    if (baseContext_ != nullptr) {
+        return baseContext_->PrintDrawnCompleted();
+    }
+    return false;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

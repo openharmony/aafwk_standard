@@ -64,6 +64,16 @@ std::string AbilityContextImpl::GetDistributedFilesDir()
     return stageContext_ ? stageContext_->GetDistributedFilesDir() : "";
 }
 
+bool AbilityContextImpl::IsUpdatingConfigurations()
+{
+    return stageContext_ ? stageContext_->IsUpdatingConfigurations() : false;
+}
+
+bool AbilityContextImpl::PrintDrawnCompleted()
+{
+    return stageContext_ ? stageContext_->PrintDrawnCompleted() : false;
+}
+
 void AbilityContextImpl::SwitchArea(int mode)
 {
     HILOG_DEBUG("AbilityContextImpl::SwitchArea.");

@@ -73,6 +73,20 @@ public:
     virtual const std::shared_ptr<AbilityInfo> GetAbilityInfo() override;
 
     /**
+     * @brief Checks whether the configuration of this ability is changing.
+     *
+     * @return Returns true if the configuration of this ability is changing and false otherwise.
+     */
+    virtual bool IsUpdatingConfigurations() override;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    virtual bool PrintDrawnCompleted() override;
+
+    /**
      * @brief Obtains the Context object of the application.
      *
      * @return Returns the Context object of the application.
