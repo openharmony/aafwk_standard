@@ -145,9 +145,6 @@ ErrCode AppMgrService::Init()
         APP_LOGE("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
     }
-    if (appMgrServiceInner_->ProcessOptimizerInit() != ERR_OK) {
-        APP_LOGE("init failed without process optimizer");
-    }
     APP_LOGI("init success");
     return ERR_OK;
 }

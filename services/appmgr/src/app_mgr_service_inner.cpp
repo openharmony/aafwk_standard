@@ -269,7 +269,6 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     }
     appRecord->LaunchApplication(*configuration_);
     appRecord->SetState(ApplicationState::APP_STATE_READY);
-    OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
 
     // There is no ability when the resident process starts
     // The status of all resident processes is ready
@@ -308,11 +307,9 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     ApplicationState appState = appRecord->GetState();
     if (appState == ApplicationState::APP_STATE_READY || appState == ApplicationState::APP_STATE_BACKGROUND) {
         appRecord->SetState(ApplicationState::APP_STATE_FOREGROUND);
-        OptimizerAppStateChanged(appRecord, appState);
         OnAppStateChanged(appRecord, ApplicationState::APP_STATE_FOREGROUND);
     } else if (appState == ApplicationState::APP_STATE_SUSPENDED) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
     } else {
         APP_LOGW("app name(%{public}s), app state(%{public}d)!",
             appRecord->GetName().c_str(),
@@ -334,11 +331,9 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     }
     if (appRecord->GetState() == ApplicationState::APP_STATE_FOREGROUND) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_FOREGROUND);
         OnAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
     } else if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
     } else {
         APP_LOGW("app name(%{public}s), app state(%{public}d)!",
             appRecord->GetName().c_str(),
@@ -365,7 +360,6 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
         return;
     }
     appRecord->SetState(ApplicationState::APP_STATE_TERMINATED);
-    OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
     appRecord->RemoveAppDeathRecipient();
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     appRunningManager_->RemoveAppRunningRecordById(recordId);
@@ -749,7 +743,6 @@ void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
     }
     if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
     }
 
     if (appRunningManager_) {
@@ -795,7 +788,6 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
     }
     if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
     }
 
     appRecord->UpdateAbilityState(token, state);
@@ -901,20 +893,9 @@ void AppMgrServiceInner::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &toke
     if (preToken) {
         abilityRecord->SetPreToken(preToken);
     }
-    if (abilityRecord->GetVisibility() != visibility) {
-        if (processOptimizerUBA_) {
-            processOptimizerUBA_->OnAbilityVisibleChanged(abilityRecord);
-        }
-    }
-    if (abilityRecord->GetPerceptibility() != perceptibility) {
-        if (processOptimizerUBA_) {
-            processOptimizerUBA_->OnAbilityPerceptibleChanged(abilityRecord);
-        }
-    }
     abilityRecord->SetVisibility(visibility);
     abilityRecord->SetPerceptibility(perceptibility);
     abilityRecord->SetConnectionState(connectionState);
-    OptimizerAbilityStateChanged(abilityRecord, abilityRecord->GetState());
 }
 
 void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
@@ -1017,7 +998,6 @@ void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sp
     ApplicationState appState = appRecord->GetState();
     if (appState == ApplicationState::APP_STATE_SUSPENDED) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
     }
 
     auto appInfo = std::make_shared<ApplicationInfo>(abilityInfo->applicationInfo);
@@ -1049,79 +1029,6 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByAbili
     const sptr<IRemoteObject> &abilityToken) const
 {
     return appRunningManager_->GetAppRunningRecordByAbilityToken(abilityToken);
-}
-
-void AppMgrServiceInner::UnsuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
-{
-    if (!appRecord) {
-        APP_LOGE("app record is null");
-        return;
-    }
-
-    APP_LOGI("app name is %{public}s , Uid is %{public}d", appRecord->GetName().c_str(), appRecord->GetUid());
-    // Resume subscription via UID
-    DelayedSingleton<EventFwk::CommonEvent>::GetInstance()->Unfreeze(appRecord->GetUid());
-}
-
-void AppMgrServiceInner::SuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
-{
-    if (!appRecord) {
-        APP_LOGE("app record is null");
-        return;
-    }
-    APP_LOGD("app name is %{public}s , Uid is %{public}d", appRecord->GetName().c_str(), appRecord->GetUid());
-    // Temporary unsubscribe via UID
-    appRecord->SetState(ApplicationState::APP_STATE_SUSPENDED);
-    OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
-    DelayedSingleton<EventFwk::CommonEvent>::GetInstance()->Freeze(appRecord->GetUid());
-}
-
-void AppMgrServiceInner::LowMemoryApplicationAlert(
-    const std::shared_ptr<AppRunningRecord> &appRecord, const CgroupManager::LowMemoryLevel level)
-{
-    if (!appRecord) {
-        APP_LOGE("app record is null");
-        return;
-    }
-}
-
-std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAbilityOwnerApp(
-    const std::shared_ptr<AbilityRunningRecord> &abilityRecord) const
-{
-    if (!abilityRecord) {
-        APP_LOGE("ability record is null");
-        return nullptr;
-    }
-    if (!abilityRecord->GetToken()) {
-        APP_LOGE("ability token is null");
-        return nullptr;
-    }
-    auto appRecord = GetAppRunningRecordByAbilityToken(abilityRecord->GetToken());
-    if (!appRecord) {
-        APP_LOGE("The app information corresponding to token does not exist");
-        return nullptr;
-    }
-    return appRecord;
-}
-
-std::shared_ptr<AbilityRunningRecord> AppMgrServiceInner::GetAbilityRunningRecordByAbilityToken(
-    const sptr<IRemoteObject> &abilityToken) const
-{
-    if (!abilityToken) {
-        APP_LOGE("ability token is null");
-        return nullptr;
-    }
-    auto appRecord = GetAppRunningRecordByAbilityToken(abilityToken);
-    if (!appRecord) {
-        APP_LOGE("The app information corresponding to token does not exist");
-        return nullptr;
-    }
-    auto abilityRecord = appRecord->GetAbilityRunningRecordByToken(abilityToken);
-    if (!abilityRecord) {
-        APP_LOGE("The ability information corresponding to token does not exist");
-        return nullptr;
-    }
-    return abilityRecord;
 }
 
 void AppMgrServiceInner::AbilityTerminated(const sptr<IRemoteObject> &token)
@@ -1362,7 +1269,6 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     appRecord->GetPriorityObject()->SetPid(pid);
     appRecord->SetUid(startMsg.uid);
     appRecord->SetStartMsg(startMsg);
-    OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     appRecord->SetAppMgrServiceInner(weak_from_this());
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     AddAppToRecentList(appName, appRecord->GetProcessName(), pid, appRecord->GetRecordId());
@@ -1449,11 +1355,9 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
 
         for (const auto &item : appRecord->GetAbilities()) {
             const auto &abilityRecord = item.second;
-            OptimizerAbilityStateChanged(abilityRecord, AbilityState::ABILITY_STATE_TERMINATED);
             appRecord->StateChangedNotifyObserver(abilityRecord,
                 static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
         }
-        OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
         RemoveAppFromRecentListById(appRecord->GetRecordId());
         OnProcessDied(appRecord);
 
@@ -1508,104 +1412,6 @@ void AppMgrServiceInner::AddAppDeathRecipient(const pid_t pid, const sptr<AppDea
     std::shared_ptr<AppRunningRecord> appRecord = GetAppRunningRecordByPid(pid);
     if (appRecord) {
         appRecord->SetAppDeathRecipient(appDeathRecipient);
-    }
-}
-
-int32_t AppMgrServiceInner::ProcessOptimizerInit()
-{
-    processOptimizerUBA_ = std::make_shared<ProcessOptimizerUBA>(nullptr);
-    bool isSuccess = processOptimizerUBA_->Init();
-    if (!isSuccess) {
-        processOptimizerUBA_.reset();
-        processOptimizerUBA_ = nullptr;
-        APP_LOGE("optimizer init is fail");
-        return ERR_NO_INIT;
-    }
-    processOptimizerUBA_->AppSuspended =
-        std::bind(&AppMgrServiceInner::SuspendApplication, this, std::placeholders::_1);
-    // Register freeze callback function
-    processOptimizerUBA_->AppResumed =
-        std::bind(&AppMgrServiceInner::UnsuspendApplication, this, std::placeholders::_1);
-    // Register freeze recovery callback function
-    processOptimizerUBA_->AppLowMemoryAlert =
-        std::bind(&AppMgrServiceInner::LowMemoryApplicationAlert, this, std::placeholders::_1, std::placeholders::_2);
-    // Register low memory warning callback function
-    processOptimizerUBA_->GetAbilityOwnerApp =
-        std::bind(&AppMgrServiceInner::GetAbilityOwnerApp, this, std::placeholders::_1);
-    // Register to get the application record callback of ability
-    processOptimizerUBA_->GetAbilityByToken =
-        std::bind(&AppMgrServiceInner::GetAbilityRunningRecordByAbilityToken, this, std::placeholders::_1);
-    // Register to get the ability record through the token callback
-    APP_LOGI("optimizer init is success");
-    return ERR_OK;
-}
-
-void AppMgrServiceInner::OptimizerAbilityStateChanged(
-    const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
-{
-    if (!processOptimizerUBA_) {
-        APP_LOGE("process optimizer is not init");
-        return;
-    }
-
-    if ((ability->GetAbilityInfo()->type == AbilityType::PAGE) ||
-        (ability->GetAbilityInfo()->type == AbilityType::DATA)) {
-        if (ability->GetState() == AbilityState::ABILITY_STATE_CREATE) {
-            processOptimizerUBA_->OnAbilityStarted(ability);
-            APP_LOGI("optimizer OnAbilityStarted is called");
-        } else if (ability->GetState() == AbilityState::ABILITY_STATE_TERMINATED) {
-            processOptimizerUBA_->OnAbilityRemoved(ability);
-            APP_LOGI("optimizer OnAbilityRemoved is called");
-        } else {
-            processOptimizerUBA_->OnAbilityStateChanged(ability, state);
-            APP_LOGI("optimizer OnAbilityStateChanged is called");
-        }
-    } else if (ability->GetAbilityInfo()->type == AbilityType::SERVICE) {
-        auto appRecord = GetAppRunningRecordByAbilityToken(ability->GetPreToken());
-        if (!appRecord) {
-            APP_LOGE("app record is not exist for ability token");
-            return;
-        }
-        auto targetAbility = appRecord->GetAbilityRunningRecordByToken(ability->GetPreToken());
-        if (!targetAbility) {
-            APP_LOGE("ability record is not exist for ability previous token");
-            return;
-        }
-        if (ability->GetConnectionState()) {
-            // connect
-            processOptimizerUBA_->OnAbilityConnected(ability, targetAbility);
-            APP_LOGI("optimizer OnAbilityConnected is called");
-        } else {
-            // disconnect
-            processOptimizerUBA_->OnAbilityDisconnected(ability, targetAbility);
-            APP_LOGI("optimizer OnAbilityDisconnected is called");
-        }
-    } else {
-        APP_LOGI("OptimizerAbilityStateChanged ability type is unknown");
-    }
-
-    if (ability->GetState() != state) {
-        processOptimizerUBA_->OnAbilityStateChanged(ability, state);
-        APP_LOGI("optimizer OnAbilityStateChanged is called");
-    }
-}
-
-void AppMgrServiceInner::OptimizerAppStateChanged(
-    const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state)
-{
-    if (!processOptimizerUBA_) {
-        APP_LOGE("process optimizer is not init");
-        return;
-    }
-    if (appRecord->GetState() == ApplicationState::APP_STATE_CREATE) {
-        processOptimizerUBA_->OnAppAdded(appRecord);
-        APP_LOGI("optimizer OnAppAdded is called");
-    } else if (appRecord->GetState() == ApplicationState::APP_STATE_TERMINATED) {
-        processOptimizerUBA_->OnAppRemoved(appRecord);
-        APP_LOGI("optimizer OnAppRemoved is called");
-    } else {
-        processOptimizerUBA_->OnAppStateChanged(appRecord, state);
-        APP_LOGI("optimizer OnAppStateChanged is called");
     }
 }
 
@@ -1681,7 +1487,6 @@ void AppMgrServiceInner::HandleTerminateApplicationTimeOut(const int64_t eventId
         return;
     }
     appRecord->SetState(ApplicationState::APP_STATE_TERMINATED);
-    OptimizerAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
     appRecord->RemoveAppDeathRecipient();
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     pid_t pid = appRecord->GetPriorityObject()->GetPid();
