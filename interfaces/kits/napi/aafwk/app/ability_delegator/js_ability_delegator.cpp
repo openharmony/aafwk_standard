@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -469,9 +469,9 @@ NativeValue *JSAbilityDelegator::ParseJSMonitorPara(
         return nullptr;
     }
 
-    std::shared_ptr<NativeReference> refence = nullptr;
-    refence.reset(engine.CreateReference(value, 1));
-    monitorRecord.emplace(refence, monitor);
+    std::shared_ptr<NativeReference> reference = nullptr;
+    reference.reset(engine.CreateReference(value, 1));
+    monitorRecord.emplace(reference, monitor);
 
     return engine.CreateNull();
 }
@@ -532,9 +532,9 @@ NativeValue *JSAbilityDelegator::CreateJsAbilityObject(NativeEngine &engine, con
         return nullptr;
     }
 
-    std::shared_ptr<NativeReference> refence = nullptr;
-    refence.reset(engine.CreateReference(objValue, 1));
-    ablityRecord[refence] = remoteObject;
+    std::shared_ptr<NativeReference> reference = nullptr;
+    reference.reset(engine.CreateReference(objValue, 1));
+    ablityRecord[reference] = remoteObject;
 
     return objValue;
 }

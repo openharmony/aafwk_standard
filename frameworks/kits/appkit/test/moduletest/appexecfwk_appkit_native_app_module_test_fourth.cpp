@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,11 +71,11 @@ void AppkitNativeModuleTestThird::TearDown(void)
     GTEST_LOG_(INFO) << "AppkitNativeModuleTestThird TearDown";
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -101,11 +101,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_CleanAbility_0100, Function | MediumTe
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -169,11 +169,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_CleanAbility_0300, Function | MediumTe
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -206,11 +206,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_CleanAbility_0400, Function | MediumTe
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -248,11 +248,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_CleanAbility_0500, Function | MediumTe
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -289,11 +289,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_ElementsCallbacks_0100, Function | Med
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", 9997);
+    ProcessInfo processing("TestProcess", 9997);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -337,11 +337,11 @@ HWTEST_F(AppkitNativeModuleTestThird, App_AbilityLifecycleCallbacks_0100, Functi
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", 9996);
+    ProcessInfo processing("TestProcess", 9996);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);

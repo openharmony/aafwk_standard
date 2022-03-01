@@ -307,7 +307,7 @@ void AppMgrProxy::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string 
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -317,13 +317,13 @@ void AppMgrProxy::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string 
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_SYSTEM_MEMORY_ATTR, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
 
     std::shared_ptr<SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<SystemMemoryAttr>());
     if (remoteRetsult == nullptr) {
-        APP_LOGE("recv SystemMemoryAttr faild");
+        APP_LOGE("recv SystemMemoryAttr failed");
         return;
     }
 
@@ -335,7 +335,7 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -345,7 +345,7 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_ADD_ABILITY_STAGE_INFO_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
     return;
@@ -514,7 +514,7 @@ void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Wa
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -524,7 +524,7 @@ void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Wa
     }
 
     if (!SendTransactCmd(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
 }
@@ -563,7 +563,7 @@ int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcF
     MessageParcel reply;
     MessageOption option;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return ERR_FLATTEN_OBJECT;
     }
 
@@ -613,7 +613,7 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
     }
 
     if (!SendTransactCmd(IAppMgr::Message::ATTACH_RENDER_PROCESS, data, reply)) {
-        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS faild");
+        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS failed");
         return;
     }
 }

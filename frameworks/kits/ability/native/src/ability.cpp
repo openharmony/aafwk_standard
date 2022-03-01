@@ -180,7 +180,7 @@ void Ability::OnStart(const Want &want)
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
-        APP_LOGE("Ability::OnStart falied abilityInfo_ is nullptr.");
+        APP_LOGE("Ability::OnStart failed abilityInfo_ is nullptr.");
         return;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,18 +97,12 @@ bool WorkerPool::CheckThreadCount(int maxThreadCount, int coreThreadCount)
 
 bool WorkerPool::CheckMaxThreadCount(int maxThreadCount)
 {
-    if ((maxThreadCount > THREAD_UPPER_LIMIT) || (maxThreadCount < MAX_THREAD_LOWER_LIMIT)) {
-        return false;
-    }
-    return true;
+    return (maxThreadCount <= THREAD_UPPER_LIMIT) && (maxThreadCount >= MAX_THREAD_LOWER_LIMIT);
 }
 
 bool WorkerPool::CheckCoreThreadCount(int coreThreadCount)
 {
-    if ((coreThreadCount > THREAD_UPPER_LIMIT) || (coreThreadCount < CORE_THREAD_LOWER_LIMIT)) {
-        return false;
-    }
-    return true;
+    return (coreThreadCount <= THREAD_UPPER_LIMIT) && (coreThreadCount >= CORE_THREAD_LOWER_LIMIT);
 }
 
 long WorkerPool::GetKeepAliveTime(void) const
@@ -243,8 +237,7 @@ bool WorkerPool::AddWorker(const std::shared_ptr<Delegate> &delegate, const std:
         unsigned int value = control_.load();
         int num = GetWorkingThreadNum(value);
         if (num >= thread_limit_) {
-            APP_LOGI("WorkerPool::AddWorker thread count exceed limits, num=%{public}d, limits=%{public}d",
-                num,
+            APP_LOGI("WorkerPool::AddWorker thread count exceed limits, num=%{public}d, limits=%{public}d", num,
                 thread_limit_);
             break;
         }
