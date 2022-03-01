@@ -58,6 +58,7 @@ ohos_shared_library("runtime") {
 
   deps = [
     "//ark/js_runtime:libark_jsruntime",
+    "//foundation/ace/ace_engine/frameworks/core:ace_container_scope",
     "//foundation/ace/ace_engine/interfaces/innerkits/ace:ace_uicontent",
     "//foundation/ace/napi:ace_napi",
     "//foundation/ace/napi:ace_napi_ark",
