@@ -498,7 +498,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 EXTERN_C_END
 
 /**
- * @brief Get Diles Dir.
+ * @brief Get Files Dir.
  *
  * @param env The environment that the Node-API call is invoked under.
  * @param info The callback info passed into the callback function.
@@ -509,6 +509,118 @@ napi_value NAPI_GetFilesDir(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_GetFilesDirCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Get OrCreateDistributed Dir.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetOrCreateDistributedDir(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    return NAPI_GetOrCreateDistributedDirCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Get Cache Dir.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCacheDir(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    return NAPI_GetCacheDirCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Get ExternalCache Dir.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetExternalCacheDir(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    return NAPI_GetExternalCacheDirCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Obtains the type of this application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxAppType(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return NAPI_GetAppTypeCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Obtains the HapModuleInfo object of the application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxHapModuleInfo(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return NAPI_GetHapModuleInfoCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Obtains the AppVersionInfo object of the application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetAppVersionInfo(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return NAPI_GetAppVersionInfoCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Obtains the Application Context object of the application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetApplicationContext(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return NAPI_GetContextCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Obtains information about the current ability.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxAbilityInfo(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return NAPI_GetAbilityInfoCommon(env, info, AbilityType::PAGE);
 }
 
 void CanRequestPermissionExecuteCallback(napi_env env, void *data)
@@ -2928,6 +3040,34 @@ napi_value NAPI_GetPreferencesDirSync(napi_env env, napi_callback_info info)
 }
 
 /**
+ * @brief Checks whether the configuration of this ability is changing.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return Returns true if the configuration of this ability is changing and false otherwise.
+ */
+napi_value NAPI_IsUpdatingConfigurations(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    return NAPI_IsUpdatingConfigurationsCommon(env, info, AbilityType::PAGE);
+}
+
+/**
+ * @brief Informs the system of the time required for drawing this Page ability.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_PrintDrawnCompleted(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    return NAPI_PrintDrawnCompletedCommon(env, info, AbilityType::PAGE);
+}
+
+/**
  * @brief Context NAPI module registration.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -2954,8 +3094,18 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getCallingBundle", NAPI_GetCallingBundle),
         DECLARE_NAPI_FUNCTION("getOrCreateLocalDir", NAPI_GetOrCreateLocalDir),
         DECLARE_NAPI_FUNCTION("getFilesDir", NAPI_GetFilesDir),
+        DECLARE_NAPI_FUNCTION("isUpdatingConfigurations", NAPI_IsUpdatingConfigurations),
+        DECLARE_NAPI_FUNCTION("printDrawnCompleted", NAPI_PrintDrawnCompleted),
         DECLARE_NAPI_FUNCTION("getDatabaseDirSync", NAPI_GetDatabaseDirSync),
         DECLARE_NAPI_FUNCTION("getPreferencesDirSync", NAPI_GetPreferencesDirSync),
+        DECLARE_NAPI_FUNCTION("getCacheDir", NAPI_GetCacheDir),
+        DECLARE_NAPI_FUNCTION("getExternalCacheDir", NAPI_GetExternalCacheDir),
+        DECLARE_NAPI_FUNCTION("getAppType", NAPI_GetCtxAppType),
+        DECLARE_NAPI_FUNCTION("getHapModuleInfo", NAPI_GetCtxHapModuleInfo),
+        DECLARE_NAPI_FUNCTION("getAppVersionInfo", NAPI_GetAppVersionInfo),
+        DECLARE_NAPI_FUNCTION("getApplicationContext", NAPI_GetApplicationContext),
+        DECLARE_NAPI_FUNCTION("getAbilityInfo", NAPI_GetCtxAbilityInfo),
+        DECLARE_NAPI_FUNCTION("getOrCreateDistributedDir", NAPI_GetOrCreateDistributedDir),
     };
 
     NAPI_CALL(env,

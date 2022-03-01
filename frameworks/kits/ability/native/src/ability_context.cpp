@@ -756,5 +756,15 @@ void AbilityContext::SetShowOnLockScreen(bool isAllow)
 {
     ContextContainer::SetShowOnLockScreen(isAllow);
 }
+
+bool AbilityContext::IsUpdatingConfigurations()
+{
+    return ContextContainer::IsUpdatingConfigurations();
+}
+
+bool AbilityContext::PrintDrawnCompleted()
+{
+    return ContextContainer::PrintDrawnCompleted();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

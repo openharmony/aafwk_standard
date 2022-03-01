@@ -27,6 +27,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara/include",
   ]
 
   sources = [
@@ -94,6 +95,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
