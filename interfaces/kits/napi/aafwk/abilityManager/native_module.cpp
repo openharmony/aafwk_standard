@@ -56,6 +56,8 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getAbilityMissionSnapshot", NAPI_GetAbilityMissionSnapshot),
         DECLARE_NAPI_PROPERTY("WeightReasonCode", nWeightReasonCode),
         DECLARE_NAPI_FUNCTION("getSystemMemoryAttr", NAPI_GetSystemMemoryAttr),
+        DECLARE_NAPI_FUNCTION("getAppMemorySize", NAPI_GetAppMemorySize),
+        DECLARE_NAPI_FUNCTION("isRamConstrainedDevice", NAPI_IsRamConstrainedDevice),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

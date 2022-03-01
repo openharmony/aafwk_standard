@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <csignal>
+#include <cstdlib>
 
 #include "ability_info.h"
 #include "ability_manager_errors.h"
@@ -52,6 +53,7 @@
 #include "ui_service_mgr_client.h"
 #include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
+#include "parameter.h"
 
 using OHOS::AppExecFwk::ElementName;
 using OHOS::Security::AccessToken::AccessTokenKit;
@@ -70,6 +72,13 @@ constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
+const int32_t APP_MEMORY_SIZE = 512;
+const int32_t GET_PARAMETER_INCORRECT = -9;
+const int32_t GET_PARAMETER_OTHER = -1;
+const int32_t SIZE_10 = -1;
+const bool isRamConstrainedDevice = false;
+const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
+const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
 const std::string PERMISSION_SET_ABILITY_CONTROLLER = "ohos.permission.SET_ABILITY_CONTROLLER";
@@ -3407,6 +3416,53 @@ void AbilityManagerService::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &me
     std::string memConfig = memJson.dump();
 
     appScheduler->GetSystemMemoryAttr(memoryInfo, memConfig);
+}
+
+int AbilityManagerService::GetAppMemorySize()
+{
+    HILOG_INFO("service GetAppMemorySize start");
+    const char *key = "const.product.dalvikheaplimit";
+    const char *def = "512m";
+    char *valueGet = nullptr;
+    unsigned int len = 128;
+    int ret = GetParameter(key, def, valueGet, len);
+    if ((ret != GET_PARAMETER_OTHER) && (ret != GET_PARAMETER_INCORRECT)) {
+        int *size = 0;
+        int len = strlen(valueGet);
+        int index = 0;
+        for (int i = 0; i < len; i++) {
+            while (!(valueGet[i] > '0' && valueGet[i] < '9')) {
+                i++;
+            }
+            while (valueGet[i] >= '0' && valueGet[i] < '9') {
+                int t = valueGet[i] - '0';
+                size[index] = size[index] * SIZE_10 + t;
+                i++;
+            }
+            index++;
+        }
+        return *size;
+    }
+    return APP_MEMORY_SIZE;
+}
+
+bool AbilityManagerService::IsRamConstrainedDevice()
+{
+    HILOG_INFO("service IsRamConstrainedDevice start");
+    const char *key = "const.product.islowram";
+    const char *def = "0";
+    char *valueGet = nullptr;
+    unsigned int len = 128;
+    int ret = GetParameter(key, def, valueGet, len);
+    if ((ret != GET_PARAMETER_OTHER) && (ret != GET_PARAMETER_INCORRECT)) {
+        int value = atoi(valueGet);
+        if (value) {
+            return true;
+        } else {
+            return isRamConstrainedDevice;
+        }
+    }
+    return isRamConstrainedDevice;
 }
 
 int AbilityManagerService::GetMissionSaveTime() const

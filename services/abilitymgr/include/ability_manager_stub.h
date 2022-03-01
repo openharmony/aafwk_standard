@@ -123,6 +123,8 @@ private:
     int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
+    int GetAppMemorySizeInner(MessageParcel &data, MessageParcel &reply);
+    int IsRamConstrainedDeviceInner(MessageParcel &data, MessageParcel &reply);
     int ClearUpApplicationDataInner(MessageParcel &data, MessageParcel &reply);
 
     int ContinueMissionInner(MessageParcel &data, MessageParcel &reply);

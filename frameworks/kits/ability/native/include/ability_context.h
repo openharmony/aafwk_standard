@@ -66,6 +66,19 @@ public:
     std::string GetFilesDir() override;
 
     /**
+     * @brief IsUpdatingConfigurations
+     *
+     * @return true  or false
+     */
+    bool IsUpdatingConfigurations() override;
+
+    /**
+     * @brief PrintDrawnCompleted
+     *
+     * @return true  or false
+     */
+    bool PrintDrawnCompleted() override;
+    /**
      * @brief Obtains the absolute path which app created and will be excluded from automatic backup to remote storage.
      * The returned path maybe changed if the application is moved to an adopted storage device.
      *

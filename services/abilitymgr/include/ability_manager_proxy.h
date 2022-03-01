@@ -529,7 +529,9 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+    virtual int GetAppMemorySize() override;
 
+    virtual bool IsRamConstrainedDevice() override;
     virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
         int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) override;
 

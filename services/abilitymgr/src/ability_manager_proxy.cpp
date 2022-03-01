@@ -1638,6 +1638,40 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
     memoryInfo = *remoteRetsult;
 }
 
+int AbilityManagerProxy::GetAppMemorySize()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken faild");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::GET_APP_MEMORY_SIZE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+bool AbilityManagerProxy::IsRamConstrainedDevice()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken faild");
+        return false;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::IS_RAM_CONSTRAINED_DEVICE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return false;
+    }
+    return reply.ReadBool();
+}
+
 int AbilityManagerProxy::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams)
 {
