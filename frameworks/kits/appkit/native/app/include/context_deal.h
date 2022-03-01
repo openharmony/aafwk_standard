@@ -175,6 +175,20 @@ public:
     std::string GetCacheDir() override;
 
     /**
+     * @brief Checks whether the configuration of this ability is changing.
+     *
+     * @return Returns true if the configuration of this ability is changing and false otherwise.
+     */
+    bool IsUpdatingConfigurations() override;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    bool PrintDrawnCompleted() override;
+
+    /**
      * @brief Obtains the application-specific code-cache directory on the device's internal storage.
      * The system will delete any files stored in this location both when your specific application is upgraded,
      * and when the entire platform is upgraded.
@@ -732,17 +746,30 @@ public:
      */
     AAFwk::LifeCycleStateInfo GetLifeCycleStateInfo() const;
 public:
+    static const int64_t CONTEXT_CREATE_BY_SYSTEM_APP;
     static const std::string CONTEXT_DEAL_FILE_SEPARATOR;
     static const std::string CONTEXT_DEAL_CODE_CACHE;
     static const std::string CONTEXT_DEAL_Files;
     static const std::string CONTEXT_DEAL_NO_BACKUP_Files;
     static const std::string CONTEXT_DEAL_DIRNAME;
+    static const std::string CONTEXT_FILE_SEPARATOR;
+    static const std::string CONTEXT_DISTRIBUTED_BASE_BEFORE;
+    static const std::string CONTEXT_DISTRIBUTED_BASE_MIDDLE;
+    static const std::string CONTEXT_DISTRIBUTED;
+    static const std::string CONTEXT_DATA_STORAGE;
+    static const std::string CONTEXT_ELS[];
+    static const int EL_DEFAULT = 1;
+    int flags_ = 0x00000000;
 
 protected:
     sptr<IRemoteObject> GetToken() override;
     bool HapModuleInfoRequestInit();
 
 private:
+    bool IsCreateBySystemApp() const;
+    int GetCurrentAccountId() const;
+    void CreateDirIfNotExist(const std::string& dirPath) const;
+    
     std::shared_ptr<ProcessInfo> processInfo_ = nullptr;
     std::shared_ptr<ApplicationInfo> applicationInfo_ = nullptr;
     std::shared_ptr<AbilityInfo> abilityInfo_ = nullptr;
@@ -760,6 +787,7 @@ private:
     std::shared_ptr<EventRunner> mainEventRunner_;
     std::shared_ptr<HapModuleInfo> hapModuleInfoLocal_ = nullptr;
     bool isCreateBySystemApp_ = false;
+    std::string currArea_ = CONTEXT_ELS[EL_DEFAULT];
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -122,6 +122,16 @@ public:
         int32_t userId = DEFAULT_INVAL_VALUE,
         int requestCode = DEFAULT_INVAL_VALUE) = 0;
 
+    virtual int GetAppMemorySize()
+    {
+        return 0;
+    }
+
+    virtual bool IsRamConstrainedDevice()
+    {
+        return false;
+    }
+
     /**
      * TerminateAbility, terminate the special ability.
      *
@@ -938,6 +948,10 @@ public:
 
         GET_SYSTEM_MEMORY_ATTR,
 
+        GET_APP_MEMORY_SIZE,
+
+        IS_RAM_CONSTRAINED_DEVICE,
+        
         GET_ABILITY_RUNNING_INFO,
 
         GET_EXTENSION_RUNNING_INFO,

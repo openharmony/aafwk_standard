@@ -25,6 +25,7 @@
 #include "directory_ex.h"
 #include "file_ex.h"
 #include "iservice_registry.h"
+#include "os_account_manager.h"
 #include "spec_task_dispatcher.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
@@ -40,6 +41,13 @@ const std::string ContextDeal::CONTEXT_DEAL_CODE_CACHE("code_cache");
 const std::string ContextDeal::CONTEXT_DEAL_Files("files");
 const std::string ContextDeal::CONTEXT_DEAL_NO_BACKUP_Files("no_backup");
 const std::string ContextDeal::CONTEXT_DEAL_DIRNAME("preferences");
+const int64_t ContextDeal::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
+const std::string ContextDeal::CONTEXT_FILE_SEPARATOR("/");
+const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_BEFORE("/mnt/hmdfs/");
+const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_MIDDLE("/device_view/local/data/");
+const std::string ContextDeal::CONTEXT_DISTRIBUTED("distributedfiles");
+const std::string ContextDeal::CONTEXT_DATA_STORAGE("/data/storage/");
+const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2", "el3", "el4"};
 
 ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
 {}
@@ -307,6 +315,16 @@ bool ContextDeal::StopAbility(const AAFwk::Want &want)
 std::string ContextDeal::GetCacheDir()
 {
     return (applicationInfo_ != nullptr) ? applicationInfo_->cacheDir : "";
+}
+
+bool ContextDeal::IsUpdatingConfigurations()
+{
+    return false;
+}
+
+bool ContextDeal::PrintDrawnCompleted()
+{
+    return false;
 }
 
 /**
@@ -621,6 +639,31 @@ int ContextDeal::VerifyPermission(const std::string &permission, int pid, int ui
     return 0;
 }
 
+bool ContextDeal::IsCreateBySystemApp() const
+{
+    return (static_cast<uint64_t>(flags_) & CONTEXT_CREATE_BY_SYSTEM_APP) == 1;
+}
+
+int ContextDeal::GetCurrentAccountId() const
+{
+    int userId = 0;
+    AccountSA::OsAccountManager::GetOsAccountLocalIdFromProcess(userId);
+    return userId;
+}
+
+void ContextDeal::CreateDirIfNotExist(const std::string &dirPath) const
+{
+    APP_LOGI("CreateDirIfNotExist: create directory if not exists.");
+    if (!OHOS::FileExists(dirPath)) {
+        APP_LOGI("ContextDeal::CreateDirIfNotExist File is not exits");
+        bool createDir = OHOS::ForceCreateDirectory(dirPath);
+        if (!createDir) {
+            APP_LOGI("CreateDirIfNotExist: create dir %{public}s failed.", dirPath.c_str());
+            return;
+        }
+    }
+}
+
 /**
  * @brief Obtains the distributed file path.
  * If the distributed file path does not exist, the system creates one and returns the created path. This method is
@@ -630,7 +673,18 @@ int ContextDeal::VerifyPermission(const std::string &permission, int pid, int ui
  */
 std::string ContextDeal::GetDistributedDir()
 {
-    return "";
+    APP_LOGI("ContextImpl::GetDistributedDir");
+    std::string dir;
+    if (IsCreateBySystemApp()) {
+        dir = CONTEXT_DISTRIBUTED_BASE_BEFORE + std::to_string(GetCurrentAccountId()) +
+              CONTEXT_DISTRIBUTED_BASE_MIDDLE + GetBundleName();
+    } else {
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTED + CONTEXT_FILE_SEPARATOR +
+              ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+    }
+    CreateDirIfNotExist(dir);
+    APP_LOGI("ContextImpl::GetDistributedDir:%{public}s", dir.c_str());
+    return dir;
 }
 /**
  * @brief Sets the pattern of this Context based on the specified pattern ID.
@@ -677,7 +731,22 @@ std::shared_ptr<HapModuleInfo> ContextDeal::GetHapModuleInfo()
     if (hapModuleInfoLocal_ == nullptr) {
         HapModuleInfoRequestInit();
     }
-
+    
+    sptr<IBundleMgr> ptr = GetBundleManager();
+    if (ptr == nullptr) {
+        APP_LOGE("GetAppType failed to get bundle manager service");
+        return hapModuleInfoLocal_;
+    }
+    Want want;
+    ElementName name;
+    name.SetBundleName(GetBundleName());
+    want.SetElement(name);
+    std::vector<AbilityInfo> abilityInfos;
+    bool isSuc = ptr->QueryAbilityInfos(want, abilityInfos);
+    if (isSuc) {
+        hapModuleInfoLocal_->abilityInfos = abilityInfos;
+    }
+    APP_LOGI("ContextDeal::GetHapModuleInfo end");
     return hapModuleInfoLocal_;
 }
 
