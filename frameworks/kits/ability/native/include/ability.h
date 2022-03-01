@@ -81,7 +81,8 @@ class Ability : public IAbilityEvent,
                 public IAbilityContinuation,
                 public IAbilityCallback,
                 public std::enable_shared_from_this<Ability>,
-                public OHOS::Rosen::DisplayManager::IDisplayListener {
+                public OHOS::Rosen::DisplayManager::IDisplayListener,
+                public OHOS::Rosen::IDisplayMoveListener {
 public:
     friend class PageAbilityImpl;
     friend class NewAbilityImpl;
@@ -1499,6 +1500,14 @@ protected:
     void OnCreate(Rosen::DisplayId displayId) override;
     void OnDestroy(Rosen::DisplayId displayId) override;
     void OnChange(Rosen::DisplayId displayId) override;
+
+    /**
+     * @brief override Rosen::IDisplayMoveListener virtual callback function
+     *
+     * @param from the displayId before display move
+     * @param to the displayId after display move
+     */
+    void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to) override;
 
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
