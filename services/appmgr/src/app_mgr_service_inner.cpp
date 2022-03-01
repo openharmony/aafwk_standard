@@ -723,6 +723,9 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
 
     appRecord->SetEventHandler(eventHandler_);
     appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
+    if (want) {
+        appRecord->SetDebugApp(want->GetBoolParam(DEBUG_APP, false));
+    }
 
     if (preToken) {
         auto abilityRecord = appRecord->GetAbilityRunningRecordByToken(token);

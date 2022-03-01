@@ -538,6 +538,10 @@ private:
 
     void RemoveModuleRecord(const std::shared_ptr<ModuleRunningRecord> &record);
 
+    void SetDebugApp(bool isDebugApp);
+
+    bool IsDebugApp();
+
 private:
     bool isKeepAliveApp_ = false;  // Only resident processes can be set to true, please choose carefully
     bool isNewMission_ = false;
@@ -568,6 +572,7 @@ private:
     bool isSpecifiedAbility_ = false;
     AAFwk::Want SpecifiedWant_;
     std::string moduleName_;
+    bool isDebugApp_ = false;
 
     UserTestRecord userTestRecord_;
 
