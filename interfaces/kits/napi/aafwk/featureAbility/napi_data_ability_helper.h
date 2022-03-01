@@ -369,6 +369,8 @@ void UpdateAsyncCompleteCB(napi_env env, napi_status status, void *data);
 
 void UpdatePromiseCompleteCB(napi_env env, napi_status status, void *data);
 
+napi_value NAPI_Call(napi_env env, napi_callback_info info);
+
 napi_value NAPI_OpenFile(napi_env env, napi_callback_info info);
 
 napi_value OpenFileWrap(napi_env env, napi_callback_info info, DAHelperOpenFileCB *openFileCB);

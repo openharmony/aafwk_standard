@@ -53,6 +53,20 @@ public:
     std::string GetCacheDir() override;
 
     /**
+     * @brief Checks whether the configuration of this ability is changing.
+     *
+     * @return Returns true if the configuration of this ability is changing and false otherwise.
+     */
+    bool IsUpdatingConfigurations() override;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    bool PrintDrawnCompleted() override;
+
+    /**
      * @brief Obtains the temporary directory.
      *
      * @return Returns the application temporary directory.

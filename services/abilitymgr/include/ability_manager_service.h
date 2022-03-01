@@ -686,7 +686,9 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+    virtual int GetAppMemorySize() override;
 
+    virtual bool IsRamConstrainedDevice() override;
     /**
      * Start Ability, connect session with common ability.
      *
