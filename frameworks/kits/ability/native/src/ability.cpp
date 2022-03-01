@@ -56,7 +56,6 @@
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
 #include "task_handler_client.h"
-#include "touch_event.h"
 #include "values_bucket.h"
 
 namespace OHOS {
