@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -457,7 +457,7 @@ napi_value NAPI_DeleteForm(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncDelFormCallbackInfo *asyncCallbackInfo = (AsyncDelFormCallbackInfo *)data;
                 InnerDelForm(env, asyncCallbackInfo);
             },
@@ -789,7 +789,7 @@ napi_value NAPI_RequestForm(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncRequestFormCallbackInfo *asyncCallbackInfo = (AsyncRequestFormCallbackInfo *)data;
                 InnerRequestForm(env, asyncCallbackInfo);
             },
@@ -949,7 +949,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo =
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
@@ -1106,7 +1106,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncUpdateFormCallbackInfo *asyncCallbackInfo = (AsyncUpdateFormCallbackInfo *)data;
                 InnerUpdateForm(env, asyncCallbackInfo);
             },
@@ -1252,7 +1252,7 @@ napi_value NAPI_CastTempForm(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncCastTempFormCallbackInfo *asyncCallbackInfo = (AsyncCastTempFormCallbackInfo *)data;
                 InnerCastTempForm(env, asyncCallbackInfo);
             },
@@ -1417,7 +1417,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
 
                 AsyncNotifyVisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyVisibleFormsCallbackInfo *)data;
@@ -1587,7 +1587,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
 
                 AsyncNotifyInvisibleFormsCallbackInfo *asyncCallbackInfo =
                 (AsyncNotifyInvisibleFormsCallbackInfo *)data;
@@ -1757,7 +1757,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
                 AsyncEnableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncEnableUpdateFormCallbackInfo *)data;
 
@@ -1926,7 +1926,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
 
                 AsyncDisableUpdateFormCallbackInfo *asyncCallbackInfo =
                 (AsyncDisableUpdateFormCallbackInfo *)data;
@@ -2060,7 +2060,7 @@ napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info)
             nullptr,
             resourceName,
             [](napi_env env, void *data) {
-                HILOG_INFO("%{public}s, promise runnning", __func__);
+                HILOG_INFO("%{public}s, promise running", __func__);
 
                 AsyncCheckFMSReadyCallbackInfo *asyncCallbackInfo =
                 (AsyncCheckFMSReadyCallbackInfo *)data;

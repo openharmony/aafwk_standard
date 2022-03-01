@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1619,7 +1619,7 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
@@ -1631,7 +1631,7 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
 
     std::shared_ptr<AppExecFwk::SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<AppExecFwk::SystemMemoryAttr>());
     if (remoteRetsult == nullptr) {
-        HILOG_ERROR("recv SystemMemoryAttr faild");
+        HILOG_ERROR("recv SystemMemoryAttr failed");
         return;
     }
 
@@ -2218,7 +2218,7 @@ int AbilityManagerProxy::StartSyncRemoteMissions(const std::string& devId, bool 
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(devId)) {
@@ -2252,7 +2252,7 @@ int32_t AbilityManagerProxy::StopSyncRemoteMissions(const std::string& devId)
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(devId)) {
