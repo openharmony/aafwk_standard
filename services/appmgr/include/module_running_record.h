@@ -171,16 +171,6 @@ public:
     const std::shared_ptr<ApplicationInfo> GetAppInfo();
 
 private:
-    /**
-     * OptimizerAbilityStateChanged, Optimizer processing ability state changes.
-     *
-     * @param ability, the ability info.
-     * @param state, the ability state.
-     *
-     * @return
-     */
-    void OptimizerAbilityStateChanged(const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state);
-
     void SendEvent(uint32_t msg, int64_t timeOut, const std::shared_ptr<AbilityRunningRecord> &abilityRecord);
 
     ModuleRecordState GetState() const;
