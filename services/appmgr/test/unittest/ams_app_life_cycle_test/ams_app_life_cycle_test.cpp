@@ -1714,52 +1714,6 @@ HWTEST_F(AmsAppLifeCycleTest, AppStateChanged001, TestSize.Level1)
 /*
  * Feature: AMS
  * Function: AppLifeCycle
- * SubFunction: UnsuspendApplication
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: test application state is APP_STATE_BACKGROUND
- */
-HWTEST_F(AmsAppLifeCycleTest, Unsuspend_001, TestSize.Level1)
-{
-    TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
-    EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
-    EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
-    serviceInner_->UnsuspendApplication(testAppRecord.appRecord_);
-    EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: UnsuspendApplication
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: test application state is APP_STATE_SUSPENDED(apprecord is nullptr)
- */
-HWTEST_F(AmsAppLifeCycleTest, Unsuspend_002, TestSize.Level1)
-{
-    TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
-    EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
-    EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
-    serviceInner_->UnsuspendApplication(nullptr);
-    EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
  * SubFunction: suspendApplication
  * FunctionPoints: suspendApplication
  * CaseDescription: test application state is APP_STATE_SUSPENDED
@@ -1776,27 +1730,6 @@ HWTEST_F(AmsAppLifeCycleTest, Suspend_001, TestSize.Level1)
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
     testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
     EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: UnsuspendApplication
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: test application state is APP_STATE_BACKGROUND(apprecord is nullptr)
- */
-HWTEST_F(AmsAppLifeCycleTest, Suspend_002, TestSize.Level1)
-{
-    TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
-    EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-    serviceInner_->UnsuspendApplication(nullptr);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
 }
 
 /*
@@ -1963,34 +1896,6 @@ HWTEST_F(AmsAppLifeCycleTest, CheckAppRunningRecordIsExist_001, TestSize.Level1)
 
     appRecord->SetState(ApplicationState::APP_STATE_FOREGROUND);
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, appRecordProc->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle::CreateAppRunningRecord
- * SubFunction: bundleMgr CheckPermission
- * FunctionPoints: UnsuspendApplication
- * CaseDescription: Check if there is background operation permission
- */
-HWTEST_F(AmsAppLifeCycleTest, GetAbilityRunningRecordByAbilityToken_001, TestSize.Level1)
-{
-    // RecordQueryResult result;
-    auto abilityInfo = GetAbilityInfoByIndex("0");
-    auto appInfo = GetApplication();
-    sptr<IRemoteObject> token = GetMockToken();
-
-    auto abilityRecord = serviceInner_->GetAbilityRunningRecordByAbilityToken(nullptr);
-    EXPECT_FALSE(abilityRecord);
-
-    abilityRecord = serviceInner_->GetAbilityRunningRecordByAbilityToken(token);
-    EXPECT_FALSE(abilityRecord);
-    auto appRecord = StartProcessAndLoadAbility(token, nullptr, abilityInfo, appInfo, 1234);
-    EXPECT_TRUE(appRecord);
-
-    abilityRecord = serviceInner_->GetAbilityRunningRecordByAbilityToken(token);
-    sptr<IRemoteObject> token2 = new MockAbilityToken();
-    auto abilityRecord2 = serviceInner_->GetAbilityRunningRecordByAbilityToken(token2);
-    EXPECT_FALSE(abilityRecord2);
 }
 
 /*
