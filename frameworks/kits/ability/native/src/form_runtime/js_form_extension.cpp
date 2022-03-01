@@ -309,6 +309,10 @@ void JsFormExtension::OnConfigurationUpdated(const AppExecFwk::Configuration& co
 
     // Notify extension context
     auto fullConfig = GetContext()->GetConfiguration();
+    if (!fullConfig) {
+        HILOG_ERROR("configuration is nullptr.");
+        return;
+    }
     JsExtensionContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, fullConfig);
 
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
