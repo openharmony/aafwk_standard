@@ -540,8 +540,6 @@ private:
 
     void SetDebugApp(bool isDebugApp);
 
-    bool IsDebugApp();
-
 private:
     bool isKeepAliveApp_ = false;  // Only resident processes can be set to true, please choose carefully
     bool isNewMission_ = false;
