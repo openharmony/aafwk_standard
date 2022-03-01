@@ -1043,10 +1043,5 @@ void AppRunningRecord::SetDebugApp(bool isDebugApp)
     APP_LOGI("SetDebugApp come, value is %{public}d", isDebugApp);
     isDebugApp_ = isDebugApp;
 }
-
-bool AppRunningRecord::IsDebugApp()
-{
-    return isDebugApp_;
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS
