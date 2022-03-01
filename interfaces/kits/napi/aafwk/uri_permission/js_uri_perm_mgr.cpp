@@ -17,7 +17,6 @@
 
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
-#include "napi_common_util.h"
 #include "uri.h"
 #include "uri_permission_manager_client.h"
 
@@ -60,16 +59,14 @@ private:
             }
 
             std::string uriStr;
-            if (!OHOS::AppExecFwk::UnwrapStringFromJS2(reinterpret_cast<napi_env>(&engine),
-                reinterpret_cast<napi_value>(args[0].get()), uriStr)) {
+            if (!ConvertFromJsValue(engine, args[0]->Get(), uriStr)) {
                 HILOG_ERROR("%{public}s called, the first parameter is invalid.", __func__);
                 task.Reject(engine, CreateJsError(engine, -1, "uri conversion failed."));
                 return;
             }
 
             int flag = 0;
-            if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
-                reinterpret_cast<napi_value>(args[1].get()), flag)) {
+            if (!ConvertFromJsValue(engine, args[1]->Get(), flag)) {
                 HILOG_ERROR("%{public}s called, the second parameter is invalid.", __func__);
                 task.Reject(engine, CreateJsError(engine, -1, "flag conversion failed."));
                 return;
@@ -77,8 +74,7 @@ private:
 
             int accessTokenId = 0;
             constexpr int32_t index = 2;
-            if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
-                reinterpret_cast<napi_value>(args[index].get()), accessTokenId)) {
+            if (!ConvertFromJsValue(engine, args[index]->Get(), accessTokenId)) {
                 HILOG_ERROR("%{public}s called, the third parameter is invalid.", __func__);
                 task.Reject(engine, CreateJsError(engine, -1, "accessTokenId conversion failed."));
                 return;

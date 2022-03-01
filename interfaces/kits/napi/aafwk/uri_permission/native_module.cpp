@@ -17,12 +17,12 @@
 #include "native_engine/native_engine.h"
 
 extern "C" __attribute__((constructor))
-void NAPI_application_uripermmgr_AutoRegister()
+void NAPI_application_uripermissionmanager_AutoRegister()
 {
     auto moduleManager = NativeModuleManager::GetInstance();
     NativeModule newModuleInfo = {
-        .name = "application.missionManager",
-        .fileName = "application/liburipermmgr_napi.so/uripermmgr.js",
+        .name = "application.uriPermissionManager",
+        .fileName = "application/liburipermissionmanager_napi.so/uripermissionmanager.js",
         .registerCallback = OHOS::AbilityRuntime::CreateJsUriPermMgr,
     };
 
