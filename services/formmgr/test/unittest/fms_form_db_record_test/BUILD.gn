@@ -49,7 +49,6 @@ ohos_unittest("FmsFormDbRecordTest") {
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${services_path}/formmgr:fms_target",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
 
@@ -62,6 +61,7 @@ ohos_unittest("FmsFormDbRecordTest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

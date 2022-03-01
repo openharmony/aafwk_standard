@@ -57,13 +57,13 @@ ohos_unittest("AmsServiceStartupTest") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/aafwk/standard/services/appmgr:libams",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",

@@ -113,7 +113,6 @@ ohos_shared_library("libams") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
@@ -129,6 +128,7 @@ ohos_shared_library("libams") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",

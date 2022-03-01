@@ -50,7 +50,6 @@ ohos_executable("appmgrserviceregtest") {
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
 
     #"startup:appspawn_jni",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
@@ -59,6 +58,7 @@ ohos_executable("appmgrserviceregtest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

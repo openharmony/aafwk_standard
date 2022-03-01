@@ -148,7 +148,6 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher",
@@ -167,6 +166,7 @@ ohos_shared_library("appkit_native") {
   external_deps = [
     "ability_base:configuration",
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
@@ -186,7 +186,6 @@ ohos_shared_library("app_context") {
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//utils/system/safwk/native/include",
@@ -210,7 +209,6 @@ ohos_shared_library("app_context") {
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
 
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/common/task_dispatcher:task_dispatcher",
@@ -232,6 +230,7 @@ ohos_shared_library("app_context") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
@@ -283,7 +282,6 @@ ohos_shared_library("appkit_delegator") {
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/icu/icu4c:shared_icuuc",
     "//utils/native/base:utils",
@@ -291,6 +289,7 @@ ohos_shared_library("appkit_delegator") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
