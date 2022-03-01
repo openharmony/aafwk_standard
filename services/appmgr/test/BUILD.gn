@@ -111,14 +111,8 @@ group("unittest") {
     "unittest/ams_app_running_record_test:unittest",
     "unittest/ams_app_state_callback_test:unittest",
     "unittest/ams_app_workflow_test:unittest",
-
-    # "unittest/ams_cgroup_manager_test:unittest",
     "unittest/ams_ipc_interface_test:unittest",
-
-    # "unittest/ams_lmks_client_test:unittest",
     "unittest/ams_mgr_scheduler_test:unittest",
-
-    # "unittest/ams_process_optimizer_test:unittest",
     "unittest/ams_recent_app_list_test:unittest",
     "unittest/ams_service_app_spawn_client_test:unittest",
     "unittest/ams_service_app_spawn_msg_wrapper_test:unittest",

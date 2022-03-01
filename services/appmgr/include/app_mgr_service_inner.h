@@ -43,8 +43,6 @@
 #include "bundle_info.h"
 #include "istart_specified_ability_response.h"
 
-#include "process_optimizer_uba.h"
-
 #include "ohos/aafwk/content/want.h"
 
 namespace OHOS {
@@ -405,34 +403,6 @@ public:
      */
 
     virtual void AddAppDeathRecipient(const pid_t pid, const sptr<AppDeathRecipient> &appDeathRecipient) const;
-    /**
-     * ProcessOptimizerInit, Process Optimizer init.
-     *
-     * @param
-     * @return ERR_OK, return back success, others fail.
-     */
-    virtual int32_t ProcessOptimizerInit();
-
-    /**
-     * OptimizerAbilityStateChanged, Optimizer processing ability state changes.
-     *
-     * @param ability, the ability info.
-     * @param state, the ability state before change.
-     *
-     * @return
-     */
-    virtual void OptimizerAbilityStateChanged(
-        const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state);
-
-    /**
-     * OptimizerAppStateChanged, Optimizer processing app state changes.
-     *
-     * @param appRecord, the app information.
-     * @param state, the app before change.
-     * @return
-     */
-    virtual void OptimizerAppStateChanged(
-        const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
 
     void HandleTimeOut(const InnerEvent::Pointer &event);
 
@@ -455,7 +425,7 @@ public:
     int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     /**
-     * SuspendApplication, Application state changed.
+     * OnAppStateChanged, Application state changed.
      *
      * @param appRecord, the app information.
      * @param state, the app state.
@@ -558,55 +528,6 @@ private:
     void StartAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
         const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AppRunningRecord> &appRecord,
         const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want);
-
-    /**
-     * UnsuspendApplication, Application process state switch to unsuspend.
-     *
-     * @param appRecord, the app information.
-     *
-     * @return
-     */
-    void UnsuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    /**
-     * SuspendApplication, Application process state switch to suspend.
-     *
-     * @param appRecord, the app information.
-     *
-     * @return
-     */
-    void SuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    /**
-     * LowMemoryApplicationAlert, Application low memory alert.
-     *
-     * @param appRecord, the app information.
-     * @param level, the app low memory level.
-     *
-     * @return
-     */
-    void LowMemoryApplicationAlert(
-        const std::shared_ptr<AppRunningRecord> &appRecord, const CgroupManager::LowMemoryLevel level);
-
-    /**
-     * GetAbilityOwnerApp, Get the process record of ability.
-     *
-     * @param abilityRecord, the ability information.
-     *
-     * @return process record.
-     */
-    std::shared_ptr<AppRunningRecord> GetAbilityOwnerApp(
-        const std::shared_ptr<AbilityRunningRecord> &abilityRecord) const;
-
-    /**
-     * GetAbilityRunningRecordByAbilityToken, Get the ability record by token.
-     *
-     * @param abilityToken, the ability token.
-     *
-     * @return ability record.
-     */
-    std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecordByAbilityToken(
-        const sptr<IRemoteObject> &abilityToken) const;
 
     /**
      * StartProcess, load the ability that needed to be started(Start on a new boot process).
@@ -803,7 +724,6 @@ private:
     std::shared_ptr<AppProcessManager> appProcessManager_;
     std::shared_ptr<RemoteClientManager> remoteClientManager_;
     std::shared_ptr<AppRunningManager> appRunningManager_;
-    std::shared_ptr<ProcessOptimizerUBA> processOptimizerUBA_;
     std::shared_ptr<AMSEventHandler> eventHandler_;
     std::shared_ptr<Configuration> configuration_;
     std::mutex serviceLock_;
