@@ -1385,7 +1385,7 @@ void MainThread::HandleANRProcess(int sigMessage)
         APP_LOGI("MainThread:HandleANRProcess start.");
         int rFD = -1;
         std::string mainThreadStackInfo;
-        if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_CRASH))) < 0) {
+        if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_STACKTRACE))) < 0) {
             APP_LOGE("MainThread::HandleANRProcess request file eescriptor failed");
             return;
         }
