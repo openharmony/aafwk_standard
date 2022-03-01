@@ -159,21 +159,10 @@ void ModuleRunningRecord::OnAbilityStateChanged(
     }
     AbilityState oldState = ability->GetState();
     ability->SetState(state);
-    OptimizerAbilityStateChanged(ability, oldState);
     APP_LOGI("OnAbilityStateChanged oldState:%{public}d, state:%{public}d", oldState, state);
     auto serviceInner = appMgrServiceInner_.lock();
     if (serviceInner) {
         serviceInner->OnAbilityStateChanged(ability, state);
-    }
-}
-
-void ModuleRunningRecord::OptimizerAbilityStateChanged(
-    const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
-{
-    APP_LOGI("Optimizer ability state changed.");
-    auto serviceInner = appMgrServiceInner_.lock();
-    if (serviceInner) {
-        serviceInner->OptimizerAbilityStateChanged(ability, state);
     }
 }
 
@@ -189,7 +178,6 @@ void ModuleRunningRecord::LaunchAbility(const std::shared_ptr<AbilityRunningReco
         APP_LOGI("ScheduleLaunchAbility ability:%{public}s", ability->GetName().c_str());
         appLifeCycleDeal_->LaunchAbility(ability);
         ability->SetState(AbilityState::ABILITY_STATE_READY);
-        OptimizerAbilityStateChanged(ability, AbilityState::ABILITY_STATE_CREATE);
     }
 }
 
@@ -233,7 +221,6 @@ void ModuleRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, con
         }
     }
 
-    OptimizerAbilityStateChanged(abilityRecord, AbilityState::ABILITY_STATE_TERMINATED);
     if (appLifeCycleDeal_) {
         appLifeCycleDeal_->ScheduleCleanAbility(token);
     } else {

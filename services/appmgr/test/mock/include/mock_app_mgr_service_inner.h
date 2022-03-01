@@ -55,8 +55,6 @@ public:
     MOCK_METHOD5(AbilityBehaviorAnalysis,
         void(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken, const int32_t visibility,
             const int32_t perceptibility, const int32_t connectionState));
-    MOCK_METHOD2(OptimizerAbilityStateChanged,
-        void(const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state));
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
     void Post()
     {
