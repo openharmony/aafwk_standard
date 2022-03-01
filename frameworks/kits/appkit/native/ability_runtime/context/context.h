@@ -120,6 +120,20 @@ public:
     virtual std::string GetFilesDir() = 0;
 
     /**
+     * @brief Checks whether the configuration of this ability is changing.
+     *
+     * @return Returns true if the configuration of this ability is changing and false otherwise.
+     */
+    virtual bool IsUpdatingConfigurations() = 0;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    virtual bool PrintDrawnCompleted() = 0;
+
+    /**
      * @brief Obtains the local database path.
      * If the local database path does not exist, the system creates one and returns the created path.
      *

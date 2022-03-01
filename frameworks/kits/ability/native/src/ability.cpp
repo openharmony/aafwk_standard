@@ -170,6 +170,26 @@ std::shared_ptr<Global::Resource::ResourceManager> Ability::GetResourceManager()
 }
 
 /**
+ * @brief Checks whether the configuration of this ability is changing.
+ *
+ * @return Returns true if the configuration of this ability is changing and false otherwise.
+ */
+bool Ability::IsUpdatingConfigurations()
+{
+    return AbilityContext::IsUpdatingConfigurations();
+}
+
+/**
+ * @brief Informs the system of the time required for drawing this Page ability.
+ *
+ * @return Returns the notification is successful or fail
+ */
+bool Ability::PrintDrawnCompleted()
+{
+    return AbilityContext::PrintDrawnCompleted();
+}
+
+/**
  * Will be called when ability start. You should override this function
  *
  * @param want ability start information
