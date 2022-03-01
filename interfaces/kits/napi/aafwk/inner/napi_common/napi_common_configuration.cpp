@@ -87,6 +87,10 @@ bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
     int32_t colormode = -1;
     if (UnwrapInt32ByPropertyName(env, param, "colorMode", colormode)) {
         HILOG_DEBUG("The parsed colormode part %{public}d", colormode);
+        if (colormode != Global::Resource::DARK && colormode != Global::Resource::LIGHT) {
+            HILOG_ERROR("Set colorMode to unsupported value.");
+            return false;
+        }
         if (!config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, GetColorModeStr(colormode))) {
             HILOG_ERROR("colorMode parsing failed");
             return false;
