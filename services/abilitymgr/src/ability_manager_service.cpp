@@ -1640,6 +1640,7 @@ int AbilityManagerService::ReleaseDataAbility(
     std::shared_ptr<DataAbilityManager> dataAbilityManager = GetDataAbilityManager(dataAbilityScheduler);
     if (!dataAbilityManager) {
         HILOG_ERROR("dataAbilityScheduler is not exists");
+        return ERR_INVALID_VALUE;
     }
 
     return dataAbilityManager->Release(dataAbilityScheduler, callerToken, isSystem);
