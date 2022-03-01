@@ -163,6 +163,7 @@ napi_value WantAgentInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("equal", NAPI_Equal),
         DECLARE_NAPI_FUNCTION("getWant", NAPI_GetWant),
         DECLARE_NAPI_FUNCTION("getWantAgent", NAPI_GetWantAgent),
+        DECLARE_NAPI_FUNCTION("getOperationType", NAPI_GetOperationType),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
@@ -1336,5 +1337,130 @@ napi_value NapiGetNull(napi_env env)
     napi_value result = nullptr;
     napi_get_null(env, &result);
     return result;
+}
+
+
+auto NAPI_GetOperationTypeWrapExecuteCallBack = [](napi_env env, void *data) {
+    HILOG_INFO("GetOperationType called(CallBack Mode)...");
+    AsyncGetOperationTypeCallbackInfo *asyncCallbackInfo = static_cast<AsyncGetOperationTypeCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_ERROR("asyncCallbackInfo is nullptr.");
+        return;
+    }
+    asyncCallbackInfo->operationType = static_cast<int32_t>(WantAgentHelper::GetType(asyncCallbackInfo->wantAgent));
+};
+
+auto NAPI_GetOperationTypeWrapCompleteCallBack = [](napi_env env, napi_status status, void *data) {
+    HILOG_INFO("GetOperationType completed(CallBack Mode)...");
+    AsyncGetOperationTypeCallbackInfo *asyncCallbackInfo = static_cast<AsyncGetOperationTypeCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_ERROR("asyncCallbackInfo is nullptr.");
+        return;
+    }
+    napi_value result[NUMBER_OF_PARAMETERS_TWO] = {0};
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value callResult = nullptr;
+
+    result[0] = GetCallbackErrorResult(asyncCallbackInfo->env, BUSINESS_ERROR_CODE_OK);
+    napi_create_int32(env, asyncCallbackInfo->operationType, &result[1]);
+    napi_get_undefined(env, &undefined);
+    napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
+    napi_call_function(env, undefined, callback, NUMBER_OF_PARAMETERS_TWO, &result[0], &callResult);
+
+    if (asyncCallbackInfo->callback[0] != nullptr) {
+        napi_delete_reference(env, asyncCallbackInfo->callback[0]);
+    }
+    napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+    delete asyncCallbackInfo;
+    asyncCallbackInfo = nullptr;
+};
+
+napi_value NAPI_GetOperationTypeWrap(
+    napi_env env, napi_callback_info info, bool callBackMode, AsyncGetOperationTypeCallbackInfo &asyncCallbackInfo)
+{
+    HILOG_INFO("NAPI_GetOperationTypeWrap called...");
+    if (callBackMode) {
+        napi_value resourceName = nullptr;
+        napi_create_string_latin1(env, "NAPI_GetOperationTypeCallBack", NAPI_AUTO_LENGTH, &resourceName);
+
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            NAPI_GetOperationTypeWrapExecuteCallBack,
+            NAPI_GetOperationTypeWrapCompleteCallBack,
+            (void *)&asyncCallbackInfo,
+            &asyncCallbackInfo.asyncWork);
+        NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo.asyncWork));
+        // create return
+        napi_value ret = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, 0, &ret));
+        return ret;
+    } else {
+        napi_value resourceName = nullptr;
+        napi_create_string_latin1(env, "NAPI_GetOperationTypePromise", NAPI_AUTO_LENGTH, &resourceName);
+
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+        asyncCallbackInfo.deferred = deferred;
+
+        napi_create_async_work(env,
+            nullptr,
+            resourceName,
+            NAPI_GetOperationTypeWrapExecuteCallBack,
+            NAPI_GetOperationTypeWrapCompleteCallBack,
+            (void *)&asyncCallbackInfo,
+            &asyncCallbackInfo.asyncWork);
+        napi_queue_async_work(env, asyncCallbackInfo.asyncWork);
+        return promise;
+    }
+}
+
+
+napi_value NAPI_GetOperationType(napi_env env, napi_callback_info info)
+{
+    size_t argc = NUMBER_OF_PARAMETERS_TWO;
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO] = {};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    HILOG_INFO("argc = [%{public}zu]", argc);
+
+    napi_valuetype wantAgentType = napi_valuetype::napi_null;
+    napi_typeof(env, argv[0], &wantAgentType);
+    NAPI_ASSERT_RETURN_NULL(env, wantAgentType == napi_object, "Wrong argument type. Object expected.");
+
+    WantAgent *pWantAgent = nullptr;
+    napi_unwrap(env, argv[0], (void **)&(pWantAgent));
+    if (pWantAgent == nullptr) {
+        HILOG_INFO("WantAgent napi_unwrap error");
+        return NapiGetNull(env);
+    }
+
+    bool callBackMode = false;
+    if (argc >= NUMBER_OF_PARAMETERS_TWO) {
+        napi_valuetype valuetype = napi_valuetype::napi_null;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT_RETURN_NULL(env, valuetype == napi_function, "Wrong argument type. Function expected.");
+        callBackMode = true;
+    }
+    AsyncGetOperationTypeCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncGetOperationTypeCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr,
+    };
+    if (asyncCallbackInfo == nullptr) {
+        return NapiGetNull(env);
+    }
+    asyncCallbackInfo->wantAgent = std::make_shared<WantAgent>(*pWantAgent);
+
+    if (callBackMode) {
+        napi_create_reference(env, argv[1], 1, &asyncCallbackInfo->callback[0]);
+    }
+    napi_value ret = NAPI_GetOperationTypeWrap(env, info, callBackMode, *asyncCallbackInfo);
+    if (ret == nullptr) {
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+    }
+    return ((callBackMode) ? (NapiGetNull(env)) : (ret));
 }
 }  // namespace OHOS
