@@ -29,7 +29,7 @@ public:
 
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 private:
-    static constexpr int COMMAND_ON_COMMON_EVENT_TRIGGERED = MIN_TRANSACTION_ID;
+    static constexpr int COMMAND_ON_RECEIVE_EVENT = MIN_TRANSACTION_ID;
 };
 } // namespace AppExecFwk
 } // namespace OHOS
