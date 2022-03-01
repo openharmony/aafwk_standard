@@ -1080,6 +1080,10 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
 {
     HILOG_INFO("ContinueMission srcDeviceId: %{public}s, dstDeviceId: %{public}s, missionId: %{public}d",
         srcDeviceId.c_str(), dstDeviceId.c_str(), missionId);
+    if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
     DistributedClient dmsClient;
     return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
 }
@@ -1148,12 +1152,20 @@ int AbilityManagerService::NotifyContinuationResult(int32_t missionId, int32_t r
 
 int AbilityManagerService::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
 {
+    if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
     DistributedClient dmsClient;
     return dmsClient.StartSyncRemoteMissions(devId, fixConflict, tag);
 }
 
 int AbilityManagerService::StopSyncRemoteMissions(const std::string& devId)
 {
+    if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
     DistributedClient dmsClient;
     return dmsClient.StopSyncRemoteMissions(devId);
 }
@@ -1167,6 +1179,10 @@ int AbilityManagerService::RegisterMissionListener(const std::string &deviceId,
         return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
     }
     CHECK_POINTER_AND_RETURN(listener, ERR_INVALID_VALUE);
+    if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
     DistributedClient dmsClient;
     return dmsClient.RegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
 }
@@ -1180,6 +1196,10 @@ int AbilityManagerService::UnRegisterMissionListener(const std::string &deviceId
         return REGISTER_REMOTE_MISSION_LISTENER_FAIL;
     }
     CHECK_POINTER_AND_RETURN(listener, ERR_INVALID_VALUE);
+    if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
     DistributedClient dmsClient;
     return dmsClient.UnRegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
 }
