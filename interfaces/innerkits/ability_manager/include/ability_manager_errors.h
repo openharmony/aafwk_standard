@@ -166,7 +166,7 @@ enum {
      */
     UNINSTALL_APP_FAILED,
     /**
-     * Result(2097184) for terminate ability result: An error of terminate servce.
+     * Result(2097184) for terminate ability result: An error of terminate service.
      */
     TERMINATE_ABILITY_RESULT_FAILED,
     /**
@@ -266,7 +266,7 @@ enum {
     GET_FLOATING_STACK_FAILED,
 
     /**
-     * Result(2097205) for close mutli window failed
+     * Result(2097205) for close multi window failed
      */
     CLOSE_MULTI_WINDOW_FAILED,
 

@@ -1131,7 +1131,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_045, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: Schedule
  * FunctionPoints: Terminate ability
- * CaseDescription: Terminate ability when multiple abilities is backgroung and app is suspended.
+ * CaseDescription: Terminate ability when multiple abilities is background and app is suspended.
  */
 HWTEST_F(AmsAppLifeCycleTest, Schedule_046, TestSize.Level1)
 {

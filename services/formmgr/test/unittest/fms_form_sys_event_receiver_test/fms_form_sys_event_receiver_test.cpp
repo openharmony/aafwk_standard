@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -161,7 +161,7 @@ void FmsFormSysEventReceiverTest::ClearFormRecord(int64_t formId)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleProviderRemoved works.
@@ -209,7 +209,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_001, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleBundleDataCleared works.
@@ -241,7 +241,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_002, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleBundleDataCleared works.
@@ -277,7 +277,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_003, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleBundleDataCleared works.
@@ -303,7 +303,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_004, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleBundleDataCleared works.
@@ -330,7 +330,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_005, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  HandleBundleDataCleared works.
@@ -382,7 +382,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_006, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if HandleProviderUpdated works.
@@ -417,7 +417,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_007, TestSize.Level0)
 /*
  * Feature: FormMgrService
  * Function: FormMgr
- * SubFunction: OnReceiveEvent Functionss
+ * SubFunction: OnReceiveEvent Functions
  * FunctionPoints: FormMgr OnReceiveEvent interface
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if HandleProviderUpdated works.

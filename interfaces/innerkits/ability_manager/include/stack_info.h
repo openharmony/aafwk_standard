@@ -25,7 +25,7 @@ namespace OHOS {
 namespace AAFwk {
 /**
  * @struct StackInfo
- * StackInfo is used to save informations about stack.
+ * StackInfo is used to save information about stack.
  */
 struct StackInfo : public Parcelable {
 
