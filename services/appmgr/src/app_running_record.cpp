@@ -858,7 +858,7 @@ void AppRunningRecord::SendEvent(uint32_t msg, int64_t timeOut)
     }
 
     if (isDebugApp_) {
-        HILOG_INFO("Is debug mode, no need to handle time out.");
+        APP_LOGI("Is debug mode, no need to handle time out.");
         return;
     }
 

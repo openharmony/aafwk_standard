@@ -485,7 +485,7 @@ public:
     void ScheduleAcceptWant(const std::string &moduleName);
     void ScheduleAcceptWantDone();
     const AAFwk::Want &GetSpecifiedWant() const;
-
+    void SetDebugApp(bool isDebugApp);
     void SetRenderRecord(const std::shared_ptr<RenderRecord> &record);
     std::shared_ptr<RenderRecord> GetRenderRecord();
     void SetStartMsg(const AppSpawnStartMsg &msg);
@@ -537,8 +537,6 @@ private:
     void SendEvent(uint32_t msg, int64_t timeOut);
 
     void RemoveModuleRecord(const std::shared_ptr<ModuleRunningRecord> &record);
-
-    void SetDebugApp(bool isDebugApp);
 
 private:
     bool isKeepAliveApp_ = false;  // Only resident processes can be set to true, please choose carefully
