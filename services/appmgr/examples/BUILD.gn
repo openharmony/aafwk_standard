@@ -28,6 +28,9 @@ ohos_executable("appspawnclienttest") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
   ]
   external_deps = [ "appspawn:appspawn_socket_client" ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_runtime"
 }
 
 ohos_executable("appmgrserviceregtest") {
@@ -62,6 +65,9 @@ ohos_executable("appmgrserviceregtest") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_runtime"
 }
 
 config("test_config") {
