@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value arg
     napi_get_value_string_utf8(env, args, buf, NapiAbilityMgr::BUFFER_LENGTH_MAX, &len);
     HILOG_INFO("bundleName= [%{public}s].", buf);
     bundleName = std::string(buf);
-    // create reutrn
+    // create return
     napi_value ret = 0;
     NAPI_CALL(env, napi_create_int32(env, 0, &ret));
     return ret;
@@ -383,7 +383,7 @@ napi_value NAPI_QueryRecentAbilityMissionInfosWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 1, &ret));
         return ret;
@@ -520,7 +520,7 @@ napi_value NAPI_GetpreviousAbilityMissionInfosWrap(napi_env env, napi_callback_i
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 1, &ret));
         return ret;
@@ -653,7 +653,7 @@ napi_value NAPI_QueryRunningAbilityMissionInfosWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -786,7 +786,7 @@ napi_value NAPI_GetActiveAbilityMissionInfosWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -914,7 +914,7 @@ napi_value NAPI_GetAllRunningProcessesWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1032,7 +1032,7 @@ napi_value NAPI_GetActiveProcessInfosWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1150,7 +1150,7 @@ napi_value NAPI_RemoveMissionWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1276,7 +1276,7 @@ napi_value NAPI_RemoveMissionsWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1413,7 +1413,7 @@ napi_value NAPI_ClearMissionsWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1531,7 +1531,7 @@ napi_value NAPI_MoveMissionToTopWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1656,7 +1656,7 @@ napi_value NAPI_KillProcessesByBundleNameWrap(
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1780,7 +1780,7 @@ napi_value NAPI_ClearUpApplicationDataWrap(napi_env env, napi_callback_info info
             &async_callback_info.asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info.asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -1908,7 +1908,7 @@ napi_value NAPI_GetAbilityMissionSnapshotWrap(
             &async_callback_info->asyncWork);
 
         NAPI_CALL(env, napi_queue_async_work(env, async_callback_info->asyncWork));
-        // create reutrn
+        // create return
         napi_value ret = 0;
         NAPI_CALL(env, napi_create_int32(env, 0, &ret));
         return ret;
@@ -2226,7 +2226,7 @@ napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info info)
     HILOG_INFO("%{public}s argc = [%{public}zu]", __func__, argc);
 
     if (argc == 0) {
-        // promiss
+        // promise
         ret = GetSystemMemoryAttrPromiss(env);
     } else if (argc == 1) {
         // async
