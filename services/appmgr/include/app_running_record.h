@@ -485,7 +485,7 @@ public:
     void ScheduleAcceptWant(const std::string &moduleName);
     void ScheduleAcceptWantDone();
     const AAFwk::Want &GetSpecifiedWant() const;
-
+    void SetDebugApp(bool isDebugApp);
     void SetRenderRecord(const std::shared_ptr<RenderRecord> &record);
     std::shared_ptr<RenderRecord> GetRenderRecord();
     void SetStartMsg(const AppSpawnStartMsg &msg);
@@ -568,6 +568,7 @@ private:
     bool isSpecifiedAbility_ = false;
     AAFwk::Want SpecifiedWant_;
     std::string moduleName_;
+    bool isDebugApp_ = false;
 
     UserTestRecord userTestRecord_;
 

@@ -857,6 +857,11 @@ void AppRunningRecord::SendEvent(uint32_t msg, int64_t timeOut)
         return;
     }
 
+    if (isDebugApp_) {
+        APP_LOGI("Is debug mode, no need to handle time out.");
+        return;
+    }
+
     appEventId_++;
     eventId_ = appEventId_;
     APP_LOGI("eventId %{public}d", static_cast<int>(eventId_));
@@ -1031,6 +1036,12 @@ void AppRunningRecord::SetStartMsg(const AppSpawnStartMsg &msg)
 AppSpawnStartMsg AppRunningRecord::GetStartMsg()
 {
     return startMsg_;
+}
+
+void AppRunningRecord::SetDebugApp(bool isDebugApp)
+{
+    APP_LOGI("SetDebugApp come, value is %{public}d", isDebugApp);
+    isDebugApp_ = isDebugApp;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
