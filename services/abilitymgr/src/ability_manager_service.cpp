@@ -4422,20 +4422,30 @@ bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequ
 
 bool AbilityManagerService::SetANRMissionByProcessID(int pid)
 {
+    HILOG_INFO("start.");
+    if (appScheduler_ == nullptr || currentMissionListManager_ == nullptr) {
+        HILOG_ERROR("null point.");
+        return false;
+    }
     std::vector<sptr<IRemoteObject>> tokens;
     if (appScheduler_->GetAbilityRecordsByProcessID(pid, tokens) != ERR_OK) {
         HILOG_ERROR("Get ability record failed.");
         return false;
     }
-    if (appScheduler_) {
-        for (auto &item : tokens) {
-            auto abilityRecord = currentMissionListManager_->GetAbilityRecordByToken(item);
-            auto mission = abilityRecord->GetMission();
-            mission->SetANRState();
+    for (auto &item : tokens) {
+        auto abilityRecord = currentMissionListManager_->GetAbilityRecordByToken(item);
+        if (abilityRecord == nullptr) {
+            HILOG_WARN("abilityRecord is nullptr.");
+            continue;
         }
-        return true;
+        auto mission = abilityRecord->GetMission();
+        if (mission == nullptr) {
+            HILOG_WARN("mission is nullptr.");
+            continue;
+        }
+        mission->SetANRState();
     }
-    return false;
+    return true;
 }
 
 void AbilityManagerService::StartupResidentProcess(int userId)
