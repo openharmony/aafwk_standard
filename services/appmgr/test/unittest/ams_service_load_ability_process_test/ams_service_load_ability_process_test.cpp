@@ -1147,7 +1147,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess001, TestSize.Level1)
 
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
-        record,
+        false, record,
         abilityInfo->applicationInfo.uid,
         abilityInfo->applicationInfo.bundleName);
     const auto &recordMap = service_->GetRecordMap();
@@ -1198,7 +1198,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess002, TestSize.Level1)
     service_->SetAppSpawnClient(nullptr);
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
-        record,
+        false, record,
         abilityInfo->applicationInfo.uid,
         abilityInfo->applicationInfo.bundleName);
     const auto &recordMap = service_->GetRecordMap();
@@ -1242,7 +1242,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess003, TestSize.Level1)
 
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
-        nullptr,
+        false, nullptr,
         abilityInfo->applicationInfo.uid,
         abilityInfo->applicationInfo.bundleName);
     const auto &recordMap = service_->GetRecordMap();
@@ -1295,7 +1295,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess004, TestSize.Level1)
     CHECK_POINTER_IS_NULLPTR(record);
     service_->StartProcess(abilityInfo->applicationName,
         GetTestAppName(),
-        record,
+        false, record,
         abilityInfo->applicationInfo.uid,
         abilityInfo->applicationInfo.bundleName);
     auto record1 = service_->GetAppRunningRecordByAppRecordId(record->GetRecordId());
