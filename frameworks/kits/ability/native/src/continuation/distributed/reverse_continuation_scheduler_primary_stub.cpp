@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,9 +49,9 @@ int ReverseContinuationSchedulerPrimaryStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     APP_LOGI("%{public}s called begin", __func__);
-    std::u16string touken = data.ReadInterfaceToken();
-    std::u16string descripor = Str8ToStr16(DESCRIPTOR);
-    if (descripor != touken) {
+    std::u16string token = data.ReadInterfaceToken();
+    std::u16string descriptor = Str8ToStr16(DESCRIPTOR);
+    if (descriptor != token) {
         APP_LOGE("ReverseContinuationSchedulerPrimaryStub::OnRemoteRequest failed, DESCRIPTOR != touken");
         return -1;
     }

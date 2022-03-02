@@ -70,7 +70,7 @@ constexpr int32_t UNSPECIFIED_USERID = -2;
  *
  * @brief Notify the AppMgrDeathRecipient that the remote is dead.
  *
- * @param remote The remote whitch is dead.
+ * @param remote The remote which is dead.
  */
 void AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
@@ -331,7 +331,7 @@ void MainThread::ScheduleTerminateApplication()
 
 /**
  *
- * @brief Shrink the memory whitch used by application.
+ * @brief Shrink the memory which used by application.
  *
  * @param level Indicates the memory trim level, which shows the current memory usage status.
  */
@@ -378,7 +378,7 @@ void MainThread::ScheduleProcessSecurityExit()
 
 /**
  *
- * @brief Low the memory whitch used by application.
+ * @brief Low the memory which used by application.
  *
  */
 void MainThread::ScheduleLowMemory()
@@ -476,7 +476,7 @@ void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemo
  *
  * @brief clean the ability by token.
  *
- * @param token The token belong to the ability whitch want to be cleaned.
+ * @param token The token belong to the ability which want to be cleaned.
  *
  */
 void MainThread::ScheduleCleanAbility(const sptr<IRemoteObject> &token)
@@ -1019,7 +1019,7 @@ bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
  *
  * @brief launch the ability.
  *
- * @param abilityRecord The abilityRecord whitch belongs to the ability launched.
+ * @param abilityRecord The abilityRecord which belongs to the ability launched.
  *
  */
 void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
@@ -1079,7 +1079,7 @@ void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &
  *
  * @brief Clean the ability but don't notify ams.
  *
- * @param token The token whitch belongs to the ability launched.
+ * @param token The token which belongs to the ability launched.
  *
  */
 void MainThread::HandleCleanAbilityLocal(const sptr<IRemoteObject> &token)
@@ -1127,7 +1127,7 @@ void MainThread::HandleCleanAbilityLocal(const sptr<IRemoteObject> &token)
  *
  * @brief Clean the ability.
  *
- * @param token The token whitch belongs to the ability launched.
+ * @param token The token which belongs to the ability launched.
  *
  */
 void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
@@ -1283,7 +1283,7 @@ void MainThread::HandleTerminateApplication()
 
 /**
  *
- * @brief Shrink the memory whitch used by application.
+ * @brief Shrink the memory which used by application.
  *
  * @param level Indicates the memory trim level, which shows the current memory usage status.
  *

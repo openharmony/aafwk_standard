@@ -382,7 +382,7 @@ private:
      *
      * @brief The handle of application not response process.
      *
-     * @param sigMessage Recieve the sig message.
+     * @param sigMessage Receive the sig message.
      *
      */
     static void HandleANRProcess(int sigMessage);

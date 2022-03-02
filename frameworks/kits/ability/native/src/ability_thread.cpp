@@ -233,7 +233,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     ErrCode err = AbilityManagerClient::GetInstance()->AttachAbilityThread(this, token_);
     APP_LOGI("AbilityThread::Attach after AttachAbilityThread");
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: attach success faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: attach success failed err = %{public}d", err);
         return;
     }
 
@@ -289,7 +289,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     ErrCode err = AbilityManagerClient::GetInstance()->AttachAbilityThread(this, token_);
     APP_LOGI("AbilityThread::AttachExtension after AttachAbilityThread");
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: attach extension success faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: attach extension success failed err = %{public}d", err);
         return;
     }
     APP_LOGI("AbilityThread::AttachExtension end");
@@ -420,7 +420,7 @@ void AbilityThread::Attach(
     ErrCode err = AbilityManagerClient::GetInstance()->AttachAbilityThread(this, token_);
     APP_LOGI("AbilityThread::Attach after AttachAbilityThread");
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: attach success faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: attach success failed err = %{public}d", err);
         return;
     }
 
@@ -488,7 +488,7 @@ void AbilityThread::HandleConnectAbility(const Want &want)
     ErrCode err = AbilityManagerClient::GetInstance()->ScheduleConnectAbilityDone(token_, service);
     APP_LOGI("AbilityThread::HandleConnectAbility after ScheduleConnectAbilityDone");
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: HandleConnectAbility faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: HandleConnectAbility failed err = %{public}d", err);
     }
     APP_LOGI("AbilityThread::HandleConnectAbility end");
 }
@@ -512,13 +512,13 @@ void AbilityThread::HandleDisconnectAbility(const Want &want)
     ErrCode err = AbilityManagerClient::GetInstance()->ScheduleDisconnectAbilityDone(token_);
     APP_LOGI("AbilityThread::HandleDisconnectAbility after ScheduleDisconnectAbilityDone");
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: HandleDisconnectAbility faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: HandleDisconnectAbility failed err = %{public}d", err);
     }
     APP_LOGI("AbilityThread::HandleDisconnectAbility end");
 }
 
 /**
- * @brief Handle the current commadn of Ability.
+ * @brief Handle the current command of Ability.
  *
  * @param want The Want object to command to.
  *
@@ -541,7 +541,7 @@ void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int sta
     APP_LOGI("AbilityThread::HandleCommandAbility before ScheduleCommandAbilityDone");
     ErrCode err = AbilityManagerClient::GetInstance()->ScheduleCommandAbilityDone(token_);
     if (err != ERR_OK) {
-        APP_LOGE("AbilityThread:: HandleCommandAbility  faile err = %{public}d", err);
+        APP_LOGE("AbilityThread:: HandleCommandAbility  failed err = %{public}d", err);
     }
     APP_LOGI("AbilityThread::HandleCommandAbility end");
 }
