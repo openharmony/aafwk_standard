@@ -19,7 +19,6 @@
 #include "context.h"
 
 #include "configuration.h"
-#include "bundle_mgr_interface.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
