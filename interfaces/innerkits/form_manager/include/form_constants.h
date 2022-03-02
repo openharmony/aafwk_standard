@@ -69,6 +69,7 @@ namespace Constants {
     const int MIN_TIME = 0;
     const int HOUR_PER_DAY = 24;
     const int MIN_PER_HOUR = 60;
+    const int SEC_PER_MIN = 60;
     const long TIME_1000 = 1000;
     const long TIME_1000000 = 1000000;
     const long TIME_CONVERSION = 30 * 60 * TIME_1000;
