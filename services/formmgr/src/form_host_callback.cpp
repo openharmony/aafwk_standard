@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+
 /**
  * @brief Request to give back a Form.
  * @param formId The Id of the forms to create.
@@ -37,7 +38,6 @@ void FormHostCallback::OnAcquired(const int64_t formId, const FormRecord& record
     APP_LOGD("FormHostCallback OnAcquired, formId:%{public}" PRId64 "", formId);
     FormTaskMgr::GetInstance().PostAcquireTaskToHost(formId, record, callerToken);
 }
-
 
 /**
 * @brief Form is updated.
