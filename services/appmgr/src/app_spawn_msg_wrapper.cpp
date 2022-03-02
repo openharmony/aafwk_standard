@@ -70,6 +70,7 @@ bool AppSpawnMsgWrapper::AssembleMsg(const AppSpawnStartMsg &startMsg)
         APP_LOGE("failed to transform renderCmd!");
         return false;
     }
+    msg_->flags = startMsg.coldStart ? AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT : 0;
 
     isValid_ = true;
     DumpMsg();

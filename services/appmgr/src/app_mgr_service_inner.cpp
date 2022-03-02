@@ -148,7 +148,8 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
             APP_LOGE("CreateAppRunningRecord failed, appRecord is nullptr");
             return;
         }
-        StartProcess(abilityInfo->applicationName, processName, appRecord,
+        bool isColdStart = want == nullptr ? false : want->GetBoolParam("coldStart", false);
+        StartProcess(abilityInfo->applicationName, processName, isColdStart, appRecord,
             abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
@@ -1209,7 +1210,7 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
     APP_LOGD("end");
 }
 
-void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName,
+void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
     const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
@@ -1249,8 +1250,9 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.apl = (*bundleInfoIter).applicationInfo.appPrivilegeLevel;
     startMsg.bundleName = bundleName;
     startMsg.renderParam = RENDER_PARAM;
-    APP_LOGD("StartProcess come, accessTokenId: %{public}d, apl: %{public}s, bundleName: %{public}s",
-        startMsg.accessTokenId, startMsg.apl.c_str(), bundleName.c_str());
+    startMsg.coldStart = coldStart;
+    APP_LOGD("StartProcess accessTokenId:%{public}d, apl:%{public}s, bundleName:%{public}s coldStart:%{public}d",
+        startMsg.accessTokenId, startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
     bundleMgrResult = bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids);
     if (!bundleMgrResult) {
@@ -1653,7 +1655,7 @@ void AppMgrServiceInner::StartEmptyResidentProcess(
         return;
     }
 
-    StartProcess(appInfo->name, processName, appRecord, appInfo->uid, appInfo->bundleName);
+    StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -1911,7 +1913,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     testRecord.observer = observer;
     appRecord->SetUserTestInfo(testRecord);
 
-    StartProcess(appInfo->name, processName, appRecord, appInfo->uid, appInfo->bundleName);
+    StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -1968,7 +1970,8 @@ void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const Ap
         appRecord->SetEventHandler(eventHandler_);
         appRecord->SendEventForSpecifiedAbility(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG,
             AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT);
-        StartProcess(appInfo->name, processName, appRecord, appInfo->uid, appInfo->bundleName);
+        bool coldStart = want.GetBoolParam("coldStart", false);
+        StartProcess(appInfo->name, processName, coldStart, appRecord, appInfo->uid, appInfo->bundleName);
 
         appRecord->SetSpecifiedAbilityFlagAndWant(true, want, hapModuleInfo.moduleName);
         appRecord->AddModules(appInfo, hapModules);
