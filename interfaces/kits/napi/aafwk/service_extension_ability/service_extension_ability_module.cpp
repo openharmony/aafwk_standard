@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,13 +15,13 @@
 
 #include "native_engine/native_engine.h"
 
-extern const char _binary_service_ext_ability_js_start[];
-extern const char _binary_service_ext_ability_js_end[];
-extern const char _binary_service_ext_ability_abc_start[];
-extern const char _binary_service_ext_ability_abc_end[];
+extern const char _binary_service_extension_ability_js_start[];
+extern const char _binary_service_extension_ability_js_end[];
+extern const char _binary_service_extension_ability_abc_start[];
+extern const char _binary_service_extension_ability_abc_end[];
 
 extern "C" __attribute__((constructor))
-void NAPI_application_ServiceExtAbility_AutoRegister()
+void NAPI_application_ServiceExtensionAbility_AutoRegister()
 {
     auto moduleManager = NativeModuleManager::GetInstance();
     NativeModule newModuleInfo = {
@@ -33,25 +33,24 @@ void NAPI_application_ServiceExtAbility_AutoRegister()
 }
 
 extern "C" __attribute__((visibility("default")))
-void NAPI_application_ServiceExtAbility_GetJSCode(const char **buf, int *bufLen)
+void NAPI_application_ServiceExtensionAbility_GetJSCode(const char **buf, int *bufLen)
 {
     if (buf != nullptr) {
-        *buf = _binary_service_ext_ability_js_start;
+        *buf = _binary_service_extension_ability_js_start;
     }
 
     if (bufLen != nullptr) {
-        *bufLen = _binary_service_ext_ability_js_end - _binary_service_ext_ability_js_start;
+        *bufLen = _binary_service_extension_ability_js_end - _binary_service_extension_ability_js_start;
     }
 }
 
-// service_extension JS register
 extern "C" __attribute__((visibility("default")))
-void NAPI_application_ServiceExtAbility_GetABCCode(const char **buf, int *buflen)
+void NAPI_application_ServiceExtensionAbility_GetABCCode(const char **buf, int *buflen)
 {
     if (buf != nullptr) {
-        *buf = _binary_service_ext_ability_abc_start;
+        *buf = _binary_service_extension_ability_abc_start;
     }
     if (buflen != nullptr) {
-        *buflen = _binary_service_ext_ability_abc_end - _binary_service_ext_ability_abc_start;
+        *buflen = _binary_service_extension_ability_abc_end - _binary_service_extension_ability_abc_start;
     }
 }
