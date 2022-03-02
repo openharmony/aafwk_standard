@@ -26,7 +26,6 @@
 #include "os_account_manager.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
-#include "bundle_mgr_interface.h"
 #include "bundle_mgr_proxy.h"
 
 namespace OHOS {
