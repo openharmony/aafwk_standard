@@ -54,7 +54,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = false;
-        refreshTime = LONG_MAX;
+        refreshTime = INT64_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -67,7 +67,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = countTimer;
-        refreshTime = LONG_MAX;
+        refreshTime = INT64_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -80,7 +80,7 @@ public:
         min = -1;
         isUpdateAt = false;
         isCountTimer = true;
-        refreshTime = LONG_MAX;
+        refreshTime = INT64_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
 
@@ -93,7 +93,7 @@ public:
         period = -1;
         isUpdateAt = true;
         isCountTimer = false;
-        refreshTime = LONG_MAX;
+        refreshTime = INT64_MAX;
         type = UpdateType::TYPE_INTERVAL_CHANGE;
     }
     ~FormTimer(void){
