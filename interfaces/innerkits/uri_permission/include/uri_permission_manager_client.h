@@ -16,15 +16,17 @@
 #ifndef OHOS_AAFWK_URI_PERMISSION_MANAGER_CLIENT_H
 #define OHOS_AAFWK_URI_PERMISSION_MANAGER_CLIENT_H
 
+#include <functional>
+
 #include "singleton.h"
 #include "uri.h"
 #include "uri_permission_manager_interface.h"
 
 namespace OHOS {
 namespace AAFwk {
-using ErrCode = int32_t;
-
-class UriPermissionManagerClient : public DelayedSingleton<UriPermissionManagerClient> {
+using ClearProxyCallback = std::function<void()>;
+class UriPermissionManagerClient : public DelayedSingleton<UriPermissionManagerClient>,
+                                   public std::enable_shared_from_this<UriPermissionManagerClient> {
 public:
     UriPermissionManagerClient() = default;
     ~UriPermissionManagerClient() = default;
@@ -58,17 +60,18 @@ public:
     void RemoveUriPermission(const Security::AccessToken::AccessTokenID tokenId);
 
 private:
-    ErrCode ConnectUriPermService();
+    sptr<IUriPermissionManager> ConnectUriPermService();
+    void ClearProxy();
     DISALLOW_COPY_AND_MOVE(UriPermissionManagerClient);
 
     class UpmsDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
-        UpmsDeathRecipient(sptr<IUriPermissionManager> &uriPermMgr) : proxy_(uriPermMgr) {}
+        UpmsDeathRecipient(const ClearProxyCallback &proxy) : proxy_(proxy) {}
         ~UpmsDeathRecipient() = default;
         virtual void OnRemoteDied([[maybe_unused]] const wptr<IRemoteObject>& remote) override;
 
     private:
-        sptr<IUriPermissionManager> proxy_;
+        ClearProxyCallback proxy_;
     };
 
 private:

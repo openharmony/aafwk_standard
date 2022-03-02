@@ -82,7 +82,7 @@ private:
 
             Uri uri(uriStr);
             if (AAFwk::UriPermissionManagerClient::GetInstance()->VerifyUriPermission(uri, flag, accessTokenId)) {
-                task.Resolve(engine, 0);
+                task.Resolve(engine, CreateJsValue(engine, 0));
             } else {
                 task.Reject(engine, CreateJsError(engine, -1, "The app doesn't have the uri permission!"));
             }
