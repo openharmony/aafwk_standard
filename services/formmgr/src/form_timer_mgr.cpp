@@ -33,7 +33,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int TIMER_TYPE_ELAPSED_REALTIME = 1;
 const int TIMER_TYPE_RTC_WAKEUP = 3;
 
 const int REQUEST_UPDATE_AT_CODE = 1;
@@ -781,10 +780,10 @@ void FormTimerMgr::OnIntervalTimeOut()
     APP_LOGI("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(intervalMutex_);
     std::vector<FormTimer> updateList;
-    long currentTime = FormUtil::GetCurrentNanosecond() / Constants::TIME_1000000;
+    int64_t currentTime = FormUtil::GetCurrentNanosecond() / Constants::TIME_1000000;
     for (auto &intervalPair : intervalTimerTasks_) {
         FormTimer &intervalTask = intervalPair.second;
-        if ((intervalTask.refreshTime == LONG_MAX || (currentTime - intervalTask.refreshTime) >= intervalTask.period ||
+        if ((intervalTask.refreshTime == INT64_MAX || (currentTime - intervalTask.refreshTime) >= intervalTask.period ||
             std::abs((currentTime - intervalTask.refreshTime) - intervalTask.period) < Constants::ABS_TIME) &&
             intervalTask.isEnable && refreshLimiter_.IsEnableRefresh(intervalTask.formId)) {
             intervalTask.refreshTime = currentTime;
@@ -1136,24 +1135,16 @@ bool FormTimerMgr::FindNextAtTimerItem(const int nowTime, UpdateAtItem &updateAt
  */
 void FormTimerMgr::EnsureInitIntervalTimer()
 {
-    if (intervalTimerId_ != 0L) {
+    APP_LOGI("%{public}s, init base timer task", __func__);
+    if (intervalTimer_ != nullptr) {
         return;
     }
 
-    APP_LOGI("%{public}s, init base timer task", __func__);
-    auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(TIMER_TYPE_ELAPSED_REALTIME);
-    timerOption->SetRepeat(true);
-    timerOption->SetInterval(static_cast<uint64_t>(Constants::MIN_PERIOD));
-    timerOption->SetWantAgent(nullptr);
-    timerOption->SetCallbackInfo([]() { FormTimerMgr::GetInstance().OnIntervalTimeOut(); });
+    intervalTimer_ = std::make_shared<Utils::Timer>("interval timer");
+    auto timeCallback = []() { FormTimerMgr::GetInstance().OnIntervalTimeOut(); };
+    intervalTimer_->Register(timeCallback, Constants::MIN_PERIOD);
+    intervalTimer_->Setup();
 
-    intervalTimerId_ = MiscServices::TimeServiceClient::GetInstance()->CreateTimer(timerOption);
-    bool bRet = MiscServices::TimeServiceClient::GetInstance()->StartTimer(intervalTimerId_,
-        static_cast<uint64_t>(Constants::MIN_PERIOD));
-    if (!bRet) {
-        APP_LOGE("%{public}s failed, init base timer task error", __func__);
-    }
     APP_LOGI("%{public}s end", __func__);
 }
 /**
@@ -1162,12 +1153,9 @@ void FormTimerMgr::EnsureInitIntervalTimer()
 void FormTimerMgr::ClearIntervalTimer()
 {
     APP_LOGI("%{public}s start", __func__);
-    if (intervalTimerId_ != 0L) {
-        APP_LOGI("%{public}s clear interval timer start", __func__);
-        MiscServices::TimeServiceClient::GetInstance()->StopTimer(intervalTimerId_);
-        MiscServices::TimeServiceClient::GetInstance()->DestroyTimer(intervalTimerId_);
-        intervalTimerId_ = 0L;
-        APP_LOGI("%{public}s clear interval timer end", __func__);
+    if (intervalTimer_ != nullptr) {
+        intervalTimer_->Shutdown();
+        intervalTimer_.reset();
     }
     APP_LOGI("%{public}s end", __func__);
 }
@@ -1229,7 +1217,7 @@ void FormTimerMgr::Init()
     timerReceiver_ = std::make_shared<TimerReceiver>(subscribeInfo);
     EventFwk::CommonEventManager::SubscribeCommonEvent(timerReceiver_);
 
-    intervalTimerId_ = 0L;
+    intervalTimer_ = nullptr;
     updateAtTimerId_ = 0L;
     dynamicAlarmTimerId_ = 0L;
     limiterTimerId_ = 0L;
