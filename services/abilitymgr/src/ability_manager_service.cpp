@@ -218,7 +218,7 @@ bool AbilityManagerService::Init()
             HILOG_INFO("file exists");
             return;
         }
-        HILOG_INFO("no such file,creat...");
+        HILOG_INFO("no such file,create...");
         std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
         outFile.close();
     };
@@ -3639,7 +3639,7 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
         std::string bundleName;
         bool result = bms->GetBundleNameForUid(callerUid, bundleName);
         if (!result) {
-            HILOG_ERROR("GetBundleNameForUid frome bms fail.");
+            HILOG_ERROR("GetBundleNameForUid from bms fail.");
             return RESOLVE_CALL_NO_PERMISSIONS;
         }
         if (bundleName != abilityInfo.bundleName && callerUid != targetUid && !isTargetSystemApp) {
