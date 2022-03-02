@@ -1446,7 +1446,7 @@ bool FormMgrAdapter::IsFormCached(const FormRecord record)
  * @param remoteObject Form provider proxy object.
  */
 void FormMgrAdapter::AcquireProviderFormInfo(const int64_t formId, const Want &want,
-const sptr<IRemoteObject> &remoteObject)
+    const sptr<IRemoteObject> &remoteObject)
 {
     APP_LOGI("%{public}s called.", __func__);
 
