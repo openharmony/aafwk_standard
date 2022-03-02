@@ -433,24 +433,16 @@ void MainThread::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
 void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token,
     const std::shared_ptr<AAFwk::Want> &want)
 {
-    APP_LOGI("MainThread::scheduleLaunchAbility called start.");
-    APP_LOGI(
-        "MainThread::scheduleLaunchAbility AbilityInfo name:%{public}s type:%{public}d", info.name.c_str(), info.type);
+    APP_LOGI("MainThread::scheduleLaunchAbility, AbilityInfo name:%{public}s type:%{public}d",
+        info.name.c_str(), info.type);
 
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>(info);
-    if (abilityInfo == nullptr) {
-        APP_LOGE("MainThread::ScheduleLaunchAbility abilityInfo is nullptr");
-        return;
-    }
-    sptr<IRemoteObject> abilityToken = token;
-    std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
+    std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
     abilityRecord->SetWant(want);
 
     std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
     sptr<IBundleMgr> bundleMgr = contextDeal->GetBundleManager();
-    if (bundleMgr == nullptr) {
-        APP_LOGE("MainThread::ScheduleLaunchAbility GetBundleManager is nullptr");
-    } else {
+    if (bundleMgr) {
         BundleInfo bundleInfo;
         bundleMgr->GetBundleInfo(abilityInfo->bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
         abilityRecord->SetCompatibleVersion(bundleInfo.compatibleVersion);
@@ -469,7 +461,6 @@ void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemo
     if (!mainHandler_->PostTask(task)) {
         APP_LOGE("MainThread::ScheduleLaunchAbility PostTask task failed");
     }
-    APP_LOGI("MainThread::scheduleLaunchAbility called end.");
 }
 
 /**
@@ -1064,15 +1055,10 @@ void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &
     mainThreadState_ = MainThreadState::RUNNING;
     std::shared_ptr<AbilityRuntime::Context> stageContext = application_->AddAbilityStage(abilityRecord);
 #ifdef APP_ABILITY_USE_TWO_RUNNER
-    APP_LOGI("MainThread::handleLaunchAbility. Start calling AbilityThreadMain start.");
     AbilityThread::AbilityThreadMain(application_, abilityRecord, stageContext);
-    APP_LOGI("MainThread::handleLaunchAbility. Start calling AbilityThreadMain end.");
 #else
-    APP_LOGI("MainThread::handleLaunchAbility. Start calling 2 AbilityThreadMain start.");
     AbilityThread::AbilityThreadMain(application_, abilityRecord, mainHandler_->GetEventRunner(), stageContext);
-    APP_LOGI("MainThread::handleLaunchAbility. Start calling 2 AbilityThreadMain end.");
 #endif
-    APP_LOGI("MainThread::handleLaunchAbility called end.");
 }
 
 /**
