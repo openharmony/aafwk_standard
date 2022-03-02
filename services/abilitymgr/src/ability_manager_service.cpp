@@ -205,8 +205,8 @@ bool AbilityManagerService::Init()
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
 
-    auto startLauncherAbilityTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
-    handler_->PostTask(startLauncherAbilityTask, "startLauncherAbility");
+    auto startSystemTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
+    handler_->PostTask(startSystemTask, "startLauncherAbility");
     auto creatWhiteListTask = [aams = shared_from_this()]() {
         if (access(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), F_OK) != 0) {
             if (mkdir(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), S_IRWXO | S_IRWXG | S_IRWXU)) {
@@ -260,7 +260,6 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         HILOG_INFO("AbilityManagerService::StartAbility. try to StartRemoteAbility");
         return StartRemoteAbility(want, requestCode);
     }
-    HILOG_INFO("AbilityManagerService::StartAbility. try to StartLocalAbility");
     return StartAbilityInner(want, callerToken, requestCode, -1, userId);
 }
 
@@ -2442,6 +2441,7 @@ void AbilityManagerService::StartingLauncherAbility()
     auto userId = GetUserId();
     Want want;
     want.SetElementName(AbilityConfig::LAUNCHER_BUNDLE_NAME, AbilityConfig::LAUNCHER_ABILITY_NAME);
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     while (!(iBundleManager_->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
         userId, abilityInfo))) {
         HILOG_INFO("Waiting query launcher ability info completed.");
@@ -2469,6 +2469,7 @@ void AbilityManagerService::StartingPhoneServiceAbility()
 
     auto userId = GetUserId();
     int attemptNums = 1;
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     while (!(iBundleManager_->QueryAbilityInfo(phoneServiceWant,
         OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, phoneServiceInfo)) &&
         attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
@@ -2494,6 +2495,7 @@ void AbilityManagerService::StartingContactsAbility()
 
     auto userId = GetUserId();
     int attemptNums = 1;
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     while (!(iBundleManager_->QueryAbilityInfo(contactsWant,
         OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, contactsInfo)) &&
         attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
@@ -2522,6 +2524,7 @@ void AbilityManagerService::StartingMmsAbility()
 
     auto userId = GetUserId();
     int attemptNums = 1;
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     while (!(iBundleManager_->QueryAbilityInfo(mmsWant,
         OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, mmsInfo)) &&
         attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
@@ -2554,6 +2557,7 @@ int AbilityManagerService::GenerateAbilityRequest(
     auto abilityInfoFlag = (AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_PERMISSION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_METADATA);
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     bms->QueryAbilityInfo(
         want, abilityInfoFlag, userId, request.abilityInfo);
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
@@ -4308,7 +4312,7 @@ int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId
 {
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-    HILOG_INFO("share content: ShowPickerDialog");
+    HILOG_INFO("share content: ShowPickerDialog, userId is %{public}d", userId);
     std::vector<AppExecFwk::AbilityInfo> abilityInfos;
     bms->QueryAbilityInfos(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfos);
     return Ace::UIServiceMgrClient::GetInstance()->ShowAppPickerDialog(want, abilityInfos, userId);
@@ -4358,6 +4362,7 @@ void AbilityManagerService::StartingScreenLockAbility()
     AppExecFwk::AbilityInfo screenLockInfo;
     Want screenLockWant;
     screenLockWant.SetElementName(AbilityConfig::SCREEN_LOCK_BUNDLE_NAME, AbilityConfig::SCREEN_LOCK_ABILITY_NAME);
+    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     while (!(iBundleManager_->QueryAbilityInfo(screenLockWant,
         OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, screenLockInfo)) &&
         attemptNums <= maxAttemptNums) {
