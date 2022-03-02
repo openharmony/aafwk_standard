@@ -285,7 +285,7 @@ void SetValuesBucketObject(
     napi_typeof(env, value, &valueType);
     if (valueType == napi_string) {
         std::string valueString = UnwrapStringFromJS(env, value);
-        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{public}s",
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{private}s",
             valueType,
             keyStr.c_str(),
             valueString.c_str());
@@ -295,12 +295,12 @@ void SetValuesBucketObject(
         napi_get_value_double(env, value, &valueNumber);
         valuesBucket.PutDouble(keyStr, valueNumber);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}lf", valueType, keyStr.c_str(), valueNumber);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}lf", valueType, keyStr.c_str(), valueNumber);
     } else if (valueType == napi_boolean) {
         bool valueBool = false;
         napi_get_value_bool(env, value, &valueBool);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}d", valueType, keyStr.c_str(), valueBool);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}d", valueType, keyStr.c_str(), valueBool);
         valuesBucket.PutBool(keyStr, valueBool);
     } else if (valueType == napi_null) {
         valuesBucket.PutNull(keyStr);
@@ -445,7 +445,7 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
 
     std::string strValue = "";
     if (UnwrapStringByPropertyName(env, args, "value", strValue)) {
-        HILOG_INFO("%{public}s,strValue=%{public}s", __func__, strValue.c_str());
+        HILOG_INFO("%{public}s,strValue=%{private}s", __func__, strValue.c_str());
         value = strValue;
     } else {
         HILOG_ERROR("%{public}s, value == nullptr.", __func__);
