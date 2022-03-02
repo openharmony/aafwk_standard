@@ -288,7 +288,7 @@ void SetValuesBucketObject(
     napi_typeof(env, value, &valueType);
     if (valueType == napi_string) {
         std::string valueString = UnwrapStringFromJS(env, value);
-        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{public}s",
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{private}s",
             valueType,
             keyStr.c_str(),
             valueString.c_str());
@@ -298,12 +298,12 @@ void SetValuesBucketObject(
         napi_get_value_double(env, value, &valueNumber);
         valuesBucket.PutDouble(keyStr, valueNumber);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}lf", valueType, keyStr.c_str(), valueNumber);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}lf", valueType, keyStr.c_str(), valueNumber);
     } else if (valueType == napi_boolean) {
         bool valueBool = false;
         napi_get_value_bool(env, value, &valueBool);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}d", valueType, keyStr.c_str(), valueBool);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}d", valueType, keyStr.c_str(), valueBool);
         valuesBucket.PutBool(keyStr, valueBool);
     } else if (valueType == napi_null) {
         valuesBucket.PutNull(keyStr);
@@ -448,7 +448,7 @@ napi_value UnwrapValuesBucket(std::string &value, napi_env env, napi_value args)
 
     std::string strValue = "";
     if (UnwrapStringByPropertyName(env, args, "value", strValue)) {
-        HILOG_INFO("%{public}s,strValue=%{public}s", __func__, strValue.c_str());
+        HILOG_INFO("%{public}s,strValue=%{private}s", __func__, strValue.c_str());
         value = strValue;
     } else {
         HILOG_ERROR("%{public}s, value == nullptr.", __func__);
@@ -2477,7 +2477,7 @@ void SetPacMapObject(AppExecFwk::PacMap &pacMap, const napi_env &env, std::strin
     HILOG_INFO("ValueObject--------> type:%{public}d", valueType);
     if (valueType == napi_string) {
         std::string valueString = UnwrapStringFromJS(env, value);
-        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{public}s", valueType, keyStr.c_str(),
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{private}s", valueType, keyStr.c_str(),
             valueString.c_str());
         pacMap.PutStringValue(keyStr, valueString);
     } else if (valueType == napi_number) {
@@ -2485,12 +2485,12 @@ void SetPacMapObject(AppExecFwk::PacMap &pacMap, const napi_env &env, std::strin
         napi_get_value_double(env, value, &valueNumber);
         pacMap.PutDoubleValue(keyStr, valueNumber);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}lf", valueType, keyStr.c_str(), valueNumber);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}lf", valueType, keyStr.c_str(), valueNumber);
     } else if (valueType == napi_boolean) {
         bool valueBool = false;
         napi_get_value_bool(env, value, &valueBool);
         HILOG_INFO(
-            "ValueObject type:%{public}d, key:%{public}s, value:%{public}d", valueType, keyStr.c_str(), valueBool);
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}d", valueType, keyStr.c_str(), valueBool);
         pacMap.PutBooleanValue(keyStr, valueBool);
     } else if (valueType == napi_null) {
         pacMap.PutObject(keyStr, nullptr);
@@ -2529,7 +2529,7 @@ void AnalysisPacMap(AppExecFwk::PacMap &pacMap, const napi_env &env, const napi_
 void ParseEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string equalValue = pacMap.GetStringValue(value_str, "");
-    HILOG_INFO("ParseJsonKey equalTo equalValue1:%{public}s ", equalValue.c_str());
+    HILOG_INFO("ParseJsonKey equalTo equalValue1:%{private}s ", equalValue.c_str());
     if (equalValue != "") {
         if (equalValue.find(",") == string::npos) {
             predicates.EqualTo(value_str, equalValue);
@@ -2540,13 +2540,13 @@ void ParseEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb:
             predicates.EqualTo(value_str, value_vec[0]);
             pacMap.Remove(value_str);
             pacMap.PutStringValue(value_str, equalValue.substr(value_vec[0].length() + 1, equalValue.length()));
-            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{public}s ",
+            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{private}s ",
                 equalValue.substr(value_vec[0].length() + 1, equalValue.length()).c_str());
         }
     } else {
         double equalDoubleValue = pacMap.GetDoubleValue(value_str, DBL_MIN);
         predicates.EqualTo(value_str, std::to_string(equalDoubleValue));
-        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{public}s ",
+        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{private}s ",
             std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)).c_str());
         pacMap.Remove(value_str);
     }
@@ -2555,7 +2555,7 @@ void ParseEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb:
 void ParseNotEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string equalValue = pacMap.GetStringValue(value_str, "123##*##abc");
-    HILOG_INFO("ParseJsonKey notEqualTo equalValue1:%{public}s ", equalValue.c_str());
+    HILOG_INFO("ParseJsonKey notEqualTo equalValue1:%{private}s ", equalValue.c_str());
     if (equalValue != "123##*##abc") {
         if (equalValue.find(",") == string::npos) {
             predicates.NotEqualTo(value_str, equalValue);
@@ -2566,12 +2566,12 @@ void ParseNotEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeR
             predicates.NotEqualTo(value_str, value_vec[0]);
             pacMap.Remove(value_str);
             pacMap.PutStringValue(value_str, equalValue.substr(value_vec[0].length() + 1, equalValue.length()));
-            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{public}s ",
+            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{private}s ",
                 equalValue.substr(value_vec[0].length() + 1, equalValue.length()).c_str());
         }
     } else {
         predicates.NotEqualTo(value_str, std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)));
-        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{public}s ",
+        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{private}s ",
             std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)).c_str());
         pacMap.Remove(value_str);
     }
@@ -2580,7 +2580,7 @@ void ParseNotEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeR
 void ParseBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string betweenValue = pacMap.GetStringValue(value_str, "");
-    HILOG_INFO("ParseJsonKey between betweenValue1:%{public}s ", betweenValue.c_str());
+    HILOG_INFO("ParseJsonKey between betweenValue1:%{private}s ", betweenValue.c_str());
     std::vector<std::string> value_vec;
     Stringsplit(betweenValue, ",", value_vec);
     predicates.Between(value_str, value_vec[0], value_vec[1]);
@@ -2589,10 +2589,10 @@ void ParseBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb:
     pacMap.Remove(value_str);
     if (value_vec.size() == 1) {
         pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
-        HILOG_INFO("ParseJsonKey between betweenValue2:%{public}s ", value_vec[0].c_str());
+        HILOG_INFO("ParseJsonKey between betweenValue2:%{private}s ", value_vec[0].c_str());
     } else if (value_vec.size() > 1) {
         pacMap.PutStringValue(value_str, betweenValue.substr(tempLength, betweenValue.length()));
-        HILOG_INFO("ParseJsonKey between betweenValue3:%{public}s ",
+        HILOG_INFO("ParseJsonKey between betweenValue3:%{private}s ",
             betweenValue.substr(tempLength, betweenValue.length()).c_str());
     }
 }
@@ -2600,7 +2600,7 @@ void ParseBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb:
 void ParseNotBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string betweenValue = pacMap.GetStringValue(value_str, "");
-    HILOG_INFO("ParseJsonKey notBetween betweenValue1:%{public}s ", betweenValue.c_str());
+    HILOG_INFO("ParseJsonKey notBetween betweenValue1:%{private}s ", betweenValue.c_str());
     std::vector<std::string> value_vec;
     Stringsplit(betweenValue, ",", value_vec);
     predicates.NotBetween(value_str, value_vec[0], value_vec[1]);
@@ -2609,10 +2609,10 @@ void ParseNotBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeR
     pacMap.Remove(value_str);
     if (value_vec.size() == 1) {
         pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
-        HILOG_INFO("ParseJsonKey notBetween betweenValue2:%{public}s ", value_vec[0].c_str());
+        HILOG_INFO("ParseJsonKey notBetween betweenValue2:%{private}s ", value_vec[0].c_str());
     } else if (value_vec.size() > 1) {
         pacMap.PutStringValue(value_str, betweenValue.substr(tempLength, betweenValue.length()));
-        HILOG_INFO("ParseJsonKey notBetween betweenValue3:%{public}s ",
+        HILOG_INFO("ParseJsonKey notBetween betweenValue3:%{private}s ",
             betweenValue.substr(tempLength, betweenValue.length()).c_str());
     }
 }
@@ -2620,7 +2620,7 @@ void ParseNotBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeR
 void ParseIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string inValue = pacMap.GetStringValue(value_str, "");
-    HILOG_INFO("ParseJsonKey in value_str1:%{public}s ", inValue.c_str());
+    HILOG_INFO("ParseJsonKey in value_str1:%{private}s ", inValue.c_str());
     std::vector<std::string> value_vec;
     Stringsplit(inValue, ",", value_vec);
     if (value_vec.size() >= ARGS_TWO) {
@@ -2633,10 +2633,10 @@ void ParseIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::Data
         pacMap.Remove(value_str);
         if (value_vec.size() == 1) {
             pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
-            HILOG_INFO("ParseJsonKey in value_str2:%{public}s ", value_vec[0].c_str());
+            HILOG_INFO("ParseJsonKey in value_str2:%{private}s ", value_vec[0].c_str());
         } else if (value_vec.size() > 1) {
             pacMap.PutStringValue(value_str, inValue.substr(tempLength, inValue.length()));
-            HILOG_INFO("ParseJsonKey in value_str3:%{public}s ", inValue.substr(tempLength, inValue.length()).c_str());
+            HILOG_INFO("ParseJsonKey in value_str3:%{private}s ", inValue.substr(tempLength, inValue.length()).c_str());
         }
     } else {
         pacMap.Remove(value_str);
@@ -2646,7 +2646,7 @@ void ParseIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::Data
 void ParseNotIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
 {
     std::string inValue = pacMap.GetStringValue(value_str, "");
-    HILOG_INFO("ParseJsonKey notIn value_str1:%{public}s ", inValue.c_str());
+    HILOG_INFO("ParseJsonKey notIn value_str1:%{private}s ", inValue.c_str());
     std::vector<std::string> value_vec;
     Stringsplit(inValue, ",", value_vec);
     if (value_vec.size() >= ARGS_TWO) {
@@ -2659,11 +2659,11 @@ void ParseNotIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::D
         pacMap.Remove(value_str);
         if (value_vec.size() == 1) {
             pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
-            HILOG_INFO("ParseJsonKey notIn value_str2:%{public}s ", value_vec[0].c_str());
+            HILOG_INFO("ParseJsonKey notIn value_str2:%{private}s ", value_vec[0].c_str());
         } else if (value_vec.size() > 1) {
             pacMap.PutStringValue(value_str, inValue.substr(tempLength, inValue.length()));
             HILOG_INFO(
-                "ParseJsonKey notIn value_str3:%{public}s ", inValue.substr(tempLength, inValue.length()).c_str());
+                "ParseJsonKey notIn value_str3:%{private}s ", inValue.substr(tempLength, inValue.length()).c_str());
         }
     } else {
         pacMap.Remove(value_str);
@@ -2679,15 +2679,15 @@ void ParseNormal(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::
         ParseNotEqualTo(pacMap, value_str, predicates);
     } else if (key_str == "contains") {
         predicates.Contains(value_str, pacMap.GetStringValue(value_str, ""));
-        HILOG_INFO("ParseJsonKey contains :%{public}s ", pacMap.GetStringValue(value_str, "").c_str());
+        HILOG_INFO("ParseJsonKey contains :%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
         pacMap.Remove(value_str);
     } else if (key_str == "beginsWith") {
         predicates.BeginsWith(value_str, pacMap.GetStringValue(value_str, ""));
-        HILOG_INFO("ParseJsonKey beginsWith :%{public}s ", pacMap.GetStringValue(value_str, "").c_str());
+        HILOG_INFO("ParseJsonKey beginsWith :%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
         pacMap.Remove(value_str);
     } else if (key_str == "endsWith") {
         predicates.EndsWith(value_str, pacMap.GetStringValue(value_str, ""));
-        HILOG_INFO("ParseJsonKey endsWithValue1:%{public}s ", pacMap.GetStringValue(value_str, "").c_str());
+        HILOG_INFO("ParseJsonKey endsWithValue1:%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
         pacMap.Remove(value_str);
     } else if (key_str == "greaterThan") {
         double greateValue = pacMap.GetDoubleValue(value_str, DBL_MIN);
@@ -2731,7 +2731,7 @@ void ParseUnNormal(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb
         predicates.Offset(pacMap.GetIntValue(value_str, 0));
     } else if (key_str == "groupBy") {
         std::string groupByValue = pacMap.GetStringValue(value_str, "");
-        HILOG_INFO("ParseJsonKey groupBy groupByValue:%{public}s ", groupByValue.c_str());
+        HILOG_INFO("ParseJsonKey groupBy groupByValue:%{private}s ", groupByValue.c_str());
         std::vector<std::string> res;
         Stringsplit(groupByValue, ",", res);
         predicates.GroupBy(res);
@@ -2757,7 +2757,7 @@ void ParseJsonKey(std::string &jsonStr, AppExecFwk::PacMap &pacMap, NativeRdb::D
         for (Json::Value::Members::iterator it = members.begin(); it != members.end(); ++it) {
             std::string key_str = *it;
             std::string value_str = devJson[key_str].asString();
-            HILOG_INFO("%{public}s, called，value_str = %{public}s", __func__, value_str.c_str());
+            HILOG_INFO("%{public}s, called，value_str = %{private}s", __func__, value_str.c_str());
             if (key_str == "equalTo" || key_str == "notEqualTo" || key_str == "contains" || key_str == "beginsWith" ||
                 key_str == "endsWith" || key_str == "greaterThan" || key_str == "lessThan" ||
                 key_str == "greaterThanOrEqualTo" || key_str == "lessThanOrEqualTo") {
