@@ -316,7 +316,7 @@ private:
      * @param nextTime The next update time.
      * @return Returns WantAgent.
      */
-    std::shared_ptr<WantAgent> GetDynamicWantAgent(long nextTime);
+    std::shared_ptr<WantAgent> GetDynamicWantAgent(long nextTime, int32_t userId);
 
     /**
      * @brief check if user is active or not.

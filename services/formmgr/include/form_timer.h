@@ -115,7 +115,7 @@ public:
 class DynamicRefreshItem {
 public:
     int64_t formId = 0L;
-    int64_t settedTime = -1L;
+    int64_t settedTime = LONG_MAX;
     int32_t userId = -1;
     DynamicRefreshItem(){}
 

@@ -34,7 +34,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 const int TIMER_TYPE_ELAPSED_REALTIME = 1;
-const int TIMER_TYPE_ELAPSED_REALTIME_WAKEUP = 2;
 const int TIMER_TYPE_RTC_WAKEUP = 3;
 
 const int REQUEST_UPDATE_AT_CODE = 1;
@@ -333,8 +332,10 @@ bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTi
         return false;
     }
     auto timeSinceEpoch = std::chrono::steady_clock::now().time_since_epoch();
-    auto timeInSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceEpoch).count();
-    int64_t refreshTime = timeInSec + nextGapTime; // * Constants::MS_PER_SECOND;
+    int64_t timeInSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceEpoch).count();
+    int64_t refreshTime = timeInSec + nextGapTime * Constants::MS_PER_SECOND;
+    APP_LOGI("%{public}s, timeInSec:%{public}" PRId64 ", refreshTime:%{public}" PRId64, __func__, timeInSec,
+        refreshTime);
     std::lock_guard<std::mutex> lock(refreshMutex_);
     bool isExist = false;
     for (auto &refreshItem: dynamicRefreshTasks_) {
@@ -1034,11 +1035,11 @@ bool FormTimerMgr::UpdateDynamicAlarm()
     }
 
     auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(TIMER_TYPE_ELAPSED_REALTIME_WAKEUP);
+    timerOption->SetType(timerOption->TIMER_TYPE_REALTIME | timerOption->TIMER_TYPE_WAKEUP);
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
-    std::shared_ptr<WantAgent> wantAgent = GetDynamicWantAgent(dynamicWakeUpTime_);
-    if (wantAgent) {
+    std::shared_ptr<WantAgent> wantAgent = GetDynamicWantAgent(dynamicWakeUpTime_, firstTask.userId);
+    if (!wantAgent) {
         APP_LOGE("%{public}s, failed to create wantAgent.", __func__);
         return false;
     }
@@ -1056,7 +1057,7 @@ bool FormTimerMgr::UpdateDynamicAlarm()
         APP_LOGE("%{public}s failed, init dynamic timer task error", __func__);
     }
 
-    APP_LOGI("%{public}s end", __func__);
+    APP_LOGI("%{public}s end, dynamicWakeUpTime_ : %{pubilc}ld.", __func__, dynamicWakeUpTime_);
 
     return true;
 }
@@ -1065,7 +1066,7 @@ bool FormTimerMgr::UpdateDynamicAlarm()
  * @param nextTime The next update time.
  * @return Returns WantAgent.
  */
-std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime)
+std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime, int32_t userId)
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("", "", "");
@@ -1077,8 +1078,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime)
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_DYNAMIC_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
-    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
+    return WantAgentHelper::GetWantAgent(wantAgentInfo, userId);
 }
 
 /**
