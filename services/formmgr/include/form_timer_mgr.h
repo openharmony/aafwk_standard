@@ -35,7 +35,7 @@
 #include "form_timer.h"
 #include "thread_pool.h"
 #include "time_service_client.h"
-// #include "timer.h"
+#include "timer.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -359,7 +359,7 @@ private:
     std::shared_ptr<TimerReceiver> timerReceiver_ = nullptr;
     std::unique_ptr<ThreadPool> taskExecutor_ = nullptr;
 
-    uint64_t intervalTimerId_ = 0L;
+    std::shared_ptr<Utils::Timer> intervalTimer_ = nullptr;
     uint64_t updateAtTimerId_ = 0L;
     uint64_t dynamicAlarmTimerId_ = 0L;
     uint64_t limiterTimerId_= 0L;
