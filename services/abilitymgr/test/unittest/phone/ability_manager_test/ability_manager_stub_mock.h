@@ -128,8 +128,6 @@ public:
     {
         return 0;
     }
-    MOCK_METHOD1(StartUser, int(int userId));
-    MOCK_METHOD1(StopUser, int(int userId, const sptr<IStopUserCallback>&callback));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
     MOCK_METHOD2(NotifyContinuationResult, int(int32_t missionId, int32_t result));
     MOCK_METHOD5(ContinueMission, int(const std::string &srcDeviceId, const std::string &dstDeviceId,
