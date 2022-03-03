@@ -24,7 +24,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 namespace {
-constexpr int32_t UNSPECIFIED_USERID = -2;
+constexpr int32_t UNSPECIFIED_USER = -2;
 }
 
 std::unique_ptr<TestRunner> TestRunner::Create(
@@ -53,8 +53,7 @@ std::unique_ptr<TestRunner> TestRunner::Create(
     }
 
     BundleInfo bundleInfo;
-    if (!bms->GetBundleInfo(
-            args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USERID)) {
+    if (!bms->GetBundleInfo(args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USER)) {
         APP_LOGE("Failed to GetBundleInfo");
         return {};
     }
