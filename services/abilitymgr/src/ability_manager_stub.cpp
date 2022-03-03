@@ -1409,8 +1409,15 @@ int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, Message
     MissionSnapshot missionSnapshot;
     int32_t result = GetMissionSnapshot(deviceId, missionId, missionSnapshot);
     HILOG_INFO("snapshot: AbilityManagerStub get snapshot result = %{public}d", result);
-    reply.WriteParcelable(&missionSnapshot);
-    return result;
+    if (!reply.WriteParcelable(&missionSnapshot)) {
+        HILOG_ERROR("GetMissionSnapshot error");
+        return ERR_INVALID_VALUE;
+    }
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("GetMissionSnapshot result error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::SetAbilityControllerInner(MessageParcel &data, MessageParcel &reply)
