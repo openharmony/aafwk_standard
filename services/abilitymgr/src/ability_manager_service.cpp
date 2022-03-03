@@ -979,6 +979,10 @@ int AbilityManagerService::ConnectAbility(
     }
 
     int32_t validUserId = GetValidUserId(userId);
+    if (callerToken != nullptr && callerToken->GetObjectDescriptor() != u"ohos.aafwk.AbilityToken") {
+        HILOG_INFO("%{public}s invalid Token.", __func__);
+        return ConnectLocalAbility(want, validUserId, connect, nullptr);
+    }
     return ConnectLocalAbility(want, validUserId, connect, callerToken);
 }
 
