@@ -4181,23 +4181,15 @@ int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObj
     return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo);
 }
 
-int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode,
-    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     HILOG_DEBUG("enter");
-    int ret = KillProcess(bundleName);
-    if (ret) {
-        HILOG_ERROR("Failed to kill process.");
-        return ret;
-    }
-
-    sptr<ITestObserver> observerProxy = iface_cast<ITestObserver>(observer);
-    if (!observerProxy) {
-        HILOG_ERROR("Failed to get ITestObserver proxy");
+    if (bundleName.empty()) {
+        HILOG_ERROR("Invalid bundle name.");
         return ERR_INVALID_VALUE;
     }
-    observerProxy->TestFinished(msg, resultCode);
-    return ERR_OK;
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    return DelayedSingleton<AppScheduler>::GetInstance()->FinishUserTest(msg, resultCode, bundleName, callingPid);
 }
 
 int AbilityManagerService::GetCurrentTopAbility(sptr<IRemoteObject> &token)
@@ -4249,7 +4241,7 @@ int AbilityManagerService::DelegatorDoAbilityForeground(const sptr<IRemoteObject
 int AbilityManagerService::DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token)
 {
     HILOG_DEBUG("enter");
-    return MinimizeAbility(token);
+    return MinimizeAbility(token, true);
 }
 
 int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)

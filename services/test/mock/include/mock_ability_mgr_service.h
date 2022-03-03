@@ -202,8 +202,7 @@ public:
         return 0;
     }
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) override
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override
     {
         return 0;
     }
@@ -243,7 +242,7 @@ public:
     {
         return 0;
     }
-    
+
 private:
     Semaphore sem_;
 };

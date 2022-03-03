@@ -19,8 +19,8 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-std::unique_ptr<TestRunner> TestRunner::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime,
-    const std::shared_ptr<AbilityDelegatorArgs> &args)
+std::unique_ptr<TestRunner> TestRunner::Create(
+    const std::unique_ptr<AbilityRuntime::Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args)
 {
     if (!runtime) {
         return std::make_unique<TestRunner>();

@@ -971,9 +971,14 @@ void AppRunningRecord::GetBundleNames(std::vector<std::string> &bundleNames)
     }
 }
 
-void AppRunningRecord::SetUserTestInfo(const UserTestRecord &record)
+void AppRunningRecord::SetUserTestInfo(const std::shared_ptr<UserTestRecord> &record)
 {
     userTestRecord_ = record;
+}
+
+std::shared_ptr<UserTestRecord> AppRunningRecord::GetUserTestInfo()
+{
+    return userTestRecord_;
 }
 
 void AppRunningRecord::SetSpecifiedAbilityFlagAndWant(
