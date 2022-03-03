@@ -1311,7 +1311,7 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
         int time = std::stoi(want.GetStringParam("-w"));
         timeMs = time * TIME_RATE_MS;
     }
-    if (!observer->waitForFinish(timeMs)) {
+    if (!observer->WaitForFinish(timeMs)) {
         resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
         return OHOS::ERR_INVALID_VALUE;
     }

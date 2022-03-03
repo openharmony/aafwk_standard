@@ -889,7 +889,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     }
 
     auto usertestInfo = appLaunchData.GetUserTestInfo();
-    if (usertestInfo.observer) {
+    if (usertestInfo) {
         if (!isStageBased) {
             AbilityRuntime::Runtime::Options options;
             options.codePath = LOCAL_CODE_PATH;
@@ -901,7 +901,8 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             }
             application_->SetRuntime(std::move(runtime));
         }
-        if (!AbilityDelegatorPrepare(usertestInfo)) {
+        if (!PrepareAbilityDelegator(usertestInfo)) {
+            APP_LOGE("Failed to prepare ability delegator");
             return;
         }
     }
@@ -984,10 +985,14 @@ void MainThread::LoadAndRegisterExtension(const std::string &libName,
     });
 }
 
-bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
+bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record)
 {
-    APP_LOGI("MainThread::AbilityDelegatorPrepare");
-    auto args = std::make_shared<AbilityDelegatorArgs>(record.want);
+    APP_LOGI("enter");
+    if (!record) {
+        APP_LOGE("Invalid UserTestRecord");
+        return false;
+    }
+    auto args = std::make_shared<AbilityDelegatorArgs>(record->want);
     if (!args) {
         APP_LOGE("args is null");
         return false;
@@ -997,13 +1002,13 @@ bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
         APP_LOGE("testRunner is null");
         return false;
     }
-
     auto delegator = std::make_shared<AbilityDelegator>(
-        application_->GetAppContext(), std::move(testRunner), record.observer);
+        application_->GetAppContext(), std::move(testRunner), record->observer);
     if (!delegator) {
         APP_LOGE("delegator is null");
         return false;
     }
+
     AbilityDelegatorRegistry::RegisterInstance(delegator, args);
 
     delegator->Prepare();

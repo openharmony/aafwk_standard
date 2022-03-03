@@ -71,7 +71,7 @@ ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, con
     return result;
 }
 
-bool TestObserver::waitForFinish(const int64_t &timeoutMs)
+bool TestObserver::WaitForFinish(const int64_t &timeoutMs)
 {
     HILOG_INFO("enter");
     int64_t startTime = SystemTime::GetNowSysTime();

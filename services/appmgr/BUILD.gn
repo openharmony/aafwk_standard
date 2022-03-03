@@ -25,6 +25,7 @@ config("appmgr_config") {
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//base/global/i18n_standard/frameworks/intl/include",
+    "//foundation/aafwk/standard/tools/aa/include",
   ]
 }
 

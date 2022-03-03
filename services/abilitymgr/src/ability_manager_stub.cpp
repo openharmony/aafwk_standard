@@ -1468,8 +1468,7 @@ int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &
     std::string msg = data.ReadString();
     int resultCode = data.ReadInt32();
     std::string bundleName = data.ReadString();
-    auto observer = data.ReadParcelable<IRemoteObject>();
-    int32_t result = FinishUserTest(msg, resultCode, bundleName, observer);
+    int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);
     return result;
 }

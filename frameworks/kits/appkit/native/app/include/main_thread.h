@@ -403,10 +403,10 @@ private:
      *
      * @brief Ability Delegator Prepare.
      *
-     * @param UserTestRecord User Test info.
+     * @param record User Test info.
      *
      */
-    bool AbilityDelegatorPrepare(const UserTestRecord &record);
+    bool PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record);
 
     class MainHandler : public EventHandler {
     public:

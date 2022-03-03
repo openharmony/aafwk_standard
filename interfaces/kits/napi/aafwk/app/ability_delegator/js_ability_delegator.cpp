@@ -28,18 +28,18 @@ namespace OHOS {
 namespace AbilityDelegatorJs {
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
-constexpr size_t ARGC_THREE = 3;
 constexpr size_t INDEX_ZERO = 0;
 constexpr size_t INDEX_ONE = 1;
 constexpr size_t INDEX_TWO = 2;
-using namespace OHOS::AppExecFwk;
+constexpr int ERROR = -1;
+
 using namespace OHOS::AbilityRuntime;
-std::map<std::shared_ptr<NativeReference>, std::shared_ptr<AbilityMonitor>> monitorRecord;
-std::map<std::shared_ptr<NativeReference>, sptr<IRemoteObject>> ablityRecord;
+std::map<std::shared_ptr<NativeReference>, std::shared_ptr<AbilityMonitor>> monitorRecord_;
+std::map<std::shared_ptr<NativeReference>, sptr<IRemoteObject>> ablityRecord_;
 
 void JSAbilityDelegator::Finalizer(NativeEngine *engine, void *data, void *hint)
 {
-    HILOG_INFO("JSAbilityDelegator::Finalizer is called");
+    HILOG_INFO("enter");
     std::unique_ptr<JSAbilityDelegator>(static_cast<JSAbilityDelegator *>(data));
 }
 
@@ -111,201 +111,208 @@ NativeValue *JSAbilityDelegator::FinishTest(NativeEngine *engine, NativeCallback
 
 NativeValue *JSAbilityDelegator::OnAddAbilityMonitor(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnAddAbilityMonitor is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::shared_ptr<AbilityMonitor> monitor = nullptr;
-    if (!ParseJSMonitorPara(engine, info.argv[INDEX_ZERO], monitor)) {
+    if (!ParseAbilityMonitorPara(engine, info, monitor)) {
+        HILOG_ERROR("Parse addAbilityMonitor parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [monitor](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnAddAbilityMonitor AsyncTask is called");
-        AbilityDelegatorRegistry::GetAbilityDelegator()->AddAbilityMonitor(monitor);
-        task.Resolve(engine, engine.CreateUndefined());
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "addAbilityMonitor failed."));
+            return;
+        }
+        delegator->AddAbilityMonitor(monitor);
+        task.Resolve(engine, engine.CreateNull());
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnRemoveAbilityMonitor(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnRemoveAbilityMonitor is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::shared_ptr<AbilityMonitor> monitor = nullptr;
-    if (!ParseJSMonitorPara(engine, info.argv[INDEX_ZERO], monitor)) {
+    if (!ParseAbilityMonitorPara(engine, info, monitor)) {
+        HILOG_ERROR("Parse removeAbilityMonitor parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete =
         [monitor](NativeEngine &engine, AsyncTask &task, int32_t status) mutable {
         HILOG_INFO("OnRemoveAbilityMonitor AsyncTask is called");
-        AbilityDelegatorRegistry::GetAbilityDelegator()->RemoveAbilityMonitor(monitor);
-        task.Resolve(engine, engine.CreateUndefined());
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "removeAbilityMonitor failed."));
+            return;
+        }
+        delegator->RemoveAbilityMonitor(monitor);
+        task.Resolve(engine, engine.CreateNull());
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
 
-    for (auto iter = monitorRecord.begin(); iter != monitorRecord.end(); ++iter) {
-        std::shared_ptr<NativeReference> jsMonitor = iter->first;
-        if ((info.argv[INDEX_ZERO])->StrictEquals(jsMonitor->Get())) {
-            monitorRecord.erase(iter);
-            break;
+    if (AbilityDelegatorRegistry::GetAbilityDelegator()) {
+        for (auto iter = monitorRecord_.begin(); iter != monitorRecord_.end(); ++iter) {
+            std::shared_ptr<NativeReference> jsMonitor = iter->first;
+            if ((info.argv[INDEX_ZERO])->StrictEquals(jsMonitor->Get())) {
+                monitorRecord_.erase(iter);
+                break;
+            }
         }
     }
-
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnWaitAbilityMonitor(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnWaitAbilityMonitor is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::shared_ptr<AbilityMonitor> monitor = nullptr;
-    if (!ParseJSMonitorPara(engine, info.argv[INDEX_ZERO], monitor)) {
+    TimeoutCallback opt {false, false};
+    int64_t timeout = 0;
+    if (!ParseWaitAbilityMonitorPara(engine, info, monitor, opt, timeout)) {
+        HILOG_ERROR("Parse waitAbilityMonitor parameters failed");
         return engine.CreateUndefined();
     }
 
-    bool hasTimeoutPara = false;
-    int64_t timeout = 0;
-    if (info.argc >= ARGC_TWO) {
-        if (!ConvertFromJsValue(engine, info.argv[INDEX_ONE], timeout)) {
-            HILOG_ERROR("Parse timeout failed");
-        } else {
-            hasTimeoutPara = true;
-        }
-    }
-
-    int argcnum = info.argc;
     AsyncTask::CompleteCallback complete =
-        [argcnum, monitor, timeout, hasTimeoutPara, this](NativeEngine &engine, AsyncTask &task, int32_t status) {
+        [monitor, timeout, opt, this](NativeEngine &engine, AsyncTask &task, int32_t status) {
             HILOG_INFO("OnWaitAbilityMonitor AsyncTask is called");
-            sptr<IRemoteObject> remoteObject = nullptr;
-            if (((argcnum == ARGC_TWO) && !hasTimeoutPara) || (argcnum == ARGC_ONE)) {
-                remoteObject = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->WaitAbilityMonitor(monitor);
-            } else if (((argcnum == ARGC_TWO) && hasTimeoutPara) || (argcnum == ARGC_THREE)) {
-                remoteObject =
-                    AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->WaitAbilityMonitor(monitor, timeout);
+            auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+            if (!delegator) {
+                task.Reject(engine, CreateJsError(engine, ERROR, "waitAbilityMonitor failed."));
+                return;
             }
-            task.Resolve(engine, CreateJsAbilityObject(engine, remoteObject));
+            sptr<IRemoteObject> remoteObject = nullptr;
+            if (opt.hasTimeoutPara) {
+                remoteObject = delegator->WaitAbilityMonitor(monitor, timeout);
+            } else {
+                remoteObject = delegator->WaitAbilityMonitor(monitor);
+            }
+            NativeValue *ability = CreateAbilityObject(engine, remoteObject);
+            if (ability) {
+                task.Resolve(engine, ability);
+            } else {
+                task.Reject(engine, CreateJsError(engine, ERROR, "waitAbilityMonitor failed."));
+            }
         };
 
     NativeValue *lastParam = nullptr;
-    if ((argcnum == ARGC_ONE) || ((argcnum == ARGC_TWO) && hasTimeoutPara)) {
+    if (opt.hasCallbackPara) {
+        lastParam = opt.hasTimeoutPara ? info.argv[INDEX_TWO] : info.argv[INDEX_ONE];
+    } else {
         lastParam = nullptr;
-    } else if ((argcnum == ARGC_TWO) && !hasTimeoutPara) {
-        lastParam = info.argv[INDEX_ONE];
-    } else if (argcnum == ARGC_THREE) {
-        lastParam = info.argv[INDEX_TWO];
     }
+
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnPrint(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnPrint is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::string msg;
-    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], msg)) {
-        HILOG_ERROR("Parse para failed");
+    if (!ParsePrintPara(engine, info, msg)) {
+        HILOG_ERROR("Parse print parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [msg](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnPrint AsyncTask is called");
-        AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->Print(msg);
-        task.Resolve(engine, engine.CreateUndefined());
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "print failed."));
+            return;
+        }
+        delegator->Print(msg);
+        task.Resolve(engine, engine.CreateNull());
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnExecuteShellCommand is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::string cmd;
-    bool hasTimeoutPara = false;
+    TimeoutCallback opt {false, false};
     int64_t timeoutSecs = 0;
-    if (!ParseJSExecuteShellCommandPara(engine, info, cmd, timeoutSecs, hasTimeoutPara)) {
+    if (!ParseExecuteShellCommandPara(engine, info, cmd, opt, timeoutSecs)) {
+        HILOG_ERROR("Parse executeShellCommand parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [cmd, timeoutSecs](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnExecuteShellCommand AsyncTask is called");
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "executeShellCommand failed."));
+            return;
+        }
         std::unique_ptr<ShellCmdResult> shellResult =
-            AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->ExecuteShellCommand(cmd, timeoutSecs);
-        task.Resolve(engine, CreateJsShellCmdResult(engine, shellResult));
+            delegator->ExecuteShellCommand(cmd, timeoutSecs);
+        NativeValue *result = CreateJsShellCmdResult(engine, shellResult);
+        if (result) {
+            task.Resolve(engine, result);
+        } else {
+            task.Reject(engine, CreateJsError(engine, ERROR, "executeShellCommand failed."));
+        }
     };
 
-    int argcnum = info.argc;
     NativeValue *lastParam = nullptr;
-    if ((argcnum == ARGC_ONE) || ((argcnum == ARGC_TWO) && hasTimeoutPara)) {
+    if (opt.hasCallbackPara) {
+        lastParam = opt.hasTimeoutPara ? info.argv[INDEX_TWO] : info.argv[INDEX_ONE];
+    } else {
         lastParam = nullptr;
-    } else if ((argcnum == ARGC_TWO) && !hasTimeoutPara) {
-        lastParam = info.argv[INDEX_ONE];
-    } else if (argcnum == ARGC_THREE) {
-        lastParam = info.argv[INDEX_TWO];
     }
+
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnGetAppContext(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnGetAppContext is called, argc = %{public}d", static_cast<int>(info.argc));
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
-    AsyncTask::CompleteCallback complete = [](NativeEngine &engine, AsyncTask &task, int32_t status) {
-        HILOG_INFO("OnGetAppContext AsyncTask is called");
-        std::shared_ptr<AbilityRuntime::Context> context =
-            AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->GetAppContext();
-        task.Resolve(engine, CreateJsBaseContext(engine, context, false));
-    };
-
-    NativeValue *lastParam = (info.argc == ARGC_ONE) ? info.argv[INDEX_ZERO] : nullptr;
-    NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
-    return result;
+    auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (!delegator) {
+        HILOG_ERROR("delegator is null");
+        return engine.CreateNull();
+    }
+    std::shared_ptr<AbilityRuntime::Context> context = delegator->GetAppContext();
+    if (!context) {
+        HILOG_ERROR("context is null");
+        return engine.CreateNull();
+    }
+    return CreateJsBaseContext(engine, context, false);
 }
 
 NativeValue *JSAbilityDelegator::OnGetAbilityState(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnGetAbilityState is called, argc = %{public}d", static_cast<int>(info.argc));
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     if (info.argc < ARGC_ONE) {
         HILOG_ERROR("Incorrect number of parameters");
@@ -313,130 +320,146 @@ NativeValue *JSAbilityDelegator::OnGetAbilityState(NativeEngine &engine, NativeC
     }
 
     sptr<OHOS::IRemoteObject> remoteObject = nullptr;
-    if (!ParseJSAbilityPara(engine, info.argv[INDEX_ZERO], remoteObject)) {
+    if (!ParseAbilityPara(engine, info.argv[INDEX_ZERO], remoteObject)) {
+        HILOG_ERROR("Parse ability parameter failed");
         return engine.CreateUndefined();
     }
 
-    AsyncTask::CompleteCallback complete = [remoteObject](NativeEngine &engine, AsyncTask &task, int32_t status) {
-        HILOG_INFO("OnGetAbilityState AsyncTask is called");
-        AbilityDelegator::AbilityState lifeState =
-            AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->GetAbilityState(remoteObject);
-        task.Resolve(engine, CreateJsAbilityState(engine, lifeState));
-    };
-
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
-    NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
-    return result;
+    auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (!delegator) {
+        HILOG_ERROR("delegator is null");
+        return engine.CreateNull();
+    }
+    AbilityDelegator::AbilityState lifeState = delegator->GetAbilityState(remoteObject);
+    AbilityLifecycleState abilityLifeState = AbilityLifecycleState::UNINITIALIZED;
+    AbilityLifecycleStateToJs(lifeState, abilityLifeState);
+    return engine.CreateNumber(static_cast<int>(abilityLifeState));
 }
 
 NativeValue *JSAbilityDelegator::OnGetCurrentTopAbility(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnGetCurrentTopAbility is called, argc = %{public}d", static_cast<int>(info.argc));
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
+
+    if (info.argc >= ARGC_ONE) {
+        if (info.argv[INDEX_ZERO]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Parse getCurrentTopAbility parameter failed");
+            return engine.CreateUndefined();
+        }
+    }
 
     AsyncTask::CompleteCallback complete = [this](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnGetCurrentTopAbility AsyncTask is called");
-        sptr<IRemoteObject> remoteObject =
-            AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->GetCurrentTopAbility();
-        task.Resolve(engine, CreateJsAbilityObject(engine, remoteObject));
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "getCurrentTopAbility failed."));
+            return;
+        }
+        sptr<IRemoteObject> remoteObject = delegator->GetCurrentTopAbility();
+        NativeValue *ability = CreateAbilityObject(engine, remoteObject);
+        if (ability) {
+            task.Resolve(engine, ability);
+        } else {
+            task.Reject(engine, CreateJsError(engine, ERROR, "getCurrentTopAbility failed."));
+        }
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_ONE) ? info.argv[INDEX_ZERO] : nullptr;
+    NativeValue *lastParam = (info.argc >= ARGC_ONE) ? info.argv[INDEX_ZERO] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnDoAbilityForeground(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnDoAbilityForeground is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     sptr<OHOS::IRemoteObject> remoteObject = nullptr;
-    if (!ParseJSAbilityPara(engine, info.argv[INDEX_ZERO], remoteObject)) {
+    if (!ParseAbilityCommonPara(engine, info, remoteObject)) {
+        HILOG_ERROR("Parse doAbilityForeground parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [remoteObject](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnDoAbilityForeground AsyncTask is called");
-        bool ret = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->DoAbilityForeground(remoteObject);
-        task.Resolve(engine, CreateJsBool(engine, ret));
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "doAbilityForeground failed."));
+            return;
+        }
+        bool ret = delegator->DoAbilityForeground(remoteObject);
+        task.Resolve(engine, engine.CreateBoolean(ret));
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnDoAbilityBackground(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnDoAbilityBackground is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_ONE) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     sptr<OHOS::IRemoteObject> remoteObject = nullptr;
-    if (!ParseJSAbilityPara(engine, info.argv[INDEX_ZERO], remoteObject)) {
+    if (!ParseAbilityCommonPara(engine, info, remoteObject)) {
+        HILOG_ERROR("Parse doAbilityBackground parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [remoteObject](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnDoAbilityBackground AsyncTask is called");
-        bool ret = AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->DoAbilityBackground(remoteObject);
-        task.Resolve(engine, CreateJsBool(engine, ret));
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "doAbilityBackground failed."));
+            return;
+        }
+        bool ret = delegator->DoAbilityBackground(remoteObject);
+        task.Resolve(engine, engine.CreateBoolean(ret));
     };
 
-    NativeValue *lastParam = (info.argc == ARGC_TWO) ? info.argv[INDEX_ONE] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
 NativeValue *JSAbilityDelegator::OnFinishTest(NativeEngine &engine, NativeCallbackInfo &info)
 {
-    HILOG_INFO("OnFinishTest is called, argc = %{public}d", static_cast<int>(info.argc));
-
-    if (info.argc < ARGC_TWO) {
-        HILOG_ERROR("Incorrect number of parameters");
-        return engine.CreateUndefined();
-    }
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
 
     std::string msg;
     int64_t code = 0;
-    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], msg)) {
-        HILOG_ERROR("Parse para failed");
-        return engine.CreateUndefined();
-    }
-
-    if (!ConvertFromJsValue(engine, info.argv[INDEX_ONE], code)) {
-        HILOG_ERROR("Parse para argv[1] failed");
+    if (!ParseFinishTestPara(engine, info, msg, code)) {
+        HILOG_ERROR("Parse finishTest parameters failed");
         return engine.CreateUndefined();
     }
 
     AsyncTask::CompleteCallback complete = [msg, code](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnFinishTest AsyncTask is called");
-        AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()->FinishUserTest(msg, code);
-        task.Resolve(engine, engine.CreateUndefined());
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "finishTest failed."));
+            return;
+        }
+        delegator->FinishUserTest(msg, code);
+        task.Resolve(engine, engine.CreateNull());
     };
-    NativeValue *lastParam = (info.argc == ARGC_THREE) ? info.argv[INDEX_TWO] : nullptr;
+    NativeValue *lastParam = (info.argc > ARGC_TWO) ? info.argv[INDEX_TWO] : nullptr;
     NativeValue *result = nullptr;
-    AsyncTask::Schedule(engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
 
-NativeValue *JSAbilityDelegator::ParseJSMonitorPara(
+NativeValue *JSAbilityDelegator::ParseMonitorPara(
     NativeEngine &engine, NativeValue *value, std::shared_ptr<AbilityMonitor> &monitor)
 {
-    HILOG_INFO("ParseJSMonitorPara is called, monitorRecord size = %{public}zu", monitorRecord.size());
+    HILOG_INFO("enter, monitorRecord size = %{public}zu", monitorRecord_.size());
 
-    for (auto iter = monitorRecord.begin(); iter != monitorRecord.end(); ++iter) {
+    for (auto iter = monitorRecord_.begin(); iter != monitorRecord_.end(); ++iter) {
         std::shared_ptr<NativeReference> jsMonitor = iter->first;
         if (value->StrictEquals(jsMonitor->Get())) {
             HILOG_ERROR("monitor existed");
@@ -453,6 +476,7 @@ NativeValue *JSAbilityDelegator::ParseJSMonitorPara(
 
     auto abilityNameValue = object->GetProperty("abilityName");
     if (abilityNameValue == nullptr) {
+        HILOG_ERROR("Failed to get property abilityName");
         return nullptr;
     }
     std::string abilityName;
@@ -465,64 +489,41 @@ NativeValue *JSAbilityDelegator::ParseJSMonitorPara(
 
     monitor = std::make_shared<AbilityMonitor>(abilityName, abilityMonitor);
     if (!monitor) {
-        HILOG_INFO("Failed to create monitor");
+        HILOG_ERROR("Failed to create monitor");
         return nullptr;
     }
 
     std::shared_ptr<NativeReference> reference = nullptr;
     reference.reset(engine.CreateReference(value, 1));
-    monitorRecord.emplace(reference, monitor);
+    monitorRecord_.emplace(reference, monitor);
 
     return engine.CreateNull();
 }
 
-NativeValue *JSAbilityDelegator::ParseJSAbilityPara(
+NativeValue *JSAbilityDelegator::ParseAbilityPara(
     NativeEngine &engine, NativeValue *value, sptr<OHOS::IRemoteObject> &remoteObject)
 {
-    HILOG_INFO("ParseJSAbilityPara is called");
+    HILOG_INFO("enter");
 
-    for (auto iter = ablityRecord.begin(); iter != ablityRecord.end(); ++iter) {
+    for (auto iter = ablityRecord_.begin(); iter != ablityRecord_.end(); ++iter) {
         if (value->StrictEquals(iter->first->Get())) {
             remoteObject = iter->second;
+            HILOG_INFO("Ablity exist");
             return remoteObject ? engine.CreateNull() : nullptr;
         }
     }
 
     HILOG_ERROR("Ablity doesn't exist");
     remoteObject = nullptr;
-
     return nullptr;
 }
 
-NativeValue *JSAbilityDelegator::ParseJSExecuteShellCommandPara(
-    NativeEngine &engine, NativeCallbackInfo &info, std::string &cmd, int64_t &timeoutSecs, bool &hasTimeoutPara)
+NativeValue *JSAbilityDelegator::CreateAbilityObject(NativeEngine &engine, const sptr<IRemoteObject> &remoteObject)
 {
-    HILOG_INFO("ParseJSExecuteShellCommandPara is called");
-
-    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], cmd)) {
-        HILOG_ERROR("Parse para argv[0] failed");
-        return nullptr;
-    }
-
-    if ((info.argc >= ARGC_TWO) && ((info.argv[INDEX_ONE])->TypeOf() == NativeValueType::NATIVE_NUMBER)) {
-        if (!ConvertFromJsValue(engine, info.argv[INDEX_ONE], timeoutSecs)) {
-            HILOG_ERROR("Parse para argv[1] failed");
-            return nullptr;
-        }
-        hasTimeoutPara = true;
-    } else {
-        hasTimeoutPara = false;
-    }
-
-    return engine.CreateNull();
-}
-
-NativeValue *JSAbilityDelegator::CreateJsAbilityObject(NativeEngine &engine, const sptr<IRemoteObject> &remoteObject)
-{
-    HILOG_INFO("CreateJsAbilityObject is called");
+    HILOG_INFO("enter");
 
     if (!remoteObject) {
-        return engine.CreateUndefined();
+        return nullptr;
     }
 
     NativeValue *objValue = engine.CreateObject();
@@ -532,11 +533,200 @@ NativeValue *JSAbilityDelegator::CreateJsAbilityObject(NativeEngine &engine, con
         return nullptr;
     }
 
-    std::shared_ptr<NativeReference> reference = nullptr;
-    reference.reset(engine.CreateReference(objValue, 1));
-    ablityRecord[reference] = remoteObject;
-
+    std::shared_ptr<NativeReference> refence = nullptr;
+    refence.reset(engine.CreateReference(objValue, 1));
+    ablityRecord_[refence] = remoteObject;
     return objValue;
+}
+
+void JSAbilityDelegator::AbilityLifecycleStateToJs(const AbilityDelegator::AbilityState &lifeState,
+    AbilityLifecycleState &abilityLifeState)
+{
+    HILOG_INFO("enter and lifeState = %{public}d", (int32_t)lifeState);
+    switch (lifeState) {
+        case AbilityDelegator::AbilityState::STARTED:
+            abilityLifeState = AbilityLifecycleState::CREATE;
+            break;
+        case AbilityDelegator::AbilityState::FOREGROUND:
+            abilityLifeState = AbilityLifecycleState::FOREGROUND;
+            break;
+        case AbilityDelegator::AbilityState::BACKGROUND:
+            abilityLifeState = AbilityLifecycleState::BACKGROUND;
+            break;
+        case AbilityDelegator::AbilityState::STOPPED:
+            abilityLifeState = AbilityLifecycleState::DESTROY;
+            break;
+        default:
+            abilityLifeState = AbilityLifecycleState::UNINITIALIZED;
+            break;
+    }
+}
+
+NativeValue *JSAbilityDelegator::ParseAbilityMonitorPara(
+    NativeEngine &engine, NativeCallbackInfo &info, std::shared_ptr<AbilityMonitor> &monitor)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ParseMonitorPara(engine, info.argv[INDEX_ZERO], monitor)) {
+        HILOG_ERROR("Parse monitor parameters failed");
+        return nullptr;
+    }
+
+    if (info.argc > ARGC_ONE) {
+        if (info.argv[INDEX_ONE]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Parse callback parameters failed");
+            return nullptr;
+        }
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseWaitAbilityMonitorPara(NativeEngine &engine, NativeCallbackInfo &info,
+    std::shared_ptr<AbilityMonitor> &monitor, TimeoutCallback &opt, int64_t &timeout)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ParseMonitorPara(engine, info.argv[INDEX_ZERO], monitor)) {
+        HILOG_ERROR("Monitor parse parameters failed");
+        return nullptr;
+    }
+
+    if (!ParseTimeoutCallbackPara(engine, info, opt, timeout)) {
+        HILOG_ERROR("TimeoutCallback parse parameters failed");
+        return nullptr;
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseTimeoutCallbackPara(
+    NativeEngine &engine, NativeCallbackInfo &info, TimeoutCallback &opt, int64_t &timeout)
+{
+    HILOG_INFO("enter");
+
+    opt.hasCallbackPara = false;
+    opt.hasTimeoutPara = false;
+
+    if (info.argc >= ARGC_TWO) {
+        if (!ConvertFromJsValue(engine, info.argv[INDEX_ONE], timeout)) {
+            if (info.argv[INDEX_ONE]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+                HILOG_ERROR("Parse parameter argv[1] failed");
+                return nullptr;
+            }
+            opt.hasCallbackPara = true;
+            return engine.CreateNull();
+        }
+        opt.hasTimeoutPara = true;
+
+        if (info.argc > ARGC_TWO) {
+            if (info.argv[INDEX_TWO]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+                HILOG_ERROR("Parse parameter argv[2] failed");
+                return nullptr;
+            }
+            opt.hasCallbackPara = true;
+        }
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParsePrintPara(NativeEngine &engine, NativeCallbackInfo &info, std::string &msg)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], msg)) {
+        HILOG_ERROR("Parse msg parameter failed");
+        return nullptr;
+    }
+
+    if (info.argc > ARGC_ONE) {
+        if (info.argv[INDEX_ONE]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Parse callback parameter failed");
+            return nullptr;
+        }
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseExecuteShellCommandPara(
+    NativeEngine &engine, NativeCallbackInfo &info, std::string &cmd, TimeoutCallback &opt, int64_t &timeout)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], cmd)) {
+        HILOG_ERROR("Parse cmd parameter failed");
+        return nullptr;
+    }
+    if (!ParseTimeoutCallbackPara(engine, info, opt, timeout)) {
+        HILOG_ERROR("Parse timeOut callback parameters failed");
+        return nullptr;
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseAbilityCommonPara(NativeEngine &engine, NativeCallbackInfo &info,
+    sptr<OHOS::IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ParseAbilityPara(engine, info.argv[INDEX_ZERO], remoteObject)) {
+        HILOG_ERROR("Parse ability parameter failed");
+        return nullptr;
+    }
+
+    if (info.argc > ARGC_ONE) {
+        if (info.argv[INDEX_ONE]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Parse ability callback parameters failed");
+            return nullptr;
+        }
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseFinishTestPara(NativeEngine &engine,
+    NativeCallbackInfo &info, std::string &msg, int64_t &code)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_TWO) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!ConvertFromJsValue(engine, info.argv[INDEX_ZERO], msg)) {
+        HILOG_ERROR("Parse msg parameter failed");
+        return nullptr;
+    }
+
+    if (!ConvertFromJsValue(engine, info.argv[INDEX_ONE], code)) {
+        HILOG_ERROR("Parse code para parameter failed");
+        return nullptr;
+    }
+
+    if (info.argc > ARGC_TWO) {
+        if ((info.argv[INDEX_TWO])->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Incorrect Callback Function type");
+            return nullptr;
+        }
+    }
+    return engine.CreateNull();
 }
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS
