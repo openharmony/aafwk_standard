@@ -22,9 +22,6 @@ int ZidlTestServiceStub::OnRemoteRequest(
     /* [out] */ MessageParcel& reply,
     /* [in] */ MessageOption& option)
 {
-    if (data.ReadInterfaceToken() != GetDescriptor()) {
-        return ERR_TRANSACTION_FAILED;
-    }
     switch (code) {
         case COMMAND_TEST_INT_TRANSACTION: {
             int _data = data.ReadInt32();

@@ -2486,8 +2486,7 @@ int AbilityManagerProxy::StartUserTest(const Want &want, const sptr<IRemoteObjec
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode,
-    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2508,10 +2507,7 @@ int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resul
         HILOG_ERROR("bundleName write failed.");
         return ERR_INVALID_VALUE;
     }
-    if (!data.WriteParcelable(observer)) {
-        HILOG_ERROR("observer write failed.");
-        return ERR_INVALID_VALUE;
-    }
+
     auto error = Remote()->SendRequest(IAbilityManager::FINISH_USER_TEST, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);

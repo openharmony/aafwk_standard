@@ -24,10 +24,6 @@ ErrCode ZidlTestServiceProxy::TestIntTransaction(
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return ERR_INVALID_VALUE;
-    }
-
     data.WriteInt32(_data);
 
     int32_t st = Remote()->SendRequest(COMMAND_TEST_INT_TRANSACTION, data, reply, option);
@@ -50,10 +46,6 @@ ErrCode ZidlTestServiceProxy::TestStringTransaction(
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
-
-    if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return ERR_INVALID_VALUE;
-    }
 
     data.WriteString16(Str8ToStr16(_data));
 

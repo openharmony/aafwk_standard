@@ -25,6 +25,7 @@
 #include "datetime_ex.h"
 #include "perf_profile.h"
 
+#include "ability_manager_client.h"
 #include "app_process_data.h"
 #include "bundle_constants.h"
 #include "bytrace.h"
@@ -32,9 +33,10 @@
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "hisysevent.h"
+#include "ipc_skeleton.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
-#include "ipc_skeleton.h"
+#include "itest_observer.h"
 #include "os_account_manager.h"
 #include "permission/permission_kit.h"
 #include "permission_constants.h"
@@ -1350,31 +1352,33 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     }
 
     auto appRecord = appRunningManager_->OnRemoteDied(remote);
-    if (appRecord) {
-        // clear uri permission
-        auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
-        auto appInfo = appRecord->GetApplicationInfo();
-        if (appInfo && upmClient) {
-            upmClient->RemoveUriPermission(appInfo->accessTokenId);
-        }
-
-        for (const auto &item : appRecord->GetAbilities()) {
-            const auto &abilityRecord = item.second;
-            appRecord->StateChangedNotifyObserver(abilityRecord,
-                static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
-        }
-        RemoveAppFromRecentListById(appRecord->GetRecordId());
-        OnProcessDied(appRecord);
-
-        // kill render if exist.
-        auto renderRecord = appRecord->GetRenderRecord();
-        if (renderRecord && renderRecord->GetPid() > 0) {
-            APP_LOGD("Kill render process when webviehost died.");
-            KillProcessByPid(renderRecord->GetPid());
-        }
+    if (!appRecord) {
+        return;
     }
 
-    if (appRecord && appRecord->IsKeepAliveApp()) {
+    // clear uri permission
+    auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
+    auto appInfo = appRecord->GetApplicationInfo();
+    if (appInfo && upmClient) {
+        upmClient->RemoveUriPermission(appInfo->accessTokenId);
+    }
+
+    for (const auto &item : appRecord->GetAbilities()) {
+        const auto &abilityRecord = item.second;
+        appRecord->StateChangedNotifyObserver(abilityRecord,
+            static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
+    }
+    RemoveAppFromRecentListById(appRecord->GetRecordId());
+    OnProcessDied(appRecord);
+
+    // kill render if exist.
+    auto renderRecord = appRecord->GetRenderRecord();
+    if (renderRecord && renderRecord->GetPid() > 0) {
+        APP_LOGD("Kill render process when webviehost died.");
+        KillProcessByPid(renderRecord->GetPid());
+    }
+
+    if (appRecord->IsKeepAliveApp()) {
         appRecord->DecRestartResidentProcCount();
         if (appRecord->CanRestartResidentProc()) {
             auto restartProcss = [appRecord, innerService = shared_from_this()]() {
@@ -1388,6 +1392,8 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
             eventHandler_->PostTask(restartProcss, "RestartResidentProcess");
         }
     }
+
+    FinishUserTestLocked("App died", -1, appRecord);
 }
 
 void AppMgrServiceInner::PushAppFront(const int32_t recordId)
@@ -1869,9 +1875,14 @@ int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> 
     return ERR_OK;
 }
 
-int AppMgrServiceInner::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &bundleInfo)
+int AppMgrServiceInner::StartUserTestProcess(
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)
 {
+    APP_LOGI("Enter");
+    if (!observer) {
+        APP_LOGE("observer nullptr.");
+        return ERR_INVALID_VALUE;
+    }
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is nullptr");
         return ERR_INVALID_VALUE;
@@ -1908,9 +1919,14 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
         return ERR_INVALID_VALUE;
     }
 
-    UserTestRecord testRecord;
-    testRecord.want = want;
-    testRecord.observer = observer;
+    std::shared_ptr<UserTestRecord> testRecord = std::make_shared<UserTestRecord>();
+    if (!testRecord) {
+        APP_LOGE("Failed to make UserTestRecord!");
+        return ERR_INVALID_VALUE;
+    }
+    testRecord->want = want;
+    testRecord->observer = observer;
+    testRecord->isFinished = false;
     appRecord->SetUserTestInfo(testRecord);
 
     StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
@@ -1924,6 +1940,66 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     appRecord->SetEventHandler(eventHandler_);
     appRecord->AddModules(appInfo, info.hapModuleInfos);
     APP_LOGI("StartEmptyProcess OK pid : [%{public}d]", appRecord->GetPriorityObject()->GetPid());
+
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    APP_LOGI("Enter");
+    if (bundleName.empty()) {
+        APP_LOGE("Invalid bundle name.");
+        return ERR_INVALID_VALUE;
+    }
+    auto appRecord = GetAppRunningRecordByPid(pid);
+    if (!appRecord) {
+        APP_LOGE("no such appRecord");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto userTestRecord = appRecord->GetUserTestInfo();
+    if (!userTestRecord) {
+        APP_LOGE("unstart user test");
+        return ERR_INVALID_VALUE;
+    }
+
+    FinishUserTestLocked(msg, resultCode, appRecord);
+
+    int ret = AAFwk::AbilityManagerClient::GetInstance()->KillProcess(bundleName);
+    if (ret) {
+        APP_LOGE("Failed to kill process.");
+        return ret;
+    }
+
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::FinishUserTestLocked(
+    const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord)
+{
+    APP_LOGI("Enter");
+    if (!appRecord) {
+        APP_LOGE("Invalid appRecord");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::unique_lock<std::mutex> lck(userTestLock_);
+    auto userTestRecord = appRecord->GetUserTestInfo();
+    if (!userTestRecord) {
+        APP_LOGW("unstart user test");
+        return ERR_INVALID_VALUE;
+    }
+    if (!userTestRecord->isFinished) {
+        sptr<ITestObserver> observerProxy = iface_cast<ITestObserver>(userTestRecord->observer);
+        if (!observerProxy) {
+            APP_LOGE("Failed to get ITestObserver proxy");
+            return ERR_INVALID_VALUE;
+        }
+        observerProxy->TestFinished(msg, resultCode);
+
+        userTestRecord->isFinished = true;
+    }
 
     return ERR_OK;
 }

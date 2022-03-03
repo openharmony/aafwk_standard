@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "ability_delegator_registry.h"
 #include "app_log_wrapper.h"
 #include "js_runtime_utils.h"
 #include "runner_runtime/js_test_runner.h"
@@ -63,6 +64,7 @@ void JsTestRunner::CallObjectMethod(const char *name, NativeValue *const *argv, 
 
     if (!jsTestRunnerObj_) {
         APP_LOGE("Not found test_runner.js");
+        ReportFinished("Not found test_runner.js");
         return;
     }
 
@@ -73,15 +75,41 @@ void JsTestRunner::CallObjectMethod(const char *name, NativeValue *const *argv, 
     NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
     if (obj == nullptr) {
         APP_LOGE("Failed to get Test Runner object");
+        ReportFinished("Failed to get Test Runner object");
         return;
     }
 
     NativeValue *methodOnCreate = obj->GetProperty(name);
     if (methodOnCreate == nullptr) {
         APP_LOGE("Failed to get '%{public}s' from Test Runner object", name);
+        ReportStatus("Failed to get " + std::string(name) + " from Test Runner object");
         return;
     }
     nativeEngine.CallFunction(value, methodOnCreate, argv, argc);
 }
-}  // namespace AbilityRuntime
+
+void JsTestRunner::ReportFinished(const std::string &msg)
+{
+    APP_LOGI("Enter");
+    auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (!delegator) {
+        APP_LOGE("delegator is null");
+        return;
+    }
+
+    delegator->FinishUserTest(msg, -1);
+}
+
+void JsTestRunner::ReportStatus(const std::string &msg)
+{
+    APP_LOGI("Enter");
+    auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (!delegator) {
+        APP_LOGE("delegator is null");
+        return;
+    }
+
+    delegator->Print(msg);
+}
+}  // namespace RunnerRuntime
 }  // namespace OHOS

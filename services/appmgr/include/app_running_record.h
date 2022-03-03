@@ -478,7 +478,8 @@ public:
 
     void GetBundleNames(std::vector<std::string> &bundleNames);
 
-    void SetUserTestInfo(const UserTestRecord &record);
+    void SetUserTestInfo(const std::shared_ptr<UserTestRecord> &record);
+    std::shared_ptr<UserTestRecord> GetUserTestInfo();
 
     void SetSpecifiedAbilityFlagAndWant(const bool flag, const AAFwk::Want &want, const std::string &moduleName);
     bool IsStartSpecifiedAbility() const;
@@ -570,7 +571,7 @@ private:
     std::string moduleName_;
     bool isDebugApp_ = false;
 
-    UserTestRecord userTestRecord_;
+    std::shared_ptr<UserTestRecord> userTestRecord_ = nullptr;
 
     // render record
     std::shared_ptr<RenderRecord> renderRecord_ = nullptr;

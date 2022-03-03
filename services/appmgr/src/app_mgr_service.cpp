@@ -44,6 +44,7 @@ const std::string TASK_CLEAR_UP_APPLICATION_DATA = "ClearUpApplicationDataTask";
 const std::string TASK_STARTUP_RESIDENT_PROCESS = "StartupResidentProcess";
 const std::string TASK_ADD_ABILITY_STAGE_DONE = "AddAbilityStageDone";
 const std::string TASK_START_USER_TEST_PROCESS = "StartUserTestProcess";
+const std::string TASK_FINISH_USER_TEST = "FinishUserTest";
 const std::string TASK_ATTACH_RENDER_PROCESS = "AttachRenderTask";
 }  // namespace
 
@@ -360,6 +361,18 @@ int AppMgrService::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRem
     std::function<void()> startUserTestProcessFunc =
         std::bind(&AppMgrServiceInner::StartUserTestProcess, appMgrServiceInner_, want, observer, bundleInfo);
     handler_->PostTask(startUserTestProcessFunc, TASK_START_USER_TEST_PROCESS);
+    return ERR_OK;
+}
+
+int AppMgrService::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    std::function<void()> finishUserTestProcessFunc =
+        std::bind(&AppMgrServiceInner::FinishUserTest, appMgrServiceInner_, msg, resultCode, bundleName, pid);
+    handler_->PostTask(finishUserTestProcessFunc, TASK_FINISH_USER_TEST);
     return ERR_OK;
 }
 
