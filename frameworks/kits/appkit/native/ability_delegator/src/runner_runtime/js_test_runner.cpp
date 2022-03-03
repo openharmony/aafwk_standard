@@ -25,13 +25,13 @@ std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> 
 {
     if (!args) {
         APP_LOGE("Invalid ability delegator args");
-        return {};
+        return nullptr;
     }
 
     auto pTestRunner = new (std::nothrow) JsTestRunner(static_cast<JsRuntime &>(*runtime), args, bundleInfo);
     if (!pTestRunner) {
         APP_LOGE("Failed to create test runner");
-        return {};
+        return nullptr;
     }
 
     return std::unique_ptr<JsTestRunner>(pTestRunner);
@@ -47,7 +47,7 @@ JsTestRunner::JsTestRunner(
 
     auto pos = tempTestRunnerName.find(":");
     if (pos != std::string::npos) {
-        prefix         = tempTestRunnerName.substr(0, pos);
+        prefix = tempTestRunnerName.substr(0, pos);
         testRunnerName = tempTestRunnerName.substr(pos + 1);
     }
 

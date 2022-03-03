@@ -38,24 +38,24 @@ std::unique_ptr<TestRunner> TestRunner::Create(
         OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     if (!bundleObj) {
         APP_LOGE("Failed to get bundle manager service");
-        return {};
+        return nullptr;
     }
 
     auto bms = iface_cast<IBundleMgr>(bundleObj);
     if (!bms) {
         APP_LOGE("Cannot convert to IBundleMgr");
-        return {};
+        return nullptr;
     }
 
     if (!args) {
         APP_LOGE("Invalid ability delegator args");
-        return {};
+        return nullptr;
     }
 
     BundleInfo bundleInfo;
     if (!bms->GetBundleInfo(args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USER)) {
         APP_LOGE("Failed to GetBundleInfo");
-        return {};
+        return nullptr;
     }
 
     switch (runtime->GetLanguage()) {
