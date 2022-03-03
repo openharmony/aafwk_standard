@@ -891,7 +891,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libaccessibility_extension_module.z.so", "AccessibilityExtension",
             application_->GetRuntime());
-        LoadAndRegisterExtension("system/lib/libwallpaper_extension_module.z.so","WallpaperExtension",
+        LoadAndRegisterExtension("system/lib/libwallpaper_extension_module.z.so", "WallpaperExtension",
             application_->GetRuntime());
     }
 
