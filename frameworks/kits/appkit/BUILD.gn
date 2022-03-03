@@ -132,8 +132,6 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/sys_mgr_client.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/watchdog.cpp",
-    "//foundation/aafwk/standard/tools/aa/src/shell_command_result.cpp",
-    "//foundation/aafwk/standard/tools/aa/src/test_observer_proxy.cpp",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -245,6 +243,7 @@ ohos_shared_library("app_context") {
 ohos_shared_library("appkit_delegator") {
   include_dirs = [
     "${appexecfwk_path}/common/log/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/frameworks/kits/appkit/native",
@@ -267,8 +266,8 @@ ohos_shared_library("appkit_delegator") {
     "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/runner_runtime/js_test_runner.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/shell_cmd_result.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/src/test_runner.cpp",
-    "//foundation/aafwk/standard/tools/aa/src/shell_command_result.cpp",
-    "//foundation/aafwk/standard/tools/aa/src/test_observer_proxy.cpp",
+    "${aafwk_path}/tools/aa/src/shell_command_result.cpp",
+    "${aafwk_path}/tools/aa/src/test_observer_proxy.cpp",
   ]
 
   cflags = []
@@ -284,6 +283,7 @@ ohos_shared_library("appkit_delegator") {
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/icu/icu4c:shared_icuuc",
     "//utils/native/base:utils",
   ]
