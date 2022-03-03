@@ -20,11 +20,11 @@ config("amsSystemTestBConfig") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/services/bundlemgr/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
   ]

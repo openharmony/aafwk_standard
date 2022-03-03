@@ -24,9 +24,9 @@ config("module_private_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "//EOSP/communication/libsoftbus/../../../foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
@@ -50,8 +50,8 @@ config("module_context_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "//EOSP/communication/libsoftbus/../../../foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",

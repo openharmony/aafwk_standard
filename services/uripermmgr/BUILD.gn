@@ -53,8 +53,8 @@ ohos_shared_library("libupms") {
   ]
 
   external_deps = [
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

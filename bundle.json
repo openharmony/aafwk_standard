@@ -26,7 +26,6 @@
               "ces_standard",
               "device_manager_base",
               "distributeddatamgr_appdatamgr",
-              "distributedschedule_dms_fwk",
               "dsoftbus_standard",
               "form_runtime",
               "hiviewdfx_hilog_native",

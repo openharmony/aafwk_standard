@@ -37,6 +37,7 @@ config("abilityms_config") {
     "${innerkits_path}/ability_manager/include",
     "${innerkits_path}/app_manager/include",
     "${innerkits_path}/base/include",
+    "${innerkits_path}/uri/include",
     "${innerkits_path}/want/include",
     "${innerkits_path}/want/include/ohos/aafwk/content",
     "${innerkits_path}/intent/include/ohos/aafwk/content",
@@ -57,7 +58,6 @@ config("abilityms_config") {
     "//foundation/aafwk/standard/tools/aa/include",
     "//foundation/graphic/standard/interfaces/innerkits/wmservice",
     "//base/global/i18n_standard/frameworks/intl/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//base/hiviewdfx/hiview/adapter/utility/include",
     "//base/account/os_account/frameworks/common/account_error/include",
     "//base/account/os_account/frameworks/common/database/include",
@@ -79,6 +79,7 @@ ohos_shared_library("abilityms") {
   configs = [ ":abilityms_config" ]
   deps = [
     "${innerkits_path}/base:base",
+    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
@@ -95,7 +96,6 @@ ohos_shared_library("abilityms") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",

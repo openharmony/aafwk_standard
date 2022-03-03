@@ -53,13 +53,13 @@ ohos_executable("appexec") {
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/interfaces/innerkits/base/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//utils/native/base/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
   ]
 
@@ -89,6 +89,7 @@ ohos_shared_library("appkit_native") {
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app",
@@ -98,7 +99,6 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/services/abilitymgr/include",
     "//utils/native/base/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
 
     "${aafwk_path}/common/task_dispatcher/include/dispatcher",
@@ -153,7 +153,6 @@ ohos_shared_library("appkit_native") {
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "//base/hiviewdfx/faultloggerd/interfaces/innerkits/dump_catcher:lib_dfx_dump_catcher",
     "//base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client:libfaultloggerd",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/icu/icu4c:shared_icuuc",
@@ -166,6 +165,7 @@ ohos_shared_library("appkit_native") {
   ]
   external_deps = [
     "ability_base:configuration",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
@@ -216,7 +216,6 @@ ohos_shared_library("app_context") {
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/icu/icu4c:shared_icuuc",
@@ -230,6 +229,7 @@ ohos_shared_library("app_context") {
   ]
 
   external_deps = [
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
