@@ -65,6 +65,5 @@ ohos_unittest("ability_record_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":ability_record_test" ]
+  # deps = [ ":ability_record_test" ]
 }
