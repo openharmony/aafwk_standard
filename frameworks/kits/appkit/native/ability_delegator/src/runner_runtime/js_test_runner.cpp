@@ -20,20 +20,48 @@
 
 namespace OHOS {
 namespace RunnerRuntime {
-std::unique_ptr<TestRunner> JsTestRunner::Create(
-    const std::unique_ptr<Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args)
+std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> &runtime,
+    const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
 {
-    return std::make_unique<JsTestRunner>(static_cast<JsRuntime &>(*runtime), args);
+    if (!args) {
+        APP_LOGE("Invalid ability delegator args");
+        return nullptr;
+    }
+
+    auto pTestRunner = new (std::nothrow) JsTestRunner(static_cast<JsRuntime &>(*runtime), args, bundleInfo);
+    if (!pTestRunner) {
+        APP_LOGE("Failed to create test runner");
+        return nullptr;
+    }
+
+    return std::unique_ptr<JsTestRunner>(pTestRunner);
 }
 
-JsTestRunner::JsTestRunner(JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args)
+JsTestRunner::JsTestRunner(
+    JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
     : jsRuntime_(jsRuntime)
 {
+    std::string prefix;
+    std::string tempTestRunnerName = args->GetTestRunnerClassName();
+    auto testRunnerName = tempTestRunnerName;
+
+    auto pos = tempTestRunnerName.find(":");
+    if (pos != std::string::npos) {
+        prefix = tempTestRunnerName.substr(0, pos);
+        testRunnerName = tempTestRunnerName.substr(pos + 1);
+    }
+
     std::string srcPath;
-    srcPath.append(args->GetTestBundleName());
-    srcPath.append("/assets/js/");
-    srcPath.append(args->GetTestRunnerClassName());
+    if (bundleInfo.hapModuleInfos.back().isModuleJson) {
+        srcPath.append(prefix);
+        srcPath.append("/ets/TestRunner/");
+    } else {
+        srcPath.append(args->GetTestBundleName());
+        srcPath.append("/assets/js/TestRunner/");
+    }
+    srcPath.append(testRunnerName);
     srcPath.append(".abc");
+
     APP_LOGI("JsTestRunner srcPath is %{public}s", srcPath.c_str());
 
     std::string moduleName;
