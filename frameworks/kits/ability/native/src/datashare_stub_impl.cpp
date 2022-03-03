@@ -14,21 +14,37 @@
  */
 
 #include "datashare_stub_impl.h"
+#include "event_handler.h"
+#include "event_runner.h"
 
 #include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+std::shared_ptr<JsDataShareExtAbility> DataShareStubImpl::GetOwner()
+{
+    std::shared_ptr<JsDataShareExtAbility> owner = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(jsDataShareExtAbilityMutex_);
+        owner = extension_.lock();
+    }
+    return owner;
+}
+
 std::vector<std::string> DataShareStubImpl::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::vector<std::string> ret;
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return ret;
-    }
-    ret = extension->GetFileTypes(uri, mimeTypeFilter);
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->GetFileTypes(uri, mimeTypeFilter);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -36,12 +52,17 @@ std::vector<std::string> DataShareStubImpl::GetFileTypes(const Uri &uri, const s
 int DataShareStubImpl::OpenFile(const Uri &uri, const std::string &mode)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->OpenFile(uri, mode);
+    int ret = -1;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->OpenFile(uri, mode);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -49,12 +70,17 @@ int DataShareStubImpl::OpenFile(const Uri &uri, const std::string &mode)
 int DataShareStubImpl::OpenRawFile(const Uri &uri, const std::string &mode)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->OpenRawFile(uri, mode);
+    int ret = -1;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->OpenRawFile(uri, mode);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -62,12 +88,17 @@ int DataShareStubImpl::OpenRawFile(const Uri &uri, const std::string &mode)
 int DataShareStubImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->Insert(uri, value);
+    int ret = 0;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->Insert(uri, value);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -76,12 +107,17 @@ int DataShareStubImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &val
     const NativeRdb::DataAbilityPredicates &predicates)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->Update(uri, value, predicates);
+    int ret = 0;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->Update(uri, value, predicates);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -89,12 +125,17 @@ int DataShareStubImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &val
 int DataShareStubImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->Delete(uri, predicates);
+    int ret = 0;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->Delete(uri, predicates);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -103,12 +144,17 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareStubImpl::Query(const Ur
     std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return nullptr;
-    }
-    auto ret = extension->Query(uri, columns, predicates);
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> ret = nullptr;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->Query(uri, columns, predicates);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -116,12 +162,17 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareStubImpl::Query(const Ur
 std::string DataShareStubImpl::GetType(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return "";
-    }
-    auto ret = extension->GetType(uri);
+    std::string ret = "";
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->GetType(uri);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -129,12 +180,17 @@ std::string DataShareStubImpl::GetType(const Uri &uri)
 int DataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return -1;
-    }
-    auto ret = extension->BatchInsert(uri, values);
+    int ret = 0;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->BatchInsert(uri, values);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -142,12 +198,17 @@ int DataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::
 bool DataShareStubImpl::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return false;
-    }
-    bool ret = extension->RegisterObserver(uri, dataObserver);
+    bool ret = false;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->RegisterObserver(uri, dataObserver);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -155,12 +216,17 @@ bool DataShareStubImpl::RegisterObserver(const Uri &uri, const sptr<AAFwk::IData
 bool DataShareStubImpl::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return false;
-    }
-    bool ret = extension->UnregisterObserver(uri, dataObserver);
+    bool ret = false;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->UnregisterObserver(uri, dataObserver);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -168,12 +234,17 @@ bool DataShareStubImpl::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
 bool DataShareStubImpl::NotifyChange(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return false;
-    }
-    bool ret = extension->NotifyChange(uri);
+    bool ret = false;
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        ret = extension->NotifyChange(uri);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -182,12 +253,16 @@ Uri DataShareStubImpl::NormalizeUri(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     Uri urivalue("");
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return urivalue;
-    }
-    urivalue = extension->NormalizeUri(uri);
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        urivalue = extension->NormalizeUri(uri);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return urivalue;
 }
@@ -196,12 +271,16 @@ Uri DataShareStubImpl::DenormalizeUri(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     Uri urivalue("");
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return urivalue;
-    }
-    urivalue = extension->DenormalizeUri(uri);
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        urivalue = extension->DenormalizeUri(uri);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return urivalue;
 }
@@ -211,12 +290,16 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareStubImpl::E
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::vector<std::shared_ptr<DataAbilityResult>> results;
-    auto extension = extension_.lock();
-    if (extension == nullptr) {
-        HILOG_INFO("%{public}s end failed.", __func__);
-        return results;
-    }
-    results = extension->ExecuteBatch(operations);
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+        auto extension = client->GetOwner();
+        if (extension == nullptr) {
+            HILOG_ERROR("%{public}s end failed.", __func__);
+            return;
+        }
+        results = extension->ExecuteBatch(operations);
+    };
+    mainHandler->PostSyncTask(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return results;
 }
