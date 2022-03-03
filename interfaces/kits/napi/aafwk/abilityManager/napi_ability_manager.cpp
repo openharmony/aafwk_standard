@@ -2226,7 +2226,7 @@ napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info info)
     HILOG_INFO("%{public}s argc = [%{public}zu]", __func__, argc);
 
     if (argc == 0) {
-        // promiss
+        // promise
         ret = GetSystemMemoryAttrPromiss(env);
     } else if (argc == 1) {
         // async

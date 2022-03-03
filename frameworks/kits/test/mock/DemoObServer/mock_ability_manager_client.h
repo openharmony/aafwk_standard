@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,11 +56,11 @@ sptr<AAFwk::IAbilityScheduler> AAFwk::AbilityManagerClient::AcquireDataAbility(
         retval = remoteProxy;
 
         if (retval == nullptr) {
-        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock result retval is  nullptr called";
+            GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock result retval is nullptr called";
         }
     } else {
         retval = iter->second;
-        GTEST_LOG_(INFO) << "mock_ability_manager_client:find data is  not null called";
+        GTEST_LOG_(INFO) << "mock_ability_manager_client:find data is not null called";
     }
 
     return retval;
