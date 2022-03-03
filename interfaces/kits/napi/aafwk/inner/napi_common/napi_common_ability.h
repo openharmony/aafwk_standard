@@ -44,6 +44,24 @@ napi_value WrapAppInfo(napi_env env, const AppInfo_ &appInfo);
 napi_value NAPI_GetFilesDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
+ * @brief Get OrCreateDistribute Dir.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetOrCreateDistributedDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+napi_value NAPI_GetCacheDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+napi_value NAPI_GetExternalCacheDirCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+napi_value NAPI_IsUpdatingConfigurationsCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+napi_value NAPI_PrintDrawnCompletedCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+/**
  * @brief Obtains the type of this application.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -72,6 +90,16 @@ napi_value NAPI_GetAbilityInfoCommon(napi_env env, napi_callback_info info, Abil
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetHapModuleInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+
+/**
+ * @brief Obtains the AppVersionInfo object of the application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetAppVersionInfoCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
  * @brief Create asynchronous data.
