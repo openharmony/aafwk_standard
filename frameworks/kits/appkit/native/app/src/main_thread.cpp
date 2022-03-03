@@ -47,6 +47,8 @@
 #include "faultloggerd_client.h"
 #include "dfx_dump_catcher.h"
 
+#include "hdc_register.h"
+
 #if defined(ABILITY_LIBRARY_LOADER) || defined(APPLICATION_LIBRARY_LOADER)
 #include <dirent.h>
 #include <dlfcn.h>
@@ -1052,6 +1054,16 @@ void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &
     if (!CheckAbilityItem(abilityRecord)) {
         APP_LOGE("MainThread::handleLaunchAbility record is invalid");
         return;
+    }
+
+    auto& runtime = application_->GetRuntime();
+    auto appInfo = application_->GetApplicationInfo();
+    auto want = abilityRecord->GetWant();
+    if (runtime && appInfo && want) {
+        if (appInfo->debug && want->GetBoolParam("debugApp", false)) {
+            HdcRegister::Get().StartHdcRegister(appInfo->bundleName);
+            runtime->StartDebugMode();
+        }
     }
 
     mainThreadState_ = MainThreadState::RUNNING;
