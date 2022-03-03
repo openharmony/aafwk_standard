@@ -62,6 +62,10 @@ public:
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override;
 private:
+    std::shared_ptr<JsDataShareExtAbility> GetOwner();
+
+private:
+    mutable std::mutex jsDataShareExtAbilityMutex_;
     std::weak_ptr<JsDataShareExtAbility> extension_;
 };
 } // namespace AppExecFwk
