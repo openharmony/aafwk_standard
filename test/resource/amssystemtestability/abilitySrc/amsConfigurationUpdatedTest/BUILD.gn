@@ -22,11 +22,11 @@ config("amsConfigurationUpdatedTestConfig") {
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
   ]
@@ -56,10 +56,10 @@ ohos_shared_library("amsConfigurationUpdatedTest") {
     "${common_path}:libappexecfwk_common",
     "${innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
+    "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",

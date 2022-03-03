@@ -52,7 +52,6 @@ ohos_systemtest("FmsSelfStartingTest") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -61,6 +60,7 @@ ohos_systemtest("FmsSelfStartingTest") {
   external_deps = [
     "ability_base:base",
     "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
