@@ -1355,6 +1355,8 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
         return;
     }
 
+    FinishUserTestLocked("App died", -1, appRecord);
+    
     // clear uri permission
     auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
     auto appInfo = appRecord->GetApplicationInfo();
@@ -1391,8 +1393,6 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
             eventHandler_->PostTask(restartProcss, "RestartResidentProcess");
         }
     }
-
-    FinishUserTestLocked("App died", -1, appRecord);
 }
 
 void AppMgrServiceInner::PushAppFront(const int32_t recordId)
