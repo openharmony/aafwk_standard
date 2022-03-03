@@ -40,6 +40,8 @@ public:
 
 private:
     void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
+    void ReportFinished(const std::string &msg);
+    void ReportStatus(const std::string &msg);
 
     JsRuntime &jsRuntime_;
     std::unique_ptr<NativeReference> jsTestRunnerObj_;

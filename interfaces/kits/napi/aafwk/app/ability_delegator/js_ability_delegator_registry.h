@@ -20,7 +20,16 @@
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
+enum class AbilityLifecycleState {
+    UNINITIALIZED,
+    CREATE,
+    FOREGROUND,
+    BACKGROUND,
+    DESTROY,
+};
+
 NativeValue *JsAbilityDelegatorRegistryInit(NativeEngine *engine, NativeValue *exportObj);
+NativeValue *AbilityLifecycleStateInit(NativeEngine *engine);
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS
 #endif // OHOS_ABILITY_DELEGATOR_ABILITY_DELEGATOR_REGISTRY_H

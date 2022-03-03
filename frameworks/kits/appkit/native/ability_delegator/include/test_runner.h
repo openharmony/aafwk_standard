@@ -27,8 +27,8 @@ class Runtime;
 namespace AppExecFwk {
 class TestRunner {
 public:
-    static std::unique_ptr<TestRunner> Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime,
-        const std::shared_ptr<AbilityDelegatorArgs> &args);
+    static std::unique_ptr<TestRunner> Create(
+        const std::unique_ptr<AbilityRuntime::Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args);
 
     TestRunner() = default;
     virtual ~TestRunner() = default;

@@ -25,12 +25,9 @@
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
-using namespace OHOS::AppExecFwk;
 NativeValue *CreateJsAbilityDelegator(NativeEngine &engine);
 NativeValue *CreateJsAbilityDelegatorArguments(
     NativeEngine &engine, const std::shared_ptr<AbilityDelegatorArgs> &abilityDelegatorArgs);
-NativeValue *CreateJsAbilityState(NativeEngine &engine, AbilityDelegator::AbilityState &lifeState);
-NativeValue *CreateJsBool(NativeEngine &engine, bool &flag);
 NativeValue *CreateJsShellCmdResult(NativeEngine &engine, std::unique_ptr<ShellCmdResult> &shellResult);
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS

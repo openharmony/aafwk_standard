@@ -509,6 +509,41 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
     return reply.ReadInt32();
 }
 
+int AppMgrProxy::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteString(msg)) {
+        APP_LOGE("msg write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteInt32(resultCode)) {
+        APP_LOGE("resultCode:WriteInt32 fail.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteString(bundleName)) {
+        APP_LOGE("bundleName write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteInt32(pid)) {
+        APP_LOGE("pid write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    int32_t ret =
+        Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::FINISH_USER_TEST), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+    return reply.ReadInt32();
+}
+
 void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
 {
     MessageParcel data;

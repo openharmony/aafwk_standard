@@ -26,7 +26,7 @@ JSAbilityMonitor::JSAbilityMonitor(const std::string &abilityName) : abilityName
 
 void JSAbilityMonitor::onAbilityCreate()
 {
-    HILOG_INFO("onAbilityCreate is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -48,12 +48,12 @@ void JSAbilityMonitor::onAbilityCreate()
 
     NativeValue* argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onAbilityCreate is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onAbilityForeground()
 {
-    HILOG_INFO("onAbilityForeground is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -75,12 +75,12 @@ void JSAbilityMonitor::onAbilityForeground()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onAbilityForeground is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onAbilityBackground()
 {
-    HILOG_INFO("onAbilityBackground is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -102,12 +102,12 @@ void JSAbilityMonitor::onAbilityBackground()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onAbilityBackground is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onAbilityDestroy()
 {
-    HILOG_INFO("onAbilityDestroy is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -129,12 +129,12 @@ void JSAbilityMonitor::onAbilityDestroy()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onAbilityDestroy is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onWindowStageCreate()
 {
-    HILOG_INFO("onWindowStageCreate is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -156,12 +156,12 @@ void JSAbilityMonitor::onWindowStageCreate()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onWindowStageCreate is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onWindowStageRestore()
 {
-    HILOG_INFO("onWindowStageRestore is called");
+    HILOG_INFO("enter");
 
     if (jsAbilityMonitor_ == nullptr) {
         HILOG_ERROR("jsAbilityMonitor_ nullptr");
@@ -183,12 +183,12 @@ void JSAbilityMonitor::onWindowStageRestore()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onWindowStageRestore is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::onWindowStageDestroy()
 {
-    HILOG_INFO("onWindowStageDestroy is called");
+    HILOG_INFO("enter");
 
     NativeValue *value = jsAbilityMonitor_->Get();
     NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
@@ -205,12 +205,12 @@ void JSAbilityMonitor::onWindowStageDestroy()
 
     NativeValue *argv[] = {};
     engine_->CallFunction(value, method, argv, 0);
-    HILOG_INFO("onWindowStageDestroy is called end");
+    HILOG_INFO("end");
 }
 
 void JSAbilityMonitor::SetJsAbilityMonitor(NativeValue *jsAbilityMonitor)
 {
-    HILOG_INFO("SetJsAbilityMonitor is called");
+    HILOG_INFO("enter");
 
     jsAbilityMonitor_ = std::unique_ptr<NativeReference>(engine_->CreateReference(jsAbilityMonitor, 1));
 }

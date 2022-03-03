@@ -516,7 +516,7 @@ void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resu
     }
 
     const auto &bundleName = delegatorArgs->GetTestBundleName();
-    auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName, observer_);
+    auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
     if (err) {
         APP_LOGE("MainThread::FinishUserTest is failed %{public}d", err);
     }
