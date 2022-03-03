@@ -127,6 +127,7 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_impl.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/hdc_register.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/main_thread.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/sys_mgr_client.cpp",
