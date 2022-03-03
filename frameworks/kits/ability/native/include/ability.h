@@ -161,6 +161,20 @@ public:
     std::shared_ptr<Global::Resource::ResourceManager> GetResourceManager() const override;
 
     /**
+     * @brief Checks whether the configuration of this ability is changing.
+     *
+     * @return Returns true if the configuration of this ability is changing and false otherwise.
+     */
+    bool IsUpdatingConfigurations() override;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    bool PrintDrawnCompleted() override;
+
+    /**
      * @brief Inflates UI controls by using ComponentContainer.
      * You can create a ComponentContainer instance that contains multiple components.
      *

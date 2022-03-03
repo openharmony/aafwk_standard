@@ -86,6 +86,16 @@ std::string ContextImpl::GetCacheDir()
     return dir;
 }
 
+bool ContextImpl::IsUpdatingConfigurations()
+{
+    return false;
+}
+
+bool ContextImpl::PrintDrawnCompleted()
+{
+    return false;
+}
+
 std::string ContextImpl::GetDatabaseDir()
 {
     std::string dir;
