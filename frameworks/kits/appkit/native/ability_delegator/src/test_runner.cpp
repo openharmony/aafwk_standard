@@ -53,7 +53,8 @@ std::unique_ptr<TestRunner> TestRunner::Create(
     }
 
     BundleInfo bundleInfo;
-    if (!bms->GetBundleInfo(args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USERID)) {
+    if (!bms->GetBundleInfo(
+            args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USERID)) {
         APP_LOGE("Failed to GetBundleInfo");
         return {};
     }
