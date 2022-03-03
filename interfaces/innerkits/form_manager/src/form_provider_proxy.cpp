@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "appexecfwk_errors.h"
 #include "form_provider_proxy.h"
+#include "appexecfwk_errors.h"
 #include "string_ex.h"
 
 namespace OHOS {
