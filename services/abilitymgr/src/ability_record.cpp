@@ -244,7 +244,7 @@ void AbilityRecord::BackgroundAbility(const Closure &task)
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
-        if (want_.GetBoolParam(DEBUG_APP, false)) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
             g_abilityRecordEventId_++;
             eventId_ = g_abilityRecordEventId_;
             // eventId_ is a unique id of the task.
@@ -571,7 +571,7 @@ void AbilityRecord::MoveToBackground(const Closure &task)
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
-        if (want_.GetBoolParam(DEBUG_APP, false)) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
             g_abilityRecordEventId_++;
             eventId_ = g_abilityRecordEventId_;
             // eventId_ is a unique id of the task.
@@ -598,7 +598,7 @@ void AbilityRecord::Terminate(const Closure &task)
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
-        if (want_.GetBoolParam(DEBUG_APP, false)) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
             g_abilityRecordEventId_++;
             eventId_ = g_abilityRecordEventId_;
             // eventId_ is a unique id of the task.
@@ -1162,7 +1162,7 @@ bool AbilityRecord::IsActiveState() const
 
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
 {
-    if (!want_.GetBoolParam(DEBUG_APP, false)) {
+    if (want_.GetBoolParam(DEBUG_APP, false)) {
         HILOG_INFO("Is debug mode, no need to handle time out.");
         return;
     }
@@ -1454,7 +1454,7 @@ void AbilityRecordNew::BackgroundNew(const Closure &task)
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
-        if (want_.GetBoolParam(DEBUG_APP, false)) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
             g_abilityRecordEventId_++;
             eventId_ = g_abilityRecordEventId_;
             // eventId_ is a unique id of the task.

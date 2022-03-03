@@ -59,7 +59,11 @@ public:
 
     void StartDebugMode() override
     {
-        panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+        if (!debugMode_) {
+            HILOG_INFO("Ark VM is startint debug mode");
+            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+            debugMode_ = true;
+        }
     }
 
 private:
