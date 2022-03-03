@@ -45,7 +45,7 @@ constexpr static char STATIC_SUBSCRIBER_EXTENSION[] = "StaticSubscriberExtension
 constexpr static char DATA_SHARE_EXT_ABILITY[] = "DataShareExtAbility";
 constexpr static char WORK_SCHEDULER_EXTENSION[] = "WorkSchedulerExtension";
 constexpr static char ACCESSIBILITY_EXTENSION[] = "AccessibilityExtension";
-
+constexpr static char WALLPAPER_EXTENSION[] = "WallpaperExtension";
 /**
  * @brief Default constructor used to create a AbilityThread instance.
  */
@@ -119,6 +119,9 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         }
         if (abilityInfo->extensionAbilityType == ExtensionAbilityType::ACCESSIBILITY) {
             abilityName = ACCESSIBILITY_EXTENSION;
+        }
+        if (abilityInfo->extensionAbilityType == ExtensionAbilityType::WALLPAPER) {
+            abilityName = WALLPAPER_EXTENSION;
         }
         APP_LOGI("CreateAbilityName extension type, abilityName:%{public}s", abilityName.c_str());
     } else {
