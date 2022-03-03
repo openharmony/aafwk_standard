@@ -25,7 +25,6 @@
 #include "datetime_ex.h"
 #include "perf_profile.h"
 
-#include "ability_manager_client.h"
 #include "app_process_data.h"
 #include "bundle_constants.h"
 #include "bytrace.h"
@@ -1966,7 +1965,7 @@ int AppMgrServiceInner::FinishUserTest(
 
     FinishUserTestLocked(msg, resultCode, appRecord);
 
-    int ret = AAFwk::AbilityManagerClient::GetInstance()->KillProcess(bundleName);
+    int ret = KillApplication(bundleName);
     if (ret) {
         APP_LOGE("Failed to kill process.");
         return ret;
@@ -1991,7 +1990,7 @@ int AppMgrServiceInner::FinishUserTestLocked(
         return ERR_INVALID_VALUE;
     }
     if (!userTestRecord->isFinished) {
-        sptr<ITestObserver> observerProxy = iface_cast<ITestObserver>(userTestRecord->observer);
+        sptr<AAFwk::ITestObserver> observerProxy = iface_cast<AAFwk::ITestObserver>(userTestRecord->observer);
         if (!observerProxy) {
             APP_LOGE("Failed to get ITestObserver proxy");
             return ERR_INVALID_VALUE;
