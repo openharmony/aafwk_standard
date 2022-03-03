@@ -46,6 +46,8 @@
 #include "task_handler_client.h"
 #include "faultloggerd_client.h"
 #include "dfx_dump_catcher.h"
+#include "hisysevent.h"
+#include "js_runtime_utils.h"
 
 #if defined(ABILITY_LIBRARY_LOADER) || defined(APPLICATION_LIBRARY_LOADER)
 #include <dirent.h>
@@ -60,6 +62,12 @@ namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
+
+constexpr char EVENT_KEY_UID[] = "UID";
+constexpr char EVENT_KEY_PID[] = "PID";
+constexpr char EVENT_KEY_MESSAGE[] = "MSG";
+constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
+constexpr char EVENT_KEY_PROCESS_NAME[] = "PROCESS_NAME";
 }
 
 #define ACEABILITY_LIBRARY_LOADER
@@ -862,7 +870,64 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-
+        auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
+        auto bundleName = appInfo.bundleName;
+        auto uid = appInfo.uid;
+        auto processName = processInfo.GetProcessName();
+        auto processPid = processInfo.GetPid();
+        wptr<MainThread> weak = this;
+        auto uncaughtTask = [weak, uid, processPid, bundleName, processName](NativeValue* v) {
+            APP_LOGI("RegisterUncaughtExceptionHandler Begin");
+            NativeObject* obj = AbilityRuntime::ConvertNativeValueTo<NativeObject>(v);
+            NativeValue* message = obj->GetProperty("message");
+            NativeString* messageStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(message);
+            if (messageStr == nullptr) {
+                APP_LOGE("messageStr Convert failed");
+                return;
+            }
+            size_t messagebufferLen = messageStr->GetLength();
+            size_t messagestrLen = 0;
+            char* messagecap = new char[messagebufferLen + 1];
+            messageStr->GetCString(messagecap, messagebufferLen + 1, &messagestrLen);
+            APP_LOGI("messagecap = %{public}s", messagecap);
+            NativeValue* stack = obj->GetProperty("stack");
+            NativeString* stackStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(stack);
+            if (stackStr == nullptr) {
+                APP_LOGE("stackStr Convert failed");
+                return;
+            }
+            size_t stackbufferLen = stackStr->GetLength();
+            size_t stackstrLen = 0;
+            char* stackcap = new char[stackbufferLen + 1];
+            stackStr->GetCString(stackcap, stackbufferLen + 1, &stackstrLen);
+            APP_LOGI("stackcap = %{public}s", stackcap);
+            auto appThread = weak.promote();
+            if (appThread == nullptr) {
+                APP_LOGE("appThread is nullptr, HandleLaunchApplication failed.");
+                return;
+            }
+            std::string eventType = "JS_EXCEPTION";
+            std::string msgContent;
+            std::string tempMessageStr(messagecap);
+            std::string tempStackStr(stackcap);
+            if (messagecap != nullptr) {
+                delete [] messagecap;
+            }
+            if (stackcap != nullptr) {
+                delete [] stackcap;
+            }
+            msgContent = "  message:" + tempMessageStr + "  Stack:" + tempStackStr;
+            auto ret = OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,
+                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                EVENT_KEY_UID, std::to_string(uid),
+                EVENT_KEY_PID, std::to_string(processPid),
+                EVENT_KEY_PACKAGE_NAME, bundleName,
+                EVENT_KEY_PROCESS_NAME, processName,
+                EVENT_KEY_MESSAGE, msgContent);
+            appThread->ScheduleProcessSecurityExit();
+            APP_LOGI("RegisterUncaughtExceptionHandler End ret = %{public}d", ret);
+        };
+        jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
 
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
@@ -885,7 +950,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     }
 
     auto usertestInfo = appLaunchData.GetUserTestInfo();
-    if (usertestInfo.observer) {
+    if (usertestInfo) {
         if (!isStageBased) {
             AbilityRuntime::Runtime::Options options;
             options.codePath = LOCAL_CODE_PATH;
@@ -897,7 +962,8 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             }
             application_->SetRuntime(std::move(runtime));
         }
-        if (!AbilityDelegatorPrepare(usertestInfo)) {
+        if (!PrepareAbilityDelegator(usertestInfo)) {
+            APP_LOGE("Failed to prepare ability delegator");
             return;
         }
     }
@@ -980,10 +1046,14 @@ void MainThread::LoadAndRegisterExtension(const std::string &libName,
     });
 }
 
-bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
+bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record)
 {
-    APP_LOGI("MainThread::AbilityDelegatorPrepare");
-    auto args = std::make_shared<AbilityDelegatorArgs>(record.want);
+    APP_LOGI("enter");
+    if (!record) {
+        APP_LOGE("Invalid UserTestRecord");
+        return false;
+    }
+    auto args = std::make_shared<AbilityDelegatorArgs>(record->want);
     if (!args) {
         APP_LOGE("args is null");
         return false;
@@ -993,13 +1063,13 @@ bool MainThread::AbilityDelegatorPrepare(const UserTestRecord &record)
         APP_LOGE("testRunner is null");
         return false;
     }
-
     auto delegator = std::make_shared<AbilityDelegator>(
-        application_->GetAppContext(), std::move(testRunner), record.observer);
+        application_->GetAppContext(), std::move(testRunner), record->observer);
     if (!delegator) {
         APP_LOGE("delegator is null");
         return false;
     }
+
     AbilityDelegatorRegistry::RegisterInstance(delegator, args);
 
     delegator->Prepare();
