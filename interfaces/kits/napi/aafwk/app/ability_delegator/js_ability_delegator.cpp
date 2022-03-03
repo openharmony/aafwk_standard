@@ -223,8 +223,6 @@ NativeValue *JSAbilityDelegator::OnWaitAbilityMonitor(NativeEngine &engine, Nati
     return result;
 }
 
-
-
 NativeValue *JSAbilityDelegator::OnPrint(NativeEngine &engine, NativeCallbackInfo &info)
 {
     HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
@@ -724,8 +722,8 @@ NativeValue *JSAbilityDelegator::ParseFinishTestPara(NativeEngine &engine,
 
     if (info.argc > ARGC_TWO) {
         if ((info.argv[INDEX_TWO])->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
-           HILOG_ERROR("Incorrect Callback Function type");
-           return nullptr;
+            HILOG_ERROR("Incorrect Callback Function type");
+            return nullptr;
         }
     }
     return engine.CreateNull();
