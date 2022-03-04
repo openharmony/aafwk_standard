@@ -40,7 +40,6 @@
 #include "itest_observer.h"
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
-#include "mission/mission_info_converter.h"
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"

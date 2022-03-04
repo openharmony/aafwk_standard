@@ -23,11 +23,11 @@ config("verify_act_ability_config") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/services/bundlemgr/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${EVENT_DIR}/kits/native/include",
   ]
   defines = [
@@ -54,14 +54,13 @@ ohos_shared_library("amsStDataAbility") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/services/bundlemgr:libbms",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//utils/native/base:utilsbase",
   ]
-  public_deps = [ "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr" ]
   external_deps = [
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",

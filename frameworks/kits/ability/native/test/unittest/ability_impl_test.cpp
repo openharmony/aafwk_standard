@@ -20,7 +20,6 @@
 #include "ability_state.h"
 #include "app_log_wrapper.h"
 #include "context_deal.h"
-#include "foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h"
 #include "mock_ability_token.h"
 #include "mock_page_ability.h"
 #include "mock_ability_impl.h"
@@ -31,6 +30,7 @@
 
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
+#include "uri.h"
 #include "values_bucket.h"
 
 namespace OHOS {

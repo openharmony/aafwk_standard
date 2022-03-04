@@ -66,9 +66,9 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
 
     #"${libs_path}/libeventhandler:libeventhandler_target",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",

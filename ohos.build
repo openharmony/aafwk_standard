@@ -241,6 +241,15 @@
             ]
           },
           "name": "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
+            "header_files": [
+              "uri.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri"
         }
       ],
       "test_list": [

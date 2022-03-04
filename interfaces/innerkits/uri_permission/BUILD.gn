@@ -37,8 +37,8 @@ ohos_shared_library("uri_permission_mgr") {
   deps = [ "${innerkits_path}/want:want" ]
 
   external_deps = [
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
