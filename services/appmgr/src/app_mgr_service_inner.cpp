@@ -556,7 +556,8 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
         APP_LOGE("Kill Application by bundle name is fail");
         return;
     }
-    NotifyAppStatus(bundleName, EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
+    NotifyAppStatusByCallerUid(bundleName, userId, callerUid,
+        EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
 }
 
 int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
@@ -1732,6 +1733,22 @@ void AppMgrServiceInner::NotifyAppStatus(const std::string &bundleName, const st
     element.SetBundleName(bundleName);
     want.SetElement(element);
     want.SetParam(Constants::USER_ID, 0);
+    EventFwk::CommonEventData commonData {want};
+    EventFwk::CommonEventManager::PublishCommonEvent(commonData);
+}
+
+void AppMgrServiceInner::NotifyAppStatusByCallerUid(const std::string &bundleName, const int32_t userId,
+    const int32_t callerUid, const std::string &eventData)
+{
+    APP_LOGI("%{public}s called, bundle name is %{public}s, , userId is %{public}d, event is %{public}s",
+        __func__, bundleName.c_str(), userId, eventData.c_str());
+    Want want;
+    want.SetAction(eventData);
+    ElementName element;
+    element.SetBundleName(bundleName);
+    want.SetElement(element);
+    want.SetParam(Constants::USER_ID, userId);
+    want.SetParam(Constants::UID, callerUid);
     EventFwk::CommonEventData commonData {want};
     EventFwk::CommonEventManager::PublishCommonEvent(commonData);
 }

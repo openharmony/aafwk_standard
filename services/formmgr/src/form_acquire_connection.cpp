@@ -65,6 +65,10 @@ void FormAcquireConnection::OnAbilityConnectDone(
         want.SetParam(Constants::ACQUIRE_TYPE, Constants::ACQUIRE_TYPE_CREATE_FORM);
     }
     want.SetParam(Constants::FORM_CONNECT_ID, this->GetConnectId());
+    want.SetElementName(info_.GetDeviceId(), info_.GetProviderBundleName(),  info_.GetAbilityName());
+    APP_LOGI("%{public}s , deviceId: %{public}s, bundleName: %{public}s, abilityName: %{public}s.",
+        __func__, info_.GetDeviceId().c_str(), info_.GetProviderBundleName().c_str(), info_.GetAbilityName().c_str());
+
     FormTaskMgr::GetInstance().PostAcquireTask(formId_, want, remoteObject);
 }
 }  // namespace AppExecFwk
