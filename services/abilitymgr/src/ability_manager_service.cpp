@@ -4241,8 +4241,13 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
 
 int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
 {
-    auto tokenId = IPCSkeleton::GetCallingTokenID();
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        // do not need check static config permission when start ability by SA
+        return ERR_OK;
+    }
 
+    auto tokenId = IPCSkeleton::GetCallingTokenID();
     if ((abilityInfo.type == AppExecFwk::AbilityType::EXTENSION &&
         abilityInfo.extensionAbilityType == AppExecFwk::ExtensionAbilityType::DATASHARE) ||
         (abilityInfo.type == AppExecFwk::AbilityType::DATA)) {
