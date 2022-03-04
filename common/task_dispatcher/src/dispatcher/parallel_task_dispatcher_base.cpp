@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,9 +30,10 @@ ParallelTaskDispatcherBase::ParallelTaskDispatcherBase(
 {
     executor_ = executor;
 }
+
 ErrCode ParallelTaskDispatcherBase::InterceptedExecute(std::shared_ptr<Task> &task)
 {
-    APP_LOGI("ParallelTaskDispatcherBase::InterceptedExecute start");
+    APP_LOGD("ParallelTaskDispatcherBase::InterceptedExecute start");
     if (executor_ == nullptr) {
         APP_LOGE("ParallelTaskDispatcherBase::InterceptedExecute executor_ is nullptr");
         return ERR_APPEXECFWK_CHECK_FAILED;

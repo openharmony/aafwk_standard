@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ std::shared_ptr<TaskExecuteInterceptor> ParallelTaskDispatcher::GetInterceptor()
 
 ErrCode ParallelTaskDispatcher::SyncDispatchBarrier(const std::shared_ptr<Runnable> &runnable)
 {
-    APP_LOGI("ParallelTaskDispatcher::SyncDispatchBarrier start");
+    APP_LOGD("ParallelTaskDispatcher::SyncDispatchBarrier start");
     if (Check(runnable) != ERR_OK) {
         APP_LOGE("ParallelTaskDispatcher::SyncDispatchBarrier Check failed");
         return ERR_APPEXECFWK_CHECK_FAILED;
@@ -63,7 +63,7 @@ ErrCode ParallelTaskDispatcher::SyncDispatchBarrier(const std::shared_ptr<Runnab
 
 ErrCode ParallelTaskDispatcher::AsyncDispatchBarrier(const std::shared_ptr<Runnable> &runnable)
 {
-    APP_LOGI("ParallelTaskDispatcher::AsyncDispatchBarrier start");
+    APP_LOGD("ParallelTaskDispatcher::AsyncDispatchBarrier start");
     if (Check(runnable) != ERR_OK) {
         APP_LOGE("ParallelTaskDispatcher::AsyncDispatchBarrier check failed");
         return ERR_APPEXECFWK_CHECK_FAILED;
