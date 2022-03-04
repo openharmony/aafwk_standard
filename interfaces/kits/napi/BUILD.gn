@@ -53,7 +53,10 @@ group("napi_packages") {
 
 group("form_napi_packages") {
   deps = [
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formHost:formhost_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager:formmanager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formProvider:formprovider_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formUtil:formutil_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_binding_data:formbindingdata_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension:formextension_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension_context:formextensioncontext_napi",
