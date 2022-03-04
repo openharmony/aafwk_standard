@@ -32,13 +32,15 @@ public:
     explicit DataShareUvQueue(napi_env env);
     virtual ~DataShareUvQueue() = default;
 
-    void CallSyncFunction(NapiVoidFunc func = NapiVoidFunc());
+    void SyncCall(NapiVoidFunc func = NapiVoidFunc());
 
 private:
     struct UvEntry {
         napi_env env;
         NapiVoidFunc func;
         bool done;
+        bool isTimeout;
+        bool purge;
         std::condition_variable condition;
         std::mutex mutex;
     };
