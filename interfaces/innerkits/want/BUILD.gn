@@ -32,9 +32,9 @@ config("want_public_config") {
     "//utils/native/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
     "//third_party/jsoncpp/include",
@@ -60,8 +60,8 @@ ohos_shared_library("want") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]

@@ -20,13 +20,13 @@ config("amsAbilityAppendTestAConfig") {
   include_dirs = [
     "${SUBDEMOSYSTEM_DIR}/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
@@ -58,11 +58,11 @@ ohos_shared_library("amsAbilityAppendTestA") {
     "${services_path}/bundlemgr:libbms",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
+    "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",

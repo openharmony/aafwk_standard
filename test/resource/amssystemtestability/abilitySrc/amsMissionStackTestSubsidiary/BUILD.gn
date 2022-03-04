@@ -22,11 +22,11 @@ config("amsMissionStackTestSubsidiaryConfig") {
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
   ]
@@ -52,12 +52,12 @@ ohos_shared_library("amsMissionStackTestSubsidiary") {
     "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${common_path}:libappexecfwk_common",
     "${innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//utils/native/base:utilsbase",
   ]
   external_deps = [

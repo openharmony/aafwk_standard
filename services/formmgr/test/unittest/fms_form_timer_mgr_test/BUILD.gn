@@ -41,7 +41,6 @@ ohos_unittest("FmsFormTimerMgrTest") {
     "//base/miscservices/time/services:time_service",
     "//base/notification/ces_standard/frameworks/common:libevent_common",
     "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]
@@ -49,6 +48,7 @@ ohos_unittest("FmsFormTimerMgrTest") {
   external_deps = [
     "ability_base:base",
     "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
