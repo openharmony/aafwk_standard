@@ -15,9 +15,6 @@
 
 #include "datashare_uv_queue.h"
 
-#include <chrono>
-#include <mutex>
-#include <condition_variable>
 #include "hilog_wrapper.h"
 
 namespace OHOS {
