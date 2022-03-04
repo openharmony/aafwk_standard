@@ -140,7 +140,7 @@ NativeValue* JsBaseContext::OnGetCacheDir(NativeEngine& engine, NativeCallbackIn
         HILOG_WARN("context is already released");
         return engine.CreateUndefined();
     }
-    std::string path = context->GetTempDir();
+    std::string path = context->GetCacheDir();
     return engine.CreateString(path.c_str(), path.length());
 }
 
