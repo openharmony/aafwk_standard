@@ -510,16 +510,6 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
 void AppMgrServiceInner::ClearUpApplicationData(const std::string &bundleName, int32_t callerUid, pid_t callerPid)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
-            AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
-        if (!isCallingPerm) {
-            APP_LOGE("%{public}s: Permission verification failed", __func__);
-            return;
-        }
-    }
-
     auto userId = GetUserIdByUid(callerUid);
     APP_LOGI("userId:%{public}d", userId);
     ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, userId);
@@ -930,11 +920,6 @@ void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &to
         return;
     }
 
-    if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
-        APP_LOGE("%{public}s: Permission verification failed", __func__);
-        return;
-    }
-
     // befor exec ScheduleProcessSecurityExit return
     // The resident process won't let him die
     if (appRecord->IsKeepAliveApp()) {
@@ -960,12 +945,6 @@ void AppMgrServiceInner::KillProcessesByUserId(int32_t userId)
 {
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is nullptr");
-        return;
-    }
-
-    if (VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES, userId) ==
-        ERR_PERMISSION_DENIED) {
-        APP_LOGE("%{public}s: Permission verification failed", __func__);
         return;
     }
 
@@ -2234,16 +2213,6 @@ void AppMgrServiceInner::HandleStartSpecifiedAbilityTimeOut(const int64_t eventI
 
 void AppMgrServiceInner::UpdateConfiguration(const Configuration &config)
 {
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
-            AAFwk::PermissionConstants::PERMISSION_UPDATE_CONFIGURATION);
-        if (!isCallingPerm) {
-            APP_LOGE("%{public}s: Permission verification failed", __func__);
-            return;
-        }
-    }
-
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is null");
         return;
