@@ -530,6 +530,8 @@ private:
 
     void MakeProcessName(std::string &processName, const std::shared_ptr<AbilityInfo> &abilityInfo,
         const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
+    void MakeProcessName(
+        std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
     /**
      * StartAbility, load the ability that needed to be started(Start on the basis of the original process).
      *  Start on a new boot process
@@ -684,8 +686,11 @@ private:
 
     void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
 
-    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &info, const std::string &processName);
+    int UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg);
+    int GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo);
+    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &info,
+        const std::string &processName);
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 
