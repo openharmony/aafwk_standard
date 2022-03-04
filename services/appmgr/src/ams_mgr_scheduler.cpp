@@ -24,6 +24,8 @@
 #include "app_log_wrapper.h"
 #include "app_mgr_constants.h"
 #include "perf_profile.h"
+#include "permission_constants.h"
+#include "permission_verification.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -128,6 +130,11 @@ void AmsMgrScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, 
 
 void AmsMgrScheduler::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
+    if (amsMgrServiceInner_->VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return;
+    }
+
     if (!IsReady()) {
         return;
     }
@@ -138,6 +145,12 @@ void AmsMgrScheduler::KillProcessByAbilityToken(const sptr<IRemoteObject> &token
 
 void AmsMgrScheduler::KillProcessesByUserId(int32_t userId)
 {
+    if (amsMgrServiceInner_->VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES,
+        userId) == ERR_PERMISSION_DENIED) {
+        APP_LOGE("%{public}s: Permission verification failed", __func__);
+        return;
+    }
+
     if (!IsReady()) {
         return;
     }
@@ -250,6 +263,16 @@ void AmsMgrScheduler::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpe
 void AmsMgrScheduler::UpdateConfiguration(const Configuration &config)
 {
     APP_LOGI("AmsMgrScheduler UpdateConfiguration begin");
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_UPDATE_CONFIGURATION);
+        if (!isCallingPerm) {
+            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            return;
+        }
+    }
+
     if (!IsReady()) {
         return;
     }
