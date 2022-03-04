@@ -21,12 +21,7 @@ namespace OHOS {
 namespace AppExecFwk {
 std::shared_ptr<JsDataShareExtAbility> DataShareStubImpl::GetOwner()
 {
-    std::shared_ptr<JsDataShareExtAbility> owner = nullptr;
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        owner = extension_.lock();
-    }
-    return owner;
+    return extension_;
 }
 
 std::vector<std::string> DataShareStubImpl::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
