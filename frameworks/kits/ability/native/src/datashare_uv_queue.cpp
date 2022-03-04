@@ -33,7 +33,7 @@ void DataShareUvQueue::CallSyncFunction(NapiVoidFunc func)
         HILOG_ERROR("no memory for uv_work_t");
         return;
     }
-    work->data = new UvEntry{ env_, std::move(func), false, {}, {} };
+    work->data = new UvEntry{ env_, std::move(func), false, { }, { } };
     uv_queue_work(
         loop_, work, [](uv_work_t* work) {},
         [](uv_work_t* work, int uvstatus) {

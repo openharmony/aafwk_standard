@@ -30,7 +30,7 @@ public:
     explicit DataShareStubImpl(const std::shared_ptr<JsDataShareExtAbility>& extension, napi_env env)
         : extension_(extension)
     {
-        uvQueue_ = std::make_shared<AbilityRuntime::DataShareUvQueue>(env);  
+        uvQueue_ = std::make_shared<AbilityRuntime::DataShareUvQueue>(env);
     }
 
     virtual ~DataShareStubImpl() {}
