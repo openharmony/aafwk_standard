@@ -1540,7 +1540,10 @@ void MainThread::MainHandler::ProcessEvent(const OHOS::AppExecFwk::InnerEvent::P
 {
     auto eventId = event->GetInnerEventId();
     if (eventId == MAIN_THREAD_IS_ALIVE) {
-        WatchDog::GetCurrentHandler()->SendEvent(MAIN_THREAD_IS_ALIVE);
+        auto watchDogHanlder = WatchDog::GetCurrentHandler();
+        if (watchDogHanlder != nullptr) {
+            watchDogHanlder->SendEvent(MAIN_THREAD_IS_ALIVE);
+        }
     }
 }
 

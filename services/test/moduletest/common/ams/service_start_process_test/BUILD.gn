@@ -32,7 +32,10 @@ ohos_moduletest("AmsServiceStartModuleTest") {
     "//base/global/i18n_standard/frameworks/intl:intl_util",
   ]
 
-  external_deps = [ "ipc:ipc_core" ]
+  external_deps = [
+    "hicollie_native:libhicollie",
+    "ipc:ipc_core",
+  ]
 }
 
 group("moduletest") {
