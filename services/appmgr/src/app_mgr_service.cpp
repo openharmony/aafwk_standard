@@ -26,7 +26,8 @@
 #include "app_log_wrapper.h"
 #include "app_mgr_constants.h"
 #include "perf_profile.h"
-
+#include "permission_constants.h"
+#include "permission_verification.h"
 #include "system_environment_information.h"
 
 namespace OHOS {
@@ -256,6 +257,16 @@ sptr<IAmsMgr> AppMgrService::GetAmsMgr()
 
 int32_t AppMgrService::ClearUpApplicationData(const std::string &bundleName)
 {
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
+        if (!isCallingPerm) {
+            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            return ERR_PERMISSION_DENIED;
+        }
+    }
+
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;
     }
