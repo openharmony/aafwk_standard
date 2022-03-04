@@ -189,6 +189,15 @@ void AppMgrServiceInner::MakeProcessName(std::string &processName, const std::sh
         processName = abilityInfo->process;
         return;
     }
+    MakeProcessName(processName, appInfo, hapModuleInfo);
+}
+
+void AppMgrServiceInner::MakeProcessName(
+    std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo)
+{
+    if (!appInfo) {
+        return;
+    }
     if (!appInfo->process.empty()) {
         processName = appInfo->process;
         return;
@@ -1336,7 +1345,7 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     }
 
     FinishUserTestLocked("App died", -1, appRecord);
-    
+
     // clear uri permission
     auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
     auto appInfo = appRecord->GetApplicationInfo();
@@ -1883,8 +1892,14 @@ int AppMgrServiceInner::StartUserTestProcess(
         return ERR_INVALID_VALUE;
     }
 
-    auto processName = bundleInfo.applicationInfo.process.empty() ?
-        bundleInfo.applicationInfo.bundleName : bundleInfo.applicationInfo.process;
+    HapModuleInfo hapModuleInfo;
+    if (GetHapModuleInfoForTestRunner(want, observer, bundleInfo, hapModuleInfo)) {
+        APP_LOGE("Failed to get HapModuleInfo for TestRunner");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string processName;
+    MakeProcessName(processName, std::make_shared<ApplicationInfo>(bundleInfo.applicationInfo), hapModuleInfo);
     APP_LOGI("processName = [%{public}s]", processName.c_str());
 
     // Inspection records
@@ -1896,6 +1911,57 @@ int AppMgrServiceInner::StartUserTestProcess(
     }
 
     return StartEmptyProcess(want, observer, bundleInfo, processName);
+}
+
+int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo)
+{
+    APP_LOGI("Enter");
+    if (!observer) {
+        APP_LOGE("observer nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    bool moduelJson = false;
+    if (!bundleInfo.hapModuleInfos.empty()) {
+        moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
+    }
+    if (moduelJson) {
+        std::string moudleName;
+        auto testRunnerName = want.GetStringParam("-s unittest");
+        auto pos = testRunnerName.find(":");
+        if (pos != std::string::npos) {
+            moudleName = testRunnerName.substr(0, pos);
+        } else {
+            UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
+            return ERR_INVALID_VALUE;
+        }
+
+        bool found = false;
+        for (auto item : bundleInfo.hapModuleInfos) {
+            if (item.moduleName == moudleName) {
+                hapModuleInfo = item;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            UserTestAbnormalFinish(observer, "The specified module name is not found.");
+            return ERR_INVALID_VALUE;
+        }
+    }
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg)
+{
+    sptr<AAFwk::ITestObserver> observerProxy = iface_cast<AAFwk::ITestObserver>(observer);
+    if (!observerProxy) {
+        APP_LOGE("Failed to get ITestObserver proxy");
+        return ERR_INVALID_VALUE;
+    }
+    observerProxy->TestFinished(msg, -1);
+    return ERR_OK;
 }
 
 int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
