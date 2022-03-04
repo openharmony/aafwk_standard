@@ -72,7 +72,7 @@ private:
 
 private:
     mutable std::mutex mutex_;
-    std::weak_ptr<JsDataShareExtAbility> extension_;
+    std::shared_ptr<JsDataShareExtAbility> extension_;
     std::shared_ptr<AbilityRuntime::DataShareUvQueue> uvQueue_;
 };
 } // namespace AppExecFwk
