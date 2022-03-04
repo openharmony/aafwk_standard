@@ -1238,10 +1238,14 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
             params[opt] = argv;
         } else if (opt == "-s") {
             if (i >= argc_ - USER_TEST_COMMAND_PARAMS_NUM) {
-                return TestCommandError("error: option [-s] is incorrect.\n");
+                return TestCommandError(
+                    "error: option Should be [-s unittest <test-runner>] or [-s class <test-class>].\n");
             }
             std::string argKey = argv_[++i];
             std::string argValue = argv_[++i];
+            if (!(argKey == "unittest" || argKey == "class")) {
+                return TestCommandError("error: option Should be [-s unittest] or [-s class].\n");
+            }
             params[opt + " " + argKey] = argValue;
         } else if (opt.at(0) == '-') {
             return TestCommandError("error: unknown option: " + opt + "\n");
