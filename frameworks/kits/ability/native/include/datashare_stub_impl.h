@@ -71,7 +71,6 @@ private:
     std::shared_ptr<JsDataShareExtAbility> GetOwner();
 
 private:
-    mutable std::mutex mutex_;
     std::shared_ptr<JsDataShareExtAbility> extension_;
     std::shared_ptr<AbilityRuntime::DataShareUvQueue> uvQueue_;
 };
