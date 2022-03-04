@@ -14,32 +14,34 @@
 import("//ark/ts2abc/ts2panda/ts2abc_config.gni")
 import("//build/ohos.gni")
 
-ts2abc_gen_abc("gen_static_subscriber_extension_abc") {
-  src_js = rebase_path("static_subscriber_extension.js")
-  dst_file = rebase_path(target_out_dir + "/static_subscriber_extension.abc")
-  in_puts = [ "static_subscriber_extension.js" ]
-  out_puts = [ target_out_dir + "/static_subscriber_extension.abc" ]
+ts2abc_gen_abc("gen_static_subscriber_extension_ability_abc") {
+  src_js = rebase_path("static_subscriber_extension_ability.js")
+  dst_file =
+      rebase_path(target_out_dir + "/static_subscriber_extension_ability.abc")
+  in_puts = [ "static_subscriber_extension_ability.js" ]
+  out_puts = [ target_out_dir + "/static_subscriber_extension_ability.abc" ]
   extra_args = [ "--module" ]
 }
 
-gen_js_obj("static_subscriber_extension_js") {
-  input = "static_subscriber_extension.js"
-  output = target_out_dir + "/static_subscriber_extension.o"
+gen_js_obj("static_subscriber_extension_ability_js") {
+  input = "static_subscriber_extension_ability.js"
+  output = target_out_dir + "/static_subscriber_extension_ability.o"
 }
 
-gen_js_obj("static_subscriber_extension_abc") {
-  input = get_label_info(":gen_static_subscriber_extension_abc",
-                         "target_out_dir") + "/static_subscriber_extension.abc"
-  output = target_out_dir + "/static_subscriber_extension_abc.o"
-  dep = ":gen_static_subscriber_extension_abc"
+gen_js_obj("static_subscriber_extension_ability_abc") {
+  input = get_label_info(":gen_static_subscriber_extension_ability_abc",
+                         "target_out_dir") +
+          "/static_subscriber_extension_ability.abc"
+  output = target_out_dir + "/static_subscriber_extension_ability_abc.o"
+  dep = ":gen_static_subscriber_extension_ability_abc"
 }
 
-ohos_shared_library("staticsubscriberextension_napi") {
-  sources = [ "static_subscriber_extension_module.cpp" ]
+ohos_shared_library("staticsubscriberextensionability_napi") {
+  sources = [ "static_subscriber_extension_ability_module.cpp" ]
 
   deps = [
-    ":static_subscriber_extension_abc",
-    ":static_subscriber_extension_js",
+    ":static_subscriber_extension_ability_abc",
+    ":static_subscriber_extension_ability_js",
   ]
 
   external_deps = [ "napi:ace_napi" ]
