@@ -1355,7 +1355,7 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     // kill render if exist.
     auto renderRecord = appRecord->GetRenderRecord();
     if (renderRecord && renderRecord->GetPid() > 0) {
-        APP_LOGD("Kill render process when webviehost died.");
+        APP_LOGD("Kill render process when nwebhost died.");
         KillProcessByPid(renderRecord->GetPid());
     }
 
@@ -2315,7 +2315,7 @@ int AppMgrServiceInner::VerifyObserverPermission()
 int AppMgrServiceInner::StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
     int32_t ipcFd, int32_t sharedFd, pid_t &renderPid)
 {
-    APP_LOGI("start render process, webview hostpid:%{public}d", hostPid);
+    APP_LOGI("start render process, nweb hostpid:%{public}d", hostPid);
     if (hostPid <= 0 || renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
         APP_LOGE("invalid param, hostPid:%{public}d, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
             hostPid, renderParam.c_str(), ipcFd, sharedFd);
@@ -2399,16 +2399,16 @@ int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecor
         return ERR_INVALID_VALUE;
     }
 
-    auto webviewSpawnClient = remoteClientManager_->GetWebviewSpawnClient();
-    if (!webviewSpawnClient) {
-        APP_LOGE("webviewSpawnClient is null");
+    auto nwebSpawnClient = remoteClientManager_->GetNWebSpawnClient();
+    if (!nwebSpawnClient) {
+        APP_LOGE("nwebSpawnClient is null");
         return ERR_INVALID_VALUE;
     }
 
     AppSpawnStartMsg startMsg = appRecord->GetStartMsg();
     startMsg.renderParam = renderRecord->GetRenderParam();
     pid_t pid = 0;
-    ErrCode errCode = webviewSpawnClient->StartProcess(startMsg, pid);
+    ErrCode errCode = nwebSpawnClient->StartProcess(startMsg, pid);
     if (FAILED(errCode)) {
         APP_LOGE("failed to spawn new render process, errCode %{public}08x", errCode);
         return ERR_INVALID_VALUE;

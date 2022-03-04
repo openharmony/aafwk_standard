@@ -189,7 +189,7 @@ public:
     virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) override;
 
     /**
-     * Start webview render process, called by webview host.
+     * Start nweb render process, called by nweb host.
      *
      * @param renderParam, params passed to renderprocess.
      * @param ipcFd, ipc file descriptior for web browser and render process.
