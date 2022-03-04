@@ -41,7 +41,7 @@ std::vector<std::string> DataShareStubImpl::GetFileTypes(const Uri &uri, const s
         }
         ret = extension->GetFileTypes(uri, mimeTypeFilter);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -58,7 +58,7 @@ int DataShareStubImpl::OpenFile(const Uri &uri, const std::string &mode)
         }
         ret = extension->OpenFile(uri, mode);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -75,7 +75,7 @@ int DataShareStubImpl::OpenRawFile(const Uri &uri, const std::string &mode)
         }
         ret = extension->OpenRawFile(uri, mode);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -92,7 +92,7 @@ int DataShareStubImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &val
         }
         ret = extension->Insert(uri, value);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -110,7 +110,7 @@ int DataShareStubImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &val
         }
         ret = extension->Update(uri, value, predicates);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -127,7 +127,7 @@ int DataShareStubImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredic
         }
         ret = extension->Delete(uri, predicates);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -145,7 +145,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareStubImpl::Query(const Ur
         }
         ret = extension->Query(uri, columns, predicates);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -162,7 +162,7 @@ std::string DataShareStubImpl::GetType(const Uri &uri)
         }
         ret = extension->GetType(uri);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -179,7 +179,7 @@ int DataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::
         }
         ret = extension->BatchInsert(uri, values);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -196,7 +196,7 @@ bool DataShareStubImpl::RegisterObserver(const Uri &uri, const sptr<AAFwk::IData
         }
         ret = extension->RegisterObserver(uri, dataObserver);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -213,7 +213,7 @@ bool DataShareStubImpl::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
         }
         ret = extension->UnregisterObserver(uri, dataObserver);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -230,7 +230,7 @@ bool DataShareStubImpl::NotifyChange(const Uri &uri)
         }
         ret = extension->NotifyChange(uri);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return ret;
 }
@@ -247,7 +247,7 @@ Uri DataShareStubImpl::NormalizeUri(const Uri &uri)
         }
         urivalue = extension->NormalizeUri(uri);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return urivalue;
 }
@@ -264,7 +264,7 @@ Uri DataShareStubImpl::DenormalizeUri(const Uri &uri)
         }
         urivalue = extension->DenormalizeUri(uri);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return urivalue;
 }
@@ -282,7 +282,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareStubImpl::E
         }
         results = extension->ExecuteBatch(operations);
     };
-    uvQueue_->CallSyncFunction(syncTaskFunc);
+    uvQueue_->SyncCall(syncTaskFunc);
     HILOG_INFO("%{public}s end successfully.", __func__);
     return results;
 }
