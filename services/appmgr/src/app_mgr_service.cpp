@@ -26,6 +26,8 @@
 #include "app_log_wrapper.h"
 #include "app_mgr_constants.h"
 #include "perf_profile.h"
+#include "xcollie/watchdog.h"
+
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "system_environment_information.h"
@@ -34,6 +36,7 @@ namespace OHOS {
 namespace AppExecFwk {
 namespace {
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
+static const int APP_MS_TimeOut = 60;
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
 const std::string TASK_APPLICATION_FOREGROUNDED = "ApplicationForegroundedTask";
@@ -146,6 +149,9 @@ ErrCode AppMgrService::Init()
     if (!amsMgrScheduler_) {
         APP_LOGE("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
+    }
+    if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TimeOut) != 0) {
+        APP_LOGE("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
     APP_LOGI("init success");
     return ERR_OK;
