@@ -513,6 +513,10 @@ public:
 
     virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
 
+    int VerifyProcessPermission();
+
+    int VerifyAccountPermission(const std::string &permissionName, const int userId);
+
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);
@@ -707,10 +711,6 @@ private:
      */
     void ClearUpApplicationDataByUserId(const std::string &bundleName,
         int32_t callerUid, pid_t callerPid, const int userId);
-
-    int VerifyProcessPermission();
-
-    int VerifyAccountPermission(const std::string &permissionName, const int userId);
 
     int VerifyObserverPermission();
 
