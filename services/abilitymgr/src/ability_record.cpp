@@ -208,6 +208,7 @@ void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
     lifeCycleStateInfo_.sceneFlag = sceneFlag;
     lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
     lifeCycleStateInfo_.sceneFlag = 0;
+    lifeCycleStateInfo_.sceneFlagBak = 0;
 
     // update ability state to appMgr service when restart
     if (IsNewWant()) {
@@ -228,12 +229,14 @@ void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
         if (IsAbilityState(AbilityState::BACKGROUND_NEW)) {
             // background to activte state
             HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            lifeCycleStateInfo_.sceneFlagBak = sceneFlag;
             DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
             ForegroundAbility(sceneFlag);
         }
     } else {
+        lifeCycleStateInfo_.sceneFlagBak = sceneFlag;
         LoadAbility();
     }
 }
