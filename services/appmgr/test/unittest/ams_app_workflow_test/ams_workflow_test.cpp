@@ -143,7 +143,7 @@ TestApplicationPreRecord AmsWorkFlowTest::CreateTestApplicationRecord(const std:
             token, nullptr, appInfo, abilityInfo, appInfo->name, bundleInfo, hapModuleInfo, nullptr);
         serviceInner_->StartProcess(abilityInfo->applicationName,
             appInfo->name,
-            appRecord,
+            false, appRecord,
             abilityInfo->applicationInfo.uid,
             abilityInfo->applicationInfo.bundleName);
     } else {

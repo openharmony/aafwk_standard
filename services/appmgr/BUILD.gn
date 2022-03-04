@@ -25,50 +25,16 @@ config("appmgr_config") {
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//base/global/i18n_standard/frameworks/intl/include",
+    "//foundation/aafwk/standard/tools/aa/include",
   ]
 }
 
 group("ams_target") {
   deps = [
     ":libams",
-    ":lmks",
-    ":lmks.rc",
     "examples:appmgrserviceregtest",
     "examples:appspawnclienttest",
   ]
-}
-
-ohos_executable("lmks") {
-  include_dirs = [
-    "include/lmks",
-    "//utils/native/base/include",
-  ]
-
-  sources = [
-    "src/lmks/lmks_main.cpp",
-    "src/lmks/lmks_server.cpp",
-    "src/lmks/lmks_utils.cpp",
-  ]
-
-  cflags = []
-  if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
-  }
-
-  deps = [ "//utils/native/base:utils" ]
-
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
-
-  install_enable = true
-  subsystem_name = "aafwk"
-  part_name = "ability_runtime"
-}
-
-ohos_prebuilt_etc("lmks.rc") {
-  source = "lmks.cfg"
-  relative_install_dir = "init"
-  subsystem_name = "aafwk"
-  part_name = "ability_runtime"
 }
 
 ohos_shared_library("libams") {
@@ -86,11 +52,7 @@ ohos_shared_library("libams") {
     "src/app_spawn_client.cpp",
     "src/app_spawn_msg_wrapper.cpp",
     "src/app_spawn_socket.cpp",
-    "src/cgroup_manager.cpp",
-    "src/lmks_client.cpp",
     "src/module_running_record.cpp",
-    "src/process_optimizer.cpp",
-    "src/process_optimizer_uba.cpp",
     "src/remote_client_manager.cpp",
     "src/system_environment_information.cpp",
   ]
@@ -113,7 +75,6 @@ ohos_shared_library("libams") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
@@ -129,6 +90,7 @@ ohos_shared_library("libams") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",

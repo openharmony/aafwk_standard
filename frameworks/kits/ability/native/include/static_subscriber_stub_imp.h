@@ -30,7 +30,7 @@ public:
 
     virtual ~StaticSubscriberStubImp() {}
 
-    ErrCode OnCommonEventTriggered(CommonEventData* data) override;
+    ErrCode OnReceiveEvent(CommonEventData* data) override;
 private:
     std::weak_ptr<JsStaticSubscriberExtension> extension_;
 };

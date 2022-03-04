@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -114,7 +114,7 @@ bool WatchDog::Timer()
                     EVENT_KEY_PROCESS_NAME, applicationInfo_->process,
                     EVENT_KEY_MESSAGE, msgContent);
             }
-            APP_LOGI("Waring : main thread is not response!");
+            APP_LOGI("Warning : main thread is not response!");
         };
         currentHandler_->PostTask(timeoutTask1, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);
         appMainHandler_->SendEvent(MAIN_THREAD_IS_ALIVE);

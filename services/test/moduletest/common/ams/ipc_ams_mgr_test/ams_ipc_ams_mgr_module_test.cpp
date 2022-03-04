@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,7 +136,7 @@ std::shared_ptr<AMSEventHandler> AmsIpcAmsmgrModuleTest::GetAmsEventHandler()
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test terminateAbility API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute terminateAbility API 1000 times
+ * CaseDescription: execute terminateAbility API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_002, TestSize.Level3)
 {
@@ -176,7 +176,7 @@ HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_002, TestSize.Level3)
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test updateAbilityState API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute updateAbilityState API 1000 times
+ * CaseDescription: execute updateAbilityState API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_003, TestSize.Level3)
 {
@@ -218,7 +218,7 @@ HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_003, TestSize.Level3)
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test registerappstatecallback API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute registerappstatecallback API 1000 times
+ * CaseDescription: execute registerappstatecallback API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_004, TestSize.Level3)
 {
@@ -258,7 +258,7 @@ HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_004, TestSize.Level3)
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test AbilityBehaviorAnalysis API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute AbilityBehaviorAnalysis API 1000 times
+ * CaseDescription: execute AbilityBehaviorAnalysis API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_005, TestSize.Level3)
 {
@@ -302,7 +302,7 @@ HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_005, TestSize.Level3)
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test KillApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute KillApplication API 1000 times
+ * CaseDescription: execute KillApplication API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_006, TestSize.Level3)
 {
@@ -342,7 +342,7 @@ HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_006, TestSize.Level3)
  * SubFunction: AmsmgrIPCInterface
  * FunctionPoints: test KillProcessByAbilityToken API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute KillProcessByAbilityToken API 1000 times
+ * CaseDescription: execute KillProcessByAbilityToken API 1000 times
  */
 HWTEST_F(AmsIpcAmsmgrModuleTest, ExcuteAmsmgrIPCInterface_007, TestSize.Level3)
 {

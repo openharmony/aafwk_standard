@@ -14,8 +14,8 @@
  */
 
 class StaticSubscriberExtension {
-    onCommonEventTriggered(event) {
-        console.log('onCommonEventTriggered, event:' + event.code);
+    onReceiveEvent(event) {
+        console.log('onReceiveEvent, event:' + event.code);
     }
 }
 

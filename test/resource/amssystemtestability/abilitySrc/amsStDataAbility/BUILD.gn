@@ -57,13 +57,13 @@ ohos_shared_library("amsStDataAbility") {
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/services/bundlemgr:libbms",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//utils/native/base:utilsbase",
   ]
   public_deps = [ "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr" ]
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",

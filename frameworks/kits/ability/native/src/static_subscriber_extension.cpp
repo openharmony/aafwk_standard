@@ -63,7 +63,7 @@ std::shared_ptr<StaticSubscriberExtensionContext> StaticSubscriberExtension::Cre
     return context;
 }
 
-void StaticSubscriberExtension::OnCommonEventTriggered(EventFwk::CommonEventData* data)
+void StaticSubscriberExtension::OnReceiveEvent(EventFwk::CommonEventData* data)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     HILOG_INFO("%{public}s end.", __func__);

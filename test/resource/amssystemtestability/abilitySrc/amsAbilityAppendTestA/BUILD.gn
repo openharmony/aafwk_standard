@@ -55,7 +55,6 @@ ohos_shared_library("amsAbilityAppendTestA") {
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${common_path}:libappexecfwk_common",
     "${innerkits_path}/appexecfwk_base:appexecfwk_base",
-    "${innerkits_path}/appexecfwk_core:appexecfwk_core",
     "${services_path}/bundlemgr:libbms",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
@@ -64,6 +63,7 @@ ohos_shared_library("amsAbilityAppendTestA") {
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

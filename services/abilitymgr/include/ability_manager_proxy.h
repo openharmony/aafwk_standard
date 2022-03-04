@@ -529,7 +529,9 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+    virtual int GetAppMemorySize() override;
 
+    virtual bool IsRamConstrainedDevice() override;
     virtual int ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
         int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams) override;
 
@@ -627,8 +629,7 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -653,7 +654,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
-    
+
     /**
      * Calls this interface to move the ability to the foreground.
      *

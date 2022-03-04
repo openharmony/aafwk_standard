@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,7 @@ public:
      * @param numMax The maximum number of entries to return in the list. The
      * actual number returned may be smaller, depending on how many tasks the
      * user has started and the maximum number the system can remember.
-     * @param falgs Information about what to return.  May be any combination
+     * @param flags Information about what to return.  May be any combination
      * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
      *
      * @returns Returns the AbilityMissionInfo.

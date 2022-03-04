@@ -16,6 +16,7 @@
 #ifndef RUNNER_RUNTIME_JS_TEST_RUNNER_H
 #define RUNNER_RUNTIME_JS_TEST_RUNNER_H
 
+#include "bundle_info.h"
 #include "js_runtime.h"
 #include "test_runner.h"
 
@@ -29,17 +30,21 @@ using namespace AbilityRuntime;
 
 class JsTestRunner : public TestRunner {
 public:
-    static std::unique_ptr<TestRunner> Create(
-        const std::unique_ptr<Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args);
+    static std::unique_ptr<TestRunner> Create(const std::unique_ptr<Runtime> &runtime,
+        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo);
 
-    JsTestRunner(JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args);
     ~JsTestRunner() override;
 
     void Prepare() override;
     void Run() override;
 
 private:
+    JsTestRunner(JsRuntime &jsRuntime,
+        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo);
+
     void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
+    void ReportFinished(const std::string &msg);
+    void ReportStatus(const std::string &msg);
 
     JsRuntime &jsRuntime_;
     std::unique_ptr<NativeReference> jsTestRunnerObj_;

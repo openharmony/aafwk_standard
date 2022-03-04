@@ -686,7 +686,9 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     virtual void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo) override;
+    virtual int GetAppMemorySize() override;
 
+    virtual bool IsRamConstrainedDevice() override;
     /**
      * Start Ability, connect session with common ability.
      *
@@ -809,8 +811,7 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.

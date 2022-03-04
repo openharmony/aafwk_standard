@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include "native_engine/impl/ark/ark_native_engine.h"
+#include "core/common/container_scope.h"
 #include "declarative_module_preloader.h"
 
 #include "event_handler.h"
@@ -58,7 +59,11 @@ public:
 
     void StartDebugMode() override
     {
-        panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+        if (!debugMode_) {
+            HILOG_INFO("Ark VM is startint debug mode");
+            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+            debugMode_ = true;
+        }
     }
 
 private:
@@ -175,7 +180,7 @@ NativeValue* CanIUse(NativeEngine* engine, NativeCallbackInfo* info)
         HILOG_ERROR("Get syscap failed with invalid parameter.");
         return engine->CreateUndefined();
     }
-    
+
     char syscap[SYSCAP_MAX_SIZE] = { 0 };
 
     NativeString* str = ConvertNativeValueTo<NativeString>(info->argv[0]);
@@ -186,7 +191,7 @@ NativeValue* CanIUse(NativeEngine* engine, NativeCallbackInfo* info)
     size_t bufferLen = str->GetLength();
     size_t strLen = 0;
     str->GetCString(syscap, bufferLen + 1, &strLen);
-        
+
     bool ret = HasSystemCapability(syscap);
     return engine->CreateBoolean(ret);
 }
@@ -422,12 +427,15 @@ bool JsRuntime::LoadModuleFile(
     return true;
 }
 
+using OHOS::Ace::ContainerScope;
 class TimerTask final {
 public:
     TimerTask(
         JsRuntime& jsRuntime, std::shared_ptr<NativeReference> jsFunction, const std::string &name, int64_t interval)
         : jsRuntime_(jsRuntime), jsFunction_(jsFunction), name_(name), interval_(interval)
-    {}
+    {
+        containerScopeId_ = ContainerScope::CurrentId();
+    }
 
     ~TimerTask() = default;
 
@@ -438,6 +446,7 @@ public:
         }
 
         // call js function
+        ContainerScope containerScope(containerScopeId_);
         HandleScope handleScope(jsRuntime_);
 
         std::vector<NativeValue*> args_;
@@ -461,6 +470,7 @@ private:
     std::vector<std::shared_ptr<NativeReference>> jsArgs_;
     std::string name_;
     int64_t interval_ = 0;
+    int32_t containerScopeId_ = 0;
 };
 
 void JsRuntime::PostTask(const TimerTask& task, const std::string& name, int64_t delayTime)

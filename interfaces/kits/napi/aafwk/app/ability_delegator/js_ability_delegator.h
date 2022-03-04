@@ -17,13 +17,19 @@
 #define OHOS_ABILITY_DELEGATOR_JS_ABILITY_DELEGATOR_H
 
 #include <string>
+#include "ability_delegator.h"
 #include "ability_monitor.h"
+#include "js_ability_delegator_registry.h"
 #include "js_ability_monitor.h"
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
 class JSAbilityDelegator {
 public:
+    struct TimeoutCallback {
+        bool hasTimeoutPara;
+        bool hasCallbackPara;
+    };
     JSAbilityDelegator() = default;
     ~JSAbilityDelegator() = default;
 
@@ -55,12 +61,24 @@ private:
     NativeValue *OnFinishTest(NativeEngine &engine, NativeCallbackInfo &info);
 
 private:
-    NativeValue *CreateJsAbilityObject(NativeEngine &engine, const sptr<IRemoteObject> &remoteObject);
-    NativeValue *ParseJSMonitorPara(NativeEngine &engine, NativeValue *value, std::shared_ptr<AbilityMonitor> &monitor);
-    NativeValue *ParseJSAbilityPara(NativeEngine &engine, NativeValue *value, sptr<OHOS::IRemoteObject> &remoteObject);
-    NativeValue *ParseJSExecuteShellCommandPara(
-        NativeEngine& engine, NativeCallbackInfo &info, std::string &cmd, int64_t &timeoutSecs, bool &hasTimeoutPara);
-    void SetJsAbilityMonitor(std::string jstring);
+    NativeValue *CreateAbilityObject(NativeEngine &engine, const sptr<IRemoteObject> &remoteObject);
+    NativeValue *ParseMonitorPara(NativeEngine &engine, NativeValue *value, std::shared_ptr<AbilityMonitor> &monitor);
+    NativeValue *ParseAbilityPara(NativeEngine &engine, NativeValue *value, sptr<OHOS::IRemoteObject> &remoteObject);
+    void AbilityLifecycleStateToJs(
+        const AbilityDelegator::AbilityState &lifeState, AbilityLifecycleState &abilityLifeState);
+    NativeValue *ParseAbilityMonitorPara(
+        NativeEngine &engine, NativeCallbackInfo &info, std::shared_ptr<AbilityMonitor> &monitor);
+    NativeValue *ParseWaitAbilityMonitorPara(NativeEngine &engine, NativeCallbackInfo &info,
+        std::shared_ptr<AbilityMonitor> &monitor, TimeoutCallback &opt, int64_t &timeout);
+    NativeValue *ParseTimeoutCallbackPara(
+        NativeEngine &engine, NativeCallbackInfo &info, TimeoutCallback &opt, int64_t &timeout);
+    NativeValue *ParsePrintPara(NativeEngine &engine, NativeCallbackInfo &info, std::string &msg);
+    NativeValue *ParseExecuteShellCommandPara(
+        NativeEngine &engine, NativeCallbackInfo &info, std::string &cmd, TimeoutCallback &opt, int64_t &timeout);
+    NativeValue *ParseAbilityCommonPara(
+        NativeEngine &engine, NativeCallbackInfo &info, sptr<OHOS::IRemoteObject> &remoteObject);
+    NativeValue *ParseAbilityCommonRemainingPara(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue *ParseFinishTestPara(NativeEngine &engine, NativeCallbackInfo &info, std::string &msg, int64_t &code);
 };
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS

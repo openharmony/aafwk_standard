@@ -64,6 +64,7 @@ config("abilityms_config") {
     "//base/account/os_account/frameworks/common/log/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -84,13 +85,13 @@ ohos_shared_library("abilityms") {
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
@@ -105,6 +106,7 @@ ohos_shared_library("abilityms") {
   external_deps = [
     "ability_runtime:app_manager",
     "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",

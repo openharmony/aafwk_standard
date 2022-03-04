@@ -197,6 +197,7 @@ void FormDataMgr::CreateFormInfo(const int64_t formId, const FormRecord &record,
     formInfo.abilityName = record.abilityName;
     formInfo.formName = record.formName;
     formInfo.formTempFlg = record.formTempFlg;
+    formInfo.jsFormCodePath = record.jsFormCodePath;
     formInfo.formSrc = record.formSrc;
     formInfo.formWindow = record.formWindow;
     formInfo.versionCode = record.versionCode;

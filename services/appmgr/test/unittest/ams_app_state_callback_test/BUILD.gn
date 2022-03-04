@@ -43,12 +43,12 @@ ohos_unittest("AmsAppStateCallbackTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

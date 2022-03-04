@@ -81,7 +81,7 @@ void JsServiceExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
     }
     HILOG_INFO("JsServiceExtension::Init CreateJsServiceExtensionContext.");
     NativeValue* contextObj = CreateJsServiceExtensionContext(engine, context);
-    shellContextRef_ = jsRuntime_.LoadSystemModule("application.ServiceExtAbilityContext", &contextObj, ARGC_ONE);
+    shellContextRef_ = jsRuntime_.LoadSystemModule("application.ServiceExtensionContext", &contextObj, ARGC_ONE);
     contextObj = shellContextRef_->Get();
     HILOG_INFO("JsServiceExtension::Init Bind.");
     context->Bind(jsRuntime_, shellContextRef_.get());
@@ -282,6 +282,10 @@ void JsServiceExtension::OnConfigurationUpdated(const AppExecFwk::Configuration&
 
     // Notify extension context
     auto fullConfig = GetContext()->GetConfiguration();
+    if (!fullConfig) {
+        HILOG_ERROR("configuration is nullptr.");
+        return;
+    }
     JsExtensionContext::ConfigurationUpdated(&nativeEngine, shellContextRef_, fullConfig);
 
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(

@@ -52,7 +52,6 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -62,6 +61,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",

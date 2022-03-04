@@ -33,7 +33,7 @@ public:
      *
      * @param data Indicates the common event data..
      */
-    virtual ErrCode OnCommonEventTriggered(CommonEventData* data) = 0;
+    virtual ErrCode OnReceiveEvent(CommonEventData* data) = 0;
 };
 } // namespace AppExecFwk
 } // namespace OHOS

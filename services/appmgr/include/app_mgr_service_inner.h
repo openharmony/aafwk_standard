@@ -43,8 +43,6 @@
 #include "bundle_info.h"
 #include "istart_specified_ability_response.h"
 
-#include "process_optimizer_uba.h"
-
 #include "ohos/aafwk/content/want.h"
 
 namespace OHOS {
@@ -405,34 +403,6 @@ public:
      */
 
     virtual void AddAppDeathRecipient(const pid_t pid, const sptr<AppDeathRecipient> &appDeathRecipient) const;
-    /**
-     * ProcessOptimizerInit, Process Optimizer init.
-     *
-     * @param
-     * @return ERR_OK, return back success, others fail.
-     */
-    virtual int32_t ProcessOptimizerInit();
-
-    /**
-     * OptimizerAbilityStateChanged, Optimizer processing ability state changes.
-     *
-     * @param ability, the ability info.
-     * @param state, the ability state before change.
-     *
-     * @return
-     */
-    virtual void OptimizerAbilityStateChanged(
-        const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state);
-
-    /**
-     * OptimizerAppStateChanged, Optimizer processing app state changes.
-     *
-     * @param appRecord, the app information.
-     * @param state, the app before change.
-     * @return
-     */
-    virtual void OptimizerAppStateChanged(
-        const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
 
     void HandleTimeOut(const InnerEvent::Pointer &event);
 
@@ -455,7 +425,7 @@ public:
     int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     /**
-     * SuspendApplication, Application state changed.
+     * OnAppStateChanged, Application state changed.
      *
      * @param appRecord, the app information.
      * @param state, the app state.
@@ -463,7 +433,7 @@ public:
     void OnAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
 
     void GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info);
-	
+
 	 /**
      * UpdateConfiguration, ANotify application update system environment changes.
      *
@@ -511,6 +481,17 @@ public:
      */
     int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const AppExecFwk::BundleInfo &bundleInfo);
+
+    /**
+     * @brief Finish user test.
+     * @param msg user test message.
+     * @param resultCode user test result Code.
+     * @param bundleName user test bundleName.
+     * @param pid the user test process id.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
 
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 
@@ -560,55 +541,6 @@ private:
         const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want);
 
     /**
-     * UnsuspendApplication, Application process state switch to unsuspend.
-     *
-     * @param appRecord, the app information.
-     *
-     * @return
-     */
-    void UnsuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    /**
-     * SuspendApplication, Application process state switch to suspend.
-     *
-     * @param appRecord, the app information.
-     *
-     * @return
-     */
-    void SuspendApplication(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    /**
-     * LowMemoryApplicationAlert, Application low memory alert.
-     *
-     * @param appRecord, the app information.
-     * @param level, the app low memory level.
-     *
-     * @return
-     */
-    void LowMemoryApplicationAlert(
-        const std::shared_ptr<AppRunningRecord> &appRecord, const CgroupManager::LowMemoryLevel level);
-
-    /**
-     * GetAbilityOwnerApp, Get the process record of ability.
-     *
-     * @param abilityRecord, the ability information.
-     *
-     * @return process record.
-     */
-    std::shared_ptr<AppRunningRecord> GetAbilityOwnerApp(
-        const std::shared_ptr<AbilityRunningRecord> &abilityRecord) const;
-
-    /**
-     * GetAbilityRunningRecordByAbilityToken, Get the ability record by token.
-     *
-     * @param abilityToken, the ability token.
-     *
-     * @return ability record.
-     */
-    std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecordByAbilityToken(
-        const sptr<IRemoteObject> &abilityToken) const;
-
-    /**
      * StartProcess, load the ability that needed to be started(Start on a new boot process).
      *
      * @param appName, the app name.
@@ -619,9 +551,8 @@ private:
      *
      * @return
      */
-    void StartProcess(
-        const std::string &appName, const std::string &processName, const std::shared_ptr<AppRunningRecord> &appRecord,
-        const int uid, const std::string &bundleName);
+    void StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
+        const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName);
 
     /**
      * PushAppFront, Adjust the latest application record to the top level.
@@ -795,6 +726,8 @@ private:
     void NotifyAppStatus(const std::string &bundleName, const std::string &eventData);
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
+    int FinishUserTestLocked(
+        const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;
@@ -803,10 +736,9 @@ private:
     std::shared_ptr<AppProcessManager> appProcessManager_;
     std::shared_ptr<RemoteClientManager> remoteClientManager_;
     std::shared_ptr<AppRunningManager> appRunningManager_;
-    std::shared_ptr<ProcessOptimizerUBA> processOptimizerUBA_;
     std::shared_ptr<AMSEventHandler> eventHandler_;
     std::shared_ptr<Configuration> configuration_;
-    std::mutex serviceLock_;
+    std::mutex userTestLock_;
     sptr<IStartSpecifiedAbilityResponse> startSpecifiedAbilityResponse_;
 };
 }  // namespace AppExecFwk

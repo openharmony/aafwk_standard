@@ -17,6 +17,7 @@
 #include <cstring>
 #include <uv.h>
 #include <vector>
+#include <string>
 
 #include "data_ability_helper.h"
 #include "data_ability_observer_interface.h"
@@ -33,6 +34,7 @@
 #include "napi_rdb_predicates.h"
 #include "napi_result_set.h"
 #include "securec.h"
+#include "json.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
@@ -68,6 +70,7 @@ napi_value DataAbilityHelperInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("denormalizeUri", NAPI_DenormalizeUri),
         DECLARE_NAPI_FUNCTION("release", NAPI_Release),
         DECLARE_NAPI_FUNCTION("executeBatch", NAPI_ExecuteBatch),
+        DECLARE_NAPI_FUNCTION("call", NAPI_Call),
     };
 
     napi_value constructor;
@@ -2447,6 +2450,1096 @@ void UpdatePromiseCompleteCB(napi_env env, napi_status status, void *data)
     delete updateCB;
     updateCB = nullptr;
     HILOG_INFO("NAPI_Update,  main event thread complete end.");
+}
+
+void Stringsplit(const string &str, const string &splits, std::vector<std::string> &res)
+{
+    if (str == "") {
+        return;
+    }
+    string strs = str + splits;
+    size_t pos = strs.find(splits);
+    int step = splits.size();
+
+    while (pos != strs.npos) {
+        string temp = strs.substr(0, pos);
+        HILOG_INFO("Stringsplit temp:%{public}s", temp.c_str());
+        res.push_back(temp);
+        strs = strs.substr(pos + step, strs.size());
+        pos = strs.find(splits);
+    }
+}
+
+void SetPacMapObject(AppExecFwk::PacMap &pacMap, const napi_env &env, std::string keyStr, napi_value value)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+    HILOG_INFO("ValueObject--------> type:%{public}d", valueType);
+    if (valueType == napi_string) {
+        std::string valueString = UnwrapStringFromJS(env, value);
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:%{private}s", valueType, keyStr.c_str(),
+            valueString.c_str());
+        pacMap.PutStringValue(keyStr, valueString);
+    } else if (valueType == napi_number) {
+        double valueNumber = 0;
+        napi_get_value_double(env, value, &valueNumber);
+        pacMap.PutDoubleValue(keyStr, valueNumber);
+        HILOG_INFO(
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}lf", valueType, keyStr.c_str(), valueNumber);
+    } else if (valueType == napi_boolean) {
+        bool valueBool = false;
+        napi_get_value_bool(env, value, &valueBool);
+        HILOG_INFO(
+            "ValueObject type:%{public}d, key:%{public}s, value:%{private}d", valueType, keyStr.c_str(), valueBool);
+        pacMap.PutBooleanValue(keyStr, valueBool);
+    } else if (valueType == napi_null) {
+        pacMap.PutObject(keyStr, nullptr);
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:null", valueType, keyStr.c_str());
+    } else if (valueType == napi_object) {
+        HILOG_INFO("ValueObject type:%{public}d, key:%{public}s, value:Uint8Array", valueType, keyStr.c_str());
+        pacMap.PutStringValueArray(keyStr, ConvertStringVector(env, value));
+    } else {
+        HILOG_ERROR("pacMap error");
+    }
+}
+
+void AnalysisPacMap(AppExecFwk::PacMap &pacMap, const napi_env &env, const napi_value &arg)
+{
+    napi_value keys = 0;
+    napi_get_property_names(env, arg, &keys);
+    uint32_t arrLen = 0;
+    napi_status status = napi_get_array_length(env, keys, &arrLen);
+    if (status != napi_ok) {
+        HILOG_ERROR("PacMap errr");
+        return;
+    }
+    HILOG_INFO("PacMap num:%{public}d ", arrLen);
+    for (size_t i = 0; i < arrLen; ++i) {
+        napi_value key = 0;
+        status = napi_get_element(env, keys, i, &key);
+        std::string keyStr = UnwrapStringFromJS(env, key);
+        HILOG_INFO("PacMap keyStr:%{public}s ", keyStr.c_str());
+        napi_value value = 0;
+        napi_get_property(env, arg, key, &value);
+
+        SetPacMapObject(pacMap, env, keyStr, value);
+    }
+}
+
+void ParseEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string equalValue = pacMap.GetStringValue(value_str, "");
+    HILOG_INFO("ParseJsonKey equalTo equalValue1:%{private}s ", equalValue.c_str());
+    if (equalValue != "") {
+        if (equalValue.find(",") == string::npos) {
+            predicates.EqualTo(value_str, equalValue);
+            pacMap.Remove(value_str);
+        } else {
+            std::vector<std::string> value_vec;
+            Stringsplit(equalValue, ",", value_vec);
+            predicates.EqualTo(value_str, value_vec[0]);
+            pacMap.Remove(value_str);
+            pacMap.PutStringValue(value_str, equalValue.substr(value_vec[0].length() + 1, equalValue.length()));
+            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{private}s ",
+                equalValue.substr(value_vec[0].length() + 1, equalValue.length()).c_str());
+        }
+    } else {
+        double equalDoubleValue = pacMap.GetDoubleValue(value_str, DBL_MIN);
+        predicates.EqualTo(value_str, std::to_string(equalDoubleValue));
+        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{private}s ",
+            std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)).c_str());
+        pacMap.Remove(value_str);
+    }
+}
+
+void ParseNotEqualTo(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string equalValue = pacMap.GetStringValue(value_str, "123##*##abc");
+    HILOG_INFO("ParseJsonKey notEqualTo equalValue1:%{private}s ", equalValue.c_str());
+    if (equalValue != "123##*##abc") {
+        if (equalValue.find(",") == string::npos) {
+            predicates.NotEqualTo(value_str, equalValue);
+            pacMap.Remove(value_str);
+        } else {
+            std::vector<std::string> value_vec;
+            Stringsplit(equalValue, ",", value_vec);
+            predicates.NotEqualTo(value_str, value_vec[0]);
+            pacMap.Remove(value_str);
+            pacMap.PutStringValue(value_str, equalValue.substr(value_vec[0].length() + 1, equalValue.length()));
+            HILOG_INFO("ParseJsonKey notEqualTo equalValue2:%{private}s ",
+                equalValue.substr(value_vec[0].length() + 1, equalValue.length()).c_str());
+        }
+    } else {
+        predicates.NotEqualTo(value_str, std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)));
+        HILOG_INFO("ParseJsonKey notEqualTo equalValue3:%{private}s ",
+            std::to_string(pacMap.GetDoubleValue(value_str, DBL_MIN)).c_str());
+        pacMap.Remove(value_str);
+    }
+}
+
+void ParseBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string betweenValue = pacMap.GetStringValue(value_str, "");
+    HILOG_INFO("ParseJsonKey between betweenValue1:%{private}s ", betweenValue.c_str());
+    std::vector<std::string> value_vec;
+    Stringsplit(betweenValue, ",", value_vec);
+    predicates.Between(value_str, value_vec[0], value_vec[1]);
+    int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+    value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
+    pacMap.Remove(value_str);
+    if (value_vec.size() == 1) {
+        pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
+        HILOG_INFO("ParseJsonKey between betweenValue2:%{private}s ", value_vec[0].c_str());
+    } else if (value_vec.size() > 1) {
+        pacMap.PutStringValue(value_str, betweenValue.substr(tempLength, betweenValue.length()));
+        HILOG_INFO("ParseJsonKey between betweenValue3:%{private}s ",
+            betweenValue.substr(tempLength, betweenValue.length()).c_str());
+    }
+}
+
+void ParseNotBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string betweenValue = pacMap.GetStringValue(value_str, "");
+    HILOG_INFO("ParseJsonKey notBetween betweenValue1:%{private}s ", betweenValue.c_str());
+    std::vector<std::string> value_vec;
+    Stringsplit(betweenValue, ",", value_vec);
+    predicates.NotBetween(value_str, value_vec[0], value_vec[1]);
+    int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+    value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
+    pacMap.Remove(value_str);
+    if (value_vec.size() == 1) {
+        pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
+        HILOG_INFO("ParseJsonKey notBetween betweenValue2:%{private}s ", value_vec[0].c_str());
+    } else if (value_vec.size() > 1) {
+        pacMap.PutStringValue(value_str, betweenValue.substr(tempLength, betweenValue.length()));
+        HILOG_INFO("ParseJsonKey notBetween betweenValue3:%{private}s ",
+            betweenValue.substr(tempLength, betweenValue.length()).c_str());
+    }
+}
+
+void ParseIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string inValue = pacMap.GetStringValue(value_str, "");
+    HILOG_INFO("ParseJsonKey in value_str1:%{private}s ", inValue.c_str());
+    std::vector<std::string> value_vec;
+    Stringsplit(inValue, ",", value_vec);
+    if (value_vec.size() >= ARGS_TWO) {
+        std::vector<std::string> in_vec;
+        in_vec.push_back(value_vec[0]);
+        in_vec.push_back(value_vec[1]);
+        predicates.In(value_str, in_vec);
+        int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+        value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
+        pacMap.Remove(value_str);
+        if (value_vec.size() == 1) {
+            pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
+            HILOG_INFO("ParseJsonKey in value_str2:%{private}s ", value_vec[0].c_str());
+        } else if (value_vec.size() > 1) {
+            pacMap.PutStringValue(value_str, inValue.substr(tempLength, inValue.length()));
+            HILOG_INFO("ParseJsonKey in value_str3:%{private}s ", inValue.substr(tempLength, inValue.length()).c_str());
+        }
+    } else {
+        pacMap.Remove(value_str);
+    }
+}
+
+void ParseNotIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates)
+{
+    std::string inValue = pacMap.GetStringValue(value_str, "");
+    HILOG_INFO("ParseJsonKey notIn value_str1:%{private}s ", inValue.c_str());
+    std::vector<std::string> value_vec;
+    Stringsplit(inValue, ",", value_vec);
+    if (value_vec.size() >= ARGS_TWO) {
+        std::vector<std::string> in_vec;
+        in_vec.push_back(value_vec[0]);
+        in_vec.push_back(value_vec[1]);
+        predicates.NotIn(value_str, in_vec);
+        int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+        value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
+        pacMap.Remove(value_str);
+        if (value_vec.size() == 1) {
+            pacMap.PutDoubleValue(value_str, stod(value_vec[0]));
+            HILOG_INFO("ParseJsonKey notIn value_str2:%{private}s ", value_vec[0].c_str());
+        } else if (value_vec.size() > 1) {
+            pacMap.PutStringValue(value_str, inValue.substr(tempLength, inValue.length()));
+            HILOG_INFO(
+                "ParseJsonKey notIn value_str3:%{private}s ", inValue.substr(tempLength, inValue.length()).c_str());
+        }
+    } else {
+        pacMap.Remove(value_str);
+    }
+}
+
+void ParseNormal(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates,
+    std::string key_str)
+{
+    if (key_str == "equalTo") {
+        ParseEqualTo(pacMap, value_str, predicates);
+    } else if (key_str == "notEqualTo") {
+        ParseNotEqualTo(pacMap, value_str, predicates);
+    } else if (key_str == "contains") {
+        predicates.Contains(value_str, pacMap.GetStringValue(value_str, ""));
+        HILOG_INFO("ParseJsonKey contains :%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
+        pacMap.Remove(value_str);
+    } else if (key_str == "beginsWith") {
+        predicates.BeginsWith(value_str, pacMap.GetStringValue(value_str, ""));
+        HILOG_INFO("ParseJsonKey beginsWith :%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
+        pacMap.Remove(value_str);
+    } else if (key_str == "endsWith") {
+        predicates.EndsWith(value_str, pacMap.GetStringValue(value_str, ""));
+        HILOG_INFO("ParseJsonKey endsWithValue1:%{private}s ", pacMap.GetStringValue(value_str, "").c_str());
+        pacMap.Remove(value_str);
+    } else if (key_str == "greaterThan") {
+        double greateValue = pacMap.GetDoubleValue(value_str, DBL_MIN);
+        predicates.GreaterThan(value_str, std::to_string(greateValue));
+        pacMap.Remove(value_str);
+    } else if (key_str == "lessThan") {
+        double lessValue = pacMap.GetDoubleValue(value_str, DBL_MAX);
+        predicates.LessThan(value_str, std::to_string(lessValue));
+        pacMap.Remove(value_str);
+    } else if (key_str == "greaterThanOrEqualTo") {
+        double greateValue = pacMap.GetDoubleValue(value_str, DBL_MIN);
+        predicates.GreaterThanOrEqualTo(value_str, std::to_string(greateValue));
+        pacMap.Remove(value_str);
+    } else if (key_str == "lessThanOrEqualTo") {
+        double lessValue = pacMap.GetDoubleValue(value_str, DBL_MAX);
+        predicates.LessThanOrEqualTo(value_str, std::to_string(lessValue));
+        pacMap.Remove(value_str);
+    }
+}
+
+void ParseUnNormal(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::DataAbilityPredicates &predicates,
+    std::string key_str)
+{
+    if (key_str == "beginWrap") {
+        predicates.BeginWrap();
+    } else if (key_str == "endWrap") {
+        predicates.EndWrap();
+    } else if (key_str == "or") {
+        predicates.Or();
+    } else if (key_str == "and") {
+        predicates.And();
+    } else if (key_str == "orderByAsc") {
+        predicates.OrderByAsc(value_str);
+    } else if (key_str == "orderByDesc") {
+        predicates.OrderByDesc(value_str);
+    } else if (key_str == "distinct") {
+        predicates.Distinct();
+    } else if (key_str == "limitAs") {
+        predicates.Limit(pacMap.GetIntValue(value_str, 0));
+    } else if (key_str == "offsetAs") {
+        predicates.Offset(pacMap.GetIntValue(value_str, 0));
+    } else if (key_str == "groupBy") {
+        std::string groupByValue = pacMap.GetStringValue(value_str, "");
+        HILOG_INFO("ParseJsonKey groupBy groupByValue:%{private}s ", groupByValue.c_str());
+        std::vector<std::string> res;
+        Stringsplit(groupByValue, ",", res);
+        predicates.GroupBy(res);
+    } else if (key_str == "indexedBy") {
+        predicates.IndexedBy(value_str);
+    } else if (key_str == "in") {
+        ParseIn(pacMap, value_str, predicates);
+    } else if (key_str == "notIn") {
+        ParseNotIn(pacMap, value_str, predicates);
+    }
+}
+
+void ParseJsonKey(std::string &jsonStr, AppExecFwk::PacMap &pacMap, NativeRdb::DataAbilityPredicates &predicates)
+{
+    HILOG_INFO("%{public}s, called.", __func__);
+    Json::Reader reader;
+    Json::Value devJson;
+    Json::Value::iterator iter;
+    Json::Value::Members members;
+    bool parseSuc = reader.parse(jsonStr, devJson);
+    if (parseSuc) {
+        members = devJson.getMemberNames();
+        for (Json::Value::Members::iterator it = members.begin(); it != members.end(); ++it) {
+            std::string key_str = *it;
+            std::string value_str = devJson[key_str].asString();
+            HILOG_INFO("%{public}s, called，value_str = %{private}s", __func__, value_str.c_str());
+            if (key_str == "equalTo" || key_str == "notEqualTo" || key_str == "contains" || key_str == "beginsWith" ||
+                key_str == "endsWith" || key_str == "greaterThan" || key_str == "lessThan" ||
+                key_str == "greaterThanOrEqualTo" || key_str == "lessThanOrEqualTo") {
+                ParseNormal(pacMap, value_str, predicates, key_str);
+            } else {
+                ParseUnNormal(pacMap, value_str, predicates, key_str);
+            }
+        }
+    }
+    HILOG_INFO("%{public}s, called end.", __func__);
+}
+
+napi_value GetCallbackPacmapValue(napi_env env, int index)
+{
+    HILOG_INFO("GetCallbackPacmapValue is called.");
+    napi_value result = nullptr;
+    napi_value eCode = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, index, &eCode));
+    NAPI_CALL(env, napi_create_object(env, &result));
+    NAPI_CALL(env, napi_set_named_property(env, result, "result", eCode));
+    HILOG_INFO("GetCallbackPacmapValue is called end.");
+    return result;
+}
+
+void CallInsertExecuteCB(napi_env env, void *data)
+{
+    HILOG_INFO("NAPI_Insert, worker pool thread execute.");
+    DAHelperInsertCB *insertCB = static_cast<DAHelperInsertCB *>(data);
+    if (insertCB->dataAbilityHelper != nullptr) {
+        insertCB->execResult = INVALID_PARAMETER;
+        if (!insertCB->uri.empty()) {
+            OHOS::Uri uri(insertCB->uri);
+            insertCB->result = insertCB->dataAbilityHelper->Insert(uri, insertCB->valueBucket);
+            HILOG_INFO("NAPI_Insert, result = %{public}d", insertCB->result);
+            if (insertCB->result > 0) {
+                insertCB->execResult = NO_ERROR;
+            }
+        }
+    } else {
+        HILOG_ERROR("NAPI_Insert, dataAbilityHelper == nullptr.");
+    }
+    HILOG_INFO("NAPI_Insert, worker pool thread execute end.");
+}
+
+void CallInsertAsyncCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Insert, main event thread complete.");
+    DAHelperInsertCB *insertCB = static_cast<DAHelperInsertCB *>(data);
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value result[ARGS_TWO] = {nullptr};
+    napi_value callResult = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, insertCB->cbBase.cbInfo.callback, &callback));
+
+    napi_create_int32(env, insertCB->execResult, &result[PARAM0]);
+    result[PARAM1] = GetCallbackPacmapValue(env, insertCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, result, &callResult));
+
+    if (insertCB->cbBase.cbInfo.callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, insertCB->cbBase.cbInfo.callback));
+    }
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, insertCB->cbBase.asyncWork));
+    delete insertCB;
+    insertCB = nullptr;
+    HILOG_INFO("NAPI_Insert, main event thread complete end.");
+}
+
+void CallInsertPromiseCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Insert,  main event thread complete.");
+    DAHelperInsertCB *insertCB = static_cast<DAHelperInsertCB *>(data);
+    napi_value result = GetCallbackPacmapValue(env, insertCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, insertCB->cbBase.deferred, result));
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, insertCB->cbBase.asyncWork));
+    delete insertCB;
+    insertCB = nullptr;
+    HILOG_INFO("NAPI_Insert,  main event thread complete end.");
+}
+
+napi_value CallInsertAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperInsertCB *insertCB)
+{
+    HILOG_INFO("%{public}s, asyncCallback.", __func__);
+    if (args == nullptr || insertCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName = 0;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
+    if (valuetype == napi_function) {
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &insertCB->cbBase.cbInfo.callback));
+    }
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallInsertExecuteCB, CallInsertAsyncCompleteCB,
+                       (void *)insertCB, &insertCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, insertCB->cbBase.asyncWork));
+    napi_value result = 0;
+    NAPI_CALL(env, napi_get_null(env, &result));
+    HILOG_INFO("%{public}s, asyncCallback end", __func__);
+    return result;
+}
+
+napi_value CallInsertPromise(napi_env env, DAHelperInsertCB *insertCB)
+{
+    HILOG_INFO("%{public}s, promise.", __func__);
+    if (insertCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise = 0;
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    insertCB->cbBase.deferred = deferred;
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallInsertExecuteCB, CallInsertPromiseCompleteCB,
+                       (void *)insertCB, &insertCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, insertCB->cbBase.asyncWork));
+    HILOG_INFO("%{public}s, promise end", __func__);
+    return promise;
+}
+
+napi_value CallInsertWrap(napi_env env, napi_value thisVar, napi_callback_info info, napi_value *args, size_t argcAsync,
+    const size_t argcPromise)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    DAHelperInsertCB *insertCB = new (std::nothrow) DAHelperInsertCB;
+    if (insertCB == nullptr) {
+        HILOG_ERROR("%{public}s, insertCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    insertCB->cbBase.cbInfo.env = env;
+    insertCB->cbBase.asyncWork = nullptr;
+    insertCB->cbBase.deferred = nullptr;
+    insertCB->cbBase.ability = nullptr;
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    if (valuetype == napi_string) {
+        insertCB->uri = NapiValueToStringUtf8(env, args[PARAM0]);
+        HILOG_INFO("%{public}s,uri=%{public}s", __func__, insertCB->uri.c_str());
+    }
+
+    insertCB->valueBucket.Clear();
+    AnalysisValuesBucket(insertCB->valueBucket, env, args[PARAM3]);
+
+    DataAbilityHelper *objectInfo = nullptr;
+    napi_unwrap(env, thisVar, (void **)&objectInfo);
+    HILOG_INFO("%{public}s,DataAbilityHelper objectInfo = %{public}p", __func__, objectInfo);
+    insertCB->dataAbilityHelper = objectInfo;
+
+    napi_value ret = nullptr;
+    if (argcAsync > argcPromise) {
+        ret = CallInsertAsync(env, args, ARGS_FOUR, insertCB);
+    } else {
+        ret = CallInsertPromise(env, insertCB);
+    }
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
+        if (insertCB != nullptr) {
+            delete insertCB;
+            insertCB = nullptr;
+        }
+    }
+    HILOG_INFO("%{public}s,called end", __func__);
+    return ret;
+}
+
+void CallDeleteExecuteCB(napi_env env, void *data)
+{
+    HILOG_INFO("NAPI_Delete, worker pool thread execute.");
+    DAHelperDeleteCB *deleteCB = static_cast<DAHelperDeleteCB *>(data);
+    if (deleteCB->dataAbilityHelper != nullptr) {
+        deleteCB->execResult = INVALID_PARAMETER;
+        if (!deleteCB->uri.empty()) {
+            OHOS::Uri uri(deleteCB->uri);
+            deleteCB->result = deleteCB->dataAbilityHelper->Delete(uri, deleteCB->predicates);
+            if (deleteCB->result >= 0) {
+                deleteCB->execResult = NO_ERROR;
+            }
+        } else {
+            HILOG_ERROR("NAPI_Delete, dataAbilityHelper uri is empty");
+        }
+    } else {
+        HILOG_ERROR("NAPI_Delete, dataAbilityHelper == nullptr");
+    }
+    HILOG_INFO("NAPI_Delete, worker pool thread execute end.");
+}
+
+void CallDeleteAsyncCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Delete, main event thread complete.");
+    DAHelperDeleteCB *DeleteCB = static_cast<DAHelperDeleteCB *>(data);
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value result[ARGS_TWO] = {nullptr};
+    napi_value callResult = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, DeleteCB->cbBase.cbInfo.callback, &callback));
+
+    napi_create_int32(env, DeleteCB->execResult, &result[PARAM0]);
+    result[PARAM1] = GetCallbackPacmapValue(env, DeleteCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, result, &callResult));
+
+    if (DeleteCB->cbBase.cbInfo.callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, DeleteCB->cbBase.cbInfo.callback));
+    }
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, DeleteCB->cbBase.asyncWork));
+    delete DeleteCB;
+    DeleteCB = nullptr;
+    HILOG_INFO("NAPI_Delete, main event thread complete end.");
+}
+
+void CallDeletePromiseCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Delete,  main event thread complete.");
+    DAHelperDeleteCB *DeleteCB = static_cast<DAHelperDeleteCB *>(data);
+
+    napi_value result = GetCallbackPacmapValue(env, DeleteCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, DeleteCB->cbBase.deferred, result));
+
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, DeleteCB->cbBase.asyncWork));
+    delete DeleteCB;
+    DeleteCB = nullptr;
+    HILOG_INFO("NAPI_Delete,  main event thread complete end.");
+}
+
+napi_value CallDeleteAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperDeleteCB *deleteCB)
+{
+    HILOG_INFO("%{public}s, asyncCallback.", __func__);
+    if (args == nullptr || deleteCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName = 0;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
+    if (valuetype == napi_function) {
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &deleteCB->cbBase.cbInfo.callback));
+    }
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallDeleteExecuteCB, CallDeleteAsyncCompleteCB,
+                       (void *)deleteCB, &deleteCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, deleteCB->cbBase.asyncWork));
+    napi_value result = 0;
+    NAPI_CALL(env, napi_get_null(env, &result));
+    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
+    return result;
+}
+
+napi_value CallDeletePromise(napi_env env, DAHelperDeleteCB *deleteCB)
+{
+    HILOG_INFO("%{public}s, promise.", __func__);
+    if (deleteCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise = 0;
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    deleteCB->cbBase.deferred = deferred;
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallDeleteExecuteCB, CallDeletePromiseCompleteCB,
+                       (void *)deleteCB, &deleteCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, deleteCB->cbBase.asyncWork));
+    HILOG_INFO("%{public}s, promise end.", __func__);
+    return promise;
+}
+
+napi_value CallDeleteWrap(napi_env env, napi_value thisVar, napi_callback_info info, napi_value *args, size_t argcAsync,
+    const size_t argcPromise)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    DAHelperDeleteCB *deleteCB = new (std::nothrow) DAHelperDeleteCB;
+    if (deleteCB == nullptr) {
+        HILOG_ERROR("%{public}s, deleteCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    deleteCB->cbBase.cbInfo.env = env;
+    deleteCB->cbBase.asyncWork = nullptr;
+    deleteCB->cbBase.deferred = nullptr;
+    deleteCB->cbBase.ability = nullptr;
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    if (valuetype == napi_string) {
+        deleteCB->uri = NapiValueToStringUtf8(env, args[PARAM0]);
+        HILOG_INFO("%{public}s,uri=%{public}s", __func__, deleteCB->uri.c_str());
+    }
+    valuetype = napi_undefined;
+    std::string predicateArg;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM2], &valuetype));
+    if (valuetype == napi_string) {
+        predicateArg = NapiValueToStringUtf8(env, args[PARAM2]);
+        HILOG_INFO("%{public}s,predicateArg=%{public}s", __func__, predicateArg.c_str());
+    }
+
+    deleteCB->pacMap.Clear();
+    HILOG_INFO("%{public}s,AnalysisPacMap start", __func__);
+    AnalysisPacMap(deleteCB->pacMap, env, args[PARAM3]);
+    HILOG_INFO("%{public}s, AnalysisPacMap end", __func__);
+
+    ParseJsonKey(predicateArg, deleteCB->pacMap, deleteCB->predicates);
+    DataAbilityHelper *objectInfo = nullptr;
+    napi_unwrap(env, thisVar, (void **)&objectInfo);
+    HILOG_INFO("%{public}s,DataAbilityHelper objectInfo = %{public}p", __func__, objectInfo);
+    deleteCB->dataAbilityHelper = objectInfo;
+
+    napi_value ret = nullptr;
+    if (argcAsync > argcPromise) {
+        ret = CallDeleteAsync(env, args, ARGS_FOUR, deleteCB);
+    } else {
+        ret = CallDeletePromise(env, deleteCB);
+    }
+    if (ret == nullptr) {
+        HILOG_ERROR("%{public}s,ret == nullptr", __func__);
+        if (deleteCB != nullptr) {
+            delete deleteCB;
+            deleteCB = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s,called end", __func__);
+    return ret;
+}
+
+void CallUpdateExecuteCB(napi_env env, void *data)
+{
+    HILOG_INFO("NAPI_Update, worker pool thread execute.");
+    DAHelperUpdateCB *updateCB = static_cast<DAHelperUpdateCB *>(data);
+    if (updateCB->dataAbilityHelper != nullptr) {
+        updateCB->execResult = INVALID_PARAMETER;
+        if (!updateCB->uri.empty()) {
+            OHOS::Uri uri(updateCB->uri);
+            updateCB->result = updateCB->dataAbilityHelper->Update(uri, updateCB->valueBucket, updateCB->predicates);
+            if (updateCB->result >= 0) {
+                updateCB->execResult = NO_ERROR;
+            }
+        } else {
+            HILOG_ERROR("NAPI_Update, dataAbilityHelper uri is empty");
+        }
+    } else {
+        HILOG_ERROR("NAPI_Update, dataAbilityHelper == nullptr");
+    }
+    HILOG_INFO("NAPI_Update, worker pool thread execute end.");
+}
+
+void CallUpdateAsyncCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Update, main event thread complete.");
+    DAHelperUpdateCB *updateCB = static_cast<DAHelperUpdateCB *>(data);
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value result[ARGS_TWO] = {nullptr};
+    napi_value callResult = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, updateCB->cbBase.cbInfo.callback, &callback));
+
+    napi_create_int32(env, updateCB->execResult, &result[PARAM0]);
+    result[PARAM1] = GetCallbackPacmapValue(env, updateCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, result, &callResult));
+
+    if (updateCB->cbBase.cbInfo.callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, updateCB->cbBase.cbInfo.callback));
+    }
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, updateCB->cbBase.asyncWork));
+    delete updateCB;
+    updateCB = nullptr;
+    HILOG_INFO("NAPI_Update, main event thread complete end.");
+}
+
+void CallUpdatePromiseCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Update,  main event thread complete.");
+    DAHelperUpdateCB *updateCB = static_cast<DAHelperUpdateCB *>(data);
+
+    napi_value result = GetCallbackPacmapValue(env, updateCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, updateCB->cbBase.deferred, result));
+
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, updateCB->cbBase.asyncWork));
+    delete updateCB;
+    updateCB = nullptr;
+    HILOG_INFO("NAPI_Update,  main event thread complete end.");
+}
+
+napi_value CallUpdateAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperUpdateCB *updateCB)
+{
+    HILOG_INFO("%{public}s, asyncCallback.", __func__);
+    if (args == nullptr || updateCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName = 0;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
+    if (valuetype == napi_function) {
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &updateCB->cbBase.cbInfo.callback));
+    }
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallUpdateExecuteCB, CallUpdateAsyncCompleteCB,
+                       (void *)updateCB, &updateCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, updateCB->cbBase.asyncWork));
+    napi_value result = 0;
+    NAPI_CALL(env, napi_get_null(env, &result));
+    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
+    return result;
+}
+
+napi_value CallUpdatePromise(napi_env env, DAHelperUpdateCB *updateCB)
+{
+    HILOG_INFO("%{public}s, promise.", __func__);
+    if (updateCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise = 0;
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    updateCB->cbBase.deferred = deferred;
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallUpdateExecuteCB, CallUpdatePromiseCompleteCB,
+                       (void *)updateCB, &updateCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, updateCB->cbBase.asyncWork));
+    HILOG_INFO("%{public}s, promise end.", __func__);
+    return promise;
+}
+
+napi_value CallUpdateWrap(napi_env env, napi_value thisVar, napi_callback_info info, napi_value *args, size_t argcAsync,
+    const size_t argcPromise)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    DAHelperUpdateCB *updateCB = new (std::nothrow) DAHelperUpdateCB;
+    if (updateCB == nullptr) {
+        HILOG_ERROR("%{public}s, updateCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    updateCB->cbBase.cbInfo.env = env;
+    updateCB->cbBase.asyncWork = nullptr;
+    updateCB->cbBase.deferred = nullptr;
+    updateCB->cbBase.ability = nullptr;
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    if (valuetype == napi_string) {
+        updateCB->uri = NapiValueToStringUtf8(env, args[PARAM0]);
+        HILOG_INFO("%{public}s,uri=%{public}s", __func__, updateCB->uri.c_str());
+    }
+    valuetype = napi_undefined;
+    std::string predicateArg;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM2], &valuetype));
+    if (valuetype == napi_string) {
+        predicateArg = NapiValueToStringUtf8(env, args[PARAM2]);
+        HILOG_INFO("%{public}s,predicateArg=%{public}s", __func__, predicateArg.c_str());
+    }
+    updateCB->pacMap.Clear();
+    AnalysisPacMap(updateCB->pacMap, env, args[PARAM3]);
+    ParseJsonKey(predicateArg, updateCB->pacMap, updateCB->predicates);
+    updateCB->valueBucket.Clear();
+    std::set<std::string> set_update = updateCB->pacMap.GetKeys();
+    std::set<std::string>::iterator it;
+    for (it = set_update.begin(); it != set_update.end(); it++) {
+        std::string pacValue = updateCB->pacMap.GetStringValue(*it, "");
+        if (pacValue != "") {
+            updateCB->valueBucket.PutString(*it, pacValue);
+        } else {
+            updateCB->valueBucket.PutDouble(*it, updateCB->pacMap.GetDoubleValue(*it, DBL_MIN));
+        }
+    }
+    DataAbilityHelper *objectInfo = nullptr;
+    napi_unwrap(env, thisVar, (void **)&objectInfo);
+    HILOG_INFO("%{public}s,DataAbilityHelper objectInfo = %{public}p", __func__, objectInfo);
+    updateCB->dataAbilityHelper = objectInfo;
+    napi_value ret = nullptr;
+    if (argcAsync > argcPromise) {
+        ret = CallUpdateAsync(env, args, ARGS_FOUR, updateCB);
+    } else {
+        ret = CallUpdatePromise(env, updateCB);
+    }
+    HILOG_INFO("%{public}s,end", __func__);
+    return ret;
+}
+
+void GetValue(std::vector<std::string> &columnNames, int &index, Json::Value &data,
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> &resultSet)
+{
+    std::string typeValue = columnNames[index];
+    int columnIndex;
+    resultSet->GetColumnIndex(typeValue, columnIndex);
+    OHOS::NativeRdb::ColumnType columnType;
+    resultSet->GetColumnType(columnIndex, columnType);
+    if (columnType == OHOS::NativeRdb::ColumnType::TYPE_INTEGER) {
+        int intValue;
+        resultSet->GetInt(columnIndex, intValue);
+        data[typeValue] = intValue;
+    } else if (columnType == OHOS::NativeRdb::ColumnType::TYPE_FLOAT) {
+        double doubleValue;
+        resultSet->GetDouble(columnIndex, doubleValue);
+        data[typeValue] = doubleValue;
+    } else if (columnType == OHOS::NativeRdb::ColumnType::TYPE_STRING) {
+        std::string stringValue;
+        resultSet->GetString(columnIndex, stringValue);
+        if (!stringValue.empty()) {
+            data[typeValue] = stringValue;
+        }
+    }
+}
+
+void ConvertResultSet(Json::Value &arrayValue, std::shared_ptr<NativeRdb::AbsSharedResultSet> &resultSet)
+{
+    int resultSetNum = resultSet->GoToFirstRow();
+    std::vector<std::string> columnNames;
+    resultSet->GetAllColumnNames(columnNames);
+    while (resultSetNum == NO_ERROR) {
+        Json::Value data;
+        int size = columnNames.size();
+        for (int i = 0; i < size; i++) {
+            GetValue(columnNames, i, data, resultSet);
+        }
+        arrayValue.append(data);
+        resultSetNum = resultSet->GoToNextRow();
+    }
+}
+
+std::string GetResultData(std::shared_ptr<NativeRdb::AbsSharedResultSet> &resultSet)
+{
+    Json::Value arrayValue;
+    ConvertResultSet(arrayValue, resultSet);
+    Json::StreamWriterBuilder builder;
+    const std::string personal_ringtone = Json::writeString(builder, arrayValue);
+    return personal_ringtone;
+}
+
+napi_value GetQueryCallbackPacmapValue(napi_env env, std::shared_ptr<NativeRdb::AbsSharedResultSet> &resultSet)
+{
+    HILOG_INFO("GetQueryCallbackPacmapValue is called.");
+    napi_value result = nullptr;
+    napi_value valueSet = nullptr;
+    std::string result_values = GetResultData(resultSet);
+    napi_create_string_utf8(env, result_values.c_str(), NAPI_AUTO_LENGTH, &valueSet);
+
+    NAPI_CALL(env, napi_create_object(env, &result));
+    NAPI_CALL(env, napi_set_named_property(env, result, "result", valueSet));
+    HILOG_INFO("GetQueryCallbackPacmapValue is called end.");
+    return result;
+}
+
+void CallQueryAsyncCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_Query, main event thread complete.");
+    DAHelperQueryCB *queryCB = static_cast<DAHelperQueryCB *>(data);
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value result[ARGS_TWO] = {nullptr};
+    napi_value callResult = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, queryCB->cbBase.cbInfo.callback, &callback));
+
+    napi_create_int32(env, queryCB->execResult, &result[PARAM0]);
+    result[PARAM1] = GetQueryCallbackPacmapValue(env, queryCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, result, &callResult));
+
+    if (queryCB->cbBase.cbInfo.callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, queryCB->cbBase.cbInfo.callback));
+    }
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, queryCB->cbBase.asyncWork));
+    delete queryCB;
+    queryCB = nullptr;
+    HILOG_INFO("NAPI_Query, main event thread complete end.");
+}
+
+void CallQueryPromiseCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("NAPI_DAHelperQueryCB,  main event thread complete.");
+    DAHelperQueryCB *QueryCB = static_cast<DAHelperQueryCB *>(data);
+    napi_value result = GetQueryCallbackPacmapValue(env, QueryCB->result);
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, QueryCB->cbBase.deferred, result));
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, QueryCB->cbBase.asyncWork));
+    delete QueryCB;
+    QueryCB = nullptr;
+    HILOG_INFO("NAPI_DAHelperQueryCB,  main event thread complete end.");
+}
+
+void CallQueryExecuteCB(napi_env env, void *data)
+{
+    HILOG_INFO("NAPI_Query, worker pool thread execute.");
+    DAHelperQueryCB *queryCB = static_cast<DAHelperQueryCB *>(data);
+    if (queryCB->dataAbilityHelper != nullptr) {
+        queryCB->execResult = INVALID_PARAMETER;
+        if (!queryCB->uri.empty()) {
+            OHOS::Uri uri(queryCB->uri);
+            auto resultset = queryCB->dataAbilityHelper->Query(uri, queryCB->columns, queryCB->predicates);
+            if (resultset != nullptr) {
+                queryCB->result = resultset;
+                queryCB->execResult = NO_ERROR;
+            } else {
+                HILOG_INFO("NAPI_Query, resultset == nullptr.");
+            }
+        } else {
+            HILOG_ERROR("NAPI_Query, dataAbilityHelper uri is empty");
+        }
+    } else {
+        HILOG_ERROR("NAPI_Query, dataAbilityHelper == nullptr");
+    }
+    HILOG_INFO("NAPI_Query, worker pool thread execute end.");
+}
+
+napi_value CallQueryAsync(napi_env env, napi_value *args, const size_t argCallback, DAHelperQueryCB *queryCB)
+{
+    HILOG_INFO("%{public}s, asyncCallback.", __func__);
+    if (args == nullptr || queryCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName = 0;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
+    if (valuetype == napi_function) {
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &queryCB->cbBase.cbInfo.callback));
+    }
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallQueryExecuteCB, CallQueryAsyncCompleteCB,
+                       (void *)queryCB, &queryCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, queryCB->cbBase.asyncWork));
+    napi_value result = 0;
+    NAPI_CALL(env, napi_get_null(env, &result));
+    HILOG_INFO("%{public}s, asyncCallback end.", __func__);
+    return result;
+}
+
+napi_value CallQueryPromise(napi_env env, DAHelperQueryCB *queryCB)
+{
+    HILOG_INFO("%{public}s, promise.", __func__);
+    if (queryCB == nullptr) {
+        HILOG_ERROR("%{public}s, param == nullptr.", __func__);
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise = 0;
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    queryCB->cbBase.deferred = deferred;
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, CallQueryExecuteCB, CallQueryPromiseCompleteCB,
+                       (void *)queryCB, &queryCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, queryCB->cbBase.asyncWork));
+    HILOG_INFO("%{public}s, promise end.", __func__);
+    return promise;
+}
+
+napi_value CallQueryWrap(napi_env env, napi_value thisVar, napi_callback_info info, napi_value *args, size_t argcAsync,
+    const size_t argcPromise)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    DAHelperQueryCB *queryCB = new (std::nothrow) DAHelperQueryCB;
+    if (queryCB == nullptr) {
+        HILOG_ERROR("%{public}s, QueryCB == nullptr.", __func__);
+        return WrapVoidToJS(env);
+    }
+    queryCB->cbBase.cbInfo.env = env;
+    queryCB->cbBase.asyncWork = nullptr;
+    queryCB->cbBase.deferred = nullptr;
+    queryCB->cbBase.ability = nullptr;
+
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetype));
+    if (valuetype == napi_string) {
+        queryCB->uri = NapiValueToStringUtf8(env, args[PARAM0]);
+        HILOG_INFO("%{public}s,uri=%{public}s", __func__, queryCB->uri.c_str());
+    }
+    valuetype = napi_undefined;
+    std::string predicateArg;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM2], &valuetype));
+    if (valuetype == napi_string) {
+        predicateArg = NapiValueToStringUtf8(env, args[PARAM2]);
+        HILOG_INFO("%{public}s,predicateArg=%{public}s", __func__, predicateArg.c_str());
+    }
+    queryCB->pacMap.Clear();
+    AnalysisPacMap(queryCB->pacMap, env, args[PARAM3]);
+
+    std::string columns = queryCB->pacMap.GetStringValue("columns", "");
+    HILOG_INFO("%{public}s,columns=%{public}s", __func__, columns.c_str());
+    Stringsplit(columns, ",", queryCB->columns);
+    HILOG_INFO("%{public}s,columns.size=%{public}d", __func__, queryCB->columns.size());
+    queryCB->pacMap.Remove("columns");
+    for (size_t i = 0; i < queryCB->columns.size(); i++) {
+        HILOG_INFO("%{public}s,columns=%{public}s", __func__, queryCB->columns.at(i).c_str());
+    }
+
+    ParseJsonKey(predicateArg, queryCB->pacMap, queryCB->predicates);
+    DataAbilityHelper *objectInfo = nullptr;
+    napi_unwrap(env, thisVar, (void **)&objectInfo);
+    HILOG_INFO("%{public}s,DataAbilityHelper objectInfo = %{public}p", __func__, objectInfo);
+    queryCB->dataAbilityHelper = objectInfo;
+
+    napi_value ret = nullptr;
+    if (argcAsync > argcPromise) {
+        ret = CallQueryAsync(env, args, ARGS_FOUR, queryCB);
+    } else {
+        ret = CallQueryPromise(env, queryCB);
+    }
+    HILOG_INFO("%{public}s,end", __func__);
+    return ret;
+}
+
+/**
+ * @brief Call processing function.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param insertCB Process data asynchronously.
+ *
+ * @return Return JS data successfully, otherwise return nullptr.
+ */
+napi_value CallWrap(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    size_t argcAsync = ARGS_FIVE;
+    const size_t argcPromise = ARGS_FOUR;
+    const size_t argCountWithAsync = argcPromise + ARGS_ASYNC_COUNT;
+    napi_value args[ARGS_MAX_COUNT] = {nullptr};
+    napi_value ret = nullptr;
+    napi_value thisVar = nullptr;
+
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, &thisVar, nullptr));
+    if (argcAsync > argCountWithAsync || argcAsync > ARGS_MAX_COUNT) {
+        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
+        return nullptr;
+    }
+
+    std::string method;
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM1], &valuetype));
+    if (valuetype == napi_string) {
+        method = NapiValueToStringUtf8(env, args[PARAM1]);
+        HILOG_INFO("%{public}s,method=%{public}s", __func__, method.c_str());
+    } else {
+        HILOG_ERROR("%{public}s, Wrong argument type.", __func__);
+        return nullptr;
+    }
+    if (method == "insert") {
+        ret = CallInsertWrap(env, thisVar, info, args, argcAsync, argcPromise);
+    } else if (method == "delete") {
+        ret = CallDeleteWrap(env, thisVar, info, args, argcAsync, argcPromise);
+    } else if (method == "update") {
+        ret = CallUpdateWrap(env, thisVar, info, args, argcAsync, argcPromise);
+    } else if (method == "query") {
+        ret = CallQueryWrap(env, thisVar, info, args, argcAsync, argcPromise);
+    }
+    HILOG_INFO("%{public}s,end", __func__);
+    return ret;
+}
+
+/**
+ * @brief DataAbilityHelper NAPI method : call.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_Call(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    napi_value ret = CallWrap(env, info);
+    if (ret == nullptr) {
+        ret = WrapVoidToJS(env);
+    }
+    HILOG_INFO("%{public}s,end", __func__);
+    return ret;
 }
 
 /**

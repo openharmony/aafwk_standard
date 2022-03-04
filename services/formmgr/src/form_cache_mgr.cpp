@@ -62,10 +62,8 @@ bool FormCacheMgr::AddData(const int64_t formId, const std::string &data)
 {
     APP_LOGI("add new cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
-    std::pair<std::map<int64_t, std::string>::iterator, bool> retVal
-        = cacheData_.emplace(formId, data);
-
-    return retVal.second;
+    cacheData_[formId] = data;
+    return true;
 }
 
 /**
