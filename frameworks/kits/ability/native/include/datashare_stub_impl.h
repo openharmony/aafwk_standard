@@ -28,7 +28,8 @@ using AbilityRuntime::JsDataShareExtAbility;
 class DataShareStubImpl : public DataShareStub {
 public:
     explicit DataShareStubImpl(const std::shared_ptr<JsDataShareExtAbility>& extension, napi_env env)
-        : extension_(extension) {
+        : extension_(extension)
+    {
         uvQueue_ = std::make_shared<AbilityRuntime::DataShareUvQueue>(env);  
     }
 
