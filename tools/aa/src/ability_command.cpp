@@ -30,7 +30,7 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:D";
+const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:CD";
 const struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
@@ -38,6 +38,7 @@ const struct option LONG_OPTIONS[] = {
     {"bundle", required_argument, nullptr, 'b'},
     {"power", required_argument, nullptr, 'p'},
     {"setting", required_argument, nullptr, 's'},
+    {"cold-start", no_argument, nullptr, 'C'},
     {"debug", no_argument, nullptr, 'D'},
     {nullptr, 0, nullptr, 0},
 };
@@ -998,6 +999,7 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
     std::string deviceId = "";
     std::string bundleName = "";
     std::string abilityName = "";
+    bool isColdStart = false;
     bool isDebugApp = false;
     bool isContinuation = false;
 
@@ -1153,6 +1155,12 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
                 windowMode = optarg;
                 break;
             }
+            case 'C': {
+                // 'aa start -C'
+                // cold start app
+                isColdStart = true;
+                break;
+            }
             case 'D': {
                 // 'aa start -D'
                 // debug app
@@ -1193,10 +1201,14 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
             ElementName element(deviceId, bundleName, abilityName);
             want.SetElement(element);
 
+            if (isColdStart) {
+                WantParams wantParams;
+                wantParams.SetParam("coldStart", Boolean::Box(isColdStart));
+                want.SetParams(wantParams);
+            }
             if (isDebugApp) {
                 WantParams wantParams;
                 wantParams.SetParam("debugApp", Boolean::Box(isDebugApp));
-
                 want.SetParams(wantParams);
             }
             if (isContinuation) {
@@ -1299,7 +1311,7 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
         int time = std::stoi(want.GetStringParam("-w"));
         timeMs = time * TIME_RATE_MS;
     }
-    if (!observer->waitForFinish(timeMs)) {
+    if (!observer->WaitForFinish(timeMs)) {
         resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
         return OHOS::ERR_INVALID_VALUE;
     }

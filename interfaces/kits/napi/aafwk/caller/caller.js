@@ -17,7 +17,6 @@ var rpc = requireNapi("rpc")
 const EVENT_CALL_NOTIFY = 1;
 const REQUEST_SUCCESS = 0;
 const REQUEST_FAILED = 1;
-
 class Caller {
     constructor(obj) {
         console.log("Caller::constructor obj is " + typeof obj);
@@ -29,6 +28,12 @@ class Caller {
         console.log("Caller call method [" + method + "]");
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller call " + typeof method + " " + typeof data);
+            throw new Error("function input parameter error");
+            return;
+        }
+
+        if (method == '' || data == null) {
+            console.log("Caller call " + method + ", " + data);
             throw new Error("function input parameter error");
             return;
         }
@@ -80,10 +85,14 @@ class Caller {
             return undefined;
         }
 
+        if (method == '' || data == null) {
+            console.log("Caller callWithResult " + method + ", " + data);
+            return undefined;
+        }
+
         if (this.releaseCall) {
             console.log("Caller callWithResult this.callee release");
-            throw new Error("Function inner object error");
-            return;
+            return undefined;
         }
 
         if (this.__call_obj__.callee == null) {

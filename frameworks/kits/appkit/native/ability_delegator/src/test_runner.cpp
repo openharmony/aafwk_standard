@@ -12,23 +12,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "test_runner.h"
+
+#include "app_log_wrapper.h"
+#include "bundle_mgr_interface.h"
 #include "runtime.h"
 #include "runner_runtime/js_test_runner.h"
+#include "sys_mgr_client.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-std::unique_ptr<TestRunner> TestRunner::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime,
-    const std::shared_ptr<AbilityDelegatorArgs> &args)
+namespace {
+constexpr int32_t UNSPECIFIED_USER = -2;
+}
+
+std::unique_ptr<TestRunner> TestRunner::Create(
+    const std::unique_ptr<AbilityRuntime::Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args)
 {
     if (!runtime) {
         return std::make_unique<TestRunner>();
     }
 
+    auto bundleObj =
+        OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (!bundleObj) {
+        APP_LOGE("Failed to get bundle manager service");
+        return nullptr;
+    }
+
+    auto bms = iface_cast<IBundleMgr>(bundleObj);
+    if (!bms) {
+        APP_LOGE("Cannot convert to IBundleMgr");
+        return nullptr;
+    }
+
+    if (!args) {
+        APP_LOGE("Invalid ability delegator args");
+        return nullptr;
+    }
+
+    BundleInfo bundleInfo;
+    if (!bms->GetBundleInfo(args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USER)) {
+        APP_LOGE("Failed to GetBundleInfo");
+        return nullptr;
+    }
+
     switch (runtime->GetLanguage()) {
         case AbilityRuntime::Runtime::Language::JS:
-            return RunnerRuntime::JsTestRunner::Create(runtime, args);
+            return RunnerRuntime::JsTestRunner::Create(runtime, args, bundleInfo);
         default:
             return std::make_unique<TestRunner>();
     }

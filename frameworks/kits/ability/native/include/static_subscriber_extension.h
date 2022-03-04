@@ -42,7 +42,7 @@ public:
 
     static StaticSubscriberExtension* Create(const std::unique_ptr<Runtime>& runtime);
 
-    virtual void OnCommonEventTriggered(EventFwk::CommonEventData* data);
+    virtual void OnReceiveEvent(EventFwk::CommonEventData* data);
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,7 @@ void AmsIpcAppSchedulerModuleTest::TearDown()
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleForegroundApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleForegroundApplication API 10000 times
+ * CaseDescription: execute ScheduleForegroundApplication API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_001, TestSize.Level3)
 {
@@ -88,7 +88,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_001, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleBackgroundApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleBackgroundApplication API 10000 times
+ * CaseDescription: execute ScheduleBackgroundApplication API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_002, TestSize.Level3)
 {
@@ -110,7 +110,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_002, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleTerminateApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleTerminateApplication API 10000 times
+ * CaseDescription: execute ScheduleTerminateApplication API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_003, TestSize.Level3)
 {
@@ -132,7 +132,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_003, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleTrimMemory API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleTrimMemory API 10000 times
+ * CaseDescription: execute ScheduleTrimMemory API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_004, TestSize.Level3)
 {
@@ -147,7 +147,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_004, TestSi
         client->ScheduleShrinkMemory(level);
         mockApplication->Wait();
         int getLevel = mockApplication->GetShrinkLevel();
-        EXPECT_EQ(getLevel, level) << "excute fail, index is " << i;
+        EXPECT_EQ(getLevel, level) << "execute fail, index is " << i;
     }
 }
 
@@ -157,7 +157,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_004, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test scheduleLowMemory API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute LowMemoryWarning API 10000 times
+ * CaseDescription: execute LowMemoryWarning API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_005, TestSize.Level3)
 {
@@ -179,7 +179,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_005, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test scheduleProfileChanged API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute scheduleProfileChanged API 10000 times
+ * CaseDescription: execute scheduleProfileChanged API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_006, TestSize.Level3)
 {
@@ -196,7 +196,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_006, TestSi
         client->ScheduleProfileChanged(profile);
         mockApplication->Wait();
         bool result = mockApplication->CompareProfile(profile);
-        EXPECT_EQ(result, true) << "excute fail, index is " << i;
+        EXPECT_EQ(result, true) << "execute fail, index is " << i;
     }
 }
 
@@ -206,7 +206,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_006, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleLaunchApplication API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleLaunchApplication API 10000 times
+ * CaseDescription: execute ScheduleLaunchApplication API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_008, TestSize.Level3)
 {
@@ -235,7 +235,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_008, TestSi
         mockApplication->Wait();
 
         bool isEqual = mockApplication->CompareAppLaunchData(launchData);
-        EXPECT_EQ(true, isEqual) << "excute fail, index is " << i;
+        EXPECT_EQ(true, isEqual) << "execute fail, index is " << i;
     }
 }
 
@@ -245,7 +245,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_008, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleCleanAbility API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleCleanAbility API 10000 times
+ * CaseDescription: execute ScheduleCleanAbility API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_009, TestSize.Level3)
 {
@@ -269,7 +269,7 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_009, TestSi
  * SubFunction: IApplicationScheduler
  * FunctionPoints: test ScheduleConfigurationUpdated API,then check the function whether is good or not
  * EnvConditions: system running normally
- * CaseDescription: excute ScheduleConfigurationUpdated API 10000 times
+ * CaseDescription: execute ScheduleConfigurationUpdated API 10000 times
  */
 HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_010, TestSize.Level3)
 {

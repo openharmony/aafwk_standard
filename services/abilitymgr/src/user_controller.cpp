@@ -110,7 +110,7 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
 
     if (isForeground) {
         SetCurrentUserId(userId);
-        // todo : notify wms switching now
+        // notify wms switching now
     }
 
     bool needStart = false;
@@ -275,7 +275,7 @@ void UserController::UserBootDone(std::shared_ptr<UserItem> &item)
 
 void UserController::BroadcastUserStarted(int32_t userId)
 {
-    // todo: broadcast event user start.
+    // broadcast event user start.
 }
 
 void UserController::BroadcastUserBackground(int32_t userId)

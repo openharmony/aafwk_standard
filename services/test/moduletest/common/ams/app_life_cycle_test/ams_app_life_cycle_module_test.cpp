@@ -128,8 +128,6 @@ void AmsAppLifeCycleModuleTest::SetUp()
     mockBundleMgr = new (std::nothrow) BundleMgrService();
     serviceInner_->SetBundleManager(mockBundleMgr);
 
-    serviceInner_->ProcessOptimizerInit();
-
     auto runner = EventRunner::Create("AmsAppLifeCycleModuleTest");
     handler_ = std::make_shared<AMSEventHandler>(runner, serviceInner_);
     serviceInner_->SetEventHandler(handler_);

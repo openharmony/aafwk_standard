@@ -136,7 +136,6 @@ ohos_source_set("abilityms_test_source") {
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/graphic/standard:libwmservice",
     "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
@@ -145,6 +144,7 @@ ohos_source_set("abilityms_test_source") {
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",

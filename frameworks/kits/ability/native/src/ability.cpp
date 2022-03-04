@@ -170,6 +170,26 @@ std::shared_ptr<Global::Resource::ResourceManager> Ability::GetResourceManager()
 }
 
 /**
+ * @brief Checks whether the configuration of this ability is changing.
+ *
+ * @return Returns true if the configuration of this ability is changing and false otherwise.
+ */
+bool Ability::IsUpdatingConfigurations()
+{
+    return AbilityContext::IsUpdatingConfigurations();
+}
+
+/**
+ * @brief Informs the system of the time required for drawing this Page ability.
+ *
+ * @return Returns the notification is successful or fail
+ */
+bool Ability::PrintDrawnCompleted()
+{
+    return AbilityContext::PrintDrawnCompleted();
+}
+
+/**
  * Will be called when ability start. You should override this function
  *
  * @param want ability start information
@@ -179,7 +199,7 @@ void Ability::OnStart(const Want &want)
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
-        APP_LOGE("Ability::OnStart falied abilityInfo_ is nullptr.");
+        APP_LOGE("Ability::OnStart failed abilityInfo_ is nullptr.");
         return;
     }
 
@@ -224,10 +244,17 @@ void Ability::OnStart(const Want &want)
         if (abilityWindow_ != nullptr) {
             APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityStart.", __func__);
             abilityWindow_->OnPostAbilityStart();
-            if (abilityWindow_->GetWindow()) {
-                auto windowId = abilityWindow_->GetWindow()->GetWindowId();
-                APP_LOGI("Ability::OnStart: add window info  = %{public}d", windowId);
+            auto window = abilityWindow_->GetWindow();
+            if (window) {
+                auto windowId = window->GetWindowId();
+                APP_LOGI("Ability::OnStart: add windowId = %{public}d", windowId);
                 OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
+
+                if (winType == Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW) {
+                    APP_LOGI("Call RegisterDisplayMoveListener, windowId: %{public}d", windowId);
+                    OHOS::sptr<OHOS::Rosen::IDisplayMoveListener> displayMoveListener(this);
+                    window->RegisterDisplayMoveListener(displayMoveListener);
+                }
             }
             APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
         }
@@ -240,11 +267,13 @@ void Ability::OnStart(const Want &want)
             int32_t width = display->GetWidth();
             int32_t height = display->GetHeight();
             auto configuration = application_->GetConfiguration();
-            configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DIRECTION,
-                GetDirectionStr(height, width));
-            configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
-            configuration->AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(displayId));
-            UpdateContextConfiguration();
+            if (configuration) {
+                std::string direction = GetDirectionStr(height, width);
+                configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DIRECTION, direction);
+                configuration->AddItem(displayId, ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+                configuration->AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(displayId));
+                UpdateContextConfiguration();
+            }
 
             std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
             if (resConfig == nullptr) {
@@ -3445,6 +3474,7 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     auto display = Rosen::DisplayManager::GetInstance().GetDisplayById(displayId);
     if (!display) {
         APP_LOGE("Get display by displayId %{public}" PRIu64" failed.", displayId);
+        return;
     }
 
     // Notify ResourceManager
@@ -3470,6 +3500,11 @@ void Ability::OnChange(Rosen::DisplayId displayId)
 
     std::vector<std::string> changeKeyV;
     auto configuration = application_->GetConfiguration();
+    if (!configuration) {
+        APP_LOGE("configuration is nullptr.");
+        return;
+    }
+
     configuration->CompareDifferent(changeKeyV, newConfig);
     int size = changeKeyV.size();
     APP_LOGI("changeKeyV size :%{public}d", size);
@@ -3479,6 +3514,41 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     }
 
     APP_LOGI("%{public}s end", __func__);
+}
+
+void Ability::OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to)
+{
+    APP_LOGI("%{public}s called, from displayId %{public}" PRIu64" to %{public}" PRIu64".", __func__, from, to);
+
+    auto display = Rosen::DisplayManager::GetInstance().GetDisplayById(to);
+    if (!display) {
+        APP_LOGE("Get display by displayId %{public}" PRIu64" failed.", to);
+        return;
+    }
+
+    // Get new display config
+    float density = display->GetVirtualPixelRatio();
+    int32_t width = display->GetWidth();
+    int32_t height = display->GetHeight();
+    Configuration newConfig;
+    newConfig.AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(to));
+    newConfig.AddItem(to, ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
+    newConfig.AddItem(to, ConfigurationInner::APPLICATION_DENSITYDPI, GetDensityStr(density));
+
+    std::vector<std::string> changeKeyV;
+    auto configuration = application_->GetConfiguration();
+    if (!configuration) {
+        APP_LOGE("configuration is nullptr.");
+        return;
+    }
+
+    configuration->CompareDifferent(changeKeyV, newConfig);
+    int size = changeKeyV.size();
+    APP_LOGI("changeKeyV size :%{public}d", size);
+    if (!changeKeyV.empty()) {
+        configuration->Merge(changeKeyV, newConfig);
+        OnConfigurationUpdated(*configuration);
+    }
 }
 
 void Ability::RequsetFocus(const Want &want)

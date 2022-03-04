@@ -57,7 +57,6 @@ ohos_unittest("FmsFormMgrUpdateFormTest") {
     "${aafwk_path}/frameworks/kits/fmskit:fmskit_native",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/formmgr:fms_target",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
@@ -75,6 +74,7 @@ ohos_unittest("FmsFormMgrUpdateFormTest") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

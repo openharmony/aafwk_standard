@@ -31,11 +31,7 @@ ohos_source_set("appmgr_mst_source") {
     "${services_path}/appmgr/src/app_spawn_client.cpp",
     "${services_path}/appmgr/src/app_spawn_msg_wrapper.cpp",
     "${services_path}/appmgr/src/app_spawn_socket.cpp",
-    "${services_path}/appmgr/src/cgroup_manager.cpp",
-    "${services_path}/appmgr/src/lmks_client.cpp",
     "${services_path}/appmgr/src/module_running_record.cpp",
-    "${services_path}/appmgr/src/process_optimizer.cpp",
-    "${services_path}/appmgr/src/process_optimizer_uba.cpp",
     "${services_path}/appmgr/src/remote_client_manager.cpp",
     "${services_path}/appmgr/test/mock/src/mock_bundle_manager.cpp",
 
@@ -84,7 +80,6 @@ ohos_source_set("appmgr_mst_source") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -93,6 +88,7 @@ ohos_source_set("appmgr_mst_source") {
 
   external_deps = [
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
@@ -118,7 +114,5 @@ group("moduletest") {
     "service_app_spawn_client_test:moduletest",
     "service_event_drive_test:moduletest",
     "service_start_process_test:moduletest",
-
-    # "process_optimizer_uba_test:moduletest",
   ]
 }

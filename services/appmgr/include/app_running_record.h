@@ -478,14 +478,15 @@ public:
 
     void GetBundleNames(std::vector<std::string> &bundleNames);
 
-    void SetUserTestInfo(const UserTestRecord &record);
+    void SetUserTestInfo(const std::shared_ptr<UserTestRecord> &record);
+    std::shared_ptr<UserTestRecord> GetUserTestInfo();
 
     void SetSpecifiedAbilityFlagAndWant(const bool flag, const AAFwk::Want &want, const std::string &moduleName);
     bool IsStartSpecifiedAbility() const;
     void ScheduleAcceptWant(const std::string &moduleName);
     void ScheduleAcceptWantDone();
     const AAFwk::Want &GetSpecifiedWant() const;
-
+    void SetDebugApp(bool isDebugApp);
     void SetRenderRecord(const std::shared_ptr<RenderRecord> &record);
     std::shared_ptr<RenderRecord> GetRenderRecord();
     void SetStartMsg(const AppSpawnStartMsg &msg);
@@ -568,8 +569,9 @@ private:
     bool isSpecifiedAbility_ = false;
     AAFwk::Want SpecifiedWant_;
     std::string moduleName_;
+    bool isDebugApp_ = false;
 
-    UserTestRecord userTestRecord_;
+    std::shared_ptr<UserTestRecord> userTestRecord_ = nullptr;
 
     // render record
     std::shared_ptr<RenderRecord> renderRecord_ = nullptr;

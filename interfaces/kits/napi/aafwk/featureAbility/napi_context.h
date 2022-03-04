@@ -112,6 +112,48 @@ napi_value NAPI_GetProcessName(napi_env env, napi_callback_info info);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetCallingBundle(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetOrCreateDistributedDir(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetFilesDir(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetCacheDir(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetExternalCacheDir(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the type of this application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxAppType(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains the HapModuleInfo object of the application.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxHapModuleInfo(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetAppVersionInfo(napi_env env, napi_callback_info info);
+
+napi_value NAPI_GetApplicationContext(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Obtains information about the current ability.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetCtxAbilityInfo(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_CONTEXT_H */

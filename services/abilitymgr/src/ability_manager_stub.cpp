@@ -116,6 +116,8 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
     requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
+    requestFuncMap_[GET_APP_MEMORY_SIZE] = &AbilityManagerStub::GetAppMemorySizeInner;
+    requestFuncMap_[IS_RAM_CONSTRAINED_DEVICE] = &AbilityManagerStub::IsRamConstrainedDeviceInner;
     requestFuncMap_[CLEAR_UP_APPLICATION_DATA] = &AbilityManagerStub::ClearUpApplicationDataInner;
     requestFuncMap_[LOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::LockMissionForCleanupInner;
     requestFuncMap_[UNLOCK_MISSION_FOR_CLEANUP] = &AbilityManagerStub::UnlockMissionForCleanupInner;
@@ -970,6 +972,27 @@ int AbilityManagerStub::GetSystemMemoryAttrInner(MessageParcel &data, MessagePar
     return NO_ERROR;
 }
 
+int AbilityManagerStub::GetAppMemorySizeInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t result = GetAppMemorySize();
+    HILOG_INFO("GetAppMemorySizeInner result %{public}d", result);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("GetAppMemorySize error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::IsRamConstrainedDeviceInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto result = IsRamConstrainedDevice();
+    if (!reply.WriteBool(result)) {
+        HILOG_ERROR("reply write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
 int AbilityManagerStub::ContinueMissionInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string srcDeviceId = data.ReadString();
@@ -1386,8 +1409,15 @@ int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, Message
     MissionSnapshot missionSnapshot;
     int32_t result = GetMissionSnapshot(deviceId, missionId, missionSnapshot);
     HILOG_INFO("snapshot: AbilityManagerStub get snapshot result = %{public}d", result);
-    reply.WriteParcelable(&missionSnapshot);
-    return result;
+    if (!reply.WriteParcelable(&missionSnapshot)) {
+        HILOG_ERROR("GetMissionSnapshot error");
+        return ERR_INVALID_VALUE;
+    }
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("GetMissionSnapshot result error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::SetAbilityControllerInner(MessageParcel &data, MessageParcel &reply)
@@ -1438,8 +1468,7 @@ int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &
     std::string msg = data.ReadString();
     int resultCode = data.ReadInt32();
     std::string bundleName = data.ReadString();
-    auto observer = data.ReadParcelable<IRemoteObject>();
-    int32_t result = FinishUserTest(msg, resultCode, bundleName, observer);
+    int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);
     return result;
 }

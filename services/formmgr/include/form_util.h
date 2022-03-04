@@ -75,18 +75,18 @@ public:
      * @brief Get current system nanosecond.
      * @return Current system nanosecond.
      */
-    static long GetCurrentNanosecond();
+    static int64_t GetCurrentNanosecond();
     /**
      * @brief Get current system millisecond.
      * @return Current system millisecond.
      */
-    static long GetCurrentMillisecond();
+    static int64_t GetCurrentMillisecond();
     /**
      * @brief Get millisecond from tm.
      * @param tmAtTime tm time.
      * @return Millisecond.
      */
-    static long GetMillisecondFromTm(struct tm &tmAtTime);
+    static int64_t GetMillisecondFromTm(struct tm &tmAtTime);
 
     /**
      * @brief split string.

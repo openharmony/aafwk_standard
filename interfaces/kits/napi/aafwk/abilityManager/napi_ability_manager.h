@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -143,6 +143,14 @@ struct SystemMemroyInfoCB {
     napi_ref callback = nullptr;
 };
 
+struct CallbackInfo {
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
+    int result = -1;
+    bool isRamConstrainedDevice = false;
+};
+
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info);
@@ -160,6 +168,8 @@ void CreateWeightReasonCodeObject(napi_env env, napi_value value);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
 napi_value NapiGetNull(napi_env env);
 napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info);
+napi_value NAPI_GetAppMemorySize(napi_env env, napi_callback_info info);
+napi_value NAPI_IsRamConstrainedDevice(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  //  NAPI_ABILITY_MANAGER_H

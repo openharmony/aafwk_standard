@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -121,6 +121,16 @@ public:
         const sptr<IRemoteObject> &callerToken,
         int32_t userId = DEFAULT_INVAL_VALUE,
         int requestCode = DEFAULT_INVAL_VALUE) = 0;
+
+    virtual int GetAppMemorySize()
+    {
+        return 0;
+    }
+
+    virtual bool IsRamConstrainedDevice()
+    {
+        return false;
+    }
 
     /**
      * TerminateAbility, terminate the special ability.
@@ -306,7 +316,7 @@ public:
      * @param numMax The maximum number of entries to return in the list. The
      * actual number returned may be smaller, depending on how many tasks the
      * user has started and the maximum number the system can remember.
-     * @param falgs Information about what to return.  May be any combination
+     * @param flags Information about what to return.  May be any combination
      * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
      * @return Returns ERR_OK on success, others on failure.
      */
@@ -665,8 +675,7 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) = 0;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) = 0;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) = 0;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -938,6 +947,10 @@ public:
 
         GET_SYSTEM_MEMORY_ATTR,
 
+        GET_APP_MEMORY_SIZE,
+
+        IS_RAM_CONSTRAINED_DEVICE,
+        
         GET_ABILITY_RUNNING_INFO,
 
         GET_EXTENSION_RUNNING_INFO,

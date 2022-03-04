@@ -69,6 +69,7 @@ int AbilityConnectManager::TerminateAbility(const std::shared_ptr<AbilityRecord>
         });
 
     if (!targetAbility) {
+        HILOG_ERROR("targetAbility error.");
         return NO_FOUND_ABILITY_BY_CALLER;
     }
     if (result != ERR_OK) {

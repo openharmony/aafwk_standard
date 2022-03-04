@@ -144,6 +144,15 @@ struct WantAgentWantsParas {
     AAFwk::WantParams &extraInfo;
 };
 
+struct AsyncGetOperationTypeCallbackInfo {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback[2] = {0};
+    std::shared_ptr<WantAgent> wantAgent;
+    int32_t operationType;
+};
+
 class TriggerCompleteCallBack : public CompletedCallback {
 public:
     TriggerCompleteCallBack();
@@ -172,6 +181,7 @@ napi_value NAPI_Cancel(napi_env env, napi_callback_info info);
 napi_value NAPI_Trigger(napi_env env, napi_callback_info info);
 napi_value NAPI_Equal(napi_env env, napi_callback_info info);
 napi_value NAPI_GetWantAgent(napi_env env, napi_callback_info info);
+napi_value NAPI_GetOperationType(napi_env env, napi_callback_info info);
 
 napi_value GetCallbackErrorResult(napi_env env, int errCode);
 napi_value NapiGetNull(napi_env env);
