@@ -62,7 +62,7 @@ const struct option LONG_OPTIONS_DUMP[] = {
     {"mission-infos", no_argument, nullptr, 'S'},
     {nullptr, 0, nullptr, 0},
 };
-const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::kd::u:c";
+const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
 const struct option LONG_OPTIONS_DUMPSYS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
@@ -72,7 +72,6 @@ const struct option LONG_OPTIONS_DUMPSYS[] = {
     {"pending", no_argument, nullptr, 'p'},
     {"process", no_argument, nullptr, 'r'},
     {"data", no_argument, nullptr, 'd'},
-    {"ui", no_argument, nullptr, 'k'},
     {"userId", required_argument, nullptr, 'u'},
     {"client", no_argument, nullptr, 'c'},
     {nullptr, 0, nullptr, 0},
