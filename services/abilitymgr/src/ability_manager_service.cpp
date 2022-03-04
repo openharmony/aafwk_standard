@@ -1725,6 +1725,7 @@ void AbilityManagerService::DumpSysMissionListInner(
 {
     std::shared_ptr<MissionListManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1756,6 +1757,7 @@ void AbilityManagerService::DumpSysAbilityInner(
 {
     std::shared_ptr<MissionListManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1788,6 +1790,7 @@ void AbilityManagerService::DumpSysStateInner(
     std::shared_ptr<AbilityConnectManager> targetManager;
 
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = connectManagers_.find(userId);
         if (it == connectManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1820,6 +1823,7 @@ void AbilityManagerService::DumpSysPendingInner(
 {
     std::shared_ptr<PendingWantManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = pendingWantManagers_.find(userId);
         if (it == pendingWantManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1897,6 +1901,7 @@ void AbilityManagerService::DataDumpSysStateInner(
 {
     std::shared_ptr<DataAbilityManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = dataAbilityManagers_.find(userId);
         if (it == dataAbilityManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -2308,15 +2313,22 @@ void AbilityManagerService::SetStackManager(int userId, bool switchUser)
 
 void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
 {
-    auto iterator = missionListManagers_.find(userId);
-    if (iterator != missionListManagers_.end()) {
-        if (switchUser) {
-            DelayedSingleton<MissionInfoMgr>::GetInstance()->Init(userId);
-            currentMissionListManager_ = iterator->second;
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto iterator = missionListManagers_.find(userId);
+        find = (iterator != missionListManagers_.end());
+        if (find) {
+            if (switchUser) {
+                DelayedSingleton<MissionInfoMgr>::GetInstance()->Init(userId);
+                currentMissionListManager_ = iterator->second;
+            }
         }
-    } else {
+    }
+    if (!find) {
         auto manager = std::make_shared<MissionListManager>(userId);
         manager->Init();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         missionListManagers_.emplace(userId, manager);
         if (switchUser) {
             currentMissionListManager_ = manager;
@@ -2779,6 +2791,7 @@ bool AbilityManagerService::IsSystemUI(const std::string &bundleName) const
 void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle load timeout.");
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
@@ -2789,7 +2802,7 @@ void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
 void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle active timeout.");
-
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
@@ -2800,6 +2813,7 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
 void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle inactive timeout.");
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
@@ -2810,6 +2824,7 @@ void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
 void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle ForegroundNew timeout.");
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -2820,6 +2835,7 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
 void AbilityManagerService::HandleBackgroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle BackgroundNew timeout.");
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
@@ -2857,7 +2873,7 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
 bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("VerificationAllToken.");
-
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: missionListManagers_) {
         if (item.second && item.second->GetAbilityRecordByToken(token)) {
             return true;
@@ -2892,6 +2908,7 @@ const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbility
         return nullptr;
     }
 
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: dataAbilityManagers_) {
         if (item.second && item.second->ContainsDataAbility(scheduler)) {
             return item.second;
@@ -2913,6 +2930,7 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUse
 
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = missionListManagers_.find(userId);
     if (it != missionListManagers_.end()) {
         return it->second;
@@ -2923,6 +2941,7 @@ std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserI
 
 std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = connectManagers_.find(userId);
     if (it != connectManagers_.end()) {
         return it->second;
@@ -2933,6 +2952,7 @@ std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerB
 
 std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = dataAbilityManagers_.find(userId);
     if (it != dataAbilityManagers_.end()) {
         return it->second;
@@ -2958,6 +2978,7 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByTok
 
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByToken(const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: missionListManagers_) {
         if (item.second && item.second->GetAbilityRecordByToken(token)) {
             return item.second;
@@ -2974,6 +2995,7 @@ std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByToken
 std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerByToken(
     const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: connectManagers_) {
         if (item.second && item.second->GetServiceRecordByToken(token)) {
             return item.second;
@@ -2986,6 +3008,7 @@ std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerB
 std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManagerByToken(
     const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: dataAbilityManagers_) {
         if (item.second && item.second->GetAbilityRecordByToken(token)) {
             return item.second;
@@ -3619,6 +3642,7 @@ int AbilityManagerService::GetProcessRunningInfosByUserId(
 void AbilityManagerService::ClearUserData(int32_t userId)
 {
     HILOG_DEBUG("%{public}s", __func__);
+    std::unique_lock<std::shared_mutex> lock(managersMutex_);
     missionListManagers_.erase(userId);
     connectManagers_.erase(userId);
     dataAbilityManagers_.erase(userId);
@@ -3735,6 +3759,7 @@ void AbilityManagerService::PauseOldUser(int32_t userId)
 void AbilityManagerService::PauseOldMissionListManager(int32_t userId)
 {
     HILOG_INFO("%{public}s, PauseOldMissionListManager:%{public}d-----begin", __func__, userId);
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = missionListManagers_.find(userId);
     if (it == missionListManagers_.end()) {
         HILOG_INFO("%{public}s, PauseOldMissionListManager:%{public}d-----end1", __func__, userId);
@@ -3812,49 +3837,70 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
 
 void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)
 {
-    auto it = connectManagers_.find(userId);
-    if (it == connectManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = connectManagers_.find(userId);
+        find = (it != connectManagers_.end());
+        if (find) {
+            if (switchUser) {
+                connectManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<AbilityConnectManager>();
         manager->SetEventHandler(handler_);
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         connectManagers_.emplace(userId, manager);
         if (switchUser) {
             connectManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            connectManager_ = it->second;
         }
     }
 }
 
 void AbilityManagerService::InitDataAbilityManager(int32_t userId, bool switchUser)
 {
-    auto it = dataAbilityManagers_.find(userId);
-    if (it == dataAbilityManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = dataAbilityManagers_.find(userId);
+        find = (it != dataAbilityManagers_.end());
+        if (find) {
+            if (switchUser) {
+                dataAbilityManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<DataAbilityManager>();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         dataAbilityManagers_.emplace(userId, manager);
         if (switchUser) {
             dataAbilityManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            dataAbilityManager_ = it->second;
         }
     }
 }
 
 void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
 {
-    auto it = pendingWantManagers_.find(userId);
-    if (it == pendingWantManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = pendingWantManagers_.find(userId);
+        find = (it != pendingWantManagers_.end());
+        if (find) {
+            if (switchUser) {
+                pendingWantManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<PendingWantManager>();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         pendingWantManagers_.emplace(userId, manager);
         if (switchUser) {
             pendingWantManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            pendingWantManager_ = it->second;
         }
     }
 }
