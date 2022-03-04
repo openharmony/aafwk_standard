@@ -185,7 +185,8 @@ sptr<IRemoteObject> JsDataShareExtAbility::OnConnect(const AAFwk::Want &want)
     HILOG_INFO("%{public}s begin.", __func__);
     Extension::OnConnect(want);
     sptr<DataShareStubImpl> remoteObject = new (std::nothrow) DataShareStubImpl(
-        std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()));
+        std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()),
+        reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine()));
     HILOG_INFO("%{public}s end. ", __func__);
     return remoteObject->AsObject();
 }
