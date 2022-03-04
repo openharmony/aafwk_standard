@@ -26,19 +26,23 @@
 namespace OHOS {
 namespace AbilityRuntime {
 class DataShareUvQueue {
-    using NapiArgsGenerator = std::function<void()>;
+    using NapiVoidFunc = std::function<void()>;
 
 public:
     explicit DataShareUvQueue(napi_env env);
     virtual ~DataShareUvQueue() = default;
 
-    void CallFunction(NapiArgsGenerator genArgs = NapiArgsGenerator());
+    void CallSyncFunction(NapiVoidFunc func = NapiVoidFunc());
 
 private:
     struct UvEntry {
         napi_env env;
-        NapiArgsGenerator args;
+        NapiVoidFunc func;
+        bool done;
+        std::condition_variable condition;
+        std::mutex mutex;
     };
+
     napi_env env_ = nullptr;
     uv_loop_s* loop_ = nullptr;
 };

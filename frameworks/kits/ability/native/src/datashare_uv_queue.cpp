@@ -25,24 +25,39 @@ DataShareUvQueue::DataShareUvQueue(napi_env env)
     napi_get_uv_event_loop(env, &loop_);
 }
 
-void DataShareUvQueue::CallFunction(NapiArgsGenerator genArgs)
+void DataShareUvQueue::CallSyncFunction(NapiVoidFunc func)
 {
+    HILOG_INFO("%{public}s begin.", __func__);
     uv_work_t* work = new (std::nothrow) uv_work_t;
     if (work == nullptr) {
         HILOG_ERROR("no memory for uv_work_t");
         return;
     }
-    work->data = new UvEntry{env_, std::move(genArgs)};
+    work->data = new UvEntry{env_, std::move(func), false, {}, {}};
     uv_queue_work(
         loop_, work, [](uv_work_t* work) {},
         [](uv_work_t* work, int uvstatus) {
             auto *entry = static_cast<UvEntry*>(work->data);
-            if (entry->args) {
-                entry->args();
+            if (entry->func) {
+                entry->func();
             }
-            delete work;
-            work = nullptr;
+            std::unique_lock<std::mutex> lock(entry->mutex);
+            entry->done = true;
+            entry->condition.notify_all();
+            HILOG_INFO("%{public}s Notify uv_queue_work completed.", __func__);
         });
+
+    auto *uvEntry = static_cast<UvEntry*>(work->data);
+    {
+        std::unique_lock<std::mutex> lock(uvEntry->mutex);
+        while (!uvEntry->done) {
+            HILOG_INFO("%{public}s Wait uv_queue_work to complete.", __func__);
+            uvEntry->condition.wait(lock);
+        }
+    }
+    delete uvEntry;
+    delete work;
+    HILOG_INFO("%{public}s end.", __func__);
 }
 } // namespace AbilityRuntime
 } // namespace OHOS
