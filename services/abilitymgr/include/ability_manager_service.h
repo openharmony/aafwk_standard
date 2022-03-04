@@ -955,7 +955,7 @@ private:
      * starting lanucher ability.
      *
      */
-    void StartingLauncherAbility();
+    bool StartingLauncherAbility(bool isBoot);
     /**
      * starting settings data ability.
      *
@@ -1102,8 +1102,8 @@ private:
     void StartLauncherAbility(int32_t userId);
     void SwitchToUser(int32_t oldUserId, int32_t userId);
     void SwitchManagers(int32_t userId, bool switchUser = true);
-    void StartUserApps(int32_t userId);
-    void StartSystemAbilityByUser(int32_t userId);
+    void StartUserApps(int32_t userId, bool isBoot);
+    void StartSystemAbilityByUser(int32_t userId, bool isBoot);
     void PauseOldUser(int32_t userId);
     void PauseOldStackManager(int32_t userId);
     void PauseOldMissionListManager(int32_t userId);
