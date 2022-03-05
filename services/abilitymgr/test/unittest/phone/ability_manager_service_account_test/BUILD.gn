@@ -16,40 +16,41 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ability_runtime/abilitymgr"
 
-ohos_unittest("ability_with_applications_test") {
+ohos_unittest("ability_manager_service_account_test") {
   module_out_path = module_output_path
 
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
+    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
   ]
 
   sources = [
+    # add mock file
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
-    "ability_with_applications_test.cpp",  # add mock file
+    "ability_manager_service_account_test.cpp",
   ]
 
-  configs = [
-    "${services_path}/abilitymgr:abilityms_config",
-    "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
-  ]
+  configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
-    "${services_path}/abilitymgr/test/mock/appmgr_test_service:appmgr_test_service",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
+    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
@@ -60,8 +61,8 @@ ohos_unittest("ability_with_applications_test") {
   ]
 
   external_deps = [
-    "access_token:libaccesstoken_sdk",
     "device_manager_base:devicemanagersdk",
+    "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -69,6 +70,5 @@ ohos_unittest("ability_with_applications_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":ability_with_applications_test" ]
+  deps = [ ":ability_manager_service_account_test" ]
 }
