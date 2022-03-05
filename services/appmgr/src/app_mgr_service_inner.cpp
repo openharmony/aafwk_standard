@@ -151,7 +151,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         }
         bool isColdStart = want == nullptr ? false : want->GetBoolParam("coldStart", false);
         StartProcess(abilityInfo->applicationName, processName, isColdStart, appRecord,
-            abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
+            appInfo->uid, appInfo->bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
@@ -221,7 +221,7 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         return false;
     }
 
-    auto userId = GetUserIdByUid(abilityInfo.applicationInfo.uid);
+    auto userId = GetUserIdByUid(appInfo->uid);
     bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName,
         BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId);
     if (!bundleMgrResult) {
