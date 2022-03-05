@@ -955,17 +955,6 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
 
     auto usertestInfo = appLaunchData.GetUserTestInfo();
     if (usertestInfo) {
-        if (!isStageBased) {
-            AbilityRuntime::Runtime::Options options;
-            options.codePath = LOCAL_CODE_PATH;
-            options.eventRunner = mainHandler_->GetEventRunner();
-            auto runtime = AbilityRuntime::Runtime::Create(options);
-            if (!runtime) {
-                APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
-                return;
-            }
-            application_->SetRuntime(std::move(runtime));
-        }
         if (!PrepareAbilityDelegator(usertestInfo)) {
             APP_LOGE("Failed to prepare ability delegator");
             return;
@@ -1062,21 +1051,25 @@ bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &
         APP_LOGE("args is null");
         return false;
     }
-    auto testRunner = TestRunner::Create(application_->GetRuntime(), args);
-    if (!testRunner) {
-        APP_LOGE("testRunner is null");
-        return false;
+    if (application_->GetRuntime() == nullptr) { // FA model
+        APP_LOGI("PrepareAbilityDelegator for FA model.");
+        AbilityRuntime::Runtime::Options options;
+        options.codePath = LOCAL_CODE_PATH;
+        options.eventRunner = mainHandler_->GetEventRunner();
+        static auto runtime = AbilityRuntime::Runtime::Create(options);
+        auto testRunner = TestRunner::Create(runtime, args);
+        auto delegator = std::make_shared<AbilityDelegator>(
+            application_->GetAppContext(), std::move(testRunner), record->observer);
+        AbilityDelegatorRegistry::RegisterInstance(delegator, args);
+        delegator->Prepare();
+    } else { // Stage model
+        APP_LOGI("PrepareAbilityDelegator for Stage model.");
+        auto testRunner = TestRunner::Create(application_->GetRuntime(), args);
+        auto delegator = std::make_shared<AbilityDelegator>(
+            application_->GetAppContext(), std::move(testRunner), record->observer);
+        AbilityDelegatorRegistry::RegisterInstance(delegator, args);
+        delegator->Prepare();
     }
-    auto delegator = std::make_shared<AbilityDelegator>(
-        application_->GetAppContext(), std::move(testRunner), record->observer);
-    if (!delegator) {
-        APP_LOGE("delegator is null");
-        return false;
-    }
-
-    AbilityDelegatorRegistry::RegisterInstance(delegator, args);
-
-    delegator->Prepare();
     return true;
 }
 
