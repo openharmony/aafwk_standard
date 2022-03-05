@@ -1771,9 +1771,10 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
     }
 
     // update running state.
-    if (!abilityRecord->IsUninstallAbility()) {
+    if (!ability->IsUninstallAbility()) {
         InnerMissionInfo info;
-        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(), info) == 0) {
+        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+            mission->GetMissionId(), info) == 0) {
             info.missionInfo.runningState = -1;
             DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
         }
@@ -2317,7 +2318,7 @@ void MissionListManager::AddUninstallTags(const std::string &bundleName, int32_t
         }
     }
     defaultSingleList_->HandleUnInstallApp(bundleName, uid);
-    defaultStandardList->HandleUnInstallApp(bundleName, uid);
+    defaultStandardList_->HandleUnInstallApp(bundleName, uid);
     std::list<int32_t> matchedMissions;
     DelayedSingleton<MissionInfoMgr>::GetInstance()->HandleUnInstallApp(bundleName, uid, matchedMissions);
     if (listenerController_) {

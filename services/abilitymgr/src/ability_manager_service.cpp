@@ -61,7 +61,6 @@ namespace OHOS {
 namespace AAFwk {
 using namespace std::chrono;
 const bool CONCURRENCY_MODE_FALSE = false;
-const int32_t BASE_USER_RANGE = 200000;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
 constexpr int32_t INVALID_USER_ID = -1;
@@ -2691,7 +2690,7 @@ int AbilityManagerService::UninstallApp(const std::string &bundleName, int32_t u
     HILOG_DEBUG("Uninstall app, bundleName: %{public}s", bundleName.c_str());
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t pid = getpid();
-    if (callingPid != pid) { 
+    if (callingPid != pid) {
         HILOG_ERROR("%{public}s: Not bundleMgr call.", __func__);
         return CHECK_PERMISSION_FAILED;
     }

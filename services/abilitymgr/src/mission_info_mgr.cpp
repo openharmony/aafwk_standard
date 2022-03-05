@@ -29,7 +29,7 @@ MissionInfoMgr::~MissionInfoMgr()
     HILOG_INFO("MissionInfoMgr instance is destroyed");
 }
 
-bool MissionInfoMgr::GenerateMissionId(int32_t &misisonId)
+bool MissionInfoMgr::GenerateMissionId(int32_t &missionId)
 {
     if (currentMisionId_ == MAX_MISSION_ID) {
         currentMisionId_ = MIN_MISSION_ID;
@@ -37,8 +37,8 @@ bool MissionInfoMgr::GenerateMissionId(int32_t &misisonId)
 
     for (int32_t index = currentMisionId_; index < MAX_MISSION_ID; index++) {
         if (missionIdMap_.find(index) == missionIdMap_.end()) {
-            misisonId = index;
-            missionIdMap_[misisonId] = false;
+            missionId = index;
+            missionIdMap_[missionId] = false;
             currentMisionId_ = missionId + 1;
             return true;
         }
@@ -358,7 +358,7 @@ bool MissionInfoMgr::LoadAllMissionInfo()
 
 void MissionInfoMgr::HandleUnInstallApp(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions)
 {
-    HILOG_INFO("HandleUnInstallApp, bundleName:%{public}s, uid:%{public}d", bundleName.c_str(), missionId);
+    HILOG_INFO("HandleUnInstallApp, bundleName:%{public}s, uid:%{public}d", bundleName.c_str(), uid);
     GetMatchedMission(bundleName, uid, missions);
     if (missions.empty()) {
         return;
