@@ -353,11 +353,12 @@ ErrCode AbilityContextImpl::StartAbility(
 
 ErrCode AbilityContextImpl::ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback)
 {
+    HILOG_DEBUG("AbilityContextImpl::Release begain.");
     if (!localCallContainer_) {
         HILOG_ERROR("%{public}s false.", __func__);
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_DEBUG("AbilityContextImpl::Release end.");
     return localCallContainer_->Release(callback);
 }
 

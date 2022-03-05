@@ -58,6 +58,8 @@ class Caller {
 
         let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
         if (!status) {
+            msgData.reclaim();
+            msgReply.reclaim();
             console.log("Caller call return status " + status);
             throw new Error("Function execution exception");
             return ;
@@ -67,6 +69,8 @@ class Caller {
         let str = msgReply.readString();
         if (retval === REQUEST_SUCCESS && str === 'object') {
             console.log("Caller call return str " + str);
+            msgData.reclaim();
+            msgReply.reclaim();
         } else {
             console.log("Caller call retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
@@ -109,6 +113,8 @@ class Caller {
         let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
         if (!status) {
             console.log("Caller callWithResult return data " + status);
+            msgData.reclaim();
+            msgReply.reclaim();
             return reply;
         }
 
@@ -117,6 +123,7 @@ class Caller {
         if (retval === REQUEST_SUCCESS && str === 'object') {
             reply = msgReply;
             console.log("Caller callWithResult return data " + str);
+            msgData.reclaim();
         } else {
             console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
