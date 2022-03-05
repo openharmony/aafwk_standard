@@ -92,6 +92,7 @@ ohos_moduletest("ability_mgr_module_test") {
     "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
