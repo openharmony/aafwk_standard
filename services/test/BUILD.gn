@@ -47,6 +47,7 @@ group("moduletest") {
     "moduletest/ability_mgr_module_account_test:moduletest",
     "moduletest/ability_mgr_service_test:moduletest",
     "moduletest/ability_record_test:moduletest",
+    "moduletest/call_module_test:moduletest",
 
     # "moduletest/ability_stack_test:moduletest",
     "moduletest/common/ams:moduletest",

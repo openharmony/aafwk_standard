@@ -370,6 +370,12 @@ sptr<IRemoteObject> JsAbility::CallRequest()
         HILOG_WARN("JsAbility::CallRequest Obj is nullptr");
         return nullptr;
     }
+
+    if (remoteCallee_ != nullptr) {
+        HILOG_INFO("JsAbility::CallRequest get Callee remoteObj.");
+        return remoteCallee_;
+    }
+
     HandleScope handleScope(jsRuntime_);
     HILOG_DEBUG("JsAbility::CallRequest set runtime scope.");
     auto& nativeEngine = jsRuntime_.GetNativeEngine();
@@ -403,8 +409,9 @@ sptr<IRemoteObject> JsAbility::CallRequest()
         HILOG_ERROR("JsAbility::CallRequest obj is nullptr");
     }
 
+    remoteCallee_ = remoteObj;
     HILOG_INFO("JsAbility::CallRequest end.");
-    return remoteObj;
+    return remoteCallee_;
 }
 
 void JsAbility::OnRequestPermissionsFromUserResult(

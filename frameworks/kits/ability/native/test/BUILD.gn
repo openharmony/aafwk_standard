@@ -593,6 +593,33 @@ ohos_unittest("ability_thread_test") {
   ]
 }
 
+ohos_unittest("ability_thread_call_request_test") {
+  module_out_path = module_output_path
+  sources = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
+    "unittest/ability_thread_call_request_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${INNERKITS_PATH}/want:want",
+    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [ "ability_runtime:runtime" ]
+}
+
 ohos_unittest("form_provider_client_test") {
   module_out_path = module_output_path
   include_dirs = [
@@ -1092,6 +1119,7 @@ group("unittest") {
     ":ability_permission_test",
 
     # ":ability_test",
+    ":ability_thread_call_request_test",
     ":ability_thread_dataability_test",
     ":ability_thread_test",
     ":continuation_test",

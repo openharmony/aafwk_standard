@@ -29,7 +29,8 @@ namespace AAFwk {
  */
 class Mission : public std::enable_shared_from_this<Mission> {
 public:
-    Mission(int32_t id, const std::shared_ptr<AbilityRecord> abilityRecord, const std::string &missionName = "");
+    Mission(int32_t id, const std::shared_ptr<AbilityRecord> abilityRecord, const std::string &missionName = "",
+        int32_t startMethod = 0);
     Mission(const std::shared_ptr<Mission> &mission);
     virtual ~Mission();
 
@@ -120,8 +121,25 @@ public:
      */
     void Dump(std::vector<std::string> &info);
 
+    /**
+     * @brief whether it is a form ByCall start-up
+     *
+     * @return true form BaCall start-up, false other
+     */
+    bool IsStartByCall();
+
+    /**
+     * @brief update mission id
+     *
+     * @param id mission id.
+     * @param method start method.
+     * @return Returns true on success, false on failure
+     */
+    bool UpdateMissionId(int32_t id, int32_t method);
+
 private:
     int32_t missionId_;
+    int32_t startMethod_;
     std::shared_ptr<AbilityRecord> abilityRecord_;
     std::string missionName_;
     std::weak_ptr<MissionList> ownerMissionList_;

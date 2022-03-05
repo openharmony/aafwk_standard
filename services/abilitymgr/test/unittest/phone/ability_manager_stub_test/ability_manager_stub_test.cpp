@@ -449,5 +449,88 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level1)
 
     EXPECT_EQ(res, NO_ERROR);
 }
+
+/*
+ * Feature: AbilityManagerService
+ * Function: OnRemoteRequest
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService OnRemoteRequest
+ * EnvConditions: code is START_CALL_ABILITY
+ * CaseDescription: Verify that on remote request is normal
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_018, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    Want want;
+    WriteInterfaceToken(data);
+    want.SetFlags(10);
+    data.WriteParcelable(&want);
+    int res = stub_->OnRemoteRequest(IAbilityManager::START_CALL_ABILITY, data, reply, option);
+
+    EXPECT_EQ(res, NO_ERROR);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: OnRemoteRequest
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService OnRemoteRequest
+ * EnvConditions: code is START_CALL_ABILITY
+ * CaseDescription: Verify that on remote request is ERR_INVALID_VALUE
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_019, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    WriteInterfaceToken(data);
+    int res = stub_->OnRemoteRequest(IAbilityManager::START_CALL_ABILITY, data, reply, option);
+
+    EXPECT_EQ(res, ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: OnRemoteRequest
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService OnRemoteRequest
+ * EnvConditions: code is START_CALL_ABILITY
+ * CaseDescription: Verify that on remote request is normal
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_020, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    WriteInterfaceToken(data);
+    AppExecFwk::ElementName element;
+    sptr<IAbilityConnection> connect = new AbilityConnectCallback();
+    data.WriteParcelable(connect->AsObject());
+    data.WriteParcelable(&element);
+    int res = stub_->OnRemoteRequest(IAbilityManager::RELEASE_CALL_ABILITY, data, reply, option);
+
+    EXPECT_EQ(res, NO_ERROR);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: OnRemoteRequest
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService OnRemoteRequest
+ * EnvConditions: code is START_CALL_ABILITY
+ * CaseDescription: Verify that on remote request is ERR_INVALID_VALUE
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_021, TestSize.Level1)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    WriteInterfaceToken(data);
+    int res = stub_->OnRemoteRequest(IAbilityManager::RELEASE_CALL_ABILITY, data, reply, option);
+
+    EXPECT_EQ(res, ERR_INVALID_VALUE);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
