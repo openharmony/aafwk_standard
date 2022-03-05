@@ -1753,6 +1753,7 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
         CompleteTerminateAndUpdateMission(ability);
         return;
     }
+
     auto mission = ability->GetMission();
     CHECK_POINTER_LOG(mission, "Fail to get mission.");
     auto missionList = mission->GetMissionList();
@@ -1761,7 +1762,7 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
     std::shared_ptr<AbilityRecord> launcherRoot = launcherList_->GetLauncherRoot();
     bool isLauncherActive = (launcherRoot &&
         (launcherRoot->IsAbilityState(FOREGROUND_NEW) || launcherRoot->IsAbilityState(FOREGROUNDING_NEW)));
-    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);    
+    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);
 
     // remove from mission list.
     missionList->RemoveMission(mission);

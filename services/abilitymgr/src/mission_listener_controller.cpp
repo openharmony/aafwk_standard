@@ -133,7 +133,7 @@ void MissionListenerController::NotifyMissionDestroyed(int32_t missionId)
     handler_->PostTask(task);
 }
 
-void MissionListenerController::HandleUnInstallApp(std::list<int32_t> missions)
+void MissionListenerController::HandleUnInstallApp(const std::list<int32_t> &missions)
 {
     if (!handler_) {
         HILOG_ERROR("handler not init");
