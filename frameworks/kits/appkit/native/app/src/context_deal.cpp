@@ -47,7 +47,7 @@ const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_BEFORE("/mnt/hmdfs/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_MIDDLE("/device_view/local/data/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED("distributedfiles");
 const std::string ContextDeal::CONTEXT_DATA_STORAGE("/data/storage/");
-const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2", "el3", "el4"};
+const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2"};
 
 ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
 {}
