@@ -286,10 +286,36 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     }
 }
 
+static int32_t CallType2StartMethod(int32_t callType)
+{
+    switch (callType) {
+        case AbilityCallType::INVALID_TYPE:
+            return static_cast<int32_t>(StartMethod::START_NORMAL);
+        case AbilityCallType::CALL_REQUEST_TYPE:
+            return static_cast<int32_t>(StartMethod::START_CALL);
+        default:
+            break;
+    }
+    return -1;
+}
+
+static bool CallTypeFilter(int32_t callType)
+{
+    switch (callType) {
+        case AbilityCallType::CALL_REQUEST_TYPE:
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
 void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilityRequest,
     std::shared_ptr<Mission> &targetMission,
     std::shared_ptr<AbilityRecord> &targetRecord)
 {
+    auto startMethod = CallType2StartMethod(abilityRequest.callType);
+    HILOG_DEBUG("GetTargetMissionAndAbility called startMethod is %{public}d.", startMethod);
     auto reUsedMission = GetReusedMission(abilityRequest);
     if (reUsedMission) {
         HILOG_DEBUG("find reused mission in running list.");
@@ -299,7 +325,13 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
             targetRecord->SetWant(abilityRequest.want);
             targetRecord->SetIsNewWant(true);
         }
-        return;
+
+        if (!(targetMission->IsStartByCall()
+            && !CallTypeFilter(startMethod))) {
+            HILOG_DEBUG("mission exists. No update required");
+            return;
+        }
+        HILOG_DEBUG("mission exists. need to be updated");
     }
 
     // no reused mission, create a new one.
@@ -319,6 +351,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
 
     info.missionName = missionName;
     info.isSingletonMode = isSingleton;
+    info.startMethod = startMethod;
     info.missionInfo.runningState = 0;
     info.missionInfo.continuable = abilityRequest.abilityInfo.continuable;
     info.missionInfo.time = Time2str(time(0));
@@ -332,10 +365,22 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
             return;
         }
     }
-    targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName);
-    targetRecord->SetUseNewMission();
-    targetRecord->SetMission(targetMission);
+
+    if (targetMission == nullptr) {
+        HILOG_DEBUG("Make new mission data.");
+        targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+        targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName, startMethod);
+        targetRecord->SetUseNewMission();
+        targetRecord->SetMission(targetMission);
+    } else {
+        HILOG_DEBUG("Update old mission data.");
+        auto state = targetMission->UpdateMissionId(info.missionInfo.id, startMethod);
+        if (!state) {
+            HILOG_INFO("targetMission UpdateMissionId(%{public}d, %{public}d) failed", info.missionInfo.id,
+                startMethod);
+        }
+        HILOG_DEBUG("Update MissionId UpdateMissionId(%{public}d, %{public}d) end", info.missionInfo.id, startMethod);
+    }
 
     if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SPECIFIED) {
         targetRecord->SetSpecifiedFlag(abilityRequest.specifiedFlag);

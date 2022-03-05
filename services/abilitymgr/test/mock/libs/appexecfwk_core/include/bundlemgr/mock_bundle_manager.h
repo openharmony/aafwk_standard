@@ -56,6 +56,7 @@ auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     abilityInfo.applicationInfo.name = "Helloworld";
     abilityInfo.type = AbilityType::PAGE;
     abilityInfo.applicationInfo.isLauncherApp = true;
+    abilityInfo.applicationInfo.apiCompatibleVersion = 8;
     return true;
 };
 

@@ -45,11 +45,12 @@ int MockServiceAbilityManagerService::StartAbility(
 int MockServiceAbilityManagerService::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
-    GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbilityByCall";
+    GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbilityByCall begain";
     if (!connect) {
         GTEST_LOG_(INFO) << "MockAbilityManagerService::StartAbilityByCall connect is null";
         return -1;
     }
+    GTEST_LOG_(INFO) << "MockServiceAbilityManagerService::StartAbilityByCall end";
     return 0;
 }
 
@@ -69,7 +70,7 @@ int MockServiceAbilityManagerService::TerminateAbility(
 int MockServiceAbilityManagerService::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
-    return -1;
+    return 0;
 }
 
 int MockServiceAbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)

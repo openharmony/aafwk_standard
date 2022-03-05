@@ -58,6 +58,7 @@ public:
             return;
         }
         std::unique_ptr<JsCallerComplex>(static_cast<JsCallerComplex*>(data));
+        HILOG_ERROR("JsCallerComplex::%{public}s is called.", __func__);
     }
 
     static NativeValue* JsRelease(NativeEngine* engine, NativeCallbackInfo* info)
@@ -112,7 +113,7 @@ private:
         }
 
         auto task = [notify = this, &str] () { notify->OnReleaseNotifyTask(str); };
-        handler_->PostTask(task, "OnReleaseNotify");
+        handler_->PostSyncTask(task, "OnReleaseNotify");
         HILOG_DEBUG("OnReleaseNotify end");
     }
 

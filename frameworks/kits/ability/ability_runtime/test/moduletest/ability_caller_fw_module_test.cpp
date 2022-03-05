@@ -61,10 +61,6 @@ void AbilityCallerTest::SetUpTestCase(void)
     }
 
     sysMgr->RegisterSystemAbility(OHOS::ABILITY_MGR_SERVICE_ID, abilityObject);
-
-    auto task = []()->Ability* { return new (std::nothrow) Ability; };
-
-    AbilityLoader::GetInstance().RegisterAbility(ACE_SERVICE_ABILITY_NAME, task);
 }
 
 void AbilityCallerTest::TearDownTestCase(void)
@@ -85,20 +81,8 @@ void AbilityCallerTest::TearDown(void)
  */
 HWTEST_F(AbilityCallerTest, AaFwk_Ability_StartAbility_0100, Function | MediumTest | Level1)
 {
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    sptr<IRemoteObject> abilityToken = sptr<IRemoteObject>(new AbilityThread());
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
-    abilityInfo->name = "DemoAbilityNameA";
-    abilityInfo->bundleName = "DemoBundleNameA";
-    abilityInfo->deviceId = "DemoDeviceIdA";
-    std::shared_ptr<AbilityLocalRecord> abilityRecord =
-                        std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
-
-    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
-
     Want want;
-    want.SetElementName("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
 
     std::shared_ptr<CallerCallBack> callback = std::make_shared<CallerCallBack>();
     callback->SetCallBack([](const sptr<IRemoteObject> &) {});
@@ -107,10 +91,14 @@ HWTEST_F(AbilityCallerTest, AaFwk_Ability_StartAbility_0100, Function | MediumTe
     ErrCode ret = context_->StartAbility(want, callback);
     EXPECT_TRUE(ret == 0);
 
-    AppExecFwk::ElementName element("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
+    AppExecFwk::ElementName element("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
     sptr<IRemoteObject> callRemoteObject =
         OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     context_->localCallContainer_->OnAbilityConnectDone(element, callRemoteObject, ERR_OK);
+    std::vector<std::string> info;
+    EXPECT_TRUE(info.size() == 0);
+    context_->localCallContainer_->DumpCalls(info);
+    EXPECT_TRUE(info.size() != 0);
     EXPECT_TRUE(callback->IsCallBack());
 }
 
@@ -122,7 +110,7 @@ HWTEST_F(AbilityCallerTest, AaFwk_Ability_StartAbility_0100, Function | MediumTe
 HWTEST_F(AbilityCallerTest, AaFwk_Ability_StartAbility_0200, Function | MediumTest | Level1)
 {
     Want want;
-    want.SetElementName("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
 
     ErrCode ret = context_->StartAbility(want, nullptr);
     EXPECT_FALSE(ret == 0);
@@ -151,18 +139,6 @@ HWTEST_F(AbilityCallerTest, AaFwk_Ability_StartAbility_0300, Function | MediumTe
  */
 HWTEST_F(AbilityCallerTest, AaFwk_Ability_ReleaseAbility_0100, Function | MediumTest | Level1)
 {
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    sptr<IRemoteObject> abilityToken = sptr<IRemoteObject>(new AbilityThread());
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
-    abilityInfo->name = "DemoAbilityNameA";
-    abilityInfo->bundleName = "DemoBundleNameA";
-    abilityInfo->deviceId = "DemoDeviceIdA";
-    std::shared_ptr<AbilityLocalRecord> abilityRecord =
-                        std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
-
-    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
-
     Want want;
     want.SetElementName("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
 
@@ -197,20 +173,8 @@ HWTEST_F(AbilityCallerTest, AaFwk_Ability_ReleaseAbility_0200, Function | Medium
  */
 HWTEST_F(AbilityCallerTest, AaFwk_Ability_OnCallStubDied_0100, Function | MediumTest | Level1)
 {
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    sptr<IRemoteObject> abilityToken = sptr<IRemoteObject>(new AbilityThread());
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->type = AppExecFwk::AbilityType::SERVICE;
-    abilityInfo->name = "DemoAbilityNameA";
-    abilityInfo->bundleName = "DemoBundleNameA";
-    abilityInfo->deviceId = "DemoDeviceIdA";
-    std::shared_ptr<AbilityLocalRecord> abilityRecord =
-                        std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
-
-    AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
-
     Want want;
-    want.SetElementName("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
 
     std::shared_ptr<CallerCallBack> callback = std::make_shared<CallerCallBack>();
     bool isSetOnReleaseCalled = false;
@@ -225,7 +189,7 @@ HWTEST_F(AbilityCallerTest, AaFwk_Ability_OnCallStubDied_0100, Function | Medium
     EXPECT_TRUE(ret == 0);
 
     std::shared_ptr<LocalCallRecord> localCallRecord;
-    AppExecFwk::ElementName elementName("DemoDeviceIdB", "DemoBundleNameB", "DemoAbilityNameB");
+    AppExecFwk::ElementName elementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
     context_->localCallContainer_->GetCallLocalreocrd(elementName, localCallRecord);
 
     sptr<IRemoteObject> callRemoteObject =

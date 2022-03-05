@@ -130,9 +130,11 @@ ErrCode AbilityManagerClient::StartAbilityByCall(
     HILOG_INFO("AbilityManagerClient::StartAbilityByCall start");
     if (remoteObject_ == nullptr) {
         HILOG_INFO("AbilityManagerClient::StartAbilityByCall fail because remoteobject is null");
-        return ABILITY_SERVICE_NOT_CONNECTED;
+        remoteObject_ =
+            OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     }
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    HILOG_INFO("AbilityManagerClient::StartAbilityByCall end");
     return abms->StartAbilityByCall(want, connect, callerToken);
 }
 
@@ -142,10 +144,11 @@ ErrCode AbilityManagerClient::ReleaseAbility(
     HILOG_INFO("AbilityManagerClient::ReleaseAbility start");
     if (remoteObject_ == nullptr) {
         HILOG_INFO("AbilityManagerClient::ReleaseAbility fail because remoteobject is null");
-        return ABILITY_SERVICE_NOT_CONNECTED;
+                remoteObject_ =
+            OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     }
-    HILOG_INFO("AbilityManagerClient::StartAbility start2");
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    HILOG_INFO("AbilityManagerClient::ReleaseAbility end");
     return abms->ReleaseAbility(connect, element);
 }
 

@@ -694,6 +694,7 @@ std::shared_ptr<AbilityResult> AbilityRecord::GetResult() const
 void AbilityRecord::SendResult()
 {
     HILOG_INFO("Send result.");
+    std::lock_guard<std::mutex> guard(lock_);
     CHECK_POINTER(scheduler_);
     CHECK_POINTER(result_);
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
@@ -705,6 +706,10 @@ void AbilityRecord::SendResult()
 void AbilityRecord::SendResultToCallers()
 {
     for (auto caller : GetCallerRecordList()) {
+        if (caller == nullptr) {
+            HILOG_WARN("Caller record is nullptr.");
+            continue;
+        }
         std::shared_ptr<AbilityRecord> callerAbilityRecord = caller->GetCaller();
         if (callerAbilityRecord != nullptr && callerAbilityRecord->GetResult() != nullptr) {
             callerAbilityRecord->SendResult();
@@ -715,6 +720,10 @@ void AbilityRecord::SendResultToCallers()
 void AbilityRecord::SaveResultToCallers(const int resultCode, const Want *resultWant)
 {
     for (auto caller : GetCallerRecordList()) {
+        if (caller == nullptr) {
+            HILOG_WARN("Caller record is nullptr.");
+            continue;
+        }
         std::shared_ptr<AbilityRecord> callerAbilityRecord = caller->GetCaller();
         if (callerAbilityRecord != nullptr) {
             callerAbilityRecord->SetResult(
@@ -1062,6 +1071,7 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
     if (mission) {
         HILOG_WARN("On scheduler died. Is app not response Reason:%{public}d", mission->IsANRState());
     }
+    std::lock_guard<std::mutex> guard(lock_);
     CHECK_POINTER(scheduler_);
 
     auto object = remote.promote();

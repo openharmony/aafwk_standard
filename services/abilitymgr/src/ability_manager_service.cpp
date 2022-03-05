@@ -2859,10 +2859,12 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
     }
 
     if (dataAbilityManager_->GetAbilityRecordByToken(token)) {
+        HILOG_INFO("Verification token4.");
         return true;
     }
 
     if (connectManager_->GetServiceRecordByToken(token)) {
+        HILOG_INFO("Verification token5.");
         return true;
     }
 
@@ -3473,6 +3475,18 @@ int AbilityManagerService::StartAbilityByCall(
     if (result != ERR_OK) {
         HILOG_ERROR("CheckCallPermissions fail, result: %{public}d", result);
         return RESOLVE_CALL_NO_PERMISSIONS;
+    }
+
+    HILOG_DEBUG("abilityInfo.applicationInfo.singleUser is %{public}s",
+        abilityRequest.abilityInfo.applicationInfo.singleUser ? "true" : "false");
+    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+        auto missionListManager = GetListManagerByUserId(U0_USER_ID);
+        if (missionListManager == nullptr) {
+            HILOG_ERROR("missionListManager is Null. userId=%{public}d", U0_USER_ID);
+            return ERR_INVALID_VALUE;
+        }
+
+        return missionListManager->ResolveLocked(abilityRequest);
     }
 
     return currentMissionListManager_->ResolveLocked(abilityRequest);

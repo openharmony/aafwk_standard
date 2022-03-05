@@ -26,10 +26,7 @@ config("module_private_config") {
   }
   include_dirs = [
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/Ability/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/BMS/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
-    "//foundation/distributedschedule/safwk/services/safwk/include",
+    #"//foundation/distributedschedule/safwk/services/safwk/include",
   ]
 }
 
@@ -39,7 +36,7 @@ ohos_moduletest("ability_caller_fw_module_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
-    "moduletest/ability_caller_fw_module_test.cpp",
+    "ability_caller_fw_module_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -75,8 +72,4 @@ group("moduletest") {
 
   deps = []
   deps += [ ":ability_caller_fw_module_test" ]
-
-  # if (is_phone_product) {
-  #   deps += [ ":ability_caller_fw_module_test" ]
-  # }
 }
