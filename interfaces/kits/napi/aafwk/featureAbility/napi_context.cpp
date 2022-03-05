@@ -540,20 +540,6 @@ napi_value NAPI_GetCacheDir(napi_env env, napi_callback_info info)
 }
 
 /**
- * @brief Get ExternalCache Dir.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_GetExternalCacheDir(napi_env env, napi_callback_info info)
-{
-    HILOG_INFO("%{public}s called", __func__);
-    return NAPI_GetExternalCacheDirCommon(env, info, AbilityType::PAGE);
-}
-
-/**
  * @brief Obtains the type of this application.
  *
  * @param env The environment that the Node-API call is invoked under.
@@ -3099,7 +3085,6 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getDatabaseDirSync", NAPI_GetDatabaseDirSync),
         DECLARE_NAPI_FUNCTION("getPreferencesDirSync", NAPI_GetPreferencesDirSync),
         DECLARE_NAPI_FUNCTION("getCacheDir", NAPI_GetCacheDir),
-        DECLARE_NAPI_FUNCTION("getExternalCacheDir", NAPI_GetExternalCacheDir),
         DECLARE_NAPI_FUNCTION("getAppType", NAPI_GetCtxAppType),
         DECLARE_NAPI_FUNCTION("getHapModuleInfo", NAPI_GetCtxHapModuleInfo),
         DECLARE_NAPI_FUNCTION("getAppVersionInfo", NAPI_GetAppVersionInfo),
