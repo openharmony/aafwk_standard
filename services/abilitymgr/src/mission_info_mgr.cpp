@@ -359,6 +359,7 @@ bool MissionInfoMgr::LoadAllMissionInfo()
 void MissionInfoMgr::HandleUnInstallApp(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions)
 {
     HILOG_INFO("HandleUnInstallApp, bundleName:%{public}s, uid:%{public}d", bundleName.c_str(), missionId);
+    GetMatchedMission(bundleName, uid, missions);
     if (missions.empty()) {
         return;
     }
