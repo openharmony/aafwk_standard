@@ -1005,5 +1005,99 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3700, TestSize.Level1)
     pendingManager_->ClearPendingWantRecordTask("bundleName3");
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
 }
+
+/*
+ * Feature: PendingWantManager
+ * Function: PendingWantStartAbility
+ * SubFunction: NA
+ * FunctionPoints: PendingWant Start Ability
+ * EnvConditions: NA
+ * CaseDescription: PendingWantStartAbility, DeviceID is null, a single Want, callerUid is SYSTEM_UID.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3800, TestSize.Level1)
+{
+    int32_t callerUid = SYSTEM_UID;
+    Want want;
+    ElementName element("", "bundleName1", "abilityName1");
+    want.SetElement(element);
+    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbility(want, nullptr, -1, callerUid);
+    EXPECT_EQ(ERR_OK, result);
+}
+
+/*
+ * Feature: PendingWantManager
+ * Function: PendingWantStartAbility
+ * SubFunction: NA
+ * FunctionPoints: PendingWant Start Ability
+ * EnvConditions: NA
+ * CaseDescription: PendingWantStartAbility, DeviceID isn't null, a single Want, callerUid is -1.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3900, TestSize.Level1)
+{
+    int32_t callerUid = -1;
+    Want want;
+    ElementName element("device", "bundleName1", "abilityName1");
+    want.SetElement(element);
+    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbility(want, nullptr, -1, callerUid);
+    EXPECT_NE(ERR_OK, result);
+}
+
+/*
+ * Feature: PendingWantManager
+ * Function: PendingWantStartAbilitys
+ * SubFunction: NA
+ * FunctionPoints: PendingWant Start Abilitys
+ * EnvConditions: NA
+ * CaseDescription: PendingWantStartAbilitys, DeviceID is null, multiple Want, callerUid is SYSTEM_UID.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_4000, TestSize.Level1)
+{
+    int32_t callerUid = SYSTEM_UID;
+    WantsInfo wantsInfo;
+    Want want;
+    ElementName element("", "bundleName", "abilityName");
+    want.SetElement(element);
+    wantsInfo.want = want;
+    WantsInfo wantsInfo1;
+    Want want1;
+    ElementName element1("", "bundleName1", "abilityName1");
+    want1.SetElement(element1);
+    wantsInfo1.want = want1;
+    std::vector<WantsInfo> wnatsInfos;
+    wnatsInfos.emplace_back(wantsInfo);
+    wnatsInfos.emplace_back(wantsInfo1);
+    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbilitys(wnatsInfos,
+        nullptr, -1, callerUid);
+    EXPECT_EQ(ERR_OK, result);
+}
+
+/*
+ * Feature: PendingWantManager
+ * Function: PendingWantStartAbilitys
+ * SubFunction: NA
+ * FunctionPoints: PendingWant Start Abilitys
+ * EnvConditions: NA
+ * CaseDescription: PendingWantStartAbilitys, DeviceID isn't null, multiple Want, callerUid is -1.
+ */
+HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_4100, TestSize.Level1)
+{
+    int32_t callerUid = -1;
+    WantsInfo wantsInfo;
+    Want want;
+    ElementName element("device", "bundleName", "abilityName");
+    want.SetElement(element);
+    wantsInfo.want = want;
+    WantsInfo wantsInfo1;
+    Want want1;
+    ElementName element1("device", "bundleName1", "abilityName1");
+    want1.SetElement(element1);
+    wantsInfo1.want = want1;
+    std::vector<WantsInfo> wnatsInfos;
+    wnatsInfos.emplace_back(wantsInfo);
+    wnatsInfos.emplace_back(wantsInfo1);
+    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbilitys(wnatsInfos,
+        nullptr, -1, callerUid);
+    EXPECT_NE(ERR_OK, result);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
