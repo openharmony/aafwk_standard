@@ -481,18 +481,18 @@ int32_t PendingWantManager::GetWantSenderInfo(const sptr<IWantSender> &target, s
     return NO_ERROR;
 }
 
-void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName)
+void PendingWantManager::ClearPendingWantRecord(const std::string &bundleName, int32_t uid)
 {
     HILOG_INFO("ClearPendingWantRecord, bundleName: %{public}s", bundleName.c_str());
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);
     auto handler = abilityManagerService->GetEventHandler();
     CHECK_POINTER(handler);
-    auto task = [bundleName, self = shared_from_this()]() { self->ClearPendingWantRecordTask(bundleName); };
+    auto task = [bundleName, uid, self = shared_from_this()]() { self->ClearPendingWantRecordTask(bundleName, uid); };
     handler->PostTask(task);
 }
 
-void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleName)
+void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleName, int32_t uid)
 {
     HILOG_INFO("ClearPendingWantRecordTask, bundleName: %{public}s", bundleName.c_str());
     std::lock_guard<std::recursive_mutex> locker(mutex_);
@@ -503,7 +503,7 @@ void PendingWantManager::ClearPendingWantRecordTask(const std::string &bundleNam
         if ((pendingRecord != nullptr)) {
             auto wantInfos = pendingRecord->GetKey()->GetAllWantsInfos();
             for (const auto &wantInfo: wantInfos) {
-                if (wantInfo.want.GetBundle() == bundleName) {
+                if (wantInfo.want.GetBundle() == bundleName && uid == pendingRecord->GetUid()) {
                     hasBundle = true;
                     break;
                 }

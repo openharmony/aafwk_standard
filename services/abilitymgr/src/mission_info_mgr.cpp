@@ -31,10 +31,15 @@ MissionInfoMgr::~MissionInfoMgr()
 
 bool MissionInfoMgr::GenerateMissionId(int32_t &misisonId)
 {
-    for (int32_t index = MIN_MISSION_ID; index <= MAX_MISSION_ID; index++) {
+    if (currentMisionId_ == MAX_MISSION_ID) {
+        currentMisionId_ = MIN_MISSION_ID;
+    }
+
+    for (int32_t index = currentMisionId_; index < MAX_MISSION_ID; index++) {
         if (missionIdMap_.find(index) == missionIdMap_.end()) {
             misisonId = index;
             missionIdMap_[misisonId] = false;
+            currentMisionId_ = missionId + 1;
             return true;
         }
     }
@@ -349,6 +354,27 @@ bool MissionInfoMgr::LoadAllMissionInfo()
         missionIdMap_[info.missionInfo.id] = true;
     }
     return true;
+}
+
+void MissionInfoMgr::HandleUnInstallApp(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions)
+{
+    HILOG_INFO("HandleUnInstallApp, bundleName:%{public}s, uid:%{public}d", bundleName.c_str(), missionId);
+    if (missions.empty()) {
+        return;
+    }
+
+    for (auto missionId : missions) {
+        DeleteMissionInfo(missionId);
+    }
+}
+
+void MissionInfoMgr::GetMatchedMission(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions)
+{
+    for (const auto& innerMissionInfo : missionInfoList_) {
+        if (innerMissionInfo.bundleName == bundleName && innerMissionInfo.uid == uid) {
+            missions.push_back(innerMissionInfo.missionInfo.id);
+        }
+    }
 }
 
 void MissionInfoMgr::Dump(std::vector<std::string> &info)
