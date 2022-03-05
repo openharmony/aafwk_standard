@@ -255,7 +255,7 @@ std::string MissionList::GetTypeName()
 
 void MissionList::HandleUnInstallApp(const std::string &bundleName, int32_t uid)
 {
-    for (auto it = missions_.begain(); it != missions_.end();) {
+    for (auto it = missions_.begin(); it != missions_.end();) {
         auto mission = *it;
         if (MatchedInitialMission(mission, bundleName, uid)) {
             missions_.erase(it++);
