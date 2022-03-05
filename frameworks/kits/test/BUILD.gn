@@ -181,6 +181,33 @@ ohos_moduletest("ability_conetxt_test") {
   ]
 }
 
+ohos_moduletest("ability_thread_call_request_module_test") {
+  module_out_path = module_output_path
+  sources = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/moduletest/cpp/abilitytest/ability_thread_call_request_module_test.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [ "ability_runtime:runtime" ]
+}
+
 ohos_moduletest("data_ability_operation_moduletest") {
   module_out_path = module_output_path
   sources = [
@@ -307,6 +334,7 @@ group("moduletest") {
   if (is_phone_product) {
     deps += [
       ":ability_conetxt_test",
+      ":ability_thread_call_request_module_test",
 
       # ":ability_moduletest",
       ":data_ability_helper_module_test",

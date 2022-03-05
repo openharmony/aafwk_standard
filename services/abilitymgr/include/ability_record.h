@@ -885,6 +885,7 @@ private:
     int32_t restartCount_ = -1;
     int32_t restratMax_ = -1;
     std::string specifiedFlag_;
+    std::mutex lock_;
 };
 
 class AbilityRecordNew : public AbilityRecord {

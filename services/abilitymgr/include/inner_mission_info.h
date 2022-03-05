@@ -31,6 +31,10 @@ enum class JsonType {
     ARRAY,
     STRING,
 };
+enum class StartMethod {
+    START_NORMAL,
+    START_CALL,
+};
 
 /**
  * @struct InnerMissionInfo
@@ -40,6 +44,7 @@ struct InnerMissionInfo {
     MissionInfo missionInfo;
     std::string missionName;
     bool isSingletonMode;
+    int32_t startMethod;
 
     std::string ToJsonStr() const;
     bool FromJsonStr(const std::string &jsonStr);
