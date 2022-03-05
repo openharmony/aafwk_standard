@@ -36,7 +36,7 @@ namespace OHOS {
 namespace AppExecFwk {
 namespace {
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
-static const int APP_MS_TimeOut = 60;
+static const int APP_MS_TIMEOUT = 60;
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
 const std::string TASK_APPLICATION_FOREGROUNDED = "ApplicationForegroundedTask";
@@ -150,7 +150,7 @@ ErrCode AppMgrService::Init()
         APP_LOGE("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
     }
-    if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TimeOut) != 0) {
+    if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TIMEOUT) != 0) {
         APP_LOGE("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
     APP_LOGI("init success");
