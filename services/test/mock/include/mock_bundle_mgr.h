@@ -37,8 +37,16 @@ const std::string COM_IX_HIDATA = "com.ix.hiData";
 const std::string COM_IX_PHONE = "com.ix.hiPhone";
 const std::string COM_IX_TV = "com.ix.hiTV";
 const std::string COM_IX_Film = "com.ix.hiFilm";
+const std::string COM_IX_HIBACKGROUNDMUSIC = "com.ix.hiBackgroundMusic";
+const std::string COM_IX_HIBACKGROUNDDATA = "com.ix.hiBackgroundData";
+const std::string COM_IX_HISINGLEMUSIC = "com.ix.hiSingleMusicInfo";
+const std::string COM_OHOS_Test = "com.ohos.test";
+const std::string COM_IX_HIACCOUNT = "com.ix.hiAccount";
+const std::string COM_IX_HIACCOUNTSERVICE = "com.ix.hiAccountService";
 constexpr int32_t MAX_SYS_UID = 2899;
 constexpr int32_t ROOT_UID = 0;
+const int32_t BASE_USER_RANGE = 200000;
+const int32_t MOCK_MAIN_UID = 20000000;
 
 auto HiWordInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
     abilityInfo.name = elementTemp.GetAbilityName();
@@ -191,6 +199,102 @@ auto HiFilmInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementNa
     }
     return true;
 };
+auto HiBAckgroundMusicInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationName = "hiBackgroundMusic";
+    abilityInfo.applicationInfo.name = "hiBackgroundMusic";
+    abilityInfo.type = AbilityType::SERVICE;
+    abilityInfo.process = "p4";
+    return true;
+};
+
+auto HiBAckgroundDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationName = "hiBackgroundData";
+    abilityInfo.applicationInfo.name = "hiBackgroundData";
+    abilityInfo.type = AbilityType::SERVICE;
+    abilityInfo.process = "p4";
+    return true;
+};
+
+auto HiSingleMusicInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationName = "hiSingleMusic";
+    abilityInfo.applicationInfo.name = "hiSingleMusic";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.process = "p3";
+    if (elementTemp.GetAbilityName() == "SingleMusicAbility") {
+        abilityInfo.launchMode = LaunchMode::STANDARD;
+    }
+    if (elementTemp.GetAbilityName() == "SingleMusicTopAbility") {
+        abilityInfo.launchMode = LaunchMode::SINGLETON;
+    }
+    return true;
+};
+
+auto TestInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationName = "com.ohos.test";
+    abilityInfo.applicationInfo.name = "com.ohos.test";
+    abilityInfo.moduleName = ".MyApplication";
+    abilityInfo.package = "com.ohos.test";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.applicationInfo.isLauncherApp = false;
+    abilityInfo.kind = "page";
+    abilityInfo.process = "p10";
+    abilityInfo.labelId = 10001;
+    abilityInfo.label = "$string:label";
+    abilityInfo.descriptionId = 10002;
+    abilityInfo.description = "$string:mainability_description";
+    abilityInfo.iconId = 10003;
+    abilityInfo.iconPath = "$media:icon";
+    abilityInfo.theme = "mytheme";
+    abilityInfo.readPermission = "readPermission";
+    abilityInfo.writePermission = "writePermission";
+    abilityInfo.resourcePath = "/data/app/com.ohos.test";
+    abilityInfo.srcPath = "/resources/base/profile";
+    abilityInfo.srcLanguage = "C++";
+    abilityInfo.isLauncherAbility = false;
+    abilityInfo.isNativeAbility = false;
+    abilityInfo.enabled = false;
+    abilityInfo.supportPipMode = false;
+    abilityInfo.formEnabled = false;
+    return true;
+};
+auto HiAccountInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.uid = MOCK_MAIN_UID;
+    abilityInfo.applicationName = "AccountTest";
+    abilityInfo.applicationInfo.name = "AccountTest";
+    abilityInfo.type = AbilityType::PAGE;
+    abilityInfo.applicationInfo.isLauncherApp = true;
+    return true;
+};
+
+auto HiAccountServiceInfo = [](std::string bundleName, AbilityInfo &abilityInfo, ElementName &elementTemp) {
+    abilityInfo.name = elementTemp.GetAbilityName();
+    abilityInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
+    abilityInfo.applicationInfo.uid = MOCK_MAIN_UID;
+    abilityInfo.applicationName = "AccountServiceTest";
+    abilityInfo.applicationInfo.name = "AccountServiceTest";
+    abilityInfo.type = AbilityType::SERVICE;
+    abilityInfo.applicationInfo.isLauncherApp = true;
+    return true;
+};
 }  // namespace
 class BundleMgrProxy : public IRemoteProxy<IBundleMgr> {
 public:
@@ -270,7 +374,6 @@ public:
     MOCK_METHOD2(QueryWantAbility, int(const AAFwk::Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
-    MOCK_METHOD3(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId));
     MOCK_METHOD2(GetBundleNameForUid, bool(const int uid, std::string &bundleName));
     MOCK_METHOD2(GetBundleGids, bool(const std::string &bundleName, std::vector<int> &gids));
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
@@ -372,6 +475,13 @@ public:
     {
         return true;
     }
+    virtual bool GetBundleInfos(
+        const BundleFlag flag,
+        std::vector<BundleInfo> &bundleInfos,
+        int32_t userId = Constants::UNSPECIFIED_USERID)
+    {
+        return false;
+    }
     BundleMgrService()
     {
         abilityInfoMap_.emplace(COM_IX_HIWORLD, HiWordInfo);
@@ -383,6 +493,12 @@ public:
         abilityInfoMap_.emplace(COM_IX_PHONE, HiPhoneInfo);
         abilityInfoMap_.emplace(COM_IX_TV, HiTVInfo);
         abilityInfoMap_.emplace(COM_IX_Film, HiFilmInfo);
+        abilityInfoMap_.emplace(COM_IX_HIBACKGROUNDMUSIC, HiBAckgroundMusicInfo);
+        abilityInfoMap_.emplace(COM_IX_HIBACKGROUNDDATA, HiBAckgroundDataInfo);
+        abilityInfoMap_.emplace(COM_IX_HISINGLEMUSIC, HiSingleMusicInfo);
+        abilityInfoMap_.emplace(COM_OHOS_Test, TestInfo);
+        abilityInfoMap_.emplace(COM_IX_HIACCOUNT, HiAccountInfo);
+        abilityInfoMap_.emplace(COM_IX_HIACCOUNTSERVICE, HiAccountServiceInfo);
     }
 
     virtual ~BundleMgrService()
