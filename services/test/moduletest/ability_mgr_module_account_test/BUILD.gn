@@ -16,7 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
 
-ohos_moduletest("ability_stack_module_test") {
+ohos_moduletest("ability_mgr_module_account_test") {
   module_out_path = module_output_path
 
   include_dirs = [
@@ -27,7 +27,7 @@ ohos_moduletest("ability_stack_module_test") {
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]
 
-  sources = [ "ability_stack_module_test.cpp" ]
+  sources = [ "ability_mgr_module_account_test.cpp" ]
   sources += [
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_callback_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_connect_manager.cpp",
@@ -52,6 +52,7 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_deal.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/lifecycle_state_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_description_info.cpp",
+    "//foundation/aafwk/standard/services/abilitymgr/src/mission_option.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_snapshot.cpp",
@@ -62,24 +63,22 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/pending_want_record.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/power_storage.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/shared_memory.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_receiver_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_app_mgr_client.cpp",
     "//foundation/aafwk/standard/services/test/mock/src/mock_bundle_mgr.cpp",
   ]
+
   configs = [
     "${services_path}/test:aafwk_module_test_config",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager_public_config",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock_config",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base_sdk_config",
     "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:bundlemgr_sdk_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -87,8 +86,6 @@ ohos_moduletest("ability_stack_module_test") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${innerkits_path}/base:base",
-    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
@@ -100,7 +97,9 @@ ohos_moduletest("ability_stack_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
@@ -113,7 +112,6 @@ ohos_moduletest("ability_stack_module_test") {
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
-    "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
@@ -129,6 +127,5 @@ ohos_moduletest("ability_stack_module_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":ability_stack_module_test" ]
+  deps = [ ":ability_mgr_module_account_test" ]
 }
