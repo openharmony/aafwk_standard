@@ -19,10 +19,13 @@ ohos_shared_library("napi_common") {
     "//third_party/node/src",
     "//third_party/libuv/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "//third_party/jsoncpp",
+    "//third_party/jsoncpp/include/json",
   ]
 
   sources = [
     "napi_common_ability.cpp",
+    "napi_common_call_util.cpp",
     "napi_common_configuration.cpp",
     "napi_common_start_options.cpp",
     "napi_common_util.cpp",
@@ -34,6 +37,7 @@ ohos_shared_library("napi_common") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/ace/napi:ace_napi",
+    "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
     "//utils/native/base:utils",
   ]
