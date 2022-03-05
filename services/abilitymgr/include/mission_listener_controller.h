@@ -82,6 +82,8 @@ public:
      */
     void NotifyMissionMovedToFront(int32_t missionId);
 
+    void HandleUnInstallApp(std::list<int32_t> missions);
+
 private:
     void NotifyListeners(int32_t missionId, IMissionListener::MissionListenerCmd cmd);
     void OnListenerDied(const wptr<IRemoteObject> &remote);

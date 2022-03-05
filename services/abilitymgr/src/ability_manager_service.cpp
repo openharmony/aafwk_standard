@@ -61,6 +61,7 @@ namespace OHOS {
 namespace AAFwk {
 using namespace std::chrono;
 const bool CONCURRENCY_MODE_FALSE = false;
+const int32_t BASE_USER_RANGE = 200000;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
 constexpr int32_t INVALID_USER_ID = -1;
@@ -2685,21 +2686,23 @@ int AbilityManagerService::ClearUpApplicationData(const std::string &bundleName)
     return ERR_OK;
 }
 
-int AbilityManagerService::UninstallApp(const std::string &bundleName)
+int AbilityManagerService::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     HILOG_DEBUG("Uninstall app, bundleName: %{public}s", bundleName.c_str());
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t pid = getpid();
-    if (callingPid != pid) {
+    if (callingPid != pid) { 
         HILOG_ERROR("%{public}s: Not bundleMgr call.", __func__);
         return CHECK_PERMISSION_FAILED;
     }
 
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    currentStackManager_->UninstallApp(bundleName);
+    int32_t targetUserId = uid / BASE_USER_RANGE;
+    auto listManager = GetListManagerByUserId(targetUserId);
+    CHECK_POINTER_AND_RETURN(listManager, ERR_NO_INIT);
+    listManager->UninstallApp(bundleName, uid);
     CHECK_POINTER_AND_RETURN(pendingWantManager_, ERR_NO_INIT);
-    pendingWantManager_->ClearPendingWantRecord(bundleName);
-    int ret = DelayedSingleton<AppScheduler>::GetInstance()->KillApplication(bundleName);
+    pendingWantManager_->ClearPendingWantRecord(bundleName, uid);
+    int ret = DelayedSingleton<AppScheduler>::GetInstance()->KillApplicationByUid(bundleName, uid);
     if (ret != ERR_OK) {
         return UNINSTALL_APP_FAILED;
     }
