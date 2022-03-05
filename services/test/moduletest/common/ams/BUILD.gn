@@ -94,8 +94,8 @@ ohos_source_set("appmgr_mst_source") {
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
-    "hisysevent_native:libhisysevent",
     "hicollie_native:libhicollie",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
