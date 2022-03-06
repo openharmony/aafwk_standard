@@ -203,6 +203,26 @@ public:
     int DistributedDataDeleteForm(const std::string &formId) override;
 
     /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms to delete.
+     * @param callerToken Caller ability token.
+     * @param numFormsDeleted Returns the number of the deleted forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DeleteInvalidForms(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                   int32_t &numFormsDeleted) override;
+
+    /**
+     * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+     * @param want Indicates a set of parameters to be transparently passed to the form provider.
+     * @param callerToken Caller ability token.
+     * @param stateInfo Returns the form's state info of the specify.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken,
+                                 FormStateInfo &stateInfo) override;
+
+    /**
      * @brief Get All FormsInfo.
      * @param formInfos Return the forms' information of all forms provided.
      * @return Returns ERR_OK on success, others on failure.

@@ -39,6 +39,8 @@ FormProviderStub::FormProviderStub()
         &FormProviderStub::HandleNotifyFormCastTempForm;
     memberFuncMap_[static_cast<uint32_t>(IFormProvider::Message::FORM_PROVIDER_EVENT_MESSAGE)] =
         &FormProviderStub::HandleFireFormEvent;
+    memberFuncMap_[static_cast<uint32_t>(IFormProvider::Message::FORM_PROVIDER_NOTIFY_STATE_ACQUIRE)] =
+        &FormProviderStub::HandleAcquireState;
 }
 
 FormProviderStub::~FormProviderStub()
@@ -261,6 +263,33 @@ int FormProviderStub::HandleFireFormEvent(MessageParcel &data, MessageParcel &re
     }
 
     int32_t result = FireFormEvent(formId, message, *want, client);
+    reply.WriteInt32(result);
+    return result;
+}
+/**
+ * @brief handle AcquireState message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormProviderStub::HandleAcquireState(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<Want> wantArg(data.ReadParcelable<Want>());
+    if (!wantArg) {
+        HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    if (client == nullptr) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    int32_t result = AcquireState(*wantArg, *want, client);
     reply.WriteInt32(result);
     return result;
 }

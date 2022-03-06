@@ -18,6 +18,7 @@
 
 #include "extension_base.h"
 #include "form_provider_info.h"
+#include "form_state_info.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -128,6 +129,15 @@ public:
      * @return none.
      */
     virtual void OnVisibilityChange(const std::map<int64_t, int32_t>& formEventsMap);
+
+    /**
+     * @brief Called to notify the form provider to acquire form state.
+     *
+     * @param want   Indicates the detailed information about the form to be obtained, including
+     *               the bundle name, module name, ability name, form name and form dimension.
+     * @return none.
+     */
+    virtual FormState OnAcquireFormState(const Want &want);
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

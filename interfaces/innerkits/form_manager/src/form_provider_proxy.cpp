@@ -348,6 +348,50 @@ int FormProviderProxy::FireFormEvent(
     return ERR_OK;
 }
 
+/**
+ * @brief Acquire form state to form provider.
+ * @param wantArg The want of onAcquireFormState.
+ * @param want The want of the request.
+ * @param callerToken Form provider proxy object.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormProviderProxy::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    if (!data.WriteParcelable(&wantArg)) {
+        HILOG_ERROR("%{public}s, failed to write wantArg", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(callerToken)) {
+        HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormProvider::Message::FORM_PROVIDER_NOTIFY_STATE_ACQUIRE),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return error;
+    }
+    return ERR_OK;
+}
+
 template<typename T>
 int  FormProviderProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {

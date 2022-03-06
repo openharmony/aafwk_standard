@@ -92,6 +92,12 @@ public:
     ErrCode NotifyProviderFormsBatchDelete(const std::string &bundleName, const std::string &abilityName, 
     const std::set<int64_t> &formIds);
     /**
+     * @brief Acquire form state.
+     * @param want Want.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode AcquireFormState(const Want &want);
+    /**
      * @brief Process js message event.
      * @param formId Indicates the unique id of form.
      * @param record Form record.
