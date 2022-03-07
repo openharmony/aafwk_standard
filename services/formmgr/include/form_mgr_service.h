@@ -233,7 +233,7 @@ private:
      */
     ErrCode Init();
 
-    bool CheckFormPermission();
+    ErrCode CheckFormPermission();
 private:
     ServiceRunningState state_;
 

@@ -2005,7 +2005,7 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::ReleaseForm(const int64_t formId)
+ErrCode Ability::ReleaseForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // release form by formId and do not release cache
@@ -2033,7 +2033,7 @@ bool Ability::ReleaseForm(const int64_t formId)
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
+ErrCode Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
 {
     APP_LOGI("%{public}s called.", __func__);
     // release form with formId and specifies whether to release the cache
@@ -2059,7 +2059,7 @@ bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::DeleteForm(const int64_t formId)
+ErrCode Ability::DeleteForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // delete form with formId
@@ -2097,26 +2097,26 @@ int Ability::StopBackgroundRunning()
  *
  * @return Returns {@code true} if the form is successfully casted; returns {@code false} otherwise.
  */
-bool Ability::CastTempForm(const int64_t formId)
+ErrCode Ability::CastTempForm(const int64_t formId)
 {
     APP_LOGI("%{public}s start", __func__);
     if (formId <= 0) {
         APP_LOGE("%{public}s error, passing in form id can't be negative.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
-    int result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
+    ErrCode result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
 
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
-        return false;
+        return result;
     }
 
     userReqParams_[formId].SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, false);
 
     APP_LOGI("%{public}s end", __func__);
-    return true;
+    return result;
 }
 
 /**
@@ -2209,35 +2209,33 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
  * @param formProviderData The data used to update the JS form displayed on the client.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProviderData)
+ErrCode Ability::UpdateForm(const int64_t formId, const FormProviderData &formProviderData)
 {
     APP_LOGI("%{public}s called.", __func__);
     // check fms recover status
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // check formId
     if (formId <= 0) {
         APP_LOGE("%{public}s error, the passed in formId can't be negative or zero.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     // check formProviderData
     if (formProviderData.GetDataString().empty()) {
         APP_LOGE("%{public}s error, the formProviderData is null.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_PROVIDER_DATA_EMPTY;
     }
 
     // update form request to fms
-    if (FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData) != ERR_OK) {
+    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+    if (result != ERR_OK) {
         APP_LOGE("%{public}s error, update form for fms failed.", __func__);
-        return false;
     }
-
-    // the update form is successfully
-    return true;
+    return result;
 }
 
 /**
@@ -2249,7 +2247,7 @@ bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProvi
  * @param formIds Indicates the IDs of the forms to be made visible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
+ErrCode Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_VISIBLE);
@@ -2264,7 +2262,7 @@ bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
  * @param formIds Indicates the IDs of the forms to be made invisible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
+ErrCode Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_INVISIBLE);
@@ -2279,26 +2277,25 @@ bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
  * @param nextTime Indicates the next time gap now in seconds, can not be litter than 300 seconds.
  * @return Returns {@code true} if seting succeed; returns {@code false} otherwise.
  */
-bool Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime)
+ErrCode Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (nextTime < MIN_NEXT_TIME) {
         APP_LOGE("next time litte than 300 seconds.");
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_REFRESH_TIME;
     }
 
     if (FormMgr::GetInstance().GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s, formManager is in recovering", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
-    int result = FormMgr::GetInstance().SetNextRefreshTime(formId, nextTime);
+    ErrCode result = FormMgr::GetInstance().SetNextRefreshTime(formId, nextTime);
     if (result != ERR_OK) {
         APP_LOGE("%{public}s, internal error:[%{public}d]", __func__, result);
-        return false;
     }
 
-    return true;
+    return result;
 }
 /**
  * @brief Requests for form data update.
@@ -2311,7 +2308,7 @@ bool Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTim
  * @param formId Indicates the ID of the form to update.
  * @return Returns true if the update request is successfully initiated, returns false otherwise.
  */
-bool Ability::RequestForm(const int64_t formId)
+ErrCode Ability::RequestForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     Want want;
@@ -2445,18 +2442,18 @@ void Ability::OnTriggerEvent(const int64_t formId, const std::string &message)
  * @param deleteType Indicates the type of delete or release.
  * @return Returns {@code true} if the form is successfully deleted; returns {@code false} otherwise.
  */
-bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
+ErrCode Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
 {
     APP_LOGI("%{public}s called.", __func__);
     // check fms recover status
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
     // check formId
     if (formId <= 0) {
         APP_LOGE("%{public}s error, the passed in formId can't be negative or zero.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     APP_LOGI("%{public}s, delete form begin, formId is %{public}" PRId64 " and deleteType is %{public}d.",
@@ -2471,14 +2468,14 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
             lostedByReconnectTempForms_.end()) {
             CleanFormResource(formId);
             // the delete temp form is successfully
-            return true;
+            return ERR_OK;
         }
     }
 
     // hostClient init
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
     // delete or release request to fms
-    int result;
+    ErrCode result;
     if (deleteType == DELETE_FORM) {
         result = FormMgr::GetInstance().DeleteForm(formId, formHostClient);
     } else {
@@ -2487,7 +2484,7 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
     }
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
-        return false;
+        return result;
     }
     {
         // form lock
@@ -2496,7 +2493,7 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
         CleanFormResource(formId);
     }
     // the delete form is successfully
-    return true;
+    return result;
 }
 
 /**
@@ -2623,26 +2620,25 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
  *                  and FORM_INVISIBLE means that the form becomes invisible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType)
+ErrCode Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (formIds.empty() || formIds.size() > Constants::MAX_VISIBLE_NOTIFY_LIST) {
         APP_LOGE("%{public}s, formIds is empty or exceed 32.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
-    int resultCode =
+    ErrCode resultCode =
         FormMgr::GetInstance().NotifyWhetherVisibleForms(formIds, FormHostClient::GetInstance(), eventType);
     if (resultCode != ERR_OK) {
         APP_LOGE("%{public}s error, internal error occurs, error code:%{public}d.", __func__, resultCode);
-        return false;
     }
-    return true;
+    return resultCode;
 }
 
 /**
@@ -2699,7 +2695,7 @@ bool Ability::CheckWantValid(const int64_t formId, const Want &want)
  *
  * @param formIds FormIds of hostclient.
  */
-bool Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
+ErrCode Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return LifecycleUpdate(formIds, ENABLE_FORM_UPDATE);
@@ -2710,33 +2706,27 @@ bool Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
  *
  * @param formIds FormIds of hostclient.
  */
-bool Ability::DisableUpdateForm(const std::vector<int64_t> &formIds)
+ErrCode Ability::DisableUpdateForm(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return LifecycleUpdate(formIds, DISABLE_FORM_UPDATE);
 }
 
-bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
+ErrCode Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
 {
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // hostClient init
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
     if (formHostClient == nullptr) {
         APP_LOGE("%{public}s error, formHostClient == nullptr.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_GET_HOST_FAILED;
     }
 
-    int result = FormMgr::GetInstance().LifecycleUpdate(formIds, formHostClient, updateType);
-    if (result != ERR_OK) {
-        APP_LOGE("%{public}s error, internal error.", __func__);
-        return false;
-    }
-
-    return true;
+    return FormMgr::GetInstance().LifecycleUpdate(formIds, formHostClient, updateType);
 }
 
 /**
@@ -2751,30 +2741,28 @@ bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
  * @param want Indicates a set of parameters to be transparently passed to the form provider.
  * @return Returns true if the update request is successfully initiated, returns false otherwise.
  */
-bool Ability::RequestForm(const int64_t formId, const Want &want)
+ErrCode Ability::RequestForm(const int64_t formId, const Want &want)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (formId <= 0) {
         APP_LOGE("%{public}s error, The passed formid is invalid. Its value must be larger than 0.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // requestForm request to fms
-    int resultCode = FormMgr::GetInstance().RequestForm(formId, FormHostClient::GetInstance(), want);
+    ErrCode resultCode = FormMgr::GetInstance().RequestForm(formId, FormHostClient::GetInstance(), want);
     if (resultCode != ERR_OK) {
         APP_LOGE("%{public}s error, failed to notify the form service that the form user's lifecycle is updated, error "
                  "code is %{public}d.",
             __func__,
             resultCode);
-        return false;
     }
-
-    return true;
+    return resultCode;
 }
 
 /**
@@ -2888,23 +2876,17 @@ bool Ability::CheckFMSReady()
  * @param formInfos Return the forms' information of all forms provided.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetAllFormsInfo request to fms
-    int resultCode = FormMgr::GetInstance().GetAllFormsInfo(formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetAllFormsInfo, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
-
-    return !formInfos.empty();
+    return FormMgr::GetInstance().GetAllFormsInfo(formInfos);
 }
 
 /**
@@ -2914,27 +2896,21 @@ bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
  * @param formInfos Return the forms' information of the specify application name.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (bundleName.empty()) {
         APP_LOGW("Failed to Get forms info, because empty bundle name");
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetFormsInfoByApp request to fms
-    int resultCode = FormMgr::GetInstance().GetFormsInfoByApp(bundleName, formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetFormsInfoByApp, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
-
-    return !formInfos.empty();
+    return FormMgr::GetInstance().GetFormsInfoByApp(bundleName, formInfos);
 }
 
 /**
@@ -2945,27 +2921,37 @@ bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &
  * @param formInfos Return the forms' information of the specify bundle name and module name.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+    std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (bundleName.empty() || moduleName.empty()) {
-        APP_LOGW("Failed to Get forms info, because empty bundleName or moduleName");
-        return false;
+    if (bundleName.empty()) {
+        APP_LOGW("Failed to Get forms info, because empty bundleName");
+        return ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME;
+    }
+
+    if (moduleName.empty()) {
+        APP_LOGW("Failed to Get forms info, because empty moduleName");
+        return ERR_APPEXECFWK_FORM_INVALID_MODULENAME;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetFormsInfoByModule request to fms
-    int resultCode = FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetFormsInfoByModule, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
+    return FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+}
 
-    return !formInfos.empty();
+/**
+ * @brief Get the error message by error code.
+ * @param errorCode the error code return form fms.
+ * @return Returns the error message detail.
+ */
+std::string Ability::GetErrorMsg(const ErrCode errorCode)
+{
+    return FormMgr::GetInstance().GetErrorMessage(errorCode);
 }
 
 /**

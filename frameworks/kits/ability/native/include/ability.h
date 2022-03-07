@@ -26,6 +26,7 @@
 #include "ability_lifecycle_executor.h"
 #include "ability_lifecycle_interface.h"
 #include "ability_window.h"
+#include "appexecfwk_errors.h"
 #include "configuration.h"
 #include "context.h"
 #include "continuation_handler.h"
@@ -992,7 +993,7 @@ public:
      * <li>The form is being restored.</li>
      * </ul>
      */
-    bool ReleaseForm(const int64_t formId);
+    ErrCode ReleaseForm(const int64_t formId);
 
     /**
      * @brief Releases an obtained form by its ID.
@@ -1015,7 +1016,7 @@ public:
      * <li>The form is being restored.</li>
      * </ul>
      */
-    bool ReleaseForm(const int64_t formId, const bool isReleaseCache);
+    ErrCode ReleaseForm(const int64_t formId, const bool isReleaseCache);
 
     /**
      * @brief Deletes an obtained form by its ID.
@@ -1036,7 +1037,7 @@ public:
      * <li>The form is being restored.</li>
      * </ul>
      */
-    bool DeleteForm(const int64_t formId);
+    ErrCode DeleteForm(const int64_t formId);
 
     /**
      * @brief Keep this Service ability in the background and displays a notification bar.
@@ -1120,7 +1121,7 @@ public:
      * @param formProviderData The data used to update the JS form displayed on the client.
      * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
      */
-    bool UpdateForm(const int64_t formId, const FormProviderData &formProviderData);
+    ErrCode UpdateForm(const int64_t formId, const FormProviderData &formProviderData);
 
     /**
      * @brief Cast temp form with formId.
@@ -1129,7 +1130,7 @@ public:
      *
      * @return Returns {@code true} if the form is successfully casted; returns {@code false} otherwise.
      */
-    bool CastTempForm(const int64_t formId);
+    ErrCode CastTempForm(const int64_t formId);
 
     /**
      * @brief Sends a notification to the form framework to make the specified forms visible.
@@ -1140,7 +1141,7 @@ public:
      * @param formIds Indicates the IDs of the forms to be made visible.
      * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
      */
-    bool NotifyVisibleForms(const std::vector<int64_t> &formIds);
+    ErrCode NotifyVisibleForms(const std::vector<int64_t> &formIds);
 
     /**
      * @brief Sends a notification to the form framework to make the specified forms invisible.
@@ -1151,7 +1152,7 @@ public:
      * @param formIds Indicates the IDs of the forms to be made invisible.
      * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
      */
-    bool NotifyInvisibleForms(const std::vector<int64_t> &formIds);
+    ErrCode NotifyInvisibleForms(const std::vector<int64_t> &formIds);
 
     /**
      * @brief Set form next refresh time.
@@ -1163,7 +1164,7 @@ public:
      * @return Returns {@code true} if seting succeed; returns {@code false} otherwise.
      */
 
-    bool SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime);
+    ErrCode SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime);
 
     /**
      * @brief Update form.
@@ -1256,7 +1257,7 @@ public:
      * @param formId Indicates the ID of the form to update.
      * @return Returns true if the update request is successfully initiated, returns false otherwise.
      */
-    bool RequestForm(const int64_t formId);
+    ErrCode RequestForm(const int64_t formId);
 
     /**
      * @brief Requests for form data update, by passing a set of parameters (using Want) to the form provider.
@@ -1270,20 +1271,20 @@ public:
      * @param want Indicates a set of parameters to be transparently passed to the form provider.
      * @return Returns true if the update request is successfully initiated, returns false otherwise.
      */
-    bool RequestForm(const int64_t formId, const Want &want);
+    ErrCode RequestForm(const int64_t formId, const Want &want);
     /**
      * @brief Enable form update.
      *
      * @param formIds formIds of hostclient.
      */
-    bool EnableUpdateForm(const std::vector<int64_t> &formIds);
+    ErrCode EnableUpdateForm(const std::vector<int64_t> &formIds);
 
     /**
      * @brief Disable form update.
      *
      * @param formIds formIds of hostclient.
      */
-    bool DisableUpdateForm(const std::vector<int64_t> &formIds);
+    ErrCode DisableUpdateForm(const std::vector<int64_t> &formIds);
 
     /**
      * @brief Check form manager service ready.
@@ -1298,7 +1299,7 @@ public:
      * @param formInfos Returns the forms' information of all forms provided.
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
-    bool GetAllFormsInfo(std::vector<FormInfo> &formInfos);
+    ErrCode GetAllFormsInfo(std::vector<FormInfo> &formInfos);
 
     /**
      * @brief Get forms info by application name.
@@ -1307,7 +1308,7 @@ public:
      * @param formInfos Returns the forms' information of the specify application name.
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
-    bool GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos);
+    ErrCode GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos);
 
     /**
      * @brief Get forms info by application name and module name.
@@ -1317,7 +1318,14 @@ public:
      * @param formInfos Returns the forms' information of the specify application name and module name.
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
-    bool GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
+    ErrCode GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Get the error message by error code.
+     * @param errorCode the error code return form fms.
+     * @return Returns the error message detail.
+     */
+    std::string GetErrorMsg(const ErrCode errorCode);
 
     /**
      * @brief Acquire a bundle manager, if it not existed,
@@ -1617,7 +1625,7 @@ private:
      * @param deleteType Indicates the type of delete or release.
      * @return Returns {@code true} if the form is successfully deleted; returns {@code false} otherwise.
      */
-    bool DeleteForm(const int64_t formId, const int32_t deleteType);
+    ErrCode DeleteForm(const int64_t formId, const int32_t deleteType);
 
     /**
      * @brief Clean form resource with formId.
@@ -1656,7 +1664,7 @@ private:
      *                  and FORM_INVISIBLE means that the form becomes invisible.
      * @return none.
      */
-    bool NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType);
+    ErrCode NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType);
 
     /**
      * @brief Check the param of want.
@@ -1675,7 +1683,7 @@ private:
      * @param updateType Update type.
      * @return Returns true if the result is ok; returns false otherwise.
      */
-    bool LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType);
+    ErrCode LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType);
 
     /**
      * @brief Reacquire a specified form when the death callback is received.

@@ -17,6 +17,7 @@
 #define FORM_ABILITY_H_
 
 #include "ability.h"
+#include "appexecfwk_errors.h"
 #include "form_info.h"
 #include "form_js_info.h"
 #include "form_provider_info.h"
@@ -149,6 +150,16 @@ struct AsyncGetFormsInfoCallbackInfo {
     std::string bundleName;
     std::string moduleName;
     int result;
+};
+
+struct AsyncErrMsgCallbackInfo {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    napi_value callbackValue;
+    int code;
+    int type;
 };
 
 napi_value NAPI_DeleteForm(napi_env env, napi_callback_info info);
