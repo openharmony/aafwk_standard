@@ -42,7 +42,8 @@ namespace {
 const int32_t MOCK_MAIN_USER_ID = 100;
 const int32_t MOCK_MISSION_ID = 10000;
 const int32_t MOCK_U0_USER_ID = 0;
-}
+}  // namespace
+
 static void WaitUntilTaskFinished()
 {
     const uint32_t maxRetryCount = 1000;
@@ -121,8 +122,8 @@ void AbilityTimeoutTest::TearDown()
     abilityMs_->currentMissionListManager_->defaultStandardList_->missions_.clear();
     abilityMs_->currentMissionListManager_->defaultSingleList_->missions_.clear();
     abilityMs_->currentMissionListManager_->currentMissionLists_.clear();
-    abilityMs_->currentMissionListManager_->currentMissionLists_
-        .push_front(abilityMs_->currentMissionListManager_->launcherList_);
+    abilityMs_->currentMissionListManager_->currentMissionLists_.push_front(
+        abilityMs_->currentMissionListManager_->launcherList_);
 }
 
 void AbilityTimeoutTest::MockOnStart()
@@ -160,7 +161,7 @@ void AbilityTimeoutTest::MockOnStart()
 
     abilityMs_->InitMissionListManager(userId, true);
     abilityMs_->SwitchManagers(MOCK_U0_USER_ID, false);
-    
+
     abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
     abilityMs_->iBundleManager_ = new BundleMgrService();
     abilityMs_->eventLoop_->Run();
@@ -211,7 +212,7 @@ HWTEST_F(AbilityTimeoutTest, GetMaxRestartNum_001, TestSize.Level1)
 
     int maxRestart = -1;
     abilityMs_->GetMaxRestartNum(maxRestart);
-    
+
     EXPECT_TRUE(maxRestart > -1);
 }
 
@@ -301,7 +302,7 @@ HWTEST_F(AbilityTimeoutTest, HandleLoadTimeOut_001, TestSize.Level1)
     auto lauList = abilityMs_->currentMissionListManager_->launcherList_;
     EXPECT_TRUE(lauList != nullptr);
     EXPECT_EQ((int)(abilityMs_->currentMissionListManager_->currentMissionLists_.size()), 1);
-    
+
     // root launcher ability load timeout
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
@@ -380,7 +381,7 @@ HWTEST_F(AbilityTimeoutTest, HandleLoadTimeOut_002, TestSize.Level1)
 
     abilityMs_->useNewMission_ = true;
     abilityMs_->HandleLoadTimeOut(abilityRecord->eventId_);
-    
+
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(abilityRecord->GetToken()) == nullptr);
     auto topAbility = curListManager->GetCurrentTopAbilityLocked();
     EXPECT_EQ(launcher, topAbility);
@@ -433,7 +434,8 @@ HWTEST_F(AbilityTimeoutTest, HandleLoadTimeOut_003, TestSize.Level1)
     // common ability load timeout
     abilityRequest.abilityInfo.name = "com.test.Timeout003";
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    auto mission = std::make_shared<Mission>(MOCK_MISSION_ID + 2, abilityRecord, abilityRequest.abilityInfo.bundleName);
+    auto mission =
+        std::make_shared<Mission>(MOCK_MISSION_ID + 2, abilityRecord, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(abilityRecord != nullptr);
     EXPECT_TRUE(mission != nullptr);
     abilityRecord->SetMission(mission);
@@ -726,7 +728,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_001, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -769,7 +771,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_002, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -791,7 +793,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_002, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground002";
     auto commonLauncher = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonLauncher != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     commonLauncher->SetMission(commonMissionLauncher);
     commonLauncher->SetMissionList(lauList);
@@ -858,8 +861,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_003, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground003";
     auto commonLauncher = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonLauncher != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID + 2,
-        commonLauncher, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID + 2, commonLauncher, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     commonLauncher->SetMission(commonMissionLauncher);
     commonLauncher->eventId_ = AbilityRecord::g_abilityRecordEventId_++;
@@ -892,7 +895,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_004, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -921,8 +924,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_004, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground004";
     auto commonLauncher = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonLauncher != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID,
-        commonLauncher, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     auto missionList = std::make_shared<MissionList>(MissionListType::CURRENT);
     commonLauncher->SetMissionList(missionList);
@@ -959,7 +962,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_005, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -989,8 +992,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_005, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground005";
     auto commonLauncher = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonLauncher != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID,
-        commonLauncher, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     auto missionList = std::make_shared<MissionList>(MissionListType::CURRENT);
     commonLauncher->SetMissionList(missionList);
@@ -1027,7 +1030,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_006, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -1057,8 +1060,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_006, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground006";
     auto commonAbility = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonAbility != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID,
-        commonAbility, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID, commonAbility, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     auto missionList = std::make_shared<MissionList>(MissionListType::CURRENT);
     commonAbility->SetMissionList(missionList);
@@ -1095,7 +1098,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_007, TestSize.Level1)
 
     EXPECT_TRUE(curListManager != nullptr);
     EXPECT_TRUE(lauList != nullptr);
-    
+
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
     abilityRequest.abilityInfo.name = "com.test.rootLauncher";
@@ -1117,7 +1120,8 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_007, TestSize.Level1)
     abilityRequest.abilityInfo.name = "com.test.TimeoutForeground007";
     auto commonLauncher = AbilityRecord::CreateAbilityRecord(abilityRequest);
     EXPECT_TRUE(commonLauncher != nullptr);
-    auto commonMissionLauncher = std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
+    auto commonMissionLauncher =
+        std::make_shared<Mission>(MOCK_MISSION_ID, commonLauncher, abilityRequest.abilityInfo.bundleName);
     EXPECT_TRUE(commonMissionLauncher != nullptr);
     auto missionList = std::make_shared<MissionList>(MissionListType::CURRENT);
     commonLauncher->SetMissionList(missionList);
