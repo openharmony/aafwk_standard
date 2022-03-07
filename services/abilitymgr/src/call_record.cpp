@@ -140,8 +140,6 @@ bool CallRecord::SchedulerDisConnectDone()
 void CallRecord::OnCallStubDied(const wptr<IRemoteObject> & remote)
 {
     HILOG_WARN("callstub is died. id:%{public}d", recordId_);
-    auto object = remote.promote();
-    CHECK_POINTER(object);
 
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);

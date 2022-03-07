@@ -44,8 +44,10 @@ group("moduletest") {
   testonly = true
 
   deps = [
+    "moduletest/ability_mgr_module_account_test:moduletest",
     "moduletest/ability_mgr_service_test:moduletest",
     "moduletest/ability_record_test:moduletest",
+    "moduletest/call_module_test:moduletest",
 
     # "moduletest/ability_stack_test:moduletest",
     "moduletest/common/ams:moduletest",
@@ -54,7 +56,11 @@ group("moduletest") {
     "moduletest/ipc_ability_mgr_test:moduletest",
     "moduletest/ipc_ability_scheduler_test:moduletest",
     "moduletest/module_test_dump_util:module_test_dump_util",
+    "moduletest/on_new_want_module_test:moduletest",
     "moduletest/panding_want_manager_test:moduletest",
+    "moduletest/running_infos_module_test:moduletest",
+    "moduletest/start_option_display_id_test:moduletest",
+    "moduletest/static_start_ability_test:moduletest",
     "//third_party/jsoncpp:jsoncpp",
   ]
 }

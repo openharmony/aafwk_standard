@@ -46,10 +46,59 @@ ohos_unittest("ability_record_test") {
     "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
+    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "device_manager_base:devicemanagersdk",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("ability_record_test_call") {
+  module_out_path = "ability_runtime/ability_call_test"
+
+  include_dirs = [
+    "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/ability_scheduler_mock",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+  ]
+
+  sources = [
+    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "ability_record_test_call.cpp",  # add mock file
+  ]
+
+  configs = [
+    "${services_path}/abilitymgr:abilityms_config",
+    "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
+  ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  deps = [
+    "${innerkits_path}/want:want",
+    "${services_path}/abilitymgr/test:abilityms_test_source",
+    "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
+    "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
+    "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
+    "${services_path}/common:perm_verification",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
     "//utils/native/base:utils",
@@ -66,5 +115,8 @@ ohos_unittest("ability_record_test") {
 group("unittest") {
   testonly = true
 
-  deps = [ ":ability_record_test" ]
+  deps = [
+    ":ability_record_test",
+    ":ability_record_test_call",
+  ]
 }

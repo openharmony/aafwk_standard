@@ -29,8 +29,8 @@ ohos_unittest("AmsAppMgrClientTest") {
   include_dirs = [
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include/",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include/",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//base/account/os_account/frameworks/common/database/include",

@@ -614,8 +614,8 @@ int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &r
         return ERR_INVALID_VALUE;
     }
 
-    if (!reply.WriteParcelable(call)) {
-        HILOG_ERROR("call request write failed.");
+    if (!reply.WriteRemoteObject(call)) {
+        HILOG_ERROR("Connect done remote object error.");
         return ERR_INVALID_VALUE;
     }
 

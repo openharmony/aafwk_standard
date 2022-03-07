@@ -2052,12 +2052,6 @@ void GetAppVersionInfoExecuteCB(napi_env env, void *data)
     std::shared_ptr<AbilityInfo> abilityInfoPtr = appVersionInfoCB->cbBase.ability->GetAbilityInfo();
     std::shared_ptr<ApplicationInfo> appInfoPtr = appVersionInfoCB->cbBase.ability->GetApplicationInfo();
     if (abilityInfoPtr != nullptr && appInfoPtr != nullptr) {
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  bundleName = %{public}s", abilityInfoPtr->bundleName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  appName = %{public}s", abilityInfoPtr->appName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionName1 = %{public}s", abilityInfoPtr->versionName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  name = %{public}s", appInfoPtr->name.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionCode = %{public}d", appInfoPtr->versionCode);
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionName2 = %{public}s", appInfoPtr->versionName.c_str());
         SaveAppVersionInfo(appVersionInfoCB->appVersionInfo, abilityInfoPtr->appName, appInfoPtr->versionName,
             appInfoPtr->versionCode);
     } else {

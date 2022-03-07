@@ -40,7 +40,6 @@
 #include "itest_observer.h"
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
-#include "mission/mission_info_converter.h"
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
@@ -70,6 +69,7 @@ constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
+const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
@@ -339,23 +339,13 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return ERR_WOULD_BLOCK;
     }
 
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(validUserId);
-        if (missionListManager == nullptr) {
-            HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        HILOG_DEBUG("%{public}s StartAbility by MissionList", __func__);
-        return missionListManager->StartAbility(abilityRequest);
-    } else {
-        auto stackManager = GetStackManagerByUserId(validUserId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        HILOG_DEBUG("%{public}s StartAbility by StackManager", __func__);
-        return stackManager->StartAbility(abilityRequest);
+    auto missionListManager = GetListManagerByUserId(validUserId);
+    if (missionListManager == nullptr) {
+        HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
+        return ERR_INVALID_VALUE;
     }
+    HILOG_DEBUG("%{public}s StartAbility by MissionList", __func__);
+    return missionListManager->StartAbility(abilityRequest);
 }
 
 int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
@@ -426,21 +416,12 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(validUserId);
-        if (missionListManager == nullptr) {
-            HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        return missionListManager->StartAbility(abilityRequest);
-    } else {
-        auto stackManager = GetStackManagerByUserId(validUserId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        return stackManager->StartAbility(abilityRequest);
+    auto missionListManager = GetListManagerByUserId(validUserId);
+    if (missionListManager == nullptr) {
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
+        return ERR_INVALID_VALUE;
     }
+    return missionListManager->StartAbility(abilityRequest);
 }
 
 int AbilityManagerService::StartAbility(const Want &want, const StartOptions &startOptions,
@@ -508,21 +489,12 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     GrantUriPermission(want, validUserId);
     abilityRequest.want.SetParam(Want::PARAM_RESV_DISPLAY_ID, startOptions.GetDisplayID());
     abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(validUserId);
-        if (missionListManager == nullptr) {
-            HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        return missionListManager->StartAbility(abilityRequest);
-    } else {
-        auto stackManager = GetStackManagerByUserId(validUserId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", validUserId);
-            return ERR_INVALID_VALUE;
-        }
-        return stackManager->StartAbility(abilityRequest);
+    auto missionListManager = GetListManagerByUserId(validUserId);
+    if (missionListManager == nullptr) {
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
+        return ERR_INVALID_VALUE;
     }
+    return missionListManager->StartAbility(abilityRequest);
 }
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
@@ -647,21 +619,12 @@ int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &t
         return ERR_WOULD_BLOCK;
     }
 
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(userId);
-        if (missionListManager == nullptr) {
-            HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return missionListManager->TerminateAbility(abilityRecord, resultCode, resultWant, flag);
-    } else {
-        auto stackManager = GetStackManagerByUserId(userId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return stackManager->TerminateAbility(token, resultCode, resultWant);
+    auto missionListManager = GetListManagerByUserId(userId);
+    if (missionListManager == nullptr) {
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+        return ERR_INVALID_VALUE;
     }
+    return missionListManager->TerminateAbility(abilityRecord, resultCode, resultWant, flag);
 }
 
 int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
@@ -842,21 +805,12 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
         return ERR_WOULD_BLOCK;
     }
 
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(userId);
-        if (!missionListManager) {
-            HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return missionListManager->MinimizeAbility(token, fromUser);
-    } else {
-        auto stackManager = GetStackManagerByUserId(userId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return stackManager->MinimizeAbility(token);
+    auto missionListManager = GetListManagerByUserId(userId);
+    if (!missionListManager) {
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+        return ERR_INVALID_VALUE;
     }
+    return missionListManager->MinimizeAbility(token, fromUser);
 }
 
 int AbilityManagerService::GetRecentMissions(
@@ -1715,21 +1669,12 @@ int AbilityManagerService::AttachAbilityThread(
         }
         returnCode = dataAbilityManager->AttachAbilityThread(scheduler, token);
     } else {
-        if (useNewMission_) {
-            auto missionListManager = GetListManagerByUserId(userId);
-            if (!missionListManager) {
-                HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
-                return ERR_INVALID_VALUE;
-            }
-            returnCode = missionListManager->AttachAbilityThread(scheduler, token);
-        } else {
-            auto stackManager = GetStackManagerByUserId(userId);
-            if (!stackManager) {
-                HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-                return ERR_INVALID_VALUE;
-            }
-            returnCode = stackManager->AttachAbilityThread(scheduler, token);
+        auto missionListManager = GetListManagerByUserId(userId);
+        if (!missionListManager) {
+            HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+            return ERR_INVALID_VALUE;
         }
+        returnCode = missionListManager->AttachAbilityThread(scheduler, token);
     }
     return returnCode;
 }
@@ -1780,6 +1725,7 @@ void AbilityManagerService::DumpSysMissionListInner(
 {
     std::shared_ptr<MissionListManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1811,6 +1757,7 @@ void AbilityManagerService::DumpSysAbilityInner(
 {
     std::shared_ptr<MissionListManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1843,6 +1790,7 @@ void AbilityManagerService::DumpSysStateInner(
     std::shared_ptr<AbilityConnectManager> targetManager;
 
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = connectManagers_.find(userId);
         if (it == connectManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1875,6 +1823,7 @@ void AbilityManagerService::DumpSysPendingInner(
 {
     std::shared_ptr<PendingWantManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = pendingWantManagers_.find(userId);
         if (it == pendingWantManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1952,6 +1901,7 @@ void AbilityManagerService::DataDumpSysStateInner(
 {
     std::shared_ptr<DataAbilityManager> targetManager;
     if (isUserID) {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = dataAbilityManagers_.find(userId);
         if (it == dataAbilityManagers_.end()) {
             info.push_back("error: No user found'.");
@@ -1980,14 +1930,8 @@ void AbilityManagerService::DataDumpSysStateInner(
 
 void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::string> &info)
 {
-    if (useNewMission_) {
-        if (currentMissionListManager_) {
-            currentMissionListManager_->Dump(info);
-        }
-    } else {
-        if (currentStackManager_) {
-            currentStackManager_->Dump(info);
-        }
+    if (currentMissionListManager_) {
+        currentMissionListManager_->Dump(info);
     }
 }
 
@@ -2049,11 +1993,7 @@ void AbilityManagerService::DumpMissionInner(const std::string &args, std::vecto
     }
     int missionId = DEFAULT_INVAL_VALUE;
     (void)StrToInt(argList[1], missionId);
-    if (useNewMission_) {
-        currentMissionListManager_->DumpMission(missionId, info);
-    } else {
-        currentStackManager_->DumpMission(missionId, info);
-    }
+    currentMissionListManager_->DumpMission(missionId, info);
 }
 
 void AbilityManagerService::DumpTopAbilityInner(const std::string &args, std::vector<std::string> &info)
@@ -2199,21 +2139,12 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
         }
         return dataAbilityManager->AbilityTransitionDone(token, state);
     }
-    if (useNewMission_) {
-        auto missionListManager = GetListManagerByUserId(userId);
-        if (!missionListManager) {
-            HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return missionListManager->AbilityTransactionDone(token, state, saveData);
-    } else {
-        auto stackManager = GetStackManagerByUserId(userId);
-        if (!stackManager) {
-            HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-            return ERR_INVALID_VALUE;
-        }
-        return stackManager->AbilityTransitionDone(token, state, saveData);
+    auto missionListManager = GetListManagerByUserId(userId);
+    if (!missionListManager) {
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+        return ERR_INVALID_VALUE;
     }
+    return missionListManager->AbilityTransactionDone(token, state, saveData);
 }
 
 int AbilityManagerService::ScheduleConnectAbilityDone(
@@ -2339,21 +2270,12 @@ void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
             break;
         }
         default: {
-            if (useNewMission_) {
-                auto missionListManager = GetListManagerByUserId(userId);
-                if (!missionListManager) {
-                    HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
-                    return;
-                }
-                missionListManager->OnAbilityRequestDone(token, state);
-            } else {
-                auto stackManager = GetStackManagerByUserId(userId);
-                if (!stackManager) {
-                    HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-                    return;
-                }
-                stackManager->OnAbilityRequestDone(token, state);
+            auto missionListManager = GetListManagerByUserId(userId);
+            if (!missionListManager) {
+                HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+                return;
             }
+            missionListManager->OnAbilityRequestDone(token, state);
             break;
         }
     }
@@ -2363,11 +2285,7 @@ void AbilityManagerService::OnAppStateChanged(const AppInfo &info)
 {
     HILOG_INFO("On app state changed.");
     connectManager_->OnAppStateChanged(info);
-    if (useNewMission_) {
-        currentMissionListManager_->OnAppStateChanged(info);
-    } else {
-        currentStackManager_->OnAppStateChanged(info);
-    }
+    currentMissionListManager_->OnAppStateChanged(info);
     dataAbilityManager_->OnAppStateChanged(info);
 }
 
@@ -2395,15 +2313,22 @@ void AbilityManagerService::SetStackManager(int userId, bool switchUser)
 
 void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
 {
-    auto iterator = missionListManagers_.find(userId);
-    if (iterator != missionListManagers_.end()) {
-        if (switchUser) {
-            DelayedSingleton<MissionInfoMgr>::GetInstance()->Init(userId);
-            currentMissionListManager_ = iterator->second;
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto iterator = missionListManagers_.find(userId);
+        find = (iterator != missionListManagers_.end());
+        if (find) {
+            if (switchUser) {
+                DelayedSingleton<MissionInfoMgr>::GetInstance()->Init(userId);
+                currentMissionListManager_ = iterator->second;
+            }
         }
-    } else {
+    }
+    if (!find) {
         auto manager = std::make_shared<MissionListManager>(userId);
         manager->Init();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         missionListManagers_.emplace(userId, manager);
         if (switchUser) {
             currentMissionListManager_ = manager;
@@ -2431,12 +2356,12 @@ int AbilityManagerService::GetUserId()
     return U0_USER_ID;
 }
 
-void AbilityManagerService::StartingLauncherAbility()
+bool AbilityManagerService::StartingLauncherAbility(bool isBoot)
 {
     HILOG_DEBUG("%{public}s", __func__);
     if (!iBundleManager_) {
         HILOG_INFO("bms service is null");
-        return;
+        return false;
     }
 
     /* query if launcher ability has installed */
@@ -2446,16 +2371,21 @@ void AbilityManagerService::StartingLauncherAbility()
     Want want;
     want.SetElementName(AbilityConfig::LAUNCHER_BUNDLE_NAME, AbilityConfig::LAUNCHER_ABILITY_NAME);
     HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
+    int attemptNums = 0;
     while (!(iBundleManager_->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
         userId, abilityInfo))) {
         HILOG_INFO("Waiting query launcher ability info completed.");
+        if (!isBoot && ++attemptNums > SWITCH_ACCOUNT_TRY) {
+            HILOG_ERROR("Start launcher failed.");
+            return false;
+        }
         usleep(REPOLL_TIME_MICRO_SECONDS);
     }
 
     HILOG_INFO("Start Home Launcher Ability.");
     /* start launch ability */
     (void)StartAbility(want, userId, DEFAULT_INVAL_VALUE);
-    return;
+    return true;
 }
 
 void AbilityManagerService::StartingPhoneServiceAbility()
@@ -2683,23 +2613,15 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
 {
     CHECK_POINTER(abilityRecord);
 
-    if (useNewMission_) {
-        auto manager = GetListManagerByToken(abilityRecord->GetToken());
-        if (manager) {
-            manager->OnAbilityDied(abilityRecord, GetUserId());
-            return;
-        }
-    } else {
-        auto manager = GetStackManagerByToken(abilityRecord->GetToken());
-        if (manager) {
-            manager->OnAbilityDied(abilityRecord);
-            return;
-        }
+    auto manager = GetListManagerByToken(abilityRecord->GetToken());
+    if (manager) {
+        manager->OnAbilityDied(abilityRecord, GetUserId());
+        return;
     }
 
-    auto manager = GetConnectManagerByToken(abilityRecord->GetToken());
-    if (manager) {
-        manager->OnAbilityDied(abilityRecord);
+    auto connectManager = GetConnectManagerByToken(abilityRecord->GetToken());
+    if (connectManager) {
+        connectManager->OnAbilityDied(abilityRecord);
         return;
     }
 
@@ -2869,17 +2791,10 @@ bool AbilityManagerService::IsSystemUI(const std::string &bundleName) const
 void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle load timeout.");
-    if (useNewMission_) {
-        for (auto& item : missionListManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
-            }
-        }
-    } else {
-        for (auto& item : stackManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::LOAD_TIMEOUT_MSG, eventId);
         }
     }
 }
@@ -2887,18 +2802,10 @@ void AbilityManagerService::HandleLoadTimeOut(int64_t eventId)
 void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle active timeout.");
-
-    if (useNewMission_) {
-        for (auto& item : missionListManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
-            }
-        }
-    } else {
-        for (auto& item : stackManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::ACTIVE_TIMEOUT_MSG, eventId);
         }
     }
 }
@@ -2906,17 +2813,10 @@ void AbilityManagerService::HandleActiveTimeOut(int64_t eventId)
 void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle inactive timeout.");
-    if (useNewMission_) {
-        for (auto& item : missionListManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
-            }
-        }
-    } else {
-        for (auto& item : stackManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
         }
     }
 }
@@ -2924,17 +2824,10 @@ void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
 void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle ForegroundNew timeout.");
-    if (useNewMission_) {
-        for (auto& item : missionListManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
-            }
-        }
-    } else {
-        for (auto& item : stackManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, eventId);
         }
     }
 }
@@ -2942,17 +2835,10 @@ void AbilityManagerService::HandleForegroundNewTimeOut(int64_t eventId)
 void AbilityManagerService::HandleBackgroundNewTimeOut(int64_t eventId)
 {
     HILOG_DEBUG("Handle BackgroundNew timeout.");
-    if (useNewMission_) {
-        for (auto& item : missionListManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
-            }
-        }
-    } else {
-        for (auto& item : stackManagers_) {
-            if (item.second) {
-                item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG, eventId);
         }
     }
 }
@@ -2965,28 +2851,20 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
     CHECK_POINTER_RETURN_BOOL(currentStackManager_);
     CHECK_POINTER_RETURN_BOOL(currentMissionListManager_);
 
-    if (useNewMission_) {
-        if (currentMissionListManager_->GetAbilityRecordByToken(token)) {
-            return true;
-        }
-        if (currentMissionListManager_->GetAbilityFromTerminateList(token)) {
-            return true;
-        }
-    } else {
-        if (currentStackManager_->GetAbilityRecordByToken(token)) {
-            return true;
-        }
-
-        if (currentStackManager_->GetAbilityFromTerminateList(token)) {
-            return true;
-        }
+    if (currentMissionListManager_->GetAbilityRecordByToken(token)) {
+        return true;
+    }
+    if (currentMissionListManager_->GetAbilityFromTerminateList(token)) {
+        return true;
     }
 
     if (dataAbilityManager_->GetAbilityRecordByToken(token)) {
+        HILOG_INFO("Verification token4.");
         return true;
     }
 
     if (connectManager_->GetServiceRecordByToken(token)) {
+        HILOG_INFO("Verification token5.");
         return true;
     }
 
@@ -2997,26 +2875,14 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
 bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("VerificationAllToken.");
-
-    if (useNewMission_) {
-        for (auto item: missionListManagers_) {
-            if (item.second && item.second->GetAbilityRecordByToken(token)) {
-                return true;
-            }
-
-            if (item.second && item.second->GetAbilityFromTerminateList(token)) {
-                return true;
-            }
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto item: missionListManagers_) {
+        if (item.second && item.second->GetAbilityRecordByToken(token)) {
+            return true;
         }
-    } else {
-        for (auto item: stackManagers_) {
-            if (item.second && item.second->GetAbilityRecordByToken(token)) {
-                return true;
-            }
 
-            if (item.second && item.second->GetAbilityFromTerminateList(token)) {
-                return true;
-            }
+        if (item.second && item.second->GetAbilityFromTerminateList(token)) {
+            return true;
         }
     }
 
@@ -3044,6 +2910,7 @@ const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbility
         return nullptr;
     }
 
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: dataAbilityManagers_) {
         if (item.second && item.second->ContainsDataAbility(scheduler)) {
             return item.second;
@@ -3065,6 +2932,7 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUse
 
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = missionListManagers_.find(userId);
     if (it != missionListManagers_.end()) {
         return it->second;
@@ -3075,6 +2943,7 @@ std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserI
 
 std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = connectManagers_.find(userId);
     if (it != connectManagers_.end()) {
         return it->second;
@@ -3085,6 +2954,7 @@ std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerB
 
 std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManagerByUserId(int32_t userId)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = dataAbilityManagers_.find(userId);
     if (it != dataAbilityManagers_.end()) {
         return it->second;
@@ -3110,6 +2980,7 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByTok
 
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByToken(const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: missionListManagers_) {
         if (item.second && item.second->GetAbilityRecordByToken(token)) {
             return item.second;
@@ -3126,6 +2997,7 @@ std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByToken
 std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerByToken(
     const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: connectManagers_) {
         if (item.second && item.second->GetServiceRecordByToken(token)) {
             return item.second;
@@ -3138,6 +3010,7 @@ std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerB
 std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManagerByToken(
     const sptr<IRemoteObject> &token)
 {
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto item: dataAbilityManagers_) {
         if (item.second && item.second->GetAbilityRecordByToken(token)) {
             return item.second;
@@ -3604,6 +3477,18 @@ int AbilityManagerService::StartAbilityByCall(
         return RESOLVE_CALL_NO_PERMISSIONS;
     }
 
+    HILOG_DEBUG("abilityInfo.applicationInfo.singleUser is %{public}s",
+        abilityRequest.abilityInfo.applicationInfo.singleUser ? "true" : "false");
+    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+        auto missionListManager = GetListManagerByUserId(U0_USER_ID);
+        if (missionListManager == nullptr) {
+            HILOG_ERROR("missionListManager is Null. userId=%{public}d", U0_USER_ID);
+            return ERR_INVALID_VALUE;
+        }
+
+        return missionListManager->ResolveLocked(abilityRequest);
+    }
+
     return currentMissionListManager_->ResolveLocked(abilityRequest);
 }
 
@@ -3771,6 +3656,7 @@ int AbilityManagerService::GetProcessRunningInfosByUserId(
 void AbilityManagerService::ClearUserData(int32_t userId)
 {
     HILOG_DEBUG("%{public}s", __func__);
+    std::unique_lock<std::shared_mutex> lock(managersMutex_);
     missionListManagers_.erase(userId);
     connectManagers_.erase(userId);
     dataAbilityManagers_.erase(userId);
@@ -3859,7 +3745,11 @@ void AbilityManagerService::SwitchToUser(int32_t oldUserId, int32_t userId)
     HILOG_INFO("%{public}s, oldUserId:%{public}d, newUserId:%{public}d", __func__, oldUserId, userId);
     SwitchManagers(userId);
     PauseOldUser(oldUserId);
-    StartUserApps(userId);
+    bool isBoot = false;
+    if (oldUserId == U0_USER_ID) {
+        isBoot = true;
+    }
+    StartUserApps(userId, isBoot);
 }
 
 void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
@@ -3876,17 +3766,14 @@ void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
 void AbilityManagerService::PauseOldUser(int32_t userId)
 {
     HILOG_INFO("%{public}s, PauseOldUser:%{public}d-----begin", __func__, userId);
-    if (useNewMission_) {
-        PauseOldMissionListManager(userId);
-    } else {
-        PauseOldStackManager(userId);
-    }
+    PauseOldMissionListManager(userId);
     HILOG_INFO("%{public}s, PauseOldUser:%{public}d-----end", __func__, userId);
 }
 
 void AbilityManagerService::PauseOldMissionListManager(int32_t userId)
 {
     HILOG_INFO("%{public}s, PauseOldMissionListManager:%{public}d-----begin", __func__, userId);
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = missionListManagers_.find(userId);
     if (it == missionListManagers_.end()) {
         HILOG_INFO("%{public}s, PauseOldMissionListManager:%{public}d-----end1", __func__, userId);
@@ -3914,40 +3801,32 @@ void AbilityManagerService::PauseOldStackManager(int32_t userId)
     manager->PauseManager();
 }
 
-void AbilityManagerService::StartUserApps(int32_t userId)
+void AbilityManagerService::StartUserApps(int32_t userId, bool isBoot)
 {
     HILOG_INFO("StartUserApps, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
-    if (useNewMission_) {
-        if (currentMissionListManager_ && currentMissionListManager_->IsStarted()) {
-            HILOG_INFO("missionListManager ResumeManager");
-            currentMissionListManager_->ResumeManager();
-            return;
-        }
-    } else {
-        if (currentStackManager_ && currentStackManager_->IsStarted()) {
-            HILOG_INFO("stack ResumeManager");
-            currentStackManager_->ResumeManager();
-            return;
-        }
+    if (currentMissionListManager_ && currentMissionListManager_->IsStarted()) {
+        HILOG_INFO("missionListManager ResumeManager");
+        currentMissionListManager_->ResumeManager();
+        return;
     }
-    StartSystemAbilityByUser(userId);
+    StartSystemAbilityByUser(userId, isBoot);
 }
 
-void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
+void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot)
 {
     HILOG_INFO("StartSystemAbilityByUser, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
     ConnectBmsService();
 
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
-        StartingLauncherAbility();
+        StartingLauncherAbility(isBoot);
         StartingScreenLockAbility();
         return;
     }
 
     if (amsConfigResolver_->GetStartLauncherState()) {
         HILOG_INFO("start launcher");
-        StartingLauncherAbility();
+        StartingLauncherAbility(isBoot);
     }
 
     if (amsConfigResolver_->GetStartScreenLockState()) {
@@ -3972,49 +3851,70 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId)
 
 void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)
 {
-    auto it = connectManagers_.find(userId);
-    if (it == connectManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = connectManagers_.find(userId);
+        find = (it != connectManagers_.end());
+        if (find) {
+            if (switchUser) {
+                connectManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<AbilityConnectManager>();
         manager->SetEventHandler(handler_);
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         connectManagers_.emplace(userId, manager);
         if (switchUser) {
             connectManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            connectManager_ = it->second;
         }
     }
 }
 
 void AbilityManagerService::InitDataAbilityManager(int32_t userId, bool switchUser)
 {
-    auto it = dataAbilityManagers_.find(userId);
-    if (it == dataAbilityManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = dataAbilityManagers_.find(userId);
+        find = (it != dataAbilityManagers_.end());
+        if (find) {
+            if (switchUser) {
+                dataAbilityManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<DataAbilityManager>();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         dataAbilityManagers_.emplace(userId, manager);
         if (switchUser) {
             dataAbilityManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            dataAbilityManager_ = it->second;
         }
     }
 }
 
 void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
 {
-    auto it = pendingWantManagers_.find(userId);
-    if (it == pendingWantManagers_.end()) {
+    bool find = false;
+    {
+        std::shared_lock<std::shared_mutex> lock(managersMutex_);
+        auto it = pendingWantManagers_.find(userId);
+        find = (it != pendingWantManagers_.end());
+        if (find) {
+            if (switchUser) {
+                pendingWantManager_ = it->second;
+            }
+        }
+    }
+    if (!find) {
         auto manager = std::make_shared<PendingWantManager>();
+        std::unique_lock<std::shared_mutex> lock(managersMutex_);
         pendingWantManagers_.emplace(userId, manager);
         if (switchUser) {
             pendingWantManager_ = manager;
-        }
-    } else {
-        if (switchUser) {
-            pendingWantManager_ = it->second;
         }
     }
 }
@@ -4277,7 +4177,6 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
         return ERR_WOULD_BLOCK;
     }
 
-    abilityRecord->lifeCycleStateInfo_.sceneFlagBak = flag;
     abilityRecord->ProcessForegroundAbility(flag);
     return ERR_OK;
 }
@@ -4401,8 +4300,13 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
 
 int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
 {
-    auto tokenId = IPCSkeleton::GetCallingTokenID();
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (isSaCall) {
+        // do not need check static config permission when start ability by SA
+        return ERR_OK;
+    }
 
+    auto tokenId = IPCSkeleton::GetCallingTokenID();
     if ((abilityInfo.type == AppExecFwk::AbilityType::EXTENSION &&
         abilityInfo.extensionAbilityType == AppExecFwk::ExtensionAbilityType::DATASHARE) ||
         (abilityInfo.type == AppExecFwk::AbilityType::DATA)) {
