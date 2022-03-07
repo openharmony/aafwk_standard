@@ -50,10 +50,9 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
             if (entry->purge) {
                 DataShareUvQueue::Purge(work);
             } else {
-                entry->condition.notify_all(); 
+                entry->condition.notify_all();
             }
         });
-
     if (status != napi_ok) {
         HILOG_ERROR("%{public}s queue work failed", __func__);
         DataShareUvQueue::Purge(work);
