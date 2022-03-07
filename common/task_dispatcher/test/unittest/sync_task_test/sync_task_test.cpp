@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,7 @@ public:
 HWTEST(SyncTaskTest, SyncTask_ConstructorTest_001, TestSize.Level0)
 {
     auto name = std::string("SyncTask_ConstructorTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto runnable = std::make_shared<Runnable>([]() {
         long wait = 200;
         auto time = std::chrono::milliseconds(wait);
@@ -69,7 +69,7 @@ HWTEST(SyncTaskTest, SyncTask_ConstructorTest_001, TestSize.Level0)
         EXPECT_EQ(task.GetPriority(), priorityHigh);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -83,7 +83,7 @@ HWTEST(SyncTaskTest, SyncTask_ConstructorTest_001, TestSize.Level0)
 HWTEST(SyncTaskTest, SyncTask_RunTest_001, TestSize.Level0)
 {
     auto name = std::string("SyncTask_RunTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto runnable = std::make_shared<Runnable>([&count]() {
         long wait = 200;
@@ -104,7 +104,7 @@ HWTEST(SyncTaskTest, SyncTask_RunTest_001, TestSize.Level0)
         EXPECT_EQ(count.load(), 1);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -118,7 +118,7 @@ HWTEST(SyncTaskTest, SyncTask_RunTest_001, TestSize.Level0)
 HWTEST(SyncTaskTest, SyncTask_WaitTest_001, TestSize.Level0)
 {
     auto name = std::string("SyncTask_WaitTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto runnable = std::make_shared<Runnable>([&count]() {
         long wait = 1000;
@@ -140,5 +140,5 @@ HWTEST(SyncTaskTest, SyncTask_WaitTest_001, TestSize.Level0)
         EXPECT_EQ(count.load(), 1);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
