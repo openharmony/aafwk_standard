@@ -18,14 +18,20 @@
 
 #include <memory>
 #include "datashare_stub.h"
+#include "datashare_uv_queue.h"
 #include "js_datashare_ext_ability.h"
+#include "native_engine/native_value.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 using AbilityRuntime::JsDataShareExtAbility;
 class DataShareStubImpl : public DataShareStub {
 public:
-    explicit DataShareStubImpl(const std::shared_ptr<JsDataShareExtAbility>& extension) : extension_(extension) {}
+    explicit DataShareStubImpl(const std::shared_ptr<JsDataShareExtAbility>& extension, napi_env env)
+        : extension_(extension)
+    {
+        uvQueue_ = std::make_shared<AbilityRuntime::DataShareUvQueue>(env);
+    }
 
     virtual ~DataShareStubImpl() {}
 
@@ -62,7 +68,11 @@ public:
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) override;
 private:
-    std::weak_ptr<JsDataShareExtAbility> extension_;
+    std::shared_ptr<JsDataShareExtAbility> GetOwner();
+
+private:
+    std::shared_ptr<JsDataShareExtAbility> extension_;
+    std::shared_ptr<AbilityRuntime::DataShareUvQueue> uvQueue_;
 };
 } // namespace AppExecFwk
 } // namespace OHOS
