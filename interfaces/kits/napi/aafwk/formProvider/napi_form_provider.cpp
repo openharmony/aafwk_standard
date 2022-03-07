@@ -35,6 +35,8 @@ namespace {
     constexpr size_t ARGS_SIZE_TWO = 2;
     constexpr size_t ARGS_SIZE_THREE = 3;
     constexpr int REF_COUNT = 1;
+    constexpr int CALLBACK_FLG = 1;
+    constexpr int PROMISE_FLG = 2;
     OHOS::AppExecFwk::Ability* g_ability = nullptr;
 }
 
@@ -108,12 +110,7 @@ static void InnerSetFormNextRefreshTime(napi_env env, AsyncNextRefreshTimeFormCa
 {
     HILOG_DEBUG("%{public}s called.", __func__);
     OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
-    bool ret = ability->SetFormNextRefreshTime(asyncCallbackInfo->formId, asyncCallbackInfo->time);
-    if (ret) {
-        asyncCallbackInfo->result = 1;
-    } else {
-        asyncCallbackInfo->result = 0;
-    }
+    asyncCallbackInfo->result = ability->SetFormNextRefreshTime(asyncCallbackInfo->formId, asyncCallbackInfo->time);
     HILOG_DEBUG("%{public}s, end", __func__);
 }
 
@@ -142,35 +139,83 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
     // Check the value type of the arguments
     napi_valuetype valueType;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
-    NAPI_ASSERT(env, valueType == napi_string, "The arguments[0] type of setFormNextRefreshTime is incorrect,\
-    expected type is string.");
+    if (valueType != napi_string) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_INVALID_FORM_ID,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
+
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
 
     std::string strFormId = GetStringFromNAPI(env, argv[0]);
     int64_t formId;
-    bool isConversionSucceeded = ConvertStringToInt64(strFormId, formId);
-    NAPI_ASSERT(env, isConversionSucceeded, "The arguments[0] type of setFormNextRefreshTime is incorrect,\
-    expected type is string and the content must be numeric,\
-    value range is: 0x8000000000000000~0x7FFFFFFFFFFFFFFF.");
+    if (!ConvertStringToInt64(strFormId, formId)) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
+
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
 
     valueType = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    NAPI_ASSERT(env, valueType == napi_number, "The arguments[1] type of setFormNextRefreshTime is incorrect,\
-    expected type is number.");
+    if (valueType != napi_number) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_REFRESH_TIME_NUM_ERR,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
 
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
     int32_t time;
     napi_get_value_int32(env, argv[1], &time);
 
     AsyncNextRefreshTimeFormCallbackInfo *asyncCallbackInfo = new
-    AsyncNextRefreshTimeFormCallbackInfo {
-        .env = env,
-        .ability = GetGlobalAbility(env),
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
-        .formId = formId,
-        .time = time,
-        .result = 0,
-    };
+        AsyncNextRefreshTimeFormCallbackInfo {
+            .env = env,
+            .ability = GetGlobalAbility(env),
+            .asyncWork = nullptr,
+            .deferred = nullptr,
+            .callback = nullptr,
+            .formId = formId,
+            .time = time,
+            .result = 0,
+        };
 
     if (argc == ARGS_SIZE_THREE) {
         HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -205,7 +250,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
 
                 if (asyncCallbackInfo->callback != nullptr) {
                     napi_value result;
-                    napi_create_int32(env, asyncCallbackInfo->result, &result);
+                    InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
                     napi_value callback;
                     napi_value undefined;
                     napi_get_undefined(env, &undefined);
@@ -247,7 +292,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
+                InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
                 napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
@@ -271,12 +316,7 @@ static void InnerUpdateForm(napi_env env, AsyncUpdateFormCallbackInfo* const asy
 {
     HILOG_DEBUG("%{public}s called.", __func__);
     OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
-    bool ret = ability->UpdateForm(asyncCallbackInfo->formId, *asyncCallbackInfo->formProviderData);
-    if (ret) {
-        asyncCallbackInfo->result = 1;
-    } else {
-        asyncCallbackInfo->result = 0;
-    }
+    asyncCallbackInfo->result = ability->UpdateForm(asyncCallbackInfo->formId, *asyncCallbackInfo->formProviderData);
     HILOG_DEBUG("%{public}s, end", __func__);
 }
 
@@ -305,34 +345,83 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
     // Check the value type of the arguments
     napi_valuetype valueType;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
-    NAPI_ASSERT(env, valueType == napi_string, "The arguments[0] type of updateForm is incorrect,\
-    expected type is string.");
+    if (valueType != napi_string) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_INVALID_FORM_ID,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
+
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
 
     std::string strFormId = GetStringFromNAPI(env, argv[0]);
     int64_t formId;
-    bool isConversionSucceeded = ConvertStringToInt64(strFormId, formId);
-    NAPI_ASSERT(env, isConversionSucceeded, "The arguments[0] type of updateForm is incorrect,\
-    expected type is string and the content must be numeric,\
-    value range is: 0x8000000000000000~0x7FFFFFFFFFFFFFFF.");
+    if (!ConvertStringToInt64(strFormId, formId)) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
+
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
 
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    NAPI_ASSERT(env, valueType == napi_string, "The arguments[1] type of updateForm is incorrect,\
-    expected type is string.");
+    if (valueType != napi_string) {
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_INVALID_PROVIDER_DATA,
+                .type = 0,
+                .callbackValue = argv[1]
+            };
+
+        if (argc == ARGS_SIZE_THREE) {
+            asyncErrorInfo->type = CALLBACK_FLG;
+        } else {
+            asyncErrorInfo->type = PROMISE_FLG;
+        }
+        return RetErrMsg(asyncErrorInfo);
+    }
 
     OHOS::AppExecFwk::FormProviderData *formProviderData = nullptr;
     napi_unwrap(env, argv[1], (void**)&formProviderData);
 
     AsyncUpdateFormCallbackInfo *asyncCallbackInfo = new
-    AsyncUpdateFormCallbackInfo {
-        .env = env,
-        .ability = GetGlobalAbility(env),
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
-        .formId = formId,
-        .formProviderData = std::shared_ptr<OHOS::AppExecFwk::FormProviderData>(formProviderData),
-        .result = 0,
-    };
+        AsyncUpdateFormCallbackInfo {
+            .env = env,
+            .ability = GetGlobalAbility(env),
+            .asyncWork = nullptr,
+            .deferred = nullptr,
+            .callback = nullptr,
+            .formId = formId,
+            .formProviderData = std::shared_ptr<OHOS::AppExecFwk::FormProviderData>(formProviderData),
+            .result = 0,
+        };
 
     if (argc == ARGS_SIZE_THREE) {
         HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -362,7 +451,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
 
                 if (asyncCallbackInfo->callback != nullptr) {
                     napi_value result;
-                    napi_create_int32(env, asyncCallbackInfo->result, &result);
+                    InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
                     napi_value callback;
                     napi_value undefined;
                     napi_get_undefined(env, &undefined);
@@ -401,7 +490,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 AsyncUpdateFormCallbackInfo *asyncCallbackInfo = (AsyncUpdateFormCallbackInfo *)data;
 
                 napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
+                InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
                 napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
