@@ -39,8 +39,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<AbilityManagerClient> client_{nullptr};
-    sptr<AbilityManagerStubTestMock> mock_{nullptr};
+    std::shared_ptr<AbilityManagerClient> client_ {nullptr};
+    sptr<AbilityManagerStubTestMock> mock_ {nullptr};
 };
 
 void AbilityManagerClientTest::SetUpTestCase(void)
