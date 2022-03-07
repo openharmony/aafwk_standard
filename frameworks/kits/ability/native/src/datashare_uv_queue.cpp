@@ -33,8 +33,8 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
     if (work == nullptr) {
         return;
     }
-    work->data = new UvEntry {env_, std::move(func), false, false, false, {}, {}};
-    uv_queue_work(
+    work->data = new UvEntry {env_, std::move(func), false, false, {}, {}};
+    auto status = uv_queue_work(
         loop_, work, [](uv_work_t* work) {},
         [](uv_work_t* work, int uvstatus) {
             if (work == nullptr || work->data == nullptr) {
@@ -47,34 +47,36 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
                 entry->func();
             }
             entry->done = true;
-            entry->condition.notify_all();
             if (entry->purge) {
                 DataShareUvQueue::Purge(work);
+            } else {
+                entry->condition.notify_all(); 
             }
         });
 
-    if (work == nullptr || work->data == nullptr) {
-        HILOG_ERROR("%{public}s invalid work or work->data.", __func__);
+    if (status != napi_ok) {
+        HILOG_ERROR("%{public}s queue work failed", __func__);
+        DataShareUvQueue::Purge(work);
         return;
     }
 
+    bool noNeedPurge = false;
     auto *uvEntry = static_cast<UvEntry*>(work->data);
     {
         std::unique_lock<std::mutex> lock(uvEntry->mutex);
-        while (!uvEntry->done) {
-            if (uvEntry->condition.wait_for(lock, std::chrono::seconds(WAIT_TIME_OUT)) == std::cv_status::timeout) {
-                HILOG_INFO("%{public}s Wait uv_queue_work timeout.", __func__);
-                uvEntry->isTimeout = true;
-                break;
-            }
+        if (uvEntry->condition.wait_for(lock, std::chrono::seconds(WAIT_TIME_OUT), 
+            [uvEntry]->bool { return !uvEntry->done; }) == std::cv_status::timeout) {
+            HILOG_INFO("%{public}s Wait uv_queue_work timeout.", __func__);
         }
-        if (uvEntry->isTimeout && !uv_cancel((uv_req_t*)&work)) {
+
+        if (!uvEntry->done && !uv_cancel((uv_req_t*)&work)) {
             HILOG_ERROR("%{public}s uv_cancel failed.", __func__);
             uvEntry->purge = true;
+            noNeedPurge = true;
         }
     }
 
-    if (!uvEntry->purge) {
+    if (!noNeedPurge) {
         DataShareUvQueue::Purge(work);
     }
     HILOG_INFO("%{public}s end.", __func__);
