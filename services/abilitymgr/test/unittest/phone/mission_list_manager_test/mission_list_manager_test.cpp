@@ -92,7 +92,7 @@ HWTEST_F(MissionListManagerTest, GetMissionBySpecifiedFlag_001, TestSize.Level1)
     ability->SetSpecifiedFlag("flag");
     missionListManager->launcherList_->AddMissionToTop(mission);
 
-    auto mission1 = missionListManager->GetMissionBySpecifiedFlag("flag");
+    auto mission1 = missionListManager->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(mission, mission1);
     missionListManager.reset();
 }
@@ -121,7 +121,7 @@ HWTEST_F(MissionListManagerTest, GetMissionBySpecifiedFlag_002, TestSize.Level1)
 
     ability->SetSpecifiedFlag("flag");
     missionListManager->defaultSingleList_->AddMissionToTop(mission);
-    auto mission1 = missionListManager->GetMissionBySpecifiedFlag("flag");
+    auto mission1 = missionListManager->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(mission, mission1);
     missionListManager.reset();
 }
@@ -150,7 +150,7 @@ HWTEST_F(MissionListManagerTest, GetMissionBySpecifiedFlag_003, TestSize.Level1)
     ability->SetSpecifiedFlag("flag");
     missionListManager->launcherList_->AddMissionToTop(mission);
 
-    auto mission1 = missionListManager->GetMissionBySpecifiedFlag("flag");
+    auto mission1 = missionListManager->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(mission, mission1);
     missionListManager.reset();
 }
@@ -179,7 +179,7 @@ HWTEST_F(MissionListManagerTest, GetMissionBySpecifiedFlag_004, TestSize.Level1)
     ability->SetSpecifiedFlag("flag");
     missionListManager->defaultStandardList_->AddMissionToTop(mission);
 
-    auto mission1 = missionListManager->GetMissionBySpecifiedFlag("flag");
+    auto mission1 = missionListManager->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(mission, mission1);
     missionListManager.reset();
 }

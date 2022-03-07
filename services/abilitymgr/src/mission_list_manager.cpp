@@ -2131,7 +2131,7 @@ void MissionListManager::OnAcceptWantResponse(const AAFwk::Want &want, const std
     auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
 
     if (!flag.empty()) {
-        auto mission = GetMissionBySpecifiedFlag(flag);
+        auto mission = GetMissionBySpecifiedFlag(want, flag);
         if (mission) {
             auto ability = mission->GetAbilityRecord();
             if (!ability) {
@@ -2170,24 +2170,24 @@ void MissionListManager::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Wan
     StartAbility(currentTopAbility, callerAbility, abilityRequest);
 }
 
-std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const std::string &flag) const
+std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const
 {
     std::shared_ptr<Mission> mission = nullptr;
     for (auto missionList : currentMissionLists_) {
-        if (missionList && (mission = missionList->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+        if (missionList && (mission = missionList->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
             return mission;
         }
     }
 
-    if ((mission = defaultSingleList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+    if ((mission = defaultSingleList_->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
         return mission;
     }
 
-    if ((mission = launcherList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+    if ((mission = launcherList_->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
         return mission;
     }
 
-    return defaultStandardList_->GetMissionBySpecifiedFlag(flag);
+    return defaultStandardList_->GetMissionBySpecifiedFlag(want, flag);
 }
 
 bool MissionListManager::MissionDmInitCallback::isInit_ = false;
