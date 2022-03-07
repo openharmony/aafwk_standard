@@ -158,11 +158,10 @@ private:
                     task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
                     return;
                 }
-                if (!missionListener) {
+                if (!missionListener || !missionListener->RemoveJsListenerObject(missionListenerId)) {
                     task.Reject(engine, CreateJsError(engine, ERR_NOT_OK, "Not registered yet."));
                     return;
                 }
-                missionListener->RemoveJsListenerObject(missionListenerId);
                 if (!missionListener->IsEmpty()) {
                     task.Resolve(engine, engine.CreateUndefined());
                     return;
