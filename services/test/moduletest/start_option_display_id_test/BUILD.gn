@@ -27,11 +27,10 @@ ohos_moduletest("start_option_display_id_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
   ]
 
-  sources = [ "start_option_display_id_test.cpp" ]
-  sources += [
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+  sources = [
     "//foundation/aafwk/standard/services/common/src/permission_verification.cpp",
     "//foundation/distributedhardware/devicemanager/test/unittest/mock/parameter.cpp",
+    "start_option_display_id_test.cpp",
   ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
