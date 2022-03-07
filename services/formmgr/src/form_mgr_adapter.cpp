@@ -111,7 +111,7 @@ int FormMgrAdapter::AddForm(const int64_t formId, const Want &want,
         APP_LOGE("%{public}s fail, generate udid hash failed", __func__);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
-
+    formItemInfo.SetDeviceId(want.GetElement().GetDeviceID());
     WantParams wantParams = want.GetParams();
     if (formId > 0) {
         return AllotFormById(formItemInfo, callerToken, wantParams, formInfo);

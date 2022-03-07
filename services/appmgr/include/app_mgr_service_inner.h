@@ -513,6 +513,10 @@ public:
 
     virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
 
+    int VerifyProcessPermission();
+
+    int VerifyAccountPermission(const std::string &permissionName, const int userId);
+
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);
@@ -526,6 +530,8 @@ private:
 
     void MakeProcessName(std::string &processName, const std::shared_ptr<AbilityInfo> &abilityInfo,
         const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
+    void MakeProcessName(
+        std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
     /**
      * StartAbility, load the ability that needed to be started(Start on the basis of the original process).
      *  Start on a new boot process
@@ -680,8 +686,11 @@ private:
 
     void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
 
-    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &info, const std::string &processName);
+    int UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg);
+    int GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo);
+    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &info,
+        const std::string &processName);
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 
@@ -708,10 +717,6 @@ private:
     void ClearUpApplicationDataByUserId(const std::string &bundleName,
         int32_t callerUid, pid_t callerPid, const int userId);
 
-    int VerifyProcessPermission();
-
-    int VerifyAccountPermission(const std::string &permissionName, const int userId);
-
     int VerifyObserverPermission();
 
 private:
@@ -724,6 +729,17 @@ private:
      * @return
      */
     void NotifyAppStatus(const std::string &bundleName, const std::string &eventData);
+    /**
+     * Notify application status.
+     *
+     * @param bundleName Indicates the name of the bundle.
+     * @param bundleName Indicates the name of the bundle.
+     * @param eventData Indicates the event defined by CommonEventSupport
+     *
+     * @return
+     */
+    void NotifyAppStatusByCallerUid(const std::string &bundleName, const int32_t userId, const int32_t callerUid,
+        const std::string &eventData);
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
     int FinishUserTestLocked(

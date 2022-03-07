@@ -19,13 +19,13 @@ config("amsKitSystemTestServiceconfig") {
   include_dirs = [
     "${subdemosystem_path}/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/services/abilitymgr/include",
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${appexecfwk_path}/services/bundlemgr/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//utils/system/safwk/native/include",
     "//third_party/jsoncpp/include",
   ]

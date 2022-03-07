@@ -151,7 +151,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         }
         bool isColdStart = want == nullptr ? false : want->GetBoolParam("coldStart", false);
         StartProcess(abilityInfo->applicationName, processName, isColdStart, appRecord,
-            abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
+            appInfo->uid, appInfo->bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
@@ -189,6 +189,15 @@ void AppMgrServiceInner::MakeProcessName(std::string &processName, const std::sh
         processName = abilityInfo->process;
         return;
     }
+    MakeProcessName(processName, appInfo, hapModuleInfo);
+}
+
+void AppMgrServiceInner::MakeProcessName(
+    std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo)
+{
+    if (!appInfo) {
+        return;
+    }
     if (!appInfo->process.empty()) {
         processName = appInfo->process;
         return;
@@ -212,7 +221,7 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         return false;
     }
 
-    auto userId = GetUserIdByUid(abilityInfo.applicationInfo.uid);
+    auto userId = GetUserIdByUid(appInfo->uid);
     bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName,
         BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId);
     if (!bundleMgrResult) {
@@ -506,16 +515,6 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
 void AppMgrServiceInner::ClearUpApplicationData(const std::string &bundleName, int32_t callerUid, pid_t callerPid)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
-            AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
-        if (!isCallingPerm) {
-            APP_LOGE("%{public}s: Permission verification failed", __func__);
-            return;
-        }
-    }
-
     auto userId = GetUserIdByUid(callerUid);
     APP_LOGI("userId:%{public}d", userId);
     ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, userId);
@@ -557,7 +556,8 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
         APP_LOGE("Kill Application by bundle name is fail");
         return;
     }
-    NotifyAppStatus(bundleName, EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
+    NotifyAppStatusByCallerUid(bundleName, userId, callerUid,
+        EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
 }
 
 int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
@@ -916,11 +916,6 @@ void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &to
         return;
     }
 
-    if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
-        APP_LOGE("%{public}s: Permission verification failed", __func__);
-        return;
-    }
-
     // befor exec ScheduleProcessSecurityExit return
     // The resident process won't let him die
     if (appRecord->IsKeepAliveApp()) {
@@ -946,12 +941,6 @@ void AppMgrServiceInner::KillProcessesByUserId(int32_t userId)
 {
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is nullptr");
-        return;
-    }
-
-    if (VerifyAccountPermission(AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES, userId) ==
-        ERR_PERMISSION_DENIED) {
-        APP_LOGE("%{public}s: Permission verification failed", __func__);
         return;
     }
 
@@ -1356,7 +1345,7 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     }
 
     FinishUserTestLocked("App died", -1, appRecord);
-    
+
     // clear uri permission
     auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
     auto appInfo = appRecord->GetApplicationInfo();
@@ -1375,7 +1364,7 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     // kill render if exist.
     auto renderRecord = appRecord->GetRenderRecord();
     if (renderRecord && renderRecord->GetPid() > 0) {
-        APP_LOGD("Kill render process when webviehost died.");
+        APP_LOGD("Kill render process when nwebhost died.");
         KillProcessByPid(renderRecord->GetPid());
     }
 
@@ -1741,6 +1730,22 @@ void AppMgrServiceInner::NotifyAppStatus(const std::string &bundleName, const st
     EventFwk::CommonEventManager::PublishCommonEvent(commonData);
 }
 
+void AppMgrServiceInner::NotifyAppStatusByCallerUid(const std::string &bundleName, const int32_t userId,
+    const int32_t callerUid, const std::string &eventData)
+{
+    APP_LOGI("%{public}s called, bundle name is %{public}s, , userId is %{public}d, event is %{public}s",
+        __func__, bundleName.c_str(), userId, eventData.c_str());
+    Want want;
+    want.SetAction(eventData);
+    ElementName element;
+    element.SetBundleName(bundleName);
+    want.SetElement(element);
+    want.SetParam(Constants::USER_ID, userId);
+    want.SetParam(Constants::UID, callerUid);
+    EventFwk::CommonEventData commonData {want};
+    EventFwk::CommonEventManager::PublishCommonEvent(commonData);
+}
+
 int32_t AppMgrServiceInner::RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
     APP_LOGI("%{public}s begin", __func__);
@@ -1887,8 +1892,14 @@ int AppMgrServiceInner::StartUserTestProcess(
         return ERR_INVALID_VALUE;
     }
 
-    auto processName = bundleInfo.applicationInfo.process.empty() ?
-        bundleInfo.applicationInfo.bundleName : bundleInfo.applicationInfo.process;
+    HapModuleInfo hapModuleInfo;
+    if (GetHapModuleInfoForTestRunner(want, observer, bundleInfo, hapModuleInfo)) {
+        APP_LOGE("Failed to get HapModuleInfo for TestRunner");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string processName;
+    MakeProcessName(processName, std::make_shared<ApplicationInfo>(bundleInfo.applicationInfo), hapModuleInfo);
     APP_LOGI("processName = [%{public}s]", processName.c_str());
 
     // Inspection records
@@ -1900,6 +1911,57 @@ int AppMgrServiceInner::StartUserTestProcess(
     }
 
     return StartEmptyProcess(want, observer, bundleInfo, processName);
+}
+
+int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo)
+{
+    APP_LOGI("Enter");
+    if (!observer) {
+        APP_LOGE("observer nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    bool moduelJson = false;
+    if (!bundleInfo.hapModuleInfos.empty()) {
+        moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
+    }
+    if (moduelJson) {
+        std::string moudleName;
+        auto testRunnerName = want.GetStringParam("-s unittest");
+        auto pos = testRunnerName.find(":");
+        if (pos != std::string::npos) {
+            moudleName = testRunnerName.substr(0, pos);
+        } else {
+            UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
+            return ERR_INVALID_VALUE;
+        }
+
+        bool found = false;
+        for (auto item : bundleInfo.hapModuleInfos) {
+            if (item.moduleName == moudleName) {
+                hapModuleInfo = item;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            UserTestAbnormalFinish(observer, "The specified module name is not found.");
+            return ERR_INVALID_VALUE;
+        }
+    }
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg)
+{
+    sptr<AAFwk::ITestObserver> observerProxy = iface_cast<AAFwk::ITestObserver>(observer);
+    if (!observerProxy) {
+        APP_LOGE("Failed to get ITestObserver proxy");
+        return ERR_INVALID_VALUE;
+    }
+    observerProxy->TestFinished(msg, -1);
+    return ERR_OK;
 }
 
 int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
@@ -2122,16 +2184,6 @@ void AppMgrServiceInner::HandleStartSpecifiedAbilityTimeOut(const int64_t eventI
 
 void AppMgrServiceInner::UpdateConfiguration(const Configuration &config)
 {
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
-            AAFwk::PermissionConstants::PERMISSION_UPDATE_CONFIGURATION);
-        if (!isCallingPerm) {
-            APP_LOGE("%{public}s: Permission verification failed", __func__);
-            return;
-        }
-    }
-
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is null");
         return;
@@ -2329,7 +2381,7 @@ int AppMgrServiceInner::VerifyObserverPermission()
 int AppMgrServiceInner::StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
     int32_t ipcFd, int32_t sharedFd, pid_t &renderPid)
 {
-    APP_LOGI("start render process, webview hostpid:%{public}d", hostPid);
+    APP_LOGI("start render process, nweb hostpid:%{public}d", hostPid);
     if (hostPid <= 0 || renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
         APP_LOGE("invalid param, hostPid:%{public}d, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
             hostPid, renderParam.c_str(), ipcFd, sharedFd);
@@ -2413,16 +2465,16 @@ int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecor
         return ERR_INVALID_VALUE;
     }
 
-    auto webviewSpawnClient = remoteClientManager_->GetWebviewSpawnClient();
-    if (!webviewSpawnClient) {
-        APP_LOGE("webviewSpawnClient is null");
+    auto nwebSpawnClient = remoteClientManager_->GetNWebSpawnClient();
+    if (!nwebSpawnClient) {
+        APP_LOGE("nwebSpawnClient is null");
         return ERR_INVALID_VALUE;
     }
 
     AppSpawnStartMsg startMsg = appRecord->GetStartMsg();
     startMsg.renderParam = renderRecord->GetRenderParam();
     pid_t pid = 0;
-    ErrCode errCode = webviewSpawnClient->StartProcess(startMsg, pid);
+    ErrCode errCode = nwebSpawnClient->StartProcess(startMsg, pid);
     if (FAILED(errCode)) {
         APP_LOGE("failed to spawn new render process, errCode %{public}08x", errCode);
         return ERR_INVALID_VALUE;

@@ -48,7 +48,9 @@ void WatchDog::ProcessEvent(const OHOS::AppExecFwk::InnerEvent::Pointer &event)
     auto eventId = event->GetInnerEventId();
     if (eventId == MAIN_THREAD_IS_ALIVE) {
         WatchDog::appMainThreadIsAlive_ = true;
-        currentHandler_->RemoveTask(MAIN_THREAD_IS_ALIVE_MSG);
+        if (currentHandler_ != nullptr) {
+            currentHandler_->RemoveTask(MAIN_THREAD_IS_ALIVE_MSG);
+        }
     }
 }
 
@@ -72,12 +74,15 @@ void WatchDog::Stop()
     }
     if (watchDogRunner_) {
         watchDogRunner_.reset();
+        watchDogRunner_ = nullptr;
     }
     if (currentHandler_) {
         currentHandler_.reset();
+        currentHandler_ = nullptr;
     }
     if (appMainHandler_) {
         appMainHandler_.reset();
+        appMainHandler_ = nullptr;
     }
 }
 
@@ -101,7 +106,8 @@ bool WatchDog::Timer()
     std::this_thread::sleep_for(std::chrono::milliseconds(INI_TIMER_FIRST_SECOND));
     while (!stopWatchDog_) {
         std::this_thread::sleep_for(std::chrono::milliseconds(INI_TIMER_SECOND));
-        auto timeoutTask1 = [&]() {
+        if (!stopWatchDog_) {
+            auto timeoutTask = [&]() {
             appMainThreadIsAlive_ = false;
             std::string eventType = "APP_MAIN_THREAD_TIMEOUT";
             std::string msgContent = "app main thread is not response!";
@@ -115,9 +121,14 @@ bool WatchDog::Timer()
                     EVENT_KEY_MESSAGE, msgContent);
             }
             APP_LOGI("Warning : main thread is not response!");
-        };
-        currentHandler_->PostTask(timeoutTask1, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);
-        appMainHandler_->SendEvent(MAIN_THREAD_IS_ALIVE);
+            };
+            if (currentHandler_ != nullptr) {
+                currentHandler_->PostTask(timeoutTask, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);
+            }
+            if (appMainHandler_ != nullptr) {
+                appMainHandler_->SendEvent(MAIN_THREAD_IS_ALIVE);
+            }
+        }
     }
     return true;
 }

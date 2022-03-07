@@ -786,5 +786,75 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_004, Te
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _)).WillOnce(Return(TRANSACTION_ERR));
     EXPECT_EQ(proxy_->ReleaseDataAbility(scheduler, abilityRecord->GetToken()), TRANSACTION_ERR);
 }
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbilityByCall
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService StartAbilityByCall
+ * EnvConditions: NA
+ * CaseDescription: Verify the function StartAbilityByCall connect is nullptr.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_StartAbilityByCall_001, TestSize.Level1)
+{
+    Want want;
+    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IAbilityConnection> connect = nullptr;
+    EXPECT_EQ(proxy_->StartAbilityByCall(want, connect, callerToken), ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbilityByCall
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService StartAbilityByCall
+ * EnvConditions: NA
+ * CaseDescription: Verify the function StartAbilityByCall is normal flow.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_StartAbilityByCall_002, TestSize.Level1)
+{
+    Want want;
+    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IAbilityConnection> connect = new AbilityConnectCallback();
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    EXPECT_EQ(proxy_->StartAbilityByCall(want, connect, callerToken), ERR_OK);
+    EXPECT_EQ(IAbilityManager::START_CALL_ABILITY, mock_->code_);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ReleaseAbility
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService ReleaseAbility
+ * EnvConditions: NA
+ * CaseDescription: Verify the function ReleaseAbility connect is nullptr.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseAbility_001, TestSize.Level1)
+{
+    AppExecFwk::ElementName element;
+    sptr<IAbilityConnection> connect = nullptr;
+    EXPECT_EQ(proxy_->ReleaseAbility(connect, element), ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ReleaseAbility
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService ReleaseAbility
+ * EnvConditions: NA
+ * CaseDescription: Verify the function ReleaseAbility is normal flow.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseAbility_002, TestSize.Level1)
+{
+    AppExecFwk::ElementName element;
+    sptr<IAbilityConnection> connect = new AbilityConnectCallback();
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    EXPECT_EQ(proxy_->ReleaseAbility(connect, element), ERR_OK);
+    EXPECT_EQ(IAbilityManager::RELEASE_CALL_ABILITY, mock_->code_);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -95,8 +95,10 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
             break;
         }
         case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {
+            if (lifecycleState_ != ABILITY_STATE_STARTED_NEW) {
+                ret = false;
+            }
             Background();
-            ret = false;
             break;
         }
         default: {

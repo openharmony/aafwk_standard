@@ -37,16 +37,6 @@ public:
 
     /**
      *
-     * @brief Process the event.
-     *
-     * @param event the event want to be processed.
-     *
-     */
-    void ProcessEvent(const OHOS::AppExecFwk::InnerEvent::Pointer &event) override;
-    bool Timer();
-
-    /**
-     *
      * @brief Init the Watchdog.
      *
      * @param mainHandler The handler of main thread.
@@ -84,11 +74,23 @@ public:
      */
     static bool GetAppMainThreadState();
 
+protected:
+    /**
+     *
+     * @brief Process the event.
+     *
+     * @param event the event want to be processed.
+     *
+     */
+    void ProcessEvent(const OHOS::AppExecFwk::InnerEvent::Pointer &event) override;
+
 private:
+    bool Timer();
+
     std::atomic_bool stopWatchDog_ = false;
     std::shared_ptr<ApplicationInfo> applicationInfo_ = nullptr;
     std::shared_ptr<std::thread> watchDogThread_ = nullptr;
-    std::shared_ptr<EventRunner> watchDogRunner_;
+    std::shared_ptr<EventRunner> watchDogRunner_ = nullptr;
     static bool appMainThreadIsAlive_;
     static std::shared_ptr<EventHandler> appMainHandler_;
     static std::shared_ptr<WatchDog> currentHandler_;

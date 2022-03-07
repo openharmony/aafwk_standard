@@ -81,6 +81,7 @@ ohos_source_set("appmgr_test_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${services_path}/common:perm_verification",
     "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -112,6 +113,9 @@ group("unittest") {
     "unittest/ams_app_state_callback_test:unittest",
     "unittest/ams_app_workflow_test:unittest",
     "unittest/ams_ipc_interface_test:unittest",
+
+    # "unittest/ams_lmks_client_test:unittest",
+    "unittest/ams_mgr_kill_process_test:unittest",
     "unittest/ams_mgr_scheduler_test:unittest",
     "unittest/ams_recent_app_list_test:unittest",
     "unittest/ams_service_app_spawn_client_test:unittest",
@@ -121,5 +125,6 @@ group("unittest") {
     "unittest/ams_service_load_ability_process_test:unittest",
     "unittest/ams_service_startup_test:unittest",
     "unittest/app_mgr_service_event_handler_test:unittest",
+    "unittest/app_running_processes_info_test:unittest",
   ]
 }

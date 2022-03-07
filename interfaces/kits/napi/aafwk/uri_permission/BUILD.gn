@@ -32,10 +32,10 @@ ohos_shared_library("uripermissionmanager_napi") {
   ]
 
   external_deps = [
+    "ability_base:zuri",
     "ability_runtime:ability_manager",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
   ]
 

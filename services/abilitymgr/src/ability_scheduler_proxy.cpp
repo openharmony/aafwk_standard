@@ -1032,10 +1032,9 @@ sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
         HILOG_ERROR("CallRequest failed, err %{public}d", result);
         return nullptr;
     }
-
-    auto call = reply.ReadParcelable<IRemoteObject>();
-    if (!call) {
-        HILOG_ERROR("CallRequest error");
+    auto call = reply.ReadRemoteObject();
+    if (call == nullptr) {
+        HILOG_ERROR("CallRequest failed, err remoteObject is nullptr");
         return nullptr;
     }
 

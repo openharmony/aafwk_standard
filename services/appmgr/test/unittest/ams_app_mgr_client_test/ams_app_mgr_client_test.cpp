@@ -366,5 +366,68 @@ HWTEST_F(AmsAppMgrClientTest, AppMgrClient_013, TestSize.Level1)
     EXPECT_EQ(AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED, client_->KillProcessByAbilityToken(token));
     APP_LOGI("ams_app_mgr_client_test_013 end");
 }
+
+/*
+ * Feature: AppMgrService
+ * Function: AppMgrClient::ClearUpApplicationData
+ * SubFunction: ClearUpApplicationData
+ * FunctionPoints: AppMgrClient ClearUpApplicationData interface
+ * EnvConditions: Mobile that can run ohos test framework
+ * CaseDescription: clear the application data.
+ */
+HWTEST_F(AmsAppMgrClientTest, AppMgrClient_014, TestSize.Level1)
+{
+    sptr<IRemoteObject> token;
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ConnectAppMgrService());
+    EXPECT_CALL(*(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), ClearUpApplicationData(_))
+        .Times(1)
+        .WillOnce(Return(ERR_NO_MEMORY));
+    EXPECT_EQ(AppMgrResultCode::ERROR_SERVICE_NOT_READY, client_->ClearUpApplicationData("com.test"));
+}
+
+/*
+ * Feature: AppMgrService
+ * Function: AppMgrClient::ClearUpApplicationData
+ * SubFunction: ClearUpApplicationData
+ * FunctionPoints: AppMgrClient ClearUpApplicationData interface
+ * EnvConditions: Mobile that can run ohos test framework
+ * CaseDescription: clear the application data.
+ */
+HWTEST_F(AmsAppMgrClientTest, AppMgrClient_015, TestSize.Level1)
+{
+    sptr<IRemoteObject> token;
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ConnectAppMgrService());
+    sptr<IAppMgr> appMgr(new MockAppMgrService());
+    EXPECT_CALL(*(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), ClearUpApplicationData(_))
+        .Times(1)
+        .WillOnce(Return(ERR_OK));
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ClearUpApplicationData("com.test"));
+}
+
+/*
+ * Feature: AppMgrService
+ * Function: AppMgrClient::UpdateConfiguration
+ * SubFunction: RegisterAppStateCallback Function
+ * FunctionPoints: AppMgrClient UpdateConfiguration interface
+ * EnvConditions: Mobile that can run ohos test framework
+ * CaseDescription: Notify app of configuration change
+ */
+HWTEST_F(AmsAppMgrClientTest, AppMgrClient_016, TestSize.Level1)
+{
+    APP_LOGI("UpdateConfiguration start");
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ConnectAppMgrService());
+    sptr<IAmsMgr> amsMgrScheduler(new MockAmsMgrScheduler());
+
+    EXPECT_CALL(*(static_cast<MockAmsMgrScheduler *>(amsMgrScheduler.GetRefPtr())), UpdateConfiguration(_))
+        .Times(1);
+
+    EXPECT_CALL(*(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), GetAmsMgr())
+        .Times(1)
+        .WillOnce(Return(amsMgrScheduler));
+
+    Configuration config;
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->UpdateConfiguration(config));
+    APP_LOGI("UpdateConfiguration end");
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

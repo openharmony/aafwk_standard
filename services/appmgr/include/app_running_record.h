@@ -47,7 +47,7 @@ class AppRunningRecord;
 
 /**
  * @class RenderRecord
- * Record webview render process info.
+ * Record nweb render process info.
  */
 class RenderRecord {
 public:
@@ -77,7 +77,7 @@ private:
     std::string renderParam_;
     int32_t ipcFd_ = 0;
     int32_t sharedFd_ = 0;
-    std::weak_ptr<AppRunningRecord> host_; // webview host
+    std::weak_ptr<AppRunningRecord> host_; // nweb host
     sptr<IRenderScheduler> renderScheduler_;
     sptr<AppDeathRecipient> deathRecipient_ = nullptr;
 };

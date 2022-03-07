@@ -23,6 +23,7 @@ config("ability_config") {
     "${SUBSYSTEM_DIR}/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "${INNERKITS_PATH}/want/include/ohos/aafwk/content",
     "${INNERKITS_PATH}/ability_manager/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
@@ -35,7 +36,6 @@ config("ability_config") {
     "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
     "//foundation/aafwk/standard/frameworks/kits/app/native/app/include",
     "//foundation/aafwk/standard/services/common/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     "//foundation/ace/napi/interfaces/kits",
@@ -254,7 +254,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
     "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
@@ -263,6 +262,7 @@ ohos_shared_library("abilitykit_native") {
 
   external_deps = [
     "ability_base:configuration",
+    "ability_base:zuri",
     "ability_runtime:ability_context_native",
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",

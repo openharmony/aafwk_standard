@@ -26,13 +26,17 @@
 #include "app_log_wrapper.h"
 #include "app_mgr_constants.h"
 #include "perf_profile.h"
+#include "xcollie/watchdog.h"
 
+#include "permission_constants.h"
+#include "permission_verification.h"
 #include "system_environment_information.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 namespace {
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
+static const int APP_MS_TIMEOUT = 60;
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
 const std::string TASK_APPLICATION_FOREGROUNDED = "ApplicationForegroundedTask";
@@ -146,6 +150,9 @@ ErrCode AppMgrService::Init()
         APP_LOGE("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
     }
+    if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TIMEOUT) != 0) {
+        APP_LOGE("HiviewDFX::Watchdog::GetInstance AddThread Fail");
+    }
     APP_LOGI("init success");
     return ERR_OK;
 }
@@ -256,6 +263,16 @@ sptr<IAmsMgr> AppMgrService::GetAmsMgr()
 
 int32_t AppMgrService::ClearUpApplicationData(const std::string &bundleName)
 {
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
+            AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
+        if (!isCallingPerm) {
+            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            return ERR_PERMISSION_DENIED;
+        }
+    }
+
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;
     }

@@ -66,6 +66,12 @@ public:
         }
     }
 
+    bool RunScript(const std::string& path) override
+    {
+        static const char PANDA_MAIN_FUNCTION[] = "_GLOBAL::func_main_0";
+        return vm_ != nullptr ? panda::JSNApi::Execute(vm_, path.c_str(), PANDA_MAIN_FUNCTION) : false;
+    }
+
 private:
     static int32_t PrintVmLog(int32_t id, int32_t level, const char* tag, const char* fmt, const char* message)
     {
@@ -347,9 +353,9 @@ std::unique_ptr<NativeReference> JsRuntime::LoadModule(const std::string& module
     if (it != modules_.end()) {
         classValue = it->second->Get();
     } else {
-        std::vector<uint8_t> content;
-        if (!LoadModuleFile(moduleName, modulePath, content)) {
-            HILOG_ERROR("Failed to load module file: %{public}s", modulePath.c_str());
+        std::string fileName;
+        if (!MakeFilePath(codePath_, modulePath, fileName)) {
+            HILOG_ERROR("Failed to make module file path: %{private}s", modulePath.c_str());
             return std::unique_ptr<NativeReference>();
         }
 
@@ -357,7 +363,10 @@ std::unique_ptr<NativeReference> JsRuntime::LoadModule(const std::string& module
         NativeValue* exports = nativeEngine_->CreateObject();
         globalObj->SetProperty("exports", exports);
 
-        nativeEngine_->RunBufferScript(content);
+        if (!RunScript(fileName)) {
+            HILOG_ERROR("Failed to run script: %{public}s", fileName.c_str());
+            return std::unique_ptr<NativeReference>();
+        }
 
         NativeObject* exportsObj = ConvertNativeValueTo<NativeObject>(globalObj->GetProperty("exports"));
         if (exportsObj == nullptr) {
@@ -402,29 +411,9 @@ std::unique_ptr<NativeReference> JsRuntime::LoadSystemModule(
     return std::unique_ptr<NativeReference>(nativeEngine_->CreateReference(instanceValue, 1));
 }
 
-bool JsRuntime::LoadModuleFile(
-    const std::string& moduleName, const std::string& modulePath, std::vector<uint8_t>& content)
+bool JsRuntime::RunScript(const std::string& path)
 {
-    std::string fileName;
-    if (!MakeFilePath(codePath_, modulePath, fileName)) {
-        HILOG_ERROR("Failed to make module file path: %{private}s", modulePath.c_str());
-        return false;
-    }
-
-    HILOG_DEBUG("Try to open module file: %{public}s", fileName.c_str());
-
-    std::ifstream stream(fileName, std::ios_base::binary | std::ios_base::in | std::ios_base::ate);
-    if (!stream.is_open()) {
-        HILOG_ERROR("Failed to open module file: %{private}s", fileName.c_str());
-        return false;
-    }
-
-    size_t fileLength = stream.tellg();
-    content.resize(fileLength);
-
-    stream.seekg(0, std::ios_base::beg);
-    stream.read(reinterpret_cast<char*>(content.data()), fileLength);
-    return true;
+    return nativeEngine_->RunScript(path.c_str()) != nullptr;
 }
 
 using OHOS::Ace::ContainerScope;
@@ -527,7 +516,9 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
 
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
-    return nativeEngine_->BuildNativeAndJsBackStackTrace();
+    std::string straceStr = "";
+    [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr);
+    return straceStr;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

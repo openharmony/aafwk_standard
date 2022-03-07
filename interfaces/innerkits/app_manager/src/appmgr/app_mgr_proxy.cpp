@@ -260,10 +260,10 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    data.WriteInt32(userId);
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
+    data.WriteInt32(userId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         APP_LOGE("Remote() is NULL");
@@ -570,10 +570,10 @@ int AppMgrProxy::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IR
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    data.WriteInt32(pid);
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
+    data.WriteInt32(pid);
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_ABILITY_RECORDS_BY_PROCESS_ID, data, reply)) {
         return ERR_NULL_OBJECT;
     }

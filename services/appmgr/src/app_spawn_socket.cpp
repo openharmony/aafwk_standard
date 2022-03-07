@@ -19,13 +19,13 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-// arg "AppSpawn" or "WebViewSpawn" cannot be defined as string object since REGISTER_SYSTEM_ABILITY will
+// arg "AppSpawn" or "NWebSpawn" cannot be defined as string object since REGISTER_SYSTEM_ABILITY will
 // firstly start without init this string object, which leads to error.
 
-AppSpawnSocket::AppSpawnSocket(bool isWebViewSpawn)
+AppSpawnSocket::AppSpawnSocket(bool isNWebSpawn)
 {
-    clientSocket_ = isWebViewSpawn ?
-        std::make_unique<AppSpawn::ClientSocket>("/dev/unix/socket/WebViewSpawn") :
+    clientSocket_ = isNWebSpawn ?
+        std::make_unique<AppSpawn::ClientSocket>("/dev/unix/socket/NWebSpawn") :
         std::make_unique<AppSpawn::ClientSocket>("AppSpawn");
 }
 

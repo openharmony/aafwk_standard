@@ -33,8 +33,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const int TIMER_TYPE_RTC_WAKEUP = 3;
-
 const int REQUEST_UPDATE_AT_CODE = 1;
 const int REQUEST_LIMITER_CODE = 2;
 const int REQUEST_DYNAMIC_CODE = 3;
@@ -845,7 +843,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     }
 
     auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(TIMER_TYPE_RTC_WAKEUP);
+    timerOption->SetType(timerOption->TIMER_TYPE_WAKEUP);
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
     std::shared_ptr<WantAgent> wantAgent = GetUpdateAtWantAgent(findedItem.updateAtTime);
@@ -943,11 +941,11 @@ bool FormTimerMgr::UpdateLimiterAlarm()
     uint64_t limiterWakeUpTime = FormUtil::GetMillisecondFromTm(tmAtTime);
 
     auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(TIMER_TYPE_RTC_WAKEUP);
+    timerOption->SetType(timerOption->TIMER_TYPE_WAKEUP);
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
     std::shared_ptr<WantAgent> wantAgent = GetLimiterWantAgent();
-    if (wantAgent) {
+    if (!wantAgent) {
         APP_LOGE("%{public}s, failed to create wantAgent.", __func__);
         return false;
     }
@@ -1004,8 +1002,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetLimiterWantAgent()
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_LIMITER_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
-    return WantAgentHelper::GetWantAgent(context, wantAgentInfo);
+    return WantAgentHelper::GetWantAgent(wantAgentInfo);
 }
 
 /**
