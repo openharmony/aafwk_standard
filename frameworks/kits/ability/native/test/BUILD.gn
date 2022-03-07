@@ -1113,7 +1113,8 @@ group("unittest") {
 
   deps += [
     # ":ability_context_test",
-    ":ability_impl_test",
+
+    # ":ability_impl_test",
     ":ability_lifecycle_executor_test",
     ":ability_lifecycle_test",
     ":ability_permission_test",

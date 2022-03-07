@@ -69,6 +69,5 @@ ohos_unittest("terminate_ability_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":terminate_ability_test" ]
+  # deps = [ ":terminate_ability_test" ]
 }
