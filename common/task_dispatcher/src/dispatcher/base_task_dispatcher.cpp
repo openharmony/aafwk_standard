@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,6 +34,7 @@ ErrCode BaseTaskDispatcher::SyncDispatchBarrier(const std::shared_ptr<Runnable> 
     APP_LOGI("BaseTaskDispatcher::SyncDispatchBarrier called");
     return SyncDispatch(task);
 }
+
 ErrCode BaseTaskDispatcher::AsyncDispatchBarrier(const std::shared_ptr<Runnable> &task)
 {
     APP_LOGI("BaseTaskDispatcher::AsyncDispatchBarrier start");
@@ -110,7 +111,7 @@ ErrCode BaseTaskDispatcher::GroupDispatchNotify(
     if (groupImpl->AddNotification(ptrCallback)) {
         APP_LOGI("BaseTaskDispatcher::GroupDispatchNotify end");
         return ERR_OK;
-    };
+    }
     APP_LOGE("BaseTaskDispatcher::GroupDispatchNotify addNotification failed");
     return ERR_APPEXECFWK_CHECK_FAILED;
 }

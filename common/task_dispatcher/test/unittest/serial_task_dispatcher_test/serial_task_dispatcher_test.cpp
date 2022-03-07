@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,7 @@ public:
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_1000, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_SyncDispatchTest_1000");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -55,12 +55,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_1000, Tes
     dispatcher->SyncDispatch(std::make_shared<Runnable>([&count, &name]() {
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 0);
-        GTEST_LOG_(INFO) << name + " task " + std::to_string(index) + " end";
+        GTEST_LOG_(INFO) << (name + " task " + std::to_string(index) + " end");
     }));
 
     EXPECT_TRUE(count.load() == 1);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -74,7 +74,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_1000, Tes
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ConstructorTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::DEFAULT;
@@ -88,12 +88,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_001, TestS
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ConstructorTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::LOW;
@@ -107,12 +107,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_002, TestS
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_003, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ConstructorTest_003");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -126,12 +126,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_003, TestS
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_004, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ConstructorTest_004");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -154,12 +154,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_004, TestS
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_005, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ConstructorTest_005");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -180,7 +180,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_005, TestS
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -194,7 +194,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_ConstructorTest_005, TestS
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_GetWorkingTasksSizeTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_GetWorkingTasksSizeTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -220,33 +220,33 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_GetWorkingTasksSizeTest_00
         long wait = 500;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        GTEST_LOG_(INFO) << name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize());
+        GTEST_LOG_(INFO) << (name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize()));
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 2 - 1);
     }
     {
         long wait = 2000;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        GTEST_LOG_(INFO) << name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize());
+        GTEST_LOG_(INFO) << (name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize()));
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 1 - 1);
     }
     {
         long wait = 2000;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        GTEST_LOG_(INFO) << name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize());
+        GTEST_LOG_(INFO) << (name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize()));
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
     long wait = 5000;
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_GetWorkingTasksSizeTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_GetWorkingTasksSizeTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -270,18 +270,18 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_GetWorkingTasksSizeTest_00
         long wait = 100;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        GTEST_LOG_(INFO) << name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize());
+        GTEST_LOG_(INFO) << (name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize()));
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), times - 1);
     }
     {
         long wait = 300 * (long)times;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        GTEST_LOG_(INFO) << name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize());
+        GTEST_LOG_(INFO) << (name + " size: " + std::to_string(dispatcher->GetWorkingTasksSize()));
         EXPECT_EQ(dispatcher->GetWorkingTasksSize(), 0);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -295,7 +295,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_GetWorkingTasksSizeTest_00
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_SyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -341,12 +341,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_001, Test
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_SyncDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -355,7 +355,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_002, Test
     ErrCode errCode = dispatcher->SyncDispatch(nullptr);
     EXPECT_TRUE(errCode == ERR_APPEXECFWK_CHECK_FAILED);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -369,7 +369,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_SyncDispatchTest_002, Test
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_AsyncDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_AsyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -444,12 +444,12 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_AsyncDispatchTest_001, Tes
         EXPECT_TRUE(count.load() == 3);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_AsyncDispatchTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_AsyncDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -458,7 +458,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_AsyncDispatchTest_002, Tes
     std::shared_ptr<Revocable> revocable = dispatcher->AsyncDispatch(nullptr);
     EXPECT_TRUE(revocable == nullptr);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -472,7 +472,7 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_AsyncDispatchTest_002, Tes
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -537,13 +537,13 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_001, Tes
         EXPECT_TRUE(count.load() == 3);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -552,13 +552,13 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_002, Tes
     int sleep1 = 2000;
     dispatcher->DelayDispatch(nullptr, sleep1);
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_003, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_003");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto config = std::make_shared<DefaultWorkerPoolConfig>();
     auto executor = std::make_shared<TaskExecutor>(config);
     auto priority = TaskPriority::HIGH;
@@ -591,5 +591,5 @@ HWTEST(SerialTaskDispatcherTest, SerialTaskDispatcher_DelayDispatchTest_003, Tes
         EXPECT_TRUE(count.load() == 2);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }

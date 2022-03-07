@@ -119,8 +119,6 @@ napi_value NAPI_GetFilesDir(napi_env env, napi_callback_info info);
 
 napi_value NAPI_GetCacheDir(napi_env env, napi_callback_info info);
 
-napi_value NAPI_GetExternalCacheDir(napi_env env, napi_callback_info info);
-
 /**
  * @brief Obtains the type of this application.
  *

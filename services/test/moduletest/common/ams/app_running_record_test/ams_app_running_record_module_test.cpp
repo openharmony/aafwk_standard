@@ -513,5 +513,147 @@ HWTEST_F(AmsAppRunningRecordModuleTest, ApplicationStatusChange_006, TestSize.Le
     auto stateFromRec = record->GetState();
     EXPECT_EQ(stateFromRec, ApplicationState::APP_STATE_TERMINATED);
 }
+
+/*
+ * Feature: StartSpecifiedAbility
+ * Function: AppManagerService
+ * SubFunction: ApprunningRecord
+ * FunctionPoints: not set Specified flag,start ability
+ * EnvConditions: system running normally
+ * CaseDescription:When the process exists and the moduleRecord exists,
+ *                 calling StartSpecifiedAbility will call the ScheduleAcceptWant method once
+ */
+HWTEST_F(AmsAppRunningRecordModuleTest, StartSpecifiedAbility_001, TestSize.Level2)
+{
+    EXPECT_TRUE(service_ != nullptr) << "init service fail!";
+
+    unsigned long index = 0;
+    auto appInfo = std::make_shared<ApplicationInfo>();
+    appInfo->name = GetTestAppName(index);
+    appInfo->bundleName = GetTestAppName(index);
+    appInfo->uid = 10003;
+    auto abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = GetTestAbilityName(index);
+    abilityInfo->applicationInfo = *appInfo;
+    std::string processName = GetTestAppName(index);
+    BundleInfo bundleInfo;
+    HapModuleInfo hapModuleInfo;
+    EXPECT_TRUE(service_->GetBundleAndHapInfo(*abilityInfo, appInfo, bundleInfo, hapModuleInfo));
+    auto record = service_->CreateAppRunningRecord(
+        GetMockToken(), nullptr, appInfo, abilityInfo, processName, bundleInfo, hapModuleInfo, nullptr);
+    EXPECT_TRUE(record != nullptr) << "create apprunningrecord fail!";
+
+    // LaunchApplication
+    sptr<MockApplication> mockApplication(new MockApplication());
+    std::string testPoint = "StartSpecifiedAbility_001";
+    CheckLaunchApplication(mockApplication, index, record, testPoint);
+
+    EXPECT_CALL(*mockApplication, ScheduleAcceptWant(_, _))
+        .Times(1)
+        .WillOnce(InvokeWithoutArgs(mockApplication.GetRefPtr(), &MockApplication::Post));
+
+    Want want;
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
+    service_->StartSpecifiedAbility(want, *abilityInfo);
+
+    mockApplication->Wait();
+    EXPECT_TRUE(record->IsStartSpecifiedAbility());
+}
+
+/*
+ * Feature: StartSpecifiedAbility
+ * Function: AppManagerService
+ * SubFunction: ApprunningRecord
+ * FunctionPoints: not set Specified flag,start ability
+ * EnvConditions: system running normally
+ * CaseDescription:When the process exists and the moduleRecord does not exist,
+ *                 calling StartSpecifiedAbility will call the ScheduleAbilityStage method once
+ */
+HWTEST_F(AmsAppRunningRecordModuleTest, StartSpecifiedAbility_002, TestSize.Level2)
+{
+    EXPECT_TRUE(service_ != nullptr) << "init service fail!";
+
+    unsigned long index = 0;
+    auto appInfo = std::make_shared<ApplicationInfo>();
+    appInfo->name = GetTestAppName(index);
+    appInfo->bundleName = GetTestAppName(index);
+    appInfo->uid = 10003;
+    auto abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = GetTestAbilityName(index);
+    abilityInfo->applicationInfo = *appInfo;
+    std::string processName = GetTestAppName(index);
+    BundleInfo bundleInfo;
+    HapModuleInfo hapModuleInfo;
+    hapModuleInfo.moduleName = "moduleName1";
+    EXPECT_TRUE(service_->GetBundleAndHapInfo(*abilityInfo, appInfo, bundleInfo, hapModuleInfo));
+    auto record = service_->CreateAppRunningRecord(
+        GetMockToken(), nullptr, appInfo, abilityInfo, processName, bundleInfo, hapModuleInfo, nullptr);
+    EXPECT_TRUE(record != nullptr) << "create apprunningrecord fail!";
+
+    auto abilityInfo1 = std::make_shared<AbilityInfo>();
+    abilityInfo1->name = GetTestAbilityName(index + 1);
+    abilityInfo1->applicationInfo = *appInfo;
+
+    // LaunchApplication
+    sptr<MockApplication> mockApplication(new MockApplication());
+    std::string testPoint = "StartSpecifiedAbility_001";
+    CheckLaunchApplication(mockApplication, index, record, testPoint);
+
+    EXPECT_CALL(*mockApplication, ScheduleAbilityStage(_))
+        .Times(1)
+        .WillOnce(InvokeWithoutArgs(mockApplication.GetRefPtr(), &MockApplication::Post));
+
+    Want want;
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
+    service_->StartSpecifiedAbility(want, *abilityInfo1);
+
+    mockApplication->Wait();
+    EXPECT_TRUE(record->IsStartSpecifiedAbility());
+}
+
+/*
+ * Feature: StartSpecifiedAbility
+ * Function: AppManagerService
+ * SubFunction: ApprunningRecord
+ * FunctionPoints: not set Specified flag,start ability
+ * EnvConditions: system running normally
+ * CaseDescription:When the process does not exist, call StartSpecifiedAbility, ScheduleAbilityStage and
+ *                 ScheduleAcceptWant methods will not be called, and there is a module information
+ */
+HWTEST_F(AmsAppRunningRecordModuleTest, StartSpecifiedAbility_003, TestSize.Level2)
+{
+    EXPECT_TRUE(service_ != nullptr) << "init service fail!";
+
+    unsigned long index = 0;
+    auto appInfo = std::make_shared<ApplicationInfo>();
+    appInfo->name = GetTestAppName(index);
+    appInfo->bundleName = GetTestAppName(index);
+    appInfo->uid = 10003;
+    appInfo->process = GetTestAppName(index);
+    auto abilityInfo = std::make_shared<AbilityInfo>();
+    abilityInfo->name = GetTestAbilityName(index);
+    abilityInfo->applicationInfo = *appInfo;
+
+    // LaunchApplication
+    sptr<MockApplication> mockApplication(new MockApplication());
+
+    EXPECT_CALL(*mockApplication, ScheduleAcceptWant(_, _))
+        .Times(0)
+        .WillOnce(InvokeWithoutArgs(mockApplication.GetRefPtr(), &MockApplication::Post));
+
+    EXPECT_CALL(*mockApplication, ScheduleAbilityStage(_))
+        .Times(0)
+        .WillOnce(InvokeWithoutArgs(mockApplication.GetRefPtr(), &MockApplication::Post));
+
+    Want want;
+    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
+    service_->StartSpecifiedAbility(want, *abilityInfo);
+    mockApplication->Wait();
+
+    BundleInfo bundleInfo;
+    auto appRecord = service_->appRunningManager_->CheckAppRunningRecordIsExist(
+        appInfo->name, GetTestAppName(index), appInfo->uid, bundleInfo);
+    EXPECT_TRUE(appRecord->GetModules().size() == 1);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

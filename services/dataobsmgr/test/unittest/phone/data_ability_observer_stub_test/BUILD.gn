@@ -31,10 +31,10 @@ ohos_unittest("data_ability_observer_stub_test") {
   deps = [
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/services/dataobsmgr:dataobsms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",

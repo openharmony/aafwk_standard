@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -80,7 +80,7 @@ bool LockScreenWhiteList::GetWhiteListInfo(nlohmann::json &jsonFile)
     std::ifstream inFile;
     inFile.open(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::in);
     if (!inFile.is_open()) {
-        HILOG_INFO("read white list error ...");
+        HILOG_INFO("read Permit list error ...");
         return false;
     }
     inFile.seekg(0, std::ios::end);

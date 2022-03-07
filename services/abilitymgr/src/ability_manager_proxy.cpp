@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1619,7 +1619,7 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
@@ -1631,7 +1631,7 @@ void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memo
 
     std::shared_ptr<AppExecFwk::SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<AppExecFwk::SystemMemoryAttr>());
     if (remoteRetsult == nullptr) {
-        HILOG_ERROR("recv SystemMemoryAttr faild");
+        HILOG_ERROR("recv SystemMemoryAttr failed");
         return;
     }
 
@@ -2252,7 +2252,7 @@ int AbilityManagerProxy::StartSyncRemoteMissions(const std::string& devId, bool 
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(devId)) {
@@ -2286,7 +2286,7 @@ int32_t AbilityManagerProxy::StopSyncRemoteMissions(const std::string& devId)
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        HILOG_ERROR("WriteInterfaceToken faild");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(devId)) {
@@ -2486,8 +2486,7 @@ int AbilityManagerProxy::StartUserTest(const Want &want, const sptr<IRemoteObjec
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode,
-    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2508,10 +2507,7 @@ int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resul
         HILOG_ERROR("bundleName write failed.");
         return ERR_INVALID_VALUE;
     }
-    if (!data.WriteParcelable(observer)) {
-        HILOG_ERROR("observer write failed.");
-        return ERR_INVALID_VALUE;
-    }
+
     auto error = Remote()->SendRequest(IAbilityManager::FINISH_USER_TEST, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);

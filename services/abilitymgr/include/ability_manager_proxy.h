@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -517,7 +517,7 @@ public:
 
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
     /**
-     * set lock screen white list
+     * set lock screen Permit list
      *
      * @param isAllow whether to allow startup on lock screen.
      * @return Returns ERR_OK on success, others on failure.
@@ -629,8 +629,7 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -655,7 +654,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
-    
+
     /**
      * Calls this interface to move the ability to the foreground.
      *

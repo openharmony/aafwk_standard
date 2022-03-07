@@ -48,7 +48,7 @@ sptr<FormHostClient> FormHostClient::GetInstance()
 }
 
 /**
- * @brief Add form.
+ * @brief Add form callback.
  *
  * @param formCallback the host's form callback.
  * @param formId The Id of the form.
@@ -57,37 +57,23 @@ sptr<FormHostClient> FormHostClient::GetInstance()
 void FormHostClient::AddForm(std::shared_ptr<FormCallbackInterface> formCallback, const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
-
-    if (formId <= 0) {
-        APP_LOGE("%{public}s error, the passed form id can't be negative or zero.", __func__);
+    if (formId <= 0 || formCallback == nullptr) {
+        APP_LOGE("%{public}s error, invalid formId or formCallback.", __func__);
         return;
     }
-
-    {
-        std::lock_guard<std::mutex> lock(lockMutex_);
-        int64_t key = FindKeyByCallback(formCallback);
-        if (key == -1) {
-            HostForms hostForms;
-            int64_t tempKey = key_;
-            if (!keyVector_.empty()) {
-                tempKey = keyVector_.back();
-                keyVector_.pop_back();
-            }
-            hostForms.AddForm(formId);
-            recordCallback_.insert(std::make_pair(tempKey, formCallback));
-            recordHostForms_.insert(std::make_pair(tempKey, hostForms));
-
-            if (tempKey == key_) {
-                key_++;
-            }
-        } else {
-            recordHostForms_[key].AddForm(formId);
-        }
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    auto iter = formCallbackMap_.find(formId);
+    if (iter == formCallbackMap_.end()) {
+        std::set<std::shared_ptr<FormCallbackInterface>> callbacks;
+        callbacks.emplace(formCallback);
+        formCallbackMap_.emplace(formId, callbacks);
+    } else {
+        iter->second.emplace(formCallback);
     }
 }
 
 /**
- * @brief Remove form.
+ * @brief Remove form callback.
  *
  * @param formCallback the host's form callback.
  * @param formId The Id of the form.
@@ -96,35 +82,19 @@ void FormHostClient::AddForm(std::shared_ptr<FormCallbackInterface> formCallback
 void FormHostClient::RemoveForm(std::shared_ptr<FormCallbackInterface> formCallback, const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
-
     if (formId <= 0 || formCallback == nullptr) {
-        APP_LOGE("%{public}s, invalid param.", __func__);
+        APP_LOGE("%{public}s, invalid formId or formCallback.", __func__);
         return;
     }
-
-    {
-        std::lock_guard<std::mutex> lock(lockMutex_);
-        int64_t key = FindKeyByCallback(formCallback);
-        if (key == -1) {
-            APP_LOGE("%{public}s, failed to find callback.", __func__);
-            return;
-        }
-
-        if (recordHostForms_[key].IsEmpty()) {
-            recordCallback_.erase(key);
-            recordHostForms_.erase(key);
-            keyVector_.push_back(key);
-            APP_LOGI("%{public}s, clear data.", __func__);
-            return;
-        }
-
-        recordHostForms_[key].DelForm(formId);
-        if (recordHostForms_[key].IsEmpty()) {
-            recordCallback_.erase(key);
-            recordHostForms_.erase(key);
-            keyVector_.push_back(key);
-            APP_LOGI("%{public}s, clear data.", __func__);
-        }
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    auto iter = formCallbackMap_.find(formId);
+    if (iter == formCallbackMap_.end()) {
+        APP_LOGE("%{public}s, not find formId:%{public}s.", __func__, std::to_string(formId).c_str());
+        return;
+    }
+    iter->second.erase(formCallback);
+    if (iter->second.empty()) {
+        formCallbackMap_.erase(iter);
     }
     APP_LOGI("%{public}s end.", __func__);
 }
@@ -138,14 +108,8 @@ void FormHostClient::RemoveForm(std::shared_ptr<FormCallbackInterface> formCallb
 bool FormHostClient::ContainsForm(int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
-
-    std::lock_guard<std::mutex> lock(lockMutex_);
-    for (auto recordHostForm : recordHostForms_) {
-        if (recordHostForm.second.Contains(formId)) {
-            return true;
-        }
-    }
-    return false;
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    return formCallbackMap_.find(formId) != formCallbackMap_.end();
 }
 
 /**
@@ -163,14 +127,17 @@ void FormHostClient::OnAcquired(const FormJsInfo &formJsInfo)
         APP_LOGE("%{public}s error, the passed form id can't be negative.", __func__);
         return;
     }
-    std::shared_ptr<FormCallbackInterface> targetCallback = FindTargetCallback(formId);
-    if (targetCallback == nullptr) {
-        APP_LOGE("%{public}s error, can't find target callback. formId: %{public}" PRId64 ".", __func__, formId);
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    auto iter = formCallbackMap_.find(formId);
+    if (iter == formCallbackMap_.end()) {
+        APP_LOGE("%{public}s error, not find formId:%{public}s.", __func__, std::to_string(formId).c_str());
         return;
     }
-    APP_LOGI("%{public}s, formId: %{public}" PRId64 ", jspath: %{public}s, data: %{public}s", __func__, formId,
-        formJsInfo.jsFormCodePath.c_str(), formJsInfo.formData.c_str());
-    targetCallback->ProcessFormUpdate(formJsInfo);
+    for (const auto& callback : iter->second) {
+        APP_LOGI("%{public}s, formId: %{public}" PRId64 ", jspath: %{public}s, data: %{public}s",
+            __func__, formId, formJsInfo.jsFormCodePath.c_str(), formJsInfo.formData.c_str());
+        callback->ProcessFormUpdate(formJsInfo);
+    }
 }
 
 /**
@@ -188,12 +155,17 @@ void FormHostClient::OnUpdate(const FormJsInfo &formJsInfo)
         APP_LOGE("%{public}s error, the passed form id can't be negative.", __func__);
         return;
     }
-    std::shared_ptr<FormCallbackInterface> targetCallback = FindTargetCallback(formId);
-    if (targetCallback == nullptr) {
-        APP_LOGE("%{public}s error, can't find target callback. formId: %{public}" PRId64 ".", __func__, formId);
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    auto iter = formCallbackMap_.find(formId);
+    if (iter == formCallbackMap_.end()) {
+        APP_LOGE("%{public}s error, not find formId:%{public}s.", __func__, std::to_string(formId).c_str());
         return;
     }
-    targetCallback->ProcessFormUpdate(formJsInfo);
+    for (const auto& callback : iter->second) {
+        APP_LOGI("%{public}s, formId: %{public}" PRId64 ", jspath: %{public}s, data: %{public}s",
+            __func__, formId, formJsInfo.jsFormCodePath.c_str(), formJsInfo.formData.c_str());
+        callback->ProcessFormUpdate(formJsInfo);
+    }
 }
 
 /**
@@ -205,7 +177,7 @@ void FormHostClient::OnUpdate(const FormJsInfo &formJsInfo)
 void FormHostClient::OnUninstall(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (formIds.size() <= 0) {
+    if (formIds.empty()) {
         APP_LOGE("%{public}s error, formIds is empty.", __func__);
         return;
     }
@@ -214,59 +186,17 @@ void FormHostClient::OnUninstall(const std::vector<int64_t> &formIds)
             APP_LOGE("%{public}s error, the passed form id can't be negative.", __func__);
             continue;
         }
-        std::shared_ptr<FormCallbackInterface> targetCallback = FindTargetCallback(formId);
-        if (targetCallback == nullptr) {
-            APP_LOGE("%{public}s error, can't find target callback. formId: %{public}" PRId64 ".", __func__, formId);
+        std::lock_guard<std::mutex> lock(callbackMutex_);
+        auto iter = formCallbackMap_.find(formId);
+        if (iter == formCallbackMap_.end()) {
+            APP_LOGE("%{public}s error, not find formId:%{public}s.", __func__, std::to_string(formId).c_str());
             continue;
         }
-        targetCallback->ProcessFormUninstall(formId);
-    }
-}
-
-/**
- * @brief Find callback by formId.
- *
- * @param formId The Id of the form.
- * @return target callback
- */
-std::shared_ptr<FormCallbackInterface> FormHostClient::FindTargetCallback(int64_t formId)
-{
-    std::lock_guard<std::mutex> lock(lockMutex_);
-    for (auto record : recordHostForms_) {
-        if (record.second.Contains(formId)) {
-            return recordCallback_[record.first];
+        for (const auto& callback : iter->second) {
+            APP_LOGE("%{public}s uninstall formId:%{public}s.", __func__, std::to_string(formId).c_str());
+            callback->ProcessFormUninstall(formId);
         }
     }
-    return nullptr;
-}
-
-/**
- * @brief Find Key By form callback.
- *
- * @param formCallback The form callback.
- * @return callback's key
- */
-int32_t FormHostClient::FindKeyByCallback(std::shared_ptr<FormCallbackInterface> formCallback)
-{
-    for (auto recordCallback : recordCallback_) {
-        if (Compare(recordCallback.second, formCallback)) {
-            return recordCallback.first;
-        }
-    }
-    return -1;
-}
-
-/**
- * @brief Compare form callback.
- *
- * @param formCallback1 The form callback.
- * @param formCallback2 The form callback to be compared with form callback1.
- * @return Returns true if the two form callback are equal to each other, returns false otherwise.
- */
-bool FormHostClient::Compare(std::shared_ptr<FormCallbackInterface> formCallback1,
-    std::shared_ptr<FormCallbackInterface> formCallback2)
-{
-    return (formCallback1 == formCallback2) ? true : false;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

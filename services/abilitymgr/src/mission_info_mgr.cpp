@@ -179,6 +179,16 @@ bool MissionInfoMgr::DeleteAllMissionInfos(const std::shared_ptr<MissionListener
     return true;
 }
 
+static bool DoesNotShowInTheMissionList(int32_t startMethod)
+{
+    switch (static_cast<StartMethod>(startMethod)) {
+        case StartMethod::START_CALL:
+            return true;
+        default:
+            return false;
+    }
+}
+
 int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &missionInfos)
 {
     HILOG_INFO("GetMissionInfos, numMax:%{public}d", numMax);
@@ -189,6 +199,11 @@ int MissionInfoMgr::GetMissionInfos(int32_t numMax, std::vector<MissionInfo> &mi
     for (auto &mission : missionInfoList_) {
         if (static_cast<int>(missionInfos.size()) >= numMax) {
             break;
+        }
+
+        if (DoesNotShowInTheMissionList(mission.startMethod)) {
+            HILOG_INFO("MissionId[%{public}d] don't show in mission list", mission.missionInfo.id);
+            continue;
         }
         MissionInfo info = mission.missionInfo;
         missionInfos.emplace_back(info);
@@ -215,6 +230,12 @@ int MissionInfoMgr::GetMissionInfoById(int32_t missionId, MissionInfo &missionIn
         HILOG_ERROR("no such mission:%{public}d", missionId);
         return -1;
     }
+
+    if (DoesNotShowInTheMissionList((*it).startMethod)) {
+        HILOG_INFO("MissionId[%{public}d] don't show in mission list", (*it).missionInfo.id);
+        return -1;
+    }
+
     HILOG_INFO("GetMissionInfoById, find missionId missionId:%{public}d", missionId);
     missionInfo = (*it).missionInfo;
     return 0;
