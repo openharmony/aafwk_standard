@@ -115,11 +115,6 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
         return;
     }
 
-    if (targetForms.empty()) {
-        APP_LOGE("%{public}s error, targetForms is empty.", __func__);
-        return;
-    }
-
     std::vector<int64_t> removedForms;
     std::vector<int64_t> updatedForms;
     for (FormRecord& formRecord : formInfos) {
