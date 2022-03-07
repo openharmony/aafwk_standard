@@ -55,8 +55,8 @@ void SpecifiedMissionListTest::TearDown(void)
 HWTEST_F(SpecifiedMissionListTest, mission_list_GetMissionBySpecifiedFlag_001, TestSize.Level1)
 {
     auto missionList = std::make_shared<MissionList>();
-
-    auto list = missionList->GetMissionBySpecifiedFlag("flag");
+    Want want;
+    auto list = missionList->GetMissionBySpecifiedFlag(want, "flag");
 
     EXPECT_EQ(nullptr, list);
 }
@@ -83,7 +83,7 @@ HWTEST_F(SpecifiedMissionListTest, mission_list_GetMissionBySpecifiedFlag_002, T
     auto missionList = std::make_shared<MissionList>();
     missionList->AddMissionToTop(mission);
 
-    auto list = missionList->GetMissionBySpecifiedFlag("flag");
+    auto list = missionList->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(nullptr, list);
 }
 
@@ -110,7 +110,7 @@ HWTEST_F(SpecifiedMissionListTest, mission_list_GetMissionBySpecifiedFlag_003, T
     auto missionList = std::make_shared<MissionList>();
     missionList->AddMissionToTop(mission);
 
-    auto list = missionList->GetMissionBySpecifiedFlag("flag");
+    auto list = missionList->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(nullptr, list);
 }
 
@@ -137,7 +137,7 @@ HWTEST_F(SpecifiedMissionListTest, mission_list_GetMissionBySpecifiedFlag_004, T
     auto missionList = std::make_shared<MissionList>();
     missionList->AddMissionToTop(mission);
 
-    auto list = missionList->GetMissionBySpecifiedFlag("flag");
+    auto list = missionList->GetMissionBySpecifiedFlag(want, "flag");
     EXPECT_EQ(mission, list);
 }
 }  // namespace AAFwk

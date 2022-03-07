@@ -113,7 +113,7 @@ std::shared_ptr<Mission> MissionList::GetMissionById(int missionId) const
     return nullptr;
 }
 
-std::shared_ptr<Mission> MissionList::GetMissionBySpecifiedFlag(const std::string &flag) const
+std::shared_ptr<Mission> MissionList::GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const
 {
     for (auto mission : missions_) {
         if (!mission) {
@@ -125,7 +125,13 @@ std::shared_ptr<Mission> MissionList::GetMissionBySpecifiedFlag(const std::strin
             return nullptr;
         }
 
-        if (ability->GetSpecifiedFlag() == flag) {
+        std::string srcAbilityName = ability->GetAbilityInfo().name;
+        std::string srcBundleName = ability->GetApplicationInfo().bundleName;
+        std::string tarAbilityName = want.GetElement().GetAbilityName();
+        std::string tarBundleName = want.GetElement().GetBundleName();
+        if ((srcBundleName == tarBundleName) &&
+            (srcAbilityName == tarAbilityName) &&
+            (ability->GetSpecifiedFlag() == flag)) {
             return mission;
         }
     }

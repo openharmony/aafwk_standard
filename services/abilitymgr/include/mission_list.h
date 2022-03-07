@@ -178,7 +178,7 @@ public:
     void DumpStateByRecordId(
         std::vector<std::string> &info, bool isClient, int32_t abilityRecordId, const std::vector<std::string> &params);
 
-    std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const std::string &flag) const;
+    std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const;
 private:
     std::string GetTypeName();
 
