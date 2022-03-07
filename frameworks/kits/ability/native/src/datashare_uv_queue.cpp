@@ -37,18 +37,19 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
     uv_queue_work(
         loop_, work, [](uv_work_t* work) {},
         [](uv_work_t* work, int uvstatus) {
+            if (work == nullptr || work->data == nullptr) {
+                HILOG_ERROR("%{public}s invalid work or work->data.", __func__);
+                return;
+            }
             auto *entry = static_cast<UvEntry*>(work->data);
+            std::unique_lock<std::mutex> lock(entry->mutex);
             if (entry->func) {
                 entry->func();
             }
-            std::unique_lock<std::mutex> lock(entry->mutex);
             entry->done = true;
             entry->condition.notify_all();
             if (entry->purge) {
-                delete entry;
-                delete work;
-                entry = nullptr;
-                work = nullptr;
+                DataShareUvQueue::Purge(work);
             }
         });
 
@@ -61,22 +62,40 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
     {
         std::unique_lock<std::mutex> lock(uvEntry->mutex);
         while (!uvEntry->done) {
-            HILOG_INFO("%{public}s Wait uv_queue_work to complete.", __func__);
             if (uvEntry->condition.wait_for(lock, std::chrono::seconds(WAIT_TIME_OUT)) == std::cv_status::timeout) {
                 HILOG_INFO("%{public}s Wait uv_queue_work timeout.", __func__);
                 uvEntry->isTimeout = true;
                 break;
             }
         }
+        if (uvEntry->isTimeout && !uv_cancel((uv_req_t*)&work)) {
+            HILOG_ERROR("%{public}s uv_cancel failed.", __func__);
+            uvEntry->purge = true;
+        }
     }
 
-    if (uvEntry->isTimeout && !uv_cancel((uv_req_t*)&work)) {
-        HILOG_ERROR("%{public}s uv_cancel failed.", __func__);
-        uvEntry->purge = true;
-    } else {
-        delete uvEntry;
-        delete work;
+    if (!uvEntry->purge) {
+        DataShareUvQueue::Purge(work);
     }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+void DataShareUvQueue::Purge(uv_work_t* work)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (work == nullptr || work->data == nullptr) {
+        HILOG_ERROR("%{public}s invalid work or work->data.", __func__);
+        return;
+    }
+
+    auto *entry = static_cast<UvEntry*>(work->data);
+    std::unique_lock<std::mutex> lock(entry->mutex);
+
+    delete entry;
+    entry = nullptr;
+
+    delete work;
+    work = nullptr;
     HILOG_INFO("%{public}s end.", __func__);
 }
 } // namespace AbilityRuntime

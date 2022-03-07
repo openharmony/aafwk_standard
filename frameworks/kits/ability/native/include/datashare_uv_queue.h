@@ -45,6 +45,8 @@ private:
         std::mutex mutex;
     };
 
+    static void Purge(uv_work_t* work);
+
     napi_env env_ = nullptr;
     uv_loop_s* loop_ = nullptr;
 };
