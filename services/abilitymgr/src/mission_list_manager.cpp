@@ -2170,7 +2170,8 @@ void MissionListManager::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Wan
     StartAbility(currentTopAbility, callerAbility, abilityRequest);
 }
 
-std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const
+std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(
+    const AAFwk::Want &want, const std::string &flag) const
 {
     std::shared_ptr<Mission> mission = nullptr;
     for (auto missionList : currentMissionLists_) {
