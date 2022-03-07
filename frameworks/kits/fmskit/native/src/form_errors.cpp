@@ -47,13 +47,17 @@ std::string FormErrors::GetErrorMessage(int errCode)
  */
 void FormErrors::InitErrorMessageMap()
 {
-    errorMessageMap_ =  { //  error + message
+    errorMessageMap_ = { //  error + message
         {
             ERR_APPEXECFWK_FORM_COMMON_CODE, "some internal server error occurs.",
         },
         {
             ERR_APPEXECFWK_FORM_PERMISSION_DENY,
             "check permission deny, need to request ohos.permission.REQUIRE_FORM.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_PERMISSION_DENY_SYS,
+            "check permission deny, need system permission.",
         },
         {
             ERR_APPEXECFWK_FORM_GET_INFO_FAILED, "can't get form info by the formName.",
@@ -63,6 +67,30 @@ void FormErrors::InitErrorMessageMap()
         },
         {
             ERR_APPEXECFWK_FORM_INVALID_PARAM, "invalid params received on operating form.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_INVALID_FORM_ID, "formId must be a string.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR, "formId must be a numeric string.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_REFRESH_TIME_NUM_ERR, "refresh time must be a number.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME, "bundleName is not available.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_INVALID_MODULENAME, "moduleName is not available.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_INVALID_PROVIDER_DATA, "moduleName is not available.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_INVALID_REFRESH_TIME, "refresh time is not available.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR, "form server error.",
         },
         {
             ERR_APPEXECFWK_FORM_CFG_NOT_MATCH_ID, "the form id and form config are not matched.",
