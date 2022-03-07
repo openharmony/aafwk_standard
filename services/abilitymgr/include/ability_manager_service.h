@@ -649,7 +649,7 @@ public:
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
 
     /**
-     * set lock screen white list
+     * set lock screen Permit list
      *
      * @param isAllow whether to allow startup on lock screen.
      * @return Returns ERR_OK on success, others on failure.
