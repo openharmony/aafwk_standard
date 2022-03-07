@@ -27,6 +27,10 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int USER_ID = 100;
+}  // namespace
+
 class AbilityManagerProxyTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -49,6 +53,31 @@ void AbilityManagerProxyTest::SetUp()
 {
     mock_ = new AbilityManagerStubMock();
     proxy_ = std::make_shared<AbilityManagerProxy>(mock_);
+}
+
+/**
+ * @tc.name: AbilityManagerProxy_DumpSysState_0100
+ * @tc.desc: DumpSysState
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_DumpSysState_0100, TestSize.Level1)
+{
+    HILOG_INFO("AbilityManagerProxy_DumpSysState_0100 start");
+
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+
+    std::string args;
+    std::vector<std::string> info;
+    bool isClient = false;
+    bool isUserID = true;
+
+    proxy_->DumpSysState(args, info, isClient, isUserID, USER_ID);
+    EXPECT_EQ(IAbilityManager::DUMPSYS_STATE, mock_->code_);
+
+    HILOG_INFO("AbilityManagerProxy_DumpSysState_0100 end");
 }
 
 /*

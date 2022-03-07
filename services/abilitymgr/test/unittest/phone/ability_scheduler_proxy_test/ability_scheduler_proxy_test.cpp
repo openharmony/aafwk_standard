@@ -326,5 +326,23 @@ HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_015, TestS
 
     EXPECT_EQ(IAbilityScheduler::REQUEST_CALL_REMOTE, mock_->code_);
 }
+/**
+ * @tc.name: ability_scheduler_proxy_operating_014
+ * @tc.desc: test DumpAbilityInfo
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilitySchedulerProxyTest, ability_scheduler_proxy_operating_016, TestSize.Level1)
+{
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilitySchedulerMock::InvokeSendRequest));
+
+    std::vector<std::string> params;
+    std::vector<std::string> info;
+    abilitySchedulerProxy_->DumpAbilityInfo(params, info);
+
+    EXPECT_EQ(IAbilityScheduler::DUMP_ABILITY_RUNNER_INNER, mock_->code_);
+}
 }  // namespace AAFwk
 }  // namespace OHOS

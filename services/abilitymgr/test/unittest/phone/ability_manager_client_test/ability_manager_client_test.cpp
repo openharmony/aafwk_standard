@@ -27,6 +27,11 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int USER_ID = 100;
+const size_t SIZE_ZERO = 0;
+}  // namespace
+
 class AbilityManagerClientTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -34,8 +39,8 @@ public:
     void SetUp();
     void TearDown();
 
-    std::shared_ptr<AbilityManagerClient> client_ {nullptr};
-    sptr<AbilityManagerStubTestMock> mock_ {nullptr};
+    std::shared_ptr<AbilityManagerClient> client_{nullptr};
+    sptr<AbilityManagerStubTestMock> mock_{nullptr};
 };
 
 void AbilityManagerClientTest::SetUpTestCase(void)
@@ -79,6 +84,24 @@ HWTEST_F(AbilityManagerClientTest, ReleaseAbility_001, TestSize.Level1)
     ElementName element;
     sptr<IAbilityConnection> connect = nullptr;
     EXPECT_EQ(client_->ReleaseAbility(connect, element), 0);
+}
+
+/**
+ * @tc.name: AbilityManagerClient_DumpSysState_0100
+ * @tc.desc: DumpSysState
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilityManagerClientTest, AbilityManagerClient_DumpSysState_0100, TestSize.Level1)
+{
+    std::string args = "-a";
+    std::vector<std::string> state;
+    bool isClient = false;
+    bool isUserID = true;
+
+    auto result = client_->DumpSysState(args, state, isClient, isUserID, USER_ID);
+    EXPECT_EQ(result, ERR_OK);
+    EXPECT_EQ(state.size(), SIZE_ZERO);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
