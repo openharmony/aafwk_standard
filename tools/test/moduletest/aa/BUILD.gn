@@ -26,6 +26,33 @@ config("tools_aa_config_mock") {
 tools_aa_mock_sources =
     [ "${aafwk_path}/tools/test/mock/mock_ability_manager_stub.cpp" ]
 
+ohos_moduletest("aa_command_dumpsys_module_test") {
+  module_out_path = module_output_path
+
+  sources = [ "aa_command_dumpsys_module_test.cpp" ]
+  sources += tools_aa_mock_sources
+
+  configs = [ ":tools_aa_config_mock" ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${aafwk_path}/tools/aa:tools_aa_source_set",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "utils_base:utils",
+  ]
+}
+
 ohos_moduletest("aa_command_start_module_test") {
   module_out_path = module_output_path
 
@@ -109,6 +136,7 @@ group("moduletest") {
 
   deps = [
     ":aa_command_dump_module_test",
+    ":aa_command_dumpsys_module_test",
     ":aa_command_start_module_test",
     ":aa_command_stop_service_module_test",
   ]

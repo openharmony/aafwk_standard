@@ -106,7 +106,7 @@ bool InnerWrapWantParamsChar(
     AAFwk::IChar *ao = AAFwk::IChar::Query(value);
     if (ao != nullptr) {
         std::string natValue(static_cast<Char *>(ao)->ToString());
-        HILOG_INFO("%{public}s called. key=%{public}s, natValue=%{public}s", __func__, key.c_str(), natValue.c_str());
+        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -123,7 +123,7 @@ bool InnerWrapWantParamsString(
     AAFwk::IString *ao = AAFwk::IString::Query(value);
     if (ao != nullptr) {
         std::string natValue = AAFwk::String::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, natValue=%{public}s", __func__, key.c_str(), natValue.c_str());
+        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -188,7 +188,7 @@ bool InnerWrapWantParamsInt32(
     AAFwk::IInteger *ao = AAFwk::IInteger::Query(value);
     if (ao != nullptr) {
         int natValue = AAFwk::Integer::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, natValue=%{public}d", __func__, key.c_str(), natValue);
+        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}d", __func__, key.c_str(), natValue);
         napi_value jsValue = WrapInt32ToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -277,7 +277,6 @@ bool InnerWrapWantParamsArrayChar(napi_env env, napi_value jsObject, const std::
             AAFwk::IChar *iValue = AAFwk::IChar::Query(iface);
             if (iValue != nullptr) {
                 std::string str(static_cast<Char *>(iValue)->ToString());
-                HILOG_INFO("%{public}s called. str=%{public}s", __func__, str.c_str());
                 natArray.push_back(str);
             }
         }
@@ -731,14 +730,14 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
         switch (jsValueType) {
             case napi_string: {
                 std::string natValue = UnwrapStringFromJS(env, jsProValue);
-                HILOG_INFO("%{public}s called. Property value=%{public}s.", __func__, natValue.c_str());
+                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue.c_str());
                 wantParams.SetParam(strProName, AAFwk::String::Box(natValue));
                 break;
             }
             case napi_boolean: {
                 bool natValue = false;
                 NAPI_CALL_BASE(env, napi_get_value_bool(env, jsProValue, &natValue), false);
-                HILOG_INFO("%{public}s called. Property value=%{public}s.", __func__, natValue ? "true" : "false");
+                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue ? "true" : "false");
                 wantParams.SetParam(strProName, AAFwk::Boolean::Box(natValue));
                 break;
             }
@@ -748,12 +747,12 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 bool isReadValue32 = false;
                 bool isReadDouble = false;
                 if (napi_get_value_int32(env, jsProValue, &natValue32) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{public}d.", __func__, natValue32);
+                    HILOG_INFO("%{public}s called. Property value=%{private}d.", __func__, natValue32);
                     isReadValue32 = true;
                 }
 
                 if (napi_get_value_double(env, jsProValue, &natValueDouble) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{public}lf.", __func__, natValueDouble);
+                    HILOG_INFO("%{public}s called. Property value=%{private}lf.", __func__, natValueDouble);
                     isReadDouble = true;
                 }
 

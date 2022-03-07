@@ -17,8 +17,9 @@
 
 namespace OHOS {
 namespace AAFwk {
-Mission::Mission(int32_t id, const std::shared_ptr<AbilityRecord> abilityRecord, const std::string &missionName)
-    : missionId_(id), abilityRecord_(abilityRecord), missionName_(missionName)
+Mission::Mission(int32_t id, const std::shared_ptr<AbilityRecord> abilityRecord, const std::string &missionName,
+    int32_t startMethod)
+    : missionId_(id), startMethod_(startMethod), abilityRecord_(abilityRecord), missionName_(missionName)
 {
 }
 
@@ -29,6 +30,7 @@ Mission::Mission(const std::shared_ptr<Mission> &mission)
     }
 
     missionId_ = mission->missionId_;
+    startMethod_ = mission->startMethod_;
     abilityRecord_ = mission->abilityRecord_;
     missionName_ = mission->missionName_;
     ownerMissionList_ = mission->ownerMissionList_;
@@ -113,6 +115,22 @@ void Mission::Dump(std::vector<std::string> &info)
     if (abilityRecord_) {
         abilityRecord_->Dump(info);
     }
+}
+
+bool Mission::IsStartByCall()
+{
+    return static_cast<int32_t>(StartMethod::START_CALL) == startMethod_;
+}
+
+bool Mission::UpdateMissionId(int32_t id, int32_t method)
+{
+    if (method == startMethod_ && id > 0) {
+        return false;
+    }
+
+    startMethod_ = method;
+    missionId_ = id;
+    return true;
 }
 
 }  // namespace AAFwk

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -806,7 +806,7 @@ HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_2600, Function | Medium
 /**
  * @tc.number    : AMS_Page_ProcessInfo_2700
  * @tc.name      : ProcessInfo_String_int
- * @tc.desc      : use the constructor with parameters (PID is mininum, processname is normal string),
+ * @tc.desc      : use the constructor with parameters (PID is minimum, processname is normal string),
  *                 judge whether PID and processname are the same as the parameters
  */
 HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_2700, Function | MediumTest | Level1)
@@ -831,7 +831,7 @@ HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_2700, Function | Medium
 /**
  * @tc.number    : AMS_Page_ProcessInfo_2800
  * @tc.name      : ProcessInfo_String_int
- * @tc.desc      : use the constructor with parameters (PID is maxinum, processname is normal string),
+ * @tc.desc      : use the constructor with parameters (PID is maximum, processname is normal string),
  *                 judge whether PID and processname are the same as the parameters
  */
 HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_2800, Function | MediumTest | Level1)
@@ -881,7 +881,7 @@ HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_2900, Function | Medium
 /**
  * @tc.number    : AMS_Page_ProcessInfo_3000
  * @tc.name      : ProcessInfo_String_int
- * @tc.desc      : use the constructor with parameters (PID is mininum, processname is special string),
+ * @tc.desc      : use the constructor with parameters (PID is minimum, processname is special string),
  *                 judge whether PID and processname are the same as the parameters
  */
 HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_3000, Function | MediumTest | Level1)
@@ -906,7 +906,7 @@ HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_3000, Function | Medium
 /**
  * @tc.number    : AMS_Page_ProcessInfo_3100
  * @tc.name      : ProcessInfo_String_int
- * @tc.desc      : use the constructor with parameters (PID is maxinum, processname is special string),
+ * @tc.desc      : use the constructor with parameters (PID is maximum, processname is special string),
  *                 judge whether PID and processname are the same as the parameters
  */
 HWTEST_F(ActsAmsKitProcessInfoTest, AMS_Page_ProcessInfo_3100, Function | MediumTest | Level1)

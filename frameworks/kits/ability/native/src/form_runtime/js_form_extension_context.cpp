@@ -73,7 +73,8 @@ private:
         }
 
         std::string strFormId;
-        int64_t formId = ConvertFromJsValue(engine, info.argv[0], strFormId) ? std::stoll(strFormId) : -1;
+        ConvertFromJsValue(engine, info.argv[0], strFormId);
+        int64_t formId = strFormId.empty() ? -1 : std::stoll(strFormId);
 
         AppExecFwk::FormProviderData formProviderData;
         std::string formDataStr = "{}";

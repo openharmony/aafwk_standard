@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,13 +76,13 @@ int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
 
     if (IsLockScreenState()) {
-        HILOG_DEBUG("Check whether the ability is on the white list");
+        HILOG_DEBUG("Check whether the ability is on the Permit list");
         std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
         bool isAwakenScreen = false;
         bool result = whiteList->FindBundleNameOnWhiteList(abilityRequest.abilityInfo.bundleName, isAwakenScreen);
         whiteList.reset();
         if (!result) {
-            HILOG_ERROR("the ability is not on the white list...");
+            HILOG_ERROR("the ability is not on the Permit list...");
             return START_ABILITY_NOT_ONTHE_WHITELIST;
         }
     }
@@ -132,7 +132,7 @@ int AbilityStackManager::StartAbilityLocked(
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     // lock screen state
     if (IsLockScreenState()) {
-        HILOG_DEBUG("Start ability with white list ...");
+        HILOG_DEBUG("Start ability with Permit list...");
         if (!lockScreenMissionStack_) {
             return StartAbilityByAllowListLocked(nullptr, abilityRequest);
         } else {
@@ -3935,7 +3935,7 @@ int AbilityStackManager::SetShowOnLockScreenLocked(const std::string &bundleName
     std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
     bool ret = whiteList->SetWhiteListInfo(bundleName, isAllow);
     if (!ret) {
-        HILOG_INFO("set white list fail");
+        HILOG_INFO("set Permit list fail");
         whiteList.reset();
         return SET_WHITE_LIST_FAIL;
     }
@@ -4510,7 +4510,7 @@ bool AbilityStackManager::CheckMissionRecordInWhiteList(const std::shared_ptr<Mi
         }
         result = whiteList->FindBundleNameOnWhiteList(abilityRecord->GetAbilityInfo().bundleName, isAwakenScreen);
         if (!result) {
-            HILOG_INFO("ability not on the white list");
+            HILOG_INFO("ability not on the Permit list");
             break;
         }
     }

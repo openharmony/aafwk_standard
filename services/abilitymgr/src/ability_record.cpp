@@ -31,6 +31,7 @@
 
 namespace OHOS {
 namespace AAFwk {
+const std::string DEBUG_APP = "debugApp";
 int64_t AbilityRecord::abilityRecordId = 0;
 int64_t AbilityRecord::g_abilityRecordEventId_ = 0;
 const std::map<AbilityState, std::string> AbilityRecord::stateToStrMap = {
@@ -207,6 +208,7 @@ void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
     lifeCycleStateInfo_.sceneFlag = sceneFlag;
     lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
     lifeCycleStateInfo_.sceneFlag = 0;
+    lifeCycleStateInfo_.sceneFlagBak = 0;
 
     // update ability state to appMgr service when restart
     if (IsNewWant()) {
@@ -227,12 +229,14 @@ void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
         if (IsAbilityState(AbilityState::BACKGROUND_NEW)) {
             // background to activte state
             HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
+            lifeCycleStateInfo_.sceneFlagBak = sceneFlag;
             DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
         } else {
             HILOG_DEBUG("Activate %{public}s", element.c_str());
             ForegroundAbility(sceneFlag);
         }
     } else {
+        lifeCycleStateInfo_.sceneFlagBak = sceneFlag;
         LoadAbility();
     }
 }
@@ -242,15 +246,15 @@ void AbilityRecord::BackgroundAbility(const Closure &task)
     HILOG_INFO("Move to backgroundNew.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr || task == nullptr) {
-        // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
-        // so don't return here.
-        HILOG_ERROR("handler is nullptr or task is nullptr.");
-    } else {
-        g_abilityRecordEventId_++;
-        eventId_ = g_abilityRecordEventId_;
-        // eventId_ is a unique id of the task.
-        handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
+    if (handler && task) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
+            g_abilityRecordEventId_++;
+            eventId_ = g_abilityRecordEventId_;
+            // eventId_ is a unique id of the task.
+            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
+        } else {
+            HILOG_INFO("Is debug mode, no need to handle time out.");
+        }
     }
 
     if (!IsTerminating() || IsRestarting()) {
@@ -569,15 +573,15 @@ void AbilityRecord::MoveToBackground(const Closure &task)
     HILOG_INFO("Move to background.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr || task == nullptr) {
-        // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
-        // so don't return here.
-        HILOG_ERROR("handler is nullptr or task is nullptr.");
-    } else {
-        g_abilityRecordEventId_++;
-        eventId_ = g_abilityRecordEventId_;
-        // eventId_ is a unique id of the task.
-        handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUND_TIMEOUT);
+    if (handler && task) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
+            g_abilityRecordEventId_++;
+            eventId_ = g_abilityRecordEventId_;
+            // eventId_ is a unique id of the task.
+            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUND_TIMEOUT);
+        } else {
+            HILOG_INFO("Is debug mode, no need to handle time out.");
+        }
     }
 
     if (!IsTerminating() || IsRestarting()) {
@@ -596,15 +600,15 @@ void AbilityRecord::Terminate(const Closure &task)
     HILOG_INFO("Terminate ability.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr || task == nullptr) {
-        // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
-        // so don't return here.
-        HILOG_ERROR("handler is nullptr or task is nullptr.");
-    } else {
-        g_abilityRecordEventId_++;
-        eventId_ = g_abilityRecordEventId_;
-        // eventId_ is a unique id of the task.
-        handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::TERMINATE_TIMEOUT);
+    if (handler && task) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
+            g_abilityRecordEventId_++;
+            eventId_ = g_abilityRecordEventId_;
+            // eventId_ is a unique id of the task.
+            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::TERMINATE_TIMEOUT);
+        } else {
+            HILOG_INFO("Is debug mode, no need to handle time out.");
+        }
     }
     // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
     // earlier than above actions.
@@ -690,6 +694,7 @@ std::shared_ptr<AbilityResult> AbilityRecord::GetResult() const
 void AbilityRecord::SendResult()
 {
     HILOG_INFO("Send result.");
+    std::lock_guard<std::mutex> guard(lock_);
     CHECK_POINTER(scheduler_);
     CHECK_POINTER(result_);
     scheduler_->SendResult(result_->requestCode_, result_->resultCode_, result_->resultWant_);
@@ -701,6 +706,10 @@ void AbilityRecord::SendResult()
 void AbilityRecord::SendResultToCallers()
 {
     for (auto caller : GetCallerRecordList()) {
+        if (caller == nullptr) {
+            HILOG_WARN("Caller record is nullptr.");
+            continue;
+        }
         std::shared_ptr<AbilityRecord> callerAbilityRecord = caller->GetCaller();
         if (callerAbilityRecord != nullptr && callerAbilityRecord->GetResult() != nullptr) {
             callerAbilityRecord->SendResult();
@@ -711,6 +720,10 @@ void AbilityRecord::SendResultToCallers()
 void AbilityRecord::SaveResultToCallers(const int resultCode, const Want *resultWant)
 {
     for (auto caller : GetCallerRecordList()) {
+        if (caller == nullptr) {
+            HILOG_WARN("Caller record is nullptr.");
+            continue;
+        }
         std::shared_ptr<AbilityRecord> callerAbilityRecord = caller->GetCaller();
         if (callerAbilityRecord != nullptr) {
             callerAbilityRecord->SetResult(
@@ -1058,6 +1071,7 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
     if (mission) {
         HILOG_WARN("On scheduler died. Is app not response Reason:%{public}d", mission->IsANRState());
     }
+    std::lock_guard<std::mutex> guard(lock_);
     CHECK_POINTER(scheduler_);
 
     auto object = remote.promote();
@@ -1161,6 +1175,10 @@ bool AbilityRecord::IsActiveState() const
 
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
 {
+    if (want_.GetBoolParam(DEBUG_APP, false)) {
+        HILOG_INFO("Is debug mode, no need to handle time out.");
+        return;
+    }
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER(handler);
 
@@ -1448,15 +1466,15 @@ void AbilityRecordNew::BackgroundNew(const Closure &task)
     HILOG_INFO("Move to backgroundNew.");
     CHECK_POINTER(lifecycleDeal_);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr || task == nullptr) {
-        // handler is nullptr means couldn't send timeout message. But still need to notify ability to inactive.
-        // so don't return here.
-        HILOG_ERROR("handler is nullptr or task is nullptr.");
-    } else {
-        g_abilityRecordEventId_++;
-        eventId_ = g_abilityRecordEventId_;
-        // eventId_ is a unique id of the task.
-        handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
+    if (handler && task) {
+        if (!want_.GetBoolParam(DEBUG_APP, false)) {
+            g_abilityRecordEventId_++;
+            eventId_ = g_abilityRecordEventId_;
+            // eventId_ is a unique id of the task.
+            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
+        } else {
+            HILOG_INFO("Is debug mode, no need to handle time out.");
+        }
     }
 
     if (!IsTerminating() || IsRestarting()) {

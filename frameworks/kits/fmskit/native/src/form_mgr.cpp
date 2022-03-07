@@ -38,6 +38,17 @@ FormMgr::~FormMgr()
         }
     }
 }
+
+/**
+ * @brief Get the error message by error code.
+ * @param errorCode the error code return form fms.
+ * @return Returns the error message detail.
+ */
+std::string FormMgr::GetErrorMsg(int errorCode)
+{
+    return "unknown error";
+}
+
 /**
  * @brief Add form with want, send want to form manager service.
  * @param formId The Id of the forms to add.

@@ -24,7 +24,7 @@ namespace OHOS {
 namespace AAFwk {
 /**
  * @struct ImageInfo
- * ImageInfo is used to save informations about sanpshot.
+ * ImageInfo is used to save information about sanpshot.
  */
 struct ImageInfo : public Parcelable {
     uint32_t width;

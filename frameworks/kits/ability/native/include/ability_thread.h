@@ -457,7 +457,7 @@ private:
     void HandleDisconnectAbility(const Want &want);
 
     /**
-     * @brief Handle the current commadn of Ability.
+     * @brief Handle the current command of Ability.
      *
      * @param want The Want object to command to.
      *
@@ -482,7 +482,7 @@ private:
     void HandleDisconnectExtension(const Want &want);
 
     /**
-     * @brief Handle the current commadn of Extension.
+     * @brief Handle the current command of Extension.
      *
      * @param want The Want object to command to.
      *

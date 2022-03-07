@@ -43,6 +43,7 @@ ohos_moduletest("dump_module_test") {
   }
   deps = [
     "${innerkits_path}/ability_manager:ability_manager",
+    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/appmgr_test_service:appmgr_test_service",
@@ -55,7 +56,6 @@ ohos_moduletest("dump_module_test") {
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
@@ -73,6 +73,5 @@ ohos_moduletest("dump_module_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":dump_module_test" ]
+  # deps = [ ":dump_module_test" ]
 }

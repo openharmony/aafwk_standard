@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ public:
      *
      * Get the systemAbility by ID.
      *
-     * @param systemAbilityId The ID of systemAbility whitch want to get.
+     * @param systemAbilityId The ID of systemAbility which want to get.
      */
     sptr<IRemoteObject> GetSystemAbility(const int32_t systemAbilityId);
 
@@ -42,8 +42,8 @@ public:
      *
      * Register the systemAbility by ID.
      *
-     * @param systemAbilityId The ID of systemAbility whitch want to register.
-     * @param broker The systemAbility whitch want to be registered.
+     * @param systemAbilityId The ID of systemAbility which want to register.
+     * @param broker The systemAbility which want to be registered.
      */
     void RegisterSystemAbility(const int32_t systemAbilityId, sptr<IRemoteObject> broker);
 
@@ -51,7 +51,7 @@ public:
      *
      * Unregister the systemAbility by ID.
      *
-     * @param systemAbilityId The ID of systemAbility whitch want to unregister.
+     * @param systemAbilityId The ID of systemAbility which want to unregister.
      */
     void UnregisterSystemAbility(const int32_t systemAbilityId);
 

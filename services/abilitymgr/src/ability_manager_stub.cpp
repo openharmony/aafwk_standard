@@ -1409,8 +1409,15 @@ int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, Message
     MissionSnapshot missionSnapshot;
     int32_t result = GetMissionSnapshot(deviceId, missionId, missionSnapshot);
     HILOG_INFO("snapshot: AbilityManagerStub get snapshot result = %{public}d", result);
-    reply.WriteParcelable(&missionSnapshot);
-    return result;
+    if (!reply.WriteParcelable(&missionSnapshot)) {
+        HILOG_ERROR("GetMissionSnapshot error");
+        return ERR_INVALID_VALUE;
+    }
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("GetMissionSnapshot result error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::SetAbilityControllerInner(MessageParcel &data, MessageParcel &reply)
@@ -1461,8 +1468,7 @@ int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &
     std::string msg = data.ReadString();
     int resultCode = data.ReadInt32();
     std::string bundleName = data.ReadString();
-    auto observer = data.ReadParcelable<IRemoteObject>();
-    int32_t result = FinishUserTest(msg, resultCode, bundleName, observer);
+    int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);
     return result;
 }

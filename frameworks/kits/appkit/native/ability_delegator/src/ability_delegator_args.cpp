@@ -28,16 +28,10 @@ AbilityDelegatorArgs::AbilityDelegatorArgs()
 AbilityDelegatorArgs::AbilityDelegatorArgs(const AAFwk::Want &want)
 {
     bundleName_ = want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME);
-    params_[AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME] =
-        want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME);
-    params_[AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS] =
-        want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS);
-    if (!want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_CASE).empty()) {
-        params_[AbilityDelegatorArgs::KEY_TEST_CASE] = want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_CASE);
-    }
-    if (!want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT).empty()) {
-        params_[AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT] =
-            want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT);
+    auto wantParams = want.GetParams();
+    std::set<std::string> keys = wantParams.KeySet();
+    for (auto key : keys) {
+        params_[key] = want.GetStringParam(key);
     }
 }
 

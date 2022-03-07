@@ -30,7 +30,10 @@ ohos_moduletest("AmsAppRunningRecordModuleTest") {
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]
 
-  external_deps = [ "ipc:ipc_core" ]
+  external_deps = [
+    "hicollie_native:libhicollie",
+    "ipc:ipc_core",
+  ]
 }
 
 group("moduletest") {

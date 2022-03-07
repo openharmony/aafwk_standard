@@ -382,7 +382,7 @@ private:
      *
      * @brief The handle of application not response process.
      *
-     * @param sigMessage Recieve the sig message.
+     * @param sigMessage Receive the sig message.
      *
      */
     static void HandleANRProcess(int sigMessage);
@@ -403,10 +403,10 @@ private:
      *
      * @brief Ability Delegator Prepare.
      *
-     * @param UserTestRecord User Test info.
+     * @param record User Test info.
      *
      */
-    bool AbilityDelegatorPrepare(const UserTestRecord &record);
+    bool PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record);
 
     class MainHandler : public EventHandler {
     public:
