@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,6 +66,7 @@ void GroupImpl::Associate()
  * @brief Notify group that a task is done or canceled.
  *
  */
+
 void GroupImpl::NotifyTaskDone()
 {
     APP_LOGI("GroupImpl::NotifyTaskDone start. Called notify a task to complete");
@@ -111,6 +112,7 @@ bool GroupImpl::AddNotification(const std::shared_ptr<Runnable> &notification)
     return true;
 }
 /**
+ *
  * @brief Notify all tasks and remove from queue.
  * Attention: Notifications added after all tasks done is not guaranteed.
  */

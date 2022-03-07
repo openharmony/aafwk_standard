@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -301,12 +301,12 @@ enum {
     GET_BUNDLENAME_BY_UID_FAIL,
 
     /**
-     * Result(2097212) for set white list fail.
+     * Result(2097212) for set Permit list fail.
      */
     SET_WHITE_LIST_FAIL,
 
     /**
-     * Result(2097213) for start ability failed,this ability is not on the white list
+     * Result(2097213) for start ability failed,this ability is not on the Permit list
      */
     START_ABILITY_NOT_ONTHE_WHITELIST,
 

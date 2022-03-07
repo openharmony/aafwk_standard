@@ -488,7 +488,7 @@ public:
     ErrCode SetMissionStackSetting(const StackSetting &stackSetting);
 
     /**
-     * set lock screen white list
+     * set lock screen Permit list
      *
      * @param isAllow whether to allow startup on lock screen.
      * @return Returns ERR_OK on success, others on failure.
