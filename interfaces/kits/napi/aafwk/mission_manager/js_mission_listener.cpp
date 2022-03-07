@@ -46,9 +46,13 @@ void JsMissionListener::AddJsListenerObject(int32_t listenerId, NativeValue* jsL
         listenerId, std::shared_ptr<NativeReference>(engine_->CreateReference(jsListenerObject, 1)));
 }
 
-void JsMissionListener::RemoveJsListenerObject(int32_t listenerId)
+bool JsMissionListener::RemoveJsListenerObject(int32_t listenerId)
 {
-    jsListenerObjectMap_.erase(listenerId);
+    if (jsListenerObjectMap_.find(listenerId) != jsListenerObjectMap_.end()) {
+        jsListenerObjectMap_.erase(listenerId);
+        return true;
+    }
+    return false;
 }
 
 bool JsMissionListener::IsEmpty()
@@ -79,7 +83,9 @@ void JsMissionListener::CallJsMethod(const std::string &methodName, int32_t miss
 
 void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t missionId)
 {
-    for (auto &item : jsListenerObjectMap_) {
+    // jsListenerObjectMap_ may be changed in engine_->CallFunction()
+    auto tmpMap = jsListenerObjectMap_;
+    for (auto &item : tmpMap) {
         NativeValue* value = (item.second)->Get();
         NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
         if (obj == nullptr) {
