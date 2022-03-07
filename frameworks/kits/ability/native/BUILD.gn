@@ -156,6 +156,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/datashare_proxy.cpp",
     "${SUBSYSTEM_DIR}/src/datashare_stub.cpp",
     "${SUBSYSTEM_DIR}/src/datashare_stub_impl.cpp",
+    "${SUBSYSTEM_DIR}/src/datashare_uv_queue.cpp",
     "${SUBSYSTEM_DIR}/src/extension.cpp",
     "${SUBSYSTEM_DIR}/src/extension_impl.cpp",
     "${SUBSYSTEM_DIR}/src/extension_module_loader.cpp",
