@@ -39,7 +39,6 @@ private:
         napi_env env;
         NapiVoidFunc func;
         bool done;
-        bool isTimeout;
         bool purge;
         std::condition_variable condition;
         std::mutex mutex;
