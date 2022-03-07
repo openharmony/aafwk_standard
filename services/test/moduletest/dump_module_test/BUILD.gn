@@ -73,6 +73,5 @@ ohos_moduletest("dump_module_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":dump_module_test" ]
+  # deps = [ ":dump_module_test" ]
 }
