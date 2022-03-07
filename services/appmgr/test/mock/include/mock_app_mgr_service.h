@@ -118,6 +118,18 @@ public:
         AbilityState st = AbilityState::ABILITY_STATE_BEGIN;
         callback_->OnAbilityRequestDone(token, st);
     }
+
+    MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
+
+    int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
+    {
+        code_ = code;
+
+        return 0;
+    }
+
+    int code_;
+
 private:
     Semaphore sem_;
     std::string data_;

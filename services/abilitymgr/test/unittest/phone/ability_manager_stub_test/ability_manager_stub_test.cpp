@@ -25,6 +25,10 @@ using namespace testing;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int USER_ID = 100;
+}  // namespace
+
 class AbilityManagerStubTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -51,6 +55,39 @@ void AbilityManagerStubTest::WriteInterfaceToken(MessageParcel &data)
 {
     data.WriteInterfaceToken(AbilityManagerStub::GetDescriptor());
 }
+
+/**
+ * @tc.name: AbilityManagerStub_DumpSysStateInner_0100
+ * @tc.desc: DumpSysStateInner
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_DumpSysStateInner_0100, TestSize.Level1)
+{
+    HILOG_INFO("AbilityManagerStub_DumpSysStateInner_0100 start");
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    WriteInterfaceToken(data);
+
+    std::string args = "-a";
+    data.WriteString16(Str8ToStr16(args));
+
+    bool isClient = false;
+    data.WriteBool(isClient);
+
+    bool isUserID = true;
+    data.WriteBool(isUserID);
+
+    data.WriteInt32(USER_ID);
+
+    int res = stub_->OnRemoteRequest(IAbilityManager::DUMPSYS_STATE, data, reply, option);
+    EXPECT_EQ(res, NO_ERROR);
+
+    HILOG_INFO("AbilityManagerStub_DumpSysStateInner_0100 end");
+}  // namespace AAFwk
 
 /*
  * Feature: AbilityManagerService
