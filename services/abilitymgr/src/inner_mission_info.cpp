@@ -100,11 +100,6 @@ bool InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
         return false;
     }
     uid = value[KEY_UID].get<int32_t>();
-<<<<<<< HEAD
-
-
-=======
->>>>>>> caochunlei1@huawei.com
     if (!CheckJsonNode(KEY_MISSION_ID, JsonType::NUMBER)) {
         return false;
     }
