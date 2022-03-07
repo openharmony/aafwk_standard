@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-constexpr int WAIT_TIME_OUT = 3;
+constexpr int WAIT_TIME = 3;
 DataShareUvQueue::DataShareUvQueue(napi_env env)
     : env_(env)
 {
@@ -64,11 +64,9 @@ void DataShareUvQueue::SyncCall(NapiVoidFunc func)
     auto *uvEntry = static_cast<UvEntry*>(work->data);
     {
         std::unique_lock<std::mutex> lock(uvEntry->mutex);
-        if (uvEntry->condition.wait_for(lock, std::chrono::seconds(WAIT_TIME_OUT), 
-            [uvEntry]->bool { return !uvEntry->done; }) == std::cv_status::timeout) {
+        if (uvEntry->condition.wait_for(lock, std::chrono::seconds(WAIT_TIME), [uvEntry] { return uvEntry->done; })) {
             HILOG_INFO("%{public}s Wait uv_queue_work timeout.", __func__);
         }
-
         if (!uvEntry->done && !uv_cancel((uv_req_t*)&work)) {
             HILOG_ERROR("%{public}s uv_cancel failed.", __func__);
             uvEntry->purge = true;
