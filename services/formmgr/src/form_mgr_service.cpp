@@ -92,9 +92,10 @@ bool FormMgrService::IsReady() const
 int FormMgrService::AddForm(const int64_t formId, const Want &want,
     const sptr<IRemoteObject> &callerToken, FormJsInfo &formInfo)
 {
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, add form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
     return FormMgrAdapter::GetInstance().AddForm(formId, want, callerToken, formInfo);
 }
@@ -107,9 +108,10 @@ int FormMgrService::AddForm(const int64_t formId, const Want &want,
  */
 int FormMgrService::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &callerToken)
 {
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, delete form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     return FormMgrAdapter::GetInstance().DeleteForm(formId, callerToken);
@@ -124,9 +126,10 @@ int FormMgrService::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &
  */
 int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> &callerToken, const bool delCache)
 {
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, release form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     return FormMgrAdapter::GetInstance().ReleaseForm(formId, callerToken, delCache);
@@ -156,9 +159,10 @@ int FormMgrService::RequestForm(const int64_t formId, const sptr<IRemoteObject> 
 {
     APP_LOGI("%{public}s called.", __func__);
 
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, request form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     return FormMgrAdapter::GetInstance().RequestForm(formId, callerToken, want);
@@ -189,9 +193,10 @@ int FormMgrService::SetNextRefreshTime(const int64_t formId, const int64_t nextT
 int FormMgrService::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds,
     const sptr<IRemoteObject> &callerToken, const int32_t formVisibleType)
 {
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, event notify visible permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     return FormMgrAdapter::GetInstance().NotifyWhetherVisibleForms(formIds, callerToken, formVisibleType);
@@ -205,9 +210,10 @@ int FormMgrService::NotifyWhetherVisibleForms(const std::vector<int64_t> &formId
  */
 int FormMgrService::CastTempForm(const int64_t formId, const sptr<IRemoteObject> &callerToken)
 {
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, cast temp form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     return FormMgrAdapter::GetInstance().CastTempForm(formId, callerToken);
@@ -225,9 +231,10 @@ int FormMgrService::LifecycleUpdate(const std::vector<int64_t> &formIds,
 {
     APP_LOGI("lifecycleUpdate.");
 
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, delete form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
 
     if (updateType == ENABLE_FORM_UPDATE) {
@@ -285,9 +292,10 @@ int FormMgrService::DumpFormTimerByFormId(const std::int64_t formId, std::string
 int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (!CheckFormPermission()) {
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
         APP_LOGE("%{public}s fail, request form permission denied", __func__);
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ret;
     }
     return FormMgrAdapter::GetInstance().MessageEvent(formId, want, callerToken);
 }
@@ -392,19 +400,33 @@ ErrCode FormMgrService::Init()
     return ERR_OK;
 }
 
-bool FormMgrService::CheckFormPermission()
+ErrCode FormMgrService::CheckFormPermission()
 {
     auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
     if (isSaCall) {
-        return true;
+        return ERR_OK;
     }
+
+    // get IBundleMgr
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    // check if system appint
+    auto isSystemApp = iBundleMgr->CheckIsSystemAppByUid(IPCSkeleton::GetCallingUid());
+    if (!isSystemApp) {
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY_SYS;
+    }
+
     auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
         AppExecFwk::Constants::PERMISSION_REQUIRE_FORM);
-    if (isCallingPerm) {
-        return true;
+    if (!isCallingPerm) {
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
     }
-    APP_LOGE("Permission verification failed");
-    return false;
+    APP_LOGI("Permission verification ok!");
+    return ERR_OK;
 }
 
 /**
