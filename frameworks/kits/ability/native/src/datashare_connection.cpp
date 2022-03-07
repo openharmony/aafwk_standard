@@ -42,7 +42,7 @@ sptr<DataShareConnection> DataShareConnection::GetInstance()
 
 /**
  * @brief This method is called back to receive the connection result after an ability calls the
- * ConnectAbility method to connect it to a extension ability.
+ * ConnectAbility method to connect it to an extension ability.
  *
  * @param element: Indicates information about the connected extension ability.
  * @param remote: Indicates the remote proxy object of the extension ability.

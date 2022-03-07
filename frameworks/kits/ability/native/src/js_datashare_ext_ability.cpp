@@ -185,7 +185,8 @@ sptr<IRemoteObject> JsDataShareExtAbility::OnConnect(const AAFwk::Want &want)
     HILOG_INFO("%{public}s begin.", __func__);
     Extension::OnConnect(want);
     sptr<DataShareStubImpl> remoteObject = new (std::nothrow) DataShareStubImpl(
-        std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()));
+        std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()),
+        reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine()));
     HILOG_INFO("%{public}s end. ", __func__);
     return remoteObject->AsObject();
 }
@@ -458,13 +459,12 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
     HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> ret;
     if (!CheckCallingPermission(abilityInfo_->readPermission)) {
-        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
         return ret;
     }
 
     ret = DataShareExtAbility::Query(uri, columns, predicates);
-    if (dataAbilityPredicatesNewInstance_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
+    if (dataAbilityPredicatesNewInstance_ == nullptr || rdbResultSetProxyGetNativeObject_ == nullptr) {
+        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates or RdbResultSet.", __func__);
         return ret;
     }
     HandleScope handleScope(jsRuntime_);
@@ -504,14 +504,8 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
         return ret;
     }
 
-    if (rdbResultSetProxyGetNativeObject_ == nullptr) {
-        HILOG_ERROR("%{public}s rdbResultSetProxyGetNativeObject_ is null.", __func__);
-        return ret;
-    }
-
     auto nativeObject = rdbResultSetProxyGetNativeObject_(env, reinterpret_cast<napi_value>(nativeResult));
     if (nativeObject == nullptr) {
-        HILOG_ERROR("JsiPaEngine AbsSharedResultSet from JS to Native failed");
         return ret;
     }
 
