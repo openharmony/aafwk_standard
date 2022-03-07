@@ -76,6 +76,44 @@ void AbilityThreadTest::TearDown(void)
 }
 
 /**
+ * @tc.name: AaFwk_AbilityThread_DumpAbilityInfo_0100
+ * @tc.desc: DumpAbilityInfo
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_DumpAbilityInfo_0100, Function | MediumTest | Level1)
+{
+    GTEST_LOG_(INFO) << "AaFwk_AbilityThread_DumpAbilityInfo_0100 start";
+
+    AbilityThread *abilitythread = new (std::nothrow) AbilityThread();
+    EXPECT_NE(abilitythread, nullptr);
+    if (abilitythread != nullptr) {
+        std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
+        abilityInfo->name = "MockPageAbility";
+        abilityInfo->type = AbilityType::PAGE;
+        sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
+        std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
+        std::shared_ptr<AbilityLocalRecord> abilityRecord = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
+        std::shared_ptr<EventRunner> mainRunner = EventRunner::Create(abilityInfo->name);
+        abilitythread->Attach(application, abilityRecord, mainRunner, nullptr);
+
+        std::vector<std::string> params;
+
+        std::vector<std::string> info;
+        abilitythread->DumpAbilityInfo(params, info);
+
+        EXPECT_NE(info.size(), 0);
+
+        GTEST_LOG_(INFO) << "info:";
+        for (auto item : info) {
+            GTEST_LOG_(INFO) << item;
+        }
+    }
+
+    GTEST_LOG_(INFO) << "AaFwk_AbilityThread_DumpAbilityInfo_0100 end";
+}
+
+/**
  * @tc.number: AaFwk_AbilityThread_ScheduleSaveAbilityState_0100
  * @tc.name: ScheduleSaveAbilityState
  * @tc.desc: Simulate successful test cases

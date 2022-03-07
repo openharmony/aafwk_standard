@@ -31,6 +31,11 @@ using namespace testing::ext;
 using namespace testing;
 using namespace std::chrono;
 
+namespace {
+const std::string STRING_DATA_ABILITY = "com.example.data_ability";
+constexpr size_t SIZE_ONE = 1;
+}  // namespace
+
 namespace OHOS {
 namespace AAFwk {
 class DataAbilityManagerTest : public testing::TestWithParam<OHOS::AAFwk::AbilityState> {
@@ -84,6 +89,78 @@ void DataAbilityManagerTest::SetUp(void)
 void DataAbilityManagerTest::TearDown(void)
 {
     abilitySchedulerMock_.clear();
+}
+
+/**
+ * @tc.name: AaFwk_DataAbilityManager_DumpSysState_0100
+ * @tc.desc: DumpSysState with no args
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_DumpSysState_0100, TestSize.Level1)
+{
+    HILOG_INFO("AaFwk_DataAbilityManager_DumpSysState_0100 start");
+
+    AbilityRequest abilityRequest;
+    auto dataAbilityRecord = std::make_shared<DataAbilityRecord>(abilityRequest);
+
+    Want want;
+    OHOS::AppExecFwk::AbilityInfo abilityInfo;
+    OHOS::AppExecFwk::ApplicationInfo applicationInfo;
+    auto abilityRecord = std::make_shared<AbilityRecord>(want, abilityInfo, applicationInfo);
+    dataAbilityRecord->ability_ = abilityRecord;
+
+    auto dataAbilityManager = std::make_unique<DataAbilityManager>();
+    dataAbilityManager->dataAbilityRecordsLoaded_ = {{STRING_DATA_ABILITY, dataAbilityRecord}};
+
+    std::vector<std::string> info;
+    bool isClient = false;
+    std::string args = "";
+    dataAbilityManager->DumpSysState(info, isClient, args);
+    EXPECT_GT(info.size(), SIZE_ONE);
+
+    HILOG_INFO("info.size() = %{public}zu", info.size());
+    for (auto item : info) {
+        HILOG_INFO("item = %{public}s", item.c_str());
+    }
+
+    HILOG_INFO("AaFwk_DataAbilityManager_DumpSysState_0100 end");
+}
+
+/**
+ * @tc.name: AaFwk_DataAbilityManager_DumpSysState_0200
+ * @tc.desc: DumpSysState with args
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(DataAbilityManagerTest, AaFwk_DataAbilityManager_DumpSysState_0200, TestSize.Level1)
+{
+    HILOG_INFO("AaFwk_DataAbilityManager_DumpSysState_0200 start");
+
+    AbilityRequest abilityRequest;
+    auto dataAbilityRecord = std::make_shared<DataAbilityRecord>(abilityRequest);
+
+    Want want;
+    OHOS::AppExecFwk::AbilityInfo abilityInfo;
+    OHOS::AppExecFwk::ApplicationInfo applicationInfo;
+    auto abilityRecord = std::make_shared<AbilityRecord>(want, abilityInfo, applicationInfo);
+    dataAbilityRecord->ability_ = abilityRecord;
+
+    auto dataAbilityManager = std::make_unique<DataAbilityManager>();
+    dataAbilityManager->dataAbilityRecordsLoaded_ = {{STRING_DATA_ABILITY, dataAbilityRecord}};
+
+    std::vector<std::string> info;
+    bool isClient = false;
+    std::string args = STRING_DATA_ABILITY;
+    dataAbilityManager->DumpSysState(info, isClient, args);
+    EXPECT_GT(info.size(), SIZE_ONE);
+
+    HILOG_INFO("info.size() = %{public}zu", info.size());
+    for (auto item : info) {
+        HILOG_INFO("item = %{public}s", item.c_str());
+    }
+
+    HILOG_INFO("AaFwk_DataAbilityManager_DumpSysState_0200 end");
 }
 
 /*
