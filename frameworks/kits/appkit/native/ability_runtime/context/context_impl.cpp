@@ -101,7 +101,7 @@ std::string ContextImpl::GetDatabaseDir()
     std::string dir;
     if (IsCreateBySystemApp()) {
         dir = CONTEXT_DATA_APP + currArea_ + CONTEXT_FILE_SEPARATOR + std::to_string(GetCurrentAccountId())
-		    + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE + GetBundleName();
+		    + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE + CONTEXT_FILE_SEPARATOR + GetBundleName();
     } else {
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
     }
