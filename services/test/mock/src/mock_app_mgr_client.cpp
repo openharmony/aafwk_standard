@@ -17,11 +17,24 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+const std::string PROCESS_NAME = "process_name";
+}  // namespace
 
 MockAppMgrClient::MockAppMgrClient()
 {}
 MockAppMgrClient::~MockAppMgrClient()
 {}
+
+AppMgrResultCode MockAppMgrClient::GetProcessRunningInfosByUserId(
+    std::vector<RunningProcessInfo> &info, int32_t userId)
+{
+    RunningProcessInfo runningProcessInfo;
+    runningProcessInfo.processName_ = PROCESS_NAME;
+    info.emplace_back(runningProcessInfo);
+
+    return AppMgrResultCode::RESULT_OK;
+}
 
 AppMgrResultCode MockAppMgrClient::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token,
     const sptr<IRemoteObject> &preToken, const int32_t visibility, const int32_t perceptibility,

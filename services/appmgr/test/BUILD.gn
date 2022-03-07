@@ -116,7 +116,10 @@ group("unittest") {
 
     # "unittest/ams_lmks_client_test:unittest",
     "unittest/ams_mgr_kill_process_test:unittest",
+    "unittest/ams_mgr_proxy_test:unittest",
+    "unittest/ams_mgr_scheduler_dump_test:unittest",
     "unittest/ams_mgr_scheduler_test:unittest",
+    "unittest/ams_mgr_stub_test:unittest",
     "unittest/ams_recent_app_list_test:unittest",
     "unittest/ams_service_app_spawn_client_test:unittest",
     "unittest/ams_service_app_spawn_msg_wrapper_test:unittest",
@@ -124,7 +127,10 @@ group("unittest") {
     "unittest/ams_service_event_drive_test:unittest",
     "unittest/ams_service_load_ability_process_test:unittest",
     "unittest/ams_service_startup_test:unittest",
+    "unittest/app_mgr_proxy_test:unittest",
+    "unittest/app_mgr_service_dump_test:unittest",
     "unittest/app_mgr_service_event_handler_test:unittest",
+    "unittest/app_mgr_stub_test:unittest",
     "unittest/app_running_processes_info_test:unittest",
   ]
 }

@@ -766,7 +766,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     } else {
         if (isfirstCommand != true) {
             result = OHOS::ERR_INVALID_VALUE;
-            resultReceiver_.append(HELP_MSG_NO_OPTION);
+            resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
             resultReceiver_.append(HELP_MSG_DUMPSYS);
             return result;
         }

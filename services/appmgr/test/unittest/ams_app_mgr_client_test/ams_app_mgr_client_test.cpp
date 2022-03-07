@@ -37,6 +37,10 @@ using testing::SetArgReferee;
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+const int32_t USER_ID = 100;
+}  // namespace
+
 class AmsAppMgrClientTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -65,6 +69,61 @@ void AmsAppMgrClientTest::SetUp()
 
 void AmsAppMgrClientTest::TearDown()
 {}
+
+/**
+ * @tc.name: AppMgrClient_GetConfiguration_0100
+ * @tc.desc: GetConfiguration
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AmsAppMgrClientTest, AppMgrClient_GetConfiguration_0100, TestSize.Level1)
+{
+    APP_LOGI("AppMgrClient_GetConfiguration_0100 start");
+
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ConnectAppMgrService());
+
+    sptr<IAmsMgr> amsMgrScheduler(new MockAmsMgrScheduler());
+    EXPECT_CALL(*(static_cast<MockAmsMgrScheduler *>(amsMgrScheduler.GetRefPtr())), GetConfiguration(_)).Times(1);
+
+    EXPECT_CALL(*(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), GetAmsMgr())
+        .Times(1)
+        .WillOnce(Return(amsMgrScheduler));
+
+    Configuration config;
+    auto result = client_->GetConfiguration(config);
+    APP_LOGI("result = %{public}d", result);
+
+    EXPECT_EQ(result, AppMgrResultCode::RESULT_OK);
+
+    APP_LOGI("AppMgrClient_GetConfiguration_0100 end");
+}
+
+/**
+ * @tc.name: AppMgrClient_GetProcessRunningInfosByUserId_0100
+ * @tc.desc: GetProcessRunningInfosByUserId
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AmsAppMgrClientTest, AppMgrClient_GetProcessRunningInfosByUserId_0100, TestSize.Level1)
+{
+    APP_LOGI("AppMgrClient_GetProcessRunningInfosByUserId_0100 start");
+
+    EXPECT_EQ(AppMgrResultCode::RESULT_OK, client_->ConnectAppMgrService());
+
+    EXPECT_CALL(
+        *(static_cast<MockAppMgrService *>(client_->remote_.GetRefPtr())), GetProcessRunningInfosByUserId(_, _))
+        .Times(1)
+        .WillOnce(Return(AppMgrResultCode::RESULT_OK));
+
+    std::vector<RunningProcessInfo> info;
+    int32_t userId = USER_ID;
+    auto result = client_->GetProcessRunningInfosByUserId(info, userId);
+    APP_LOGI("result = %{public}d", result);
+
+    EXPECT_EQ(result, AppMgrResultCode::RESULT_OK);
+
+    APP_LOGI("AppMgrClient_GetProcessRunningInfosByUserId_0100 end");
+}
 
 /*
  * Feature: AppMgrService
