@@ -63,6 +63,9 @@ ohos_source_set("tools_fm_source_set") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_tools"
 }
 
 ohos_executable("fm") {
