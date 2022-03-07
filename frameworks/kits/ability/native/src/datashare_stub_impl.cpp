@@ -28,7 +28,7 @@ std::vector<std::string> DataShareStubImpl::GetFileTypes(const Uri &uri, const s
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::vector<std::string> ret;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -45,7 +45,7 @@ int DataShareStubImpl::OpenFile(const Uri &uri, const std::string &mode)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = -1;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -62,7 +62,7 @@ int DataShareStubImpl::OpenRawFile(const Uri &uri, const std::string &mode)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = -1;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -79,7 +79,7 @@ int DataShareStubImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &val
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = 0;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -97,7 +97,7 @@ int DataShareStubImpl::Update(const Uri &uri, const NativeRdb::ValuesBucket &val
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = 0;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -114,7 +114,7 @@ int DataShareStubImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredic
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = 0;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -132,7 +132,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataShareStubImpl::Query(const Ur
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> ret = nullptr;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &columns, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -149,7 +149,7 @@ std::string DataShareStubImpl::GetType(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::string ret = "";
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -166,7 +166,7 @@ int DataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::
 {
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = 0;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -183,7 +183,7 @@ bool DataShareStubImpl::RegisterObserver(const Uri &uri, const sptr<AAFwk::IData
 {
     HILOG_INFO("%{public}s begin.", __func__);
     bool ret = false;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &dataObserver, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -200,7 +200,7 @@ bool DataShareStubImpl::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
 {
     HILOG_INFO("%{public}s begin.", __func__);
     bool ret = false;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &dataObserver, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -217,7 +217,7 @@ bool DataShareStubImpl::NotifyChange(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     bool ret = false;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &ret, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -234,7 +234,7 @@ Uri DataShareStubImpl::NormalizeUri(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     Uri urivalue("");
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &urivalue, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -251,7 +251,7 @@ Uri DataShareStubImpl::DenormalizeUri(const Uri &uri)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     Uri urivalue("");
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &urivalue, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
@@ -269,7 +269,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareStubImpl::E
 {
     HILOG_INFO("%{public}s begin.", __func__);
     std::vector<std::shared_ptr<DataAbilityResult>> results;
-    std::function<void()> syncTaskFunc = [&, client = sptr<DataShareStubImpl>(this)]() {
+    std::function<void()> syncTaskFunc = [=, &results, client = sptr<DataShareStubImpl>(this)]() {
         auto extension = client->GetOwner();
         if (extension == nullptr) {
             HILOG_ERROR("%{public}s end failed.", __func__);
