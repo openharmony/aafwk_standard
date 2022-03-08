@@ -325,6 +325,13 @@ bool JsRuntime::Initialize(const Options& options)
 
     OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
     codePath_ = options.codePath;
+
+    auto moduleManager = NativeModuleManager::GetInstance();
+    std::string packagePath = options.packagePath;
+    if (moduleManager && !packagePath.empty()) {
+        moduleManager->SetAppLibPath(packagePath.c_str());
+    }
+
     return true;
 }
 

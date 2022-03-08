@@ -867,6 +867,16 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         AbilityRuntime::Runtime::Options options;
         options.codePath = LOCAL_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
+        std::string nativeLibraryPath = appInfo.nativeLibraryPath;
+        if (!nativeLibraryPath.empty()) {
+            if (nativeLibraryPath.back() == '/') {
+                nativeLibraryPath.pop_back();
+            }
+            std::string libPath = LOCAL_CODE_PATH;
+            libPath += (libPath.back() == '/') ? nativeLibraryPath : "/" + nativeLibraryPath;
+            APP_LOGI("napi lib path = %{private}s", libPath.c_str());
+            options.packagePath = libPath;
+        }
         auto runtime = AbilityRuntime::Runtime::Create(options);
         if (!runtime) {
             APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
