@@ -789,6 +789,8 @@ public:
 
     void SetSpecifiedFlag(const std::string &flag);
     std::string GetSpecifiedFlag() const;
+    void SetWindowMode(int32_t windowMode);
+    void RemoveWindowMode();
     LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
 
 protected:

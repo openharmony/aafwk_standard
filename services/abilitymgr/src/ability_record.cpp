@@ -1696,5 +1696,15 @@ int AbilityRecord::GetCurrentAccountId()
 
     return osActiveAccountIds.front();
 }
+
+void AbilityRecord::SetWindowMode(int32_t windowMode)
+{
+    want_.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
+}
+
+void AbilityRecord::RemoveWindowMode()
+{
+    want_.RemoveParam(Want::PARAM_RESV_WINDOW_MODE);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
