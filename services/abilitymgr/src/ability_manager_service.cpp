@@ -2739,7 +2739,7 @@ int AbilityManagerService::PreLoadAppDataAbilities(const std::string &bundleName
     AppExecFwk::BundleInfo bundleInfo;
     bool ret = bms->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId);
     if (!ret) {
-        HILOG_ERROR("Failed to get bundle info when app data abilities preloading.");
+        HILOG_ERROR("Failed to get bundle info when app data abilities preloading, userId is %{public}d", userId);
         return RESOLVE_APP_ERR;
     }
 
@@ -3961,6 +3961,7 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
 
 int AbilityManagerService::SendANRProcessID(int pid)
 {
+    HILOG_INFO("AbilityManagerService::SendANRProcessID come, pid is %{public}d", pid);
     auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
     if (!isSaCall) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
