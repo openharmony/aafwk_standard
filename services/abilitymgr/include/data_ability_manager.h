@@ -58,6 +58,7 @@ private:
 private:
     DataAbilityRecordPtr LoadLocked(const std::string &name, const AbilityRequest &req);
     void DumpLocked(const char *func, int line);
+    void RestartDataAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
 private:
     std::mutex mutex_;
