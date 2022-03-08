@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1140,27 +1140,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
     testing::Mock::AllowLeak(callback);
 }
 
-/*
- * Feature: AbilityManagerService
- * Function: CompelVerifyPermission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService CompelVerifyPermission
- * EnvConditions: NA
- * CaseDescription: Verify function CompelVerifyPermission
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_025, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    const std::string permission = "permission";
-    int pid = 100;
-    int uid = 1000;
-    std::string message;
-    int runTimes = 1;
-    EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(runTimes);
-    auto resultFunction = abilityMgrServ_->CompelVerifyPermission(permission, pid, uid, message);
-    EXPECT_EQ(resultFunction, 0);
-}
 /*
  * Feature: AbilityManagerService
  * Function: AmsConfigurationParameter

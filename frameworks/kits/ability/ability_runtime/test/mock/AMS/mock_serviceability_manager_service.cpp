@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -156,12 +156,6 @@ int MockServiceAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject>
 bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
 {
     return true;
-}
-
-int MockServiceAbilityManagerService::CompelVerifyPermission(
-    const std::string &permission, int pid, int uid, std::string &message)
-{
-    return 0;
 }
 
 int MockServiceAbilityManagerService::PowerOff()

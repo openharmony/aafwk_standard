@@ -51,8 +51,6 @@ AmsMgrStub::AmsMgrStub()
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_APPLICATION)] = &AmsMgrStub::HandleKillApplication;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::ABILITY_ATTACH_TIMEOUT)] =
         &AmsMgrStub::HandleAbilityAttachTimeOut;
-    memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::COMPEL_VERIFY_PERMISSION)] =
-        &AmsMgrStub::HandleCompelVerifyPermission;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::PREPARE_TERMINATE_ABILITY)] =
         &AmsMgrStub::HandlePrepareTerminate;
     memberFuncMap_[static_cast<uint32_t>(IAmsMgr::Message::KILL_APPLICATION_BYUID)] =
@@ -229,19 +227,6 @@ int32_t AmsMgrStub::HandleAbilityAttachTimeOut(MessageParcel &data, MessageParce
     BYTRACE(BYTRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
     AbilityAttachTimeOut(token);
-    return NO_ERROR;
-}
-
-int32_t AmsMgrStub::HandleCompelVerifyPermission(MessageParcel &data, MessageParcel &reply)
-{
-    BYTRACE(BYTRACE_TAG_APP);
-    auto permission = Str16ToStr8(data.ReadString16());
-    auto pid = data.ReadInt32();
-    auto uid = data.ReadInt32();
-    std::string message;
-    auto result = CompelVerifyPermission(permission, pid, uid, message);
-    reply.WriteString16(Str8ToStr16(message));
-    reply.WriteInt32(result);
     return NO_ERROR;
 }
 
