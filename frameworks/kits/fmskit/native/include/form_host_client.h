@@ -20,6 +20,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <set>
 #include "form_callback_interface.h"
 #include "form_host_stub.h"
 
@@ -29,7 +30,6 @@ namespace AppExecFwk {
  * @class FormHostClient
  * The service of the form host.
  */
-class HostForms;
 class FormHostClient : public FormHostStub {
 public:
     FormHostClient();
@@ -93,91 +93,12 @@ public:
     virtual void OnUninstall(const std::vector<int64_t> &formIds);
 
 private:
-    static sptr<FormHostClient> instance_;
     static std::mutex instanceMutex_;
-    mutable std::mutex lockMutex_;
-    std::vector<int64_t> keyVector_;
-    std::map<int64_t, std::shared_ptr<FormCallbackInterface>> recordCallback_;
-    std::map<int64_t, HostForms> recordHostForms_;
-    int32_t key_ = 0;
-
-private:
-    /**
-     * @brief Find callback by formId.
-     *
-     * @param formId The Id of the form.
-     * @return target callback
-     */
-    std::shared_ptr<FormCallbackInterface> FindTargetCallback(int64_t formId);
-
-    /**
-     * @brief Find Key By form callback.
-     *
-     * @param formCallback The form callback.
-     * @return callback's key
-     */
-    int32_t FindKeyByCallback(std::shared_ptr<FormCallbackInterface> formCallback);
-
-    /**
-     * @brief Compare callback.
-     *
-     * @param formCallback1 The  form callback1.
-     * @param formCallback2 The callback to be compared with form callback1.
-     * @return Returns true if the two callback are equal to each other, returns false otherwise.
-     */
-    bool Compare(std::shared_ptr<FormCallbackInterface> formCallback1, std::shared_ptr<FormCallbackInterface> formCallback2);
+    static sptr<FormHostClient> instance_;
+    mutable std::mutex callbackMutex_;
+    std::map<int64_t, std::set<std::shared_ptr<FormCallbackInterface>>> formCallbackMap_;
 
     DISALLOW_COPY_AND_MOVE(FormHostClient);
-};
-
-class HostForms {
-public:
-    /**
-     * @brief Add form by formId.
-     *
-     * @param formId The Id of the form.
-     */
-    void AddForm(const int64_t formId)
-    {
-        std::map<int64_t, bool>::iterator it = forms_.find(formId);
-        if (it != forms_.end()) {
-            return;
-        }
-        forms_.insert(std::pair<int64_t, bool>(formId, true));
-    }
-
-    /**
-     * @brief Delete form by formId.
-     *
-     * @param formId The Id of the form.
-     */
-    void DelForm(const int64_t formId)
-    {
-        forms_.erase(formId);
-    }
-
-    /**
-     * @brief Check whether the form is empty.
-     */
-    bool IsEmpty()
-    {
-        return forms_.empty();
-    }
-
-    /**
-     * @brief Check whether the form exist in the forms.
-     *
-     * @param formId The Id of the form.
-     * @return Returns true if contains form; returns false otherwise.
-     */
-    bool Contains(const int64_t formId)
-    {
-        std::map<int64_t, bool>::iterator it = forms_.find(formId);
-        return (it == forms_.end()) ? false : true;
-    }
-
-private:
-    std::map<int64_t, bool> forms_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

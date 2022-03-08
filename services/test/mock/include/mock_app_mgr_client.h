@@ -34,6 +34,11 @@ public:
     MOCK_METHOD1(KillProcessesByUserId, AppMgrResultCode(int32_t userId));
     MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD1(AbilityAttachTimeOut, void(const sptr<IRemoteObject> &token));
+    MOCK_METHOD2(GetRunningProcessInfoByToken, void((const sptr<IRemoteObject> &token,
+        AppExecFwk::RunningProcessInfo &info)));
+    MOCK_METHOD1(GetAllRunningProcesses, AppMgrResultCode(std::vector<RunningProcessInfo> &info));
+
+    AppMgrResultCode GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId);
 
     AppMgrResultCode AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
         const int32_t visibility, const int32_t perceptibility, const int32_t connectionState) override;

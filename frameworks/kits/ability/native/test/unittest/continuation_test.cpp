@@ -24,7 +24,6 @@
 #include "continuation_manager.h"
 #include "continuation_handler.h"
 #include "data_ability_predicates.h"
-#include "foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h"
 #include "mock_ability_impl.h"
 #include "mock_ability_lifecycle_callbacks.h"
 #include "mock_ability_token.h"

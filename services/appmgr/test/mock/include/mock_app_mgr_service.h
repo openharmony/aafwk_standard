@@ -56,8 +56,14 @@ public:
         void(const int32_t recordId, const AAFwk::Want &want, const std::string &flag));
     MOCK_METHOD2(GetAbilityRecordsByProcessID, int(const int pid, std::vector<sptr<IRemoteObject>> &tokens));
 
-    virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &bundleInfo)
+    virtual int StartUserTestProcess(
+        const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)
+    {
+        return 0;
+    }
+
+    virtual int FinishUserTest(
+        const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
     {
         return 0;
     }
@@ -112,6 +118,18 @@ public:
         AbilityState st = AbilityState::ABILITY_STATE_BEGIN;
         callback_->OnAbilityRequestDone(token, st);
     }
+
+    MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
+
+    int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
+    {
+        code_ = code;
+
+        return 0;
+    }
+
+    int code_;
+
 private:
     Semaphore sem_;
     std::string data_;

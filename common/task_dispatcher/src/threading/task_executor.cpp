@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,6 @@ ErrCode TaskExecutor::DoWorks(const std::shared_ptr<WorkerThread> &worker)
     }
 
     std::shared_ptr<Task> task = worker->PollFirstTask();
-
     bool isInterrupted = false;
     bool done = false;
     while (((task != nullptr && done == false) || ((task = GetTask(worker)) != nullptr))) {
@@ -212,7 +211,7 @@ void TaskExecutor::Consume()
         if (delayTaskWrapper == nullptr || delayTaskWrapper->runnable_ == nullptr) {
             APP_LOGE("TaskExecutor::Consume delayTaskWrapper is nullptr");
             return;
-        };
+        }
         (delayTaskWrapper->runnable_)();
         APP_LOGI("TaskExecutor::Consume after run");
     }

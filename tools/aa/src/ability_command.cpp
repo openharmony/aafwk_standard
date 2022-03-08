@@ -62,7 +62,7 @@ const struct option LONG_OPTIONS_DUMP[] = {
     {"mission-infos", no_argument, nullptr, 'S'},
     {nullptr, 0, nullptr, 0},
 };
-const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::kd::u:c";
+const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
 const struct option LONG_OPTIONS_DUMPSYS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
@@ -72,7 +72,6 @@ const struct option LONG_OPTIONS_DUMPSYS[] = {
     {"pending", no_argument, nullptr, 'p'},
     {"process", no_argument, nullptr, 'r'},
     {"data", no_argument, nullptr, 'd'},
-    {"ui", no_argument, nullptr, 'k'},
     {"userId", required_argument, nullptr, 'u'},
     {"client", no_argument, nullptr, 'c'},
     {nullptr, 0, nullptr, 0},
@@ -767,7 +766,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     } else {
         if (isfirstCommand != true) {
             result = OHOS::ERR_INVALID_VALUE;
-            resultReceiver_.append(HELP_MSG_NO_OPTION);
+            resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
             resultReceiver_.append(HELP_MSG_DUMPSYS);
             return result;
         }
@@ -1239,14 +1238,10 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
             params[opt] = argv;
         } else if (opt == "-s") {
             if (i >= argc_ - USER_TEST_COMMAND_PARAMS_NUM) {
-                return TestCommandError(
-                    "error: option Should be [-s unittest <test-runner>] or [-s class <test-class>].\n");
+                return TestCommandError("error: option [-s] is incorrect.\n");
             }
             std::string argKey = argv_[++i];
             std::string argValue = argv_[++i];
-            if (!(argKey == "unittest" || argKey == "class")) {
-                return TestCommandError("error: option Should be [-s unittest] or [-s class].\n");
-            }
             params[opt + " " + argKey] = argValue;
         } else if (opt.at(0) == '-') {
             return TestCommandError("error: unknown option: " + opt + "\n");
@@ -1311,7 +1306,7 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
         int time = std::stoi(want.GetStringParam("-w"));
         timeMs = time * TIME_RATE_MS;
     }
-    if (!observer->waitForFinish(timeMs)) {
+    if (!observer->WaitForFinish(timeMs)) {
         resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
         return OHOS::ERR_INVALID_VALUE;
     }

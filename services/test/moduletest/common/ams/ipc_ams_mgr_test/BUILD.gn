@@ -21,9 +21,9 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
 
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
     "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
@@ -37,7 +37,10 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]
 
-  external_deps = [ "ipc:ipc_core" ]
+  external_deps = [
+    "hicollie_native:libhicollie",
+    "ipc:ipc_core",
+  ]
 }
 
 group("moduletest") {

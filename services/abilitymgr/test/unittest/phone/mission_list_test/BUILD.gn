@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
-module_output_path = "ability_runtime/abilitymgr"
+module_output_path = "ability_runtime/ability_call_test"
 
 ohos_unittest("mission_list_test") {
   module_out_path = module_output_path
@@ -46,10 +46,10 @@ ohos_unittest("mission_list_test") {
     "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
     "//utils/native/base:utils",
@@ -63,8 +63,36 @@ ohos_unittest("mission_list_test") {
   ]
 }
 
+ohos_unittest("mission_list_test_call") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mission_list_test_call.cpp",  # add mock file
+  ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  deps = [
+    "${innerkits_path}/want:want",
+    "${services_path}/abilitymgr/test:abilityms_test_source",
+    "${services_path}/common:perm_verification",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
+    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libpng:libpng",
+  ]
+
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+}
+
 group("unittest") {
   testonly = true
 
-  deps = [ ":mission_list_test" ]
+  deps = [ ":mission_list_test_call" ]
 }

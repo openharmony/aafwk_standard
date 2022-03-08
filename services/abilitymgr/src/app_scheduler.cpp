@@ -317,6 +317,18 @@ int AppScheduler::StartUserTest(const Want &want, const sptr<IRemoteObject> &obs
     return ERR_OK;
 }
 
+int AppScheduler::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    int ret = appMgrClient_->FinishUserTest(msg, resultCode, bundleName, pid);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("Fail to start user test.");
+        return INNER_ERR;
+    }
+    return ERR_OK;
+}
+
 int AppScheduler::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);

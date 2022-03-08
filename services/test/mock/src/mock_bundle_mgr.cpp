@@ -22,6 +22,9 @@ using namespace OHOS::AAFwk;
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+const int32_t ERROR_USER_ID_U256 = 256;
+}
 
 int BundleMgrProxy::QueryWantAbility(
     const AAFwk::Want &__attribute__((unused)) want, std::vector<AbilityInfo> &__attribute__((unused)) abilityInfos)
@@ -82,7 +85,12 @@ bool BundleMgrService::GetBundleInfo(
 bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId,
     AbilityInfo &abilityInfo)
 {
-    return QueryAbilityInfo(want, abilityInfo);
+    auto flag = QueryAbilityInfo(want, abilityInfo);
+    if (userId == ERROR_USER_ID_U256) {
+        abilityInfo.applicationInfo.singleUser = false;
+    }
+    return flag;
+
 }
 
 bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo)
@@ -109,8 +117,14 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
             return true;
         }
     }
-    if (std::string::npos != elementTemp.GetBundleName().find("service")) {
+    if (std::string::npos != elementTemp.GetBundleName().find("Service")) {
         abilityInfo.type = AppExecFwk::AbilityType::SERVICE;
+    }
+    if (std::string::npos != elementTemp.GetBundleName().find("Data")) {
+        abilityInfo.type = AppExecFwk::AbilityType::DATA;
+    }
+    if (std::string::npos != elementTemp.GetBundleName().find("Extension")) {
+        abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     }
     abilityInfo.name = elementTemp.GetAbilityName();
     abilityInfo.bundleName = elementTemp.GetBundleName();
@@ -131,8 +145,9 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &ab
 bool BundleMgrService::GetApplicationInfo(
     const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo)
 {
-    appInfo.name = "test_app";
-    appInfo.bundleName = "com.ix.hiMusic";
+    appInfo.name = appName;
+    appInfo.bundleName = appName;
+    appInfo.uid = userId * BASE_USER_RANGE;
     return true;
 }
 

@@ -40,7 +40,7 @@ public:
      */
     virtual void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
 private:
-    void HandleProviderUpdated(const std::string &bundleName);
+    void HandleProviderUpdated(const std::string &bundleName, const int userId);
     bool ProviderFormUpdated(const int64_t formId, const FormRecord &formRecord,
     const std::vector<FormInfo> &targetForms);
     void HandleBundleFormInfoChanged(const std::string &bundleName);

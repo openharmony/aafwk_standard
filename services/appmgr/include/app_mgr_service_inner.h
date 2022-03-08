@@ -433,7 +433,7 @@ public:
     void OnAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
 
     void GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info);
-	
+
 	 /**
      * UpdateConfiguration, ANotify application update system environment changes.
      *
@@ -482,6 +482,17 @@ public:
     int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const AppExecFwk::BundleInfo &bundleInfo);
 
+    /**
+     * @brief Finish user test.
+     * @param msg user test message.
+     * @param resultCode user test result Code.
+     * @param bundleName user test bundleName.
+     * @param pid the user test process id.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
+
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 
     void RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response);
@@ -519,6 +530,8 @@ private:
 
     void MakeProcessName(std::string &processName, const std::shared_ptr<AbilityInfo> &abilityInfo,
         const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
+    void MakeProcessName(
+        std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo);
     /**
      * StartAbility, load the ability that needed to be started(Start on the basis of the original process).
      *  Start on a new boot process
@@ -673,8 +686,11 @@ private:
 
     void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
 
-    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &info, const std::string &processName);
+    int UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg);
+    int GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo);
+    int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &info,
+        const std::string &processName);
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 
@@ -713,8 +729,21 @@ private:
      * @return
      */
     void NotifyAppStatus(const std::string &bundleName, const std::string &eventData);
+    /**
+     * Notify application status.
+     *
+     * @param bundleName Indicates the name of the bundle.
+     * @param bundleName Indicates the name of the bundle.
+     * @param eventData Indicates the event defined by CommonEventSupport
+     *
+     * @return
+     */
+    void NotifyAppStatusByCallerUid(const std::string &bundleName, const int32_t userId, const int32_t callerUid,
+        const std::string &eventData);
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
+    int FinishUserTestLocked(
+        const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;
@@ -725,7 +754,7 @@ private:
     std::shared_ptr<AppRunningManager> appRunningManager_;
     std::shared_ptr<AMSEventHandler> eventHandler_;
     std::shared_ptr<Configuration> configuration_;
-    std::mutex serviceLock_;
+    std::mutex userTestLock_;
     sptr<IStartSpecifiedAbilityResponse> startSpecifiedAbilityResponse_;
 };
 }  // namespace AppExecFwk

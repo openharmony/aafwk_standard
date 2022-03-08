@@ -353,6 +353,17 @@ int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemo
     return service->StartUserTestProcess(want, observer, bundleInfo);
 }
 
+int AppMgrClient::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        APP_LOGE("service is nullptr");
+        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    }
+    return service->FinishUserTest(msg, resultCode, bundleName, pid);
+}
+
 void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
