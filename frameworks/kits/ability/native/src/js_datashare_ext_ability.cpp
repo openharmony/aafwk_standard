@@ -187,6 +187,10 @@ sptr<IRemoteObject> JsDataShareExtAbility::OnConnect(const AAFwk::Want &want)
     sptr<DataShareStubImpl> remoteObject = new (std::nothrow) DataShareStubImpl(
         std::static_pointer_cast<JsDataShareExtAbility>(shared_from_this()),
         reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine()));
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("%{public}s No memory allocated for DataShareStubImpl", __func__);
+        return nullptr;
+    }
     HILOG_INFO("%{public}s end. ", __func__);
     return remoteObject->AsObject();
 }
@@ -389,11 +393,16 @@ int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket 
         return ret;
     }
 
-    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
+    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new (std::nothrow) OHOS::NativeRdb::DataAbilityPredicates();
+    if (predicatesPtr == nullptr) {
+        HILOG_ERROR("%{public}s No memory allocated for predicates", __func__);
+        return ret;
+    }
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
     if (napiPredicates == nullptr) {
         HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        delete predicatesPtr;
         return ret;
     }
 
@@ -431,11 +440,16 @@ int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
     napi_value napiUri = nullptr;
     napi_create_string_utf8(env, uri.ToString().c_str(), NAPI_AUTO_LENGTH, &napiUri);
 
-    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
+    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new (std::nothrow) OHOS::NativeRdb::DataAbilityPredicates();
+    if (predicatesPtr == nullptr) {
+        HILOG_ERROR("%{public}s No memory allocated for predicates", __func__);
+        return ret;
+    }
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
     if (napiPredicates == nullptr) {
         HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        delete predicatesPtr;
         return ret;
     }
 
@@ -486,11 +500,16 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
         napi_set_element(env, napiColumns, index++, result);
     }
 
-    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new OHOS::NativeRdb::DataAbilityPredicates();
+    OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new (std::nothrow) OHOS::NativeRdb::DataAbilityPredicates();
+    if (predicatesPtr == nullptr) {
+        HILOG_ERROR("%{public}s No memory allocated for predicates", __func__);
+        return ret;
+    }
     *predicatesPtr = predicates;
     napi_value napiPredicates = dataAbilityPredicatesNewInstance_(env, predicatesPtr);
     if (napiPredicates == nullptr) {
         HILOG_ERROR("%{public}s failed to make new instance of dataAbilityPredicates.", __func__);
+        delete predicatesPtr;
         return ret;
     }
 

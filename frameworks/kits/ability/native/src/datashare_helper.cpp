@@ -834,7 +834,7 @@ void DataShareHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAb
             dataShareProxy = datashare->second;
         }
     } else {
-        dataShareProxy = dataShareProxy_;
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy == nullptr) {
@@ -882,7 +882,7 @@ void DataShareHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IData
         }
         dataShareProxy = datashare->second;
     } else {
-        dataShareProxy = dataShareProxy_;
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
     if (dataShareProxy == nullptr) {
