@@ -3399,22 +3399,8 @@ void AbilityManagerService::StartingSettingsDataAbility()
         waitCnt++;
     }
 
-    // node: do not use abilityInfo.uri directly, need check uri first.
-    auto GetValidUri = [&]() -> std::string {
-        int32_t firstSeparator = abilityInfo.uri.find_first_of('/');
-        int32_t lastSeparator = abilityInfo.uri.find_last_of('/');
-        if (lastSeparator - firstSeparator != 1) {
-            HILOG_ERROR("ability info uri error, uri: %{public}s", abilityInfo.uri.c_str());
-            return "";
-        }
-
-        std::string uriStr = abilityInfo.uri;
-        uriStr.insert(lastSeparator, "/");
-        return uriStr;
-    };
-
-    std::string abilityUri = GetValidUri();
-    if (abilityUri.empty()) {
+    std::string abilityUri;
+    if (!GetValidDataAbilityUri(abilityInfo.uri, abilityUri)) {
         return;
     }
 
@@ -4439,7 +4425,7 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
 {
     std::set<uint32_t> needEraseIndexSet;
 
-    for (int i = 0; i< bundleInfos.size(); i++) {
+    for (size_t i = 0; i < bundleInfos.size(); i++) {
         if (!bundleInfos[i].isKeepAlive) {
             needEraseIndexSet.insert(i);
             continue;
@@ -4454,8 +4440,8 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
                 }
                 needEraseIndexSet.insert(i);
                 std::string uriStr;
-                bool getDataAbilityInfo = GetDataAbilityUri(hapModuleInfo.abilityInfos, mainElement, uriStr);
-                if (getDataAbilityInfo) {
+                bool getDataAbilityUri = GetDataAbilityUri(hapModuleInfo.abilityInfos, mainElement, uriStr);
+                if (getDataAbilityUri) {
                     // dataability, need use AcquireDataAbility
                     Uri uri(uriStr);
                     (void)AcquireDataAbility(uri, true, nullptr);
@@ -4484,6 +4470,21 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
     }
 }
 
+bool AbilityManagerService::GetValidDataAbilityUri(const std::string &abilityInfoUri, std::string &adjustUri)
+{
+    // note: do not use abilityInfo.uri directly, need check uri first.
+    int32_t firstSeparator = abilityInfoUri.find_first_of('/');
+    int32_t lastSeparator = abilityInfoUri.find_last_of('/');
+    if (lastSeparator - firstSeparator != 1) {
+        HILOG_ERROR("ability info uri error, uri: %{public}s", abilityInfoUri.c_str());
+        return false;
+    }
+
+    adjustUri = abilityInfoUri;
+    adjustUri.insert(lastSeparator, "/");
+    return true;
+}
+
 bool AbilityManagerService::GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
     const std::string &mainAbility, std::string &uri)
 {
@@ -4492,15 +4493,17 @@ bool AbilityManagerService::GetDataAbilityUri(const std::vector<AppExecFwk::Abil
         return false;
     }
 
+    std::string dataAbilityUri;
     for (auto abilityInfo : abilityInfos) {
         if (abilityInfo.type == AppExecFwk::AbilityType::DATA &&
             abilityInfo.name == mainAbility) {
-            uri = abilityInfo.uri;
-            return true;
+            dataAbilityUri = abilityInfo.uri;
+            HILOG_INFO("get data ability uri: %{public}s", dataAbilityUri.c_str());
+            break;
         }
     }
 
-    return false;
+    return GetValidDataAbilityUri(dataAbilityUri, uri);
 }
 
 int AbilityManagerService::VerifyMissionPermission()
