@@ -274,7 +274,7 @@ NativeValue* JsAbilityContext::OnStartAbilityByCall(NativeEngine& engine, Native
         HILOG_INFO("OnStartAbilityByCall releaseListen is called %{public}s", str.c_str());
     };
 
-    auto callExecute = [calldata = calls] (NativeEngine& engine, AsyncTask& task) {
+    auto callExecute = [calldata = calls] () {
         HILOG_INFO("OnStartAbilityByCall callExecute begin, calls is %{public}p", calldata);
         constexpr int CALLER_TIME_OUT = 10; // 10s
         std::unique_lock<std::mutex> lock(calldata->mutexlock);
