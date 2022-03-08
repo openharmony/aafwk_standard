@@ -27,11 +27,7 @@ ohos_moduletest("start_option_display_id_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
   ]
 
-  sources = [
-    "//foundation/aafwk/standard/services/common/src/permission_verification.cpp",
-    "//foundation/distributedhardware/devicemanager/test/unittest/mock/parameter.cpp",
-    "start_option_display_id_test.cpp",
-  ]
+  sources = [ "start_option_display_id_test.cpp" ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
   cflags = []
@@ -44,6 +40,7 @@ ohos_moduletest("start_option_display_id_test") {
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
+    "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
