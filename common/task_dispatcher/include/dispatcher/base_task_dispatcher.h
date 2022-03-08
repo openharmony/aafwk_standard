@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,8 +48,8 @@ public:
      *
      *  @param runnable is the job to execute.
      *  @return an interface for revoke the task if it hasn't been invoked.
-     *
      */
+
     virtual std::shared_ptr<Revocable> AsyncDispatch(const std::shared_ptr<Runnable> &runnable) override = 0;
 
     /**
@@ -60,6 +60,7 @@ public:
      */
     virtual std::shared_ptr<Revocable> DelayDispatch(
         const std::shared_ptr<Runnable> &runnable, long delayMs) override = 0;
+
     /**
      *  Set a barrier and meanwhile a sync task that execute after all tasks finished.
      *  @param runnable  is the job to execute after barrier.
@@ -83,7 +84,6 @@ public:
      *  @param group related by task.
      *  @param runnable  is the job to execute.
      *  @return an interface for revoke the task if it hasn't been invoked.
-     *
      */
     virtual std::shared_ptr<Revocable> AsyncGroupDispatch(
         const std::shared_ptr<Group> &group, const std::shared_ptr<Runnable> &runnable) override;
