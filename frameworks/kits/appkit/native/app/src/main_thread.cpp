@@ -1017,10 +1017,6 @@ void MainThread::HandleAbilityStage(const HapModuleInfo &abilityStage)
         return;
     }
 
-    if (!appMgr_ || !applicationImpl_) {
-        APP_LOGE("appMgr_ is nullptr");
-        return;
-    }
     appMgr_->AddAbilityStageDone(applicationImpl_->GetRecordId());
 }
 
