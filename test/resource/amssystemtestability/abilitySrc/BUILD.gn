@@ -15,7 +15,6 @@ group("ams_system_test_app") {
   deps = [
     "amsAbilityAppendTestA:amsAbilityAppendTestA",
     "amsAbilityAppendTestB:amsAbilityAppendTestB",
-    "amsAbilityVisibleTestPageA:amsAbilityVisibleTestPageA",
     "amsAbilityVisibleTestServiceB:amsAbilityVisibleTestServiceB",
     "amsConfigurationUpdatedSingletonTest:amsConfigurationUpdatedSingletonTest",
     "amsConfigurationUpdatedTest:amsConfigurationUpdatedTest",
@@ -29,7 +28,6 @@ group("ams_system_test_app") {
     "amsKitSystemTestB:amsKitSystemTestB",
     "amsKitSystemTestDataA:amsKitSystemTestDataA",
     "amsKitSystemTestDataB:amsKitSystemTestDataB",
-    "amsKitSystemTestPageA:amsKitSystemTestPageA",
     "amsKitSystemTestService:amsKitSystemTestService",
     "amsMissionStackTest:amsMissionStackTest",
     "amsMissionStackTestSubsidiary:amsMissionStackTestSubsidiary",
@@ -67,4 +65,11 @@ group("ams_system_test_app") {
 
     # "launcherAbility:launcher_ability_native",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [
+      "amsAbilityVisibleTestPageA:amsAbilityVisibleTestPageA",
+      "amsKitSystemTestPageA:amsKitSystemTestPageA",
+    ]
+  }
 }

@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("ability_manager_public_config") {
   visibility = [ ":*" ]
@@ -29,12 +30,20 @@ config("ability_manager_public_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
-    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
+
+  if (ability_runtime_graphics) {
+    include_dirs += [
+      "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+    ]
+
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
+
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -47,7 +56,6 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
     "${services_path}/abilitymgr/src/ability_manager_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_manager_stub.cpp",
-    "${services_path}/abilitymgr/src/ability_mission_info.cpp",
     "${services_path}/abilitymgr/src/ability_record_info.cpp",
     "${services_path}/abilitymgr/src/ability_running_info.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
@@ -55,23 +63,10 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/extension_running_info.cpp",
-    "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
-    "${services_path}/abilitymgr/src/mission_description_info.cpp",
-    "${services_path}/abilitymgr/src/mission_info.cpp",
-    "${services_path}/abilitymgr/src/mission_listener_proxy.cpp",
-    "${services_path}/abilitymgr/src/mission_listener_stub.cpp",
-    "${services_path}/abilitymgr/src/mission_option.cpp",
-    "${services_path}/abilitymgr/src/mission_record_info.cpp",
-    "${services_path}/abilitymgr/src/mission_snapshot.cpp",
-    "${services_path}/abilitymgr/src/mission_stack_info.cpp",
-    "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
-    "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
     "${services_path}/abilitymgr/src/sender_info.cpp",
     "${services_path}/abilitymgr/src/shared_memory.cpp",
-    "${services_path}/abilitymgr/src/stack_info.cpp",
-    "${services_path}/abilitymgr/src/stack_setting.cpp",
     "${services_path}/abilitymgr/src/start_options.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
@@ -104,7 +99,6 @@ ohos_shared_library("ability_manager") {
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
@@ -118,6 +112,26 @@ ohos_shared_library("ability_manager") {
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    sources += [
+      "${services_path}/abilitymgr/src/ability_mission_info.cpp",
+      "${services_path}/abilitymgr/src/image_info.cpp",
+      "${services_path}/abilitymgr/src/mission_description_info.cpp",
+      "${services_path}/abilitymgr/src/mission_info.cpp",
+      "${services_path}/abilitymgr/src/mission_listener_proxy.cpp",
+      "${services_path}/abilitymgr/src/mission_listener_stub.cpp",
+      "${services_path}/abilitymgr/src/mission_option.cpp",
+      "${services_path}/abilitymgr/src/mission_record_info.cpp",
+      "${services_path}/abilitymgr/src/mission_snapshot.cpp",
+      "${services_path}/abilitymgr/src/mission_stack_info.cpp",
+      "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
+      "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
+      "${services_path}/abilitymgr/src/stack_info.cpp",
+      "${services_path}/abilitymgr/src/stack_setting.cpp",
+    ]
+    deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
+  }
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"

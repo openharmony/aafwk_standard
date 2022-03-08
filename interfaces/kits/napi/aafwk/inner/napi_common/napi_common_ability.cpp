@@ -3089,7 +3089,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
         return;
     }
-
+#ifdef SUPPORT_GRAPHICS
     // inherit split mode
     auto windowMode = asyncCallbackInfo->ability->GetCurrentWindowMode();
     if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
@@ -3097,7 +3097,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
     HILOG_INFO("window mode is %{public}d", windowMode);
-
+#endif
     ErrCode ret = ERR_OK;
     if (asyncCallbackInfo->param.setting == nullptr) {
         HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);
