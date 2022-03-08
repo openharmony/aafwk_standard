@@ -24,7 +24,9 @@
 #include "js_runtime_utils.h"
 #include "mission_snapshot.h"
 #include "napi_common_start_options.h"
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
+#endif
 #include "start_options.h"
 
 #include <mutex>
@@ -301,9 +303,11 @@ private:
                     abilityObj->SetProperty(
                         "abilityName", CreateJsValue(engine, missionSnapshot.topAbility.GetAbilityName()));
                     object->SetProperty("ability", abilityValue);
+#ifdef SUPPORT_GRAPHICS
                     auto snapshotValue = reinterpret_cast<NativeValue*>(Media::PixelMapNapi::CreatePixelMap(
                         reinterpret_cast<napi_env>(&engine), missionSnapshot.snapshot));
                     object->SetProperty("snapshot", snapshotValue);
+#endif
                     task.Resolve(engine, objValue);
                 } else {
                     task.Reject(engine, CreateJsError(engine, ret, "Get mission snapshot failed."));

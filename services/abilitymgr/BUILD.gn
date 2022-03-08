@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 EVENT_DIR = "//base/notification/ces_standard/"
 
@@ -49,15 +50,11 @@ config("abilityms_config") {
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/graphic/standard/interfaces/innerkits",
-    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
     "//foundation/aafwk/standard/tools/aa/include",
-    "//foundation/graphic/standard/interfaces/innerkits/wmservice",
-    "//base/global/i18n_standard/frameworks/intl/include",
     "//base/hiviewdfx/hiview/adapter/utility/include",
     "//base/account/os_account/frameworks/common/account_error/include",
     "//base/account/os_account/frameworks/common/database/include",
@@ -66,6 +63,18 @@ config("abilityms_config") {
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara/include",
   ]
+
+  if (ability_runtime_graphics) {
+    include_dirs += [
+      "//foundation/graphic/standard/interfaces/innerkits",
+      "//foundation/multimedia/image_standard/interfaces/innerkits/include",
+      "//foundation/graphic/standard/interfaces/innerkits/wmservice",
+      "//base/global/i18n_standard/frameworks/intl/include",
+    ]
+
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
+
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -84,22 +93,18 @@ ohos_shared_library("abilityms") {
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
-    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
 
@@ -120,7 +125,15 @@ ohos_shared_library("abilityms") {
     "resmgr_standard:global_resmgr",
   ]
 
-  public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+  if (ability_runtime_graphics) {
+    deps += [
+      "//base/global/i18n_standard/frameworks/intl:intl_util",
+      "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
+      "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+      "//third_party/libpng:libpng",
+    ]
+    public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+  }
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"

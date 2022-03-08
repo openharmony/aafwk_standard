@@ -875,6 +875,7 @@ NativeValue* JsAbilityContext::WrapPermissionRequestResult(NativeEngine& engine,
 void JsAbilityContext::InheritWindowMode(AAFwk::Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
+#ifdef SUPPORT_GRAPHICS
     // only split mode need inherit
     auto context = context_.lock();
     if (!context) {
@@ -887,6 +888,7 @@ void JsAbilityContext::InheritWindowMode(AAFwk::Want &want)
         want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
     HILOG_INFO("%{public}s called end. window mode is %{public}d", __func__, windowMode);
+#endif
 }
 
 void JsAbilityContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,

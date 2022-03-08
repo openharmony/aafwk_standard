@@ -41,7 +41,9 @@
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "system_ability_definition.h"
+#ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
+#endif
 #include "uri_permission_manager_client.h"
 
 
@@ -2206,10 +2208,13 @@ void AppMgrServiceInner::GetGlobalConfiguration()
         APP_LOGE("configuration_ is null");
         return;
     }
+
+#ifdef SUPPORT_GRAPHICS
     // Currently only this interface is known
     auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
     APP_LOGI("current global language is : %{public}s", language.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+#endif
 
     // Assign to default colormode "light"
     APP_LOGI("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());
