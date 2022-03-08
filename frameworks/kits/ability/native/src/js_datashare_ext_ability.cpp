@@ -379,10 +379,7 @@ int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket 
         HILOG_ERROR("%{public}s invalid instance of ValuesBucket.", __func__);
         return ret;
     }
-    if (dataAbilityPredicatesNewInstance_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
-        return ret;
-    }
+
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
     napi_value napiUri = nullptr;
@@ -424,10 +421,6 @@ int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
     }
 
     ret = DataShareExtAbility::Delete(uri, predicates);
-    if (dataAbilityPredicatesNewInstance_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
-        return ret;
-    }
     HandleScope handleScope(jsRuntime_);
     napi_env env = reinterpret_cast<napi_env>(&jsRuntime_.GetNativeEngine());
     napi_value napiUri = nullptr;
@@ -464,8 +457,8 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
     }
 
     ret = DataShareExtAbility::Query(uri, columns, predicates);
-    if (dataAbilityPredicatesNewInstance_ == nullptr || rdbResultSetProxyGetNativeObject_ == nullptr) {
-        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates or RdbResultSet.", __func__);
+    if (rdbResultSetProxyGetNativeObject_ == nullptr) {
+        HILOG_ERROR("%{public}s invalid instance of RdbResultSet.", __func__);
         return ret;
     }
     HandleScope handleScope(jsRuntime_);
@@ -711,6 +704,10 @@ bool JsDataShareExtAbility::CheckCallingPermission(const std::string &permission
 napi_value JsDataShareExtAbility::MakePredicates(napi_env env, const NativeRdb::DataAbilityPredicates &predicates)
 {
     HILOG_INFO("%{public}s begin.", __func__);
+    if (dataAbilityPredicatesNewInstance_ == nullptr) {
+        HILOG_ERROR("%{public}s invalid instance of DataAbilityPredicates.", __func__);
+        return nullptr;
+    }
     OHOS::NativeRdb::DataAbilityPredicates* predicatesPtr = new (std::nothrow) OHOS::NativeRdb::DataAbilityPredicates();
     if (predicatesPtr == nullptr) {
         HILOG_ERROR("%{public}s No memory allocated for predicates", __func__);
