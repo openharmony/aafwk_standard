@@ -25,6 +25,7 @@ std::string InnerMissionInfo::ToJsonStr() const
     nlohmann::json value;
     value["MissionName"] = missionName;
     value["IsSingleton"] = isSingletonMode;
+    value["StartMethod"] = startMethod;
     value["MissionId"] = missionInfo.id;
     value["RunningState"] = missionInfo.runningState;
     value["LockedState"] = missionInfo.lockedState;
@@ -71,6 +72,10 @@ bool InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
         return false;
     }
     isSingletonMode = value["IsSingleton"].get<bool>();
+    if (!CheckJsonNode("StartMethod", JsonType::NUMBER)) {
+        return false;
+    }
+    startMethod = value["StartMethod"].get<int32_t>();
     if (!CheckJsonNode("MissionId", JsonType::NUMBER)) {
         return false;
     }

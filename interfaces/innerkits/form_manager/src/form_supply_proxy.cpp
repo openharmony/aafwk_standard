@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
+#include "form_supply_proxy.h"
 #include "appexecfwk_errors.h"
 #include "form_constants.h"
-#include "form_supply_proxy.h"
 #include "string_ex.h"
 
 namespace OHOS {

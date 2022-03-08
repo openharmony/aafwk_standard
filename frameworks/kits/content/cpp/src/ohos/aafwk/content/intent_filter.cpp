@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,11 +82,7 @@ bool IntentFilter::Marshalling(Parcel &parcel) const
         actionU16.push_back(Str8ToStr16(actions_[i]));
     }
 
-    if (!parcel.WriteString16Vector(actionU16)) {
-        return false;
-    }
-
-    return true;
+    return parcel.WriteString16Vector(actionU16);
 }
 
 bool IntentFilter::ReadFromParcel(Parcel &parcel)

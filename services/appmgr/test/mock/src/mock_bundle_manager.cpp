@@ -140,6 +140,30 @@ bool BundleMgrService::GetBundleInfo(
         bundleInfo.jointUserId = "";
         bundleInfo.appId = bundleName + "_xxx";
     }
+    if (bundleName == "KeepAliveApplication") {
+        HapModuleInfo hapModuleInfo;
+        hapModuleInfo.moduleName = "KeepAliveApplication";
+        ApplicationInfo appInfo;
+        appInfo.name = "KeepAliveApp";
+        appInfo.bundleName = bundleName;
+        appInfo.uid = 2100;
+        bundleInfo.uid = 2100;
+        bundleInfo.name = bundleName;
+        bundleInfo.applicationInfo = appInfo;
+        bundleInfo.hapModuleInfos.push_back(hapModuleInfo);
+    }
+    if (bundleName == "KeepAliveApplication1") {
+        HapModuleInfo hapModuleInfo;
+        hapModuleInfo.moduleName = "KeepAliveApplication1";
+        ApplicationInfo appInfo;
+        appInfo.name = "KeepAliveApp1";
+        appInfo.bundleName = bundleName;
+        appInfo.uid = 2101;
+        bundleInfo.uid = 2101;
+        bundleInfo.name = bundleName;
+        bundleInfo.applicationInfo = appInfo;
+        bundleInfo.hapModuleInfos.push_back(hapModuleInfo);
+    }
     return true;
 }
 bool BundleMgrService::GetBundleGids(const std::string &bundleName, std::vector<int> &gids)
@@ -156,6 +180,7 @@ bool BundleMgrService::GetBundleGids(const std::string &bundleName, std::vector<
 bool BundleMgrService::GetBundleInfos(
     const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId)
 {
+    GTEST_LOG_(INFO) << "BundleMgrService::GetBundleInfos";
     bundleInfos = bundleInfos_;
     return true;
 }
@@ -242,12 +267,18 @@ void BundleMgrService::MakingPackageData()
 void BundleMgrService::MakingResidentProcData()
 {
     int appUid = 2100;
+    int appUid1 = 2101;
     GTEST_LOG_(INFO) << "MakingResidentProcData()";
     BundleInfo bundleInfo;
     bundleInfo.uid = appUid;
     bundleInfo.name = "KeepAliveApplication";
 
+    BundleInfo bundleInfo1;
+    bundleInfo1.uid = appUid1;
+    bundleInfo1.name = "KeepAliveApplication1";
+
     bundleInfos_.emplace_back(bundleInfo);
+    bundleInfos_.emplace_back(bundleInfo1);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

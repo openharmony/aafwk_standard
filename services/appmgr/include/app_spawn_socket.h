@@ -29,7 +29,7 @@ public:
     /**
      * Constructor.
      */
-    explicit AppSpawnSocket(bool isWebViewSpawn = false);
+    explicit AppSpawnSocket(bool isNWebSpawn = false);
 
     /**
      * Destructor

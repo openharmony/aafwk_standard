@@ -66,6 +66,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleGetForegroundApplications;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::START_USER_TEST_PROCESS)] =
         &AppMgrStub::HandleStartUserTestProcess;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::FINISH_USER_TEST)] =
+        &AppMgrStub::HandleFinishUserTest;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE)] =
         &AppMgrStub::HandleScheduleAcceptWantDone;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::APP_GET_ABILITY_RECORDS_BY_PROCESS_ID)] =
@@ -297,6 +299,17 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
     int32_t result = StartUserTestProcess(*want, observer, *bundleInfo);
     reply.WriteInt32(result);
     delete want;
+    return result;
+}
+
+int32_t AppMgrStub::HandleFinishUserTest(MessageParcel &data, MessageParcel &reply)
+{
+    std::string msg = data.ReadString();
+    int resultCode = data.ReadInt32();
+    std::string bundleName = data.ReadString();
+    auto pid = data.ReadInt32();
+    int32_t result = FinishUserTest(msg, resultCode, bundleName, pid);
+    reply.WriteInt32(result);
     return result;
 }
 

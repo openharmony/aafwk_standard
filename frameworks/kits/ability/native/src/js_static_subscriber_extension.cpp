@@ -122,9 +122,9 @@ void JsStaticSubscriberExtension::OnDisconnect(const AAFwk::Want& want)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-void JsStaticSubscriberExtension::OnCommonEventTriggered(EventFwk::CommonEventData* data)
+void JsStaticSubscriberExtension::OnReceiveEvent(EventFwk::CommonEventData* data)
 {
-    StaticSubscriberExtension::OnCommonEventTriggered(data);
+    StaticSubscriberExtension::OnReceiveEvent(data);
     HILOG_INFO("%{public}s begin.", __func__);
     if (data == nullptr) {
         HILOG_ERROR("%{public}s common event data == nullptr", __func__);
@@ -159,9 +159,9 @@ void JsStaticSubscriberExtension::OnCommonEventTriggered(EventFwk::CommonEventDa
         return;
     }
 
-    NativeValue* method = obj->GetProperty("onCommonEventTriggered");
+    NativeValue* method = obj->GetProperty("onReceiveEvent");
     if (method == nullptr) {
-        HILOG_ERROR("Failed to get onCommonEventTriggered from StaticSubscriberExtension object");
+        HILOG_ERROR("Failed to get onReceiveEvent from StaticSubscriberExtension object");
         return;
     }
     nativeEngine.CallFunction(value, method, argv, ARGC_ONE);

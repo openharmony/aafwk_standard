@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -151,8 +151,6 @@ void ExtraParams::SetTargetBundleName(const string &targetBundleName)
  * @brief Obtains the bundle name of the target application where the ability will be migrated.
  *
  * @return Returns the bundle name of the target application.
- *
- * @return none
  */
 string ExtraParams::GetTargetBundleName() const
 {

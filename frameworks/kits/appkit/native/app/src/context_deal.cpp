@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +47,7 @@ const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_BEFORE("/mnt/hmdfs/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_MIDDLE("/device_view/local/data/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED("distributedfiles");
 const std::string ContextDeal::CONTEXT_DATA_STORAGE("/data/storage/");
-const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2", "el3", "el4"};
+const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2"};
 
 ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
 {}
@@ -1457,7 +1457,7 @@ bool ContextDeal::SetMissionInformation(const MissionInformation &missionInforma
 }
 
 /**
- * set lock screen white list
+ * set lock screen
  *
  * @param isAllow Whether to allow lock screen.
  *

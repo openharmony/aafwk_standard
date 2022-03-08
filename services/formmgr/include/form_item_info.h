@@ -281,7 +281,16 @@ public:
      * @param icon ability icon.
      */
     void SetIcon(const std::string &icon);
-
+    /**
+     * @brief Get deviceId_.
+     * @return deviceId_.
+     */
+    std::string GetDeviceId();
+    /**
+     * @brief Set value of  deviceId_.
+     * @param deviceId.
+     */
+    void SetDeviceId(const std::string &deviceId);
 private:
     /**
      * @brief Equal or not.
@@ -316,6 +325,7 @@ private:
     std::string jsComponentName_ = "";
     std::string abilityModuleName_ = "";
     std::unordered_map<std::string, std::string> moduleInfoMap_;
+    std::string deviceId_ = "";
 };
 } // namespace AppExecFwk
 } // namespace OHOS

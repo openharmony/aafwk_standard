@@ -85,14 +85,18 @@ const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
                                   "  The original -s parameter is invalid\n"
                                   "  The original -m parameter is invalid\n";
 
-
 const std::string HELP_MSG_TEST =
     "usage: aa test <options>\n"
     "options list:\n"
-    "  -h, --help                                                                            \
-    list available commands\n"
-    "  -p <bundle-name> -s unittest <test-runner> [-s class <test-class>] [-w <wait-time>]   \
-    start the test framework with options\n";
+    "  -h, --help                                             list available commands\n"
+    "  -p <bundle-name> -s unittest <test-runner>             start the test framework with options\n"
+    "                  [-s class <test-class>]\n"
+    "                  [-s level <test-level>]\n"
+    "                  [-s size <test-size>]\n"
+    "                  [-s testType <test-testType>]\n"
+    "                  [-s timeout <test-timeout>]\n"
+    "                  [-s <any-key> <any-value>]\n"
+    "                  [-w <wait-time>]\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 const std::string HELP_MSG_FORCE_TIMEOUT =

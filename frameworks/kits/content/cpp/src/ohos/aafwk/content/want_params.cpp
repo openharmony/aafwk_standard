@@ -869,8 +869,6 @@ bool WantParams::ReadFromParcelArrayString(Parcel &parcel, sptr<IArray> &ao)
     if (ao != nullptr) {
         for (std::vector<std::u16string>::size_type i = 0; i < size; i++) {
             ao->Set(i, String::Box(Str16ToStr8(value[i])));
-            std::string strValue(Str16ToStr8(value[i]));
-            APP_LOGI("%{public}s string of array: %{public}s", __func__, strValue.c_str());
         }
         return true;
     } else {
@@ -891,7 +889,6 @@ bool WantParams::ReadFromParcelArrayBool(Parcel &parcel, sptr<IArray> &ao)
 
     std::vector<int32_t>::size_type size = value.size();
     for (std::vector<int32_t>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s bool of array: %{public}d", __func__, value[i]);
         boolValue.push_back(value[i]);
     }
     return SetArray<int8_t, Boolean>(g_IID_IBoolean, boolValue, ao);
@@ -905,11 +902,6 @@ bool WantParams::ReadFromParcelArrayByte(Parcel &parcel, sptr<IArray> &ao)
         APP_LOGI("%{public}s read byte of array fail.", __func__);
         return false;
     }
-
-    std::vector<int8_t>::size_type size = value.size();
-    for (std::vector<int8_t>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s byte of array: %{public}d", __func__, value[i]);
-    }
     return SetArray<int8_t, Byte>(g_IID_IByte, value, ao);
 }
 
@@ -920,11 +912,6 @@ bool WantParams::ReadFromParcelArrayChar(Parcel &parcel, sptr<IArray> &ao)
     if (!parcel.ReadInt32Vector(&value)) {
         APP_LOGI("%{public}s char bool of array fail.", __func__);
         return false;
-    }
-
-    std::vector<int32_t>::size_type size = value.size();
-    for (std::vector<int32_t>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s char of array: %{public}d", __func__, value[i]);
     }
     return SetArray<int32_t, Char>(g_IID_IChar, value, ao);
 }
@@ -937,11 +924,6 @@ bool WantParams::ReadFromParcelArrayShort(Parcel &parcel, sptr<IArray> &ao)
         APP_LOGI("%{public}s read short of array fail.", __func__);
         return false;
     }
-
-    std::vector<short>::size_type size = value.size();
-    for (std::vector<short>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s short of array: %{public}d", __func__, value[i]);
-    }
     return SetArray<short, Short>(g_IID_IShort, value, ao);
 }
 
@@ -952,11 +934,6 @@ bool WantParams::ReadFromParcelArrayInt(Parcel &parcel, sptr<IArray> &ao)
     if (!parcel.ReadInt32Vector(&value)) {
         APP_LOGI("%{public}s read int of array fail.", __func__);
         return false;
-    }
-
-    std::vector<int>::size_type size = value.size();
-    for (std::vector<int>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s int of array: %{public}d", __func__, value[i]);
     }
     return SetArray<int, Integer>(g_IID_IInteger, value, ao);
 }
@@ -974,10 +951,8 @@ bool WantParams::ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao)
     return SetArray<int64_t, Long>(g_IID_ILong, value, ao);
 #else
     std::vector<std::string> strList;
-
     for (size_t i = 0; i < value.size(); i++) {
         strList.push_back(std::to_string(value[i]));
-        APP_LOGI("%{public}s long of array: %{public}s", __func__, std::to_string(value[i]).c_str());
     }
     return SetArray<std::string, String>(g_IID_IString, strList, ao);
 #endif
@@ -991,11 +966,6 @@ bool WantParams::ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao)
         APP_LOGI("%{public}s read float of array fail.", __func__);
         return false;
     }
-
-    std::vector<float>::size_type size = value.size();
-    for (std::vector<float>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s float of array: %{public}f", __func__, value[i]);
-    }
     return SetArray<float, Float>(g_IID_IFloat, value, ao);
 }
 
@@ -1006,11 +976,6 @@ bool WantParams::ReadFromParcelArrayDouble(Parcel &parcel, sptr<IArray> &ao)
     if (!parcel.ReadDoubleVector(&value)) {
         APP_LOGI("%{public}s read double of array fail.", __func__);
         return false;
-    }
-
-    std::vector<double>::size_type size = value.size();
-    for (std::vector<double>::size_type i = 0; i < size; i++) {
-        APP_LOGI("%{public}s double of array: %{public}f", __func__, value[i]);
     }
     return SetArray<double, Double>(g_IID_IDouble, value, ao);
 }
@@ -1058,16 +1023,12 @@ bool WantParams::ReadFromParcelString(Parcel &parcel, const std::string &key)
 {
     std::u16string value = parcel.ReadString16();
     std::string strValue(Str16ToStr8(value));
-    APP_LOGI("%{public}s key=%{public}s, value=%{public}s.", __func__, key.c_str(), strValue.c_str());
+    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     sptr<IInterface> intf = String::Box(Str16ToStr8(value));
     if (intf) {
-        APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}s.", __func__, key.c_str(), strValue.c_str());
         SetParam(key, intf);
     } else {
-        APP_LOGI("%{public}s insert param fail, intf=nullptr: key=%{public}s, value=%{public}s.",
-            __func__,
-            key.c_str(),
-            strValue.c_str());
+        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
     }
     return true;
 }
@@ -1077,11 +1038,9 @@ bool WantParams::ReadFromParcelBool(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int8_t value;
     if (parcel.ReadInt8(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         sptr<IInterface> intf = Boolean::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1097,11 +1056,9 @@ bool WantParams::ReadFromParcelInt8(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int8_t value;
     if (parcel.ReadInt8(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         sptr<IInterface> intf = Byte::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1117,11 +1074,9 @@ bool WantParams::ReadFromParcelChar(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int32_t value;
     if (parcel.ReadInt32(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         sptr<IInterface> intf = Char::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1137,11 +1092,9 @@ bool WantParams::ReadFromParcelShort(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     short value;
     if (parcel.ReadInt16(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         sptr<IInterface> intf = Short::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1157,11 +1110,9 @@ bool WantParams::ReadFromParcelInt(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int value;
     if (parcel.ReadInt32(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         sptr<IInterface> intf = Integer::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param: key=%{public}s, value=%{public}d", __func__, key.c_str(), (int)value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1186,7 +1137,6 @@ bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
     int64_t value;
     if (parcel.ReadInt64(value)) {
         std::string strValue(std::to_string(value));
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}s", __func__, key.c_str(), strValue.c_str());
 #ifdef WANT_PARAM_USE_LONG
         sptr<IInterface> intf = Long::Box(value);
 #else
@@ -1194,8 +1144,6 @@ bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
 #endif
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI(
-                "%{public}s insert param: key=%{public}s, value=%{public}s", __func__, key.c_str(), strValue.c_str());
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1211,11 +1159,9 @@ bool WantParams::ReadFromParcelFloat(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     float value;
     if (parcel.ReadFloat(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}f", __func__, key.c_str(), value);
         sptr<IInterface> intf = Float::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param:key=%{public}s, value=%{public}f", __func__, key.c_str(), value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1231,11 +1177,9 @@ bool WantParams::ReadFromParcelDouble(Parcel &parcel, const std::string &key)
     APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     double value;
     if (parcel.ReadDouble(value)) {
-        APP_LOGI("%{public}s key=%{public}s, value=%{public}f", __func__, key.c_str(), value);
         sptr<IInterface> intf = Double::Box(value);
         if (intf) {
             SetParam(key, intf);
-            APP_LOGI("%{public}s insert param:key=%{public}s, value=%{public}f", __func__, key.c_str(), value);
         } else {
             APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
@@ -1340,7 +1284,6 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
         return false;
     }
     APP_LOGI("%{public}s size=%{public}d.", __func__, size);
-
     for (int32_t i = 0; i < size; i++) {
         APP_LOGI("%{public}s get i=%{public}d", __func__, i);
         std::u16string key = parcel.ReadString16();
@@ -1349,14 +1292,11 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
             APP_LOGI("%{public}s read type fail.", __func__);
             return false;
         }
-        APP_LOGI("%{public}s get i=%{public}d, type=%{public}d.", __func__, i, type);
-
         if (!ReadFromParcelParam(parcel, Str16ToStr8(key), type)) {
             APP_LOGI("%{public}s get i=%{public}d fail.", __func__, i);
             return false;
         }
     }
-
     return true;
 }
 
@@ -1380,8 +1320,6 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
         APP_LOGI("%{public}s read length fail.", __func__);
         return nullptr;
     }
-    APP_LOGI("%{public}s length=%{public}d.", __func__, length);
-
     const uint8_t *dataInBytes = parcel.ReadUnpadBuffer(bufferSize);
     if (dataInBytes == nullptr) {
         APP_LOGI("%{public}s read buffer fail.", __func__);
@@ -1405,7 +1343,6 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 void WantParams::DumpInfo(int level) const
 {
     APP_LOGI("=======WantParams::DumpInfo level: %{public}d start=============", level);
-
     int params_size = params_.size();
     APP_LOGI("===WantParams::params_: count %{public}d =============", params_size);
     int typeId = VALUE_TYPE_NULL;

@@ -216,26 +216,18 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_002, TestSize.Level1)
     appInfo2->bundleName = "com.ohos.test.special";
     const pid_t PID2 = 2234;
 
-    APP_LOGI("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     StartLoadAbility(token2, token, abilityInfo2, appInfo2, PID2);
-    APP_LOGI("00000000000000000000000000000000000000");
     const uint32_t EXPECT_MAP_SIZE = 2;
     EXPECT_EQ(recordMap.size(), EXPECT_MAP_SIZE);
 
-    APP_LOGI("11111111111111111111111111111111111111111");
     auto record2 = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo2->name, "com.ohos.test.special", appInfo2->uid, bundleInfo);
-    APP_LOGI("22222222222222222222222222222222222222");
     EXPECT_NE(record2, nullptr);
     CHECK_POINTER_IS_NULLPTR(record2);
-    APP_LOGI("3333333333333333333333333333333333333");
     EXPECT_EQ(record2->GetState(), ApplicationState::APP_STATE_CREATE);
-    APP_LOGI("444444444444444444444444444444444444444444444");
     auto abilityRecord2 = record2->GetAbilityRunningRecordByToken(token2);
-    APP_LOGI("5555555555555555555555555555555555555");
     EXPECT_NE(abilityRecord2, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityRecord2);
-    APP_LOGI("666666666666666666666666666666666");
     EXPECT_EQ(abilityRecord2->GetState(), AbilityState::ABILITY_STATE_CREATE);
     APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_002 end");
 }

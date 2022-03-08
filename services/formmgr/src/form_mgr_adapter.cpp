@@ -111,7 +111,7 @@ int FormMgrAdapter::AddForm(const int64_t formId, const Want &want,
         APP_LOGE("%{public}s fail, generate udid hash failed", __func__);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
-
+    formItemInfo.SetDeviceId(want.GetElement().GetDeviceID());
     WantParams wantParams = want.GetParams();
     if (formId > 0) {
         return AllotFormById(formItemInfo, callerToken, wantParams, formInfo);
@@ -1232,22 +1232,37 @@ int FormMgrAdapter::SetNextRefreshTime(const int64_t formId, const int64_t nextT
         APP_LOGE("%{public}s form formId or bundleName is invalid", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
-    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
 
     std::string bundleName;
     if (!GetBundleName(bundleName)) {
         return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
     }
 
+    // get IBundleMgr
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    int callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = GetCurrentUserId(callingUid);
+    APP_LOGI("%{public}s, userId:%{public}d, callingUid:%{public}d.", __func__, userId, callingUid);
+
+    int32_t bundleUid = iBundleMgr->GetUidByBundleName(bundleName, userId);
+    if (bundleUid != callingUid) {
+        APP_LOGE("%{public}s error, permission denied, the form is not your own.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
     FormRecord formRecord;
+    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
     if (!FormDataMgr::GetInstance().GetFormRecord(matchedFormId, formRecord)) {
         APP_LOGE("%{public}s, not found in formrecord.", __func__);
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
-    int callingUid = IPCSkeleton::GetCallingUid();
-    int32_t userId = GetCurrentUserId(callingUid);
-    bool isSelfFormId = (userId == formRecord.userId) && ((std::find(formRecord.formUserUids.begin(),
-    formRecord.formUserUids.end(), callingUid) != formRecord.formUserUids.end()) ? true : false);
+
+    bool isSelfFormId = (userId == formRecord.userId);
     if (!isSelfFormId) {
         APP_LOGE("%{public}s, not self form:%{public}" PRId64 "", __func__, formId);
         return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
@@ -1306,7 +1321,7 @@ int FormMgrAdapter::SetNextRefreshtTimeLocked(const int64_t formId, const int64_
         return ERR_APPEXECFWK_FORM_MAX_REFRESH;
     }
 
-    if (!FormTimerMgr::GetInstance().SetNextRefreshTime(formId, nextTime, userId)) {
+    if (!FormTimerMgr::GetInstance().SetNextRefreshTime(formId, nextTime * Constants::SEC_PER_MIN, userId)) {
         APP_LOGE("%{public}s failed", __func__);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
@@ -1446,7 +1461,7 @@ bool FormMgrAdapter::IsFormCached(const FormRecord record)
  * @param remoteObject Form provider proxy object.
  */
 void FormMgrAdapter::AcquireProviderFormInfo(const int64_t formId, const Want &want,
-const sptr<IRemoteObject> &remoteObject)
+    const sptr<IRemoteObject> &remoteObject)
 {
     APP_LOGI("%{public}s called.", __func__);
 

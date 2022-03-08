@@ -25,7 +25,7 @@ namespace OHOS {
 namespace AAFwk {
 /**
  * @struct MissionInfo
- * MissionInfo is used to save informations about mission information.
+ * MissionInfo is used to save information about mission information.
  */
 struct MissionInfo : public Parcelable {
     bool ReadFromParcel(Parcel &parcel);

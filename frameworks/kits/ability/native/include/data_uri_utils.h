@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,7 +63,7 @@ public:
     /**
      * @brief Updates the ID in the specified dataUri
      * @param dataUri based on RFC 2396( Uniform Resource Identifier ).
-     * @param id indiates Update attached to the end of the path component of the given URI
+     * @param id indicates Update attached to the end of the path component of the given URI
      * @return Uri return is the URI after path is updated
      */
     static Uri UpdateId(const Uri &dataUri, long long id);
@@ -78,7 +78,7 @@ public:
 private:
     /**
      * @brief Determine whether the string content is a numeric string
-     * @param str indicates stirng.
+     * @param str indicates string.
      * @return bool
      */
     static bool IsNumber(const string &str);

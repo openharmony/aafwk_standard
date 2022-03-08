@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,17 +35,17 @@ sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()
 {
     sptr<AppExecFwk::AbilityThread> abilitythread(new (std::nothrow) AppExecFwk::AbilityThread());
     if (abilitythread == nullptr) {
-        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock abilityhreadptr is  nullptr called";
+        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock abilityhreadptr is nullptr called";
     }
 
     std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
     if (application == nullptr) {
-        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock applicationptr is  nullptr called";
+        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock applicationptr is nullptr called";
     }
 
     std::shared_ptr<AbilityInfo> info = std::make_shared<AbilityInfo>();
     if (info == nullptr) {
-        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock AbilityInfo::info is  nullptr called";
+        GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock AbilityInfo::info is nullptr called";
     }
 
     info->name = std::string("MockAbilityTest");

@@ -22,6 +22,7 @@ config("ability_manager_public_config") {
     "${innerkits_path}/want/include",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
@@ -93,6 +94,7 @@ ohos_shared_library("ability_manager") {
 
   deps = [
     "${innerkits_path}/base:base",
+    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -101,7 +103,6 @@ ohos_shared_library("ability_manager") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//third_party/jsoncpp:jsoncpp",

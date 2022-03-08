@@ -70,10 +70,12 @@ ohos_source_set("appmgr_mst_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   public_deps = [
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
+    "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -92,6 +94,7 @@ ohos_source_set("appmgr_mst_source") {
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -106,6 +109,7 @@ group("moduletest") {
     "app_life_cycle_test:moduletest",
     "app_mgr_service_test:moduletest",
     "app_recent_list_test:moduletest",
+    "app_running_processes_info_module_test:moduletest",
     "app_running_record_test:moduletest",
     "app_service_flow_test:moduletest",
     "ipc_ams_mgr_test:moduletest",
@@ -114,5 +118,6 @@ group("moduletest") {
     "service_app_spawn_client_test:moduletest",
     "service_event_drive_test:moduletest",
     "service_start_process_test:moduletest",
+    "specified_ability_service_test:moduletest",
   ]
 }

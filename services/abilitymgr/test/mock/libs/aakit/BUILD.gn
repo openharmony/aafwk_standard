@@ -18,6 +18,7 @@ config("aakit_mock_config") {
   include_dirs = [
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
@@ -25,7 +26,6 @@ config("aakit_mock_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
     "include/",
     "//third_party/jsoncpp/include",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/",
     "//foundation/aafwk/standard/services/common/include/",
   ]
 }
