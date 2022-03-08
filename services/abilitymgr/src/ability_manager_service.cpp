@@ -1488,6 +1488,13 @@ int AbilityManagerService::CleanAllMissions()
         return CHECK_PERMISSION_FAILED;
     }
 
+    Want want;
+    want.SetElementName(AbilityConfig::LAUNCHER_BUNDLE_NAME, AbilityConfig::LAUNCHER_ABILITY_NAME);
+    if (!IsAbilityControllerStart(want, AbilityConfig::LAUNCHER_BUNDLE_NAME)) {
+        HILOG_ERROR("IsAbilityControllerStart failed: %{public}s", want.GetBundle().c_str());
+        return ERR_WOULD_BLOCK;
+    }
+
     return currentMissionListManager_->ClearAllMissions();
 }
 
@@ -1499,6 +1506,11 @@ int AbilityManagerService::MoveMissionToFront(int32_t missionId)
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
+    }
+
+    if (!IsAbilityControllerStartById(missionId)) {
+        HILOG_ERROR("IsAbilityControllerStart false");
+        return ERR_WOULD_BLOCK;
     }
 
     return currentMissionListManager_->MoveMissionToFront(missionId);
@@ -1514,8 +1526,30 @@ int AbilityManagerService::MoveMissionToFront(int32_t missionId, const StartOpti
         return CHECK_PERMISSION_FAILED;
     }
 
+    if (!IsAbilityControllerStartById(missionId)) {
+        HILOG_ERROR("IsAbilityControllerStart false");
+        return ERR_WOULD_BLOCK;
+    }
+
     auto options = std::make_shared<StartOptions>(startOptions);
     return currentMissionListManager_->MoveMissionToFront(missionId, options);
+}
+
+bool AbilityManagerService::IsAbilityControllerStartById(int32_t missionId)
+{
+    InnerMissionInfo innerMissionInfo;
+    int getMission = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+        missionId, innerMissionInfo);
+    if (getMission != ERR_OK) {
+        HILOG_ERROR("cannot find mission info from MissionInfoList by missionId: %{public}d", missionId);
+        return true;
+    }
+    if (!IsAbilityControllerStart(innerMissionInfo.missionInfo.want, innerMissionInfo.missionInfo.want.GetBundle())) {
+        HILOG_ERROR("IsAbilityControllerStart failed: %{public}s",
+            innerMissionInfo.missionInfo.want.GetBundle().c_str());
+        return false;
+    }
+    return true;
 }
 
 std::shared_ptr<AbilityRecord> AbilityManagerService::GetServiceRecordByElementName(const std::string &element)
@@ -4199,6 +4233,11 @@ int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)
 {
     HILOG_INFO("enter missionId : %{public}d", missionId);
     CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
+
+    if (!IsAbilityControllerStartById(missionId)) {
+        HILOG_ERROR("IsAbilityControllerStart false");
+        return ERR_WOULD_BLOCK;
+    }
 
     return currentMissionListManager_->MoveMissionToFront(missionId);
 }
