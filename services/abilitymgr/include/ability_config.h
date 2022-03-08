@@ -47,6 +47,7 @@ const std::string FLOATING_WINDOW_PERMISSION = "ohos.permission.SYSTEM_FLOAT_WIN
 
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
+const std::string LAUNCHER_RECENT_ABILITY_NAME = "com.ohos.launcher.recents.MainAbility";
 
 const std::string SETTINGS_DATA_ABILITY_NAME = "com.ohos.settingsdata.data";
 const std::string SETTINGS_DATA_BUNDLE_NAME = "com.ohos.settingsdata";
