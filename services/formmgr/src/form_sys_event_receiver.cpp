@@ -31,6 +31,7 @@
 #include "form_sys_event_receiver.h"
 #include "form_timer_mgr.h"
 #include "form_util.h"
+#include "in_process_call_wrapper.h"
 #include "want.h"
 
 namespace OHOS {
@@ -110,7 +111,7 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
     }
 
     std::vector<FormInfo> targetForms;
-    if (!iBundleMgr->GetFormsInfoByApp(bundleName, targetForms)) {
+    if (!IN_PROCESS_CALL(iBundleMgr->GetFormsInfoByApp(bundleName, targetForms))) {
         APP_LOGE("%{public}s error, failed to get forms info.", __func__);
         return;
     }
