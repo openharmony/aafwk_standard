@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -94,7 +94,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
     requestFuncMap_[SET_STACK_SETTING] = &AbilityManagerStub::SetMissionStackSettingInner;
     requestFuncMap_[IS_FIRST_IN_MISSION] = &AbilityManagerStub::IsFirstInMissionInner;
-    requestFuncMap_[COMPEL_VERIFY_PERMISSION] = &AbilityManagerStub::CompelVerifyPermissionInner;
     requestFuncMap_[POWER_OFF] = &AbilityManagerStub::PowerOffInner;
     requestFuncMap_[POWER_ON] = &AbilityManagerStub::PowerOnInner;
     requestFuncMap_[LUCK_MISSION] = &AbilityManagerStub::LockMissionInner;
@@ -689,18 +688,6 @@ int AbilityManagerStub::IsFirstInMissionInner(MessageParcel &data, MessageParcel
         HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::CompelVerifyPermissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto permission = Str16ToStr8(data.ReadString16());
-    auto pid = data.ReadInt32();
-    auto uid = data.ReadInt32();
-    std::string message;
-    auto result = CompelVerifyPermission(permission, pid, uid, message);
-    reply.WriteString16(Str8ToStr16(message));
-    reply.WriteInt32(result);
     return NO_ERROR;
 }
 

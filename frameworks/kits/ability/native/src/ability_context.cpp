@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,11 @@
 #include "ability_context.h"
 
 #include "ability_manager_client.h"
+#include "accesstoken_kit.h"
 #include "bundle_constants.h"
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
+#include "os_account_manager.h"
 #include "resource_manager.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
@@ -346,92 +348,6 @@ std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceMa
     return resourceManager;
 }
 
-int AbilityContext::VerifySelfPermission(const std::string &permission)
-{
-    HILOG_INFO("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
-    if (permission.empty()) {
-        HILOG_ERROR("VerifySelfPermission permission invalid");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    std::string bundle_name = GetBundleName();
-    if (bundle_name.empty()) {
-        HILOG_ERROR("VerifySelfPermission failed to get bundle name error");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    sptr<IBundleMgr> ptr = GetBundleManager();
-    if (ptr == nullptr) {
-        HILOG_ERROR("VerifySelfPermission failed to get bundle manager service");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    HILOG_INFO("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
-    int ret = ptr->CheckPermission(bundle_name, permission);
-    HILOG_INFO("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-int AbilityContext::VerifyCallingPermission(const std::string &permission)
-{
-    HILOG_INFO("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
-    if (permission.empty()) {
-        HILOG_ERROR("VerifyCallingPermission permission invalid");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    std::string bundle_name = GetCallingBundle();
-    if (bundle_name.empty()) {
-        HILOG_ERROR("VerifyCallingPermission failed to get bundle name by uid");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    sptr<IBundleMgr> ptr = GetBundleManager();
-    if (ptr == nullptr) {
-        HILOG_ERROR("VerifyCallingPermission failed to get bundle manager service");
-        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-    }
-
-    HILOG_INFO("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
-    int ret = ptr->CheckPermission(bundle_name, permission);
-    HILOG_INFO("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-bool AbilityContext::CanRequestPermission(const std::string &permission)
-{
-    HILOG_INFO("%{public}s begin. permission=%{public}s", __func__, permission.c_str());
-    if (permission.empty()) {
-        HILOG_ERROR("CanRequestPermission permission invalid");
-        return true;
-    }
-
-    std::string bundle_name = GetBundleName();
-    if (bundle_name.empty()) {
-        HILOG_ERROR("CanRequestPermission failed to get bundle name error");
-        return true;
-    }
-
-    sptr<IBundleMgr> ptr = GetBundleManager();
-    if (ptr == nullptr) {
-        HILOG_ERROR("CanRequestPermission failed to get bundle manager service");
-        return true;
-    }
-
-    HILOG_INFO("%{public}s start bms->CanRequestPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
-    bool ret = ptr->CanRequestPermission(bundle_name, permission, 0);
-    HILOG_INFO("%{public}s end bms->CanRequestPermission, ret=%{public}s", __func__, ret ? "true" : "false");
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
-}
-
-int AbilityContext::VerifyCallingOrSelfPermission(const std::string &permission)
-{
-    return VerifySelfPermission(permission);
-}
-
 int AbilityContext::VerifyPermission(const std::string &permission, int pid, int uid)
 {
     HILOG_INFO("%{public}s begin. permission=%{public}s, pid=%{public}d, uid=%{public}d",
@@ -456,27 +372,36 @@ int AbilityContext::VerifyPermission(const std::string &permission, int pid, int
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 
-    HILOG_INFO("%{public}s start bms->CheckPermission. bundle_name=%{public}s", __func__, bundle_name.c_str());
-    int ret = ptr->CheckPermission(bundle_name, permission);
-    HILOG_INFO("%{public}s end bms->CheckPermission, ret=%{public}d", __func__, ret);
-    HILOG_INFO("%{public}s end.", __func__);
-    return ret;
+    int account = -1;
+    if (AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, account) != 0) {
+        HILOG_ERROR("VerifyPermission failed to get account by uid");
+        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+    }
+
+    AppExecFwk::ApplicationInfo appInfo;
+    if (!ptr->GetApplicationInfo(bundle_name, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, account, appInfo)) {
+        HILOG_ERROR("VerifyPermission failed to get application info");
+        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+    }
+
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(appInfo.accessTokenId, permission);
+    if (ret == Security::AccessToken::PermissionState::PERMISSION_DENIED) {
+        HILOG_ERROR("VerifyPermission %{public}d: PERMISSION_DENIED", appInfo.accessTokenId);
+        return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
+    }
+
+    return 0;
 }
 
 void AbilityContext::GetPermissionDes(const std::string &permissionName, std::string &des)
 {
-    sptr<IBundleMgr> ptr = GetBundleManager();
-    if (ptr == nullptr) {
-        HILOG_ERROR("GetPermissionDes failed to get bundle manager service");
-        return;
-    }
-
-    PermissionDef permissionDef;
-    HILOG_INFO("%{public}s start bms->GetPermissionDef. permissionName=%{public}s", __func__, permissionName.c_str());
-    if (ptr->GetPermissionDef(permissionName, permissionDef)) {
+    Security::AccessToken::PermissionDef permissionDef;
+    int32_t ret = Security::AccessToken::AccessTokenKit::GetDefPermission(permissionName, permissionDef);
+    if (ret == Security::AccessToken::AccessTokenKitRet::RET_SUCCESS) {
+        HILOG_DEBUG("GetPermissionDes %{public}s: RET_SUCCESS", permissionName.c_str());
         des = permissionDef.description;
     }
-    HILOG_INFO("%{public}s end bms->GetPermissionDef.", __func__);
+    HILOG_DEBUG("%{public}s end GetPermissionDef.", __func__);
 }
 
 void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode)

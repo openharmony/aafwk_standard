@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -208,8 +208,6 @@ public:
     virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
 
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
-
-    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     virtual int SetShowOnLockScreen(bool isAllow) override
     {

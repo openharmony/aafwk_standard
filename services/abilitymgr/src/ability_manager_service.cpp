@@ -84,7 +84,6 @@ const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
-const std::string PERMISSION_SET_ABILITY_CONTROLLER = "ohos.permission.SET_ABILITY_CONTROLLER";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-a", KEY_DUMP_ALL),
@@ -3157,15 +3156,7 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
     }
     return stackManager->IsFirstInMission(token);
 }
-#endif
 
-int AbilityManagerService::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    HILOG_INFO("Compel verify permission.");
-    return DelayedSingleton<AppScheduler>::GetInstance()->CompelVerifyPermission(permission, pid, uid, message);
-}
-
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::PowerOff()
 {
     HILOG_INFO("Power off.");
@@ -4029,16 +4020,12 @@ int AbilityManagerService::SetAbilityController(const sptr<IAbilityController> &
     bool imAStabilityTest)
 {
     HILOG_DEBUG("%{public}s, imAStabilityTest: %{public}d", __func__, imAStabilityTest);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, ERR_INVALID_VALUE);
-    std::string bundleName;
-    int uid = IPCSkeleton::GetCallingUid();
-    IN_PROCESS_CALL_WITHOUT_RET(bms->GetBundleNameForUid(uid, bundleName));
-    HILOG_INFO("%{public}s, bundleName: %{public}s, uid = %{public}d", __func__, bundleName.c_str(), uid);
-    if (IN_PROCESS_CALL(bms->CheckPermission(bundleName, PERMISSION_SET_ABILITY_CONTROLLER)) == 0) {
-        HILOG_ERROR("PERMISSION_SET_ABILITY_CONTROLLER check failed");
+    auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyControllerPerm();
+    if (!isPerm) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
     }
+
     std::lock_guard<std::recursive_mutex> guard(globalLock_);
     abilityController_ = abilityController;
     controllerIsAStabilityTest_ = imAStabilityTest;
