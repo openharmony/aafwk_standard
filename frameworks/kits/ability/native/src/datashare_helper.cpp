@@ -814,7 +814,6 @@ void DataShareHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAb
 
     Uri tmpUri(uri.ToString());
     std::lock_guard<std::mutex> lock_l(oplock_);
-    sptr<IDataShare> dataShareProxy = nullptr;
     if (uri_ == nullptr) {
         auto datashare = registerMap_.find(dataObserver);
         if (datashare == registerMap_.end()) {
@@ -822,7 +821,7 @@ void DataShareHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAb
                 dataShareConnection_->ConnectDataShareExtAbility(want_, token_);
             }
             dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
-            registerMap_.emplace(dataObserver, dataShareProxy);
+            registerMap_.emplace(dataObserver, dataShareProxy_);
             uriMap_.emplace(dataObserver, tmpUri.GetPath());
         } else {
             auto path = uriMap_.find(dataObserver);
@@ -831,19 +830,19 @@ void DataShareHelper::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAb
                          "observer used");
                 return;
             }
-            dataShareProxy = datashare->second;
+            dataShareProxy_ = datashare->second;
         }
     } else {
-        dataShareProxy = dataShareProxy_;
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
-    if (dataShareProxy == nullptr) {
-        APP_LOGE("DataShareHelper::RegisterObserver failed dataShareProxy == nullptr");
+    if (dataShareProxy_ == nullptr) {
+        APP_LOGE("DataShareHelper::RegisterObserver failed dataShareProxy_ == nullptr");
         registerMap_.erase(dataObserver);
         uriMap_.erase(dataObserver);
         return;
     }
-    dataShareProxy->RegisterObserver(uri, dataObserver);
+    dataShareProxy_->RegisterObserver(uri, dataObserver);
     APP_LOGI("DataShareHelper::RegisterObserver end.");
 }
 
@@ -868,7 +867,6 @@ void DataShareHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IData
 
     Uri tmpUri(uri.ToString());
     std::lock_guard<std::mutex> lock_l(oplock_);
-    sptr<IDataShare> dataShareProxy = nullptr;
     if (uri_ == nullptr) {
         auto datashare = registerMap_.find(dataObserver);
         if (datashare == registerMap_.end()) {
@@ -880,17 +878,17 @@ void DataShareHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IData
                      "observer used");
             return;
         }
-        dataShareProxy = datashare->second;
+        dataShareProxy_ = datashare->second;
     } else {
-        dataShareProxy = dataShareProxy_;
+        dataShareProxy_ = dataShareConnection_->GetDataShareProxy();
     }
 
-    if (dataShareProxy == nullptr) {
-        APP_LOGE("DataShareHelper::UnregisterObserver failed dataShareProxy == nullptr");
+    if (dataShareProxy_ == nullptr) {
+        APP_LOGE("DataShareHelper::UnregisterObserver failed dataShareProxy_ == nullptr");
         return;
     }
 
-    dataShareProxy->UnregisterObserver(uri, dataObserver);
+    dataShareProxy_->UnregisterObserver(uri, dataObserver);
     if (uri_ == nullptr) {
         APP_LOGI("DataShareHelper::UnregisterObserver before DisconnectDataShareExtAbility.");
         if (dataShareConnection_->IsExtAbilityConnected()) {
