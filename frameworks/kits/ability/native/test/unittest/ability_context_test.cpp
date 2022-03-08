@@ -59,7 +59,7 @@ void AbilityContextTest::SetUpTestCase(void)
     GTEST_LOG_(INFO) << "AppExecFwk_AbilityContext_SetUpTestCase abilityObject->" << abilityObject.GetRefPtr();
 
     auto sysMgr = OHOS::DelayedSingleton<SysMrgClient>::GetInstance();
-    if (sysMgr == NULL) {
+    if (sysMgr == nullptr) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;
     }
