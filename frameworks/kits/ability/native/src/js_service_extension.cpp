@@ -243,7 +243,7 @@ NativeValue* JsServiceExtension::CallObjectMethod(const char* name, NativeValue*
     }
 
     NativeValue* method = obj->GetProperty(name);
-    if (method == nullptr) {
+    if (method == nullptr || method->TypeOf() != NATIVE_FUNCTION) {
         HILOG_ERROR("Failed to get '%{public}s' from ServiceExtension object", name);
         return nullptr;
     }
