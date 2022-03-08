@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 #ifndef OHOS_APP_DISPATCHER_GROUP_IMPL_H
 #define OHOS_APP_DISPATCHER_GROUP_IMPL_H
+
 #include <atomic>
 #include <deque>
 #include <mutex>
@@ -29,6 +30,7 @@ namespace AppExecFwk {
 class GroupImpl : public Group {
 public:
     GroupImpl();
+
     ~GroupImpl() = default;
     /**
      *  Wait all tasks associated to this group to be done.

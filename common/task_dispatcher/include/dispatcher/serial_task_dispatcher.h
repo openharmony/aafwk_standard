@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,6 +82,7 @@ public:
      *
      */
     std::shared_ptr<Revocable> DelayDispatch(const std::shared_ptr<Runnable> &runnable, long delayMs);
+
 private:
     ErrCode OnNewTaskIn(std::shared_ptr<Task> &task);
 
@@ -105,6 +106,7 @@ private:
     bool DoNext(bool isExhausted);
 
     void DoWork(std::shared_ptr<Task> &task);
+
 private:
     static std::string DISPATCHER_TAG;
     static std::string ASYNC_DISPATCHER_TAG;
