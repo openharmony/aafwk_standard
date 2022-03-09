@@ -872,7 +872,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-        auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
+        //auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
         auto uid = appInfo.uid;
         auto processName = processInfo.GetProcessName();
@@ -929,7 +929,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             appThread->ScheduleProcessSecurityExit();
             APP_LOGI("RegisterUncaughtExceptionHandler End ret = %{public}d", ret);
         };
-        jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
+        //jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
 
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
