@@ -636,7 +636,6 @@ public:
     ErrCode MoveMissionToFront(int32_t missionId);
     ErrCode MoveMissionToFront(int32_t missionId, const StartOptions &startOptions);
 
-
     /**
      * @brief Get mission id by ability token.
      *
