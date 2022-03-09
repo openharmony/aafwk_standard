@@ -1327,9 +1327,9 @@ void MainThread::HandleTerminateApplication()
     SetRunnerStarted(false);
 
 #ifdef ABILITY_LIBRARY_LOADER
-    APP_LOGI("MainThread::handleTerminateApplication. Start callint CloseAbilityLibrary.");
+    APP_LOGI("MainThread::handleTerminateApplication. Start calling CloseAbilityLibrary.");
     CloseAbilityLibrary();
-    APP_LOGI("MainThread::handleTerminateApplication. End callint CloseAbilityLibrary.");
+    APP_LOGI("MainThread::handleTerminateApplication. End calling CloseAbilityLibrary.");
 #endif  // ABILITY_LIBRARY_LOADER
 #ifdef APPLICATION_LIBRARY_LOADER
     if (handleAppLib_ != nullptr) {

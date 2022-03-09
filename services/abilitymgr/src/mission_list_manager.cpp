@@ -930,7 +930,7 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
 
     // new version. started by caller, sdheduler call request
     if (abilityRecord->IsStartedByCall() && abilityRecord->IsStartToBackground() && abilityRecord->IsReady()) {
-        HILOG_DEBUG("call request after completing backgroud state");
+        HILOG_DEBUG("call request after completing background state");
         abilityRecord->CallRequest();
         abilityRecord->SetStartToBackground(false);
     }
