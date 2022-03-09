@@ -192,10 +192,8 @@ bool AbilityManagerService::Init()
     systemDataAbilityManager_ = std::make_shared<DataAbilityManager>();
 
     amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
-    if (amsConfigResolver_) {
-        amsConfigResolver_->Parse();
-        HILOG_INFO("ams config parse");
-    }
+    amsConfigResolver_->Parse();
+    HILOG_INFO("ams config parse");
     useNewMission_ = amsConfigResolver_->IsUseNewMission();
 #ifdef SUPPORT_GRAPHICS
     SetStackManager(userId, true);
