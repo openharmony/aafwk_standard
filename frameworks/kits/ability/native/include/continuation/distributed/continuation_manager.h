@@ -100,9 +100,9 @@ private:
     bool DoScheduleRestoreData(const WantParams &restoreData);
 
     bool DoRestoreFromRemote(const WantParams &restoreData);
-
+#ifdef SUPPORT_GRAPHICS
     bool GetContentInfo(WantParams &wantParams);
-
+#endif
     sptr<IRemoteObject> continueToken_ = nullptr;
     std::weak_ptr<Ability> ability_;
     std::weak_ptr<AbilityInfo> abilityInfo_;

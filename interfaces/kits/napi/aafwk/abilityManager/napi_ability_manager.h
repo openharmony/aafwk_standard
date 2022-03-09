@@ -22,7 +22,9 @@
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
+#endif
 #include "ability_manager_client.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"

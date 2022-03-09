@@ -13,7 +13,10 @@
         "name": "ability_runtime",
         "subsystem": "aafwk",
         "syscap": [],
-        "features": [],
+        "features": [
+          "ability_runtime_graphics",
+          "ability_runtime_power"
+        ],
         "adapted_system_type": [
             "standard"
         ],
