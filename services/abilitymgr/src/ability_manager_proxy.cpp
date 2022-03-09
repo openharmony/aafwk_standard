@@ -503,7 +503,7 @@ void AbilityManagerProxy::AddWindowInfo(const sptr<IRemoteObject> &token, int32_
 }
 
 void AbilityManagerProxy::DumpSysState(
-    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID)
+    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserId, int UserId)
 {
     int error;
     MessageParcel data;
@@ -519,11 +519,11 @@ void AbilityManagerProxy::DumpSysState(
         HILOG_ERROR("data write failed.");
         return ;
     }
-    if (!data.WriteBool(isUserID)) {
+    if (!data.WriteBool(isUserId)) {
         HILOG_ERROR("data write failed.");
         return ;
     }
-    if (!data.WriteInt32(UserID)) {
+    if (!data.WriteInt32(UserId)) {
         HILOG_ERROR("data write failed.");
         return ;
     }

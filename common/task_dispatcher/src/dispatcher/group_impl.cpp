@@ -95,7 +95,7 @@ bool GroupImpl::AddNotification(const std::shared_ptr<Runnable> &notification)
     if (count_.load() != 0) {
         std::unique_lock<std::mutex> lock(dataMutex_);
         if (notifications_.size() == MAX_TASK) {
-            APP_LOGW("GroupImpl::AddNotification called maximun number of tasks exceeded");
+            APP_LOGW("GroupImpl::AddNotification called maximum number of tasks exceeded");
             return false;
         }
         if (count_.load() != 0) {

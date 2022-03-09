@@ -1831,7 +1831,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_035, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult ability, put in float stack
+    // start default ability, put in float stack
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1877,7 +1877,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_036, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1906,7 +1906,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_037, TestSize.Level1)
     auto topAbilityRecord1 = stackManager_->GetCurrentTopAbility();
     topAbilityRecord1->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1971,7 +1971,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_038, TestSize.Level1)
  * SubFunction: Try moving other applications to the floating window stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the defult ability to the floating window stack
+ * CaseDescription: Move the default ability to the floating window stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_039, TestSize.Level1)
 {
@@ -2166,7 +2166,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
  * SubFunction: moving other applications to the floating window stack or Full screen stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the float ability to the defult stack
+ * CaseDescription: Move the float ability to the default stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
 {
@@ -2248,7 +2248,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_045, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     radioAbilityRecord->SetScheduler(scheduler);
 
-    // top float ability move to defult stack
+    // top float ability move to default stack
     ref = stackManager_->MaximizeMultiWindow(radioAbilityRecord->GetMissionRecordId());
     EXPECT_EQ(ERR_OK, ref);
 
