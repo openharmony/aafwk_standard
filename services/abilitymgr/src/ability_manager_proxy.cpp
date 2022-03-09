@@ -931,7 +931,7 @@ int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
+int AbilityManagerProxy::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -942,6 +942,10 @@ int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
     }
     if (!data.WriteString16(Str8ToStr16(bundleName))) {
         HILOG_ERROR("bundleName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteInt32(uid)) {
+        HILOG_ERROR("uid write failed.");
         return ERR_INVALID_VALUE;
     }
     int error = Remote()->SendRequest(IAbilityManager::UNINSTALL_APP, data, reply, option);
