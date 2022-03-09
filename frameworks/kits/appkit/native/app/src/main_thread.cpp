@@ -31,11 +31,13 @@
 #include "context_deal.h"
 #include "context_impl.h"
 #include "extension_module_loader.h"
+#ifdef SUPPORT_GRAPHICS
 #include "form_extension.h"
+#include "locale_config.h"
+#endif
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "js_runtime.h"
-#include "locale_config.h"
 #include "ohos_application.h"
 #include "resource_manager.h"
 #include "runtime.h"
@@ -759,6 +761,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     APP_LOGI("MainThread::handleLaunchApplication before Resource::CreateResConfig.");
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     APP_LOGI("MainThread::handleLaunchApplication after Resource::CreateResConfig.");
+#ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
     resConfig->SetLocaleInfo(locale);
@@ -774,7 +777,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
 
     std::string colormode = config.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
     resConfig->SetColorMode(ConvertColorMode(colormode));
-
+#endif
     APP_LOGI("MainThread::handleLaunchApplication. Start calling UpdateResConfig.");
     resourceManager->UpdateResConfig(*resConfig);
     APP_LOGI("MainThread::handleLaunchApplication. End calling UpdateResConfig.");
@@ -867,12 +870,22 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         AbilityRuntime::Runtime::Options options;
         options.codePath = LOCAL_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
+        std::string nativeLibraryPath = appInfo.nativeLibraryPath;
+        if (!nativeLibraryPath.empty()) {
+            if (nativeLibraryPath.back() == '/') {
+                nativeLibraryPath.pop_back();
+            }
+            std::string libPath = LOCAL_CODE_PATH;
+            libPath += (libPath.back() == '/') ? nativeLibraryPath : "/" + nativeLibraryPath;
+            APP_LOGI("napi lib path = %{private}s", libPath.c_str());
+            options.packagePath = libPath;
+        }
         auto runtime = AbilityRuntime::Runtime::Create(options);
         if (!runtime) {
             APP_LOGE("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-        auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
+        // auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
         auto uid = appInfo.uid;
         auto processName = processInfo.GetProcessName();
@@ -929,15 +942,17 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             appThread->ScheduleProcessSecurityExit();
             APP_LOGI("RegisterUncaughtExceptionHandler End ret = %{public}d", ret);
         };
-        jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
+        // jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
 
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
             return Ability::Create(application->GetRuntime());
         });
+#ifdef SUPPORT_GRAPHICS
         AbilityLoader::GetInstance().RegisterExtension("FormExtension", [application = application_]() {
             return AbilityRuntime::FormExtension::Create(application->GetRuntime());
         });
+#endif
         AbilityLoader::GetInstance().RegisterExtension("StaticSubscriberExtension", [application = application_]() {
             return AbilityRuntime::StaticSubscriberExtension::Create(application->GetRuntime());
         });

@@ -878,6 +878,9 @@ public:
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
 
+    bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+        const std::string &mainAbility, std::string &uri);
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t ACTIVE_TIMEOUT_MSG = 1;
@@ -1057,7 +1060,9 @@ private:
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
+#ifdef SUPPORT_GRAPHICS
     void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
+#endif
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
@@ -1093,7 +1098,9 @@ private:
 
     int32_t InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
         AppExecFwk::AbilityInfo &abilityInfo);
+#ifdef SUPPORT_GRAPHICS
     int32_t ShowPickerDialog(const Want& want, int32_t userId);
+#endif
 
     // multi user
     void StartFreezingScreen();
@@ -1149,8 +1156,7 @@ private:
 
     void StartMainElement(int userId, std::vector<AppExecFwk::BundleInfo> &bundleInfos);
 
-    bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
-        const std::string &mainAbility, std::string &uri);
+    bool GetValidDataAbilityUri(const std::string &abilityInfoUri, std::string &adjustUri);
 
     constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
     constexpr static int WAITING_BOOT_ANIMATION_TIMER = 5;

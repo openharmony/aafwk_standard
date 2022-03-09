@@ -37,15 +37,19 @@
 #include "data_ability_predicates.h"
 #include "data_ability_result.h"
 #include "data_uri_utils.h"
-#include "display_type.h"
 #include "distributed_objectstore.h"
+#ifdef SUPPORT_GRAPHICS
+#include "display_type.h"
 #include "form_host_client.h"
 #include "form_mgr.h"
 #include "form_provider_client.h"
+#endif
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#ifdef SUPPORT_GRAPHICS
 #include "key_event.h"
+#endif
 #include "ohos_application.h"
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
@@ -77,10 +81,12 @@ const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 
+#ifdef SUPPORT_GRAPHICS
 static std::mutex formLock;
 
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
+#endif
 constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
@@ -106,6 +112,7 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     handler_ = handler;
     AbilityContext::token_ = token;
 
+#ifdef SUPPORT_GRAPHICS
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         if (!abilityInfo_->isStageBasedModel) {
@@ -139,6 +146,7 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
         OHOS::sptr<OHOS::Rosen::DisplayManager::IDisplayListener> thisAbility(this);
         Rosen::DisplayManager::GetInstance().RegisterDisplayListener(thisAbility);
     }
+#endif
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
     if (abilityLifecycleExecutor_ != nullptr) {
@@ -179,6 +187,7 @@ bool Ability::IsUpdatingConfigurations()
     return AbilityContext::IsUpdatingConfigurations();
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Informs the system of the time required for drawing this Page ability.
  *
@@ -188,6 +197,7 @@ bool Ability::PrintDrawnCompleted()
 {
     return AbilityContext::PrintDrawnCompleted();
 }
+#endif
 
 /**
  * Will be called when ability start. You should override this function
@@ -203,6 +213,7 @@ void Ability::OnStart(const Want &want)
         return;
     }
 
+#ifdef SUPPORT_GRAPHICS
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         Rosen::WindowType winType = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
         if (abilityInfo_->bundleName == SYSTEM_UI) {
@@ -289,6 +300,7 @@ void Ability::OnStart(const Want &want)
             }
         }
     }
+#endif
 
     SetWant(want);
     if (abilityLifecycleExecutor_ == nullptr) {
@@ -339,6 +351,7 @@ void Ability::OnStop()
 void Ability::Destroy()
 {
     APP_LOGI("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     // Release the scene.
     if (scene_ != nullptr) {
         scene_->GoDestroy();
@@ -350,6 +363,7 @@ void Ability::Destroy()
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         abilityWindow_->OnPostAbilityStop(); // Ability will been released when window destroy.
     }
+#endif
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -365,12 +379,14 @@ void Ability::OnActive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityActive.", __func__);
         abilityWindow_->OnPostAbilityActive();
         APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityActive.", __func__);
     }
     bWindowFocus_ = true;
+#endif
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnActive error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -395,12 +411,14 @@ void Ability::OnInactive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     APP_LOGI("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         APP_LOGI("%{public}s begin abilityWindow_->OnPostAbilityInactive.", __func__);
         abilityWindow_->OnPostAbilityInactive();
         APP_LOGI("%{public}s end abilityWindow_->OnPostAbilityInactive.", __func__);
     }
     bWindowFocus_ = false;
+#endif
     if (abilityLifecycleExecutor_ == nullptr) {
         APP_LOGE("Ability::OnInactive error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -415,6 +433,7 @@ void Ability::OnInactive()
     APP_LOGI("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called after instantiating WindowScene.
  *
@@ -463,6 +482,7 @@ void Ability::OnForeground(const Want &want)
     DispatchLifecycleOnForeground(want);
     APP_LOGI("%{public}s end.", __func__);
 }
+#endif
 
 bool Ability::IsRestoredInContinuation() const
 {
@@ -532,6 +552,7 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
  *
@@ -581,6 +602,7 @@ void Ability::OnBackground()
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_BACKGROUND);
     APP_LOGI("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Called when this Service ability is connected for the first time.
@@ -704,6 +726,7 @@ ErrCode Ability::StartAbility(const Want &want, AbilityStartSetting abilityStart
     return err;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
  * the component will be handled first. This callback will not be invoked if the callback triggered for the
@@ -869,6 +892,7 @@ bool Ability::HasWindowFocus()
 
     return false;
 }
+#endif
 
 /**
  * @description: Obtains api version based on ability.
@@ -889,6 +913,7 @@ void Ability::SetCompatibleVersion(int32_t compatibleVersion)
     compatibleVersion_ = compatibleVersion;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when a key is lone pressed.
  *
@@ -902,6 +927,7 @@ bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &ke
 {
     return false;
 }
+#endif
 
 /**
  * @brief Called back after permissions are requested by using
@@ -920,6 +946,7 @@ void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability is about to leave the foreground and enter the background due to a user
  * operation, for example, when the user touches the Home key.
@@ -927,6 +954,7 @@ void Ability::OnRequestPermissionsFromUserResult(
  */
 void Ability::OnLeaveForeground()
 {}
+#endif
 
 /**
  * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -986,7 +1014,7 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     if (resConfig != nullptr) {
         APP_LOGI("make resource mgr data");
-
+#ifdef SUPPORT_GRAPHICS
         if (!language.empty()) {
             UErrorCode status = U_ZERO_ERROR;
             icu::Locale locale = icu::Locale::forLanguageTag(language, status);
@@ -995,7 +1023,7 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
                 resConfig->SetLocaleInfo(locale);
             }
         }
-
+#endif
         resConfig->SetColorMode(ConvertColorMode(colormode));
 
         auto resourceManager = GetResourceManager();
@@ -1004,14 +1032,14 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
             APP_LOGI("%{public}s Notify ResourceManager.", __func__);
         }
     }
-
+#ifdef SUPPORT_GRAPHICS
     // Notify WindowScene
     if (scene_ != nullptr && !language.empty()) {
         auto diffConfiguration = std::make_shared<AppExecFwk::Configuration>(changeConfiguration);
         scene_->UpdateConfiguration(diffConfiguration);
         APP_LOGE("%{public}s scene_ -> UpdateConfiguration success.", __func__);
     }
-
+#endif
     if (abilityContext_ != nullptr && application_ != nullptr) {
         abilityContext_->SetConfiguration(application_->GetConfiguration());
     }
@@ -1121,6 +1149,7 @@ bool Ability::IsTerminating()
 void Ability::OnAbilityResult(int requestCode, int resultCode, const Want &want)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called back when the Back key is pressed.
  * The default implementation destroys the ability. You can override this method.
@@ -1140,6 +1169,7 @@ void Ability::OnBackPressed()
     }
     APP_LOGI("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch an
@@ -1238,6 +1268,7 @@ void Ability::SetResult(int resultCode, const Want &resultData)
     APP_LOGI("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Sets the type of audio whose volume will be adjusted by the volume button.
  *
@@ -1245,6 +1276,7 @@ void Ability::SetResult(int resultCode, const Want &resultData)
  */
 void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
 {}
+#endif
 
 /**
  * @brief Called back when Service is started.
@@ -1647,6 +1679,7 @@ void Ability::SetMainRoute(const std::string &entry)
 void Ability::AddActionRoute(const std::string &action, const std::string &entry)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Sets the background color of the window in RGB color mode.
  *
@@ -1662,6 +1695,7 @@ int Ability::SetWindowBackgroundColor(int red, int green, int blue)
 {
     return -1;
 }
+#endif
 
 /**
  * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
@@ -1756,6 +1790,7 @@ bool Ability::OnContinue(WantParams &wantParams)
     return false;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Get page ability stack info.
  *
@@ -1768,6 +1803,7 @@ std::string Ability::GetContentInfo()
     }
     return scene_->GetContentInfo();
 }
+#endif
 
 /**
  * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
@@ -1932,6 +1968,7 @@ bool Ability::IsFlagExists(unsigned int flag, unsigned int flagSet)
     return (flag & flagSet) == flag;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability gains or loses window focus.
  *
@@ -1948,6 +1985,7 @@ void Ability::OnWindowFocusChanged(bool hasFocus)
  */
 void Ability::OnTopActiveAbilityChanged(bool topActive)
 {}
+#endif
 
 /**
  * @brief Called to set caller information for the application. The default implementation returns null.
@@ -1985,6 +2023,7 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
     return std::make_shared<AbilityPostEventTimeout>(taskstr, handler_);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * Releases an obtained form by its ID.
  *
@@ -2005,7 +2044,7 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::ReleaseForm(const int64_t formId)
+ErrCode Ability::ReleaseForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // release form by formId and do not release cache
@@ -2033,7 +2072,7 @@ bool Ability::ReleaseForm(const int64_t formId)
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
+ErrCode Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
 {
     APP_LOGI("%{public}s called.", __func__);
     // release form with formId and specifies whether to release the cache
@@ -2059,12 +2098,13 @@ bool Ability::ReleaseForm(const int64_t formId, const bool isReleaseCache)
  * <li>The form is being restored.</li>
  * </ul>
  */
-bool Ability::DeleteForm(const int64_t formId)
+ErrCode Ability::DeleteForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     // delete form with formId
     return DeleteForm(formId, DELETE_FORM);
 }
+#endif
 
 /**
  * @brief Keep this Service ability in the background and displays a notification bar.
@@ -2090,6 +2130,7 @@ int Ability::StopBackgroundRunning()
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Cast temp form with formId.
  *
@@ -2097,26 +2138,26 @@ int Ability::StopBackgroundRunning()
  *
  * @return Returns {@code true} if the form is successfully casted; returns {@code false} otherwise.
  */
-bool Ability::CastTempForm(const int64_t formId)
+ErrCode Ability::CastTempForm(const int64_t formId)
 {
     APP_LOGI("%{public}s start", __func__);
     if (formId <= 0) {
         APP_LOGE("%{public}s error, passing in form id can't be negative.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     APP_LOGI("%{public}s, castTempForm begin of temp form %{public}" PRId64, __func__, formId);
-    int result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
+    ErrCode result = FormMgr::GetInstance().CastTempForm(formId, FormHostClient::GetInstance());
 
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
-        return false;
+        return result;
     }
 
     userReqParams_[formId].SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, false);
 
     APP_LOGI("%{public}s end", __func__);
-    return true;
+    return result;
 }
 
 /**
@@ -2209,35 +2250,33 @@ bool Ability::AcquireForm(const int64_t formId, const Want &want, const std::sha
  * @param formProviderData The data used to update the JS form displayed on the client.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProviderData)
+ErrCode Ability::UpdateForm(const int64_t formId, const FormProviderData &formProviderData)
 {
     APP_LOGI("%{public}s called.", __func__);
     // check fms recover status
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // check formId
     if (formId <= 0) {
         APP_LOGE("%{public}s error, the passed in formId can't be negative or zero.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     // check formProviderData
     if (formProviderData.GetDataString().empty()) {
         APP_LOGE("%{public}s error, the formProviderData is null.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_PROVIDER_DATA_EMPTY;
     }
 
     // update form request to fms
-    if (FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData) != ERR_OK) {
+    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+    if (result != ERR_OK) {
         APP_LOGE("%{public}s error, update form for fms failed.", __func__);
-        return false;
     }
-
-    // the update form is successfully
-    return true;
+    return result;
 }
 
 /**
@@ -2249,7 +2288,7 @@ bool Ability::UpdateForm(const int64_t formId, const FormProviderData &formProvi
  * @param formIds Indicates the IDs of the forms to be made visible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
+ErrCode Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_VISIBLE);
@@ -2264,7 +2303,7 @@ bool Ability::NotifyVisibleForms(const std::vector<int64_t> &formIds)
  * @param formIds Indicates the IDs of the forms to be made invisible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
+ErrCode Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return NotifyWhetherVisibleForms(formIds, Constants::FORM_INVISIBLE);
@@ -2279,26 +2318,25 @@ bool Ability::NotifyInvisibleForms(const std::vector<int64_t> &formIds)
  * @param nextTime Indicates the next time gap now in seconds, can not be litter than 300 seconds.
  * @return Returns {@code true} if seting succeed; returns {@code false} otherwise.
  */
-bool Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime)
+ErrCode Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTime)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (nextTime < MIN_NEXT_TIME) {
         APP_LOGE("next time litte than 300 seconds.");
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_REFRESH_TIME;
     }
 
     if (FormMgr::GetInstance().GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s, formManager is in recovering", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
-    int result = FormMgr::GetInstance().SetNextRefreshTime(formId, nextTime);
+    ErrCode result = FormMgr::GetInstance().SetNextRefreshTime(formId, nextTime);
     if (result != ERR_OK) {
         APP_LOGE("%{public}s, internal error:[%{public}d]", __func__, result);
-        return false;
     }
 
-    return true;
+    return result;
 }
 /**
  * @brief Requests for form data update.
@@ -2311,7 +2349,7 @@ bool Ability::SetFormNextRefreshTime(const int64_t formId, const int64_t nextTim
  * @param formId Indicates the ID of the form to update.
  * @return Returns true if the update request is successfully initiated, returns false otherwise.
  */
-bool Ability::RequestForm(const int64_t formId)
+ErrCode Ability::RequestForm(const int64_t formId)
 {
     APP_LOGI("%{public}s called.", __func__);
     Want want;
@@ -2445,18 +2483,18 @@ void Ability::OnTriggerEvent(const int64_t formId, const std::string &message)
  * @param deleteType Indicates the type of delete or release.
  * @return Returns {@code true} if the form is successfully deleted; returns {@code false} otherwise.
  */
-bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
+ErrCode Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
 {
     APP_LOGI("%{public}s called.", __func__);
     // check fms recover status
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
     // check formId
     if (formId <= 0) {
         APP_LOGE("%{public}s error, the passed in formId can't be negative or zero.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     APP_LOGI("%{public}s, delete form begin, formId is %{public}" PRId64 " and deleteType is %{public}d.",
@@ -2471,14 +2509,14 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
             lostedByReconnectTempForms_.end()) {
             CleanFormResource(formId);
             // the delete temp form is successfully
-            return true;
+            return ERR_OK;
         }
     }
 
     // hostClient init
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
     // delete or release request to fms
-    int result;
+    ErrCode result;
     if (deleteType == DELETE_FORM) {
         result = FormMgr::GetInstance().DeleteForm(formId, formHostClient);
     } else {
@@ -2487,7 +2525,7 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
     }
     if (result != ERR_OK) {
         APP_LOGE("%{public}s error, some internal server occurs, error code is %{public}d.", __func__, result);
-        return false;
+        return result;
     }
     {
         // form lock
@@ -2496,7 +2534,7 @@ bool Ability::DeleteForm(const int64_t formId, const int32_t deleteType)
         CleanFormResource(formId);
     }
     // the delete form is successfully
-    return true;
+    return result;
 }
 
 /**
@@ -2623,26 +2661,25 @@ void Ability::HandleFormMessage(const int32_t msgCode, const FormJsInfo &formJsI
  *                  and FORM_INVISIBLE means that the form becomes invisible.
  * @return Returns {@code true} if the request is successfully initiated; returns {@code false} otherwise.
  */
-bool Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType)
+ErrCode Ability::NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, int32_t eventType)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (formIds.empty() || formIds.size() > Constants::MAX_VISIBLE_NOTIFY_LIST) {
         APP_LOGE("%{public}s, formIds is empty or exceed 32.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
-    int resultCode =
+    ErrCode resultCode =
         FormMgr::GetInstance().NotifyWhetherVisibleForms(formIds, FormHostClient::GetInstance(), eventType);
     if (resultCode != ERR_OK) {
         APP_LOGE("%{public}s error, internal error occurs, error code:%{public}d.", __func__, resultCode);
-        return false;
     }
-    return true;
+    return resultCode;
 }
 
 /**
@@ -2699,7 +2736,7 @@ bool Ability::CheckWantValid(const int64_t formId, const Want &want)
  *
  * @param formIds FormIds of hostclient.
  */
-bool Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
+ErrCode Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return LifecycleUpdate(formIds, ENABLE_FORM_UPDATE);
@@ -2710,33 +2747,27 @@ bool Ability::EnableUpdateForm(const std::vector<int64_t> &formIds)
  *
  * @param formIds FormIds of hostclient.
  */
-bool Ability::DisableUpdateForm(const std::vector<int64_t> &formIds)
+ErrCode Ability::DisableUpdateForm(const std::vector<int64_t> &formIds)
 {
     APP_LOGI("%{public}s called.", __func__);
     return LifecycleUpdate(formIds, DISABLE_FORM_UPDATE);
 }
 
-bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
+ErrCode Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
 {
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // hostClient init
     sptr<FormHostClient> formHostClient = FormHostClient::GetInstance();
     if (formHostClient == nullptr) {
         APP_LOGE("%{public}s error, formHostClient == nullptr.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_GET_HOST_FAILED;
     }
 
-    int result = FormMgr::GetInstance().LifecycleUpdate(formIds, formHostClient, updateType);
-    if (result != ERR_OK) {
-        APP_LOGE("%{public}s error, internal error.", __func__);
-        return false;
-    }
-
-    return true;
+    return FormMgr::GetInstance().LifecycleUpdate(formIds, formHostClient, updateType);
 }
 
 /**
@@ -2751,30 +2782,28 @@ bool Ability::LifecycleUpdate(std::vector<int64_t> formIds, int32_t updateType)
  * @param want Indicates a set of parameters to be transparently passed to the form provider.
  * @return Returns true if the update request is successfully initiated, returns false otherwise.
  */
-bool Ability::RequestForm(const int64_t formId, const Want &want)
+ErrCode Ability::RequestForm(const int64_t formId, const Want &want)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (formId <= 0) {
         APP_LOGE("%{public}s error, The passed formid is invalid. Its value must be larger than 0.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // requestForm request to fms
-    int resultCode = FormMgr::GetInstance().RequestForm(formId, FormHostClient::GetInstance(), want);
+    ErrCode resultCode = FormMgr::GetInstance().RequestForm(formId, FormHostClient::GetInstance(), want);
     if (resultCode != ERR_OK) {
         APP_LOGE("%{public}s error, failed to notify the form service that the form user's lifecycle is updated, error "
                  "code is %{public}d.",
             __func__,
             resultCode);
-        return false;
     }
-
-    return true;
+    return resultCode;
 }
 
 /**
@@ -2888,23 +2917,17 @@ bool Ability::CheckFMSReady()
  * @param formInfos Return the forms' information of all forms provided.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetAllFormsInfo request to fms
-    int resultCode = FormMgr::GetInstance().GetAllFormsInfo(formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetAllFormsInfo, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
-
-    return !formInfos.empty();
+    return FormMgr::GetInstance().GetAllFormsInfo(formInfos);
 }
 
 /**
@@ -2914,27 +2937,21 @@ bool Ability::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
  * @param formInfos Return the forms' information of the specify application name.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
     if (bundleName.empty()) {
         APP_LOGW("Failed to Get forms info, because empty bundle name");
-        return false;
+        return ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetFormsInfoByApp request to fms
-    int resultCode = FormMgr::GetInstance().GetFormsInfoByApp(bundleName, formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetFormsInfoByApp, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
-
-    return !formInfos.empty();
+    return FormMgr::GetInstance().GetFormsInfoByApp(bundleName, formInfos);
 }
 
 /**
@@ -2945,27 +2962,38 @@ bool Ability::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &
  * @param formInfos Return the forms' information of the specify bundle name and module name.
  * @return Return true if the request is successfully initiated; return false otherwise.
  */
-bool Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos)
+ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
+    std::vector<FormInfo> &formInfos)
 {
     APP_LOGI("%{public}s called.", __func__);
-    if (bundleName.empty() || moduleName.empty()) {
-        APP_LOGW("Failed to Get forms info, because empty bundleName or moduleName");
-        return false;
+    if (bundleName.empty()) {
+        APP_LOGW("Failed to Get forms info, because empty bundleName");
+        return ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME;
+    }
+
+    if (moduleName.empty()) {
+        APP_LOGW("Failed to Get forms info, because empty moduleName");
+        return ERR_APPEXECFWK_FORM_INVALID_MODULENAME;
     }
 
     if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
         APP_LOGE("%{public}s error, form is in recover status, can't do action on form.", __func__);
-        return false;
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
     }
 
     // GetFormsInfoByModule request to fms
-    int resultCode = FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
-    if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s error, failed to GetFormsInfoByModule, error code is %{public}d.", __func__, resultCode);
-        return false;
-    }
+    return FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+}
+#endif
 
-    return !formInfos.empty();
+/**
+ * @brief Get the error message by error code.
+ * @param errorCode the error code return form fms.
+ * @return Returns the error message detail.
+ */
+std::string Ability::GetErrorMsg(const ErrCode errorCode)
+{
+    return FormMgr::GetInstance().GetErrorMessage(errorCode);
 }
 
 /**
@@ -3005,6 +3033,7 @@ void Ability::SetBundleManager(const sptr<IBundleMgr> &bundleManager)
     iBundleMgr_ = bundleManager;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Acquire a form provider remote object.
  * @return Returns form provider remote object.
@@ -3024,6 +3053,7 @@ sptr<IRemoteObject> Ability::GetFormRemoteObject()
     APP_LOGI("%{public}s end", __func__);
     return providerRemoteObject_;
 }
+#endif
 
 /**
  * @brief Set the start ability setting.
@@ -3051,10 +3081,12 @@ const AAFwk::LaunchParam& Ability::GetLaunchParam() const
     return launchParam_;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener)
 {
     sceneListener_ = listener;
 }
+#endif
 
 std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
@@ -3389,6 +3421,7 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
     return true;
 }
 
+#ifdef SUPPORT_GRAPHICS
 sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
 {
     APP_LOGI("%{public}s start", __func__);
@@ -3431,6 +3464,7 @@ void Ability::DoOnForeground(const Want& want)
 
     }
 }
+#endif
 
 /**
  * @brief request a remote object of callee from this ability.
@@ -3441,6 +3475,7 @@ sptr<IRemoteObject> Ability::CallRequest()
     return nullptr;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int Ability::GetCurrentWindowMode()
 {
     APP_LOGI("%{public}s start", __func__);
@@ -3566,5 +3601,6 @@ void Ability::RequsetFocus(const Want &want)
     }
     abilityWindow_->OnPostAbilityForeground(sceneFlag_);
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

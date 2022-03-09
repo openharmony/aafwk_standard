@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("appmgr_test_config") {
   configs = [
@@ -82,7 +83,6 @@ ohos_source_set("appmgr_test_source") {
   }
   deps = [
     "${services_path}/common:perm_verification",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
@@ -90,6 +90,10 @@ ohos_source_set("appmgr_test_source") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

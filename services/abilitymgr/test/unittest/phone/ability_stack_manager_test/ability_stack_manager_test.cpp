@@ -3462,6 +3462,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_093, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_094, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     stackManager_->curSysWindowMode_ = SystemWindowMode::SPLITSCREEN_WINDOW_MODE;
 
@@ -3474,6 +3475,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_094, TestSize.
         index = mode.find(split);
         EXPECT_TRUE(index != std::string::npos);
     }
+#endif
 }
 
 /*
@@ -3638,6 +3640,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_099, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0100, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
     auto str = stackManager_->ConvertWindowModeState(SystemWindowMode::DEFAULT_WINDOW_MODE);
     EXPECT_EQ(str, "default window mode");
@@ -3647,6 +3650,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0100, TestSize
     EXPECT_EQ(str, "floating window mode");
     str = stackManager_->ConvertWindowModeState(SystemWindowMode::FLOATING_AND_SPLITSCREEN_WINDOW_MODE);
     EXPECT_EQ(str, "floating and split screen window mode");
+#endif
 }
 
 /*
@@ -3750,6 +3754,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0103, TestSize
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
 
     auto result = stackManager_->StartAbility(radioAbilityRequest_);
@@ -3773,6 +3778,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize
 
     ref = stackManager_->CheckMultiWindowCondition(missionOptions);
     EXPECT_EQ(MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION, ref);
+#endif
 }
 
 /*
@@ -3785,6 +3791,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0105, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     auto result = stackManager_->StartAbility(radioAbilityRequest_);
     EXPECT_EQ(0, result);
@@ -3798,6 +3805,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0105, TestSize
     missionOptions.push_back(mission);
     auto ref = stackManager_->CheckMultiWindowCondition(missionOptions);
     EXPECT_EQ(ERR_OK, ref);
+#endif
 }
 
 /*
