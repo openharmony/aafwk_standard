@@ -559,6 +559,9 @@ std::shared_ptr<AbilityRecord> AbilityConnectManager::GetServiceRecordByToken(co
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto IsMatch = [token](auto service) {
+        if (!service.second) {
+            return false;
+        }
         sptr<IRemoteObject> srcToken = service.second->GetToken();
         return srcToken == token;
     };
