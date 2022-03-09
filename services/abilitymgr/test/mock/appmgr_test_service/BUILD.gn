@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("appmgr_test_service_config") {
   include_dirs = [
@@ -52,7 +53,10 @@ ohos_source_set("appmgr_test_service") {
     "//utils/native/base:utils",
   ]
 
-  public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+  if (ability_runtime_graphics) {
+    public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

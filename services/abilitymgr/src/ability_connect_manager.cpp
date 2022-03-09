@@ -23,6 +23,7 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -910,23 +911,15 @@ void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &
     }
 }
 
-void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
+bool AbilityConnectManager::IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    HILOG_INFO("Handle ability died task.");
-    std::lock_guard<std::recursive_mutex> guard(Lock_);
-    CHECK_POINTER(abilityRecord);
-    if (!GetServiceRecordByToken(abilityRecord->GetToken())) {
-        HILOG_ERROR("Died ability record is not exist in service map.");
-        return;
-    }
-
     auto bms = AbilityUtil::GetBundleManager();
-    CHECK_POINTER(bms);
+    CHECK_POINTER_AND_RETURN(bms, false);
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
     bool getBundleInfos = bms->GetBundleInfos(OHOS::AppExecFwk::GET_BUNDLE_DEFAULT, bundleInfos, USER_ID_NO_HEAD);
     if (!getBundleInfos) {
         HILOG_ERROR("Handle ability died task, get bundle infos failed");
-        return;
+        return false;
     }
 
     auto GetKeepAliveAbilities = [&bundleInfos](std::vector<std::string> &keepAliveAbilities) -> void {
@@ -955,13 +948,27 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME ||
-                abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME);
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME);
     };
 
     std::vector<std::string> keepAliveAbilities;
     GetKeepAliveAbilities(keepAliveAbilities);
     auto findIter = find_if(keepAliveAbilities.begin(), keepAliveAbilities.end(), findKeepAliveAbility);
-    if (findIter != keepAliveAbilities.end()) {
+    return (findIter != keepAliveAbilities.end());
+}
+
+void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_INFO("Handle ability died task.");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    CHECK_POINTER(abilityRecord);
+    if (!GetServiceRecordByToken(abilityRecord->GetToken())) {
+        HILOG_ERROR("Died ability record is not exist in service map.");
+        return;
+    }
+
+    if (IsAbilityNeedRestart(abilityRecord)) {
         HILOG_INFO("restart ability: %{public}s", abilityRecord->GetAbilityInfo().name.c_str());
         AbilityRequest requestInfo;
         requestInfo.want = abilityRecord->GetWant();
@@ -1068,8 +1075,8 @@ void AbilityConnectManager::GetExtensionRunningInfo(std::shared_ptr<AbilityRecor
     auto bms = AbilityUtil::GetBundleManager();
     CHECK_POINTER(bms);
     std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
-    bool queryResult = bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
-        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos);
+    bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos));
     if (queryResult) {
         HILOG_INFO("Query Extension Ability Infos Success.");
         auto abilityInfo = abilityRecord->GetAbilityInfo();

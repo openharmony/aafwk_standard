@@ -35,8 +35,9 @@ const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 const int32_t CONTINUE_ABILITY_REJECTED = 29360197;
 const int32_t CONTINUE_SAVE_DATA_FAILED = 29360198;
 const int32_t CONTINUE_ON_CONTINUE_FAILED = 29360199;
+#ifdef SUPPORT_GRAPHICS
 const int32_t CONTINUE_GET_CONTENT_FAILED = 29360200;
-
+#endif
 ContinuationManager::ContinuationManager()
 {
     progressState_ = ProgressState::INITIAL;
@@ -166,12 +167,13 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
     auto abilityInfo = abilityInfo_.lock();
     std::string &bundleName = abilityInfo->bundleName;
     ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerSync();
-
+#ifdef SUPPORT_GRAPHICS
     status = GetContentInfo(wantParams);
     if (!status) {
         HILOG_ERROR("GetContentInfo failed.");
         return CONTINUE_GET_CONTENT_FAILED;
     }
+#endif
     HILOG_INFO("%{public}s called end", __func__);
     return ERR_OK;
 }
@@ -195,6 +197,7 @@ int32_t ContinuationManager::OnContinue(WantParams &wantParams)
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 bool ContinuationManager::GetContentInfo(WantParams &wantParams)
 {
     HILOG_INFO("%{public}s called begin", __func__);
@@ -216,6 +219,7 @@ bool ContinuationManager::GetContentInfo(WantParams &wantParams)
     HILOG_INFO("%{public}s called end", __func__);
     return true;
 }
+#endif
 
 void ContinuationManager::ContinueAbility(bool reversible, const std::string &deviceId)
 {

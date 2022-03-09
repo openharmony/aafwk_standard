@@ -32,6 +32,7 @@
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "hisysevent.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
@@ -41,7 +42,9 @@
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "system_ability_definition.h"
+#ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
+#endif
 #include "uri_permission_manager_client.h"
 
 
@@ -222,13 +225,13 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
     }
 
     auto userId = GetUserIdByUid(appInfo->uid);
-    bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName,
-        BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId);
+    bool bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleInfo(appInfo->bundleName,
+        BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetBundleInfo is fail");
         return false;
     }
-    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo);
+    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetHapModuleInfo is fail");
         return false;
@@ -486,13 +489,13 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
     }
 
     int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (!bundleMgr_->CheckIsSystemAppByUid(callerUid)) {
+    if (!IN_PROCESS_CALL(bundleMgr_->CheckIsSystemAppByUid(callerUid))) {
         HILOG_ERROR("caller is not systemApp, callerUid %{public}d", callerUid);
         return ERR_INVALID_VALUE;
     }
 
     HILOG_INFO("userId value is %{public}d", userId);
-    int uid = bundleMgr_->GetUidByBundleName(bundleName, userId);
+    int uid = IN_PROCESS_CALL(bundleMgr_->GetUidByBundleName(bundleName, userId));
     HILOG_INFO("uid value is %{public}d", uid);
     if (!appRunningManager_->ProcessExitByBundleNameAndUid(bundleName, uid, pids)) {
         HILOG_INFO("The process corresponding to the package name did not start");
@@ -545,7 +548,7 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
         return;
     }
     // 2.delete bundle side user data
-    if (!bundleMgr_->CleanBundleDataFiles(bundleName, userId)) {
+    if (!IN_PROCESS_CALL(bundleMgr_->CleanBundleDataFiles(bundleName, userId))) {
         HILOG_ERROR("Delete bundle side user data is fail");
         return;
     }
@@ -1220,8 +1223,8 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     AppSpawnStartMsg startMsg;
     BundleInfo bundleInfo;
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
-    bool bundleMgrResult = bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
-        bundleInfos, userId);
+    bool bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
+        bundleInfos, userId));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetBundleInfo is fail");
         return;
@@ -1245,7 +1248,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     HILOG_DEBUG("StartProcess accessTokenId:%{public}d, apl:%{public}s, bundleName:%{public}s coldStart:%{public}d",
         startMsg.accessTokenId, startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
-    bundleMgrResult = bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids);
+    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetBundleGids is fail");
         return;
@@ -1555,7 +1558,7 @@ int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, in
         HILOG_ERROR("GetBundleManager fail");
         return ERR_NO_INIT;
     }
-    auto bmsUid = bundleMgr->GetUidByBundleName(bundleName, userId);
+    auto bmsUid = IN_PROCESS_CALL(bundleMgr->GetUidByBundleName(bundleName, userId));
     if (bmsUid == ROOT_UID || bmsUid == SYSTEM_UID) {
         HILOG_INFO("uid is root or system, PERMISSION_GRANTED");
         message = ENUM_TO_STRING(PERMISSION_GRANTED);
@@ -1565,7 +1568,7 @@ int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, in
         HILOG_INFO("check uid != bms uid, PERMISSION_NOT_GRANTED");
         return PERMISSION_NOT_GRANTED;
     }
-    auto result = bundleMgr->CheckPermissionByUid(bundleName, permission, userId);
+    auto result = IN_PROCESS_CALL(bundleMgr->CheckPermissionByUid(bundleName, permission, userId));
     if (result != PERMISSION_GRANTED) {
         return PERMISSION_NOT_GRANTED;
     }
@@ -1706,7 +1709,8 @@ void AppMgrServiceInner::RestartResidentProcess(std::shared_ptr<AppRunningRecord
 
     auto bundleMgr = remoteClientManager_->GetBundleManager();
     BundleInfo bundleInfo;
-    if (!bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo)) {
+    if (!IN_PROCESS_CALL(
+        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo))) {
         HILOG_ERROR("GetBundleInfo fail");
         return;
     }
@@ -2207,10 +2211,13 @@ void AppMgrServiceInner::GetGlobalConfiguration()
         HILOG_ERROR("configuration_ is null");
         return;
     }
+
+#ifdef SUPPORT_GRAPHICS
     // Currently only this interface is known
     auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
     HILOG_INFO("current global language is : %{public}s", language.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+#endif
 
     // Assign to default colormode "light"
     HILOG_INFO("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());

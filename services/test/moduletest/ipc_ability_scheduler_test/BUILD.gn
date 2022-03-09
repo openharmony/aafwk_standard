@@ -13,6 +13,7 @@
 
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
 
@@ -56,9 +57,12 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
-    "//third_party/libpng:libpng",
     "//utils/native/base:utilsbase",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//third_party/libpng:libpng" ]
+  }
 
   external_deps = [
     "ability_base:configuration",

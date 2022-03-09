@@ -35,6 +35,7 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         targetState.state,
         targetState.isNewWant,
         targetState.sceneFlag);
+#ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
@@ -42,7 +43,7 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
     }
-
+#endif
     SetLifeCycleStateInfo(targetState);
 
     if (lifecycleState_ == AAFwk::ABILITY_STATE_INITIAL) {
@@ -51,10 +52,11 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         Start(want);
         CheckAndRestore();
     }
-
+#ifdef SUPPORT_GRAPHICS
     if (ability_ != nullptr) {
         ability_->sceneFlag_ = targetState.sceneFlag;
     }
+#endif
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
@@ -80,9 +82,11 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
     bool ret = true;
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
+#ifdef SUPPORT_GRAPHICS
             if (lifecycleState_ == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
                 Background();
             }
+#endif
             Stop();
             break;
         }
@@ -90,7 +94,9 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
             if (targetState.isNewWant) {
                 NewWant(want);
             }
+#ifdef SUPPORT_GRAPHICS
             Foreground(want);
+#endif
             ret = false;
             break;
         }
@@ -98,7 +104,9 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
             if (lifecycleState_ != ABILITY_STATE_STARTED_NEW) {
                 ret = false;
             }
+#ifdef SUPPORT_GRAPHICS
             Background();
+#endif
             break;
         }
         default: {

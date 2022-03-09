@@ -42,9 +42,15 @@ group("systemtest") {
     "ams_dfx_test:systemtest",
     "ams_kit_test:systemtest",
     "ams_missionstack_test:systemtest",
-    "ams_page_ability_test:systemtest",
-    "ams_power_test:systemtest",
     "ams_service_ability_test:systemtest",
     "tool:system_test_ability_util",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "ams_page_ability_test:systemtest" ]
+  }
+
+  if (ability_runtime_power) {
+    deps += [ "ams_power_test:systemtest" ]
+  }
 }

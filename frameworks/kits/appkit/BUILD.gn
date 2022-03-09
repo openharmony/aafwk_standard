@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("appkit_config") {
   defines = [
@@ -30,10 +31,17 @@ config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//base/global/resmgr_standard/interfaces/innerkits/include",
-    "//base/global/i18n_standard/frameworks/intl/include",
-    "//third_party/icu/icu4c/source/common",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include",
   ]
+
+  if (ability_runtime_graphics) {
+    include_dirs += [
+      "//base/global/i18n_standard/frameworks/intl/include",
+      "//third_party/icu/icu4c/source/common",
+    ]
+
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
 }
 
 #build bin
@@ -132,13 +140,10 @@ ohos_shared_library("appkit_native") {
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
-    "//third_party/icu/icu4c:shared_icuuc",
   ]
 
-  public_deps = [
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-  ]
+  public_deps =
+      [ "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr" ]
   external_deps = [
     "ability_base:configuration",
     "ability_base:want",
@@ -156,12 +161,18 @@ ohos_shared_library("appkit_native") {
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "napi:ace_napi",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
 
+  if (ability_runtime_graphics) {
+    deps += [
+      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+      "//third_party/icu/icu4c:shared_icuuc",
+    ]
+    public_deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+  }
   part_name = "ability_runtime"
 }
 
@@ -193,12 +204,10 @@ ohos_shared_library("app_context") {
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
-    "//third_party/icu/icu4c:shared_icuuc",
   ]
 
   public_deps = [
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
   ]
 
@@ -213,7 +222,6 @@ ohos_shared_library("app_context") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "napi:ace_napi",
     "os_account_standard:os_account_innerkits",
     "resmgr_standard:resmgr_napi_core",
@@ -221,6 +229,13 @@ ohos_shared_library("app_context") {
     "utils_base:utils",
   ]
 
+  if (ability_runtime_graphics) {
+    deps += [
+      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+      "//third_party/icu/icu4c:shared_icuuc",
+    ]
+    public_deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+  }
   part_name = "ability_runtime"
 }
 
@@ -262,7 +277,6 @@ ohos_shared_library("appkit_delegator") {
   deps = [
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "//third_party/icu/icu4c:shared_icuuc",
   ]
 
   external_deps = [
@@ -284,5 +298,8 @@ ohos_shared_library("appkit_delegator") {
 
   public_deps = [ "//foundation/ace/napi:ace_napi" ]
 
+  if (ability_runtime_graphics) {
+    deps += [ "//third_party/icu/icu4c:shared_icuuc" ]
+  }
   part_name = "ability_runtime"
 }
