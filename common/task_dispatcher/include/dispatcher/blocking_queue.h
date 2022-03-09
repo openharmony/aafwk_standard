@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,6 +55,7 @@ struct PriorityTaskWrapper {
     static constexpr int DEFAULT_PRIORITY_WEIGHT = 1;
     static constexpr int LOW_PRIORITY_WEIGHT = 0;
 };
+
 struct CompareTaskPriority {
     bool operator()(const std::shared_ptr<PriorityTaskWrapper> &wrapper1,
         const std::shared_ptr<PriorityTaskWrapper> &wrapper2) const
