@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,6 +54,7 @@ std::vector<std::string> AmsStServiceAbilityB3::Split(std::string str, const std
     }
     return splitString;
 }
+
 void AmsStServiceAbilityB3::StartOtherAbility()
 {
     HILOG_INFO("AmsStServiceAbilityB3::StartOtherAbility begin targetBundle=%{public}s, targetAbility=%{public}s",
@@ -80,6 +81,7 @@ void AmsStServiceAbilityB3::StartOtherAbility()
         }
     }
 }
+
 void AmsStServiceAbilityB3::ConnectOtherAbility()
 {
     HILOG_INFO(
@@ -141,6 +143,7 @@ void AmsStServiceAbilityB3::OnStart(const Want &want)
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnStart");
     SubscribeEvent();
 }
+
 void AmsStServiceAbilityB3::OnNewWant(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnNewWant");
@@ -148,6 +151,7 @@ void AmsStServiceAbilityB3::OnNewWant(const Want &want)
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
+
 void AmsStServiceAbilityB3::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnCommand");
@@ -156,6 +160,7 @@ void AmsStServiceAbilityB3::OnCommand(const AAFwk::Want &want, bool restart, int
     Ability::OnCommand(want, restart, startId);
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnCommand");
 }
+
 void AmsStServiceAbilityB3::OnStop()
 {
     HILOG_INFO("AmsStServiceAbilityB3::onStop");
@@ -163,6 +168,7 @@ void AmsStServiceAbilityB3::OnStop()
     Ability::OnStop();
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
+
 void AmsStServiceAbilityB3::OnActive()
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnActive");
@@ -170,6 +176,7 @@ void AmsStServiceAbilityB3::OnActive()
     Ability::OnActive();
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
+
 void AmsStServiceAbilityB3::OnInactive()
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnInactive");
@@ -177,6 +184,7 @@ void AmsStServiceAbilityB3::OnInactive()
     Ability::OnInactive();
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
+
 void AmsStServiceAbilityB3::OnBackground()
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnBackground");
@@ -184,6 +192,7 @@ void AmsStServiceAbilityB3::OnBackground()
     Ability::OnBackground();
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
 }
+
 sptr<IRemoteObject> AmsStServiceAbilityB3::OnConnect(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnConnect");
@@ -192,6 +201,7 @@ sptr<IRemoteObject> AmsStServiceAbilityB3::OnConnect(const Want &want)
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnConnect");
     return remote;
 }
+
 void AmsStServiceAbilityB3::OnDisconnect(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityB3::OnDisconnect");
@@ -199,6 +209,7 @@ void AmsStServiceAbilityB3::OnDisconnect(const Want &want)
     Ability::OnDisconnect(want);
     PublishEvent(APP_B3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnDisconnect");
 }
+
 void AmsStServiceAbilityB3::Clear()
 {
     shouldReturn_ = "";
@@ -212,6 +223,7 @@ void AmsStServiceAbilityB3::Clear()
     nextTargetAbilityConn_ = "";
     AmsStServiceAbilityB3::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
+
 void AmsStServiceAbilityB3::GetWantInfo(const Want &want)
 {
     Want mWant(want);
@@ -226,6 +238,7 @@ void AmsStServiceAbilityB3::GetWantInfo(const Want &want)
     nextTargetAbilityConn_ = mWant.GetStringParam("nextTargetAbilityConn");
     AmsStServiceAbilityB3::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
+
 bool AmsStServiceAbilityB3::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
     HILOG_INFO("AmsStServiceAbilityB3::PublishEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
@@ -241,6 +254,7 @@ bool AmsStServiceAbilityB3::PublishEvent(const std::string &eventName, const int
     commonData.SetData(data);
     return CommonEventManager::PublishCommonEvent(commonData);
 }
+
 bool AmsStServiceAbilityB3::SubscribeEvent()
 {
     HILOG_INFO("AmsStServiceAbilityB3::SubscribeEvent");
@@ -253,6 +267,7 @@ bool AmsStServiceAbilityB3::SubscribeEvent()
     subscriber_->mainAbility_ = this;
     return CommonEventManager::SubscribeCommonEvent(subscriber_);
 }
+
 void AmsStServiceAbilityB3::AppEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
     auto eventName = data.GetWant().GetAction();
