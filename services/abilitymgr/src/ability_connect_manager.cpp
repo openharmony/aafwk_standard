@@ -23,6 +23,7 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -1074,8 +1075,8 @@ void AbilityConnectManager::GetExtensionRunningInfo(std::shared_ptr<AbilityRecor
     auto bms = AbilityUtil::GetBundleManager();
     CHECK_POINTER(bms);
     std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
-    bool queryResult = bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
-        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos);
+    bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos));
     if (queryResult) {
         HILOG_INFO("Query Extension Ability Infos Success.");
         auto abilityInfo = abilityRecord->GetAbilityInfo();

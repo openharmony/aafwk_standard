@@ -23,6 +23,7 @@
 #include "form_bms_helper.h"
 #include "form_info_storage_mgr.h"
 #include "form_util.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "json_serializer.h"
 #include "permission_verification.h"
@@ -47,8 +48,8 @@ ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundle
     }
 
     BundleInfo bundleInfo;
-    if (!iBundleMgr->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO,
-        bundleInfo, FormUtil::GetCurrentAccountId())) {
+    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO,
+        bundleInfo, FormUtil::GetCurrentAccountId()))) {
         APP_LOGE("failed to get bundle info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
@@ -112,7 +113,7 @@ ErrCode FormInfoHelper::LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, 
     for (const auto &modelInfo: bundleInfo.hapModuleInfos) {
         const std::string &moduleName = modelInfo.moduleName;
         std::vector<FormInfo> formInfoVec {};
-        if (!iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfoVec)) {
+        if (!IN_PROCESS_CALL(iBundleMgr->GetFormsInfoByModule(bundleName, moduleName, formInfoVec))) {
             continue;
         }
         for (const auto &formInfo: formInfoVec) {
@@ -377,7 +378,8 @@ bool FormInfoMgr::IsCaller(std::string bundleName)
         return false;
     }
     AppExecFwk::BundleInfo bundleInfo;
-    bool ret = bms->GetBundleInfo(bundleName, GET_BUNDLE_DEFAULT, bundleInfo, FormUtil::GetCurrentAccountId());
+    bool ret = IN_PROCESS_CALL(
+        bms->GetBundleInfo(bundleName, GET_BUNDLE_DEFAULT, bundleInfo, FormUtil::GetCurrentAccountId()));
     if (!ret) {
         APP_LOGE("Failed to get bundle info.");
         return false;
