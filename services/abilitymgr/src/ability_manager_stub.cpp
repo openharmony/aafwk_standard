@@ -422,7 +422,8 @@ int AbilityManagerStub::ClearUpApplicationDataInner(MessageParcel &data, Message
 int AbilityManagerStub::UninstallAppInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string bundleName = Str16ToStr8(data.ReadString16());
-    int result = UninstallApp(bundleName);
+    int32_t uid = data.ReadInt32();
+    int result = UninstallApp(bundleName, uid);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("remove stack error");
         return ERR_INVALID_VALUE;
