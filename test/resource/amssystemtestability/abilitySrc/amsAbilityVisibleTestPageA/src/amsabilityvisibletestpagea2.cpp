@@ -22,7 +22,7 @@ void AmsAbilityVisibleTestPageA2::Init(const std::shared_ptr<AbilityInfo> &abili
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::Init");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::Init");
     Ability::Init(abilityInfo, application, handler, token);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateInit;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, STEventName::g_defeventCode, eventData);
@@ -33,7 +33,7 @@ void AmsAbilityVisibleTestPageA2::Init(const std::shared_ptr<AbilityInfo> &abili
 void AmsAbilityVisibleTestPageA2::OnStart(const Want &want)
 {
     GetWantInfo(want);
-    APP_LOGI("AmsAbilityVisibleTestPageA2::onStart");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::onStart");
     Ability::OnStart(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStart;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnStartCount(), eventData);
@@ -41,7 +41,7 @@ void AmsAbilityVisibleTestPageA2::OnStart(const Want &want)
 
 void AmsAbilityVisibleTestPageA2::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::OnNewWant");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::OnNewWant");
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnNewWant;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnNewWantCount(), eventData);
@@ -49,7 +49,7 @@ void AmsAbilityVisibleTestPageA2::OnNewWant(const Want &want)
 
 void AmsAbilityVisibleTestPageA2::OnForeground(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::OnForeground");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnForeground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnForegroundCount(), eventData);
@@ -57,7 +57,7 @@ void AmsAbilityVisibleTestPageA2::OnForeground(const Want &want)
 
 void AmsAbilityVisibleTestPageA2::OnStop()
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::onStop");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::onStop");
     Ability::OnStop();
     pageAbilityEvent.UnsubscribeEvent();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStop;
@@ -66,7 +66,7 @@ void AmsAbilityVisibleTestPageA2::OnStop()
 
 void AmsAbilityVisibleTestPageA2::OnActive()
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::OnActive");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::OnActive");
     Ability::OnActive();
     std::string startBundleName = this->Split(targetBundle_, ",");
     std::string startAbilityName = this->Split(targetAbility_, ",");
@@ -107,7 +107,7 @@ void AmsAbilityVisibleTestPageA2::OnActive()
 
 void AmsAbilityVisibleTestPageA2::OnInactive()
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::OnInactive");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnInactive;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnInactiveCount(), eventData);
@@ -115,7 +115,7 @@ void AmsAbilityVisibleTestPageA2::OnInactive()
 
 void AmsAbilityVisibleTestPageA2::OnBackground()
 {
-    APP_LOGI("AmsAbilityVisibleTestPageA2::OnBackground");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnBackground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnBackgroundCount(), eventData);
@@ -159,19 +159,19 @@ void AmsAbilityVisibleTestPageA2::GetAndTriggerWantAgent(
     std::shared_ptr<Want> wantParameter = std::make_shared<Want>(want);
     vec.push_back(wantParameter);
     WantAgentInfo info(0, operationType, WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, vec, nullptr);
-    APP_LOGI("AmsAbilityVisibleTestPageA2::StartOtherAbility()");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::StartOtherAbility()");
     std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
     std::shared_ptr<WantAgent> agent = WantAgentHelper::GetWantAgent(context, info);
     if (agent == nullptr) {
         pageAbilityEvent.PublishEvent(
             STEventName::g_eventName, STEventName::g_defeventCode, STEventName::g_getWantAgentState);
-        APP_LOGI("AmsAbilityVisibleTestPageA2::StartOtherAbility():GetWantAgent is nullptr.");
+        HILOG_INFO("AmsAbilityVisibleTestPageA2::StartOtherAbility():GetWantAgent is nullptr.");
         return;
     }
     TriggerInfo paramsInfo;
     std::shared_ptr<PendingWantCallback> callback = std::make_shared<PendingWantCallback>();
     WantAgentHelper::TriggerWantAgent(agent, callback, paramsInfo);
-    APP_LOGI("AmsAbilityVisibleTestPageA2::StartOtherAbility():WantAgentHelper::TriggerWantAgent end.");
+    HILOG_INFO("AmsAbilityVisibleTestPageA2::StartOtherAbility():WantAgentHelper::TriggerWantAgent end.");
 }
 
 REGISTER_AA(AmsAbilityVisibleTestPageA2);

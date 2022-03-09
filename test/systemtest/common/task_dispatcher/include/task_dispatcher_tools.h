@@ -23,7 +23,7 @@
 #include "common_event_manager.h"
 #include "context.h"
 #include "group.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "task_dispatcher.h"
 #include "task_priority.h"
 #include "revocable.h"

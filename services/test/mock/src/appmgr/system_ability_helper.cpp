@@ -17,7 +17,7 @@
 
 #include <map>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "mock_ability_mgr_host.h"
 #include "system_ability_definition.h"
 
@@ -27,7 +27,7 @@ static std::map<int32_t, sptr<IRemoteObject>> g_abilities;
 
 sptr<IRemoteObject> SystemAbilityHelper::GetSystemAbility(const int32_t systemAbilityId)
 {
-    APP_LOGD("mock system ability helper get %{public}d system ability", systemAbilityId);
+    HILOG_DEBUG("mock system ability helper get %{public}d system ability", systemAbilityId);
     auto iter = g_abilities.find(systemAbilityId);
     if (iter != g_abilities.end()) {
         return iter->second;
@@ -41,9 +41,9 @@ sptr<IRemoteObject> SystemAbilityHelper::GetSystemAbility(const int32_t systemAb
 bool SystemAbilityHelper::AddSystemAbility(const int32_t systemAbilityId, const sptr<IRemoteObject> &systemAbility)
 {
     if (g_abilities.erase(systemAbilityId) > 0) {
-        APP_LOGD("mock system ability helper add system ability erase exist key");
+        HILOG_DEBUG("mock system ability helper add system ability erase exist key");
     }
-    APP_LOGD("mock system ability helper emplace %{public}d system ability", systemAbilityId);
+    HILOG_DEBUG("mock system ability helper emplace %{public}d system ability", systemAbilityId);
     g_abilities.emplace(systemAbilityId, systemAbility);
     // mock helper always return true.
     return true;
@@ -51,9 +51,9 @@ bool SystemAbilityHelper::AddSystemAbility(const int32_t systemAbilityId, const 
 
 bool SystemAbilityHelper::RemoveSystemAbility(const int32_t systemAbilityId)
 {
-    APP_LOGD("mock system ability helper remove system ability");
+    HILOG_DEBUG("mock system ability helper remove system ability");
     if (g_abilities.erase(systemAbilityId) > 0) {
-        APP_LOGD("mock system ability helper remove %{public}d system ability erase exist key", systemAbilityId);
+        HILOG_DEBUG("mock system ability helper remove %{public}d system ability erase exist key", systemAbilityId);
     }
     // mock helper always return true.
     return true;

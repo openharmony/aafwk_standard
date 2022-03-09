@@ -18,8 +18,8 @@
 #define private public
 #include "ams_mgr_scheduler.h"
 #undef private
-#include "app_log_wrapper.h"
 #include "app_mgr_interface.h"
+#include "hilog_wrapper.h"
 #include "mock_bundle_manager.h"
 #include "system_ability_definition.h"
 #include "sys_mgr_client.h"
@@ -92,7 +92,7 @@ sptr<IAppMgr> AmsMgrKillProcessTest::GetAppMgrProxy(void)
  */
 HWTEST_F(AmsMgrKillProcessTest, KillProcess_0100, TestSize.Level0)
 {
-    APP_LOGI("AmsMgrKillProcessTest_KillProcess_0100");
+    HILOG_INFO("AmsMgrKillProcessTest_KillProcess_0100");
 
     auto appMgrServiceInner = GetAppMgrServiceInner();
     EXPECT_NE(appMgrServiceInner, nullptr);
@@ -111,7 +111,7 @@ HWTEST_F(AmsMgrKillProcessTest, KillProcess_0100, TestSize.Level0)
  */
 HWTEST_F(AmsMgrKillProcessTest, KillProcess_0200, TestSize.Level0)
 {
-    APP_LOGI("AmsMgrKillProcessTest_KillProcess_0200");
+    HILOG_INFO("AmsMgrKillProcessTest_KillProcess_0200");
 
     auto proxy = GetAppMgrProxy();
     EXPECT_NE(proxy, nullptr);

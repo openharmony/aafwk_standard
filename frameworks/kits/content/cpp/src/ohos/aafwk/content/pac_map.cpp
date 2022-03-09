@@ -36,7 +36,7 @@
 #include "ohos/aafwk/base/user_object_base.h"
 #include "ohos/aafwk/base/user_object_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
-#include "parcel_macro.h"
+#include "parcel_macro_base.h"
 #include "string_ex.h"
 
 using IUserObject = OHOS::AAFwk::IUserObject;

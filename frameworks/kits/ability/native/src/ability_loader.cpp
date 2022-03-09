@@ -14,7 +14,7 @@
  */
 
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -33,7 +33,7 @@ AbilityLoader &AbilityLoader::GetInstance()
 void AbilityLoader::RegisterAbility(const std::string &abilityName, const CreateAblity &createFunc)
 {
     abilities_.emplace(abilityName, createFunc);
-    APP_LOGD("AbilityLoader::RegisterAbility:%{public}s", abilityName.c_str());
+    HILOG_DEBUG("AbilityLoader::RegisterAbility:%{public}s", abilityName.c_str());
 }
 
 /**
@@ -45,7 +45,7 @@ void AbilityLoader::RegisterAbility(const std::string &abilityName, const Create
 void AbilityLoader::RegisterExtension(const std::string &abilityName, const CreateExtension &createFunc)
 {
     extensions_.emplace(abilityName, createFunc);
-    APP_LOGD("AbilityLoader::RegisterExtension:%{public}s", abilityName.c_str());
+    HILOG_DEBUG("AbilityLoader::RegisterExtension:%{public}s", abilityName.c_str());
 }
 
 /**
@@ -61,7 +61,7 @@ Ability *AbilityLoader::GetAbilityByName(const std::string &abilityName)
     if (it != abilities_.end()) {
         return it->second();
     } else {
-        APP_LOGE("AbilityLoader::GetAbilityByName failed:%{public}s", abilityName.c_str());
+        HILOG_ERROR("AbilityLoader::GetAbilityByName failed:%{public}s", abilityName.c_str());
     }
     return nullptr;
 }
@@ -79,7 +79,7 @@ AbilityRuntime::Extension *AbilityLoader::GetExtensionByName(const std::string &
     if (it != extensions_.end()) {
         return it->second();
     } else {
-        APP_LOGE("AbilityLoader::GetExtensionByName failed:%{public}s", abilityName.c_str());
+        HILOG_ERROR("AbilityLoader::GetExtensionByName failed:%{public}s", abilityName.c_str());
     }
     return nullptr;
 }

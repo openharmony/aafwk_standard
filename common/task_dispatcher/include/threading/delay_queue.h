@@ -22,7 +22,7 @@
 #include <mutex>
 #include <queue>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -65,12 +65,12 @@ public:
         while (true) {
             std::unique_lock<std::mutex> lock(mutex_);
             while (taskQueue_.empty() && !stopFlag_) {
-                APP_LOGI("DelayQueue::taskQueue_ is empty");
+                HILOG_INFO("DelayQueue::taskQueue_ is empty");
                 emptyWait_.wait(lock);
             }
 
             if (taskQueue_.empty() && stopFlag_) {
-                APP_LOGI("DelayQueue::taskQueue is empty and stopFlag is true");
+                HILOG_INFO("DelayQueue::taskQueue is empty and stopFlag is true");
                 return nullptr;
             }
 

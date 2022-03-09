@@ -17,7 +17,7 @@
 #define FWK_ABILITY_STATE_ABILITY_B_H
 #include <string>
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "pac_map.h"

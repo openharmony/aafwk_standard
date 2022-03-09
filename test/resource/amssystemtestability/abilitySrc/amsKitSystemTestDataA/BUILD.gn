@@ -32,8 +32,8 @@ config("amsKitSystemTestDataAConfig") {
     "//third_party/jsoncpp/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsKitDataSystemTestA\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsKitDataSystemTestA\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
   cflags = []
   if (target_cpu == "arm") {

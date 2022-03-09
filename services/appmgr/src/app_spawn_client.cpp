@@ -15,8 +15,8 @@
 
 #include "app_spawn_client.h"
 
-#include "app_log_wrapper.h"
 #include "bytrace.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -35,14 +35,14 @@ ErrCode AppSpawnClient::OpenConnection()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!socket_) {
-        APP_LOGE("failed to open connection without socket!");
+        HILOG_ERROR("failed to open connection without socket!");
         return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
     }
 
     int32_t retryCount = 1;
     ErrCode errCode = socket_->OpenAppSpawnConnection();
     while (FAILED(errCode) && retryCount <= CONNECT_RETRY_MAX_TIMES) {
-        APP_LOGW("failed to OpenConnection, retry times %{public}d ...", retryCount);
+        HILOG_WARN("failed to OpenConnection, retry times %{public}d ...", retryCount);
         usleep(CONNECT_RETRY_DELAY);
         errCode = socket_->OpenAppSpawnConnection();
         retryCount++;
@@ -50,7 +50,7 @@ ErrCode AppSpawnClient::OpenConnection()
     if (SUCCEEDED(errCode)) {
         state_ = SpawnConnectionState::STATE_CONNECTED;
     } else {
-        APP_LOGE("failed to openConnection, errorCode is %{public}08x", errCode);
+        HILOG_ERROR("failed to openConnection, errorCode is %{public}08x", errCode);
         state_ = SpawnConnectionState::STATE_CONNECT_FAILED;
     }
     return errCode;
@@ -62,7 +62,7 @@ ErrCode AppSpawnClient::StartProcess(const AppSpawnStartMsg &startMsg, pid_t &pi
     int32_t retryCount = 1;
     ErrCode errCode = StartProcessImpl(startMsg, pid);
     while (FAILED(errCode) && retryCount <= CONNECT_RETRY_MAX_TIMES) {
-        APP_LOGW("failed to StartProcess, retry times %{public}d ...", retryCount);
+        HILOG_WARN("failed to StartProcess, retry times %{public}d ...", retryCount);
         usleep(CONNECT_RETRY_DELAY);
         errCode = StartProcessImpl(startMsg, pid);
         retryCount++;
@@ -74,7 +74,7 @@ ErrCode AppSpawnClient::StartProcessImpl(const AppSpawnStartMsg &startMsg, pid_t
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!socket_) {
-        APP_LOGE("failed to startProcess without socket!");
+        HILOG_ERROR("failed to startProcess without socket!");
         return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
     }
 
@@ -83,7 +83,7 @@ ErrCode AppSpawnClient::StartProcessImpl(const AppSpawnStartMsg &startMsg, pid_t
     if (state_ != SpawnConnectionState::STATE_CONNECTED) {
         result = OpenConnection();
         if (FAILED(result)) {
-            APP_LOGE("connect to appspawn failed!");
+            HILOG_ERROR("connect to appspawn failed!");
             return result;
         }
     }
@@ -92,24 +92,24 @@ ErrCode AppSpawnClient::StartProcessImpl(const AppSpawnStartMsg &startMsg, pid_t
 
     AppSpawnMsgWrapper msgWrapper;
     if (!msgWrapper.AssembleMsg(startMsg)) {
-        APP_LOGE("AssembleMsg failed!");
+        HILOG_ERROR("AssembleMsg failed!");
         return ERR_APPEXECFWK_ASSEMBLE_START_MSG_FAILED;
     }
     AppSpawnPidMsg pidMsg;
     if (msgWrapper.IsValid()) {
         result = socket_->WriteMessage(msgWrapper.GetMsgBuf(), msgWrapper.GetMsgLength());
         if (FAILED(result)) {
-            APP_LOGE("WriteMessage failed!");
+            HILOG_ERROR("WriteMessage failed!");
             return result;
         }
         result = socket_->ReadMessage(reinterpret_cast<void *>(pidMsg.pidBuf), LEN_PID);
         if (FAILED(result)) {
-            APP_LOGE("ReadMessage failed!");
+            HILOG_ERROR("ReadMessage failed!");
             return result;
         }
     }
     if (pidMsg.pid <= 0) {
-        APP_LOGE("invalid pid!");
+        HILOG_ERROR("invalid pid!");
         result = ERR_APPEXECFWK_INVALID_PID;
     } else {
         pid = pidMsg.pid;

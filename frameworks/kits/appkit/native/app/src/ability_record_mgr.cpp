@@ -14,7 +14,7 @@
  */
 
 #include "ability_record_mgr.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -36,7 +36,7 @@ sptr<IRemoteObject> AbilityRecordMgr::GetToken() const
 void AbilityRecordMgr::SetToken(const sptr<IRemoteObject> &token)
 {
     if (token == nullptr) {
-        APP_LOGE("AbilityRecordMgr::SetToken failed, application is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::SetToken failed, application is nullptr");
         return;
     }
     tokens_ = token;
@@ -51,12 +51,12 @@ void AbilityRecordMgr::SetToken(const sptr<IRemoteObject> &token)
 void AbilityRecordMgr::SetEventRunner(const std::shared_ptr<EventRunner> &eventRunner)
 {
     if (eventRunner == nullptr) {
-        APP_LOGE("AbilityRecordMgr::SetEventRunner failed, eventRunner is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::SetEventRunner failed, eventRunner is nullptr");
         return;
     }
     sptr<IRemoteObject> token = GetToken();
     if (token == nullptr) {
-        APP_LOGE("AbilityRecordMgr::SetEventRunner failed, token is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::SetEventRunner failed, token is nullptr");
         return;
     }
 
@@ -64,7 +64,7 @@ void AbilityRecordMgr::SetEventRunner(const std::shared_ptr<EventRunner> &eventR
     if (abilityInstance != nullptr) {
         abilityInstance->SetEventRunner(eventRunner);
     } else {
-        APP_LOGW("AbilityRecordMgr::setEventRunner failed, ability record is not exists");
+        HILOG_WARN("AbilityRecordMgr::setEventRunner failed, ability record is not exists");
     }
 }
 
@@ -79,12 +79,12 @@ void AbilityRecordMgr::AddAbilityRecord(
     const sptr<IRemoteObject> &token, const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
 {
     if (token == nullptr) {
-        APP_LOGE("AbilityRecordMgr::AddAbilityRecord failed, token is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::AddAbilityRecord failed, token is nullptr");
         return;
     }
 
     if (abilityRecord == nullptr) {
-        APP_LOGE("AbilityRecordMgr::AddAbilityRecord failed, abilityRecord is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::AddAbilityRecord failed, abilityRecord is nullptr");
         return;
     }
 
@@ -100,7 +100,7 @@ void AbilityRecordMgr::AddAbilityRecord(
 void AbilityRecordMgr::RemoveAbilityRecord(const sptr<IRemoteObject> &token)
 {
     if (token == nullptr) {
-        APP_LOGE("AbilityRecordMgr::RemoveAbilityRecord failed, token is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::RemoveAbilityRecord failed, token is nullptr");
         return;
     }
     abilityRecords_.erase(token);
@@ -126,16 +126,16 @@ int AbilityRecordMgr::GetRecordCount() const
 std::shared_ptr<AbilityLocalRecord> AbilityRecordMgr::GetAbilityItem(const sptr<IRemoteObject> &token) const
 {
     if (token == nullptr) {
-        APP_LOGE("AbilityRecordMgr::GetAbilityItem failed, token is nullptr");
+        HILOG_ERROR("AbilityRecordMgr::GetAbilityItem failed, token is nullptr");
         return nullptr;
     }
 
     const auto &iter = abilityRecords_.find(token);
     if (iter != abilityRecords_.end()) {
-        APP_LOGI("AbilityRecordMgr::GetAbilityItem : the ability found");
+        HILOG_INFO("AbilityRecordMgr::GetAbilityItem : the ability found");
         return iter->second;
     }
-    APP_LOGI("AbilityRecordMgr::GetAbilityItem : the ability not found");
+    HILOG_INFO("AbilityRecordMgr::GetAbilityItem : the ability not found");
     return nullptr;
 }
 

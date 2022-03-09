@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "form_ability_self_starting_b.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 
@@ -30,24 +30,24 @@ std::vector<std::string> eventList = {
 void FormAbilitySelfStartingB::SelfStartingCallback::OnAcquired(const int32_t result,
     const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilitySelfStartingB::SelfStartingCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
-    APP_LOGI("%{public}s called, caseName_: %{public}s, code_: %{public}d", __func__, this->caseName_.c_str(),
+    HILOG_INFO("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called, caseName_: %{public}s, code_: %{public}d", __func__, this->caseName_.c_str(),
         this->code_);
     FormTestUtils::PublishEvent(this->caseName_, this->code_, "true");
 }
 
 void FormAbilitySelfStartingB::SelfStartingCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 
 void FormAbilitySelfStartingB::FMS_Start_0300_02(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<SelfStartingCallback> callback =
         std::make_shared<SelfStartingCallback>(FORM_EVENT_RECV_SELF_STARTING_TEST_0200, EVENT_CODE_200);
     // Set Want info begin
@@ -60,16 +60,16 @@ void FormAbilitySelfStartingB::FMS_Start_0300_02(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_SELF_STARTING_TEST_0200, EVENT_CODE_200, "false");
     }
 }
 
 void FormAbilitySelfStartingB::FMS_Start_0300_03(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<SelfStartingCallback> callback =
         std::make_shared<SelfStartingCallback>(FORM_EVENT_RECV_SELF_STARTING_TEST_0300, EVENT_CODE_300);
     // Set Want info begin
@@ -82,9 +82,9 @@ void FormAbilitySelfStartingB::FMS_Start_0300_03(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_SELF_STARTING_TEST_0300, EVENT_CODE_300, "false");
     }
 }
@@ -95,12 +95,12 @@ FormAbilitySelfStartingB::~FormAbilitySelfStartingB()
 }
 void FormAbilitySelfStartingB::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilitySelfStartingB::onStart");
+    HILOG_INFO("FormAbilitySelfStartingB::onStart");
     Ability::OnStart(want);
 }
 void FormAbilitySelfStartingB::OnActive()
 {
-    APP_LOGI("FormAbilitySelfStartingB::OnActive");
+    HILOG_INFO("FormAbilitySelfStartingB::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -108,25 +108,25 @@ void FormAbilitySelfStartingB::OnActive()
 
 void FormAbilitySelfStartingB::OnStop()
 {
-    APP_LOGI("FormAbilitySelfStartingB::OnStop");
+    HILOG_INFO("FormAbilitySelfStartingB::OnStop");
 
     Ability::OnStop();
 }
 void FormAbilitySelfStartingB::OnInactive()
 {
-    APP_LOGI("FormAbilitySelfStartingB::OnInactive");
+    HILOG_INFO("FormAbilitySelfStartingB::OnInactive");
 
     Ability::OnInactive();
 }
 void FormAbilitySelfStartingB::OnBackground()
 {
-    APP_LOGI("FormAbilitySelfStartingB::OnBackground");
+    HILOG_INFO("FormAbilitySelfStartingB::OnBackground");
 
     Ability::OnBackground();
 }
 void FormAbilitySelfStartingB::SubscribeEvent()
 {
-    APP_LOGI("FormAbilitySelfStartingB::SubscribeEvent");
+    HILOG_INFO("FormAbilitySelfStartingB::SubscribeEvent");
     MatchingSkills matchingSkills;
     for (const auto &e : eventList) {
         matchingSkills.AddEvent(e);
@@ -143,7 +143,7 @@ void FormAbilitySelfStartingB::Init(const std::shared_ptr<AbilityInfo> &abilityI
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilitySelfStartingB::Init");
+    HILOG_INFO("FormAbilitySelfStartingB::Init");
     Ability::Init(abilityInfo, application, handler, token);
     memberFuncMap_[FORM_EVENT_REQ_SELF_STARTING_TEST_0200] = &FormAbilitySelfStartingB::FMS_Start_0300_02;
     memberFuncMap_[FORM_EVENT_REQ_SELF_STARTING_TEST_0300] = &FormAbilitySelfStartingB::FMS_Start_0300_03;
@@ -153,7 +153,7 @@ void FormAbilitySelfStartingB::Init(const std::shared_ptr<AbilityInfo> &abilityI
 
 void FormAbilitySelfStartingB::handleEvent(std::string action, std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     if (calledFuncMap_.find(action) != calledFuncMap_.end()) {
         return;
     }
@@ -173,9 +173,9 @@ void FormAbilitySelfStartingB::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName, data.GetData());
     CommonEventManager::UnSubscribeCommonEvent(ability_->subscriber_);

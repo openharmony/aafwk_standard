@@ -50,7 +50,7 @@ ohos_systemtest("FormReleaseFormTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"FMSReleaseFormTest\"" ]
+  defines = [ "AMS_LOG_TAG = \"FMSReleaseFormTest\"" ]
 
   external_deps = [
     "ability_base:base",

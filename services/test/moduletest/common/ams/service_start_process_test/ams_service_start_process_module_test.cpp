@@ -20,7 +20,7 @@
 #undef private
 #undef protected
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
@@ -67,7 +67,7 @@ void AmsServiceStartModuleTest::TearDown()
  */
 HWTEST_F(AmsServiceStartModuleTest, AmsStartupMoretimes_001, TestSize.Level1)
 {
-    APP_LOGI("AmsStartupMoretimes_001 start");
+    HILOG_INFO("AmsStartupMoretimes_001 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     EXPECT_TRUE(appMgrService.get() != nullptr);
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
@@ -81,7 +81,7 @@ HWTEST_F(AmsServiceStartModuleTest, AmsStartupMoretimes_001, TestSize.Level1)
 
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("AmsStartupMoretimes_001 end");
+    HILOG_INFO("AmsStartupMoretimes_001 end");
 }
 
 /*
@@ -94,7 +94,7 @@ HWTEST_F(AmsServiceStartModuleTest, AmsStartupMoretimes_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceStartModuleTest, AmsStartupMoretimes_002, TestSize.Level1)
 {
-    APP_LOGI("AmsStartupMoretimes_002 start");
+    HILOG_INFO("AmsStartupMoretimes_002 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     EXPECT_TRUE(appMgrService.get() != nullptr);
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
@@ -108,5 +108,5 @@ HWTEST_F(AmsServiceStartModuleTest, AmsStartupMoretimes_002, TestSize.Level1)
 
     appMgrService->OnStart();
     EXPECT_EQ(ServiceRunningState::STATE_RUNNING, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("AmsStartupMoretimes_002 end");
+    HILOG_INFO("AmsStartupMoretimes_002 end");
 }

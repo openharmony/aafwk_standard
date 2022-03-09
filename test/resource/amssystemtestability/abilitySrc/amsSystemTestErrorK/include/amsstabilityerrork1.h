@@ -16,7 +16,7 @@
 #ifndef _AMS_ST_ABILITY_ERROR_K1_
 #define _AMS_ST_ABILITY_ERROR_K1_
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include <string>
 
 namespace OHOS {

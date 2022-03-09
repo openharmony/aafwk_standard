@@ -15,7 +15,7 @@
 
 #include "priority_object.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -133,7 +133,7 @@ PriorityObject *PriorityObject::Unmarshalling(Parcel &parcel)
 {
     PriorityObject *priorityObject = new (std::nothrow) PriorityObject();
     if (priorityObject && !priorityObject->ReadFromParcel(parcel)) {
-        APP_LOGW("failed, because ReadFromParcel failed");
+        HILOG_WARN("failed, because ReadFromParcel failed");
         delete priorityObject;
         priorityObject = nullptr;
     }

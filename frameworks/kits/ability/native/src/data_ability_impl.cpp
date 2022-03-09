@@ -16,8 +16,8 @@
 #include "data_ability_impl.h"
 
 #include "abs_shared_result_set.h"
-#include "app_log_wrapper.h"
 #include "data_ability_predicates.h"
+#include "hilog_wrapper.h"
 #include "values_bucket.h"
 
 namespace OHOS {
@@ -32,12 +32,12 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
  */
 void DataAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGI("DataAbilityImpl::sourceState:%{public}d; targetState: %{public}d; isNewWant: %{public}d",
+    HILOG_INFO("DataAbilityImpl::sourceState:%{public}d; targetState: %{public}d; isNewWant: %{public}d",
         lifecycleState_,
         targetState.state,
         targetState.isNewWant);
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
-        APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
+        HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
     }
 
@@ -53,7 +53,7 @@ void DataAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
             break;
         }
         default: {
-            APP_LOGE("DataAbilityImpl::HandleAbilityTransaction state is error");
+            HILOG_ERROR("DataAbilityImpl::HandleAbilityTransaction state is error");
             return;
             break;
         }
@@ -74,7 +74,7 @@ std::vector<std::string> DataAbilityImpl::GetFileTypes(const Uri &uri, const std
 {
     std::vector<std::string> types;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::GetFileTypes ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::GetFileTypes ability_ is nullptr");
         return types;
     }
 
@@ -97,7 +97,7 @@ int DataAbilityImpl::OpenFile(const Uri &uri, const std::string &mode)
 {
     int fd = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::OpenFile ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::OpenFile ability_ is nullptr");
         return fd;
     }
 
@@ -121,7 +121,7 @@ int DataAbilityImpl::OpenRawFile(const Uri &uri, const std::string &mode)
 {
     int fd = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::OpenRawFile ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::OpenRawFile ability_ is nullptr");
         return fd;
     }
 
@@ -141,7 +141,7 @@ int DataAbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value
 {
     int index = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::Insert ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::Insert ability_ is nullptr");
         return index;
     }
 
@@ -163,7 +163,7 @@ int DataAbilityImpl::Update(
 {
     int index = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::Update ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::Update ability_ is nullptr");
         return index;
     }
 
@@ -183,7 +183,7 @@ int DataAbilityImpl::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicat
 {
     int index = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::Delete ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::Delete ability_ is nullptr");
         return index;
     }
 
@@ -204,7 +204,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
     const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::Query ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::Query ability_ is nullptr");
         return nullptr;
     }
 
@@ -223,7 +223,7 @@ std::string DataAbilityImpl::GetType(const Uri &uri)
 {
     std::string type;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::GetType ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::GetType ability_ is nullptr");
         return type;
     }
     type = ability_->GetType(uri);
@@ -244,7 +244,7 @@ bool DataAbilityImpl::Reload(const Uri &uri, const PacMap &extras)
 {
     bool ret = false;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::Reload ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::Reload ability_ is nullptr");
         return ret;
     }
     ret = ability_->Reload(uri, extras);
@@ -263,7 +263,7 @@ int DataAbilityImpl::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Va
 {
     int ret = -1;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::BatchInsert​ ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::BatchInsert​ ability_ is nullptr");
         return ret;
     }
     ret = ability_->BatchInsert(uri, values);
@@ -285,7 +285,7 @@ Uri DataAbilityImpl::NormalizeUri(const Uri &uri)
 {
     Uri urivalue("");
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::NormalizeUri ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::NormalizeUri ability_ is nullptr");
         return urivalue;
     }
     urivalue = ability_->NormalizeUri(uri);
@@ -308,7 +308,7 @@ Uri DataAbilityImpl::DenormalizeUri(const Uri &uri)
 {
     Uri urivalue("");
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::DenormalizeUri ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::DenormalizeUri ability_ is nullptr");
         return urivalue;
     }
     urivalue = ability_->DenormalizeUri(uri);
@@ -318,16 +318,16 @@ Uri DataAbilityImpl::DenormalizeUri(const Uri &uri)
 std::vector<std::shared_ptr<DataAbilityResult>> DataAbilityImpl::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
 {
-    APP_LOGI("DataAbilityImpl::ExecuteBatch start");
+    HILOG_INFO("DataAbilityImpl::ExecuteBatch start");
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     if (ability_ == nullptr) {
-        APP_LOGE("DataAbilityImpl::ExecuteBatch ability_ is nullptr");
+        HILOG_ERROR("DataAbilityImpl::ExecuteBatch ability_ is nullptr");
         results.clear();
         return results;
     }
 
     results = ability_->ExecuteBatch(operations);
-    APP_LOGI("DataAbilityImpl::ExecuteBatch end, results size:%{public}zu", results.size());
+    HILOG_INFO("DataAbilityImpl::ExecuteBatch end, results size:%{public}zu", results.size());
     return results;
 }
 

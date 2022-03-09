@@ -20,10 +20,10 @@
 #include "refbase.h"
 
 #include "app_launch_data.h"
-#include "app_log_wrapper.h"
 #define private public
 #include "app_mgr_service_inner.h"
 #undef private
+#include "hilog_wrapper.h"
 #include "mock_ability_token.h"
 #include "mock_bundle_manager.h"
 #include "mock_ability_token.h"
@@ -167,7 +167,7 @@ TestApplicationPreRunningRecord AmsAppServiceFlowModuleTest::TestCreateApplicati
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_001 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_001 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -198,7 +198,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_001, TestSize.Level1)
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA1")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_001 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_001 end");
 }
 
 /*
@@ -210,7 +210,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_002 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_002 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestApplicationPreRunningRecord testAppB = TestCreateApplicationRecordAndSetState(
@@ -241,7 +241,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_002, TestSize.Level1)
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testappC.appRecord_->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA1")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_002 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_002 end");
 }
 
 /*
@@ -253,7 +253,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_003, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_003 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_003 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -273,7 +273,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_003, TestSize.Level1)
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA3")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_003 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_003 end");
 }
 
 /*
@@ -285,7 +285,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_003, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_004, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_004 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_004 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -329,7 +329,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_004, TestSize.Level1)
     EXPECT_EQ(testAppA.GetAbility("abilityA1"), nullptr);
     EXPECT_EQ(testAppA.GetAbility("abilityA2"), nullptr);
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_004 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_004 end");
 }
 
 /*
@@ -343,7 +343,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_004, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_005, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_005 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_005 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestApplicationPreRunningRecord testAppB = TestCreateApplicationRecordAndSetState(
@@ -383,7 +383,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_005, TestSize.Level1)
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testappC.appRecord_->GetState());
     EXPECT_EQ(testAppB.GetAbility("abilityB1"), nullptr);
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppB.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_005 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_BackKey_005 end");
 }
 
 /*
@@ -395,7 +395,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_005, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_001 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_001 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     // The previous app and ability
@@ -423,7 +423,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_001, TestSize.Level1
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppA.appRecord_->GetState());
     EXPECT_EQ(testAppB.GetAbility("abilityB1"), nullptr);
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppB.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_001 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_001 end");
 }
 
 /*
@@ -435,7 +435,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_001, TestSize.Level1
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_002 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_002 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -466,7 +466,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_002, TestSize.Level1
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA1")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_002 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_002 end");
 }
 
 /*
@@ -478,7 +478,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_002, TestSize.Level1
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_003, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_003 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_003 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -512,7 +512,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_003, TestSize.Level1
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppA.appRecord_->GetState());
     EXPECT_EQ(testAppB.GetAbility("abilityB1"), nullptr);
     EXPECT_EQ(ApplicationState::APP_STATE_TERMINATED, testAppB.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_003 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_003 end");
 }
 
 /*
@@ -524,7 +524,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_003, TestSize.Level1
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_004, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_004 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_004 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -559,7 +559,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_004, TestSize.Level1
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA1")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_004 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOff_004 end");
 }
 
 /*
@@ -571,7 +571,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_004, TestSize.Level1
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_001 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_001 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -593,7 +593,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_001, TestSize.Level1)
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_BACKGROUND, testAppA.GetAbility("abilityA3")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_001 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_001 end");
 }
 
 /*
@@ -605,7 +605,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_002 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_002 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -629,7 +629,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_002, TestSize.Level1)
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA3")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_002 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_002 end");
 }
 
 /*
@@ -641,7 +641,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_003, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_003 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_003 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -672,7 +672,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_003, TestSize.Level1)
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppB.GetAbility("abilityB1")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppB.GetAbility("abilityB2")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppB.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_003 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOn_003 end");
 }
 
 /*
@@ -684,7 +684,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOn_003, TestSize.Level1)
  */
 HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOnAndOff_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOnAndOff_001 start");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOnAndOff_001 start");
     TestApplicationPreRunningRecord testAppA = TestCreateApplicationRecordAndSetState(
         "abilityA1", "appA", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     TestCreateApplicationRecordAndSetState("abilityA2",
@@ -715,7 +715,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOnAndOff_001, TestSize.L
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA1")->GetState());
     EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppA.GetAbility("abilityA2")->GetState());
     EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppA.appRecord_->GetState());
-    APP_LOGI("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOnAndOff_001 end");
+    HILOG_INFO("AmsAppServiceFlowModuleTest ServiceFlow_ScreenOnAndOff_001 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

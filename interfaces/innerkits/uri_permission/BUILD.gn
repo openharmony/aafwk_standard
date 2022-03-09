@@ -34,9 +34,10 @@ ohos_shared_library("uri_permission_mgr") {
     "src/uri_permission_manager_stub.cpp",
   ]
 
-  deps = [ "${innerkits_path}/want:want" ]
+  deps = []
 
   external_deps = [
+    "ability_base:want",
     "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "hiviewdfx_hilog_native:libhilog",

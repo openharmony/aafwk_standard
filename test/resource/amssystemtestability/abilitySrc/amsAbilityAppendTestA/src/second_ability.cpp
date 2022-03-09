@@ -14,7 +14,7 @@
  */
 
 #include "second_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -31,7 +31,7 @@ void SecondAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("SecondAbility::Init");
+    HILOG_INFO("SecondAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
@@ -42,7 +42,7 @@ SecondAbility::~SecondAbility()
 
 void SecondAbility::OnStart(const Want &want)
 {
-    APP_LOGI("SecondAbility::onStart");
+    HILOG_INFO("SecondAbility::onStart");
     SubscribeEvent();
     Ability::OnStart(want);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "onStart");
@@ -50,7 +50,7 @@ void SecondAbility::OnStart(const Want &want)
 
 void SecondAbility::OnStop()
 {
-    APP_LOGI("SecondAbility::OnStop");
+    HILOG_INFO("SecondAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnStop");
@@ -58,35 +58,35 @@ void SecondAbility::OnStop()
 
 void SecondAbility::OnActive()
 {
-    APP_LOGI("SecondAbility::OnActive");
+    HILOG_INFO("SecondAbility::OnActive");
     Ability::OnActive();
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnActive");
 }
 
 void SecondAbility::OnInactive()
 {
-    APP_LOGI("SecondAbility::OnInactive");
+    HILOG_INFO("SecondAbility::OnInactive");
     Ability::OnInactive();
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnInactive");
 }
 
 void SecondAbility::OnBackground()
 {
-    APP_LOGI("SecondAbility::OnBackground");
+    HILOG_INFO("SecondAbility::OnBackground");
     Ability::OnBackground();
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnBackground");
 }
 
 void SecondAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("SecondAbility::OnForeground");
+    HILOG_INFO("SecondAbility::OnForeground");
     Ability::OnForeground(want);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnForeground");
 }
 
 void SecondAbility::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnCommand");
+    HILOG_INFO("AmsStServiceAbilityA1::OnCommand");
 
     Ability::OnCommand(want, restart, startId);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnActive");
@@ -94,7 +94,7 @@ void SecondAbility::OnCommand(const AAFwk::Want &want, bool restart, int startId
 
 sptr<IRemoteObject> SecondAbility::OnConnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnConnect");
+    HILOG_INFO("AmsStServiceAbilityA1::OnConnect");
 
     sptr<IRemoteObject> ret = Ability::OnConnect(want);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnActive");
@@ -102,7 +102,7 @@ sptr<IRemoteObject> SecondAbility::OnConnect(const Want &want)
 }
 void SecondAbility::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnDisconnect");
+    HILOG_INFO("AmsStServiceAbilityA1::OnDisconnect");
 
     Ability::OnDisconnect(want);
     TestUtils::PublishEvent(g_EVENT_RESP_SECOND_LIFECYCLE, SECOND_ABILITY_A_CODE, "OnDisconnect");
@@ -126,9 +126,9 @@ void SecondAbility::SubscribeEvent()
 
 void SecondEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("SecondEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("SecondEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("SecondEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("SecondEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("SecondEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("SecondEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), g_EVENT_REQU_SECOND.c_str()) == 0) {
         auto target = data.GetData();
@@ -139,14 +139,14 @@ void SecondEventSubscriber::OnReceiveEvent(const CommonEventData &data)
         if (mapTestFunc_.find(caseInfo[numZero]) != mapTestFunc_.end()) {
             mapTestFunc_[caseInfo[numZero]](std::stoi(caseInfo[numOne]), std::stoi(caseInfo[numTwo]), data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
 
 void SecondAbility::TestAbility(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("SecondAbility::TestAbility");
+    HILOG_INFO("SecondAbility::TestAbility");
     if (mapCase_.find(apiIndex) != mapCase_.end()) {
         if (caseIndex < (int)mapCase_[apiIndex].size()) {
             mapCase_[apiIndex][caseIndex](code);

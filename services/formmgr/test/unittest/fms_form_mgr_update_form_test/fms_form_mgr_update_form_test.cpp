@@ -76,7 +76,7 @@ void FmsFormMgrUpdateFormTest::TearDownTestCase()
 
 void FmsFormMgrUpdateFormTest::SetUp()
 {
-    APP_LOGI("fms_form_mgr_client_updateForm_test_001 setup");
+    HILOG_INFO("fms_form_mgr_client_updateForm_test_001 setup");
     formyMgrServ_->OnStart();
     token_ = new (std::nothrow) MockFormHostClient();
 

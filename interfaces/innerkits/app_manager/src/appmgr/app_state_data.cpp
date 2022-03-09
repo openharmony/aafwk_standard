@@ -15,7 +15,7 @@
 
 #include "app_state_data.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -37,7 +37,7 @@ AppStateData *AppStateData::Unmarshalling(Parcel &parcel)
 {
     AppStateData *appStateData = new (std::nothrow) AppStateData();
     if (appStateData && !appStateData->ReadFromParcel(parcel)) {
-        APP_LOGW("appStateData failed, because ReadFromParcel failed");
+        HILOG_WARN("appStateData failed, because ReadFromParcel failed");
         delete appStateData;
         appStateData = nullptr;
     }

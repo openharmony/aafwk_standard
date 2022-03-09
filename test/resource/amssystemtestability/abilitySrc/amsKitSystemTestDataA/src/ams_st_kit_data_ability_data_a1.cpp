@@ -18,7 +18,7 @@
 #include <mutex>
 #include <cstdio>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "data_ability_helper.h"
 
 namespace OHOS {
@@ -46,7 +46,7 @@ constexpr int charCnt = 5;
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityStart(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityStart");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityStart");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnStart");
@@ -55,7 +55,7 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityStart(const std::shar
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityInactive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityInactive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityInactive");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnInactive");
@@ -64,7 +64,7 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityInactive(const std::s
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityBackground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityBackground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityBackground");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnBackground");
@@ -73,7 +73,7 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityBackground(const std:
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityForeground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityForeground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityForeground");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnForeground");
@@ -82,7 +82,7 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityForeground(const std:
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityActive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityActive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityActive");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnActive");
@@ -91,7 +91,7 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityActive(const std::sha
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityStop(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityStop");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilityStop");
     std::string abilityName = ability->GetAbilityName();
     if (abilityName == mainAbility_->GetAbilityName()) {
         mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnStop");
@@ -100,55 +100,55 @@ void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilityStop(const std::share
 
 void AmsStKitDataAbilityDataA1LifecycleCallbacks::OnAbilitySaveState(const PacMap &outState)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilitySaveState");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleCallbacks  OnAbilitySaveState");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_CALLBACKS, "OnSaveState");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnActive()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnActive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnActive");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnActive");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnBackground()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnBackground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnBackground");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnBackground");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnForeground(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnForeground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnForeground");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnForeground");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnInactive()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnInactive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnInactive");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnInactive");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnStart");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnStart");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnStart");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnStop()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnStop");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnStop");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnStop");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnStateChanged(LifeCycle::Event event, const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnStateChanged");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnStateChanged");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnStateChanged");
 }
 
 void AmsStKitDataAbilityDataA1LifecycleObserver::OnStateChanged(LifeCycle::Event event)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1LifecycleObserver  OnStateChanged");
+    HILOG_INFO("AmsStKitDataAbilityDataA1LifecycleObserver  OnStateChanged");
     mainAbility_->PublishEvent(abilityEventName, LIFECYCLE_OBSERVER, "OnStateChanged");
 }
 
@@ -165,9 +165,9 @@ bool AmsStKitDataAbilityDataA1::PublishEvent(const std::string &eventName, const
 
 void KitTestDataA1EventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestDataA1EventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestDataA1EventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestDataA1EventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestDataA1EventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestDataA1EventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestDataA1EventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (eventName.compare(testEventName) == 0 && ABILITY_DATA_CODE == data.GetCode()) {
         std::string target = data.GetData();
@@ -179,7 +179,7 @@ void AmsStKitDataAbilityDataA1::Init(const std::shared_ptr<AbilityInfo> &ability
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1::Init called.");
+    HILOG_INFO("AmsStKitDataAbilityDataA1::Init called.");
     Ability::Init(abilityInfo, application, handler, token);
     auto callback = std::make_shared<AmsStKitDataAbilityDataA1LifecycleCallbacks>();
     callback->mainAbility_ = this;
@@ -216,7 +216,7 @@ void AmsStKitDataAbilityDataA1::SubscribeEvent(const Want &want)
 
 void AmsStKitDataAbilityDataA1::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnStart");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnStart");
     SubscribeEvent(want);
     originWant_ = want;
     Ability::OnStart(want);
@@ -225,42 +225,42 @@ void AmsStKitDataAbilityDataA1::OnStart(const Want &want)
 
 void AmsStKitDataAbilityDataA1::OnStop()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnStop");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnStop");
     Ability::OnStop();
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnStop");
 }
 
 void AmsStKitDataAbilityDataA1::OnActive()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnActive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnActive");
     Ability::OnActive();
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnActive");
 }
 
 void AmsStKitDataAbilityDataA1::OnInactive()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnInactive");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnInactive");
     Ability::OnInactive();
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnInactive");
 }
 
 void AmsStKitDataAbilityDataA1::OnForeground(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnForeground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnForeground");
     Ability::OnForeground(want);
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnForeground");
 }
 
 void AmsStKitDataAbilityDataA1::OnBackground()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 OnBackground");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 OnBackground");
     Ability::OnBackground();
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnBackground");
 }
 
 void AmsStKitDataAbilityDataA1::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1::OnNewWant");
+    HILOG_INFO("AmsStKitDataAbilityDataA1::OnNewWant");
     originWant_ = want;
     Ability::OnNewWant(want);
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OnNewWant");
@@ -268,14 +268,14 @@ void AmsStKitDataAbilityDataA1::OnNewWant(const Want &want)
 
 int AmsStKitDataAbilityDataA1::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<Insert>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<Insert>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "Insert");
     return DEFAULT_INSERT_RESULT;
 }
 
 int AmsStKitDataAbilityDataA1::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<Delete>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<Delete>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "Delete");
     return DEFAULT_DELETE_RESULT;
 }
@@ -283,7 +283,7 @@ int AmsStKitDataAbilityDataA1::Delete(const Uri &uri, const NativeRdb::DataAbili
 int AmsStKitDataAbilityDataA1::Update(
     const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<Update>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<Update>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "Update");
     return DEFAULT_UPDATE_RESULT;
 }
@@ -292,7 +292,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStKitDataAbilityDataA1::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     subscriber_->vectorOperator_ = columns;
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<Query>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<Query>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, OPERATOR_QUERY);
 
     STtools::WaitCompleted(event, OPERATOR_QUERY, ABILITY_DATA_CODE);
@@ -308,7 +308,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStKitDataAbilityDataA1::Query(
 
 std::vector<std::string> AmsStKitDataAbilityDataA1::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<GetFileTypes>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<GetFileTypes>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "GetFileTypes");
     std::vector<std::string> fileType {"filetypes"};
     return fileType;
@@ -316,7 +316,7 @@ std::vector<std::string> AmsStKitDataAbilityDataA1::GetFileTypes(const Uri &uri,
 
 int AmsStKitDataAbilityDataA1::OpenFile(const Uri &uri, const std::string &mode)
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1 <<<<OpenFile>>>>");
+    HILOG_INFO("AmsStKitDataAbilityDataA1 <<<<OpenFile>>>>");
     if (fd1 != nullptr) {
         fclose(fd1);
         fd1 = nullptr;
@@ -325,14 +325,14 @@ int AmsStKitDataAbilityDataA1::OpenFile(const Uri &uri, const std::string &mode)
     if (fd1 == nullptr)
         return -1;
     int fd = fileno(fd1);
-    APP_LOGI("AmsStKitDataAbilityDataA1 fd: %{public}d", fd);
+    HILOG_INFO("AmsStKitDataAbilityDataA1 fd: %{public}d", fd);
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "OpenFile");
     return fd;
 }
 
 void AmsStKitDataAbilityDataA1::TestLifeCycle()
 {
-    APP_LOGI("AmsStKitDataAbilityDataA1::TestLifeCycle");
+    HILOG_INFO("AmsStKitDataAbilityDataA1::TestLifeCycle");
     // ability_lifecycle.h
     auto lifecycle = Ability::GetLifecycle();
     PublishEvent(abilityEventName, ABILITY_DATA_CODE, "GetLifecycle");

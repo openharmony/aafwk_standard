@@ -43,6 +43,7 @@ config("dispatcher_test_config") {
   defines = []
 
   include_dirs = [
+    "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
 

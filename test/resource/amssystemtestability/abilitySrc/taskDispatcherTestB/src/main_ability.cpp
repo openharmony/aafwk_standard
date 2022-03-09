@@ -14,7 +14,7 @@
  */
 
 #include "main_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 #include <algorithm>
 #include <condition_variable>
@@ -51,14 +51,14 @@ constexpr int numThree = 3;
 
 bool Wait(const int task_num)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::Wait");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::Wait");
     std::unique_lock<std::mutex> ulock(cv_mutex);
     using namespace std::chrono_literals;
     bool result = cv.wait_for(ulock, 5000ms, [task_num] { return terminated_task_num == task_num; });
     if (result) {
         allDispatchers.clear();
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::Wait result:%{public}d", result);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::Wait result:%{public}d", result);
     return result;
 }
 
@@ -69,14 +69,14 @@ void TestTask(const std::string &task_id)
         terminated_task_num++;
         task_execution_sequence += task_id + delimiter;
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::TestTask: %{public}d %{public}s", terminated_task_num, task_id.c_str());
+    HILOG_INFO("-- -- -- -- -- --MainAbility::TestTask: %{public}d %{public}s", terminated_task_num, task_id.c_str());
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, terminated_task_num, task_execution_sequence);
     cv.notify_one();
 }
 
 void Reset()
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::Reset");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::Reset");
     terminated_task_num = 0;
     task_execution_sequence = delimiter;
     allDispatchers.clear();
@@ -84,15 +84,15 @@ void Reset()
 
 bool IsAscend(const std::vector<size_t> &vec)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::IsAscend begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::IsAscend begin");
     auto pos = std::adjacent_find(std::begin(vec), std::end(vec), std::greater<size_t>());
     return pos == std::end(vec);
-    APP_LOGI("-- -- -- -- -- --MainAbility::IsAscend end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::IsAscend end");
 }
 
 bool OuterTaskExecuted(TestSetting setting)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::OuterTaskExecuted begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::OuterTaskExecuted begin");
     std::string expectedTaskId;
     bool executed = true;
     for (int i = 0; i < testTaskCount; i++) {
@@ -114,13 +114,13 @@ bool OuterTaskExecuted(TestSetting setting)
         expectedTaskId = delimiter + outerGroupNotifyId + delimiter;
         executed = executed && (task_execution_sequence.find(expectedTaskId) != string::npos);
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::OuterTaskExecuted end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::OuterTaskExecuted end");
     return executed;
 }
 
 bool InnerTaskExecuted(TestSetting setting)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::InnerTaskExecuted begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::InnerTaskExecuted begin");
     std::string expectedTaskId;
     bool executed = true;
     for (int i = 0; i < testTaskCount; i++) {
@@ -144,45 +144,45 @@ bool InnerTaskExecuted(TestSetting setting)
         expectedTaskId = delimiter + innerGroupNotifyId + delimiter;
         executed = executed && (task_execution_sequence.find(expectedTaskId) != string::npos);
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::InnerTaskExecuted end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::InnerTaskExecuted end");
     return executed;
 }
 
 void setTaskIndex(std::string taskId, std::vector<size_t> &taskIndex)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::setTaskIndex begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::setTaskIndex begin");
     std::size_t indx = task_execution_sequence.find(taskId);
     if (indx != string::npos) {
         taskIndex.push_back(indx);
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::setTaskIndex end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::setTaskIndex end");
 }
 
 void GetTaskIndex(std::vector<size_t> &outerTaskIndex, std::vector<std::vector<size_t>> &innerTaskIndex,
     const int outerCnt = testTaskCount, const int innerCnt = testTaskCount)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex begin");
     std::string outerTaskId;
     std::string innerTaskId;
     outerTaskIndex.resize(outerCnt);
-    APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex outersize : %{public}zu", outerTaskIndex.size());
+    HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex outersize : %{public}zu", outerTaskIndex.size());
     innerTaskIndex.resize(outerCnt);
-    APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex innersize : %{public}zu", innerTaskIndex.size());
+    HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex innersize : %{public}zu", innerTaskIndex.size());
     for (auto &inner : innerTaskIndex) {
         inner.resize(innerCnt);
-        APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex inner :%{public}zu", inner.size());
+        HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex inner :%{public}zu", inner.size());
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex mid1");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex mid1");
     for (int i = 0; i < outerCnt; i++) {
         outerTaskId = delimiter + std::to_string(i) + delimiter;
-        APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex mid2");
+        HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex mid2");
         outerTaskIndex[i] = task_execution_sequence.find(outerTaskId);
-        APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex mid3");
+        HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex mid3");
         for (int j = 0; j < innerCnt; j++) {
             innerTaskId = delimiter + std::to_string(i) + innerDelimiter + std::to_string(j) + delimiter;
-            APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex mid4");
+            HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex mid4");
             innerTaskIndex[i][j] = task_execution_sequence.find(innerTaskId);
-            APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex mid5");
+            HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex mid5");
         }
         std::string taskId = innerSyncBarrierId + std::to_string(i);
         setTaskIndex(taskId, innerTaskIndex[i]);
@@ -194,14 +194,14 @@ void GetTaskIndex(std::vector<size_t> &outerTaskIndex, std::vector<std::vector<s
     setTaskIndex(outerSyncBarrierId, outerTaskIndex);
     setTaskIndex(outerAsyncBarrierId, outerTaskIndex);
     setTaskIndex(outerGroupNotifyId, outerTaskIndex);
-    APP_LOGI("-- -- -- -- -- --MainAbility::  end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::  end");
 }
 
 void MainAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("MainAbility::Init");
+    HILOG_INFO("MainAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
@@ -212,7 +212,7 @@ MainAbility::~MainAbility()
 
 void MainAbility::OnStart(const Want &want)
 {
-    APP_LOGI("MainAbility::onStart");
+    HILOG_INFO("MainAbility::onStart");
     SubscribeEvent();
     Ability::OnStart(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, Ability::GetState(), "onStart");
@@ -220,7 +220,7 @@ void MainAbility::OnStart(const Want &want)
 
 void MainAbility::OnStop()
 {
-    APP_LOGI("MainAbility::OnStop");
+    HILOG_INFO("MainAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, Ability::GetState(), "OnStop");
@@ -228,28 +228,28 @@ void MainAbility::OnStop()
 
 void MainAbility::OnActive()
 {
-    APP_LOGI("MainAbility::OnActive");
+    HILOG_INFO("MainAbility::OnActive");
     Ability::OnActive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, 0, "OnActive");
 }
 
 void MainAbility::OnInactive()
 {
-    APP_LOGI("MainAbility::OnInactive");
+    HILOG_INFO("MainAbility::OnInactive");
     Ability::OnInactive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, Ability::GetState(), "OnInactive");
 }
 
 void MainAbility::OnBackground()
 {
-    APP_LOGI("MainAbility::OnBackground");
+    HILOG_INFO("MainAbility::OnBackground");
     Ability::OnBackground();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, Ability::GetState(), "OnBackground");
 }
 
 void MainAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("MainAbility::OnForeground");
+    HILOG_INFO("MainAbility::OnForeground");
     Ability::OnForeground(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_B, Ability::GetState(), "OnForeground");
 }
@@ -272,21 +272,21 @@ void MainAbility::SubscribeEvent()
 
 void FirstEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), g_EVENT_REQU_FIRST_B.c_str()) == 0) {
         auto target = data.GetData();
         auto caseInfo = TestUtils::split(target, "_");
-        APP_LOGI("FirstEventSubscriber::OnReceiveEvent:caseInfo.size()=%{public}zu", caseInfo.size());
+        HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:caseInfo.size()=%{public}zu", caseInfo.size());
         if (caseInfo.size() < numThree) {
             return;
         }
         if (mapTestFunc_.find(caseInfo[numZero]) != mapTestFunc_.end()) {
             mapTestFunc_[caseInfo[numZero]](std::stoi(caseInfo[numOne]), std::stoi(caseInfo[numTwo]), data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
@@ -452,7 +452,7 @@ static void addTaskFromList(TaskList &dispatcher, const std::vector<TestOperatio
 
 void MainAbility::MultiAppCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -484,7 +484,7 @@ void MainAbility::MultiAppCase1(int code)
 
 void MainAbility::MultiAppCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::PARALLEL, context, "parallel"};
@@ -516,7 +516,7 @@ void MainAbility::MultiAppCase2(int code)
 
 void MainAbility::MultiAppCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::SERIAL, context, "serial"};
@@ -548,7 +548,7 @@ void MainAbility::MultiAppCase3(int code)
 
 void MainAbility::MultiAppCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::MAIN, context, "main"};

@@ -104,7 +104,7 @@ private:
         void OnChanged(const TaskStage &stage)
         {
             if (stage.IsDone()) {
-                APP_LOGI("ParallelTaskDispatcherBase task done.");
+                HILOG_INFO("ParallelTaskDispatcherBase task done.");
                 callback_();
             }
         }

@@ -29,6 +29,8 @@ config("appexecfwk_core_mock_config") {
     "//base/notification/ces_standard/interfaces/innerkits/native/include/",
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include/",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "${aafwk_path}/services/common/include",
+    "//foundation/appexecfwk/standard/common/log/include",
   ]
 }
 

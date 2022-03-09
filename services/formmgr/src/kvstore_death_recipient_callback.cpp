@@ -18,8 +18,8 @@
 #include <thread>
 #include <unistd.h>
 
-#include "app_log_wrapper.h"
 #include "form_db_cache.h"
+#include "hilog_wrapper.h"
 
 using namespace OHOS::DistributedKv;
 
@@ -31,21 +31,21 @@ const int32_t CHECK_INTERVAL = 100000;  // 100ms
 }  // namespace
 KvStoreDeathRecipientCallback::KvStoreDeathRecipientCallback()
 {
-    APP_LOGI("create kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("create kvstore death recipient callback instance %{public}p", this);
 }
 
 KvStoreDeathRecipientCallback::~KvStoreDeathRecipientCallback()
 {
-    APP_LOGI("destroy kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("destroy kvstore death recipient callback instance %{public}p", this);
 }
 
 void KvStoreDeathRecipientCallback::OnRemoteDied()
 {
-    APP_LOGI("OnRemoteDied, register data change listener begin");
+    HILOG_INFO("OnRemoteDied, register data change listener begin");
 
     auto dataStorage = FormDbCache::GetInstance().GetDataStorage();
     if (!dataStorage) {
-        APP_LOGE("dataStorage is nullptr");
+        HILOG_ERROR("dataStorage is nullptr");
         return;
     }
 
@@ -56,14 +56,14 @@ void KvStoreDeathRecipientCallback::OnRemoteDied()
             // init kvStore.
             if (dataStorage && dataStorage->ResetKvStore()) {
                 // register data change listener again.
-                APP_LOGI("current times is %{public}d", times);
+                HILOG_INFO("current times is %{public}d", times);
                 break;
             }
             usleep(CHECK_INTERVAL);
         }
     }).detach();
 
-    APP_LOGI("OnRemoteDied, register data change listener end");
+    HILOG_INFO("OnRemoteDied, register data change listener end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

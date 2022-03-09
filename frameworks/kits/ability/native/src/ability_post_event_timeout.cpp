@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
 #include "ability_post_event_timeout.h"
 
 #include "ability_handler.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -40,9 +40,9 @@ AbilityPostEventTimeout::~AbilityPostEventTimeout()
 
 void AbilityPostEventTimeout::TimingBegin(int64_t delaytime)
 {
-    APP_LOGI("AbilityPostEventTimeout::TimingBegin() call %{public}s", task_.c_str());
+    HILOG_INFO("AbilityPostEventTimeout::TimingBegin() call %{public}s", task_.c_str());
     if (handler_ == nullptr) {
-        APP_LOGE("AbilityPostEventTimeout::TimingBegin %{public}s handler_ is nullptr", task_.c_str());
+        HILOG_ERROR("AbilityPostEventTimeout::TimingBegin %{public}s handler_ is nullptr", task_.c_str());
         return;
     }
 
@@ -52,7 +52,7 @@ void AbilityPostEventTimeout::TimingBegin(int64_t delaytime)
 void AbilityPostEventTimeout::TimeEnd()
 {
     if (handler_ == nullptr) {
-        APP_LOGE("AbilityPostEventTimeout::TimeEnd %{public}s handler_ is nullptr", task_.c_str());
+        HILOG_ERROR("AbilityPostEventTimeout::TimeEnd %{public}s handler_ is nullptr", task_.c_str());
         return;
     }
 
@@ -65,19 +65,19 @@ void AbilityPostEventTimeout::TimeEnd()
 
 void AbilityPostEventTimeout::TimeOutProc()
 {
-    APP_LOGI("AbilityPostEventTimeout::TimeOutProc() call %{public}s", task_.c_str());
+    HILOG_INFO("AbilityPostEventTimeout::TimeOutProc() call %{public}s", task_.c_str());
     if (handler_ == nullptr) {
-        APP_LOGE("AbilityPostEventTimeout::TimeEnd %{public}s handler_ is nullptr", task_.c_str());
+        HILOG_ERROR("AbilityPostEventTimeout::TimeEnd %{public}s handler_ is nullptr", task_.c_str());
         return;
     }
 
     std::lock_guard<std::mutex> lck(mtx_);
     if (!taskExec_) {
         taskExec_ = true;
-        APP_LOGW("TimeOutProc %{public}s Event TimeOut", task_.c_str());
+        HILOG_WARN("TimeOutProc %{public}s Event TimeOut", task_.c_str());
         handler_->RemoveTask(task_);
     } else {
-        APP_LOGW("AbilityPostEventTimeout::TimeOutProc Exec Failed, The Event is %{public}s", task_.c_str());
+        HILOG_WARN("AbilityPostEventTimeout::TimeOutProc Exec Failed, The Event is %{public}s", task_.c_str());
     }
 }
 
