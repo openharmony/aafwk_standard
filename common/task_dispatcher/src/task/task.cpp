@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -208,9 +208,10 @@ void Task::ConcurrentQueueStatusUpdate(const TaskStage::TASKSTAGE taskstage)
 
 bool Task::operator==(std::shared_ptr<Task> &rec) const
 {
-    return this->sequence_ == rec->sequence_ && this->state_ == rec->state_ && this->priority_ == rec->priority_ &&
-           this->revocable_ == rec->revocable_ && this->runnable_ == rec->runnable_ &&
-           this->baseTaskDispatcher_ == rec->baseTaskDispatcher_;
+    return ((this->sequence_ == rec->sequence_) && (this->state_ == rec->state_) &&
+           (this->priority_ == rec->priority_) &&
+           (this->revocable_ == rec->revocable_) && (this->runnable_ == rec->runnable_) &&
+           (this->baseTaskDispatcher_ == rec->baseTaskDispatcher_));
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

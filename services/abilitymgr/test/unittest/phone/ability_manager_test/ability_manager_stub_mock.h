@@ -65,7 +65,7 @@ public:
     MOCK_METHOD1(RemoveStack, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(KillProcess, int(const std::string &));
-    MOCK_METHOD1(UninstallApp, int(const std::string &));
+    MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));

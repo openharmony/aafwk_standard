@@ -198,6 +198,19 @@ int AppScheduler::KillApplication(const std::string &bundleName)
     return ERR_OK;
 }
 
+int AppScheduler::KillApplicationByUid(const std::string &bundleName, int32_t uid)
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    int ret = (int)appMgrClient_->KillApplicationByUid(bundleName, uid);
+    if (ret != ERR_OK) {
+        HILOG_ERROR("Fail to kill application by uid.");
+        return INNER_ERR;
+    }
+
+    return ERR_OK;
+}
+
 int AppScheduler::ClearUpApplicationData(const std::string &bundleName)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);

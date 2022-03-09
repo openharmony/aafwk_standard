@@ -211,6 +211,15 @@ public:
     int KillApplication(const std::string &bundleName);
 
     /**
+     * kill the application by uid
+     *
+     * @param bundleName name of bundle.
+     * @param uid uid of bundle.
+     * @return 0 if success.
+     */
+    int KillApplicationByUid(const std::string &bundleName, int32_t uid);
+
+    /**
      * clear the application data
      *
      * @param bundleName.

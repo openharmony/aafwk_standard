@@ -503,7 +503,7 @@ void AbilityManagerProxy::AddWindowInfo(const sptr<IRemoteObject> &token, int32_
 }
 
 void AbilityManagerProxy::DumpSysState(
-    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserID, int UserID)
+    const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserId, int UserId)
 {
     int error;
     MessageParcel data;
@@ -519,11 +519,11 @@ void AbilityManagerProxy::DumpSysState(
         HILOG_ERROR("data write failed.");
         return ;
     }
-    if (!data.WriteBool(isUserID)) {
+    if (!data.WriteBool(isUserId)) {
         HILOG_ERROR("data write failed.");
         return ;
     }
-    if (!data.WriteInt32(UserID)) {
+    if (!data.WriteInt32(UserId)) {
         HILOG_ERROR("data write failed.");
         return ;
     }
@@ -931,7 +931,7 @@ int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
+int AbilityManagerProxy::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -942,6 +942,10 @@ int AbilityManagerProxy::UninstallApp(const std::string &bundleName)
     }
     if (!data.WriteString16(Str8ToStr16(bundleName))) {
         HILOG_ERROR("bundleName write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!data.WriteInt32(uid)) {
+        HILOG_ERROR("uid write failed.");
         return ERR_INVALID_VALUE;
     }
     int error = Remote()->SendRequest(IAbilityManager::UNINSTALL_APP, data, reply, option);

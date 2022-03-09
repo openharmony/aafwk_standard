@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -362,7 +362,7 @@ private:
     std::shared_ptr<Utils::Timer> intervalTimer_ = nullptr;
     uint64_t updateAtTimerId_ = 0L;
     uint64_t dynamicAlarmTimerId_ = 0L;
-    uint64_t limiterTimerId_= 0L;
+    uint64_t limiterTimerId_ = 0L;
 
     std::shared_ptr<WantAgent> currentUpdateAtWantAgent = nullptr;
     std::shared_ptr<WantAgent> currentDynamicWantAgent = nullptr;

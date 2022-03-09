@@ -1032,10 +1032,6 @@ void MainThread::HandleAbilityStage(const HapModuleInfo &abilityStage)
         return;
     }
 
-    if (!appMgr_ || !applicationImpl_) {
-        HILOG_ERROR("appMgr_ is nullptr");
-        return;
-    }
     appMgr_->AddAbilityStageDone(applicationImpl_->GetRecordId());
 }
 
@@ -1346,9 +1342,9 @@ void MainThread::HandleTerminateApplication()
     SetRunnerStarted(false);
 
 #ifdef ABILITY_LIBRARY_LOADER
-    HILOG_INFO("MainThread::handleTerminateApplication. Start callint CloseAbilityLibrary.");
+    HILOG_INFO("MainThread::handleTerminateApplication. Start calling CloseAbilityLibrary.");
     CloseAbilityLibrary();
-    HILOG_INFO("MainThread::handleTerminateApplication. End callint CloseAbilityLibrary.");
+    HILOG_INFO("MainThread::handleTerminateApplication. End calling CloseAbilityLibrary.");
 #endif  // ABILITY_LIBRARY_LOADER
 #ifdef APPLICATION_LIBRARY_LOADER
     if (handleAppLib_ != nullptr) {
