@@ -3808,6 +3808,7 @@ void AbilityManagerService::SwitchToUser(int32_t oldUserId, int32_t userId)
         isBoot = true;
     }
     StartUserApps(userId, isBoot);
+    PauseOldConnectManager(oldUserId);
 }
 
 void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
@@ -3847,6 +3848,29 @@ void AbilityManagerService::PauseOldMissionListManager(int32_t userId)
     }
     manager->PauseManager();
     HILOG_INFO("%{public}s, PauseOldMissionListManager:%{public}d-----end", __func__, userId);
+}
+
+void AbilityManagerService::PauseOldConnectManager(int32_t userId)
+{
+    HILOG_INFO("%{public}s, PauseOldConnectManager:%{public}d-----begin", __func__, userId);
+    if (userId == U0_USER_ID) {
+        HILOG_INFO("%{public}s, u0 not stop, id:%{public}d-----nullptr", __func__, userId);
+        return;
+    }
+    
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    auto it = connectManagers_.find(userId);
+    if (it == connectManagers_.end()) {
+        HILOG_INFO("%{public}s, PauseOldConnectManager:%{public}d-----no user", __func__, userId);
+        return;
+    }
+    auto manager = it->second;
+    if (!manager) {
+        HILOG_INFO("%{public}s, PauseOldConnectManager:%{public}d-----nullptr", __func__, userId);
+        return;
+    }
+    manager->StopAllExtensions();
+    HILOG_INFO("%{public}s, PauseOldConnectManager:%{public}d-----end", __func__, userId);
 }
 
 void AbilityManagerService::PauseOldStackManager(int32_t userId)

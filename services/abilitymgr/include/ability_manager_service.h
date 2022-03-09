@@ -1116,6 +1116,7 @@ private:
     void PauseOldUser(int32_t userId);
     void PauseOldStackManager(int32_t userId);
     void PauseOldMissionListManager(int32_t userId);
+    void PauseOldConnectManager(int32_t userId);
     bool IsSystemUI(const std::string &bundleName) const;
 
     bool VerificationAllToken(const sptr<IRemoteObject> &token);
