@@ -682,6 +682,14 @@ public:
      */
     virtual int SendANRProcessID(int pid) override;
 
+    /**
+     * Get mission id by ability token.
+     *
+     * @param token The token of ability.
+     * @return Returns -1 if do not find mission, otherwise return mission id.
+     */
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
+
 private:
     template <typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);
