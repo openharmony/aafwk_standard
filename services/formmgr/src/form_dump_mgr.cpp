@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "app_log_wrapper.h"
 #include "form_cache_mgr.h"
+#include "hilog_wrapper.h"
 #include "form_dump_mgr.h"
 
 namespace OHOS {
@@ -50,7 +50,7 @@ void FormDumpMgr::DumpStorageFormInfos(const std::vector<FormDBInfo> &storageInf
  */
 void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, std::string &formInfos) const
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     for (const auto &info : formRecordInfos) {
         formInfos += "  FormId [" + std::to_string(info.formId)  + "]";
         formInfos += "    formName [" + info.formName + "]";
@@ -95,7 +95,7 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
         }
     }
 
-    APP_LOGI("%{public}s success. Form infos:%{public}s", __func__, formInfos.c_str());
+    HILOG_INFO("%{public}s success. Form infos:%{public}s", __func__, formInfos.c_str());
 }
 /**
  * @brief Dump form infos.
@@ -104,11 +104,11 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
  */
 void FormDumpMgr::DumpFormHostInfo(const FormHostRecord &formHostRecord, std::string &formInfo) const
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     formInfo += "  ================FormHostRecord=================";
     formInfo += "  callerUid [" + std::to_string(formHostRecord.GetCallerUid()) + "]";
     formInfo += "  hostBundleName [" + formHostRecord.GetHostBundleName() + "]";
-    APP_LOGI("%{public}s success. Host Form infos:%{public}s", __func__, formInfo.c_str());
+    HILOG_INFO("%{public}s success. Host Form infos:%{public}s", __func__, formInfo.c_str());
 }
 
 /**
@@ -118,7 +118,7 @@ void FormDumpMgr::DumpFormHostInfo(const FormHostRecord &formHostRecord, std::st
  */
 void FormDumpMgr::DumpFormInfo(const FormRecord &formRecordInfo, std::string &formInfo) const
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     formInfo += "  ================FormRecord=================";
     formInfo += "  FormId [" + std::to_string(formRecordInfo.formId) + "]";
     formInfo += "    formName [" + formRecordInfo.formName + "]";
@@ -169,7 +169,7 @@ void FormDumpMgr::DumpFormInfo(const FormRecord &formRecordInfo, std::string &fo
         formInfo += "]" + LINE_SEPARATOR;
     }
 
-    APP_LOGI("%{public}s success. Form infos:%{public}s", __func__, formInfo.c_str());
+    HILOG_INFO("%{public}s success. Form infos:%{public}s", __func__, formInfo.c_str());
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

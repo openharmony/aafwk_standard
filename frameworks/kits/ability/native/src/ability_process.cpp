@@ -17,7 +17,7 @@
 
 #include <dlfcn.h>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
 static void *g_handle = nullptr;
@@ -55,9 +55,9 @@ AbilityProcess::~AbilityProcess()
 
 ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, CallbackInfo callback)
 {
-    APP_LOGI("AbilityProcess::StartAbility begin");
+    HILOG_INFO("AbilityProcess::StartAbility begin");
     if (ability == nullptr) {
-        APP_LOGE("AbilityProcess::StartAbility ability is nullptr");
+        HILOG_ERROR("AbilityProcess::StartAbility ability is nullptr");
         return ERR_NULL_OBJECT;
     }
 
@@ -67,15 +67,15 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
         param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
-    APP_LOGI("window mode is %{public}d", windowMode);
+    HILOG_INFO("window mode is %{public}d", windowMode);
 
     ErrCode err = ERR_OK;
     if (param.forResultOption == true) {
         if (param.setting == nullptr) {
-            APP_LOGI("%{public}s param.setting == nullptr call StartAbilityForResult.", __func__);
+            HILOG_INFO("%{public}s param.setting == nullptr call StartAbilityForResult.", __func__);
             err = ability->StartAbilityForResult(param.want, param.requestCode);
         } else {
-            APP_LOGI("%{public}s param.setting != nullptr call StartAbilityForResult.", __func__);
+            HILOG_INFO("%{public}s param.setting != nullptr call StartAbilityForResult.", __func__);
             err = ability->StartAbilityForResult(param.want, param.requestCode, *(param.setting));
         }
 
@@ -84,9 +84,9 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         std::map<int, CallbackInfo> map;
         auto it = abilityResultMap_.find(ability);
         if (it == abilityResultMap_.end()) {
-            APP_LOGI("AbilityProcess::StartAbility ability: %{public}p is not in the abilityResultMap_", ability);
+            HILOG_INFO("AbilityProcess::StartAbility ability: %{public}p is not in the abilityResultMap_", ability);
         } else {
-            APP_LOGI("AbilityProcess::StartAbility ability: %{public}p is in the abilityResultMap_", ability);
+            HILOG_INFO("AbilityProcess::StartAbility ability: %{public}p is in the abilityResultMap_", ability);
             map = it->second;
         }
         callback.errCode = err;
@@ -94,33 +94,33 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         abilityResultMap_[ability] = map;
     } else {
         if (param.setting == nullptr) {
-            APP_LOGI("%{public}s param.setting == nullptr call StartAbility.", __func__);
+            HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);
             err = ability->StartAbility(param.want);
         } else {
-            APP_LOGI("%{public}s param.setting != nullptr call StartAbility.", __func__);
+            HILOG_INFO("%{public}s param.setting != nullptr call StartAbility.", __func__);
             err = ability->StartAbility(param.want, *(param.setting));
         }
     }
-    APP_LOGI("AbilityProcess::StartAbility end");
+    HILOG_INFO("AbilityProcess::StartAbility end");
     return err;
 }
 
 void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resultCode, const Want &resultData)
 {
-    APP_LOGI("AbilityProcess::OnAbilityResult begin");
+    HILOG_INFO("AbilityProcess::OnAbilityResult begin");
 
     std::lock_guard<std::mutex> lock_l(mutex_);
 
     auto it = abilityResultMap_.find(ability);
     if (it == abilityResultMap_.end()) {
-        APP_LOGE("AbilityProcess::OnAbilityResult ability: %{public}p is not in the abilityResultMap", ability);
+        HILOG_ERROR("AbilityProcess::OnAbilityResult ability: %{public}p is not in the abilityResultMap", ability);
         return;
     }
     std::map<int, CallbackInfo> map = it->second;
 
     auto callback = map.find(requestCode);
     if (callback == map.end()) {
-        APP_LOGE("AbilityProcess::OnAbilityResult requestCode: %{public}d is not in the map", requestCode);
+        HILOG_ERROR("AbilityProcess::OnAbilityResult requestCode: %{public}d is not in the map", requestCode);
         return;
     }
     CallbackInfo callbackInfo = callback->second;
@@ -129,7 +129,7 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
     if (g_handle == nullptr) {
         g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
         if (g_handle == nullptr) {
-            APP_LOGE("%{public}s, dlopen failed %{public}s. %{public}s",
+            HILOG_ERROR("%{public}s, dlopen failed %{public}s. %{public}s",
                 __func__,
                 SHARED_LIBRARY_FEATURE_ABILITY,
                 dlerror());
@@ -140,7 +140,8 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
     // get function
     auto func = reinterpret_cast<NAPICallOnAbilityResult>(dlsym(g_handle, FUNC_CALL_ON_ABILITY_RESULT));
     if (func == nullptr) {
-        APP_LOGE("%{public}s, dlsym failed %{public}s. %{public}s", __func__, FUNC_CALL_ON_ABILITY_RESULT, dlerror());
+        HILOG_ERROR(
+            "%{public}s, dlsym failed %{public}s. %{public}s", __func__, FUNC_CALL_ON_ABILITY_RESULT, dlerror());
         dlclose(g_handle);
         g_handle = nullptr;
         return;
@@ -150,15 +151,15 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
     map.erase(requestCode);
 
     abilityResultMap_[ability] = map;
-    APP_LOGI("AbilityProcess::OnAbilityResult end");
+    HILOG_INFO("AbilityProcess::OnAbilityResult end");
 }
 
 void AbilityProcess::RequestPermissionsFromUser(
     Ability *ability, CallAbilityPermissionParam &param, CallbackInfo callbackInfo)
 {
-    APP_LOGI("AbilityProcess::RequestPermissionsFromUser begin");
+    HILOG_INFO("AbilityProcess::RequestPermissionsFromUser begin");
     if (ability == nullptr) {
-        APP_LOGE("AbilityProcess::RequestPermissionsFromUser ability is nullptr");
+        HILOG_ERROR("AbilityProcess::RequestPermissionsFromUser ability is nullptr");
         return;
     }
 
@@ -169,11 +170,11 @@ void AbilityProcess::RequestPermissionsFromUser(
         std::map<int, CallbackInfo> map;
         auto it = abilityRequestPermissionsForUserMap_.find(ability);
         if (it == abilityRequestPermissionsForUserMap_.end()) {
-            APP_LOGI("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is not in the "
+            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is not in the "
                      "abilityRequestPermissionsForUserMap_",
                 ability);
         } else {
-            APP_LOGI("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is in the "
+            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is in the "
                      "abilityRequestPermissionsForUserMap_",
                 ability);
             map = it->second;
@@ -182,15 +183,15 @@ void AbilityProcess::RequestPermissionsFromUser(
         map[param.requestCode] = callbackInfo;
         abilityRequestPermissionsForUserMap_[ability] = map;
     }
-    APP_LOGI("AbilityProcess::RequestPermissionsFromUser end");
+    HILOG_INFO("AbilityProcess::RequestPermissionsFromUser end");
 }
 
 void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int requestCode,
     const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {
-    APP_LOGI("AbilityProcess::OnRequestPermissionsFromUserResult begin");
+    HILOG_INFO("AbilityProcess::OnRequestPermissionsFromUserResult begin");
     if (ability == nullptr) {
-        APP_LOGE("AbilityProcess::OnRequestPermissionsFromUserResult ability is nullptr");
+        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult ability is nullptr");
         return;
     }
 
@@ -198,7 +199,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
 
     auto it = abilityRequestPermissionsForUserMap_.find(ability);
     if (it == abilityRequestPermissionsForUserMap_.end()) {
-        APP_LOGE("AbilityProcess::OnRequestPermissionsFromUserResult ability: %{public}p is not in the "
+        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult ability: %{public}p is not in the "
                  "abilityRequestPermissionsForUserMap_",
             ability);
         return;
@@ -207,7 +208,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
 
     auto callback = map.find(requestCode);
     if (callback == map.end()) {
-        APP_LOGE("AbilityProcess::OnRequestPermissionsFromUserResult requestCode: %{public}d is not in the map",
+        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult requestCode: %{public}d is not in the map",
             requestCode);
         return;
     }
@@ -217,7 +218,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
     if (g_handle == nullptr) {
         g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
         if (g_handle == nullptr) {
-            APP_LOGE("%{public}s, dlopen failed %{public}s. %{public}s",
+            HILOG_ERROR("%{public}s, dlopen failed %{public}s. %{public}s",
                 __func__,
                 SHARED_LIBRARY_FEATURE_ABILITY,
                 dlerror());
@@ -229,7 +230,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
     auto func = reinterpret_cast<NAPICallOnRequestPermissionsFromUserResult>(
         dlsym(g_handle, FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT));
     if (func == nullptr) {
-        APP_LOGE("%{public}s, dlsym failed %{public}s. %{public}s",
+        HILOG_ERROR("%{public}s, dlsym failed %{public}s. %{public}s",
             __func__,
             FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT,
             dlerror());
@@ -241,7 +242,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
     map.erase(requestCode);
 
     abilityRequestPermissionsForUserMap_[ability] = map;
-    APP_LOGI("AbilityProcess::OnRequestPermissionsFromUserResult end");
+    HILOG_INFO("AbilityProcess::OnRequestPermissionsFromUserResult end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

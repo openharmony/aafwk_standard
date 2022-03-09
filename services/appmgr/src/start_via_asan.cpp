@@ -15,7 +15,7 @@
 
 #include "start_via_asan.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "properties.h"
 
 namespace OHOS {
@@ -36,10 +36,10 @@ bool StartViaAsan::IsAsanVersion(const std::string &name) const
     std::string wrapAppName = "wrap." + name;
     std::string propValue = GetProperty(wrapAppName, defaultWrapValue);
     if (propValue != defaultWrapValue) {
-        APP_LOGI("%{public}s system prop set, value is %{public}s", wrapAppName.c_str(), propValue.c_str());
+        HILOG_INFO("%{public}s system prop set, value is %{public}s", wrapAppName.c_str(), propValue.c_str());
         return true;
     }
-    APP_LOGI("%{public}s system prop not set", wrapAppName.c_str());
+    HILOG_INFO("%{public}s system prop not set", wrapAppName.c_str());
     return false;
 }
 

@@ -15,7 +15,7 @@
 
 #include "process_info.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -45,7 +45,7 @@ ProcessInfo *ProcessInfo::Unmarshalling(Parcel &parcel)
 {
     ProcessInfo *processInfo = new (std::nothrow) ProcessInfo();
     if (processInfo && !processInfo->ReadFromParcel(parcel)) {
-        APP_LOGE("ProcessInfo::Unmarshalling ReadFromParcel failed");
+        HILOG_ERROR("ProcessInfo::Unmarshalling ReadFromParcel failed");
         delete processInfo;
         processInfo = nullptr;
     }

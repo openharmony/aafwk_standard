@@ -14,7 +14,7 @@
  */
 #include "test_runner.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "bundle_mgr_interface.h"
 #include "runtime.h"
 #include "runner_runtime/js_test_runner.h"
@@ -37,24 +37,24 @@ std::unique_ptr<TestRunner> TestRunner::Create(
     auto bundleObj =
         OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     if (!bundleObj) {
-        APP_LOGE("Failed to get bundle manager service");
+        HILOG_ERROR("Failed to get bundle manager service");
         return nullptr;
     }
 
     auto bms = iface_cast<IBundleMgr>(bundleObj);
     if (!bms) {
-        APP_LOGE("Cannot convert to IBundleMgr");
+        HILOG_ERROR("Cannot convert to IBundleMgr");
         return nullptr;
     }
 
     if (!args) {
-        APP_LOGE("Invalid ability delegator args");
+        HILOG_ERROR("Invalid ability delegator args");
         return nullptr;
     }
 
     BundleInfo bundleInfo;
     if (!bms->GetBundleInfo(args->GetTestBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USER)) {
-        APP_LOGE("Failed to GetBundleInfo");
+        HILOG_ERROR("Failed to GetBundleInfo");
         return nullptr;
     }
 

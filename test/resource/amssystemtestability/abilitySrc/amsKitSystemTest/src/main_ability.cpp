@@ -14,7 +14,7 @@
  */
 
 #include "main_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -25,13 +25,13 @@ void MainAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("MainAbility::Init");
+    HILOG_INFO("MainAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
 void MainAbility::OnStart(const Want &want)
 {
-    APP_LOGI("MainAbility::onStart");
+    HILOG_INFO("MainAbility::onStart");
     SubscribeEvent();
     Ability::OnStart(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "onStart");
@@ -39,7 +39,7 @@ void MainAbility::OnStart(const Want &want)
 
 void MainAbility::OnStop()
 {
-    APP_LOGI("MainAbility::OnStop");
+    HILOG_INFO("MainAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "OnStop");
@@ -47,49 +47,49 @@ void MainAbility::OnStop()
 
 void MainAbility::OnActive()
 {
-    APP_LOGI("MainAbility::OnActive");
+    HILOG_INFO("MainAbility::OnActive");
     Ability::OnActive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "OnActive");
 }
 
 void MainAbility::OnInactive()
 {
-    APP_LOGI("MainAbility::OnInactive");
+    HILOG_INFO("MainAbility::OnInactive");
     Ability::OnInactive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "OnInactive");
 }
 
 void MainAbility::OnBackground()
 {
-    APP_LOGI("MainAbility::OnBackground");
+    HILOG_INFO("MainAbility::OnBackground");
     Ability::OnBackground();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "OnBackground");
 }
 
 void MainAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("MainAbility::OnForeground");
+    HILOG_INFO("MainAbility::OnForeground");
     Ability::OnForeground(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_LIFECYCLE, Ability::GetState(), "OnForeground");
 }
 
 void MainAbility::OnAbilityResult(int requestCode, int resultCode, const Want &resultData)
 {
-    APP_LOGI("MainAbility::OnAbilityResult");
+    HILOG_INFO("MainAbility::OnAbilityResult");
     Ability::OnAbilityResult(requestCode, resultCode, resultData);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_ON_ABILITY_RESULT, 0, resultData.ToUri());
 }
 
 void MainAbility::OnBackPressed()
 {
-    APP_LOGI("MainAbility::OnBackPressed");
+    HILOG_INFO("MainAbility::OnBackPressed");
     Ability::OnBackPressed();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_ON_BACK_PRESSED, 0, "");
 }
 
 void MainAbility::OnNewWant(const Want &want)
 {
-    APP_LOGI("MainAbility::OnNewWant");
+    HILOG_INFO("MainAbility::OnNewWant");
     Ability::OnNewWant(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST_ON_NEW_WANT, 0, want.ToUri());
 }
@@ -111,9 +111,9 @@ void MainAbility::SubscribeEvent()
 
 void FirstEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("FirstEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), g_EVENT_REQU_FIRST.c_str()) == 0) {
         auto target = data.GetData();
@@ -128,14 +128,14 @@ void FirstEventSubscriber::OnReceiveEvent(const CommonEventData &data)
         if (mapTestFunc_.find(caseInfo[handle]) != mapTestFunc_.end()) {
             mapTestFunc_[caseInfo[handle]](std::stoi(caseInfo[api]), std::stoi(caseInfo[code]), data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
 
 void MainAbility::TestAbility(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("MainAbility::TestAbility");
+    HILOG_INFO("MainAbility::TestAbility");
     if (mapCase_.find(apiIndex) != mapCase_.end()) {
         if (caseIndex < (int)mapCase_[apiIndex].size()) {
             mapCase_[apiIndex][caseIndex](code);
@@ -196,14 +196,14 @@ void MainAbility::GetWantCase3(int code)
 
 void MainAbility::GetWindowCase1(int code)
 {
-    APP_LOGI("MainAbility::GetWindowCase1");
+    HILOG_INFO("MainAbility::GetWindowCase1");
     bool result = true;
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, code, std::to_string(result));
 }
 
 void MainAbility::DumpCase1(int code)
 {
-    APP_LOGI("MainAbility::DumpCase1");
+    HILOG_INFO("MainAbility::DumpCase1");
     std::string dumpInfo;
     Ability::Dump(dumpInfo);
     bool result = true;

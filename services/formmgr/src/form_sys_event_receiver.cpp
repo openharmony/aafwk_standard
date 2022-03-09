@@ -15,7 +15,6 @@
 
 #include <cinttypes>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "bundle_info.h"
 #include "common_event_manager.h"
@@ -31,6 +30,7 @@
 #include "form_sys_event_receiver.h"
 #include "form_timer_mgr.h"
 #include "form_util.h"
+#include "hilog_wrapper.h"
 #include "want.h"
 
 namespace OHOS {
@@ -54,24 +54,24 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
     std::string action = want.GetAction();
     std::string bundleName = want.GetElement().GetBundleName();
     if (action.empty() || bundleName.empty()) {
-        APP_LOGE("%{public}s failed, invalid param, action: %{public}s, bundleName: %{public}s",
+        HILOG_ERROR("%{public}s failed, invalid param, action: %{public}s, bundleName: %{public}s",
             __func__, action.c_str(), bundleName.c_str());
         return;
     }
-    APP_LOGI("%{public}s, action:%{public}s.", __func__, action.c_str());
+    HILOG_INFO("%{public}s, action:%{public}s.", __func__, action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
         // install or update
-        APP_LOGI("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
+        HILOG_INFO("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
         int userId = want.GetIntParam(KEY_USER_ID, 0);
         HandleProviderUpdated(bundleName, userId);
         HandleBundleFormInfoChanged(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
-        APP_LOGI("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
+        HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
         HandleProviderRemoved(bundleName);
         HandleBundleFormInfoRemoved(bundleName);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
-        APP_LOGI("%{public}s, bundle updated, bundleName: %{public}s", __func__, bundleName.c_str());
+        HILOG_INFO("%{public}s, bundle updated, bundleName: %{public}s", __func__, bundleName.c_str());
         int userId = want.GetIntParam(KEY_USER_ID, 0);
         HandleProviderUpdated(bundleName, userId);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
@@ -80,12 +80,12 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED) {
         int32_t userId = want.GetIntParam(KEY_USER_ID, -1);
         if (userId == -1) {
-            APP_LOGE("%{public}s, failed to get userId, bundleName: %{public}s", __func__, bundleName.c_str());
+            HILOG_ERROR("%{public}s, failed to get userId, bundleName: %{public}s", __func__, bundleName.c_str());
             return;
         }
         HandleUserIdRemoved(userId);
     } else {
-        APP_LOGW("%{public}s warnning, invalid action.", __func__);
+        HILOG_WARN("%{public}s warnning, invalid action.", __func__);
     }
 }
 /**
@@ -96,10 +96,10 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
  */
 void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, const int userId)
 {
-    APP_LOGI("%{public}s, bundleName:%{public}s, userId:%{public}d.", __func__, bundleName.c_str(), userId);
+    HILOG_INFO("%{public}s, bundleName:%{public}s, userId:%{public}d.", __func__, bundleName.c_str(), userId);
     std::vector<FormRecord> formInfos;
     if (!FormDataMgr::GetInstance().GetFormRecord(bundleName, formInfos)) {
-        APP_LOGI("%{public}s, no form info.", __func__);
+        HILOG_INFO("%{public}s, no form info.", __func__);
         return;
     }
 
@@ -111,21 +111,21 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
 
     std::vector<FormInfo> targetForms;
     if (!iBundleMgr->GetFormsInfoByApp(bundleName, targetForms)) {
-        APP_LOGE("%{public}s error, failed to get forms info.", __func__);
+        HILOG_ERROR("%{public}s error, failed to get forms info.", __func__);
         return;
     }
 
     std::vector<int64_t> removedForms;
     std::vector<int64_t> updatedForms;
     for (FormRecord& formRecord : formInfos) {
-        APP_LOGI("%{public}s, provider update, formName:%{public}s", __func__, formRecord.formName.c_str());
+        HILOG_INFO("%{public}s, provider update, formName:%{public}s", __func__, formRecord.formName.c_str());
         int64_t formId = formRecord.formId;
         if (ProviderFormUpdated(formId, formRecord, targetForms)) {
             updatedForms.emplace_back(formId);
             continue;
         }
 
-        APP_LOGI("%{public}s, no such form anymore, delete it:%{public}s", __func__, formRecord.formName.c_str());
+        HILOG_INFO("%{public}s, no such form anymore, delete it:%{public}s", __func__, formRecord.formName.c_str());
         (!formRecord.formTempFlg) ? FormDbCache::GetInstance().DeleteFormInfo(formId) :
             FormDataMgr::GetInstance().DeleteTempForm(formId);
         removedForms.emplace_back(formId);
@@ -133,16 +133,16 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
     }
 
     if (!removedForms.empty()) {
-        APP_LOGI("%{public}s, clean removed forms", __func__);
+        HILOG_INFO("%{public}s, clean removed forms", __func__);
         FormDataMgr::GetInstance().CleanHostRemovedForms(removedForms);
     }
 
-    APP_LOGI("%{public}s, remove form timer", __func__);
+    HILOG_INFO("%{public}s, remove form timer", __func__);
     for (const int64_t id : removedForms) {
         FormTimerMgr::GetInstance().RemoveFormTimer(id);
     }
 
-    APP_LOGI("%{public}s, refresh form", __func__);
+    HILOG_INFO("%{public}s, refresh form", __func__);
     Want want;
     want.SetParam(Constants::PARAM_FORM_USER_ID, userId);
     for (const int64_t id : updatedForms) {
@@ -152,7 +152,7 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
 
 void FormSysEventReceiver::HandleProviderRemoved(const std::string &bundleName)
 {
-    APP_LOGI("GET into HandleProviderRemoved with bundleName : %{public}s", bundleName.c_str());
+    HILOG_INFO("GET into HandleProviderRemoved with bundleName : %{public}s", bundleName.c_str());
     // clean removed form in DB
     std::set<int64_t> removedForms;
     {
@@ -184,16 +184,16 @@ void FormSysEventReceiver::HandleProviderRemoved(const std::string &bundleName)
 bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
     const FormRecord &formRecord, const std::vector<FormInfo> &targetForms)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     if (targetForms.empty()) {
-        APP_LOGE("%{public}s error, targetForms is empty", __func__);
+        HILOG_ERROR("%{public}s error, targetForms is empty", __func__);
         return false;
     }
 
     FormInfo updatedForm;
     bool bGetForm = FormDataMgr::GetInstance().GetUpdatedForm(formRecord, targetForms, updatedForm);
     if (bGetForm) {
-        APP_LOGI("%{public}s, form is still exist,form:%{public}s", __func__, formRecord.formName.c_str());
+        HILOG_INFO("%{public}s, form is still exist,form:%{public}s", __func__, formRecord.formName.c_str());
         // update resource
         FormDataMgr::GetInstance().SetNeedRefresh(formId, true);
         FormCacheMgr::GetInstance().DeleteData(formId);
@@ -206,7 +206,7 @@ bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
         FormDataMgr::GetInstance().SetVersionUpgrade(formId, true);
         return true;
     }
-    APP_LOGI("%{public}s, no updated form.", __func__);
+    HILOG_INFO("%{public}s, no updated form.", __func__);
     return false;
 }
 
@@ -222,7 +222,7 @@ void FormSysEventReceiver::HandleBundleFormInfoRemoved(const std::string &bundle
 
 void FormSysEventReceiver::HandleBundleDataCleared(const std::string &bundleName, const int uid)
 {
-    APP_LOGD("%{public}s, bundleName:%{public}s, uid:%{public}d", __func__, bundleName.c_str(), uid);
+    HILOG_DEBUG("%{public}s, bundleName:%{public}s, uid:%{public}d", __func__, bundleName.c_str(), uid);
     // as provider data is cleared
     std::set<int64_t> reCreateForms;
     FormDataMgr::GetInstance().GetReCreateFormRecordsByBundleName(bundleName, reCreateForms);
@@ -237,7 +237,7 @@ void FormSysEventReceiver::HandleBundleDataCleared(const std::string &bundleName
 }
 void FormSysEventReceiver::HandleFormHostDataCleared(const int uid)
 {
-    APP_LOGD("%{public}s, uid:%{public}d", __func__, uid);
+    HILOG_DEBUG("%{public}s, uid:%{public}d", __func__, uid);
     std::map<int64_t, bool> removedFormsMap;
     // clear formDBRecord
     ClearFormDBRecordData(uid, removedFormsMap);
@@ -266,7 +266,7 @@ void FormSysEventReceiver::ClearFormDBRecordData(const int uid, std::map<int64_t
         }
     }
 
-    APP_LOGD("%{public}s, noHostFormDbMap size:%{public}zu", __func__, noHostFormDbMap.size());
+    HILOG_DEBUG("%{public}s, noHostFormDbMap size:%{public}zu", __func__, noHostFormDbMap.size());
     if (noHostFormDbMap.size() > 0) {
         BatchDeleteNoHostDBForms(uid, noHostFormDbMap, foundFormsMap);
     }
@@ -280,7 +280,7 @@ void FormSysEventReceiver::ClearTempFormRecordData(const int uid, std::map<int64
     std::map<int64_t, bool> foundFormsMap;
     std::map<FormIdKey, std::set<int64_t>> noHostTempFormsMap;
     FormDataMgr::GetInstance().GetNoHostTempForms(uid, noHostTempFormsMap, foundFormsMap);
-    APP_LOGD("%{public}s, noHostTempFormsMap size:%{public}zu", __func__, noHostTempFormsMap.size());
+    HILOG_DEBUG("%{public}s, noHostTempFormsMap size:%{public}zu", __func__, noHostTempFormsMap.size());
     if (noHostTempFormsMap.size() > 0) {
         BatchDeleteNoHostTempForms(uid, noHostTempFormsMap, foundFormsMap);
     }
@@ -299,7 +299,7 @@ void FormSysEventReceiver::BatchDeleteNoHostDBForms(const int uid, std::map<Form
         std::string abilityName = formIdKey.abilityName;
         int result = FormProviderMgr::GetInstance().NotifyProviderFormsBatchDelete(bundleName, abilityName, formIds);
         if (result != ERR_OK) {
-            APP_LOGE("%{public}s error, NotifyProviderFormsBatchDelete failed! bundleName:%{public}s,\
+            HILOG_ERROR("%{public}s error, NotifyProviderFormsBatchDelete failed! bundleName:%{public}s,\
             abilityName:%{public}s",
                 __func__, bundleName.c_str(), abilityName.c_str());
             for (int64_t formId : formIds) {
@@ -350,7 +350,7 @@ void FormSysEventReceiver::BatchDeleteNoHostTempForms(const int uid, std::map<Fo
         std::string abilityName = formIdKey.abilityName;
         int result = FormProviderMgr::GetInstance().NotifyProviderFormsBatchDelete(bundleName, abilityName, formIds);
         if (result != ERR_OK) {
-            APP_LOGE("%{public}s error, NotifyProviderFormsBatchDelete failed! bundleName:%{public}s,\
+            HILOG_ERROR("%{public}s error, NotifyProviderFormsBatchDelete failed! bundleName:%{public}s,\
             abilityName:%{public}s",
                 __func__, bundleName.c_str(), abilityName.c_str());
             for (int64_t formId : formIds) {
@@ -367,12 +367,12 @@ void FormSysEventReceiver::BatchDeleteNoHostTempForms(const int uid, std::map<Fo
 }
 void FormSysEventReceiver::ReCreateForm(const int64_t formId)
 {
-    APP_LOGI("%{public}s start, formId:%{public}" PRId64 "", __func__, formId);
+    HILOG_INFO("%{public}s start, formId:%{public}" PRId64 "", __func__, formId);
     FormRecord reCreateRecord;
     FormRecord record;
     bool isGetForm = FormDataMgr::GetInstance().GetFormRecord(formId, record);
     if (!isGetForm) {
-        APP_LOGE("%{public}s error, not exist such form:%{public}" PRId64 "", __func__, formId);
+        HILOG_ERROR("%{public}s error, not exist such form:%{public}" PRId64 "", __func__, formId);
         return;
     }
     FormCacheMgr::GetInstance().DeleteData(formId);
@@ -393,15 +393,15 @@ void FormSysEventReceiver::ReCreateForm(const int64_t formId)
 void FormSysEventReceiver::GetTimerCfg(const bool updateEnabled,
     const int updateDuration, const std::string &configUpdateAt, FormTimerCfg& cfg)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     if (!updateEnabled) {
-        APP_LOGI("%{public}s, update disable", __func__);
+        HILOG_INFO("%{public}s, update disable", __func__);
         return;
     }
 
     if (updateDuration > 0) {
         // interval timer
-        APP_LOGI("%{public}s,interval timer updateDuration:%{public}d", __func__, updateDuration);
+        HILOG_INFO("%{public}s,interval timer updateDuration:%{public}d", __func__, updateDuration);
         if (updateDuration <= Constants::MIN_CONFIG_DURATION) {
             cfg.updateDuration = Constants::MIN_PERIOD;
         } else if (updateDuration >= Constants::MAX_CONFIG_DURATION) {
@@ -414,14 +414,14 @@ void FormSysEventReceiver::GetTimerCfg(const bool updateEnabled,
     } else {
         // updateAtTimer
         if (configUpdateAt.empty()) {
-            APP_LOGI("%{public}s, configUpdateAt is empty", __func__);
+            HILOG_INFO("%{public}s, configUpdateAt is empty", __func__);
             return;
         }
-        APP_LOGI("%{public}s,update at timer updateAt:%{public}s", __func__, configUpdateAt.c_str());
+        HILOG_INFO("%{public}s,update at timer updateAt:%{public}s", __func__, configUpdateAt.c_str());
 
         std::vector<std::string> temp = FormUtil::StringSplit(configUpdateAt, Constants::TIME_DELIMETER);
         if (temp.size() != Constants::UPDATE_AT_CONFIG_COUNT) {
-            APP_LOGE("%{public}s, invalid config", __func__);
+            HILOG_ERROR("%{public}s, invalid config", __func__);
             return;
         }
         int hour = -1;
@@ -430,7 +430,7 @@ void FormSysEventReceiver::GetTimerCfg(const bool updateEnabled,
         min = std::stoi(temp[1]);
         if (hour < Constants::MIN_TIME || hour > Constants::MAX_HOUR || min < Constants::MIN_TIME || min >
             Constants::MAX_MININUTE) {
-            APP_LOGE("%{public}s, time is invalid", __func__);
+            HILOG_ERROR("%{public}s, time is invalid", __func__);
             return;
         }
 
@@ -461,10 +461,10 @@ void FormSysEventReceiver::HandleTimerUpdate(const int64_t formId,
         FormDataMgr::GetInstance().SetUpdateInfo(formId, true,
             timerCfg.updateDuration, timerCfg.updateAtHour, timerCfg.updateAtMin);
         if (timerCfg.updateDuration > 0) {
-            APP_LOGI("%{public}s, add interval timer:%{public}" PRId64 "", __func__, timerCfg.updateDuration);
+            HILOG_INFO("%{public}s, add interval timer:%{public}" PRId64 "", __func__, timerCfg.updateDuration);
             FormTimerMgr::GetInstance().AddFormTimer(formId, timerCfg.updateDuration, record.userId);
         } else {
-            APP_LOGI("%{public}s, add at timer:%{public}d, %{public}d", __func__,
+            HILOG_INFO("%{public}s, add at timer:%{public}d, %{public}d", __func__,
                 timerCfg.updateAtHour, timerCfg.updateAtMin);
             FormTimerMgr::GetInstance().AddFormTimer(formId, timerCfg.updateAtHour,
                                                      timerCfg.updateAtMin, record.userId);

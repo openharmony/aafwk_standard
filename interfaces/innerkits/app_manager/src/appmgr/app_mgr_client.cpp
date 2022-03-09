@@ -22,9 +22,9 @@
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 
-#include "app_log_wrapper.h"
 #include "app_mgr_interface.h"
 #include "app_service_manager.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -302,7 +302,7 @@ void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return;
     }
 
@@ -324,7 +324,7 @@ void AppMgrClient::AddAbilityStageDone(const int32_t recordId)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return;
     }
 
@@ -335,7 +335,7 @@ void AppMgrClient::StartupResidentProcess(const std::vector<AppExecFwk::BundleIn
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return;
     }
 
@@ -347,7 +347,7 @@ int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemo
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
     }
     return service->StartUserTestProcess(want, observer, bundleInfo);
@@ -358,7 +358,7 @@ int AppMgrClient::FinishUserTest(
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
     }
     return service->FinishUserTest(msg, resultCode, bundleName, pid);
@@ -394,7 +394,7 @@ void AppMgrClient::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::W
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return;
     }
 
@@ -419,7 +419,7 @@ int AppMgrClient::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<I
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
     }
 
@@ -443,7 +443,7 @@ int AppMgrClient::StartRenderProcess(const std::string &renderParam, int32_t ipc
 void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderScheduler)
 {
     if (!renderScheduler) {
-        APP_LOGI("renderScheduler is nullptr");
+        HILOG_INFO("renderScheduler is nullptr");
         return;
     }
 
@@ -453,7 +453,7 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
 
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service != nullptr) {
-        APP_LOGI("AttachRenderProcess");
+        HILOG_INFO("AttachRenderProcess");
         service->AttachRenderProcess(renderScheduler->AsObject());
     }
 }

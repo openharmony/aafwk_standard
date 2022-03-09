@@ -43,17 +43,15 @@ ohos_shared_library("dataobs_manager") {
     "${services_path}/dataobsmgr:dataobsms_config",
   ]
 
-  deps = [
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
 
   external_deps = [
     "ability_base:zuri",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

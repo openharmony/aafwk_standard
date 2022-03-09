@@ -50,7 +50,7 @@ ohos_systemtest("fmsFuzzTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"fmsFuzzTest\"" ]
+  defines = [ "AMS_LOG_TAG = \"fmsFuzzTest\"" ]
 
   external_deps = [
     "ability_base:base",

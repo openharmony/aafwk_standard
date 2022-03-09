@@ -17,7 +17,7 @@
 #define private public
 #include "sync_task.h"
 #undef private
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "default_worker_pool_config.h"
 #include "task.h"
 #include "task_priority.h"
@@ -55,7 +55,7 @@ HWTEST(SyncTaskTest, SyncTask_ConstructorTest_001, TestSize.Level0)
         long wait = 200;
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
-        APP_LOGD("task %{public}d end", 0);
+        HILOG_DEBUG("task %{public}d end", 0);
     });
     auto priorityLow = TaskPriority::LOW;
     auto priorityHigh = TaskPriority::HIGH;
@@ -90,7 +90,7 @@ HWTEST(SyncTaskTest, SyncTask_RunTest_001, TestSize.Level0)
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
         count++;
-        APP_LOGD("task %{public}d end", count.load());
+        HILOG_DEBUG("task %{public}d end", count.load());
     });
     auto priority = TaskPriority::DEFAULT;
     {
@@ -125,7 +125,7 @@ HWTEST(SyncTaskTest, SyncTask_WaitTest_001, TestSize.Level0)
         auto time = std::chrono::milliseconds(wait);
         std::this_thread::sleep_for(time);
         count++;
-        APP_LOGD("task %{public}d end", count.load());
+        HILOG_DEBUG("task %{public}d end", count.load());
     });
     auto priority = TaskPriority::LOW;
     {

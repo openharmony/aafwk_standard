@@ -14,7 +14,7 @@
  */
 
 #include "life_cycle_observer_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "base_ability.h"
 #include "test_utils.h"
 
@@ -132,7 +132,7 @@ void LifeCycleObserverAbility::Init(const std::shared_ptr<AbilityInfo> &abilityI
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("LifeCycleObserverAbility::Init called.");
+    HILOG_INFO("LifeCycleObserverAbility::Init called.");
     BaseAbility::Init(abilityInfo, application, handler, token);
     SubscribeEvent();
     lifecycleCallbacks_ = std::make_shared<LifecycleObserverLifecycleCallbacks>();
@@ -172,7 +172,7 @@ void LifeCycleObserverAbility::OnStart(const Want &want)
 
 void LifeCycleObserverAbility::OnStop()
 {
-    APP_LOGI("LifeCycleObserverAbility::OnStop");
+    HILOG_INFO("LifeCycleObserverAbility::OnStop");
     BaseAbility::OnStop();
     TestUtils::PublishEvent(
         APP_LIFE_CYCLE_OBSERVER_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
@@ -184,7 +184,7 @@ void LifeCycleObserverAbility::OnStop()
 
 void LifeCycleObserverAbility::OnActive()
 {
-    APP_LOGI("LifeCycleObserverAbility::OnActive");
+    HILOG_INFO("LifeCycleObserverAbility::OnActive");
     BaseAbility::OnActive();
     TestUtils::PublishEvent(
         APP_LIFE_CYCLE_OBSERVER_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
@@ -196,7 +196,7 @@ void LifeCycleObserverAbility::OnActive()
 
 void LifeCycleObserverAbility::OnInactive()
 {
-    APP_LOGI("LifeCycleObserverAbility::OnInactive");
+    HILOG_INFO("LifeCycleObserverAbility::OnInactive");
     BaseAbility::OnInactive();
     TestUtils::PublishEvent(
         APP_LIFE_CYCLE_OBSERVER_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
@@ -208,7 +208,7 @@ void LifeCycleObserverAbility::OnInactive()
 
 void LifeCycleObserverAbility::OnBackground()
 {
-    APP_LOGI("LifeCycleObserverAbility::OnBackground");
+    HILOG_INFO("LifeCycleObserverAbility::OnBackground");
     BaseAbility::OnBackground();
     TestUtils::PublishEvent(
         APP_LIFE_CYCLE_OBSERVER_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
@@ -220,7 +220,7 @@ void LifeCycleObserverAbility::OnBackground()
 
 void LifeCycleObserverAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("LifeCycleObserverAbility::OnForeground");
+    HILOG_INFO("LifeCycleObserverAbility::OnForeground");
     BaseAbility::OnBackground();
     TestUtils::PublishEvent(
         APP_LIFE_CYCLE_OBSERVER_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnForeground");
@@ -232,7 +232,7 @@ void LifeCycleObserverAbility::OnForeground(const Want &want)
 
 void LifeCycleObserverAbility::OnCommand(const Want &want, bool restart, int startId)
 {
-    APP_LOGI("LifeCycleObserverAbility::OnCommand");
+    HILOG_INFO("LifeCycleObserverAbility::OnCommand");
 
     BaseAbility::OnCommand(want, restart, startId);
     TestUtils::PublishEvent(
@@ -245,7 +245,7 @@ void LifeCycleObserverAbility::OnCommand(const Want &want, bool restart, int sta
 
 sptr<IRemoteObject> LifeCycleObserverAbility::OnConnect(const Want &want)
 {
-    APP_LOGI("LifeCycleObserverAbility::OnConnect");
+    HILOG_INFO("LifeCycleObserverAbility::OnConnect");
 
     sptr<IRemoteObject> ret = BaseAbility::OnConnect(want);
     TestUtils::PublishEvent(
@@ -259,7 +259,7 @@ sptr<IRemoteObject> LifeCycleObserverAbility::OnConnect(const Want &want)
 
 void LifeCycleObserverAbility::OnDisconnect(const Want &want)
 {
-    APP_LOGI("LifeCycleObserverAbility::OnDisconnect");
+    HILOG_INFO("LifeCycleObserverAbility::OnDisconnect");
 
     BaseAbility::OnDisconnect(want);
     TestUtils::PublishEvent(
@@ -755,10 +755,10 @@ void LifeCycleObserverAbility::TestLifeCycleRemoveObserver()
 
 void LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI(
+    HILOG_INFO(
         "LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
 
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), APP_LIFE_CYCLE_OBSERVER_REQ_EVENT_NAME.c_str()) == 0) {
@@ -767,7 +767,7 @@ void LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent(const CommonEventDa
         if (func != mapTestFunc_.end()) {
             func->second();
         } else {
-            APP_LOGI("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent: CommonEventData error(%{public}s)",
+            HILOG_INFO("LifeCycleObserverAbilityEventSubscriber::OnReceiveEvent: CommonEventData error(%{public}s)",
                 target.c_str());
         }
     }

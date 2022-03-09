@@ -18,7 +18,7 @@
 #include "nlohmann/json.hpp"
 #include "string_ex.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "parcel_macro.h"
 
 namespace OHOS {
@@ -48,7 +48,7 @@ RunningProcessInfo *RunningProcessInfo::Unmarshalling(Parcel &parcel)
 {
     RunningProcessInfo *info = new (std::nothrow) RunningProcessInfo();
     if (info && !info->ReadFromParcel(parcel)) {
-        APP_LOGW("read from parcel failed");
+        HILOG_WARN("read from parcel failed");
         delete info;
         info = nullptr;
     }

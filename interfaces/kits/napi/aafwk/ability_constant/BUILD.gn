@@ -20,9 +20,12 @@ ohos_shared_library("abilityconstant_napi") {
 
   sources = [ "ability_constant_module.cpp" ]
 
-  deps = [ "//utils/native/base:utils" ]
+  deps = []
 
-  external_deps = [ "napi:ace_napi" ]
+  external_deps = [
+    "napi:ace_napi",
+    "utils_base:utils",
+  ]
 
   relative_install_dir = "module/application"
   subsystem_name = "aafwk"

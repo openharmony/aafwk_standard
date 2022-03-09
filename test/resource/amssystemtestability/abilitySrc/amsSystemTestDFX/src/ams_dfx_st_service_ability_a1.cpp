@@ -14,7 +14,7 @@
  */
 
 #include "ams_dfx_st_service_ability_a1.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 using namespace OHOS::EventFwk;
@@ -26,7 +26,7 @@ AmsDfxStServiceAbilityA1::~AmsDfxStServiceAbilityA1()
 
 void AmsDfxStServiceAbilityA1::OnStart(const Want &want)
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnStart");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnStart");
     pageAbilityEvent.SubscribeEvent(STEventName::g_eventList, shared_from_this());
     Ability::OnStart(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStart;
@@ -35,7 +35,7 @@ void AmsDfxStServiceAbilityA1::OnStart(const Want &want)
 
 void AmsDfxStServiceAbilityA1::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnCommand");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnCommand");
 
     Ability::OnCommand(want, restart, startId);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnCommand;
@@ -44,7 +44,7 @@ void AmsDfxStServiceAbilityA1::OnCommand(const AAFwk::Want &want, bool restart, 
 
 void AmsDfxStServiceAbilityA1::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnNewWant");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnNewWant");
 
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnNewWant;
@@ -53,7 +53,7 @@ void AmsDfxStServiceAbilityA1::OnNewWant(const Want &want)
 
 void AmsDfxStServiceAbilityA1::OnStop()
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnStop");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnStop");
 
     Ability::OnStop();
     pageAbilityEvent.UnsubscribeEvent();
@@ -63,7 +63,7 @@ void AmsDfxStServiceAbilityA1::OnStop()
 
 void AmsDfxStServiceAbilityA1::OnActive()
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnActive");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnActive");
 
     Ability::OnActive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnActive;
@@ -72,7 +72,7 @@ void AmsDfxStServiceAbilityA1::OnActive()
 
 void AmsDfxStServiceAbilityA1::OnInactive()
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnInactive");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnInactive");
 
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnInactive;
@@ -81,7 +81,7 @@ void AmsDfxStServiceAbilityA1::OnInactive()
 
 void AmsDfxStServiceAbilityA1::OnBackground()
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnBackground");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnBackground");
 
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnBackground;
@@ -90,7 +90,7 @@ void AmsDfxStServiceAbilityA1::OnBackground()
 
 sptr<IRemoteObject> AmsDfxStServiceAbilityA1::OnConnect(const Want &want)
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnConnect");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnConnect");
 
     sptr<IRemoteObject> ret = Ability::OnConnect(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnConnect;
@@ -101,7 +101,7 @@ sptr<IRemoteObject> AmsDfxStServiceAbilityA1::OnConnect(const Want &want)
 
 void AmsDfxStServiceAbilityA1::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AmsDfxStServiceAbilityA1::OnDisconnect");
+    HILOG_INFO("AmsDfxStServiceAbilityA1::OnDisconnect");
 
     Ability::OnDisconnect(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnDisconnect;

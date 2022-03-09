@@ -15,7 +15,7 @@
  */
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "provider_connect_stub.h"
@@ -35,7 +35,7 @@ int ProviderConnectStub::OnRemoteRequest(
     std::u16string descriptor = ProviderConnectStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGI("%{public}s failed, local descriptor is not equal to remote", __func__);
+        HILOG_INFO("%{public}s failed, local descriptor is not equal to remote", __func__);
         return ERR_INVALID_STATE;
     }
 
@@ -43,7 +43,7 @@ int ProviderConnectStub::OnRemoteRequest(
     switch (code) {
         case IAbilityConnection::ON_ABILITY_CONNECT_DONE: {
             if (element == nullptr) {
-                APP_LOGE("%{public}s failed, callback stub receive element is nullptr", __func__);
+                HILOG_ERROR("%{public}s failed, callback stub receive element is nullptr", __func__);
                 return ERR_APPEXECFWK_PARCEL_ERROR;
             }
             auto remoteObject = data.ReadRemoteObject();
@@ -54,7 +54,7 @@ int ProviderConnectStub::OnRemoteRequest(
         }
         case IAbilityConnection::ON_ABILITY_DISCONNECT_DONE: {
             if (element == nullptr) {
-                APP_LOGE("%{public}s failed, callback stub receive element is nullptr", __func__);
+                HILOG_ERROR("%{public}s failed, callback stub receive element is nullptr", __func__);
                 return ERR_APPEXECFWK_PARCEL_ERROR;
             }
             auto resultCode = data.ReadInt32();

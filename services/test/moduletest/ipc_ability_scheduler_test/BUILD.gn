@@ -61,6 +61,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

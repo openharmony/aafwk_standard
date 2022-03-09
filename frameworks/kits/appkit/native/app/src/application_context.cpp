@@ -14,7 +14,7 @@
  */
 
 #include "application_context.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "task_dispatcher_context.h"
 
 namespace OHOS {
@@ -213,22 +213,22 @@ int ApplicationContext::GetMissionId()
 std::shared_ptr<TaskDispatcher> ApplicationContext::CreateParallelTaskDispatcher(
     const std::string &name, const TaskPriority &priority)
 {
-    APP_LOGI("ApplicationContext::CreateParallelTaskDispatcher begin");
+    HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher begin");
     if (taskDispatcherContext_ == nullptr) {
         std::lock_guard<std::mutex> lock_l(mutex_);
         if (taskDispatcherContext_ == nullptr) {
             taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            APP_LOGI("ApplicationContext::CreateParallelTaskDispatcher threadpool create");
+            HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher threadpool create");
         }
 
         if (taskDispatcherContext_ == nullptr) {
-            APP_LOGE("ApplicationContext::CreateParallelTaskDispatcher taskDispatcherContext_ is nullptr");
+            HILOG_ERROR("ApplicationContext::CreateParallelTaskDispatcher taskDispatcherContext_ is nullptr");
             return nullptr;
         }
     }
 
     std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->CreateParallelDispatcher(name, priority);
-    APP_LOGI("ApplicationContext::CreateParallelTaskDispatcher end");
+    HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher end");
     return task;
 }
 
@@ -243,22 +243,22 @@ std::shared_ptr<TaskDispatcher> ApplicationContext::CreateParallelTaskDispatcher
 std::shared_ptr<TaskDispatcher> ApplicationContext::CreateSerialTaskDispatcher(
     const std::string &name, const TaskPriority &priority)
 {
-    APP_LOGI("ApplicationContext::CreateSerialTaskDispatcher begin");
+    HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher begin");
     if (taskDispatcherContext_ == nullptr) {
         std::lock_guard<std::mutex> lock_l(mutex_);
         if (taskDispatcherContext_ == nullptr) {
             taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            APP_LOGI("ApplicationContext::CreateSerialTaskDispatcher threadpool create");
+            HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher threadpool create");
         }
 
         if (taskDispatcherContext_ == nullptr) {
-            APP_LOGE("ApplicationContext::CreateSerialTaskDispatcher taskDispatcherContext_ is nullptr");
+            HILOG_ERROR("ApplicationContext::CreateSerialTaskDispatcher taskDispatcherContext_ is nullptr");
             return nullptr;
         }
     }
 
     std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->CreateSerialDispatcher(name, priority);
-    APP_LOGI("ApplicationContext::CreateSerialTaskDispatcher end");
+    HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher end");
     return task;
 }
 
@@ -271,22 +271,22 @@ std::shared_ptr<TaskDispatcher> ApplicationContext::CreateSerialTaskDispatcher(
  */
 std::shared_ptr<TaskDispatcher> ApplicationContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
 {
-    APP_LOGI("ApplicationContext::GetGlobalTaskDispatcher begin");
+    HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher begin");
     if (taskDispatcherContext_ == nullptr) {
         std::lock_guard<std::mutex> lock_l(mutex_);
         if (taskDispatcherContext_ == nullptr) {
             taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            APP_LOGI("ApplicationContext::GetGlobalTaskDispatcher threadpool create");
+            HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher threadpool create");
         }
 
         if (taskDispatcherContext_ == nullptr) {
-            APP_LOGE("ApplicationContext::GetGlobalTaskDispatcher taskDispatcherContext_ is nullptr");
+            HILOG_ERROR("ApplicationContext::GetGlobalTaskDispatcher taskDispatcherContext_ is nullptr");
             return nullptr;
         }
     }
 
     std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->GetGlobalTaskDispatcher(priority);
-    APP_LOGI("ApplicationContext::GetGlobalTaskDispatcher end");
+    HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher end");
     return task;
 }
 }  // namespace AppExecFwk

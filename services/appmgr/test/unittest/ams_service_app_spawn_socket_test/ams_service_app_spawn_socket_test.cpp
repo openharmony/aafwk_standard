@@ -15,8 +15,8 @@
 
 #include <gtest/gtest.h>
 
-#include "app_log_wrapper.h"
 #include "app_spawn_socket.h"
+#include "hilog_wrapper.h"
 #include "mock_client_socket.h"
 #include "securec.h"
 
@@ -66,7 +66,7 @@ void AmsServiceAppSpawnSocketTest::TearDown()
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_001, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_001 start");
+    HILOG_INFO("ams_service_app_spawn_socket_001 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -76,7 +76,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_001, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, CreateClient()).WillOnce(Return(-1));
     EXPECT_EQ(ERR_APPEXECFWK_BAD_APPSPAWN_CLIENT, appSpawnSocket->OpenAppSpawnConnection());
 
-    APP_LOGI("ams_service_app_spawn_socket_001 end");
+    HILOG_INFO("ams_service_app_spawn_socket_001 end");
 }
 
 /*
@@ -89,7 +89,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_001, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_002, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_002 start");
+    HILOG_INFO("ams_service_app_spawn_socket_002 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -100,7 +100,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_002, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, ConnectSocket()).WillOnce(Return(-1));
     EXPECT_EQ(ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED, appSpawnSocket->OpenAppSpawnConnection());
 
-    APP_LOGI("ams_service_app_spawn_socket_002 end");
+    HILOG_INFO("ams_service_app_spawn_socket_002 end");
 }
 
 /*
@@ -113,7 +113,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_002, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_003, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_003 start");
+    HILOG_INFO("ams_service_app_spawn_socket_003 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -124,7 +124,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_003, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, ConnectSocket()).WillOnce(Return(ERR_OK));
     EXPECT_EQ(ERR_OK, appSpawnSocket->OpenAppSpawnConnection());
 
-    APP_LOGI("ams_service_app_spawn_socket_003 end");
+    HILOG_INFO("ams_service_app_spawn_socket_003 end");
 }
 
 /*
@@ -137,7 +137,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_003, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_004, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_004 start");
+    HILOG_INFO("ams_service_app_spawn_socket_004 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -148,7 +148,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_004, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->ReadMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_004 end");
+    HILOG_INFO("ams_service_app_spawn_socket_004 end");
 }
 
 /*
@@ -161,7 +161,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_004, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_005, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_005 start");
+    HILOG_INFO("ams_service_app_spawn_socket_005 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -172,7 +172,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_005, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->ReadMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_005 end");
+    HILOG_INFO("ams_service_app_spawn_socket_005 end");
 }
 
 /*
@@ -185,7 +185,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_005, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_006, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_006 start");
+    HILOG_INFO("ams_service_app_spawn_socket_006 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -196,7 +196,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_006, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->ReadMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_006 end");
+    HILOG_INFO("ams_service_app_spawn_socket_006 end");
 }
 
 /*
@@ -209,7 +209,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_006, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_007, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_007 start");
+    HILOG_INFO("ams_service_app_spawn_socket_007 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -221,7 +221,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_007, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, ReadSocketMessage(_, _)).WillOnce(Return(len));
     EXPECT_EQ(ERR_OK, appSpawnSocket->ReadMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_007 end");
+    HILOG_INFO("ams_service_app_spawn_socket_007 end");
 }
 
 /*
@@ -234,7 +234,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_007, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_008, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_008 start");
+    HILOG_INFO("ams_service_app_spawn_socket_008 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -246,7 +246,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_008, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, ReadSocketMessage(_, _)).WillOnce(Return(11));
     EXPECT_EQ(ERR_APPEXECFWK_SOCKET_READ_FAILED, appSpawnSocket->ReadMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_008 end");
+    HILOG_INFO("ams_service_app_spawn_socket_008 end");
 }
 
 /*
@@ -259,7 +259,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_008, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_009, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_009 start");
+    HILOG_INFO("ams_service_app_spawn_socket_009 start");
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
     std::unique_ptr<AppSpawnSocket> appSpawnSocket = std::make_unique<AppSpawnSocket>();
@@ -269,7 +269,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_009, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->WriteMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_009 end");
+    HILOG_INFO("ams_service_app_spawn_socket_009 end");
 }
 
 /*
@@ -282,7 +282,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_009, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_010, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_010 start");
+    HILOG_INFO("ams_service_app_spawn_socket_010 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -293,7 +293,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_010, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->WriteMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_010 end");
+    HILOG_INFO("ams_service_app_spawn_socket_010 end");
 }
 
 /*
@@ -306,7 +306,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_010, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_011, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_011 start");
+    HILOG_INFO("ams_service_app_spawn_socket_011 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -317,7 +317,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_011, TestSize.Level1)
     appSpawnSocket->SetClientSocket(mockClientSocket);
     EXPECT_EQ(ERR_INVALID_VALUE, appSpawnSocket->WriteMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_011 end");
+    HILOG_INFO("ams_service_app_spawn_socket_011 end");
 }
 
 /*
@@ -330,7 +330,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_011, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_012, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_012 start");
+    HILOG_INFO("ams_service_app_spawn_socket_012 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -342,7 +342,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_012, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, WriteSocketMessage(_, _)).WillOnce(Return(len));
     EXPECT_EQ(ERR_OK, appSpawnSocket->WriteMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_012 end");
+    HILOG_INFO("ams_service_app_spawn_socket_012 end");
 }
 
 /*
@@ -355,7 +355,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_012, TestSize.Level1)
  */
 HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_013, TestSize.Level1)
 {
-    APP_LOGI("ams_service_app_spawn_socket_013 start");
+    HILOG_INFO("ams_service_app_spawn_socket_013 start");
 
     std::shared_ptr<OHOS::AppSpawn::MockClientSocket> mockClientSocket =
         std::make_shared<OHOS::AppSpawn::MockClientSocket>();
@@ -367,7 +367,7 @@ HWTEST(AmsServiceAppSpawnSocketTest, AppSpawnSocket_013, TestSize.Level1)
     EXPECT_CALL(*mockClientSocket, WriteSocketMessage(_, _)).WillOnce(Return(11));
     EXPECT_EQ(ERR_APPEXECFWK_SOCKET_WRITE_FAILED, appSpawnSocket->WriteMessage(buff.get(), len));
 
-    APP_LOGI("ams_service_app_spawn_socket_013 end");
+    HILOG_INFO("ams_service_app_spawn_socket_013 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

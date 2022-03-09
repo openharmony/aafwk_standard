@@ -111,6 +111,7 @@ ohos_moduletest("ability_mgr_module_account_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "access_token:libaccesstoken_sdk",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",

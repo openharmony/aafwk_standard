@@ -50,7 +50,7 @@ ohos_systemtest("FmsAcquireFormTestMax") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"FMSAcquireFormTestMax\"" ]
+  defines = [ "AMS_LOG_TAG = \"FMSAcquireFormTestMax\"" ]
 
   external_deps = [
     "ability_base:base",

@@ -15,8 +15,8 @@
 
 #include "form_ams_helper.h"
 #include "ability_manager_interface.h"
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
+#include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
@@ -37,15 +37,15 @@ sptr<AAFwk::IAbilityManager> FormAmsHelper::GetAbilityManager()
     if (abilityManager_ == nullptr) {
         sptr<ISystemAbilityManager> systemManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         if (systemManager == nullptr) {
-            APP_LOGE("%{public}s:fail to get registry", __func__);
+            HILOG_ERROR("%{public}s:fail to get registry", __func__);
             return nullptr;
         }
         sptr<IRemoteObject> remoteObject = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
         if (remoteObject == nullptr) {
-            APP_LOGE("%{public}s:fail to connect AbilityMgrService", __func__);
+            HILOG_ERROR("%{public}s:fail to connect AbilityMgrService", __func__);
             return nullptr;
         }
-        APP_LOGD("connect AbilityMgrService success");
+        HILOG_DEBUG("connect AbilityMgrService success");
 
         abilityManager_ = iface_cast<AAFwk::IAbilityManager>(remoteObject);
     }
@@ -62,10 +62,10 @@ sptr<AAFwk::IAbilityManager> FormAmsHelper::GetAbilityManager()
 ErrCode FormAmsHelper::ConnectServiceAbility(
     const Want &want, const sptr<AAFwk::IAbilityConnection> &connect)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     sptr<AAFwk::IAbilityManager> ams = GetAbilityManager();
     if (ams == nullptr) {
-        APP_LOGE("%{public}s:ability service not connect", __func__);
+        HILOG_ERROR("%{public}s:ability service not connect", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
     return ams->ConnectAbility(want, connect, nullptr);
@@ -78,10 +78,10 @@ ErrCode FormAmsHelper::ConnectServiceAbility(
  */
 ErrCode FormAmsHelper::DisConnectServiceAbility(const sptr<AAFwk::IAbilityConnection> &connect)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     sptr<AAFwk::IAbilityManager> ams = GetAbilityManager();
     if (ams == nullptr) {
-        APP_LOGE("%{public}s:ability service not connect", __func__);
+        HILOG_ERROR("%{public}s:ability service not connect", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
     return ams->DisconnectAbility(connect);
@@ -95,7 +95,7 @@ ErrCode FormAmsHelper::DisConnectServiceAbility(const sptr<AAFwk::IAbilityConnec
 ErrCode FormAmsHelper::DisConnectServiceAbilityDelay(const sptr<AAFwk::IAbilityConnection> &connect)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return ERR_INVALID_OPERATION;
     }
     std::function<void()> disConnectAbilityFunc = std::bind(
@@ -103,7 +103,7 @@ ErrCode FormAmsHelper::DisConnectServiceAbilityDelay(const sptr<AAFwk::IAbilityC
         this,
         connect);
     if (!eventHandler_->PostTask(disConnectAbilityFunc, FORM_DISCONNECT_DELAY_TIME)) {
-        APP_LOGE("%{public}s, failed to disconnect ability", __func__);
+        HILOG_ERROR("%{public}s, failed to disconnect ability", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
     return ERR_OK;
@@ -126,7 +126,7 @@ void FormAmsHelper::DisConnectAbilityTask(const sptr<AAFwk::IAbilityConnection> 
 {
     sptr<AAFwk::IAbilityManager> ams = GetAbilityManager();
     if (ams == nullptr) {
-        APP_LOGE("%{public}s, ability service not connect", __func__);
+        HILOG_ERROR("%{public}s, ability service not connect", __func__);
         return;
     }
     ams->DisconnectAbility(connect);

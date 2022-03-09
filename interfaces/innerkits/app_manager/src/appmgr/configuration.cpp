@@ -17,7 +17,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "app_log_wrapper.h"
+#include "ability_base_log_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -62,7 +62,7 @@ bool Configuration::MakeTheKey(std::string &getKey, int id, const std::string &p
     getKey += std::to_string(id);
     getKey += ConfigurationInner::CONNECTION_SYMBOL;
     getKey += param;
-    APP_LOGW(" getKey [%{public}s]", getKey.c_str());
+    ABILITYBASE_LOGW(" getKey [%{public}s]", getKey.c_str());
 
     return true;
 }
@@ -134,7 +134,7 @@ void Configuration::CompareDifferent(std::vector<std::string> &diffKeyV, const C
     std::vector<std::string> otherk;
     other.GetAllKey(otherk);
     for (const auto &iter : otherk) {
-        APP_LOGW(" iter : [%{public}s] | Val: [%{public}s]", iter.c_str(), other.GetValue(iter).c_str());
+        ABILITYBASE_LOGW(" iter : [%{public}s] | Val: [%{public}s]", iter.c_str(), other.GetValue(iter).c_str());
         // Insert new content directly
         auto pair = configParameter_.insert(std::make_pair(iter, other.GetValue(iter)));
         if (pair.second) {
@@ -201,7 +201,7 @@ const std::string& Configuration::GetName() const
 
 bool Configuration::ReadFromParcel(Parcel &parcel)
 {
-    APP_LOGW("ReadFromParcel");
+    ABILITYBASE_LOGW("ReadFromParcel");
     defaultDisplayId_ = parcel.ReadInt32();
     int32_t configSize = parcel.ReadInt32();
     std::vector<std::string> keys;
@@ -209,17 +209,17 @@ bool Configuration::ReadFromParcel(Parcel &parcel)
     keys.clear();
     values.clear();
     if (!parcel.ReadStringVector(&keys)) {
-        APP_LOGE("ReadStringVector for keys failed.");
+        ABILITYBASE_LOGE("ReadStringVector for keys failed.");
         return false;
     }
     if (!parcel.ReadStringVector(&values)) {
-        APP_LOGE("ReadStringVector for values failed.");
+        ABILITYBASE_LOGE("ReadStringVector for values failed.");
         return false;
     }
     int32_t keySize = keys.size();
     int32_t valueSize = values.size();
     if (keySize != valueSize || configSize != valueSize) {
-        APP_LOGE("ReadFromParcel failed, invalid size.");
+        ABILITYBASE_LOGE("ReadFromParcel failed, invalid size.");
         return false;
     }
     std::string key;
@@ -244,7 +244,7 @@ Configuration *Configuration::Unmarshalling(Parcel &parcel)
 
 bool Configuration::Marshalling(Parcel &parcel) const
 {
-    APP_LOGW("Marshalling");
+    ABILITYBASE_LOGW("Marshalling");
     std::vector<std::string> keys;
     std::vector<std::string> values;
     keys.clear();

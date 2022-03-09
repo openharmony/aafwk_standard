@@ -17,7 +17,7 @@
 #include <iostream>
 #include <numeric>
 #include <sstream>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
@@ -576,12 +576,12 @@ void FourthAbility::SubscribeEvent(const vector_conststr &eventList)
 
 void FourthAbility::SkillsApiStByCode(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("FourthAbility::SkillsApiStByCode");
+    HILOG_INFO("FourthAbility::SkillsApiStByCode");
     if (mapStKitFunc_.find(apiIndex) != mapStKitFunc_.end() &&
         static_cast<int>(mapStKitFunc_[apiIndex].size()) > caseIndex) {
         mapStKitFunc_[apiIndex][caseIndex](code);
     } else {
-        APP_LOGI("SkillsApiStByCode error");
+        HILOG_INFO("SkillsApiStByCode error");
     }
 }
 
@@ -2402,7 +2402,7 @@ void FourthAbility::SkillAddSchemeSpecificPartCase1(int code)
 // Skills API ST End
 void FourthAbility::OnStart(const Want &want)
 {
-    APP_LOGI("FourthAbility::onStart");
+    HILOG_INFO("FourthAbility::onStart");
     Ability::OnStart(want);
     SubscribeEvent(g_requPageFourthAbilitySTVector);
     std::string eventData = GetAbilityName() + g_abilityStateOnStart;
@@ -2411,7 +2411,7 @@ void FourthAbility::OnStart(const Want &want)
 
 void FourthAbility::OnStop()
 {
-    APP_LOGI("FourthAbility::onStop");
+    HILOG_INFO("FourthAbility::onStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     std::string eventData = GetAbilityName() + g_abilityStateOnStop;
@@ -2420,7 +2420,7 @@ void FourthAbility::OnStop()
 
 void FourthAbility::OnActive()
 {
-    APP_LOGI("FourthAbility::OnActive");
+    HILOG_INFO("FourthAbility::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + g_abilityStateOnActive;
     TestUtils::PublishEvent(g_respPageFourthAbilityST, 0, eventData);
@@ -2428,7 +2428,7 @@ void FourthAbility::OnActive()
 
 void FourthAbility::OnInactive()
 {
-    APP_LOGI("FourthAbility::OnInactive");
+    HILOG_INFO("FourthAbility::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + g_abilityStateOnInactive;
     TestUtils::PublishEvent(g_respPageFourthAbilityST, 0, eventData);
@@ -2436,7 +2436,7 @@ void FourthAbility::OnInactive()
 
 void FourthAbility::OnBackground()
 {
-    APP_LOGI("FourthAbility::OnBackground");
+    HILOG_INFO("FourthAbility::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + g_abilityStateOnBackground;
     TestUtils::PublishEvent(g_respPageFourthAbilityST, 0, eventData);
@@ -2444,7 +2444,7 @@ void FourthAbility::OnBackground()
 
 void FourthAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("FourthAbility::OnForeground");
+    HILOG_INFO("FourthAbility::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnForeground;
     TestUtils::PublishEvent(g_respPageFourthAbilityST, 0, eventData);
@@ -2452,7 +2452,7 @@ void FourthAbility::OnForeground(const Want &want)
 
 void FourthAbility::OnNewWant(const Want &want)
 {
-    APP_LOGI("FourthAbility::OnNewWant");
+    HILOG_INFO("FourthAbility::OnNewWant");
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnNewWant;
     TestUtils::PublishEvent(g_respPageFourthAbilityST, 0, eventData);
@@ -2460,9 +2460,9 @@ void FourthAbility::OnNewWant(const Want &want)
 
 void KitTestFourthEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (g_requPageFourthAbilityST == eventName) {
         auto target = data.GetData();
@@ -2481,7 +2481,7 @@ void KitTestFourthEventSubscriber::OnReceiveEvent(const CommonEventData &data)
             if (keyMap == "TerminateAbility") {
                 KitTerminateAbility();
             } else {
-                APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+                HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
             }
         }
     }
