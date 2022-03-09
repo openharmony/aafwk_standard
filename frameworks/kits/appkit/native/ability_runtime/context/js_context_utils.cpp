@@ -43,7 +43,7 @@ public:
     NativeValue* OnGetDatabaseDir(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnGetStorageDir(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnGetBundleCodeDir(NativeEngine& engine, NativeCallbackInfo& info);
-    
+
     static NativeValue* GetCacheDir(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* GetTempDir(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* GetFilesDir(NativeEngine* engine, NativeCallbackInfo* info);
