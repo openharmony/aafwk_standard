@@ -32,11 +32,12 @@ void Ability::Init(std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_
     abilityInfo_ = abilityInfo;
     handler_ = handler;
     AbilityContext::token_ = token;
-
+#ifdef SUPPORT_GRAPHICS
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         abilityWindow_ = std::make_shared<AbilityWindow>();
     }
+#endif
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
     application_ = application;
@@ -66,6 +67,7 @@ void Ability::OnActive()
 void Ability::OnInactive()
 {}
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnForeground(const Want &want)
 {
     return;
@@ -75,6 +77,7 @@ void Ability::OnBackground()
 {
     return;
 }
+#endif
 
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
@@ -99,6 +102,7 @@ void Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSet
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
 {
     return false;
@@ -177,6 +181,7 @@ bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &ke
 {
     return false;
 }
+#endif
 
 void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
@@ -184,10 +189,12 @@ void Ability::OnRequestPermissionsFromUserResult(
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnLeaveForeground()
 {
     return;
 }
+#endif
 
 std::string Ability::GetType(const Uri &uri)
 {
@@ -265,10 +272,12 @@ void Ability::OnEventDispatch()
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnWindowFocusChanged(bool hasFocus)
 {
     return;
 }
+#endif
 
 void Ability::SetWant(const AAFwk::Want &want)
 {
@@ -293,10 +302,12 @@ void Ability::SetResult(int resultCode, const Want &resultData)
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
 {
     return;
 }
+#endif
 
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
@@ -430,9 +441,11 @@ void Ability::AddActionRoute(const std::string &action, const std::string &entry
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int Ability::SetWindowBackgroundColor(int red, int green, int blue)
 {
     return -1;
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

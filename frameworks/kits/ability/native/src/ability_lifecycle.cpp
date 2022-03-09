@@ -71,12 +71,14 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event, const Want &wan
     if (callbacks_.size() != 0) {
         for (auto &callback : callbacks_) {
             switch (event) {
+#ifdef SUPPORT_GRAPHICS
                 case ON_FOREGROUND: {
                     if (callback != nullptr) {
                         callback->OnForeground(want);
                     }
                     break;
                 }
+#endif
                 case ON_START: {
                     if (callback != nullptr) {
                         callback->OnStart(want);
@@ -117,12 +119,14 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event)
                     }
                     break;
                 }
+#ifdef SUPPORT_GRAPHICS
                 case ON_BACKGROUND: {
                     if (callback != nullptr) {
                         callback->OnBackground();
                     }
                     break;
                 }
+#endif
                 case ON_INACTIVE: {
                     if (callback != nullptr) {
                         callback->OnInactive();

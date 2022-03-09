@@ -21,10 +21,12 @@
 namespace OHOS {
 namespace AppExecFwk {
 static void *g_handle = nullptr;
+#ifdef SUPPORT_GRAPHICS
 #ifdef _ARM64_
 constexpr char SHARED_LIBRARY_FEATURE_ABILITY[] = "/system/lib64/module/ability/libfeatureability.z.so";
 #else
 constexpr char SHARED_LIBRARY_FEATURE_ABILITY[] = "/system/lib/module/ability/libfeatureability.z.so";
+#endif
 #endif
 constexpr char FUNC_CALL_ON_ABILITY_RESULT[] = "CallOnAbilityResult";
 using NAPICallOnAbilityResult = void (*)(int requestCode, int resultCode, const Want &resultData, CallbackInfo cb);
@@ -60,7 +62,7 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         APP_LOGE("AbilityProcess::StartAbility ability is nullptr");
         return ERR_NULL_OBJECT;
     }
-
+#ifdef SUPPORT_GRAPHICS
     // inherit split mode
     auto windowMode = ability->GetCurrentWindowMode();
     if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
@@ -68,7 +70,7 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
     APP_LOGI("window mode is %{public}d", windowMode);
-
+#endif
     ErrCode err = ERR_OK;
     if (param.forResultOption == true) {
         if (param.setting == nullptr) {
@@ -124,7 +126,7 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
         return;
     }
     CallbackInfo callbackInfo = callback->second;
-
+#ifdef SUPPORT_GRAPHICS
     // start open featureability lib
     if (g_handle == nullptr) {
         g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
@@ -136,7 +138,7 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
             return;
         }
     }
-
+#endif
     // get function
     auto func = reinterpret_cast<NAPICallOnAbilityResult>(dlsym(g_handle, FUNC_CALL_ON_ABILITY_RESULT));
     if (func == nullptr) {
@@ -212,7 +214,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
         return;
     }
     CallbackInfo callbackInfo = callback->second;
-
+#ifdef SUPPORT_GRAPHICS
     // start open featureability lib
     if (g_handle == nullptr) {
         g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
@@ -224,7 +226,7 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
             return;
         }
     }
-
+#endif
     // get function
     auto func = reinterpret_cast<NAPICallOnRequestPermissionsFromUserResult>(
         dlsym(g_handle, FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT));

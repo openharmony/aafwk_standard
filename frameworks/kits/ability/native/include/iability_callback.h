@@ -22,11 +22,12 @@ class IAbilityCallback {
 public:
     IAbilityCallback() = default;
     virtual ~IAbilityCallback() = default;
-
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called back at ability context.
      */
     virtual int GetCurrentWindowMode() = 0;
+#endif
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

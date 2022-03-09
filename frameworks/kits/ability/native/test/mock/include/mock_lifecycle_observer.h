@@ -38,6 +38,7 @@ public:
         GTEST_LOG_(INFO) << "MockLifecycleObserver::OnActive called";
     }
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * Called back in response to an ON_BACKGROUND event.
      * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
@@ -63,6 +64,7 @@ public:
         (void)want;
         GTEST_LOG_(INFO) << "MockLifecycleObserver::OnForeground called";
     }
+#endif
 
     /**
      * Called back in response to an ON_INACTIVE event.
