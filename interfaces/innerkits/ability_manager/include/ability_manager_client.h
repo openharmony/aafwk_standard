@@ -638,7 +638,7 @@ public:
 
 
     /**
-     * @brief Clean all missions in system.
+     * @brief Get mission id by ability token.
      *
      * @param token ability token.
      * @param missionId output mission id.
