@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 SO_DIR = "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime"
 APPKIT_DIR = "//foundation/aafwk/standard/frameworks/kits"
 
@@ -27,6 +28,9 @@ config("ability_context_public_config") {
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  if (ability_runtime_graphics) {
+    defines = [ "SUPPORT_GRAPHICS" ]
   }
 }
 

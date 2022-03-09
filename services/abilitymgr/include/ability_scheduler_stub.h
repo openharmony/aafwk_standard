@@ -61,8 +61,10 @@ private:
     int DenormalizeUriInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
     int ExecuteBatchInner(MessageParcel &data, MessageParcel &reply);
+#ifdef SUPPORT_GRAPHICS
     int MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply);
     int TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply);
+#endif
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
     int DumpAbilityInfoInner(MessageParcel& data, MessageParcel& reply);
     int CallRequestInner(MessageParcel &data, MessageParcel &reply);

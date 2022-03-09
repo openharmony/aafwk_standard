@@ -46,10 +46,12 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     handler_ = handler;
     auto info = record->GetAbilityInfo();
     isStageBasedModel_ = info && info->isStageBasedModel;
+#ifdef SUPPORT_GRAPHICS
     if (info && info->type == AbilityType::PAGE) {
         ability_->SetSceneListener(
             sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
     }
+#endif
     ability_->Init(record->GetAbilityInfo(), application, handler, token);
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_ = application;
@@ -70,32 +72,37 @@ void AbilityImpl::Start(const Want &want)
         HILOG_ERROR("AbilityImpl::Start ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
-
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AbilityType::PAGE) &&
         (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         ability_->HandleCreateAsContinuation(want);
     }
-
+#endif
     HILOG_INFO("AbilityImpl::Start");
     ability_->OnStart(want);
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STARTED_NEW;
     } else {
+#endif
         if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
             lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
         } else {
             lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
         }
+#ifdef SUPPORT_GRAPHICS
     }
+#endif
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
-
+#ifdef SUPPORT_GRAPHICS
     // Multimodal Events Register
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         WindowEventRegister();
     }
+#endif
     HILOG_INFO("%{public}s end.", __func__);
 }
 
@@ -113,12 +120,16 @@ void AbilityImpl::Stop()
     }
 
     ability_->OnStop();
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STOPED_NEW;
     } else {
+#endif
         lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
+#ifdef SUPPORT_GRAPHICS
     }
+#endif
     abilityLifecycleCallbacks_->OnAbilityStop(ability_);
     ability_->Destroy(); // Release window and ability.
     ability_ = nullptr;
@@ -140,12 +151,12 @@ void AbilityImpl::Active()
 
     HILOG_INFO("AbilityImpl::Active");
     ability_->OnActive();
-
+#ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
         ability_->OnTopActiveAbilityChanged(true);
         ability_->OnWindowFocusChanged(true);
     }
-
+#endif
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
     HILOG_INFO("%{public}s end.", __func__);
@@ -166,12 +177,12 @@ void AbilityImpl::Inactive()
 
     HILOG_INFO("AbilityImpl::Inactive");
     ability_->OnInactive();
-
+#ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
         ability_->OnTopActiveAbilityChanged(false);
         ability_->OnWindowFocusChanged(false);
     }
-
+#endif
     lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
     abilityLifecycleCallbacks_->OnAbilityInactive(ability_);
     HILOG_INFO("%{public}s end.", __func__);
@@ -191,6 +202,7 @@ int AbilityImpl::GetCompatibleVersion()
     return -1;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityImpl::AfterUnFocused()
 {
     HILOG_INFO("%{public}s begin.", __func__);
@@ -311,6 +323,7 @@ void AbilityImpl::Background()
     abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
     HILOG_INFO("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Save data and states of an ability when it is restored by the system. and Calling information back to Ability.
@@ -428,6 +441,7 @@ int AbilityImpl::GetCurrentState()
     return lifecycleState_;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Execution the KeyDown callback of the ability
  * @param keyEvent Indicates the key-down event.
@@ -466,6 +480,7 @@ void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEven
 {
     HILOG_INFO("AbilityImpl::DoPointerEvent called");
 }
+#endif
 
 /**
  * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -852,6 +867,7 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
 {
     int32_t code = keyEvent->GetKeyAction();
@@ -885,6 +901,7 @@ void AbilityImpl::WindowEventRegister()
         }
     }
 }
+#endif
 
 /**
  * @brief Create a PostEvent timeout task. The default delay is 5000ms

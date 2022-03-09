@@ -158,10 +158,13 @@ public:
      */
     void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) override;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * get current window mode
      */
     int GetCurrentWindowMode() override;
+#endif
+
 private:
     sptr<IRemoteObject> token_;
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;

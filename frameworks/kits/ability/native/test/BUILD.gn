@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ability_runtime/ability_test"
 
@@ -33,7 +34,6 @@ config("module_private_config") {
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
-    "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/app_distributeddata/include",
@@ -54,6 +54,11 @@ config("module_private_config") {
     "AMS_LOG_TAG = \"AbilityUnitTest\"",
     "AMS_LOG_DOMAIN = 0xD002201",
   ]
+
+  if (ability_runtime_graphics) {
+    include_dirs +=
+        [ "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include" ]
+  }
 }
 
 config("module_ability_context_config") {
@@ -113,7 +118,6 @@ ohos_unittest("ability_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -123,11 +127,15 @@ ohos_unittest("ability_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_lifecycle_test") {
@@ -159,8 +167,11 @@ ohos_unittest("ability_lifecycle_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_lifecycle_executor_test") {
@@ -191,8 +202,11 @@ ohos_unittest("ability_lifecycle_executor_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_context_for_task_dispacher_test") {
@@ -223,8 +237,11 @@ ohos_unittest("ability_context_for_task_dispacher_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_context_interface_test") {
@@ -256,8 +273,11 @@ ohos_unittest("ability_context_interface_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_context_test") {
@@ -295,8 +315,11 @@ ohos_unittest("ability_context_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("page_ability_impl_test") {
@@ -361,8 +384,11 @@ ohos_unittest("service_ability_impl_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("scene_created_test") {
@@ -422,11 +448,14 @@ ohos_unittest("data_ability_helper_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("data_ability_operation_test") {
@@ -456,11 +485,14 @@ ohos_unittest("data_ability_operation_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_impl_active_test") {
@@ -469,7 +501,6 @@ ohos_unittest("ability_impl_active_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "unittest/ability_impl_active_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -496,8 +527,12 @@ ohos_unittest("ability_impl_active_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    sources += [ "unittest/ability_impl_active_test.cpp" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_impl_test") {
@@ -506,7 +541,6 @@ ohos_unittest("ability_impl_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "unittest/ability_impl_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -538,11 +572,15 @@ ohos_unittest("ability_impl_test") {
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    sources += [ "unittest/ability_impl_test.cpp" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_thread_test") {
@@ -578,7 +616,6 @@ ohos_unittest("ability_thread_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -587,11 +624,14 @@ ohos_unittest("ability_thread_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_thread_call_request_test") {
@@ -694,7 +734,6 @@ ohos_unittest("data_ability_impl_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -703,11 +742,15 @@ ohos_unittest("data_ability_impl_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("data_ability_impl_file_secondpart_test") {
@@ -741,7 +784,6 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -750,11 +792,15 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("data_ability_impl_file_test") {
@@ -788,7 +834,6 @@ ohos_unittest("data_ability_impl_file_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -797,11 +842,15 @@ ohos_unittest("data_ability_impl_file_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_thread_dataability_test") {
@@ -837,7 +886,6 @@ ohos_unittest("ability_thread_dataability_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -846,11 +894,15 @@ ohos_unittest("ability_thread_dataability_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/graphic/standard:libwmclient" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 config("data_uri_utils_test_config") {
@@ -893,8 +945,11 @@ ohos_unittest("data_uri_utils_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("pac_map_test") {
@@ -915,8 +970,11 @@ ohos_unittest("pac_map_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_permission_test") {
@@ -949,8 +1007,10 @@ ohos_unittest("ability_permission_test") {
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("task_handler_client_test") {
@@ -968,10 +1028,10 @@ ohos_unittest("task_handler_client_test") {
     "//utils/native/base:utils",
   ]
 
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "multimodalinput_base:libmmi-client",
-  ]
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("ability_thread_for_ability_on_configuration_update") {
@@ -996,8 +1056,11 @@ ohos_unittest("ability_thread_for_ability_on_configuration_update") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("data_ability_result_test") {
@@ -1016,8 +1079,11 @@ ohos_unittest("data_ability_result_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_unittest("form_host_client_test") {
@@ -1099,11 +1165,14 @@ ohos_unittest("continuation_test") {
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ###############################################################################
@@ -1133,12 +1202,17 @@ group("unittest") {
     ":data_ability_operation_test",
     ":data_ability_result_test",
     ":data_uri_utils_test",
-    ":form_host_client_test",
-    ":form_provider_client_test",
     ":pac_map_test",
-    ":page_ability_impl_test",
     ":service_ability_impl_test",
     ":task_handler_client_test",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [
+      ":form_host_client_test",
+      ":form_provider_client_test",
+      ":page_ability_impl_test",
+    ]
+  }
 }
 ###############################################################################

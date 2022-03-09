@@ -30,12 +30,14 @@
 #include "context_deal.h"
 #include "context_impl.h"
 #include "extension_module_loader.h"
-#include "form_extension.h"
 #include "hilog_wrapper.h"
+#ifdef SUPPORT_GRAPHICS
+#include "form_extension.h"
+#include "locale_config.h"
+#endif
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "js_runtime.h"
-#include "locale_config.h"
 #include "ohos_application.h"
 #include "resource_manager.h"
 #include "runtime.h"
@@ -759,6 +761,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     HILOG_INFO("MainThread::handleLaunchApplication before Resource::CreateResConfig.");
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     HILOG_INFO("MainThread::handleLaunchApplication after Resource::CreateResConfig.");
+#ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
     resConfig->SetLocaleInfo(locale);
@@ -774,7 +777,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
 
     std::string colormode = config.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
     resConfig->SetColorMode(ConvertColorMode(colormode));
-
+#endif
     HILOG_INFO("MainThread::handleLaunchApplication. Start calling UpdateResConfig.");
     resourceManager->UpdateResConfig(*resConfig);
     HILOG_INFO("MainThread::handleLaunchApplication. End calling UpdateResConfig.");
@@ -945,9 +948,11 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
             return Ability::Create(application->GetRuntime());
         });
+#ifdef SUPPORT_GRAPHICS
         AbilityLoader::GetInstance().RegisterExtension("FormExtension", [application = application_]() {
             return AbilityRuntime::FormExtension::Create(application->GetRuntime());
         });
+#endif
         AbilityLoader::GetInstance().RegisterExtension("StaticSubscriberExtension", [application = application_]() {
             return AbilityRuntime::StaticSubscriberExtension::Create(application->GetRuntime());
         });

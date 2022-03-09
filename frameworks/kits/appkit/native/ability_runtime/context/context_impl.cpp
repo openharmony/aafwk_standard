@@ -22,7 +22,9 @@
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
 #include "js_runtime_utils.h"
+#ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
+#endif
 #include "os_account_manager.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
@@ -281,6 +283,7 @@ void ContextImpl::InitResourceManager(
     }
 
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+#ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
     resConfig->SetLocaleInfo(locale);
@@ -292,6 +295,7 @@ void ContextImpl::InitResourceManager(
     } else {
         HILOG_ERROR("ContextImpl::InitResourceManager language: GetLocaleInfo is null.");
     }
+#endif
     resourceManager->UpdateResConfig(*resConfig);
     appContext->SetResourceManager(resourceManager);
 }

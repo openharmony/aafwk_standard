@@ -36,16 +36,20 @@
 #include "data_ability_predicates.h"
 #include "data_ability_result.h"
 #include "data_uri_utils.h"
-#include "display_type.h"
 #include "distributed_objectstore.h"
+#include "hilog_wrapper.h"
+#ifdef SUPPORT_GRAPHICS
+#include "display_type.h"
 #include "form_host_client.h"
 #include "form_mgr.h"
 #include "form_provider_client.h"
-#include "hilog_wrapper.h"
+#endif
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#ifdef SUPPORT_GRAPHICS
 #include "key_event.h"
+#endif
 #include "ohos_application.h"
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
@@ -77,10 +81,12 @@ const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 
+#ifdef SUPPORT_GRAPHICS
 static std::mutex formLock;
 
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
+#endif
 constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
@@ -106,6 +112,7 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
     handler_ = handler;
     AbilityContext::token_ = token;
 
+#ifdef SUPPORT_GRAPHICS
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         if (!abilityInfo_->isStageBasedModel) {
@@ -139,6 +146,7 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
         OHOS::sptr<OHOS::Rosen::DisplayManager::IDisplayListener> thisAbility(this);
         Rosen::DisplayManager::GetInstance().RegisterDisplayListener(thisAbility);
     }
+#endif
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
     if (abilityLifecycleExecutor_ != nullptr) {
@@ -179,6 +187,7 @@ bool Ability::IsUpdatingConfigurations()
     return AbilityContext::IsUpdatingConfigurations();
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Informs the system of the time required for drawing this Page ability.
  *
@@ -188,6 +197,7 @@ bool Ability::PrintDrawnCompleted()
 {
     return AbilityContext::PrintDrawnCompleted();
 }
+#endif
 
 /**
  * Will be called when ability start. You should override this function
@@ -203,6 +213,7 @@ void Ability::OnStart(const Want &want)
         return;
     }
 
+#ifdef SUPPORT_GRAPHICS
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         Rosen::WindowType winType = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
         if (abilityInfo_->bundleName == SYSTEM_UI) {
@@ -289,6 +300,7 @@ void Ability::OnStart(const Want &want)
             }
         }
     }
+#endif
 
     SetWant(want);
     if (abilityLifecycleExecutor_ == nullptr) {
@@ -339,6 +351,7 @@ void Ability::OnStop()
 void Ability::Destroy()
 {
     HILOG_INFO("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     // Release the scene.
     if (scene_ != nullptr) {
         scene_->GoDestroy();
@@ -350,6 +363,7 @@ void Ability::Destroy()
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         abilityWindow_->OnPostAbilityStop(); // Ability will been released when window destroy.
     }
+#endif
     HILOG_INFO("%{public}s end.", __func__);
 }
 
@@ -365,12 +379,14 @@ void Ability::OnActive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr) {
         HILOG_INFO("%{public}s begin abilityWindow_->OnPostAbilityActive.", __func__);
         abilityWindow_->OnPostAbilityActive();
         HILOG_INFO("%{public}s end abilityWindow_->OnPostAbilityActive.", __func__);
     }
     bWindowFocus_ = true;
+#endif
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnActive error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -395,12 +411,14 @@ void Ability::OnInactive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
+#ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         HILOG_INFO("%{public}s begin abilityWindow_->OnPostAbilityInactive.", __func__);
         abilityWindow_->OnPostAbilityInactive();
         HILOG_INFO("%{public}s end abilityWindow_->OnPostAbilityInactive.", __func__);
     }
     bWindowFocus_ = false;
+#endif
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnInactive error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -415,6 +433,7 @@ void Ability::OnInactive()
     HILOG_INFO("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called after instantiating WindowScene.
  *
@@ -463,6 +482,7 @@ void Ability::OnForeground(const Want &want)
     DispatchLifecycleOnForeground(want);
     HILOG_INFO("%{public}s end.", __func__);
 }
+#endif
 
 bool Ability::IsRestoredInContinuation() const
 {
@@ -532,6 +552,7 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
  *
@@ -581,6 +602,7 @@ void Ability::OnBackground()
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_BACKGROUND);
     HILOG_INFO("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Called when this Service ability is connected for the first time.
@@ -704,6 +726,7 @@ ErrCode Ability::StartAbility(const Want &want, AbilityStartSetting abilityStart
     return err;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
  * the component will be handled first. This callback will not be invoked if the callback triggered for the
@@ -869,6 +892,7 @@ bool Ability::HasWindowFocus()
 
     return false;
 }
+#endif
 
 /**
  * @description: Obtains api version based on ability.
@@ -889,6 +913,7 @@ void Ability::SetCompatibleVersion(int32_t compatibleVersion)
     compatibleVersion_ = compatibleVersion;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when a key is lone pressed.
  *
@@ -902,6 +927,7 @@ bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &ke
 {
     return false;
 }
+#endif
 
 /**
  * @brief Called back after permissions are requested by using
@@ -920,6 +946,7 @@ void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability is about to leave the foreground and enter the background due to a user
  * operation, for example, when the user touches the Home key.
@@ -927,6 +954,7 @@ void Ability::OnRequestPermissionsFromUserResult(
  */
 void Ability::OnLeaveForeground()
 {}
+#endif
 
 /**
  * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -986,7 +1014,7 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     if (resConfig != nullptr) {
         HILOG_INFO("make resource mgr data");
-
+#ifdef SUPPORT_GRAPHICS
         if (!language.empty()) {
             UErrorCode status = U_ZERO_ERROR;
             icu::Locale locale = icu::Locale::forLanguageTag(language, status);
@@ -995,7 +1023,7 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
                 resConfig->SetLocaleInfo(locale);
             }
         }
-
+#endif
         resConfig->SetColorMode(ConvertColorMode(colormode));
 
         auto resourceManager = GetResourceManager();
@@ -1004,14 +1032,14 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
             HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
         }
     }
-
+#ifdef SUPPORT_GRAPHICS
     // Notify WindowScene
     if (scene_ != nullptr && !language.empty()) {
         auto diffConfiguration = std::make_shared<AppExecFwk::Configuration>(changeConfiguration);
         scene_->UpdateConfiguration(diffConfiguration);
         HILOG_ERROR("%{public}s scene_ -> UpdateConfiguration success.", __func__);
     }
-
+#endif
     if (abilityContext_ != nullptr && application_ != nullptr) {
         abilityContext_->SetConfiguration(application_->GetConfiguration());
     }
@@ -1121,6 +1149,7 @@ bool Ability::IsTerminating()
 void Ability::OnAbilityResult(int requestCode, int resultCode, const Want &want)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called back when the Back key is pressed.
  * The default implementation destroys the ability. You can override this method.
@@ -1140,6 +1169,7 @@ void Ability::OnBackPressed()
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch an
@@ -1238,6 +1268,7 @@ void Ability::SetResult(int resultCode, const Want &resultData)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Sets the type of audio whose volume will be adjusted by the volume button.
  *
@@ -1245,6 +1276,7 @@ void Ability::SetResult(int resultCode, const Want &resultData)
  */
 void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
 {}
+#endif
 
 /**
  * @brief Called back when Service is started.
@@ -1648,6 +1680,7 @@ void Ability::SetMainRoute(const std::string &entry)
 void Ability::AddActionRoute(const std::string &action, const std::string &entry)
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Sets the background color of the window in RGB color mode.
  *
@@ -1663,6 +1696,7 @@ int Ability::SetWindowBackgroundColor(int red, int green, int blue)
 {
     return -1;
 }
+#endif
 
 /**
  * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
@@ -1757,6 +1791,7 @@ bool Ability::OnContinue(WantParams &wantParams)
     return false;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Get page ability stack info.
  *
@@ -1769,6 +1804,7 @@ std::string Ability::GetContentInfo()
     }
     return scene_->GetContentInfo();
 }
+#endif
 
 /**
  * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
@@ -1934,6 +1970,7 @@ bool Ability::IsFlagExists(unsigned int flag, unsigned int flagSet)
     return (flag & flagSet) == flag;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when this ability gains or loses window focus.
  *
@@ -1950,6 +1987,7 @@ void Ability::OnWindowFocusChanged(bool hasFocus)
  */
 void Ability::OnTopActiveAbilityChanged(bool topActive)
 {}
+#endif
 
 /**
  * @brief Called to set caller information for the application. The default implementation returns null.
@@ -1987,6 +2025,7 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
     return std::make_shared<AbilityPostEventTimeout>(taskstr, handler_);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * Releases an obtained form by its ID.
  *
@@ -2067,6 +2106,7 @@ ErrCode Ability::DeleteForm(const int64_t formId)
     // delete form with formId
     return DeleteForm(formId, DELETE_FORM);
 }
+#endif
 
 /**
  * @brief Keep this Service ability in the background and displays a notification bar.
@@ -2092,6 +2132,7 @@ int Ability::StopBackgroundRunning()
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Cast temp form with formId.
  *
@@ -2947,6 +2988,7 @@ ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &modu
     // GetFormsInfoByModule request to fms
     return FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
+#endif
 
 /**
  * @brief Get the error message by error code.
@@ -2995,6 +3037,7 @@ void Ability::SetBundleManager(const sptr<IBundleMgr> &bundleManager)
     iBundleMgr_ = bundleManager;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Acquire a form provider remote object.
  * @return Returns form provider remote object.
@@ -3014,6 +3057,7 @@ sptr<IRemoteObject> Ability::GetFormRemoteObject()
     HILOG_INFO("%{public}s end", __func__);
     return providerRemoteObject_;
 }
+#endif
 
 /**
  * @brief Set the start ability setting.
@@ -3041,10 +3085,12 @@ const AAFwk::LaunchParam& Ability::GetLaunchParam() const
     return launchParam_;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener)
 {
     sceneListener_ = listener;
 }
+#endif
 
 std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
@@ -3380,6 +3426,7 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
     return true;
 }
 
+#ifdef SUPPORT_GRAPHICS
 sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
 {
     HILOG_INFO("%{public}s start", __func__);
@@ -3422,6 +3469,7 @@ void Ability::DoOnForeground(const Want& want)
 
     }
 }
+#endif
 
 /**
  * @brief request a remote object of callee from this ability.
@@ -3432,6 +3480,7 @@ sptr<IRemoteObject> Ability::CallRequest()
     return nullptr;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int Ability::GetCurrentWindowMode()
 {
     HILOG_INFO("%{public}s start", __func__);
@@ -3557,5 +3606,6 @@ void Ability::RequsetFocus(const Want &want)
     }
     abilityWindow_->OnPostAbilityForeground(sceneFlag_);
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
