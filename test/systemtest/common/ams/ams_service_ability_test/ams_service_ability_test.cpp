@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -123,7 +123,7 @@ public:
         result.clear();
         char bufPs[BUFFER_SIZE];
         FILE *ptr;
-        if (!cmd.empty() && (ptr = popen(cmd.c_str(), "r")) != NULL) {
+        if (!cmd.empty() && (ptr = popen(cmd.c_str(), "r")) != nullptr) {
             while (fgets(bufPs, BUFFER_SIZE, ptr) != nullptr) {
                 result.append(bufPs);
             }
