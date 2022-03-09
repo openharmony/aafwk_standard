@@ -27,6 +27,9 @@ namespace OHOS {
 namespace AppExecFwk {
 
 int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
+const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
+const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
+const std::string PERMISSION_KEY = "ohos.user.grant.permission";
 
 ErrCode AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
 {
@@ -492,22 +495,9 @@ void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permis
         return;
     }
 
-    std::vector<std::string> permissionDes;
-    std::string des;
-    for (size_t i = 0; i < permissions.size(); i++) {
-        des = "";
-        GetPermissionDes(permissions[i], des);
-        permissionDes.push_back(des);
-    }
-
     AAFwk::Want want;
-    want.SetElementName(OHOS_REQUEST_PERMISSION_BUNDLENAME, OHOS_REQUEST_PERMISSION_ABILITY_NAME);
-
-    want.SetParam(OHOS_REQUEST_PERMISSION_KEY, OHOS_REQUEST_PERMISSION_VALUE);
-    want.SetParam(OHOS_REQUEST_PERMISSIONS_LIST, permissions);
-    want.SetParam(OHOS_REQUEST_PERMISSIONS_DES_LIST, permissionDes);
-    want.SetParam(OHOS_REQUEST_CALLER_BUNDLERNAME, GetBundleName());
-
+    want.SetElementName(GRANT_ABILITY_BUNDLE_NAME, GRANT_ABILITY_ABILITY_NAME);
+    want.SetParam(PERMISSION_KEY, permissions);
     StartAbility(want, requestCode);
     APP_LOGI("%{public}s end.", __func__);
 }
