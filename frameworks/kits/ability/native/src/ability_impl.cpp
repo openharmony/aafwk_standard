@@ -501,32 +501,7 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
         return;
     }
 
-    if (resultData.HasParameter(OHOS_RESULT_PERMISSION_KEY) && resultData.HasParameter(OHOS_RESULT_PERMISSIONS_LIST) &&
-        resultData.HasParameter(OHOS_RESULT_CALLER_BUNDLERNAME)) {
-
-        if (resultCode > 0) {
-            std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST);
-            std::vector<std::string> grantYes = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_YES);
-            std::vector<std::string> grantNo = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_NO);
-            std::vector<int> grantResult;
-            int intOK = 0;
-            for (size_t i = 0; i < permissions.size(); i++) {
-                intOK = 0;
-                for (size_t j = 0; j < grantYes.size(); j++) {
-                    if (permissions[i] == grantYes[j]) {
-                        intOK = 1;
-                        break;
-                    }
-                }
-                grantResult.push_back(intOK);
-            }
-            HILOG_INFO("%{public}s begin OnRequestPermissionsFromUserResult.", __func__);
-            ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grantResult);
-            HILOG_INFO("%{public}s end OnRequestPermissionsFromUserResult.", __func__);
-        } else {
-            HILOG_INFO("%{public}s user cancel permissions.", __func__);
-        }
-    } else if (resultData.HasParameter(PERMISSION_KEY)) {
+    if (resultData.HasParameter(PERMISSION_KEY)) {
         std::vector<std::string> permissions = resultData.GetStringArrayParam(PERMISSION_KEY);
         std::vector<int> grantedResult(permissions.size(), -1);
         if (resultCode > 0) {

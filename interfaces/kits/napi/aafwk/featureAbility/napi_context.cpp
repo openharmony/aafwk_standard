@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,6 @@ namespace AppExecFwk {
 const std::string NAPI_CONTEXT_FILE_SEPARATOR = std::string("/");
 const std::string NAPI_CONTEXT_DATABASE = std::string("database");
 const std::string NAPI_CONTEXT_PREFERENCES = std::string("preferences");
-CallbackInfo aceCallbackInfoPermission;
 
 napi_value ContextConstructor(napi_env env, napi_callback_info info)
 {
@@ -183,14 +182,16 @@ bool UnwrapRequestPermissionsFromUser(
         return false;
     }
 
-    aceCallbackInfoPermission.env = env;
+    CallbackInfo* aceCallbackInfoPermission = new CallbackInfo();
+    aceCallbackInfoPermission->env = env;
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL_BASE(env, napi_typeof(env, argv[PARAM2], &valuetype), false);
     if (valuetype != napi_function) {
         HILOG_INFO("%{public}s called, parameters is invalid", __func__);
         return false;
     }
-    NAPI_CALL_BASE(env, napi_create_reference(env, argv[PARAM2], 1, &aceCallbackInfoPermission.callback), false);
+    NAPI_CALL_BASE(env, napi_create_reference(env, argv[PARAM2], 1, &(aceCallbackInfoPermission->callback)), false);
+    asyncCallbackInfo->aceCallback = aceCallbackInfoPermission;
 
     std::vector<std::string> permissionList;
     if (!UnwrapArrayStringFromJS(env, argv[PARAM0], permissionList)) {
@@ -326,7 +327,6 @@ napi_value NAPI_RequestPermissionsFromUserWrap(
         return nullptr;
     }
 
-    asyncCallbackInfo->aceCallback = &aceCallbackInfoPermission;
     AsyncParamEx asyncParamEx;
     asyncParamEx.resource = "NAPI_RequestPermissionsFromUserCallback";
     asyncParamEx.execute = RequestPermissionsFromUserExecuteCallbackWork;
@@ -355,11 +355,11 @@ napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info
 
     napi_value rev = NAPI_RequestPermissionsFromUserWrap(env, info, asyncCallbackInfo);
     if (rev == nullptr) {
-        if (aceCallbackInfoPermission.callback != nullptr && aceCallbackInfoPermission.env != nullptr) {
-            napi_delete_reference(aceCallbackInfoPermission.env, aceCallbackInfoPermission.callback);
+        if (asyncCallbackInfo->aceCallback->callback != nullptr && asyncCallbackInfo->aceCallback->env != nullptr) {
+            napi_delete_reference(asyncCallbackInfo->aceCallback->env, asyncCallbackInfo->aceCallback->callback);
         }
-        aceCallbackInfoPermission.env = nullptr;
-        aceCallbackInfoPermission.callback = nullptr;
+        asyncCallbackInfo->aceCallback->env = nullptr;
+        asyncCallbackInfo->aceCallback->callback = nullptr;
 
         FreeAsyncJSCallbackInfo(&asyncCallbackInfo);
         rev = WrapVoidToJS(env);
