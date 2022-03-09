@@ -315,41 +315,7 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
         }
     }
 
-    auto bms = AbilityUtil::GetBundleManager();
-    CHECK_POINTER(bms);
-    std::vector<AppExecFwk::BundleInfo> bundleInfos;
-    bool getBundleInfos = bms->GetBundleInfos(OHOS::AppExecFwk::GET_BUNDLE_DEFAULT, bundleInfos, USER_ID_NO_HEAD);
-    if (!getBundleInfos) {
-        HILOG_ERROR("Handle ability died task, get bundle infos failed");
-        return;
-    }
-
-    for (size_t i = 0; i < bundleInfos.size(); i++) {
-        if (!bundleInfos[i].isKeepAlive) {
-            continue;
-        }
-        for (auto hapModuleInfo : bundleInfos[i].hapModuleInfos) {
-            if (hapModuleInfo.isModuleJson) {
-                // new application model, it cannot be a data ability
-                continue;
-            }
-            // old application model, it maybe a data ability
-            std::string mainElement = hapModuleInfo.mainAbility;
-            if (abilityRecord->GetAbilityInfo().name != mainElement) {
-                continue;
-            }
-            std::string uriStr;
-            bool getDataAbilityUri = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetDataAbilityUri(
-                hapModuleInfo.abilityInfos, mainElement, uriStr);
-            if (getDataAbilityUri) {
-                HILOG_INFO("restart data ability: %{public}s, uri: %{public}s",
-                    abilityRecord->GetAbilityInfo().name.c_str(), uriStr.c_str());
-                Uri uri(uriStr);
-                OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->AcquireDataAbility(uri, true, nullptr);
-                return;
-            }
-        }
-    }
+    RestartDataAbility(abilityRecord);
 }
 
 void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
@@ -617,6 +583,46 @@ void DataAbilityManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
 
     std::for_each(dataAbilityRecordsLoading_.begin(), dataAbilityRecordsLoading_.end(), queryInfo);
     std::for_each(dataAbilityRecordsLoaded_.begin(), dataAbilityRecordsLoaded_.end(), queryInfo);
+}
+
+void DataAbilityManager::RestartDataAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    // restart data ability if necessary
+    auto bms = AbilityUtil::GetBundleManager();
+    CHECK_POINTER(bms);
+    std::vector<AppExecFwk::BundleInfo> bundleInfos;
+    bool getBundleInfos = bms->GetBundleInfos(OHOS::AppExecFwk::GET_BUNDLE_DEFAULT, bundleInfos, USER_ID_NO_HEAD);
+    if (!getBundleInfos) {
+        HILOG_ERROR("Handle ability died task, get bundle infos failed");
+        return;
+    }
+
+    for (size_t i = 0; i < bundleInfos.size(); i++) {
+        if (!bundleInfos[i].isKeepAlive) {
+            continue;
+        }
+        for (auto hapModuleInfo : bundleInfos[i].hapModuleInfos) {
+            if (hapModuleInfo.isModuleJson) {
+                // new application model, it cannot be a data ability
+                continue;
+            }
+            // old application model, it maybe a data ability
+            std::string mainElement = hapModuleInfo.mainAbility;
+            if (abilityRecord->GetAbilityInfo().name != mainElement) {
+                continue;
+            }
+            std::string uriStr;
+            bool getDataAbilityUri = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->GetDataAbilityUri(
+                hapModuleInfo.abilityInfos, mainElement, uriStr);
+            if (getDataAbilityUri) {
+                HILOG_INFO("restart data ability: %{public}s, uri: %{public}s",
+                    abilityRecord->GetAbilityInfo().name.c_str(), uriStr.c_str());
+                Uri uri(uriStr);
+                OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->AcquireDataAbility(uri, true, nullptr);
+                return;
+            }
+        }
+    }
 }
 }  // namespace AAFwk
 }  // namespace OHOS
