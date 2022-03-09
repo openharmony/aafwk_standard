@@ -14,8 +14,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
 #include "context_deal.h"
+#include "hilog_wrapper.h"
 #include "mock_service_ability.h"
 #include "mock_ability_token.h"
 #include "service_ability_impl.h"

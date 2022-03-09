@@ -31,6 +31,7 @@ ohos_unittest("ams_mgr_scheduler_dump_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",

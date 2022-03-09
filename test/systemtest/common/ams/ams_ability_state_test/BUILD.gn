@@ -19,6 +19,15 @@ module_output_path = "appexecfwk_standard/ams/"
 config("system_test_ams_ability_state_test_config") {
   include_dirs = [
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
+    "${aafwk_path}/interfaces/innerkits/intent/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "${aafwk_path}/interfaces/innerkits/want/include",
+    "//utils/system/safwk/native/include",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/frameworks/kits/ability/native/include",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//third_party/json/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -46,7 +55,8 @@ ohos_systemtest("ams_ability_state_test") {
   configs = [
     "${aafwk_path}/services/abilitymgr:abilityms_config",
     "${aafwk_path}/services/appmgr:appmgr_config",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_config",
+
+    # "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_config",
 
     ":system_test_ams_ability_state_test_config",
     "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/:system_test_ability_util_config",

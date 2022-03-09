@@ -21,7 +21,7 @@ void AmsStAbilityF3::OnStart(const Want &want)
 {
     GetWantInfo(want);
 
-    APP_LOGI("AmsStAbilityF3::onStart");
+    HILOG_INFO("AmsStAbilityF3::onStart");
     pageAbilityEvent.SubscribeEvent(STEventName::g_eventList, shared_from_this());
     Ability::OnStart(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStart;
@@ -30,7 +30,7 @@ void AmsStAbilityF3::OnStart(const Want &want)
 
 void AmsStAbilityF3::OnForeground(const Want &want)
 {
-    APP_LOGI("AmsStAbilityF3::OnForeground");
+    HILOG_INFO("AmsStAbilityF3::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnForeground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnForegroundCount(), eventData);
@@ -38,7 +38,7 @@ void AmsStAbilityF3::OnForeground(const Want &want)
 
 void AmsStAbilityF3::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStAbilityF2::OnNewWant");
+    HILOG_INFO("AmsStAbilityF2::OnNewWant");
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnNewWant;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnNewWantCount(), eventData);
@@ -46,7 +46,7 @@ void AmsStAbilityF3::OnNewWant(const Want &want)
 
 void AmsStAbilityF3::OnStop()
 {
-    APP_LOGI("AmsStAbilityF3::onStop");
+    HILOG_INFO("AmsStAbilityF3::onStop");
     Ability::OnStop();
     pageAbilityEvent.UnsubscribeEvent();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStop;
@@ -55,7 +55,7 @@ void AmsStAbilityF3::OnStop()
 
 void AmsStAbilityF3::OnActive()
 {
-    APP_LOGI("AmsStAbilityF3::OnActive");
+    HILOG_INFO("AmsStAbilityF3::OnActive");
     Ability::OnActive();
     if (!targetBundle.empty() && !targetAbility.empty()) {
         Want want;
@@ -73,7 +73,7 @@ void AmsStAbilityF3::OnActive()
 
 void AmsStAbilityF3::OnInactive()
 {
-    APP_LOGI("AmsStAbilityF3::OnInactive");
+    HILOG_INFO("AmsStAbilityF3::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnInactive;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnInactiveCount(), eventData);
@@ -81,7 +81,7 @@ void AmsStAbilityF3::OnInactive()
 
 void AmsStAbilityF3::OnBackground()
 {
-    APP_LOGI("AmsStAbilityF3::OnBackground");
+    HILOG_INFO("AmsStAbilityF3::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnBackground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnBackgroundCount(), eventData);

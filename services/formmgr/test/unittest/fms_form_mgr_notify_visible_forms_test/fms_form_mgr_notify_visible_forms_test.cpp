@@ -17,7 +17,6 @@
 #include <thread>
 #include <string>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #define private public
 #include "form_bms_helper.h"
@@ -27,6 +26,7 @@
 #include "form_mgr_service.h"
 #include "form_mgr_adapter.h"
 #undef private
+#include "hilog_wrapper.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
 #include "permission/permission.h"

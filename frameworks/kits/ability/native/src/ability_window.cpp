@@ -16,7 +16,7 @@
 #include "ability_window.h"
 #include "ability.h"
 #include "ability_handler.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -33,11 +33,11 @@ AbilityWindow::~AbilityWindow()
  */
 void AbilityWindow::Init(std::shared_ptr<AbilityHandler>& handler, std::shared_ptr<Ability> ability)
 {
-    APP_LOGI("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
     handler_ = handler;
     ability_ = std::weak_ptr<IAbilityEvent>(ability);
     windowScene_ = std::make_shared<Rosen::WindowScene>();
-    APP_LOGI("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**
@@ -52,28 +52,28 @@ bool AbilityWindow::InitWindow(Rosen::WindowType winType,
     std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext,
     sptr<Rosen::IWindowLifeCycle> &listener, int32_t displayId, sptr<Rosen::WindowOption> option)
 {
-    APP_LOGI("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
     auto ret = windowScene_->Init(displayId, abilityContext, listener, option);
     if (ret != OHOS::Rosen::WMError::WM_OK) {
-        APP_LOGE("%{public}s error. failed to init window scene!", __func__);
+        HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
         return false;
     }
 
     auto window = windowScene_->GetMainWindow();
     if (!window) {
-        APP_LOGI("%{public}s window is nullptr.", __func__);
+        HILOG_INFO("%{public}s window is nullptr.", __func__);
         return false;
     }
 
     ret = window->SetWindowType(winType);
     if (ret != OHOS::Rosen::WMError::WM_OK) {
-        APP_LOGE("Set window type error, errcode = %{public}d", ret);
+        HILOG_ERROR("Set window type error, errcode = %{public}d", ret);
         return false;
     }
     winType_ = winType;
 
     isWindowAttached = true;
-    APP_LOGI("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 
@@ -83,19 +83,19 @@ bool AbilityWindow::InitWindow(Rosen::WindowType winType,
  */
 void AbilityWindow::OnPostAbilityStart()
 {
-    APP_LOGI("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityStart window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityStart window not attached.");
         return;
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoBackground.", __func__);
+        HILOG_INFO("%{public}s begin windowScene_->GoBackground.", __func__);
         windowScene_->GoBackground();
-        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
+        HILOG_INFO("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
-    APP_LOGI("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**
@@ -104,25 +104,25 @@ void AbilityWindow::OnPostAbilityStart()
  */
 void AbilityWindow::OnPostAbilityActive()
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityActive called.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityActive called.");
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityActive window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityActive window not attached.");
         return;
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoForeground.", __func__);
+        HILOG_INFO("%{public}s begin windowScene_->GoForeground.", __func__);
         windowScene_->GoForeground();
-        APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
+        HILOG_INFO("%{public}s end windowScene_->GoForeground.", __func__);
 
-        APP_LOGI("%{public}s begin windowScene_->RequestFocus.", __func__);
+        HILOG_INFO("%{public}s begin windowScene_->RequestFocus.", __func__);
         if (!(winType_ >= Rosen::WindowType::SYSTEM_WINDOW_BASE && winType_ < Rosen::WindowType::SYSTEM_WINDOW_END)) {
             windowScene_->RequestFocus();
         }
-        APP_LOGI("%{public}s end windowScene_->RequestFocus.", __func__);
+        HILOG_INFO("%{public}s end windowScene_->RequestFocus.", __func__);
     }
 
-    APP_LOGI("AbilityWindow::OnPostAbilityActive end.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityActive end.");
 }
 
 /**
@@ -131,12 +131,12 @@ void AbilityWindow::OnPostAbilityActive()
  */
 void AbilityWindow::OnPostAbilityInactive()
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityInactive called.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityInactive called.");
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityInactive window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityInactive window not attached.");
         return;
     }
-    APP_LOGI("AbilityWindow::OnPostAbilityInactive end.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityInactive end.");
 }
 
 /**
@@ -145,19 +145,19 @@ void AbilityWindow::OnPostAbilityInactive()
  */
 void AbilityWindow::OnPostAbilityBackground(uint32_t sceneFlag)
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityBackground called.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityBackground called.");
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityBackground window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityBackground window not attached.");
         return;
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoBackground, sceneFlag:%{public}d.", __func__, sceneFlag);
+        HILOG_INFO("%{public}s begin windowScene_->GoBackground, sceneFlag:%{public}d.", __func__, sceneFlag);
         windowScene_->GoBackground(sceneFlag);
-        APP_LOGI("%{public}s end windowScene_->GoBackground.", __func__);
+        HILOG_INFO("%{public}s end windowScene_->GoBackground.", __func__);
     }
 
-    APP_LOGI("AbilityWindow::OnPostAbilityBackground end.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityBackground end.");
 }
 
 /**
@@ -166,19 +166,19 @@ void AbilityWindow::OnPostAbilityBackground(uint32_t sceneFlag)
  */
 void AbilityWindow::OnPostAbilityForeground(uint32_t sceneFlag)
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityForeground called.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityForeground called.");
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityForeground window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityForeground window not attached.");
         return;
     }
 
     if (windowScene_) {
-        APP_LOGI("%{public}s begin windowScene_->GoForeground, sceneFlag:%{public}d.", __func__, sceneFlag);
+        HILOG_INFO("%{public}s begin windowScene_->GoForeground, sceneFlag:%{public}d.", __func__, sceneFlag);
         windowScene_->GoForeground(sceneFlag);
-        APP_LOGI("%{public}s end windowScene_->GoForeground.", __func__);
+        HILOG_INFO("%{public}s end windowScene_->GoForeground.", __func__);
     }
 
-    APP_LOGI("AbilityWindow::OnPostAbilityForeground end.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityForeground end.");
 }
 
 /**
@@ -187,19 +187,19 @@ void AbilityWindow::OnPostAbilityForeground(uint32_t sceneFlag)
  */
 void AbilityWindow::OnPostAbilityStop()
 {
-    APP_LOGI("AbilityWindow::OnPostAbilityStop called.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityStop called.");
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::OnPostAbilityStop window not attached.");
+        HILOG_ERROR("AbilityWindow::OnPostAbilityStop window not attached.");
         return;
     }
 
     if (windowScene_) {
         windowScene_ = nullptr;
-        APP_LOGI("AbilityWindow::window windowScene_ release end.");
+        HILOG_INFO("AbilityWindow::window windowScene_ release end.");
     }
 
     isWindowAttached = false;
-    APP_LOGI("AbilityWindow::OnPostAbilityStop end.");
+    HILOG_INFO("AbilityWindow::OnPostAbilityStop end.");
 }
 
 /**
@@ -210,7 +210,7 @@ void AbilityWindow::OnPostAbilityStop()
 const sptr<Rosen::Window> AbilityWindow::GetWindow()
 {
     if (!isWindowAttached) {
-        APP_LOGE("AbilityWindow::GetWindow window not attached.");
+        HILOG_ERROR("AbilityWindow::GetWindow window not attached.");
     }
     return windowScene_ ? windowScene_->GetMainWindow() : nullptr;
 }

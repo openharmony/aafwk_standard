@@ -15,7 +15,7 @@
 
 #include "sys_mgr_client.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
@@ -43,7 +43,7 @@ sptr<IRemoteObject> SysMrgClient::GetSystemAbility(const int32_t systemAbilityId
         if (abilityManager_ == nullptr) {
             abilityManager_ = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
             if (abilityManager_ == nullptr) {
-                APP_LOGE("fail to GetSystemAbility abilityManager_ == nullptr.");
+                HILOG_ERROR("fail to GetSystemAbility abilityManager_ == nullptr.");
                 return nullptr;
             }
         }

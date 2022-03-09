@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "runnable.h"
 #include "task.h"
 #include "thread_factory.h"

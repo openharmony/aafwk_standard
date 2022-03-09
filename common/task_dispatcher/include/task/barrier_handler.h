@@ -68,7 +68,7 @@ private:
         void OnChanged(const TaskStage &stage)
         {
             if (stage.IsDone()) {
-                APP_LOGI("BarrierHandler task done.");
+                HILOG_INFO("BarrierHandler task done.");
                 callback_();
             }
         };

@@ -30,17 +30,17 @@ int FormSupplyProxy::OnAcquire(const FormProviderInfo &formInfo, const Want& wan
 {
     MessageParcel data;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("%{public}s, failed to WriteInterfaceToken", __func__);
+        HILOG_ERROR("%{public}s, failed to WriteInterfaceToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     if (!data.WriteParcelable(&want)) {
-        APP_LOGE("%{public}s, failed to write want", __func__);
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
     if (want.GetIntParam(Constants::PROVIDER_FLAG, ERR_OK) == ERR_OK) {
         if (!data.WriteParcelable(&formInfo)) {
-            APP_LOGE("%{public}s, failed to write formInfo", __func__);
+            HILOG_ERROR("%{public}s, failed to write formInfo", __func__);
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -53,7 +53,7 @@ int FormSupplyProxy::OnAcquire(const FormProviderInfo &formInfo, const Want& wan
         reply,
         option);
     if (error != ERR_OK) {
-        APP_LOGE("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
     }
     return error;
 }
@@ -69,12 +69,12 @@ int FormSupplyProxy::OnEventHandle(const Want& want)
     MessageParcel data;
 
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
     if (!data.WriteParcelable(&want)) {
-        APP_LOGE("%{public}s, failed to write want", __func__);
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -86,7 +86,7 @@ int FormSupplyProxy::OnEventHandle(const Want& want)
         reply,
         option);
     if (error != ERR_OK) {
-        APP_LOGE("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
     }
     return error;
 }
@@ -98,19 +98,19 @@ int  FormSupplyProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &p
     for (int32_t i = 0; i < infoSize; i++) {
         std::unique_ptr<T> info(reply.ReadParcelable<T>());
         if (!info) {
-            APP_LOGE("%{public}s, failed to ReadParcelable<T>", __func__);
+            HILOG_ERROR("%{public}s, failed to ReadParcelable<T>", __func__);
             return ERR_INVALID_VALUE;
         }
         parcelableInfos.emplace_back(*info);
     }
-    APP_LOGI("get parcelable infos success");
+    HILOG_INFO("get parcelable infos success");
     return ERR_OK;
 }
 
 bool  FormSupplyProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(FormSupplyProxy::GetDescriptor())) {
-        APP_LOGE("%{public}s, failed to write interface token failed", __func__);
+        HILOG_ERROR("%{public}s, failed to write interface token failed", __func__);
         return false;
     }
     return true;

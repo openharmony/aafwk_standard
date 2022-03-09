@@ -28,8 +28,8 @@ config("module_private_config") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"WantUnitTest\"",
-    "LOG_DOMAIN = 0xD002210",
+    "ABILITYBASE_LOG_TAG = \"WantUnitTest\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002210",
   ]
 }
 
@@ -43,8 +43,8 @@ config("module_private_want_param_wrapper_config") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"WantUnitTest\"",
-    "LOG_DOMAIN = 0xD002210",
+    "ABILITYBASE_LOG_TAG = \"WantUnitTest\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002210",
   ]
 }
 

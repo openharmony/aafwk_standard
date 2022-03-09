@@ -17,7 +17,7 @@
 
 #include "ipc_types.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -27,7 +27,7 @@ AppStateCallbackProxy::AppStateCallbackProxy(const sptr<IRemoteObject> &impl) : 
 bool AppStateCallbackProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AppStateCallbackProxy::GetDescriptor())) {
-        APP_LOGE("write interface token failed");
+        HILOG_ERROR("write interface token failed");
         return false;
     }
     return true;
@@ -35,7 +35,7 @@ bool AppStateCallbackProxy::WriteInterfaceToken(MessageParcel &data)
 
 void AppStateCallbackProxy::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const AbilityState state)
 {
-    APP_LOGD("begin");
+    HILOG_DEBUG("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -47,20 +47,20 @@ void AppStateCallbackProxy::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
     data.WriteInt32(abilityState);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppStateCallback::Message::TRANSACT_ON_ABILITY_REQUEST_DONE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AppStateCallbackProxy::OnAppStateChanged(const AppProcessData &appProcessData)
 {
-    APP_LOGD("begin");
+    HILOG_DEBUG("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -70,15 +70,15 @@ void AppStateCallbackProxy::OnAppStateChanged(const AppProcessData &appProcessDa
     data.WriteParcelable(&appProcessData);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppStateCallback::Message::TRANSACT_ON_APP_STATE_CHANGED), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

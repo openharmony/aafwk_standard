@@ -25,11 +25,19 @@ config("appmgr_test_config") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"AppMgrService\"",
-    "LOG_DOMAIN = 0xD00111E",
+    "AMS_LOG_TAG = \"AppMgrService\"",
+    "AMS_LOG_DOMAIN = 0xD00111E",
   ]
 
-  include_dirs = [ "${services_path}/appmgr/test/mock/include" ]
+  include_dirs = [
+    "${services_path}/appmgr/test/mock/include",
+    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
+    "//base/notification/ces_standard/frameworks/core/include",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include",
+    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
+    "//base/global/i18n_standard/frameworks/intl/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
+  ]
 }
 
 ohos_source_set("appmgr_test_source") {

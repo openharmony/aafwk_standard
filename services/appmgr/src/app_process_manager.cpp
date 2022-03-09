@@ -16,7 +16,7 @@
 #include "app_process_manager.h"
 #include <csignal>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

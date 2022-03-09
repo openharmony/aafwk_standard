@@ -15,10 +15,8 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("napi_common") {
   include_dirs = [
-    "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
     "//third_party/libuv/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]
@@ -33,19 +31,17 @@ ohos_shared_library("napi_common") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/ace/napi:ace_napi",
     "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",
     "ability_runtime:wantagent_innerkits",
@@ -55,9 +51,11 @@ ohos_shared_library("napi_common") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
+    "napi:ace_napi",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "utils_base:utils",
   ]
 
   if (ability_runtime_graphics) {

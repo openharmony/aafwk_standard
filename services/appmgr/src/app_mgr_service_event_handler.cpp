@@ -15,8 +15,8 @@
 
 #include "app_mgr_service_event_handler.h"
 
-#include "app_log_wrapper.h"
 #include "app_mgr_service_inner.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -24,24 +24,24 @@ AMSEventHandler::AMSEventHandler(
     const std::shared_ptr<EventRunner> &runner, const std::weak_ptr<AppMgrServiceInner> &appMgr)
     : EventHandler(runner), appMgr_(appMgr)
 {
-    APP_LOGI("instance created");
+    HILOG_INFO("instance created");
 }
 
 AMSEventHandler::~AMSEventHandler()
 {
-    APP_LOGI("instance destroyed");
+    HILOG_INFO("instance destroyed");
 }
 
 void AMSEventHandler::ProcessEvent(const InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        APP_LOGE("AppEventHandler::ProcessEvent::parameter error");
+        HILOG_ERROR("AppEventHandler::ProcessEvent::parameter error");
         return;
     }
 
     auto appManager = appMgr_.lock();
     if (!appManager) {
-        APP_LOGE("app manager is nullptr");
+        HILOG_ERROR("app manager is nullptr");
         return;
     }
     appManager->HandleTimeOut(event);

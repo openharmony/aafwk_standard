@@ -19,10 +19,10 @@
 #include <stdint.h>
 #include <unordered_map>
 #include <vector>
-#include "app_log_wrapper.h"
 #include "form_host_callback.h"
 #include "form_item_info.h"
 #include "form_record.h"
+#include "hilog_wrapper.h"
 #include "iremote_object.h"
 
 namespace OHOS {

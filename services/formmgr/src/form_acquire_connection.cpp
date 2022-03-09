@@ -17,12 +17,12 @@
 #include <cinttypes>
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_acquire_connection.h"
 #include "form_constants.h"
 #include "form_supply_callback.h"
 #include "form_task_mgr.h"
 #include "form_util.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "want.h"
@@ -48,10 +48,10 @@ FormAcquireConnection::FormAcquireConnection(
 void FormAcquireConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s, abilityName:%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
+        HILOG_ERROR("%{public}s, abilityName:%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
            __func__, element.GetAbilityName().c_str(), formId_, resultCode);
         return;
     }
@@ -66,7 +66,7 @@ void FormAcquireConnection::OnAbilityConnectDone(
     }
     want.SetParam(Constants::FORM_CONNECT_ID, this->GetConnectId());
     want.SetElementName(info_.GetDeviceId(), info_.GetProviderBundleName(),  info_.GetAbilityName());
-    APP_LOGI("%{public}s , deviceId: %{public}s, bundleName: %{public}s, abilityName: %{public}s.",
+    HILOG_INFO("%{public}s , deviceId: %{public}s, bundleName: %{public}s, abilityName: %{public}s.",
         __func__, info_.GetDeviceId().c_str(), info_.GetProviderBundleName().c_str(), info_.GetAbilityName().c_str());
 
     FormTaskMgr::GetInstance().PostAcquireTask(formId_, want, remoteObject);

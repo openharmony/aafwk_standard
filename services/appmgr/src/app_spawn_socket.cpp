@@ -15,7 +15,7 @@
 
 #include "app_spawn_socket.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -34,20 +34,20 @@ AppSpawnSocket::~AppSpawnSocket()
 
 ErrCode AppSpawnSocket::OpenAppSpawnConnection()
 {
-    APP_LOGD("ready to open connection");
+    HILOG_DEBUG("ready to open connection");
     if (clientSocket_) {
         if (clientSocket_->CreateClient() != ERR_OK) {
-            APP_LOGE("failed to create socketClient");
+            HILOG_ERROR("failed to create socketClient");
             return ERR_APPEXECFWK_BAD_APPSPAWN_CLIENT;
         }
         if (clientSocket_->ConnectSocket() != ERR_OK) {
-            APP_LOGE("failed to connect socket");
+            HILOG_ERROR("failed to connect socket");
             return ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED;
         }
-        APP_LOGD("connection has been opened");
+        HILOG_DEBUG("connection has been opened");
         return ERR_OK;
     }
-    APP_LOGE("failed to open connection without socket");
+    HILOG_ERROR("failed to open connection without socket");
     return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
 }
 
@@ -60,48 +60,48 @@ void AppSpawnSocket::CloseAppSpawnConnection()
 
 ErrCode AppSpawnSocket::WriteMessage(const void *buf, const int32_t len)
 {
-    APP_LOGD("ready to write message");
+    HILOG_DEBUG("ready to write message");
     if (len <= 0) {
-        APP_LOGE("failed to write message due to invalid length of message");
+        HILOG_ERROR("failed to write message due to invalid length of message");
         return ERR_INVALID_VALUE;
     }
     if (buf == nullptr) {
-        APP_LOGE("failed to write message due to null buf");
+        HILOG_ERROR("failed to write message due to null buf");
         return ERR_INVALID_VALUE;
     }
     if (clientSocket_) {
         if (clientSocket_->WriteSocketMessage(buf, len) != len) {
-            APP_LOGE("failed to write message due to invalid write length");
+            HILOG_ERROR("failed to write message due to invalid write length");
             return ERR_APPEXECFWK_SOCKET_WRITE_FAILED;
         }
-        APP_LOGD("write message success");
+        HILOG_DEBUG("write message success");
         return ERR_OK;
     }
 
-    APP_LOGE("failed to write message without socket");
+    HILOG_ERROR("failed to write message without socket");
     return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
 }
 
 ErrCode AppSpawnSocket::ReadMessage(void *buf, const int32_t len)
 {
-    APP_LOGD("ready to read message");
+    HILOG_DEBUG("ready to read message");
     if (len <= 0) {
-        APP_LOGE("failed to read message due to invalid length of cache");
+        HILOG_ERROR("failed to read message due to invalid length of cache");
         return ERR_INVALID_VALUE;
     }
     if (buf == nullptr) {
-        APP_LOGE("failed to read message due to null buf");
+        HILOG_ERROR("failed to read message due to null buf");
         return ERR_INVALID_VALUE;
     }
     if (clientSocket_) {
         if (clientSocket_->ReadSocketMessage(buf, len) != len) {
-            APP_LOGE("failed to read message due to invalid read length");
+            HILOG_ERROR("failed to read message due to invalid read length");
             return ERR_APPEXECFWK_SOCKET_READ_FAILED;
         }
-        APP_LOGD("read message success");
+        HILOG_DEBUG("read message success");
         return ERR_OK;
     }
-    APP_LOGE("failed to read message without socket");
+    HILOG_ERROR("failed to read message without socket");
     return ERR_APPEXECFWK_BAD_APPSPAWN_CLIENT;
 }
 

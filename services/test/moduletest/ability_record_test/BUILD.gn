@@ -121,6 +121,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
   }
 
   external_deps = [
+    "ability_base:configuration",
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
