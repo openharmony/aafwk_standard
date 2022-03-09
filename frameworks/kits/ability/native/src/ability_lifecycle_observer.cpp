@@ -24,6 +24,7 @@ namespace AppExecFwk {
 void LifecycleObserver::OnActive()
 {}
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called back in response to an ON_BACKGROUND event.
  * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
@@ -43,6 +44,7 @@ void LifecycleObserver::OnBackground()
  */
 void LifecycleObserver::OnForeground(const Want &want)
 {}
+#endif
 
 /**
  * @brief Called back in response to an ON_INACTIVE event.

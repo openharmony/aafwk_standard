@@ -71,6 +71,5 @@ ohos_unittest("FmsFormCacheMgrTest") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":FmsFormCacheMgrTest" ]
+  # deps = [ ":FmsFormCacheMgrTest" ]
 }

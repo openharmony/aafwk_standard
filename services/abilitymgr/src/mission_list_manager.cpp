@@ -184,10 +184,9 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
         HILOG_ERROR("get target ability record failed, missionId: %{public}d", missionId);
         return MOVE_MISSION_FAILED;
     }
+    targetAbilityRecord->RemoveWindowMode();
     if (startOptions != nullptr) {
-        Want want(targetAbilityRecord->GetWant());
-        want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions->GetWindowMode());
-        targetAbilityRecord->SetWant(want);
+        targetAbilityRecord->SetWindowMode(startOptions->GetWindowMode());
     }
     // schedule target ability to foreground.
     targetAbilityRecord->ProcessForegroundAbility();
@@ -836,6 +835,8 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     CHECK_POINTER(abilityRecord);
+    // ability do not save window mode
+    abilityRecord->RemoveWindowMode();
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("ability: %{public}s", element.c_str());
 
@@ -1315,7 +1316,7 @@ void MissionListManager::PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &a
         HILOG_ERROR("ability is nullptr");
         return;
     }
-    
+
     AppExecFwk::RunningProcessInfo processInfo;
     DelayedSingleton<AppScheduler>::GetInstance()->GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
     std::string msgContent;
@@ -1414,7 +1415,7 @@ void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<Ability
         HILOG_ERROR("MissionListManager on time out event: ability record is nullptr.");
         return;
     }
-    
+
     if (ability->GetMission()) {
         ability->GetMission()->SetMovingState(false);
     }
@@ -1446,10 +1447,10 @@ void MissionListManager::HandleTimeoutAndResumeAbility(const std::shared_ptr<Abi
 
     // complete mission list mvoing
     MoveToTerminateList(timeOutAbilityRecord);
-    
+
     // load and foreground timeout, notify appMs force terminate the ability.
     DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(timeOutAbilityRecord->GetToken());
-    
+
     // caller not exist or caller is service or timeout ability is launcher, back to launcher
     auto callerAbility = timeOutAbilityRecord->GetCallerRecord();
     if ((callerAbility == nullptr) ||
@@ -1522,7 +1523,7 @@ void MissionListManager::MoveToTerminateList(const std::shared_ptr<AbilityRecord
     if (missionList->GetType() == MissionListType::CURRENT && missionList->IsEmpty()) {
         RemoveMissionList(missionList);
     }
-    
+
     // load timeout will not wait for died event, directly remove.
     if (abilityRecord->IsAbilityState(AbilityState::INITIAL)) {
         HILOG_WARN("load timeout will not wait for died event, directly remove.");
@@ -1539,7 +1540,7 @@ void MissionListManager::MoveToTerminateList(const std::shared_ptr<AbilityRecord
     // other remove to terminate list.
     abilityRecord->SetTerminatingState();
     terminateAbilityList_.push_back(abilityRecord);
-    
+
     HILOG_INFO("MoveToDefaultList end");
 }
 

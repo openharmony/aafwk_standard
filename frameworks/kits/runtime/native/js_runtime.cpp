@@ -325,6 +325,13 @@ bool JsRuntime::Initialize(const Options& options)
 
     OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
     codePath_ = options.codePath;
+
+    auto moduleManager = NativeModuleManager::GetInstance();
+    std::string packagePath = options.packagePath;
+    if (moduleManager && !packagePath.empty()) {
+        moduleManager->SetAppLibPath(packagePath.c_str());
+    }
+
     return true;
 }
 
@@ -516,7 +523,9 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
 
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
-    return nativeEngine_->BuildNativeAndJsBackStackTrace();
+    std::string straceStr = "";
+    // [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr);
+    return straceStr;
 }
 }  // namespace AbilityRuntime
 }  // namespace OHOS

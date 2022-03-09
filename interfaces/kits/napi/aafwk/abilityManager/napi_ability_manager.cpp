@@ -314,13 +314,17 @@ void GetMissionSnapshotInfoForResult(napi_env env, MissionSnapshot &recentMissio
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objTopAbilityInfo, "abilityName", abilityName));
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "topAbility", objTopAbilityInfo));
 
+#ifdef SUPPORT_GRAPHICS
     if (recentMissionInfos.snapshot) {
         napi_value iconResult = nullptr;
         iconResult = Media::PixelMapNapi::CreatePixelMap(env, recentMissionInfos.snapshot);
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", iconResult));
     } else {
+#endif
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, "snapshot", NapiGetNull(env)));
+#ifdef SUPPORT_GRAPHICS
     }
+#endif
 }
 
 auto NAPI_QueryRecentAbilityMissionInfosAsyncExecuteCallback = [](napi_env env, void *data) {

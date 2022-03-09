@@ -22,7 +22,19 @@
 #include "napi/native_node_api.h"
 #include "nlohmann/json.hpp"
 
+struct AsyncErrMsgCallbackInfo {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    napi_value callbackValue;
+    int code;
+    int type;
+};
+
 napi_value NapiGetResut(napi_env env, int iResult);
 bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value);
+void InnerCreateRetMsg(napi_env env, int32_t code, napi_value* result);
+napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo);
 
 #endif /* NAPI_FORM_UTIL_H_ */
