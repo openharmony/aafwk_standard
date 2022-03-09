@@ -943,9 +943,14 @@ int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &a
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("Terminate ability, ability is %{public}s", element.c_str());
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
-    if (abilityRecord->IsTerminating()) {
+    if (abilityRecord->IsTerminating() && !abilityRecord->IsForeground()) {
         HILOG_ERROR("Ability is on terminating.");
         return ERR_OK;
+    }
+
+    if (abilityRecord->IsTerminating() && abilityRecord->IsForeground()) {
+        HILOG_WARN("Ability is on terminating and ability state is foreground, force close");
+        flag = false;
     }
 
     // double check to avoid the ability has been removed
@@ -1028,6 +1033,12 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
 {
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("RemoveTerminatingAbility, ability is %{public}s", element.c_str());
+    if (GetAbilityFromTerminateList(abilityRecord->GetToken())) {
+        abilityRecord->SetNextAbilityRecord(nullptr);
+        HILOG_DEBUG("find ability in terminating list, return");
+        return;
+    }
+
     auto missionList = abilityRecord->GetOwnedMissionList();
     CHECK_POINTER(missionList);
 
@@ -1066,12 +1077,24 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         HILOG_DEBUG("needTopAbility is null");
         return;
     }
-    element = needTopAbility->GetWant().GetElement().GetURI();
+    AppExecFwk::ElementName elementName = needTopAbility->GetWant().GetElement();
     HILOG_DEBUG("next top ability is %{public}s, state is %{public}d, minimizeReason is %{public}d",
-        element.c_str(), needTopAbility->GetAbilityState(), needTopAbility->IsMinimizeFromUser());
+        elementName.GetURI().c_str(), needTopAbility->GetAbilityState(), needTopAbility->IsMinimizeFromUser());
+
+    // 5. if caller is recent, close
+    if (elementName.GetBundleName() == AbilityConfig::LAUNCHER_BUNDLE_NAME
+        && elementName.GetAbilityName() == AbilityConfig::LAUNCHER_RECENT_ABILITY_NAME) {
+        HILOG_DEBUG("next to need is recent, just to launcher");
+        needTopAbility = launcherList_->GetLauncherRoot();
+    }
+
+    if (!needTopAbility) {
+        HILOG_DEBUG("needTopAbility of launcherRoot is null");
+        return;
+    }
 
     if (!needTopAbility->IsForeground() && !needTopAbility->IsMinimizeFromUser()) {
-        HILOG_DEBUG("%{public}s is need to foreground", element.c_str());
+        HILOG_DEBUG("%{public}s is need to foreground", elementName.GetURI().c_str());
         abilityRecord->SetNextAbilityRecord(needTopAbility);
     }
 }
