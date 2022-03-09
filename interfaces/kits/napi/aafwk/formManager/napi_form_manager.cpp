@@ -1367,7 +1367,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
+    HILOG_INFO("%{public}s, argc size = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1389,11 +1389,12 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formId is not napi_string.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
     std::string strFormId = GetStringFromNAPI(env, argv[0]);
-    int64_t formId;
+    int64_t formId = 0;
     if (!ConvertStringToInt64(strFormId, formId)) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
@@ -1411,11 +1412,12 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formId ConvertStringToInt64 failed.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    if (valueType != napi_string) {
+    if (valueType != napi_object) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -1432,11 +1434,13 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formBindingData is not napi_object.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
-    auto formProviderData = std::shared_ptr<OHOS::AppExecFwk::FormProviderData>();
+    auto formProviderData = std::make_shared<OHOS::AppExecFwk::FormProviderData>();
     std::string formDataStr = GetStringByProp(env, argv[1], "data");
+    HILOG_INFO("%{public}s %{public}s - %{public}s.", __func__, strFormId.c_str(), formDataStr.c_str());
     formProviderData->SetDataString(formDataStr);
     std::map<std::string, int> rawImageDataMap;
     UnwrapRawImageDataMap(env, argv[1], rawImageDataMap);
