@@ -26,7 +26,7 @@ ohos_shared_library("particleability") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]
@@ -37,7 +37,7 @@ ohos_shared_library("particleability") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_operation.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
     "native_module.cpp",
     "particle_ability.cpp",
   ]
