@@ -29,7 +29,9 @@
 #include "dummy_values_bucket.h"
 #include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
+#ifdef SUPPORT_GRAPHICS
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/i_input_event_consumer.h"
+#endif
 namespace OHOS {
 namespace AppExecFwk {
 class Ability;
@@ -113,6 +115,7 @@ public:
     // Page Service Ability has different AbilityTransaction
     virtual void HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Execution the KeyDown callback of the ability
      * @param keyEvent Indicates the key-down event.
@@ -142,6 +145,7 @@ public:
      *
      */
     virtual void DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
+#endif
 
     /**
      * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -356,9 +360,9 @@ public:
     bool IsStageBasedModel() const;
 
     int GetCompatibleVersion();
-
+#ifdef SUPPORT_GRAPHICS
     void AfterUnFocused();
-
+#endif
 protected:
     /**
      * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
@@ -389,6 +393,7 @@ protected:
      */
     void Inactive();
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
      * that it belongs to of the lifecycle status.
@@ -403,6 +408,7 @@ protected:
      *
      */
     void Background();
+#endif
 
     /**
      * @brief SerUriString
@@ -439,6 +445,7 @@ protected:
     std::shared_ptr<AbilityHandler> handler_;
 
 private:
+#ifdef SUPPORT_GRAPHICS
 class WindowLifeCycleImpl : public Rosen::IWindowLifeCycle {
 public:
     WindowLifeCycleImpl(const sptr<IRemoteObject>& token, const std::shared_ptr<AbilityImpl>& owner)
@@ -462,6 +469,7 @@ public:
 private:
     std::shared_ptr<AbilityImpl> abilityImpl_;
 };
+#endif
     typedef enum {
         START,
         INACTIVE,
@@ -476,11 +484,12 @@ private:
     std::shared_ptr<ContextDeal> contextDeal_;
 
 private:
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Multimodal Events Register.
      */
     void WindowEventRegister();
-
+#endif
     bool hasSaveData_ = false;
     bool needSaveDate_ = false;
     PacMap restoreData_;

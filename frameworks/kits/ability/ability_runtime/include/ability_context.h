@@ -240,9 +240,9 @@ public:
     virtual void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config) = 0;
 
     virtual void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) = 0;
-
+#ifdef SUPPORT_GRAPHICS
     virtual int GetCurrentWindowMode() = 0;
-
+#endif
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;
 

@@ -228,6 +228,7 @@ public:
      */
     virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
+#ifdef SUPPORT_GRAPHICS
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
 
     /**
@@ -236,6 +237,7 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     virtual void NotifyTopActiveAbilityChanged(bool flag) = 0;
+#endif
 
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.

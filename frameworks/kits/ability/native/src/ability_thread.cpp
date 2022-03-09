@@ -27,7 +27,9 @@
 #include "data_ability_predicates.h"
 #include "dataobs_mgr_client.h"
 #include "ohos_application.h"
+#ifdef SUPPORT_GRAPHICS
 #include "page_ability_impl.h"
+#endif
 #include "values_bucket.h"
 
 namespace OHOS {
@@ -38,9 +40,11 @@ constexpr static char ABILITY_NAME[] = "Ability";
 constexpr static char ACE_ABILITY_NAME[] = "AceAbility";
 constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
 constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
+#ifdef SUPPORT_GRAPHICS
 constexpr static char ACE_FORM_ABILITY_NAME[] = "AceFormAbility";
-constexpr static char BASE_SERVICE_EXTENSION[] = "ServiceExtension";
 constexpr static char FORM_EXTENSION[] = "FormExtension";
+#endif
+constexpr static char BASE_SERVICE_EXTENSION[] = "ServiceExtension";
 constexpr static char STATIC_SUBSCRIBER_EXTENSION[] = "StaticSubscriberExtension";
 constexpr static char DATA_SHARE_EXT_ABILITY[] = "DataShareExtAbility";
 constexpr static char WORK_SCHEDULER_EXTENSION[] = "WorkSchedulerExtension";
@@ -89,7 +93,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         APP_LOGI("AbilityThread::CreateAbilityName end, create native ability.");
         return abilityInfo->name;
     }
-
+#ifdef SUPPORT_GRAPHICS
     if (abilityInfo->type == AbilityType::PAGE) {
         if (abilityInfo->isStageBasedModel) {
             abilityName = ABILITY_NAME;
@@ -97,18 +101,27 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
             abilityName = ACE_ABILITY_NAME;
         }
     } else if (abilityInfo->type == AbilityType::SERVICE) {
+#else
+    if (abilityInfo->type == AbilityType::SERVICE) {
+#endif
+#ifdef SUPPORT_GRAPHICS
         if (abilityInfo->formEnabled == true) {
             abilityName = ACE_FORM_ABILITY_NAME;
         } else {
+#endif
             abilityName = ACE_SERVICE_ABILITY_NAME;
+#ifdef SUPPORT_GRAPHICS
         }
+#endif
     } else if (abilityInfo->type == AbilityType::DATA) {
         abilityName = ACE_DATA_ABILITY_NAME;
     } else if (abilityInfo->type == AbilityType::EXTENSION) {
         abilityName = BASE_SERVICE_EXTENSION;
+#ifdef SUPPORT_GRAPHICS
         if (abilityInfo->formEnabled || abilityInfo->extensionAbilityType == ExtensionAbilityType::FORM) {
             abilityName = FORM_EXTENSION;
         }
+#endif
         if (abilityInfo->extensionAbilityType == ExtensionAbilityType::STATICSUBSCRIBER) {
             abilityName = STATIC_SUBSCRIBER_EXTENSION;
         }
@@ -1180,6 +1193,7 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Valu
     return ret;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {
     APP_LOGI("NotifyMultiWinModeChanged.key:%{public}d,flag:%{public}d", winModeKey, flag);
@@ -1221,6 +1235,7 @@ void AbilityThread::NotifyTopActiveAbilityChanged(bool flag)
     }
     return;
 }
+#endif
 
 void AbilityThread::ContinueAbility(const std::string& deviceId)
 {
@@ -1581,6 +1596,7 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
     return abilityContextImpl;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     APP_LOGI("%{public}s begin.", __func__);
@@ -1641,6 +1657,7 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
 
     APP_LOGI("localCallContainer need to get calls info.");
 }
+#endif
 
 sptr<IRemoteObject> AbilityThread::CallRequest()
 {

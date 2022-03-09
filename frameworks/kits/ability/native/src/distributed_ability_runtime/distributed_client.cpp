@@ -351,7 +351,7 @@ bool DistributedClient::ReadMissionInfosFromParcel(Parcel& parcel,
 }
 
 int32_t DistributedClient::StartRemoteAbilityByCall(const OHOS::AAFwk::Want& want,
-    const sptr<IRemoteObject>& connect, int32_t callerUid, int32_t callerPid, uint32_t tokenCaller)
+    const sptr<IRemoteObject>& connect, int32_t callerUid, int32_t callerPid, uint32_t accessToken)
 {
     HILOG_INFO("called");
     if (connect == nullptr) {
@@ -372,7 +372,7 @@ int32_t DistributedClient::StartRemoteAbilityByCall(const OHOS::AAFwk::Want& wan
     PARCEL_WRITE_HELPER(data, RemoteObject, connect);
     PARCEL_WRITE_HELPER(data, Int32, callerUid);
     PARCEL_WRITE_HELPER(data, Int32, callerPid);
-    PARCEL_WRITE_HELPER(data, Uint32, tokenCaller);
+    PARCEL_WRITE_HELPER(data, Uint32, accessToken);
     MessageParcel reply;
     PARCEL_TRANSACT_SYNC_RET_INT(remote, START_REMOTE_ABILITY_BY_CALL, data, reply);
 }

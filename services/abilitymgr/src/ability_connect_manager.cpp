@@ -23,6 +23,7 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -910,6 +911,53 @@ void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &
     }
 }
 
+bool AbilityConnectManager::IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    auto bms = AbilityUtil::GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, false);
+    std::vector<AppExecFwk::BundleInfo> bundleInfos;
+    bool getBundleInfos = bms->GetBundleInfos(OHOS::AppExecFwk::GET_BUNDLE_DEFAULT, bundleInfos, USER_ID_NO_HEAD);
+    if (!getBundleInfos) {
+        HILOG_ERROR("Handle ability died task, get bundle infos failed");
+        return false;
+    }
+
+    auto GetKeepAliveAbilities = [&bundleInfos](std::vector<std::string> &keepAliveAbilities) -> void {
+        for (size_t i = 0; i < bundleInfos.size(); i++) {
+            if (!bundleInfos[i].isKeepAlive) {
+                continue;
+            }
+            for (auto hapModuleInfo : bundleInfos[i].hapModuleInfos) {
+                std::string mainElement;
+                if (!hapModuleInfo.isModuleJson) {
+                    // old application model
+                    mainElement = hapModuleInfo.mainAbility;
+                } else {
+                    // new application model
+                    mainElement = hapModuleInfo.mainElementName;
+                }
+                if (!mainElement.empty()) {
+                    keepAliveAbilities.push_back(mainElement);
+                }
+            }
+        }
+    };
+
+    auto findKeepAliveAbility = [abilityRecord](const std::string &mainElemen) {
+        return (abilityRecord->GetAbilityInfo().name == mainElemen ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME ||
+                abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME);
+    };
+
+    std::vector<std::string> keepAliveAbilities;
+    GetKeepAliveAbilities(keepAliveAbilities);
+    auto findIter = find_if(keepAliveAbilities.begin(), keepAliveAbilities.end(), findKeepAliveAbility);
+    return (findIter != keepAliveAbilities.end());
+}
+
 void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
     HILOG_INFO("Handle ability died task.");
@@ -920,10 +968,8 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
         return;
     }
 
-    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME ||
-        abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME ||
-        abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME ||
-        abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME) {
+    if (IsAbilityNeedRestart(abilityRecord)) {
+        HILOG_INFO("restart ability: %{public}s", abilityRecord->GetAbilityInfo().name.c_str());
         AbilityRequest requestInfo;
         requestInfo.want = abilityRecord->GetWant();
         requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
@@ -1029,8 +1075,8 @@ void AbilityConnectManager::GetExtensionRunningInfo(std::shared_ptr<AbilityRecor
     auto bms = AbilityUtil::GetBundleManager();
     CHECK_POINTER(bms);
     std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
-    bool queryResult = bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
-        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos);
+    bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfos(abilityRecord->GetWant(),
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, extensionInfos));
     if (queryResult) {
         HILOG_INFO("Query Extension Ability Infos Success.");
         auto abilityInfo = abilityRecord->GetAbilityInfo();
