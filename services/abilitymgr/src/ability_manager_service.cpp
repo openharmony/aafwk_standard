@@ -1555,7 +1555,7 @@ int32_t AbilityManagerService::GetMissionIdByToken(const sptr<IRemoteObject> &to
         return -1;
     }
 
-    return GetMissionIdByAbilityToken();
+    return GetMissionIdByAbilityToken(token);
 }
 #endif
 
