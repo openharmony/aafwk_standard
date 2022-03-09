@@ -635,7 +635,7 @@ int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
     HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, callerUid = %{public}d", callerUid);
-    HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, AccessTokenID = %{public}d", accessToken);
+    HILOG_INFO("AbilityManagerService::Try to StartRemoteAbility, AccessTokenID = %{public}u", accessToken);
     int result = dmsClient.StartRemoteAbility(want, callerUid, requestCode, accessToken);
     if (result != ERR_NONE) {
         HILOG_ERROR("AbilityManagerService::StartRemoteAbility failed, result = %{public}d", result);
@@ -1024,7 +1024,7 @@ int AbilityManagerService::ConnectRemoteAbility(const Want &want, const sptr<IRe
     int32_t callerPid = IPCSkeleton::GetCallingPid();
     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
-    HILOG_INFO("AbilityManagerService::Try to ConnectRemoteAbility, AccessTokenID = %{public}d", accessToken);
+    HILOG_INFO("AbilityManagerService::Try to ConnectRemoteAbility, AccessTokenID = %{public}u", accessToken);
     return dmsClient.ConnectRemoteAbility(want, connect, callerUid, callerPid, accessToken);
 }
 
@@ -1079,7 +1079,7 @@ int AbilityManagerService::StartContinuation(const Want &want, const sptr<IRemot
 
     int32_t appUid = IPCSkeleton::GetCallingUid();
     uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
-    HILOG_INFO("AbilityManagerService::Try to StartContinuation, AccessTokenID = %{public}d", accessToken);
+    HILOG_INFO("AbilityManagerService::Try to StartContinuation, AccessTokenID = %{public}u", accessToken);
     int32_t missionId = GetMissionIdByAbilityToken(abilityToken);
     if (missionId == -1) {
         HILOG_ERROR("AbilityManagerService::StartContinuation failed to get missionId.");
@@ -3415,9 +3415,9 @@ int AbilityManagerService::StartRemoteAbilityByCall(const Want &want, const sptr
 {
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     int32_t callerPid = IPCSkeleton::GetCallingPid();
-    uint32_t tokenCaller = IPCSkeleton::GetCallingTokenID();
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
-    return dmsClient.StartRemoteAbilityByCall(want, connect, callerUid, callerPid, tokenCaller);
+    return dmsClient.StartRemoteAbilityByCall(want, connect, callerUid, callerPid, accessToken);
 }
 
 int AbilityManagerService::ReleaseRemoteAbility(const sptr<IRemoteObject> &connect,
