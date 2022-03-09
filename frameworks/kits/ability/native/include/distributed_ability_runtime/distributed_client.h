@@ -50,7 +50,7 @@ public:
     int32_t GetRemoteMissionSnapshotInfo(const std::string& deviceId, int32_t missionId,
         std::unique_ptr<MissionSnapshot>& missionSnapshot);
     int32_t StartRemoteAbilityByCall(const OHOS::AAFwk::Want& want, const sptr<IRemoteObject>& connect,
-        int32_t callerUid, int32_t callerPid, uint32_t tokenCaller);
+        int32_t callerUid, int32_t callerPid, uint32_t accessToken);
     int32_t ReleaseRemoteAbility(const sptr<IRemoteObject>& connect, const AppExecFwk::ElementName &element);
     enum {
         START_REMOTE_ABILITY = 1,

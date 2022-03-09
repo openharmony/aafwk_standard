@@ -40,6 +40,7 @@
 #include "form_timer_mgr.h"
 #include "form_util.h"
 #include "if_system_ability_manager.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "ohos_account_kits.h"
@@ -399,7 +400,7 @@ int FormMgrAdapter::UpdateForm(const int64_t formId,
     // check bundle uid for permission
     int callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = GetCurrentUserId(callingUid);
-    int32_t bundleUid = iBundleMgr->GetUidByBundleName(bundleName, userId);
+    int32_t bundleUid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
     if (bundleUid != callingUid) {
         APP_LOGE("%{public}s error, permission denied, the updated form is not your own.", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
@@ -1039,8 +1040,8 @@ ErrCode FormMgrAdapter::GetBundleInfo(const AAFwk::Want &want, BundleInfo &bundl
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
 
-    if (!iBundleMgr->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
-        bundleInfo, FormUtil::GetCurrentAccountId())) {
+    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
+        bundleInfo, FormUtil::GetCurrentAccountId()))) {
         APP_LOGE("GetBundleInfo, failed to get bundle info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
@@ -1180,12 +1181,12 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
     std::string hostBundleName {};
-    if (!iBundleMgr->GetBundleNameForUid(IPCSkeleton::GetCallingUid(), hostBundleName)) {
+    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleNameForUid(IPCSkeleton::GetCallingUid(), hostBundleName))) {
         APP_LOGE("GetFormsInfoByModule,  failed to get form config info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
     itemInfo.SetHostBundleName(hostBundleName);
-    std::string icon = iBundleMgr->GetAbilityIcon(bundleInfo.name, formInfo.abilityName);
+    std::string icon = IN_PROCESS_CALL(iBundleMgr->GetAbilityIcon(bundleInfo.name, formInfo.abilityName));
     itemInfo.SetIcon(icon);
 
     itemInfo.SetAbilityName(formInfo.abilityName);
@@ -1249,7 +1250,7 @@ int FormMgrAdapter::SetNextRefreshTime(const int64_t formId, const int64_t nextT
     int32_t userId = GetCurrentUserId(callingUid);
     APP_LOGI("%{public}s, userId:%{public}d, callingUid:%{public}d.", __func__, userId, callingUid);
 
-    int32_t bundleUid = iBundleMgr->GetUidByBundleName(bundleName, userId);
+    int32_t bundleUid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
     if (bundleUid != callingUid) {
         APP_LOGE("%{public}s error, permission denied, the form is not your own.", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
@@ -1291,12 +1292,12 @@ bool FormMgrAdapter::GetBundleName(std::string &bundleName)
     }
 
     int uid = IPCSkeleton::GetCallingUid();
-    if (!iBundleMgr->CheckIsSystemAppByUid(uid)) {
+    if (!IN_PROCESS_CALL(iBundleMgr->CheckIsSystemAppByUid(uid))) {
         APP_LOGE("%{public}s fail, form is not system app. uid:%{public}d", __func__, uid);
         return false;
     }
 
-    bool result = iBundleMgr->GetBundleNameForUid(uid, bundleName);
+    bool result = IN_PROCESS_CALL(iBundleMgr->GetBundleNameForUid(uid, bundleName));
     if (!result || bundleName.empty()) {
         APP_LOGE("%{public}s failed, cannot get bundle name by uid:%{public}d", __func__, uid);
         return false;
@@ -1651,10 +1652,10 @@ bool FormMgrAdapter::UpdateProviderInfoToHost(const int64_t matchedFormId, const
 bool FormMgrAdapter::CheckIsSystemAppByBundleName(const sptr<IBundleMgr> &iBundleMgr, const std::string &bundleName)
 {
     BundleInfo bundleInfo;
-    if (iBundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT,
-        bundleInfo, FormUtil::GetCurrentAccountId())) {
+    if (IN_PROCESS_CALL(iBundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT,
+        bundleInfo, FormUtil::GetCurrentAccountId()))) {
         APP_LOGD("%{public}s, get bundle uid success", __func__);
-        if (!iBundleMgr->CheckIsSystemAppByUid(bundleInfo.uid)) {
+        if (!IN_PROCESS_CALL(iBundleMgr->CheckIsSystemAppByUid(bundleInfo.uid))) {
             APP_LOGW("%{public}s fail, form provider is not system app, bundleName: %{public}s",
                 __func__, bundleName.c_str());
             return false;

@@ -35,8 +35,10 @@ public:
     MOCK_METHOD1(ScheduleRestoreAbilityState, void(const PacMap &inState));
     MOCK_METHOD1(ScheduleUpdateConfiguration, void(const AppExecFwk::Configuration &config));
     MOCK_METHOD1(ScheduleNewWant, void(const Want &want));
+#ifdef SUPPORT_GRAPHICS
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
+#endif
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD2(
         ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
