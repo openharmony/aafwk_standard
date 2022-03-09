@@ -15,9 +15,9 @@
 
 #include "app_state_callback_proxy.h"
 
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 
-#include "app_log_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

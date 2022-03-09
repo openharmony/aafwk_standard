@@ -19,34 +19,24 @@ config("ability_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "${INNERKITS_PATH}/base/include",
-    "//utils/native/base/include",
     "${SUBSYSTEM_DIR}/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "${INNERKITS_PATH}/want/include/ohos/aafwk/content",
-    "${INNERKITS_PATH}/ability_manager/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include/",
     "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/app",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
     "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
     "//foundation/aafwk/standard/frameworks/kits/app/native/app/include",
     "//foundation/aafwk/standard/services/common/include",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
-    "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/remote_register_service",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/distributed",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/distributed_ability_runtime",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include/continuation",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//foundation/aafwk/standard/common/task_dispatcher/include/dispatcher",
     "//foundation/aafwk/standard/common/task_dispatcher/include/task",
     "//foundation/aafwk/standard/common/task_dispatcher/include/threading",
@@ -61,6 +51,8 @@ config("ability_config") {
   defines = [
     "APP_LOG_TAG = \"Ability\"",
     "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"Ability\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 
@@ -87,6 +79,7 @@ config("ability_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
     "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_stage_napi",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include/",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
@@ -104,15 +97,14 @@ ohos_shared_library("static_subscriber_ipc") {
     "${SUBSYSTEM_DIR}/src/static_subscriber_stub.cpp",
   ]
 
-  deps = [
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
-  ]
+  deps = []
 
   external_deps = [
     "ability_base:want",
     "ces_standard:cesfwk_innerkits",
     "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
@@ -241,34 +233,30 @@ ohos_shared_library("abilitykit_native") {
 
   deps = [
     ":static_subscriber_ipc",
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/want:want",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_delegator",
-    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
-    "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
-    "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
+
+    # "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
     "//third_party/icu/icu4c:shared_icuuc",
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:configuration",
+    "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",
     "ability_runtime:runtime",
+    "ability_runtime:task_dispatcher",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
+    "background_task_mgr:bgtaskmgr_innerkits",
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_innerkits",
@@ -278,9 +266,13 @@ ohos_shared_library("abilitykit_native") {
     "ipc:ipc_core",
     "ipc_js:rpc",
     "multimodalinput_base:libmmi-client",
+    "napi:ace_napi",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "permission_standard:libpermissionsdk_standard",
+    "resmgr_standard:global_resmgr",
+    "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
 
@@ -311,14 +303,13 @@ ohos_shared_library("dummy_classes") {
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
 
-  deps = [
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
 
   external_deps = [
+    "ability_base:want",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
@@ -337,12 +328,13 @@ ohos_shared_library("service_extension_module") {
   deps = [
     ":abilitykit_native",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:want",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
@@ -361,12 +353,13 @@ ohos_shared_library("datashare_ext_ability_module") {
   deps = [
     ":abilitykit_native",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:want",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

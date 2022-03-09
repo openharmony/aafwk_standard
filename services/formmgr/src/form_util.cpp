@@ -19,10 +19,10 @@
 #include <regex>
 #include <sys/time.h>
 
-#include "app_log_wrapper.h"
 #include "bundle_constants.h"
 #include "form_constants.h"
 #include "form_util.h"
+#include "hilog_wrapper.h"
 #include "ohos_account_kits.h"
 #include "os_account_manager.h"
 
@@ -86,11 +86,11 @@ int64_t FormUtil::GenerateFormId(int64_t udidHash)
 
     int64_t elapsedTime { ((t.tv_sec) * SEC_TO_NANOSEC + t.tv_nsec) };
     size_t elapsedHash = std::hash<std::string>()(std::to_string(elapsedTime));
-    APP_LOGI("%{public}s, GenerateFormId generate elapsed hash %{public}zu", __func__, elapsedHash);
+    HILOG_INFO("%{public}s, GenerateFormId generate elapsed hash %{public}zu", __func__, elapsedHash);
     uint64_t unsignedudidHash = static_cast<uint64_t>(udidHash);
     uint64_t formId = unsignedudidHash | (int32_t)(elapsedHash & 0x000000007fffffffL);
     int64_t ret = static_cast<int64_t>(formId);
-    APP_LOGI("%{public}s, GenerateFormId generate formId %{public}" PRId64 "", __func__, ret);
+    HILOG_INFO("%{public}s, GenerateFormId generate formId %{public}" PRId64 "", __func__, ret);
     return ret;
 }
 
@@ -116,7 +116,7 @@ int64_t FormUtil::PaddingUDIDHash(uint64_t formId, uint64_t udidHash)
  */
 bool FormUtil::GenerateUdidHash(int64_t &udidHash)
 {
-    APP_LOGI("%{public}s start, udidHash: %{public}" PRId64 "", __func__, udidHash);
+    HILOG_INFO("%{public}s start, udidHash: %{public}" PRId64 "", __func__, udidHash);
     if (udidHash != INVALID_UDID_HASH) {
         return true;
     }
@@ -127,7 +127,7 @@ bool FormUtil::GenerateUdidHash(int64_t &udidHash)
     if (udidHash < 0) {
         udidHash = 0L;
     }
-    APP_LOGI("%{public}s, FormAdapter generate hash %{public}" PRId64 "", __func__, udidHash);
+    HILOG_INFO("%{public}s, FormAdapter generate hash %{public}" PRId64 "", __func__, udidHash);
 
     return true;
 }
@@ -162,7 +162,7 @@ int64_t FormUtil::GetMillisecondFromTm(struct tm &tmAtTime)
 {
     time_t inputTime = mktime(&tmAtTime);
     if (inputTime == -1) {
-        APP_LOGE("%{public}s fail, mktime failed.", __func__);
+        HILOG_ERROR("%{public}s fail, mktime failed.", __func__);
         return -1;
     }
     system_clock::time_point pointTime = system_clock::from_time_t(inputTime);
@@ -194,12 +194,12 @@ int FormUtil::GetCurrentAccountId()
     std::vector<int32_t> osActiveAccountIds;
     ErrCode ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(osActiveAccountIds);
     if (ret != ERR_OK) {
-        APP_LOGE("QueryActiveOsAccountIds failed.");
+        HILOG_ERROR("QueryActiveOsAccountIds failed.");
         return Constants::ANY_USERID;
     }
 
     if (osActiveAccountIds.empty()) {
-        APP_LOGE("QueryActiveOsAccountIds is empty, no accounts.");
+        HILOG_ERROR("QueryActiveOsAccountIds is empty, no accounts.");
         return Constants::ANY_USERID;
     }
 

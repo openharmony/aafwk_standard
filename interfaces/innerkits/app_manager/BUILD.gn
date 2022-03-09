@@ -19,6 +19,7 @@ config("appmgr_sdk_config") {
     "include/appmgr",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
   ]
 }
 
@@ -30,7 +31,7 @@ ohos_shared_library("app_manager") {
   include_dirs = [
     "//third_party/json/include",
     "${aafwk_path}/services/appmgr/include",
-    "//utils/system/safwk/native/include",
+    "${aafwk_path}/services/common/include",
   ]
 
   sources = [
@@ -54,7 +55,6 @@ ohos_shared_library("app_manager") {
     "src/appmgr/app_task_info.cpp",
     "src/appmgr/application_state_observer_proxy.cpp",
     "src/appmgr/application_state_observer_stub.cpp",
-    "src/appmgr/configuration.cpp",
     "src/appmgr/priority_object.cpp",
     "src/appmgr/process_data.cpp",
     "src/appmgr/process_info.cpp",
@@ -75,27 +75,28 @@ ohos_shared_library("app_manager") {
   defines = [
     "APP_LOG_TAG = \"AppexecfwkCore\"",
     "LOG_DOMAIN = 0xD001100",
+    "AMS_LOG_TAG = \"AppexecfwkCore\"",
+    "AMS_LOG_DOMAIN = 0xD001100",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "bundle_framework:appexecfwk_base",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
@@ -105,16 +106,12 @@ ohos_shared_library("app_manager") {
 config("configuration_sdk_config") {
   include_dirs = [
     "include/appmgr",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/log/include",
     "//third_party/json/include",
   ]
 }
 
 ohos_shared_library("configuration") {
-  include_dirs =
-      [ "//base/global/resmgr_standard/interfaces/innerkits/include" ]
-
   sources = [
     "src/appmgr/configuration.cpp",
     "src/appmgr/configuration_convertor.cpp",
@@ -123,19 +120,19 @@ ohos_shared_library("configuration") {
   public_configs = [ ":configuration_sdk_config" ]
 
   defines = [
-    "APP_LOG_TAG = \"Configuration\"",
-    "LOG_DOMAIN = 0xD001100",
+    "ABILITYBASE_LOG_TAG = \"Configuration\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002200",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  deps = [
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//utils/native/base:utils",
-  ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "resmgr_standard:global_resmgr",
+    "utils_base:utils",
+  ]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "form_ability_not_sys.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 
@@ -26,15 +26,15 @@ namespace OHOS {
 namespace AppExecFwk {
 void FormAbilityNotSys::AcquireFormCallback::OnAcquired(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityNotSys::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityNotSys::AcquireFormCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityNotSys::FMS_acquireForm_0100()
 {
@@ -49,9 +49,9 @@ void FormAbilityNotSys::FMS_acquireForm_0100()
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0100, EVENT_CODE_100, "false");
     }
 }
@@ -61,9 +61,9 @@ void FormAbilityNotSys::FMS_deleteForm_0100()
     int64_t formId = 1;
     bool bResult = DeleteForm(formId);
     if (bResult) {
-        APP_LOGI("[FMS_deleteForm_0100] end");
+        HILOG_INFO("[FMS_deleteForm_0100] end");
     } else {
-        APP_LOGE("[FMS_deleteForm_0100] error");
+        HILOG_ERROR("[FMS_deleteForm_0100] error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_0100, EVENT_CODE_100, "false");
     }
 }
@@ -74,16 +74,16 @@ void FormAbilityNotSys::FMS_releaseForm_0100()
     bool isReleaseCache = true;
     bool bResult = ReleaseForm(formId, isReleaseCache);
     if (bResult) {
-        APP_LOGI("[FMS_releaseForm_0100] end");
+        HILOG_INFO("[FMS_releaseForm_0100] end");
     } else {
-        APP_LOGE("[FMS_releaseForm_0100] error");
+        HILOG_ERROR("[FMS_releaseForm_0100] error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0100, EVENT_CODE_100, "false");
     }
 }
 
 void FormAbilityNotSys::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilityNotSys::onStart");
+    HILOG_INFO("FormAbilityNotSys::onStart");
     Ability::OnStart(want);
 
     std::vector<std::string> eventList = {
@@ -95,7 +95,7 @@ void FormAbilityNotSys::OnStart(const Want &want)
 }
 void FormAbilityNotSys::OnActive()
 {
-    APP_LOGI("FormAbilityNotSys::OnActive");
+    HILOG_INFO("FormAbilityNotSys::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -103,19 +103,19 @@ void FormAbilityNotSys::OnActive()
 
 void FormAbilityNotSys::OnStop()
 {
-    APP_LOGI("FormAbilityNotSys::OnStop");
+    HILOG_INFO("FormAbilityNotSys::OnStop");
 
     Ability::OnStop();
 }
 void FormAbilityNotSys::OnInactive()
 {
-    APP_LOGI("FormAbilityNotSys::OnInactive");
+    HILOG_INFO("FormAbilityNotSys::OnInactive");
 
     Ability::OnInactive();
 }
 void FormAbilityNotSys::OnBackground()
 {
-    APP_LOGI("FormAbilityNotSys::OnBackground");
+    HILOG_INFO("FormAbilityNotSys::OnBackground");
 
     Ability::OnBackground();
 }
@@ -137,7 +137,7 @@ void FormAbilityNotSys::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilityNotSys::Init");
+    HILOG_INFO("FormAbilityNotSys::Init");
     Ability::Init(abilityInfo, application, handler, token);
 
     memberFuncMap_[FORM_EVENT_REQ_ACQUIRE_FORM_0100] = &FormAbilityNotSys::FMS_acquireForm_0100;
@@ -162,8 +162,8 @@ void FormAbilityNotSys::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName);
 }

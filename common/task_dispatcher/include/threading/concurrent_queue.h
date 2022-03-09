@@ -19,7 +19,7 @@
 #include <condition_variable>
 #include <queue>
 #include <vector>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -51,7 +51,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
         while (queue_.empty()) {
-            APP_LOGI("ConcurrentQueue::Take blocked");
+            HILOG_INFO("ConcurrentQueue::Take blocked");
             empty_.wait(lock);
         }
 
@@ -63,7 +63,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
         if (queue_.empty()) {
-            APP_LOGI("ConcurrentQueue::Poll empty");
+            HILOG_INFO("ConcurrentQueue::Poll empty");
             return nullptr;
         }
         T front(queue_.front());

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
 #include "errors.h"
 #include "form_constants.h"
 #include "form_supply_interface.h"
+#include "hilog_wrapper.h"
 #include "mock_form_provider_client.h"
 #include "string_ex.h"
 
@@ -34,11 +34,11 @@ int MockFormProviderClient::AcquireProviderFormInfo(const int64_t formId, const 
 {
     // avoid the user modify the number in onCreate
 
-    APP_LOGD("Acquire provider form info");
+    HILOG_DEBUG("Acquire provider form info");
 
     sptr<IFormSupply> formSupply = iface_cast<IFormSupply>(callerToken);
     if (formSupply == nullptr) {
-        APP_LOGE("failed to get formSupplyProxy");
+        HILOG_ERROR("failed to get formSupplyProxy");
     }
 
     FormProviderInfo formProviderInfo;
@@ -62,7 +62,7 @@ int MockFormProviderClient::AcquireProviderFormInfo(const int64_t formId, const 
 int MockFormProviderClient::NotifyFormDelete(const int64_t formId, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Notify form delete");
+    HILOG_DEBUG("Notify form delete");
     return ERR_OK;
 }
 /**
@@ -76,7 +76,7 @@ int MockFormProviderClient::NotifyFormDelete(const int64_t formId, const Want &w
 int MockFormProviderClient::NotifyFormsDelete(const std::vector<int64_t> &formIds, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Notify forms delete");
+    HILOG_DEBUG("Notify forms delete");
     return ERR_OK;
 }
 
@@ -89,7 +89,7 @@ int MockFormProviderClient::NotifyFormsDelete(const std::vector<int64_t> &formId
 int MockFormProviderClient::NotifyFormUpdate(const int64_t formId, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Notify form update");
+    HILOG_DEBUG("Notify form update");
     return ERR_OK;
 }
 
@@ -105,7 +105,7 @@ int MockFormProviderClient::NotifyFormUpdate(const int64_t formId, const Want &w
 int MockFormProviderClient::EventNotify(const std::vector<int64_t> &formIds, const int32_t formVisibleType,
     const Want &want, const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Event notify");
+    HILOG_DEBUG("Event notify");
     return ERR_OK;
 }
 
@@ -119,7 +119,7 @@ int MockFormProviderClient::EventNotify(const std::vector<int64_t> &formIds, con
 int MockFormProviderClient::NotifyFormCastTempForm(const int64_t formId, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Notify cast temp form");
+    HILOG_DEBUG("Notify cast temp form");
     return ERR_OK;
 }
 /**
@@ -133,7 +133,7 @@ int MockFormProviderClient::NotifyFormCastTempForm(const int64_t formId, const W
 int MockFormProviderClient::FireFormEvent(const int64_t formId, const std::string &message, const Want &want,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("Fire form event");
+    HILOG_DEBUG("Fire form event");
     return ERR_OK;
 }
 }  // namespace AppExecFwk

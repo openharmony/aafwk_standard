@@ -17,7 +17,7 @@
 #include <iostream>
 #include <numeric>
 #include <sstream>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -63,12 +63,12 @@ void SixthAbility::SubscribeEvent(const vector_conststr &eventList)
 
 void SixthAbility::ApplicationStByCode(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("SixthAbility::ApplicationStByCode");
+    HILOG_INFO("SixthAbility::ApplicationStByCode");
     if (mapStKitFunc_.find(apiIndex) != mapStKitFunc_.end() &&
         static_cast<int>(mapStKitFunc_[apiIndex].size()) > caseIndex) {
         mapStKitFunc_[apiIndex][caseIndex](code);
     } else {
-        APP_LOGI("ApplicationStByCode error");
+        HILOG_INFO("ApplicationStByCode error");
     }
 }
 
@@ -76,43 +76,43 @@ void SixthAbility::ApplicationStByCode(int apiIndex, int caseIndex, int code)
 // RegisterAbilityLifecycleCallbacks ST case
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase1(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase1");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase1");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityStart, GetOnAbilityStartCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase2(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase2");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase2");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityInactive, GetOnAbilityInactiveCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase3(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase3");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase3");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityBackground, GetOnAbilityBackgroundCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase4(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase4");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase4");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityForeground, GetOnAbilityForegroundCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase5(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase5");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase5");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityActive, GetOnAbilityActiveCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase6(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase5");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase5");
     APPREGISTERABILITYLIFECYCALLBACK(OnAbilityStop, GetOnAbilityStopCount, 1, code);
 }
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase7(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase7");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase7");
     auto callback = std::make_shared<KitTestFirstLifecycleCallbacks>();
     for (int i = 0; i < cycleCount; i++) {
         Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback);
@@ -126,7 +126,7 @@ void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase7(int code)
 
 void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase8(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase8");
+    HILOG_INFO("SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase8");
     auto callback1 = std::make_shared<KitTestFirstLifecycleCallbacks>();
     auto callback2 = std::make_shared<KitTestSecondLifecycleCallbacks>();
     Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback1);
@@ -143,43 +143,43 @@ void SixthAbility::SkillRegisterAbilityLifecycleCallbacksCase8(int code)
 // UnregisterAbilityLifecycleCallbacks
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase1(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase1");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase1");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityStart, GetOnAbilityStartCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase2(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase2");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase2");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityInactive, GetOnAbilityInactiveCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase3(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase3");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase3");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityBackground, GetOnAbilityBackgroundCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase4(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase4");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase4");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityForeground, GetOnAbilityForegroundCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase5(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase5");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase5");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityActive, GetOnAbilityActiveCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase6(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase6");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase6");
     APPUNREGISTERABILITYLIFECYCALLBACK(OnAbilityStop, GetOnAbilityStopCount, 0, code);
 }
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase7(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase7");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase7");
     auto callback = std::make_shared<KitTestFirstLifecycleCallbacks>();
     Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback);
     for (int i = 0; i < cycleCount; i++) {
@@ -193,7 +193,7 @@ void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase7(int code)
 
 void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase8(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase8");
+    HILOG_INFO("SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase8");
     auto callback1 = std::make_shared<KitTestFirstLifecycleCallbacks>();
     auto callback2 = std::make_shared<KitTestSecondLifecycleCallbacks>();
     Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback1);
@@ -210,7 +210,7 @@ void SixthAbility::SkillUnregisterAbilityLifecycleCallbacksCase8(int code)
 // DispatchAbilitySavedState ST case
 void SixthAbility::SkillDispatchAbilitySavedStateCase1(int code)
 {
-    APP_LOGI("SixthAbility::SkillDispatchAbilitySavedStateCase1");
+    HILOG_INFO("SixthAbility::SkillDispatchAbilitySavedStateCase1");
     auto callback = std::make_shared<KitTestFirstLifecycleCallbacks>();
     Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback);
     PacMap outState;
@@ -222,7 +222,7 @@ void SixthAbility::SkillDispatchAbilitySavedStateCase1(int code)
 
 void SixthAbility::SkillDispatchAbilitySavedStateCase2(int code)
 {
-    APP_LOGI("SixthAbility::SkillDispatchAbilitySavedStateCase2");
+    HILOG_INFO("SixthAbility::SkillDispatchAbilitySavedStateCase2");
     auto callback = std::make_shared<KitTestFirstLifecycleCallbacks>();
     for (int i = 0; i < cycleCount; i++) {
         Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback);
@@ -237,7 +237,7 @@ void SixthAbility::SkillDispatchAbilitySavedStateCase2(int code)
 // RegisterElementsCallbacks
 void SixthAbility::SkillRegisterElementsCallbacksCase1(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterElementsCallbacksCase1");
+    HILOG_INFO("SixthAbility::SkillRegisterElementsCallbacksCase1");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback);
     Configuration configuration;
@@ -249,7 +249,7 @@ void SixthAbility::SkillRegisterElementsCallbacksCase1(int code)
 
 void SixthAbility::SkillRegisterElementsCallbacksCase2(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterElementsCallbacksCase2");
+    HILOG_INFO("SixthAbility::SkillRegisterElementsCallbacksCase2");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback);
     Ability::GetApplication()->OnMemoryLevel(1);
@@ -260,7 +260,7 @@ void SixthAbility::SkillRegisterElementsCallbacksCase2(int code)
 
 void SixthAbility::SkillRegisterElementsCallbacksCase3(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterElementsCallbacksCase3");
+    HILOG_INFO("SixthAbility::SkillRegisterElementsCallbacksCase3");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     for (int i = 0; i < cycleCount; i++) {
         Ability::GetApplication()->RegisterElementsCallbacks(callback);
@@ -274,7 +274,7 @@ void SixthAbility::SkillRegisterElementsCallbacksCase3(int code)
 
 void SixthAbility::SkillRegisterElementsCallbacksCase4(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterElementsCallbacksCase4");
+    HILOG_INFO("SixthAbility::SkillRegisterElementsCallbacksCase4");
     auto callback1 = std::make_shared<KitTestSecondElementsCallback>();
     auto callback2 = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback1);
@@ -290,7 +290,7 @@ void SixthAbility::SkillRegisterElementsCallbacksCase4(int code)
 // UnregisterElementsCallbacks
 void SixthAbility::SkillUnregisterElementsCallbacksCase1(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterElementsCallbacksCase1");
+    HILOG_INFO("SixthAbility::SkillUnregisterElementsCallbacksCase1");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback);
     Ability::GetApplication()->UnregisterElementsCallbacks(callback);
@@ -302,7 +302,7 @@ void SixthAbility::SkillUnregisterElementsCallbacksCase1(int code)
 
 void SixthAbility::SkillUnregisterElementsCallbacksCase2(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterElementsCallbacksCase2");
+    HILOG_INFO("SixthAbility::SkillUnregisterElementsCallbacksCase2");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback);
     Ability::GetApplication()->UnregisterElementsCallbacks(callback);
@@ -313,7 +313,7 @@ void SixthAbility::SkillUnregisterElementsCallbacksCase2(int code)
 
 void SixthAbility::SkillUnregisterElementsCallbacksCase3(int code)
 {
-    APP_LOGI("SixthAbility::SkillRegisterElementsCallbacksCase3");
+    HILOG_INFO("SixthAbility::SkillRegisterElementsCallbacksCase3");
     auto callback = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback);
     for (int i = 0; i < cycleCount; i++) {
@@ -327,7 +327,7 @@ void SixthAbility::SkillUnregisterElementsCallbacksCase3(int code)
 
 void SixthAbility::SkillUnregisterElementsCallbacksCase4(int code)
 {
-    APP_LOGI("SixthAbility::SkillUnregisterElementsCallbacksCase4");
+    HILOG_INFO("SixthAbility::SkillUnregisterElementsCallbacksCase4");
     auto callback1 = std::make_shared<KitTestSecondElementsCallback>();
     auto callback2 = std::make_shared<KitTestFirstElementsCallback>();
     Ability::GetApplication()->RegisterElementsCallbacks(callback1);
@@ -345,7 +345,7 @@ void SixthAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("SixthAbility::Init");
+    HILOG_INFO("SixthAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
     auto callback = std::make_shared<KitTestThirdLifecycleCallbacks>();
     Ability::GetApplication()->RegisterAbilityLifecycleCallbacks(callback);
@@ -353,7 +353,7 @@ void SixthAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void SixthAbility::OnStart(const Want &want)
 {
-    APP_LOGI("SixthAbility::onStart");
+    HILOG_INFO("SixthAbility::onStart");
     GetWantInfo(want);
     Ability::OnStart(want);
     SubscribeEvent(g_requPageSixthAbilitySTVector);
@@ -363,7 +363,7 @@ void SixthAbility::OnStart(const Want &want)
 
 void SixthAbility::OnStop()
 {
-    APP_LOGI("SixthAbility::onStop");
+    HILOG_INFO("SixthAbility::onStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     std::string eventData = GetAbilityName() + g_abilityStateOnStop;
@@ -372,7 +372,7 @@ void SixthAbility::OnStop()
 
 void SixthAbility::OnActive()
 {
-    APP_LOGI("SixthAbility::OnActive");
+    HILOG_INFO("SixthAbility::OnActive");
     Ability::OnActive();
     std::string startBundleName = this->Split(targetBundle_, ",");
     std::string startAabilityName = this->Split(targetAbility_, ",");
@@ -396,7 +396,7 @@ void SixthAbility::OnActive()
 
 void SixthAbility::OnInactive()
 {
-    APP_LOGI("SixthAbility::OnInactive");
+    HILOG_INFO("SixthAbility::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + g_abilityStateOnInactive;
     TestUtils::PublishEvent(g_respPageSixthAbilityST, 0, eventData);
@@ -404,7 +404,7 @@ void SixthAbility::OnInactive()
 
 void SixthAbility::OnBackground()
 {
-    APP_LOGI("SixthAbility::OnBackground");
+    HILOG_INFO("SixthAbility::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + g_abilityStateOnBackground;
     TestUtils::PublishEvent(g_respPageSixthAbilityST, 0, eventData);
@@ -412,7 +412,7 @@ void SixthAbility::OnBackground()
 
 void SixthAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("SixthAbility::OnForeground");
+    HILOG_INFO("SixthAbility::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnForeground;
     TestUtils::PublishEvent(g_respPageSixthAbilityST, 0, eventData);
@@ -420,7 +420,7 @@ void SixthAbility::OnForeground(const Want &want)
 
 void SixthAbility::OnNewWant(const Want &want)
 {
-    APP_LOGI("SixthAbility::OnNewWant");
+    HILOG_INFO("SixthAbility::OnNewWant");
     GetWantInfo(want);
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnNewWant;
@@ -460,9 +460,9 @@ std::string SixthAbility::Split(std::string &str, std::string delim)
 
 void KitTestSixEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (g_requPageSixthAbilityST == eventName) {
         auto target = data.GetData();
@@ -476,7 +476,7 @@ void KitTestSixEventSubscriber::OnReceiveEvent(const CommonEventData &data)
             if (keyMap == "TerminateAbility") {
                 KitTerminateAbility();
             } else {
-                APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+                HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
             }
         }
     }
@@ -590,43 +590,43 @@ void CallbackCount::SetOnMemoryLevelCount()
 // The Lifecycle callback function class (First)
 void KitTestFirstLifecycleCallbacks::OnAbilityStart(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityStart");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityStart");
     callbackCount_.SetOnAbilityStartCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilityInactive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityInactive");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityInactive");
     callbackCount_.SetOnAbilityInactiveCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilityBackground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityBackground");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityBackground");
     callbackCount_.SetOnAbilityBackgroundCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilityForeground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityForeground");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityForeground");
     callbackCount_.SetOnAbilityForegroundCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilityActive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityActive");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityActive");
     callbackCount_.SetOnAbilityActiveCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilityStop(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilityStop");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilityStop");
     callbackCount_.SetOnAbilityStopCount();
 }
 
 void KitTestFirstLifecycleCallbacks::OnAbilitySaveState(const PacMap &outState)
 {
-    APP_LOGI("KitTestFirstLifecycleCallbacks::OnAbilitySaveState");
+    HILOG_INFO("KitTestFirstLifecycleCallbacks::OnAbilitySaveState");
     callbackCount_.SetOnAbilitySaveStateCount();
 }
 
@@ -638,43 +638,43 @@ CallbackCount KitTestFirstLifecycleCallbacks::GetCallbackCount()
 // The Lifecycle callback function class (Second)
 void KitTestSecondLifecycleCallbacks::OnAbilityStart(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityStart");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityStart");
     callbackCount_.SetOnAbilityStartCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilityInactive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityInactive");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityInactive");
     callbackCount_.SetOnAbilityInactiveCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilityBackground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityBackground");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityBackground");
     callbackCount_.SetOnAbilityBackgroundCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilityForeground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityForeground");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityForeground");
     callbackCount_.SetOnAbilityForegroundCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilityActive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityActive");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityActive");
     callbackCount_.SetOnAbilityActiveCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilityStop(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilityStop");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilityStop");
     callbackCount_.SetOnAbilityStopCount();
 }
 
 void KitTestSecondLifecycleCallbacks::OnAbilitySaveState(const PacMap &outState)
 {
-    APP_LOGI("KitTestSecondLifecycleCallbacks::OnAbilitySaveState");
+    HILOG_INFO("KitTestSecondLifecycleCallbacks::OnAbilitySaveState");
     callbackCount_.SetOnAbilitySaveStateCount();
 }
 
@@ -686,49 +686,49 @@ CallbackCount KitTestSecondLifecycleCallbacks::GetCallbackCount()
 // The Lifecycle callback function class (Third)
 void KitTestThirdLifecycleCallbacks::OnAbilityStart(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityStart");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityStart");
     std::string eventData = ability->GetAbilityName() + g_onAbilityStart;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilityInactive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityInactive");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityInactive");
     std::string eventData = ability->GetAbilityName() + g_onAbilityInactive;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilityBackground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityBackground");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityBackground");
     std::string eventData = ability->GetAbilityName() + g_onAbilityBackground;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilityForeground(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityForeground");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityForeground");
     std::string eventData = ability->GetAbilityName() + g_onAbilityForeground;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilityActive(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityActive");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityActive");
     std::string eventData = ability->GetAbilityName() + g_onAbilityActive;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilityStop(const std::shared_ptr<Ability> &ability)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilityStop");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilityStop");
     std::string eventData = ability->GetAbilityName() + g_onAbilityStop;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
 
 void KitTestThirdLifecycleCallbacks::OnAbilitySaveState(const PacMap &outState)
 {
-    APP_LOGI("KitTestThirdLifecycleCallbacks::OnAbilitySaveState");
+    HILOG_INFO("KitTestThirdLifecycleCallbacks::OnAbilitySaveState");
     std::string eventData = g_onAbilitySaveState;
     TestUtils::PublishEvent(g_respPageSixthAbilityLifecycleCallbacks, 0, eventData);
 }
@@ -742,13 +742,13 @@ CallbackCount KitTestThirdLifecycleCallbacks::GetCallbackCount()
 void KitTestFirstElementsCallback::OnConfigurationUpdated(
     const std::shared_ptr<Ability> &ability, const Configuration &config)
 {
-    APP_LOGI("KitTestFirstElementsCallback::OnConfigurationUpdated");
+    HILOG_INFO("KitTestFirstElementsCallback::OnConfigurationUpdated");
     callbackCount_.SetOnConfigurationCount();
 }
 
 void KitTestFirstElementsCallback::OnMemoryLevel(int level)
 {
-    APP_LOGI("KitTestFirstElementsCallback::OnMemoryLevel");
+    HILOG_INFO("KitTestFirstElementsCallback::OnMemoryLevel");
     callbackCount_.SetOnMemoryLevelCount();
 }
 
@@ -761,13 +761,13 @@ CallbackCount KitTestFirstElementsCallback::GetCallbackCount()
 void KitTestSecondElementsCallback::OnConfigurationUpdated(
     const std::shared_ptr<Ability> &ability, const Configuration &config)
 {
-    APP_LOGI("KitTestSecondElementsCallback::OnConfigurationUpdated");
+    HILOG_INFO("KitTestSecondElementsCallback::OnConfigurationUpdated");
     callbackCount_.SetOnConfigurationCount();
 }
 
 void KitTestSecondElementsCallback::OnMemoryLevel(int level)
 {
-    APP_LOGI("KitTestSecondElementsCallback::OnMemoryLevel");
+    HILOG_INFO("KitTestSecondElementsCallback::OnMemoryLevel");
     callbackCount_.SetOnMemoryLevelCount();
 }
 

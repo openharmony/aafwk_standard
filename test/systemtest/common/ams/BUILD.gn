@@ -16,8 +16,8 @@ import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("ams_system_test_config") {
   defines = [
-    # "APP_LOG_TAG = \"AmsSystemTest\"",
-    # "LOG_DOMAIN = 0xD00111F",
+    # "AMS_LOG_TAG = \"AmsSystemTest\"",
+    # "AMS_LOG_DOMAIN = 0xD00111F",
   ]
 
   configs = [

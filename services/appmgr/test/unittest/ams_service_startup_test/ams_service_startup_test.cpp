@@ -20,7 +20,7 @@
 #undef private
 #undef protected
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -63,7 +63,7 @@ void AmsServiceStartupTest::TearDown()
  */
 HWTEST_F(AmsServiceStartupTest, Startup_001, TestSize.Level1)
 {
-    APP_LOGI("ams_service_startup_001 start");
+    HILOG_INFO("ams_service_startup_001 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
     appMgrService->SetInnerService(innerService);
@@ -72,7 +72,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_001, TestSize.Level1)
     EXPECT_EQ(ServiceRunningState::STATE_RUNNING, appMgrService->QueryServiceState().serviceRunningState);
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("ams_service_startup_001 end");
+    HILOG_INFO("ams_service_startup_001 end");
 }
 
 /*
@@ -85,7 +85,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceStartupTest, Startup_002, TestSize.Level1)
 {
-    APP_LOGI("ams_service_startup_002 start");
+    HILOG_INFO("ams_service_startup_002 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
     appMgrService->SetInnerService(innerService);
@@ -96,7 +96,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_002, TestSize.Level1)
     EXPECT_EQ(ServiceRunningState::STATE_RUNNING, appMgrService->QueryServiceState().serviceRunningState);
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("ams_service_startup_002 end");
+    HILOG_INFO("ams_service_startup_002 end");
 }
 
 /*
@@ -109,14 +109,14 @@ HWTEST_F(AmsServiceStartupTest, Startup_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceStartupTest, Startup_003, TestSize.Level1)
 {
-    APP_LOGI("ams_service_startup_003 start");
+    HILOG_INFO("ams_service_startup_003 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
     appMgrService->SetInnerService(innerService);
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("ams_service_startup_003 end");
+    HILOG_INFO("ams_service_startup_003 end");
 }
 
 /*
@@ -129,7 +129,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_003, TestSize.Level1)
  */
 HWTEST_F(AmsServiceStartupTest, Startup_004, TestSize.Level1)
 {
-    APP_LOGI("ams_service_startup_004 start");
+    HILOG_INFO("ams_service_startup_004 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
     appMgrService->SetInnerService(innerService);
@@ -140,7 +140,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_004, TestSize.Level1)
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("ams_service_startup_004 end");
+    HILOG_INFO("ams_service_startup_004 end");
 }
 
 /*
@@ -153,7 +153,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_004, TestSize.Level1)
  */
 HWTEST_F(AmsServiceStartupTest, Startup_005, TestSize.Level1)
 {
-    APP_LOGI("ams_service_startup_005 start");
+    HILOG_INFO("ams_service_startup_005 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     std::shared_ptr<AppMgrServiceInnerMock> innerService = std::make_shared<AppMgrServiceInnerMock>();
     appMgrService->SetInnerService(innerService);
@@ -166,7 +166,7 @@ HWTEST_F(AmsServiceStartupTest, Startup_005, TestSize.Level1)
     EXPECT_EQ(ServiceRunningState::STATE_RUNNING, appMgrService->QueryServiceState().serviceRunningState);
     appMgrService->OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, appMgrService->QueryServiceState().serviceRunningState);
-    APP_LOGI("ams_service_startup_005 end");
+    HILOG_INFO("ams_service_startup_005 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

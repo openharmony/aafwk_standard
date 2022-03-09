@@ -14,9 +14,9 @@
  */
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_info.h"
 #include "form_mgr_stub.h"
+#include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
@@ -31,7 +31,7 @@ void SplitString(const std::string &source, std::vector<std::string> &strings)
     if ((source.size() % LIMIT_PARCEL_SIZE) != 0) {
         splitSize++;
     }
-    APP_LOGD("the dump string split into %{public}d size", splitSize);
+    HILOG_DEBUG("the dump string split into %{public}d size", splitSize);
     for (int i = 0; i < splitSize; i++) {
         int32_t start = LIMIT_PARCEL_SIZE * i;
         strings.emplace_back(source.substr(start, LIMIT_PARCEL_SIZE));
@@ -98,11 +98,11 @@ FormMgrStub::~FormMgrStub()
  */
 int FormMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("FormMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("FormMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = FormMgrStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("%{public}s failed, local descriptor is not equal to remote", __func__);
+        HILOG_ERROR("%{public}s failed, local descriptor is not equal to remote", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
@@ -126,13 +126,13 @@ int32_t FormMgrStub::HandleAddForm(MessageParcel &data, MessageParcel &reply)
     int64_t formId = data.ReadInt64();
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<FormReqInfo>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<FormReqInfo>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
     sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
     if (client == nullptr) {
-        APP_LOGE("%{public}s, failed to RemoteObject invalidate", __func__);
+        HILOG_ERROR("%{public}s, failed to RemoteObject invalidate", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -223,7 +223,7 @@ int32_t FormMgrStub::HandleLifecycleUpdate(MessageParcel &data, MessageParcel &r
     }
     sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
     if (client == nullptr) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     int32_t updateType = data.ReadInt32();
@@ -239,19 +239,19 @@ int32_t FormMgrStub::HandleLifecycleUpdate(MessageParcel &data, MessageParcel &r
  */
 int32_t FormMgrStub::HandleRequestForm(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     int64_t formId = data.ReadInt64();
 
     sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
     if (client == nullptr) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -317,7 +317,7 @@ int32_t FormMgrStub::HandleDumpStorageFormInfos(MessageParcel &data, MessageParc
         std::vector<std::string> dumpInfos;
         SplitString(formInfos, dumpInfos);
         if (!reply.WriteStringVector(dumpInfos)) {
-            APP_LOGE("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
+            HILOG_ERROR("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -337,11 +337,11 @@ int32_t FormMgrStub::HandleDumpFormInfoByBundleName(MessageParcel &data, Message
     int32_t result = DumpFormInfoByBundleName(bundleName, formInfos);
     reply.WriteInt32(result);
     if (result == ERR_OK) {
-        APP_LOGD("%{public}s, formInfos: %{public}s", __func__, formInfos.c_str());
+        HILOG_DEBUG("%{public}s, formInfos: %{public}s", __func__, formInfos.c_str());
         std::vector<std::string> dumpInfos;
         SplitString(formInfos, dumpInfos);
         if (!reply.WriteStringVector(dumpInfos)) {
-            APP_LOGE("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
+            HILOG_ERROR("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -364,7 +364,7 @@ int32_t FormMgrStub::HandleDumpFormInfoByFormId(MessageParcel &data, MessageParc
         std::vector<std::string> dumpInfos;
         SplitString(formInfo, dumpInfos);
         if (!reply.WriteStringVector(dumpInfos)) {
-            APP_LOGE("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
+            HILOG_ERROR("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -386,7 +386,7 @@ int32_t FormMgrStub::HandleDumpFormTimerByFormId(MessageParcel &data, MessagePar
         std::vector<std::string> dumpInfos;
         SplitString(isTimingService, dumpInfos);
         if (!reply.WriteStringVector(dumpInfos)) {
-            APP_LOGE("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
+            HILOG_ERROR("%{public}s, failed to WriteStringVector<dumpInfos>", __func__);
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -401,17 +401,17 @@ int32_t FormMgrStub::HandleDumpFormTimerByFormId(MessageParcel &data, MessagePar
  */
 int32_t FormMgrStub::HandleMessageEvent(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     int64_t formId = data.ReadInt64();
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
     sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
     if (client == nullptr) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -428,10 +428,10 @@ int32_t FormMgrStub::HandleMessageEvent(MessageParcel &data, MessageParcel &repl
  */
 int32_t FormMgrStub::HandleBatchAddFormRecords(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -448,7 +448,7 @@ int32_t FormMgrStub::HandleBatchAddFormRecords(MessageParcel &data, MessageParce
  */
 int32_t FormMgrStub::HandleClearFormRecords(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     int32_t result = ClearFormRecords();
     reply.WriteInt32(result);
     return result;
@@ -462,11 +462,11 @@ int32_t FormMgrStub::HandleClearFormRecords(MessageParcel &data, MessageParcel &
  */
 int32_t FormMgrStub::HandleDistributedDataAddForm(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -483,11 +483,11 @@ int32_t FormMgrStub::HandleDistributedDataAddForm(MessageParcel &data, MessagePa
  */
 int32_t FormMgrStub::HandleDistributedDataDeleteForm(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     std::string formId = data.ReadString();
     if (formId.empty()) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<int64_t>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<int64_t>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -504,13 +504,13 @@ int32_t FormMgrStub::HandleDistributedDataDeleteForm(MessageParcel &data, Messag
  */
 int32_t FormMgrStub::HandleGetAllFormsInfo(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::vector<FormInfo> infos;
     int32_t result = GetAllFormsInfo(infos);
     reply.WriteInt32(result);
     if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
-            APP_LOGE("write failed");
+            HILOG_ERROR("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -525,14 +525,14 @@ int32_t FormMgrStub::HandleGetAllFormsInfo(MessageParcel &data, MessageParcel &r
  */
 int32_t FormMgrStub::HandleGetFormsInfoByApp(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::string bundleName = data.ReadString();
     std::vector<FormInfo> infos;
     int32_t result = GetFormsInfoByApp(bundleName, infos);
     reply.WriteInt32(result);
     if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
-            APP_LOGE("write failed");
+            HILOG_ERROR("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -547,7 +547,7 @@ int32_t FormMgrStub::HandleGetFormsInfoByApp(MessageParcel &data, MessageParcel 
  */
 int32_t FormMgrStub::HandleGetFormsInfoByModule(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::string bundleName = data.ReadString();
     std::string moduleName = data.ReadString();
     std::vector<FormInfo> infos;
@@ -555,7 +555,7 @@ int32_t FormMgrStub::HandleGetFormsInfoByModule(MessageParcel &data, MessageParc
     reply.WriteInt32(result);
     if (result == ERR_OK) {
         if (!WriteParcelableVector(infos, reply)) {
-            APP_LOGE("write failed");
+            HILOG_ERROR("write failed");
             return ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -572,13 +572,13 @@ template<typename T>
 bool FormMgrStub::WriteParcelableVector(std::vector<T> &parcelableVector, Parcel &reply)
 {
     if (!reply.WriteInt32(parcelableVector.size())) {
-        APP_LOGE("write ParcelableVector failed");
+        HILOG_ERROR("write ParcelableVector failed");
         return false;
     }
 
     for (auto &parcelable: parcelableVector) {
         if (!reply.WriteParcelable(&parcelable)) {
-            APP_LOGE("write ParcelableVector failed");
+            HILOG_ERROR("write ParcelableVector failed");
             return false;
         }
     }

@@ -16,8 +16,6 @@ import("//build/ohos.gni")
 ohos_shared_library("abilitydelegatorregistry") {
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/",
-    "//foundation/communication/ipc/ipc/native/src/napi/include/",
-    "//foundation/ace/napi/native_engine/",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/app/ability_delegator/",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_delegator/include/",
   ]
@@ -34,20 +32,21 @@ ohos_shared_library("abilitydelegatorregistry") {
   configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_delegator",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
+    "napi:ace_napi",
   ]
 
   relative_install_dir = "module/application"

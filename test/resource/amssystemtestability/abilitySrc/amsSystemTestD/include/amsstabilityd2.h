@@ -18,7 +18,7 @@
 #include "stpageabilityevent.h"
 #include <string>
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

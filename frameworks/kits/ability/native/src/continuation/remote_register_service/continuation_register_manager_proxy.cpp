@@ -14,11 +14,11 @@
  */
 #include "continuation_register_manager_proxy.h"
 
-#include "app_log_wrapper.h"
 #include "context.h"
 #include "continuation_connector.h"
 #include "continuation_device_callback_interface.h"
 #include "continuation_request.h"
+#include "hilog_wrapper.h"
 #include "request_callback.h"
 
 namespace OHOS {
@@ -35,16 +35,16 @@ ContinuationRequestRegister::ContinuationRequestRegister(const std::string &bund
 void ContinuationRequestRegister::Execute(void)
 {
     if (continuatinConnector_ == nullptr) {
-        APP_LOGE("%{public}s called, continuatinConnector is null", __func__);
+        HILOG_ERROR("%{public}s called, continuatinConnector is null", __func__);
         return;
     }
 
     int ret = continuatinConnector_->Register(context_, bundleName_, parameter_, deviceCallback_);
     if (requestCallback_ != nullptr) {
         requestCallback_->OnResult(ret);
-        APP_LOGI("%{public}s called, ret=%{public}d", __func__, ret);
+        HILOG_INFO("%{public}s called, ret=%{public}d", __func__, ret);
     } else {
-        APP_LOGE("%{public}s called, requestCallback is null", __func__);
+        HILOG_ERROR("%{public}s called, requestCallback is null", __func__);
     }
 }
 
@@ -56,16 +56,16 @@ ContinuationRequestUnRegister::ContinuationRequestUnRegister(int token)
 void ContinuationRequestUnRegister::Execute(void)
 {
     if (continuatinConnector_ == nullptr) {
-        APP_LOGE("%{public}s called, continuatinConnector is null", __func__);
+        HILOG_ERROR("%{public}s called, continuatinConnector is null", __func__);
         return;
     }
 
     bool ret = continuatinConnector_->Unregister(token_);
     if (requestCallback_ != nullptr) {
         requestCallback_->OnResult(ret ? 0 : -1);
-        APP_LOGI("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
+        HILOG_INFO("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
     } else {
-        APP_LOGE("%{public}s called, requestCallback is null", __func__);
+        HILOG_ERROR("%{public}s called, requestCallback is null", __func__);
     }
 }
 
@@ -80,16 +80,16 @@ ContinuationRequestUpdateConnectStatus::ContinuationRequestUpdateConnectStatus(
 void ContinuationRequestUpdateConnectStatus::Execute(void)
 {
     if (continuatinConnector_ == nullptr) {
-        APP_LOGE("%{public}s called, continuatinConnector is null", __func__);
+        HILOG_ERROR("%{public}s called, continuatinConnector is null", __func__);
         return;
     }
 
     bool ret = continuatinConnector_->UpdateConnectStatus(token_, deviceId_, status_);
     if (requestCallback_ != nullptr) {
         requestCallback_->OnResult(ret ? 0 : -1);
-        APP_LOGI("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
+        HILOG_INFO("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
     } else {
-        APP_LOGE("%{public}s called, requestCallback is null", __func__);
+        HILOG_ERROR("%{public}s called, requestCallback is null", __func__);
     }
 }
 
@@ -102,16 +102,16 @@ ContinuationRequestShowDeviceList::ContinuationRequestShowDeviceList(int token, 
 void ContinuationRequestShowDeviceList::Execute(void)
 {
     if (continuatinConnector_ == nullptr) {
-        APP_LOGE("%{public}s called, continuatinConnector is null", __func__);
+        HILOG_ERROR("%{public}s called, continuatinConnector is null", __func__);
         return;
     }
 
     bool ret = continuatinConnector_->ShowDeviceList(token_, parameter_);
     if (requestCallback_ != nullptr) {
         requestCallback_->OnResult(ret ? 0 : -1);
-        APP_LOGI("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
+        HILOG_INFO("%{public}s called, ret=%{public}d", __func__, (ret ? 0 : -1));
     } else {
-        APP_LOGE("%{public}s called, requestCallback is null", __func__);
+        HILOG_ERROR("%{public}s called, requestCallback is null", __func__);
     }
 }
 
@@ -142,10 +142,10 @@ void ContinuationRegisterManagerProxy::Register(const std::string &bundleName, c
     const std::shared_ptr<IContinuationDeviceCallback> &deviceCallback,
     const std::shared_ptr<RequestCallback> &requestCallback)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 
     if (context_.lock() == nullptr || applicationContext_.lock() == nullptr) {
-        APP_LOGE("%{public}s context or applicationContext is null", __func__);
+        HILOG_ERROR("%{public}s context or applicationContext is null", __func__);
         return;
     }
 
@@ -160,7 +160,7 @@ void ContinuationRegisterManagerProxy::Register(const std::string &bundleName, c
 
         SendRequest(applicationContext_, request);
     } else {
-        APP_LOGE("%{public}s Create ContinuationRequestRegister failed", __func__);
+        HILOG_ERROR("%{public}s Create ContinuationRequestRegister failed", __func__);
     }
 }
 
@@ -174,10 +174,10 @@ void ContinuationRegisterManagerProxy::Register(const std::string &bundleName, c
  */
 void ContinuationRegisterManagerProxy::Unregister(int token, const std::shared_ptr<RequestCallback> &requestCallback)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 
     if (applicationContext_.lock() == nullptr) {
-        APP_LOGI("%{public}s Context is null", __func__);
+        HILOG_INFO("%{public}s Context is null", __func__);
         return;
     }
 
@@ -191,7 +191,7 @@ void ContinuationRegisterManagerProxy::Unregister(int token, const std::shared_p
 
         SendRequest(applicationContext_, request);
     } else {
-        APP_LOGE("%{public}s Create ContinuationRequestUnRegister failed", __func__);
+        HILOG_ERROR("%{public}s Create ContinuationRequestUnRegister failed", __func__);
     }
 }
 
@@ -209,10 +209,10 @@ void ContinuationRegisterManagerProxy::Unregister(int token, const std::shared_p
 void ContinuationRegisterManagerProxy::UpdateConnectStatus(
     int token, const std::string &deviceId, int status, const std::shared_ptr<RequestCallback> &requestCallback)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 
     if (applicationContext_.lock() == nullptr) {
-        APP_LOGI("%{public}s Context is null", __func__);
+        HILOG_INFO("%{public}s Context is null", __func__);
         return;
     }
 
@@ -227,7 +227,7 @@ void ContinuationRegisterManagerProxy::UpdateConnectStatus(
 
         SendRequest(applicationContext_, request);
     } else {
-        APP_LOGE("%{public}s Create ContinuationRequestUpdateConnectStatus failed", __func__);
+        HILOG_ERROR("%{public}s Create ContinuationRequestUpdateConnectStatus failed", __func__);
     }
 }
 
@@ -243,10 +243,10 @@ void ContinuationRegisterManagerProxy::UpdateConnectStatus(
 void ContinuationRegisterManagerProxy::ShowDeviceList(
     int token, const ExtraParams &parameter, const std::shared_ptr<RequestCallback> &requestCallback)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
 
     if (applicationContext_.lock() == nullptr) {
-        APP_LOGI("%{public}s Context is null", __func__);
+        HILOG_INFO("%{public}s Context is null", __func__);
         return;
     }
 
@@ -259,9 +259,9 @@ void ContinuationRegisterManagerProxy::ShowDeviceList(
         std::shared_ptr<ContinuationRequest> request(pContinuationRequestShowDeviceList);
 
         SendRequest(applicationContext_, request);
-        APP_LOGI("%{public}s called end", __func__);
+        HILOG_INFO("%{public}s called end", __func__);
     } else {
-        APP_LOGE("%{public}s Create ContinuationRequestShowDeviceList failed", __func__);
+        HILOG_ERROR("%{public}s Create ContinuationRequestShowDeviceList failed", __func__);
     }
 }
 
@@ -270,20 +270,20 @@ void ContinuationRegisterManagerProxy::ShowDeviceList(
  */
 void ContinuationRegisterManagerProxy::Disconnect(void)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
 
     if (continuatinConnector_ != nullptr && continuatinConnector_->IsAbilityConnected()) {
         continuatinConnector_->UnbindRemoteRegisterAbility();
     }
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 
 void ContinuationRegisterManagerProxy::SendRequest(
     const std::weak_ptr<Context> &context, const std::shared_ptr<ContinuationRequest> &request)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     if (request == nullptr) {
-        APP_LOGE("%{public}s called, request is null", __func__);
+        HILOG_ERROR("%{public}s called, request is null", __func__);
         return;
     }
 
@@ -296,7 +296,7 @@ void ContinuationRegisterManagerProxy::SendRequest(
     } else {
         request->Execute();
     }
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

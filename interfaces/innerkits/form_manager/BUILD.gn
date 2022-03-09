@@ -19,11 +19,10 @@ config("formmgr_sdk_config") {
   include_dirs = [
     "include/",
     "//third_party/json/include",
-    "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "//foundation/aafwk/standard/services/common/include",
   ]
@@ -57,13 +56,12 @@ ohos_shared_library("form_manager") {
 
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${innerkits_path}/want:want",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//third_party/jsoncpp:jsoncpp",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
@@ -71,6 +69,7 @@ ohos_shared_library("form_manager") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

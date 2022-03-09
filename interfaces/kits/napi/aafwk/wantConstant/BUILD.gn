@@ -15,10 +15,8 @@
 import("//build/ohos.gni")
 ohos_shared_library("wantconstant") {
   include_dirs = [
-    "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
     "//third_party/libuv/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant",
   ]
 
@@ -28,22 +26,22 @@ ohos_shared_library("wantconstant") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/ace/napi:ace_napi",
     "//third_party/libuv:uv_static",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:want",
     "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "napi:ace_napi",
+    "utils_base:utils",
   ]
 
   relative_install_dir = "module/ability"

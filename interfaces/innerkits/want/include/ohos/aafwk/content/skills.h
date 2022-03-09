@@ -21,7 +21,7 @@
 #include "want.h"
 #include "want_params.h"
 #include "parcel.h"
-#include "parcel_macro.h"
+#include "parcel_macro_base.h"
 #include "match_type.h"
 #include "patterns_matcher.h"
 #include "uri.h"

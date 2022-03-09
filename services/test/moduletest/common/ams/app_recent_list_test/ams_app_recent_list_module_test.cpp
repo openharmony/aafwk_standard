@@ -20,8 +20,8 @@
 #include <unistd.h>
 #include <gtest/gtest.h>
 
-#include "app_log_wrapper.h"
 #include "refbase.h"
+#include "hilog_wrapper.h"
 #include "iremote_object.h"
 #include "mock_bundle_manager.h"
 #include "mock_ability_token.h"
@@ -139,7 +139,7 @@ void AmsAppRecentListModuleTest::CreateAppRecentList(const int32_t appNum)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_001, TestSize.Level1)
 {
-    APP_LOGI("Create_Recent_List_001 start");
+    HILOG_INFO("Create_Recent_List_001 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -159,7 +159,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_001, TestSize.Level1)
     serviceInner_->SetAppSpawnClient(std::unique_ptr<MockAppSpawnClient>(mockedSpawnClient));
     serviceInner_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
-    APP_LOGI("Create_Recent_List_001 end");
+    HILOG_INFO("Create_Recent_List_001 end");
 }
 
 /*
@@ -172,7 +172,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_002, TestSize.Level1)
 {
-    APP_LOGI("Create_Recent_List_002 start");
+    HILOG_INFO("Create_Recent_List_002 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -194,7 +194,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_002, TestSize.Level1)
     serviceInner_->SetAppSpawnClient(std::unique_ptr<MockAppSpawnClient>(mockedSpawnClient));
     serviceInner_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     EXPECT_EQ(INDEX_NUM_10 + INDEX_NUM_1, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
-    APP_LOGI("Create_Recent_List_002 end");
+    HILOG_INFO("Create_Recent_List_002 end");
 }
 
 /*
@@ -207,7 +207,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Create_Recent_List_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_001, TestSize.Level1)
 {
-    APP_LOGI("Update_Recent_List_001 start");
+    HILOG_INFO("Update_Recent_List_001 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -220,7 +220,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_001, TestSize.Level1)
     appRecord->SetApplicationClient(client);
     serviceInner_->ApplicationTerminated(p);
     EXPECT_EQ(INDEX_NUM_10 - INDEX_NUM_1, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
-    APP_LOGI("Update_Recent_List_001 end");
+    HILOG_INFO("Update_Recent_List_001 end");
 }
 
 /*
@@ -233,7 +233,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_002, TestSize.Level1)
 {
-    APP_LOGI("Update_Recent_List_002 start");
+    HILOG_INFO("Update_Recent_List_002 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -246,7 +246,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_002, TestSize.Level1)
     wptr<IRemoteObject> app = object;
     serviceInner_->OnRemoteDied(app);
     EXPECT_EQ(INDEX_NUM_10 - INDEX_NUM_1, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
-    APP_LOGI("Update_Recent_List_002 end");
+    HILOG_INFO("Update_Recent_List_002 end");
 }
 
 /*
@@ -259,7 +259,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Update_Recent_List_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_001, TestSize.Level1)
 {
-    APP_LOGI("Remove_Recent_List_001 start");
+    HILOG_INFO("Remove_Recent_List_001 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -276,7 +276,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_001, TestSize.Level1)
 
     serviceInner_->RemoveAppFromRecentList(appInfo->name, appInfo->bundleName);  // specify process condition
     EXPECT_EQ(INDEX_NUM_10 - INDEX_NUM_1, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
-    APP_LOGI("Remove_Recent_List_001 end");
+    HILOG_INFO("Remove_Recent_List_001 end");
 }
 
 /*
@@ -289,7 +289,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_002, TestSize.Level1)
 {
-    APP_LOGI("Remove_Recent_List_002 start");
+    HILOG_INFO("Remove_Recent_List_002 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -306,7 +306,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_002, TestSize.Level1)
         serviceInner_->RemoveAppFromRecentList(appInfo->name, appInfo->bundleName);  // specify process condition
     }
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
-    APP_LOGI("Remove_Recent_List_002 end");
+    HILOG_INFO("Remove_Recent_List_002 end");
 }
 
 /*
@@ -319,7 +319,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Remove_Recent_List_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRecentListModuleTest, Clear_Recent_List_001, TestSize.Level1)
 {
-    APP_LOGI("Clear_Recent_List_002 start");
+    HILOG_INFO("Clear_Recent_List_002 start");
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
     CreateAppRecentList(INDEX_NUM_10);
     EXPECT_EQ(INDEX_NUM_10, static_cast<int32_t>(serviceInner_->GetRecentAppList().size()));
@@ -342,7 +342,7 @@ HWTEST_F(AmsAppRecentListModuleTest, Clear_Recent_List_001, TestSize.Level1)
     }
     serviceInner_->ClearRecentAppList();
     EXPECT_TRUE(serviceInner_->GetRecentAppList().empty());
-    APP_LOGI("Clear_Recent_List_002 end");
+    HILOG_INFO("Clear_Recent_List_002 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
