@@ -822,9 +822,9 @@ ErrCode AbilityManagerClient::GetMissionIdByToken(const sptr<IRemoteObject> &tok
     }
 
     missionId = abms->GetMissionIdByToken(token);
-    if (missionId < 0) {
+    if (missionId <= 0) {
         HILOG_ERROR("get missionid by token failed!");
-        return -1;
+        return MISSION_NOT_FOUND;
     }
     return ERR_OK;
 }
