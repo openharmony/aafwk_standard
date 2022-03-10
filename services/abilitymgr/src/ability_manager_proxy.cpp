@@ -1146,27 +1146,6 @@ bool AbilityManagerProxy::IsFirstInMission(const sptr<IRemoteObject> &token)
     return reply.ReadBool();
 }
 
-int AbilityManagerProxy::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteString16(Str8ToStr16(permission)) || !data.WriteInt32(pid) || !data.WriteInt32(uid)) {
-        HILOG_ERROR("data write failed.");
-        return INNER_ERR;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::COMPEL_VERIFY_PERMISSION, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    message = Str16ToStr8(reply.ReadString16());
-    return reply.ReadInt32();
-}
-
 int AbilityManagerProxy::PowerOff()
 {
     MessageParcel data;

@@ -449,20 +449,6 @@ std::string ContextDeal::GetNoBackupFilesDir()
 }
 
 /**
- * @brief Checks whether the calling process for inter-process communication has the given permission.
- * The calling process is not the current process.
- *
- * @param permission Indicates the permission to check. This parameter cannot be null.
- *
- * @return Returns 0 (IBundleManager.PERMISSION_GRANTED) if the calling process has the permission;
- * returns -1 (IBundleManager.PERMISSION_DENIED) otherwise.
- */
-int ContextDeal::VerifyCallingPermission(const std::string &permission)
-{
-    return 0;
-}
-
-/**
  * @brief Checks whether the current process has the given permission.
  * You need to call requestPermissionsFromUser(java.lang.std::string[],int) to request a permission only
  * if the current process does not have the specific permission.
@@ -593,36 +579,6 @@ std::string ContextDeal::GetAppType()
 ErrCode ContextDeal::TerminateAbility(int requestCode)
 {
     return ERR_INVALID_VALUE;
-}
-
-/**
- * @brief Confirms with the permission management module to check whether a request prompt is required for granting a
- * certain permission. You need to call the current method to check whether a prompt is required before calling
- * requestPermissionsFromUser(java.lang.String[],int) to request a permission. If a prompt is not required, permission
- * request will not be initiated.
- *
- * @param requestCode Indicates the permission to be queried. This parameter cannot be null.
- *
- * @return Returns true if the current application does not have the permission and the user does not turn off further
- * requests; returns false if the current application already has the permission, the permission is rejected by the
- * system, or the permission is denied by the user and the user has turned off further requests.
- */
-bool ContextDeal::CanRequestPermission(const std::string &permission)
-{
-    return false;
-}
-
-/**
- * @brief When there is a remote call to check whether the remote has permission, otherwise check whether it has
- * permission
- *
- * @param permissions Indicates the list of permissions to be requested. This parameter cannot be null.
- * @return Returns 0 (IBundleManager.PERMISSION_GRANTED) if the current process has the permission;
- * returns -1 (IBundleManager.PERMISSION_DENIED) otherwise.
- */
-int ContextDeal::VerifyCallingOrSelfPermission(const std::string &permission)
-{
-    return 0;
 }
 
 /**

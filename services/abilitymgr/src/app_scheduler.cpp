@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -232,18 +232,6 @@ void AppScheduler::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->PrepareTerminate(token);
-}
-
-int AppScheduler::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
-    auto ret = static_cast<int>(appMgrClient_->CompelVerifyPermission(permission, pid, uid, message));
-    if (ret != ERR_OK) {
-        HILOG_ERROR("Compel verify permission failed.");
-        return INNER_ERR;
-    }
-
-    return ERR_OK;
 }
 
 void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
