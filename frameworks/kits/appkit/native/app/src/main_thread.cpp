@@ -875,6 +875,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         AbilityRuntime::Runtime::Options options;
         options.codePath = LOCAL_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
+        options.loadAce = true;
         std::string nativeLibraryPath = appInfo.nativeLibraryPath;
         if (!nativeLibraryPath.empty()) {
             if (nativeLibraryPath.back() == '/') {
@@ -1072,6 +1073,7 @@ bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &
         AbilityRuntime::Runtime::Options options;
         options.codePath = LOCAL_CODE_PATH;
         options.eventRunner = mainHandler_->GetEventRunner();
+        options.loadAce = false;
         static auto runtime = AbilityRuntime::Runtime::Create(options);
         auto testRunner = TestRunner::Create(runtime, args);
         auto delegator = std::make_shared<AbilityDelegator>(
