@@ -20,6 +20,7 @@
 #include "form_info.h"
 #include "form_js_info.h"
 #include "form_provider_data.h"
+#include "form_state_info.h"
 #include "ipc_types.h"
 #include "iremote_broker.h"
 
@@ -183,6 +184,26 @@ public:
     virtual int DistributedDataDeleteForm(const std::string &formId) = 0;
 
     /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms to delete.
+     * @param callerToken Caller ability token.
+     * @param numFormsDeleted Returns the number of the deleted forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DeleteInvalidForms(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                   int32_t &numFormsDeleted) = 0;
+
+    /**
+     * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+     * @param want Indicates a set of parameters to be transparently passed to the form provider.
+     * @param callerToken Caller ability token.
+     * @param stateInfo Returns the form's state info of the specify.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken,
+                                 FormStateInfo &stateInfo) = 0;
+
+    /**
      * @brief Get All FormsInfo.
      * @param formInfos Return the forms' information of all forms provided.
      * @return Returns ERR_OK on success, others on failure.
@@ -224,7 +245,6 @@ public:
         FORM_MGR_EVENT_NOTIFY,
         FORM_MGR_CHECK_AND_DELETE_INVALID_FORMS,
         FORM_MGR_SET_NEXT_REFRESH_TIME,
-        FORM_MGR_ACQUIRE_FORM_STATE,
         FORM_MGR_NOTIFY_FORM_WHETHER_VISIBLE,
         FORM_MGR_STORAGE_FORM_INFOS,
         FORM_MGR_FORM_INFOS_BY_NAME,
@@ -235,6 +255,8 @@ public:
         FORM_MGR_CLEAR_FORM_RECORDS_ST,
         FORM_MGR_DISTRIBUTED_DATA_ADD_FORM__ST,
         FORM_MGR_DISTRIBUTED_DATA_DELETE_FORM__ST,
+        FORM_MGR_DELETE_INVALID_FORMS,
+        FORM_MGR_ACQUIRE_FORM_STATE,
         FORM_MGR_GET_ALL_FORMS_INFO,
         FORM_MGR_GET_FORMS_INFO_BY_APP,
         FORM_MGR_GET_FORMS_INFO_BY_MODULE,

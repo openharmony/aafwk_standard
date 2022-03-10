@@ -76,6 +76,10 @@ FormMgrStub::FormMgrStub()
         &FormMgrStub::HandleDistributedDataAddForm;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_DISTRIBUTED_DATA_DELETE_FORM__ST)] =
         &FormMgrStub::HandleDistributedDataDeleteForm;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_DELETE_INVALID_FORMS)] =
+        &FormMgrStub::HandleDeleteInvalidForms;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_ACQUIRE_FORM_STATE)] =
+        &FormMgrStub::HandleAcquireFormState;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO)] =
         &FormMgrStub::HandleGetAllFormsInfo;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_APP)] =
@@ -493,6 +497,70 @@ int32_t FormMgrStub::HandleDistributedDataDeleteForm(MessageParcel &data, Messag
 
     int32_t result = DistributedDataDeleteForm(formId);
     reply.WriteInt32(result);
+    return result;
+}
+
+/**
+ * @brief Handle DeleteInvalidForms message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleDeleteInvalidForms(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    std::vector<int64_t> formIds;
+    if (!data.ReadInt64Vector(&formIds)) {
+        HILOG_ERROR("%{public}s, failed to ReadInt64Vector", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    int32_t numFormsDeleted = 0;
+    int32_t result = DeleteInvalidForms(formIds, callerToken, numFormsDeleted);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("%{public}s, failed to write result", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!reply.WriteInt32(numFormsDeleted)) {
+        HILOG_ERROR("%{public}s, failed to write numFormsDeleted", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    return result;
+}
+
+/**
+ * @brief Handle AcquireFormState message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleAcquireFormState(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    FormStateInfo stateInfo {};
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (want == nullptr) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    int32_t result = AcquireFormState(*want, callerToken, stateInfo);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("%{public}s, failed to write result", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!reply.WriteInt32((int32_t)stateInfo.state)) {
+        HILOG_ERROR("%{public}s, failed to write state", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
     return result;
 }
 

@@ -91,6 +91,42 @@ int FormSupplyProxy::OnEventHandle(const Want& want)
     return error;
 }
 
+/**
+ * @brief Accept form state from form provider.
+ * @param state Form state.
+ * @param want input data.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormSupplyProxy::OnAcquireStateResult(FormState state, const Want &want)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to WriteInterfaceToken", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteInt32((int32_t) state)) {
+        HILOG_ERROR("%{public}s, failed to write form state", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormSupply::Message::TRANSACTION_FORM_STATE_ACQUIRED),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+    }
+    return error;
+}
+
+
 template<typename T>
 int  FormSupplyProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {

@@ -137,5 +137,18 @@ int MockFormProviderClient::FireFormEvent(const int64_t formId, const std::strin
     HILOG_DEBUG("Fire form event");
     return ERR_OK;
 }
+
+/**
+ * @brief Acquire form state to form provider.
+ * @param wantArg The want of onAcquireFormState.
+ * @param want The want of the request.
+ * @param callerToken Form provider proxy object.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int MockFormProviderClient::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_DEBUG("Acquire state");
+    return ERR_OK;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

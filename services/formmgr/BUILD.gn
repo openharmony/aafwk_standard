@@ -39,6 +39,7 @@ ohos_shared_library("libfms") {
   sources = [
     "src/form_ability_connection.cpp",
     "src/form_acquire_connection.cpp",
+    "src/form_acquire_state_connection.cpp",
     "src/form_ams_helper.cpp",
     "src/form_batch_delete_connection.cpp",
     "src/form_bms_helper.cpp",

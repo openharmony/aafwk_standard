@@ -45,6 +45,14 @@ public:
      */
     virtual int OnEventHandle(const Want& want) override;
 
+    /**
+     * OnAcquireStateResult
+     *
+     * @param state Form state
+     * @param want input data
+     */
+    virtual int OnAcquireStateResult(FormState state, const Want &want) override;
+
 private:
     static std::mutex mutex;
     static sptr<MockFormSupplyCallback> instance;
