@@ -811,6 +811,23 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId, const StartO
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MoveMissionToFront(missionId, startOptions);
 }
+
+ErrCode AbilityManagerClient::GetMissionIdByToken(const sptr<IRemoteObject> &token, int32_t &missionId)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    if (!abms) {
+        HILOG_ERROR("ability manager service connect failed!");
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+
+    missionId = abms->GetMissionIdByToken(token);
+    if (missionId <= 0) {
+        HILOG_ERROR("get missionid by token failed!");
+        return MISSION_NOT_FOUND;
+    }
+    return ERR_OK;
+}
 #endif
 
 ErrCode AbilityManagerClient::StartAbilityByCall(

@@ -49,17 +49,17 @@ public:
         std::shared_ptr<ContextDeal> &contextDeal);
 
     /**
-      * @brief Set if use new mission.
-      *
-      * @param useNewMission new mission flag.
-      */
+     * @brief Set if use new mission.
+     *
+     * @param useNewMission new mission flag.
+     */
     static void SetUseNewMission(bool useNewMission);
  
-     /**
-      * @brief Get if use new mission.
-      *
-      * @return return true if use new mission.
-      */
+    /**
+     * @brief Get if use new mission.
+     *
+     * @return return true if use new mission.
+     */
     static bool IsUseNewMission();
 
     /**

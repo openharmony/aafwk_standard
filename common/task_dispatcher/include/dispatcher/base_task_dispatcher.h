@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,6 @@ namespace AppExecFwk {
 /**
  * Base implementation for interface of TaskDispatcher.
  */
-
 class BaseTaskDispatcher : public TaskDispatcher {
 public:
     BaseTaskDispatcher(const std::string &dispatcherName, const TaskPriority priority);
@@ -90,7 +89,7 @@ public:
 
     /**
      *  Synchronously waiting all tasks in the group to be done.
-     *  @param group   contains a serial of jobs.
+     *  @param group contains a serial of jobs.
      *  @param timeout is the max waiting time for jobs in group execute, in ms.
      *  @return true if all jobs in group has finished or false if timeout occurs.
      *
@@ -110,7 +109,7 @@ public:
     /**
      *  Called to dispatch |task| |iterations| times and wait.
      *
-     *  @param task       is the job to execute multi times.
+     *  @param task is the job to execute multi times.
      *  @param iterations indicates times the task should be executed.
      *
      */

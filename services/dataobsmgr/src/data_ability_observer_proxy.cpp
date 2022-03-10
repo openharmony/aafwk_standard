@@ -48,14 +48,9 @@ void DataAbilityObserverProxy::OnChange()
     }
 
     int result = remote->SendRequest(IDataAbilityObserver::DATA_ABILITY_OBSERVER_CHANGE, data, reply, option);
-    if (result == ERR_NONE) {
-        HILOG_INFO("%{public}s SendRequest ok, retval is %d", __func__, reply.ReadInt32());
-        return;
-    } else {
+    if (result != ERR_NONE) {
         HILOG_ERROR("%{public}s SendRequest error, result=%{public}d", __func__, result);
-        return;
     }
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
