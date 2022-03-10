@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,7 @@ void FormAbilityA::AcquireFormCallback::OnAcquired(const int32_t result, const F
     HILOG_INFO("%{public}s called", __func__);
     FormTestUtils::PublishEvent(this->caseName_, this->code_, std::to_string(formJsInfo.formId));
 }
+
 void FormAbilityA::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -65,6 +66,7 @@ void FormAbilityA::AcquireFormCallback::OnFormUninstall(const int64_t formId) co
 {
     HILOG_INFO("%{public}s called", __func__);
 }
+
 void FormAbilityA::FMS_deleteFormCommon(std::string strFormId)
 {
     HILOG_INFO("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
@@ -107,6 +109,7 @@ void FormAbilityA::FMS_acquireForm_0300(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0300, EVENT_CODE_300, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_0400(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -128,6 +131,7 @@ void FormAbilityA::FMS_acquireForm_0400(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0400, EVENT_CODE_400, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_0500(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -150,6 +154,7 @@ void FormAbilityA::FMS_acquireForm_0500(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0500, EVENT_CODE_500, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_0600(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -172,6 +177,7 @@ void FormAbilityA::FMS_acquireForm_0600(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0600, EVENT_CODE_600, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_0700(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -193,6 +199,7 @@ void FormAbilityA::FMS_acquireForm_0700(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0700, EVENT_CODE_700, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1000(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -214,6 +221,7 @@ void FormAbilityA::FMS_acquireForm_1000(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1000, EVENT_CODE_1000, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1100(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -236,6 +244,7 @@ void FormAbilityA::FMS_acquireForm_1100(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1100, EVENT_CODE_1100, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1200(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -304,6 +313,7 @@ void FormAbilityA::FMS_acquireForm_1600(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1600, EVENT_CODE_1600, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1600_1(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -326,6 +336,7 @@ void FormAbilityA::FMS_acquireForm_1600_1(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1600_1, EVENT_CODE_1610, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1800(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -348,6 +359,7 @@ void FormAbilityA::FMS_acquireForm_1800(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1800, EVENT_CODE_1800, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1800_1(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -370,6 +382,7 @@ void FormAbilityA::FMS_acquireForm_1800_1(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1800_1, EVENT_CODE_1810, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_1900(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -392,6 +405,7 @@ void FormAbilityA::FMS_acquireForm_1900(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1900, EVENT_CODE_1900, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_2100(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -415,6 +429,7 @@ void FormAbilityA::FMS_acquireForm_2100(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2100, EVENT_CODE_2100, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_2200(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -430,6 +445,7 @@ void FormAbilityA::FMS_acquireForm_2200(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2200, EVENT_CODE_2200, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_2300(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -445,6 +461,7 @@ void FormAbilityA::FMS_acquireForm_2300(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2300, EVENT_CODE_2300, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_2400(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -483,6 +500,7 @@ void FormAbilityA::FMS_acquireForm_2500(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2500, EVENT_CODE_2500, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_2600_1(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -544,6 +562,7 @@ void FormAbilityA::FMS_acquireForm_2700(std::string data)
 
     FMS_deleteFormCommon(data);
 }
+
 void FormAbilityA::FMS_acquireForm_2800(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -562,6 +581,7 @@ void FormAbilityA::FMS_acquireForm_2800(std::string data)
 
     FMS_deleteFormCommon(data);
 }
+
 void FormAbilityA::FMS_acquireForm_2900(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -607,6 +627,7 @@ void FormAbilityA::FMS_acquireForm_2900_1(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2900_1, EVENT_CODE_2910, "");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_3000(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -628,6 +649,7 @@ void FormAbilityA::FMS_acquireForm_3000(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3000, EVENT_CODE_3000, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireForm_3100(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -654,9 +676,11 @@ void FormAbilityA::FMS_acquireForm_3100(std::string data)
 void FormAbilityA::FMS_acquireForm_3300(std::string data)
 {
 }
+
 void FormAbilityA::FMS_acquireForm_3400(std::string data)
 {
 }
+
 void FormAbilityA::FMS_acquireForm_3500(std::string data)
 {
 }
@@ -683,6 +707,7 @@ void FormAbilityA::FMS_acquireForm_tempForm(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_TEMP, EVENT_CODE_TEMP, "");
     }
 }
+
 void FormAbilityA::FMS_acquireFormBatch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -732,6 +757,7 @@ void FormAbilityA::FMS_acquireFormBatchB(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH_B, EVENT_CODE_BATCH_B, "false");
     }
 }
+
 void FormAbilityA::FMS_acquireFormTempBatch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -757,6 +783,7 @@ void FormAbilityA::FMS_acquireFormTempBatch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "false");
     }
 }
+
 void FormAbilityA::FMS_deleteFormBatch(std::string strFormId)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -769,15 +796,18 @@ void FormAbilityA::FMS_deleteFormBatch(std::string strFormId)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_CLEAR_FORM_BATCH, EVENT_CODE_CLEAR_BATCH, "false");
     }
 }
+
 FormAbilityA::~FormAbilityA()
 {
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
 }
+
 void FormAbilityA::OnStart(const Want &want)
 {
     HILOG_INFO("FormAbilityA::onStart");
     Ability::OnStart(want);
 }
+
 void FormAbilityA::OnActive()
 {
     HILOG_INFO("FormAbilityA::OnActive");
@@ -792,18 +822,21 @@ void FormAbilityA::OnStop()
 
     Ability::OnStop();
 }
+
 void FormAbilityA::OnInactive()
 {
     HILOG_INFO("FormAbilityA::OnInactive");
 
     Ability::OnInactive();
 }
+
 void FormAbilityA::OnBackground()
 {
     HILOG_INFO("FormAbilityA::OnBackground");
 
     Ability::OnBackground();
 }
+
 void FormAbilityA::SubscribeEvent()
 {
     HILOG_INFO("FormAbilityA::SubscribeEvent");

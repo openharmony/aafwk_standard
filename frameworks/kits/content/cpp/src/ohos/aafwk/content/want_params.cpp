@@ -1350,7 +1350,7 @@ void WantParams::DumpInfo(int level) const
         if (typeId != VALUE_TYPE_NULL) {
             std::string value = WantParams::GetStringByType(it.second, typeId);
             ABILITYBASE_LOGI(
-                "=WantParams::params_[%{public}s] : %{public}s =============", it.first.c_str(), value.c_str());
+                "=WantParams::params_[%{public}s] : %{private}s =============", it.first.c_str(), value.c_str());
         } else {
             ABILITYBASE_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
         }

@@ -1262,7 +1262,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level1)
 {
     abilityMs_->currentStackManager_ = nullptr;
-    auto result = abilityMs_->UninstallApp("bundle");
+    auto result = abilityMs_->UninstallApp("bundle", -1);
     EXPECT_EQ(ERR_NO_INIT, result);
 }
 

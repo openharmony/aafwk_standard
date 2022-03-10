@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,7 @@ void AbilityConnectionActFirst::OnAbilityDisconnectDone(const AppExecFwk::Elemen
     HILOG_INFO("AbilityConnectionActFirst OnAbilityDisconnectDone resultCode: %{public}d", resultCode);
     HILOG_INFO("AbilityConnectionActFirst OnAbilityDisconnectDone : %{public}s", element.GetAbilityName().c_str());
 }
+
 void VerifyIOAbilityLifecycleCallbacks::OnAbilityStart(const std::shared_ptr<Ability> &ability)
 {
     HILOG_INFO("----------VerifyIOAbilityLifecycleCallbacks::OnAbilityStart called. AbilityName is %{public}s",
@@ -69,6 +70,7 @@ void VerifyIOAbilityLifecycleCallbacks::OnAbilityStop(const std::shared_ptr<Abil
     HILOG_INFO("----------VerifyIOAbilityLifecycleCallbacks::OnAbilityStop called. AbilityName is %{public}s----------",
         ability->GetAbilityName().c_str());
 }
+
 void VerifyIOAbilityLifecycleCallbacks::OnAbilitySaveState(const PacMap &outState)
 {
     HILOG_INFO("----------VerifyIOAbilityLifecycleCallbacks::OnAbilitySaveState called.----------");
@@ -98,24 +100,28 @@ void VerifyActFirstAbility::OnStart(const Want &want)
 
     Ability::OnStart(want);
 }
+
 void VerifyActFirstAbility::OnStop()
 {
     HILOG_INFO("----------VerifyActFirstAbility::onStop begin----------");
     HILOG_INFO("----------VerifyActFirstAbility::onStop end----------");
     Ability::OnStop();
 }
+
 void VerifyActFirstAbility::OnActive()
 {
     HILOG_INFO("----------VerifyActFirstAbility::OnActive begin----------");
     HILOG_INFO("----------VerifyActFirstAbility::OnActive end----------");
     Ability::OnActive();
 }
+
 void VerifyActFirstAbility::OnInactive()
 {
     HILOG_INFO("----------VerifyActFirstAbility::OnInactive begin----------");
     HILOG_INFO("----------VerifyActFirstAbility::OnInactive end----------");
     Ability::OnInactive();
 }
+
 void VerifyActFirstAbility::OnBackground()
 {
     HILOG_INFO("----------VerifyActFirstAbility::OnBackground begin----------");
