@@ -16,8 +16,8 @@ import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("form_manager_test_config") {
   defines = [
-    "APP_LOG_TAG = \"FormManagerTest\"",
-    "LOG_DOMAIN = 0xD00666F",
+    "AMS_LOG_TAG = \"FormManagerTest\"",
+    "AMS_LOG_DOMAIN = 0xD00666F",
   ]
 
   configs = [

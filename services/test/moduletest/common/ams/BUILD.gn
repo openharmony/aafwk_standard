@@ -14,6 +14,18 @@
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
+config("appmgr_test_config") {
+  include_dirs = [
+    "//utils/system/safwk/native/include",
+    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
+    "//base/notification/ces_standard/frameworks/core/include",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include",
+    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
+    "//base/global/i18n_standard/frameworks/intl/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
+  ]
+}
+
 ohos_source_set("appmgr_mst_source") {
   testonly = true
 
@@ -38,7 +50,7 @@ ohos_source_set("appmgr_mst_source") {
     #"//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/src/appmgr/app_resident_process_info.cpp",
   ]
 
-  defines = [ "APP_LOG_TAG = \"AppMgrService\"" ]
+  defines = [ "AMS_LOG_TAG = \"AppMgrService\"" ]
 
   include_dirs = [
     "//third_party/json/include",
@@ -49,6 +61,7 @@ ohos_source_set("appmgr_mst_source") {
   ]
 
   public_configs = [
+    ":appmgr_test_config",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config",
     "${services_path}/test:services_module_test_config",
     "${services_path}/appmgr:appmgr_config",
@@ -89,6 +102,7 @@ ohos_source_set("appmgr_mst_source") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",

@@ -19,9 +19,9 @@
 #include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_errors.h"
-#include "app_log_wrapper.h"
 #include "application_context.h"
 #include "bundle_constants.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -36,7 +36,7 @@ constexpr int CURRENT_ACCOUNT_ID = 100;
 void ContextContainer::AttachBaseContext(const std::shared_ptr<Context> &base)
 {
     if (base == nullptr) {
-        APP_LOGE("ContextDeal::AttachBaseContext failed, base is nullptr");
+        HILOG_ERROR("ContextDeal::AttachBaseContext failed, base is nullptr");
         return;
     }
     baseContext_ = base;
@@ -66,7 +66,7 @@ std::shared_ptr<ApplicationInfo> ContextContainer::GetApplicationInfo() const
     if (baseContext_ != nullptr) {
         return baseContext_->GetApplicationInfo();
     } else {
-        APP_LOGE("ContextContainer::GetApplicationInfo baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetApplicationInfo baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -81,7 +81,7 @@ std::shared_ptr<Context> ContextContainer::GetApplicationContext() const
     if (baseContext_ != nullptr) {
         return baseContext_->GetApplicationContext();
     } else {
-        APP_LOGE("ContextContainer::GetApplicationContext baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetApplicationContext baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -97,7 +97,7 @@ std::string ContextContainer::GetBundleCodePath()
     if (baseContext_ != nullptr) {
         return baseContext_->GetBundleCodePath();
     } else {
-        APP_LOGE("ContextContainer::GetBundleCodePath baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetBundleCodePath baseContext_ is nullptr");
         return "";
     }
 }
@@ -113,7 +113,7 @@ const std::shared_ptr<AbilityInfo> ContextContainer::GetAbilityInfo()
     if (baseContext_ != nullptr) {
         return baseContext_->GetAbilityInfo();
     } else {
-        APP_LOGE("ContextContainer::GetAbilityInfo baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetAbilityInfo baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -128,7 +128,7 @@ std::shared_ptr<Context> ContextContainer::GetContext()
     if (baseContext_ != nullptr) {
         return baseContext_->GetContext();
     } else {
-        APP_LOGE("ContextContainer::GetContext baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetContext baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -144,7 +144,7 @@ sptr<IBundleMgr> ContextContainer::GetBundleManager() const
     if (baseContext_ != nullptr) {
         return baseContext_->GetBundleManager();
     } else {
-        APP_LOGE("ContextContainer::GetBundleManager baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetBundleManager baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -159,7 +159,7 @@ std::shared_ptr<Global::Resource::ResourceManager> ContextContainer::GetResource
     if (baseContext_ != nullptr) {
         return baseContext_->GetResourceManager();
     } else {
-        APP_LOGE("ContextContainer::GetResourceManager baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetResourceManager baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -176,7 +176,7 @@ bool ContextContainer::DeleteFile(const std::string &fileName)
     if (baseContext_ != nullptr) {
         return baseContext_->DeleteFile(fileName);
     } else {
-        APP_LOGE("ContextContainer::DeleteFile baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::DeleteFile baseContext_ is nullptr");
         return false;
     }
 }
@@ -193,7 +193,7 @@ std::string ContextContainer::GetCacheDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetCacheDir();
     } else {
-        APP_LOGE("ContextContainer::GetCacheDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetCacheDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -210,7 +210,7 @@ std::string ContextContainer::GetCodeCacheDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetCodeCacheDir();
     } else {
-        APP_LOGE("ContextContainer::GetCodeCacheDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetCodeCacheDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -226,7 +226,7 @@ std::string ContextContainer::GetDatabaseDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetDatabaseDir();
     } else {
-        APP_LOGE("ContextContainer::GetDatabaseDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetDatabaseDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -241,7 +241,7 @@ std::string ContextContainer::GetDataDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetDataDir();
     } else {
-        APP_LOGE("ContextContainer::GetDataDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetDataDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -262,7 +262,7 @@ std::string ContextContainer::GetDir(const std::string &name, int mode)
     if (baseContext_ != nullptr) {
         return baseContext_->GetDir(name, mode);
     } else {
-        APP_LOGE("ContextContainer::GetDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -279,7 +279,7 @@ std::string ContextContainer::GetExternalCacheDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetExternalCacheDir();
     } else {
-        APP_LOGE("ContextContainer::GetExternalCacheDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetExternalCacheDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -298,7 +298,7 @@ std::string ContextContainer::GetExternalFilesDir(std::string &type)
     if (baseContext_ != nullptr) {
         return baseContext_->GetExternalFilesDir(type);
     } else {
-        APP_LOGE("ContextContainer::GetExternalFilesDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetExternalFilesDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -313,7 +313,7 @@ std::string ContextContainer::GetFilesDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetFilesDir();
     } else {
-        APP_LOGE("ContextContainer::GetFilesDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetFilesDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -330,7 +330,7 @@ std::string ContextContainer::GetNoBackupFilesDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetNoBackupFilesDir();
     } else {
-        APP_LOGE("ContextContainer::GetNoBackupFilesDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetNoBackupFilesDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -349,7 +349,7 @@ int ContextContainer::VerifyCallingPermission(const std::string &permission)
     if (baseContext_ != nullptr) {
         return baseContext_->VerifyCallingPermission(permission);
     } else {
-        APP_LOGE("ContextContainer::VerifyCallingPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::VerifyCallingPermission baseContext_ is nullptr");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 }
@@ -369,7 +369,7 @@ int ContextContainer::VerifySelfPermission(const std::string &permission)
     if (baseContext_ != nullptr) {
         return baseContext_->VerifySelfPermission(permission);
     } else {
-        APP_LOGE("ContextContainer::VerifySelfPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::VerifySelfPermission baseContext_ is nullptr");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 }
@@ -384,7 +384,7 @@ std::string ContextContainer::GetBundleName()
     if (baseContext_ != nullptr) {
         return baseContext_->GetBundleName();
     } else {
-        APP_LOGE("ContextContainer::GetBundleName baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetBundleName baseContext_ is nullptr");
         return "";
     }
 }
@@ -399,7 +399,7 @@ std::string ContextContainer::GetBundleResourcePath()
     if (baseContext_ != nullptr) {
         return baseContext_->GetBundleResourcePath();
     } else {
-        APP_LOGE("ContextContainer::GetBundleResourcePath baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetBundleResourcePath baseContext_ is nullptr");
         return "";
     }
 }
@@ -417,7 +417,7 @@ void ContextContainer::UnauthUriPermission(const std::string &permission, const 
     if (baseContext_ != nullptr) {
         baseContext_->UnauthUriPermission(permission, uri, uid);
     } else {
-        APP_LOGE("ContextContainer::UnauthUriPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::UnauthUriPermission baseContext_ is nullptr");
     }
 }
 
@@ -432,7 +432,7 @@ sptr<AAFwk::IAbilityManager> ContextContainer::GetAbilityManager()
     if (baseContext_ != nullptr) {
         return baseContext_->GetAbilityManager();
     } else {
-        APP_LOGE("ContextContainer::GetAbilityManager baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetAbilityManager baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -450,7 +450,7 @@ std::string ContextContainer::GetAppType()
     if (baseContext_ != nullptr) {
         return baseContext_->GetAppType();
     } else {
-        APP_LOGE("ContextContainer::GetAppType baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetAppType baseContext_ is nullptr");
         return "";
     }
 }
@@ -472,7 +472,7 @@ bool ContextContainer::CanRequestPermission(const std::string &permission)
     if (baseContext_ != nullptr) {
         return baseContext_->CanRequestPermission(permission);
     } else {
-        APP_LOGE("ContextContainer::CanRequestPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::CanRequestPermission baseContext_ is nullptr");
         return true;
     }
 }
@@ -490,7 +490,7 @@ int ContextContainer::VerifyCallingOrSelfPermission(const std::string &permissio
     if (baseContext_ != nullptr) {
         return baseContext_->VerifyCallingOrSelfPermission(permission);
     } else {
-        APP_LOGE("ContextContainer::VerifyCallingOrSelfPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::VerifyCallingOrSelfPermission baseContext_ is nullptr");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 }
@@ -509,7 +509,7 @@ int ContextContainer::VerifyPermission(const std::string &permission, int pid, i
     if (baseContext_ != nullptr) {
         return baseContext_->VerifyPermission(permission, pid, uid);
     } else {
-        APP_LOGE("ContextContainer::VerifyPermission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::VerifyPermission baseContext_ is nullptr");
         return AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
     }
 }
@@ -526,7 +526,7 @@ std::string ContextContainer::GetDistributedDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetDistributedDir();
     } else {
-        APP_LOGE("ContextContainer::GetDistributedDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetDistributedDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -540,7 +540,7 @@ void ContextContainer::SetPattern(int patternId)
     if (baseContext_ != nullptr) {
         baseContext_->SetPattern(patternId);
     } else {
-        APP_LOGE("ContextContainer::SetPattern baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::SetPattern baseContext_ is nullptr");
     }
 }
 
@@ -554,7 +554,7 @@ std::shared_ptr<Context> ContextContainer::GetAbilityPackageContext()
     if (baseContext_ != nullptr) {
         return baseContext_->GetAbilityPackageContext();
     } else {
-        APP_LOGE("ContextContainer::GetAbilityPackageContext baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetAbilityPackageContext baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -569,7 +569,7 @@ std::shared_ptr<HapModuleInfo> ContextContainer::GetHapModuleInfo()
     if (baseContext_ != nullptr) {
         return baseContext_->GetHapModuleInfo();
     } else {
-        APP_LOGE("ContextContainer::GetHapModuleInfo baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetHapModuleInfo baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -584,7 +584,7 @@ std::string ContextContainer::GetProcessName()
     if (baseContext_ != nullptr) {
         return baseContext_->GetProcessName();
     } else {
-        APP_LOGE("ContextContainer::GetProcessName baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetProcessName baseContext_ is nullptr");
         return "";
     }
 }
@@ -604,14 +604,14 @@ void ContextContainer::RequestPermissionsFromUser(std::vector<std::string> &perm
     if (baseContext_ != nullptr) {
         baseContext_->RequestPermissionsFromUser(permissions, requestCode);
     } else {
-        APP_LOGE("ContextContainer::RequestPermissionsFromUser baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::RequestPermissionsFromUser baseContext_ is nullptr");
     }
 }
 
 std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundleName, int flag, int accountId)
 {
     if (bundleName.empty()) {
-        APP_LOGE("ContextContainer::CreateBundleContext bundleName is empty");
+        HILOG_ERROR("ContextContainer::CreateBundleContext bundleName is empty");
         return nullptr;
     }
 
@@ -621,13 +621,15 @@ std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundl
 
     sptr<IBundleMgr> bundleMgr = GetBundleManager();
     if (nullptr == bundleMgr) {
-        APP_LOGE("ContextContainer::CreateBundleContext GetBundleManager is nullptr");
+        HILOG_ERROR("ContextContainer::CreateBundleContext GetBundleManager is nullptr");
         return nullptr;
     }
 
     BundleInfo bundleInfo;
-    APP_LOGI("CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId is %{public}d",
-        bundleName.length(), bundleName.c_str(), accountId);
+    HILOG_INFO("CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId is %{public}d",
+        bundleName.length(),
+        bundleName.c_str(),
+        accountId);
     int realAccountId = CURRENT_ACCOUNT_ID;
     if (accountId != DEFAULT_ACCOUNT_ID) {
         realAccountId = accountId;
@@ -635,18 +637,18 @@ std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundl
     bundleMgr->GetBundleInfo(bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, realAccountId);
 
     if (bundleInfo.name.empty() || bundleInfo.applicationInfo.name.empty()) {
-        APP_LOGE("ContextContainer::CreateBundleContext GetBundleInfo is error");
+        HILOG_ERROR("ContextContainer::CreateBundleContext GetBundleInfo is error");
         return nullptr;
     }
 
     std::shared_ptr<ApplicationContext> appContext = std::make_shared<ApplicationContext>();
     if (appContext == nullptr) {
-        APP_LOGE("ContextContainer::CreateBundleContext appContext is nullptr");
+        HILOG_ERROR("ContextContainer::CreateBundleContext appContext is nullptr");
         return nullptr;
     }
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>(true);
     if (deal == nullptr) {
-        APP_LOGE("ContextContainer::CreateBundleContext bundleName is empty");
+        HILOG_ERROR("ContextContainer::CreateBundleContext bundleName is empty");
         return nullptr;
     }
 
@@ -662,11 +664,11 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
 {
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager(Global::Resource::CreateResourceManager());
     if (deal == nullptr || resourceManager == nullptr) {
-        APP_LOGE("ContextContainer::InitResourceManager create resourceManager failed");
+        HILOG_ERROR("ContextContainer::InitResourceManager create resourceManager failed");
         return;
     }
 
-    APP_LOGI(
+    HILOG_INFO(
         "ContextContainer::InitResourceManager moduleResPaths count: %{public}zu", bundleInfo.moduleResPaths.size());
     std::vector<std::string> moduleResPaths;
     std::regex pattern(AbilityRuntime::Constants::ABS_CODE_PATH);
@@ -679,11 +681,11 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
 
     for (auto moduleResPath : moduleResPaths) {
         if (!moduleResPath.empty()) {
-            APP_LOGI("ContextContainer::InitResourceManager length: %{public}zu, moduleResPath : %{public}s",
+            HILOG_INFO("ContextContainer::InitResourceManager length: %{public}zu, moduleResPath : %{public}s",
                 moduleResPath.length(),
                 moduleResPath.c_str());
             if (!resourceManager->AddResource(moduleResPath.c_str())) {
-                APP_LOGE("ContextContainer::InitResourceManager AddResource failed");
+                HILOG_ERROR("ContextContainer::InitResourceManager AddResource failed");
             }
         }
     }
@@ -691,12 +693,13 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     resConfig->SetLocaleInfo("zh", "Hans", "CN");
     if (resConfig->GetLocaleInfo() != nullptr) {
-        APP_LOGI("ContextContainer::InitResourceManager language: %{public}s, script: %{public}s, region: %{public}s,",
+        HILOG_INFO(
+            "ContextContainer::InitResourceManager language: %{public}s, script: %{public}s, region: %{public}s,",
             resConfig->GetLocaleInfo()->getLanguage(),
             resConfig->GetLocaleInfo()->getScript(),
             resConfig->GetLocaleInfo()->getCountry());
     } else {
-        APP_LOGI("ContextContainer::InitResourceManager language: GetLocaleInfo is null.");
+        HILOG_INFO("ContextContainer::InitResourceManager language: GetLocaleInfo is null.");
     }
     resourceManager->UpdateResConfig(*resConfig);
     deal->initResourceManager(resourceManager);
@@ -711,7 +714,7 @@ Uri ContextContainer::GetCaller()
     if (baseContext_ != nullptr) {
         return baseContext_->GetCaller();
     } else {
-        APP_LOGE("ContextContainer::GetCaller baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetCaller baseContext_ is nullptr");
         Uri uri("");
         return uri;
     }
@@ -730,7 +733,7 @@ std::string ContextContainer::GetString(int resId)
         std::string ret = baseContext_->GetString(resId);
         return ret;
     } else {
-        APP_LOGE("ContextContainer::GetString baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetString baseContext_ is nullptr");
         return "";
     }
 }
@@ -748,7 +751,7 @@ std::vector<std::string> ContextContainer::GetStringArray(int resId)
         return baseContext_->GetStringArray(resId);
     } else {
         return std::vector<std::string>();
-        APP_LOGE("ContextContainer::GetStringArray baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetStringArray baseContext_ is nullptr");
     }
 }
 
@@ -764,7 +767,7 @@ std::vector<int> ContextContainer::GetIntArray(int resId)
     if (baseContext_ != nullptr) {
         return baseContext_->GetIntArray(resId);
     } else {
-        APP_LOGE("ContextContainer::GetIntArray baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetIntArray baseContext_ is nullptr");
         return std::vector<int>();
     }
 }
@@ -779,7 +782,7 @@ std::map<std::string, std::string> ContextContainer::GetTheme()
     if (baseContext_ != nullptr) {
         return baseContext_->GetTheme();
     } else {
-        APP_LOGE("ContextContainer::GetTheme baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetTheme baseContext_ is nullptr");
         return std::map<std::string, std::string>();
     }
 }
@@ -794,7 +797,7 @@ void ContextContainer::SetTheme(int themeId)
     if (baseContext_ != nullptr) {
         baseContext_->SetTheme(themeId);
     } else {
-        APP_LOGE("ContextContainer::SetTheme baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::SetTheme baseContext_ is nullptr");
     }
 }
 
@@ -808,7 +811,7 @@ std::map<std::string, std::string> ContextContainer::GetPattern()
     if (baseContext_ != nullptr) {
         return baseContext_->GetPattern();
     } else {
-        APP_LOGE("ContextContainer::GetPattern baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetPattern baseContext_ is nullptr");
         return std::map<std::string, std::string>();
     }
 }
@@ -825,7 +828,7 @@ int ContextContainer::GetColor(int resId)
     if (baseContext_ != nullptr) {
         return baseContext_->GetColor(resId);
     } else {
-        APP_LOGE("ContextContainer::GetColor baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetColor baseContext_ is nullptr");
         return INVALID_RESOURCE_VALUE;
     }
 }
@@ -840,7 +843,7 @@ int ContextContainer::GetThemeId()
     if (baseContext_ != nullptr) {
         return baseContext_->GetThemeId();
     } else {
-        APP_LOGE("ContextContainer::GetThemeId baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetThemeId baseContext_ is nullptr");
         return -1;
     }
 }
@@ -855,7 +858,7 @@ int ContextContainer::GetDisplayOrientation()
     if (baseContext_ != nullptr) {
         return baseContext_->GetDisplayOrientation();
     } else {
-        APP_LOGE("ContextContainer::GetDisplayOrientation baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetDisplayOrientation baseContext_ is nullptr");
         return static_cast<int>(DisplayOrientation::UNSPECIFIED);
     }
 }
@@ -871,7 +874,7 @@ std::string ContextContainer::GetPreferencesDir()
     if (baseContext_ != nullptr) {
         return baseContext_->GetPreferencesDir();
     } else {
-        APP_LOGE("ContextContainer::GetPreferencesDir baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetPreferencesDir baseContext_ is nullptr");
         return "";
     }
 }
@@ -884,7 +887,7 @@ std::string ContextContainer::GetPreferencesDir()
 void ContextContainer::SetColorMode(int mode)
 {
     if (baseContext_ == nullptr) {
-        APP_LOGE("ContextContainer::SetColorMode baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::SetColorMode baseContext_ is nullptr");
         return;
     }
 
@@ -899,7 +902,7 @@ void ContextContainer::SetColorMode(int mode)
 int ContextContainer::GetColorMode()
 {
     if (baseContext_ == nullptr) {
-        APP_LOGE("ContextContainer::GetColorMode baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetColorMode baseContext_ is nullptr");
         return -1;
     }
 
@@ -916,7 +919,7 @@ int ContextContainer::GetMissionId()
     if (baseContext_ != nullptr) {
         return baseContext_->GetMissionId();
     } else {
-        APP_LOGE("ContextContainer::GetMissionId baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetMissionId baseContext_ is nullptr");
         return -1;
     }
 }
@@ -930,7 +933,7 @@ void ContextContainer::TerminateAndRemoveMission()
     if (baseContext_ != nullptr) {
         baseContext_->TerminateAndRemoveMission();
     } else {
-        APP_LOGE("ContextContainer::TerminateAndRemoveMission baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::TerminateAndRemoveMission baseContext_ is nullptr");
     }
 }
 
@@ -944,7 +947,7 @@ std::shared_ptr<TaskDispatcher> ContextContainer::GetUITaskDispatcher()
     if (baseContext_ != nullptr) {
         return baseContext_->GetUITaskDispatcher();
     } else {
-        APP_LOGE("ContextContainer::GetUITaskDispatcher baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetUITaskDispatcher baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -959,7 +962,7 @@ std::shared_ptr<TaskDispatcher> ContextContainer::GetMainTaskDispatcher()
     if (baseContext_ != nullptr) {
         return baseContext_->GetMainTaskDispatcher();
     } else {
-        APP_LOGE("ContextContainer::GetMainTaskDispatcher baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetMainTaskDispatcher baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -977,7 +980,7 @@ std::shared_ptr<TaskDispatcher> ContextContainer::CreateParallelTaskDispatcher(
     if (baseContext_ != nullptr) {
         return baseContext_->CreateParallelTaskDispatcher(name, priority);
     } else {
-        APP_LOGE("ContextContainer::CreateParallelTaskDispatcher baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::CreateParallelTaskDispatcher baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -996,7 +999,7 @@ std::shared_ptr<TaskDispatcher> ContextContainer::CreateSerialTaskDispatcher(
     if (baseContext_ != nullptr) {
         return baseContext_->CreateSerialTaskDispatcher(name, priority);
     } else {
-        APP_LOGE("ContextContainer::CreateSerialTaskDispatcher baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::CreateSerialTaskDispatcher baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -1013,7 +1016,7 @@ std::shared_ptr<TaskDispatcher> ContextContainer::GetGlobalTaskDispatcher(const 
     if (baseContext_ != nullptr) {
         return baseContext_->GetGlobalTaskDispatcher(priority);
     } else {
-        APP_LOGE("ContextContainer::GetGlobalTaskDispatcher baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::GetGlobalTaskDispatcher baseContext_ is nullptr");
         return nullptr;
     }
 }
@@ -1029,19 +1032,19 @@ bool ContextContainer::MoveMissionToEnd(bool nonFirst)
 {
     sptr<IRemoteObject> token = GetToken();
     if (token == nullptr) {
-        APP_LOGE("ContextContainer::MoveMissionToEnd GetToken return nullptr");
+        HILOG_ERROR("ContextContainer::MoveMissionToEnd GetToken return nullptr");
         return false;
     }
 
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
-        APP_LOGE("ContextContainer::MoveMissionToEnd abilityClient is nullptr");
+        HILOG_ERROR("ContextContainer::MoveMissionToEnd abilityClient is nullptr");
         return false;
     }
 
     ErrCode errval = abilityClient->MoveMissionToEnd(token, nonFirst);
     if (errval != ERR_OK) {
-        APP_LOGE("ContextContainer::MoveMissionToEnd MoveMissionToEnd retval is %d", errval);
+        HILOG_ERROR("ContextContainer::MoveMissionToEnd MoveMissionToEnd retval is %d", errval);
     }
 
     return (errval == ERR_OK) ? true : false;
@@ -1054,13 +1057,13 @@ void ContextContainer::LockMission()
 {
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
-        APP_LOGE("ContextContainer::LockMission abilityClient is nullptr");
+        HILOG_ERROR("ContextContainer::LockMission abilityClient is nullptr");
         return;
     }
 
     ErrCode errval = abilityClient->LockMission(GetMissionId());
     if (errval != ERR_OK) {
-        APP_LOGE("ContextContainer::LockMission LockMission retval is %d", errval);
+        HILOG_ERROR("ContextContainer::LockMission LockMission retval is %d", errval);
     }
 }
 
@@ -1071,13 +1074,13 @@ void ContextContainer::UnlockMission()
 {
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
-        APP_LOGE("ContextContainer::UnlockMission abilityClient is nullptr");
+        HILOG_ERROR("ContextContainer::UnlockMission abilityClient is nullptr");
         return;
     }
 
     ErrCode errval = abilityClient->UnlockMission(GetMissionId());
     if (errval != ERR_OK) {
-        APP_LOGE("ContextContainer::UnlockMission UnlockMission retval is %d", errval);
+        HILOG_ERROR("ContextContainer::UnlockMission UnlockMission retval is %d", errval);
     }
 }
 
@@ -1092,13 +1095,13 @@ bool ContextContainer::SetMissionInformation(const MissionInformation &missionIn
 {
     sptr<IRemoteObject> token = GetToken();
     if (token == nullptr) {
-        APP_LOGE("ContextContainer::SetMissionInformation GetToken return nullptr");
+        HILOG_ERROR("ContextContainer::SetMissionInformation GetToken return nullptr");
         return false;
     }
 
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
-        APP_LOGE("ContextContainer::SetMissionInformation abilityClient is nullptr");
+        HILOG_ERROR("ContextContainer::SetMissionInformation abilityClient is nullptr");
         return false;
     }
 
@@ -1108,7 +1111,7 @@ bool ContextContainer::SetMissionInformation(const MissionInformation &missionIn
 
     ErrCode errval = abilityClient->SetMissionDescriptionInfo(token, missionInfoMat);
     if (errval != ERR_OK) {
-        APP_LOGE("ContextContainer::SetMissionInformation SetMissionDescriptionInfo retval is %d", errval);
+        HILOG_ERROR("ContextContainer::SetMissionInformation SetMissionDescriptionInfo retval is %d", errval);
     }
 
     return (errval == ERR_OK) ? true : false;
@@ -1123,12 +1126,12 @@ bool ContextContainer::SetMissionInformation(const MissionInformation &missionIn
 void ContextContainer::SetShowOnLockScreen(bool isAllow)
 {
     if (baseContext_ == nullptr) {
-        APP_LOGE("ContextContainer::SetShowOnLockScreen baseContext_ is nullptr");
+        HILOG_ERROR("ContextContainer::SetShowOnLockScreen baseContext_ is nullptr");
         return;
     }
 
     baseContext_->SetShowOnLockScreen(isAllow);
-    APP_LOGI("ContextContainer::SetShowOnLockScreen called end.");
+    HILOG_INFO("ContextContainer::SetShowOnLockScreen called end.");
 }
 
 bool ContextContainer::IsUpdatingConfigurations()

@@ -15,7 +15,7 @@
 
 #include "ability_delegator.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ohos_application.h"
 #include "ability_manager_client.h"
 #include "ability_delegator_registry.h"
@@ -34,14 +34,14 @@ AbilityDelegator::~AbilityDelegator()
 void AbilityDelegator::AddAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor)
 {
     if (!monitor) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     auto pos = std::find(abilityMonitors_.begin(), abilityMonitors_.end(), monitor);
     if (pos != abilityMonitors_.end()) {
-        APP_LOGW("Monitor has been added");
+        HILOG_WARN("Monitor has been added");
         return;
     }
 
@@ -51,7 +51,7 @@ void AbilityDelegator::AddAbilityMonitor(const std::shared_ptr<IAbilityMonitor> 
 void AbilityDelegator::RemoveAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor)
 {
     if (!monitor) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -77,7 +77,7 @@ size_t AbilityDelegator::GetMonitorsNum()
 sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor)
 {
     if (!monitor) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return {};
     }
 
@@ -85,7 +85,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<I
 
     auto obtainedAbility = monitor->waitForAbility();
     if (!obtainedAbility) {
-        APP_LOGW("Invalid obtained ability");
+        HILOG_WARN("Invalid obtained ability");
         return {};
     }
 
@@ -96,7 +96,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
     const std::shared_ptr<IAbilityMonitor> &monitor, const int64_t timeoutMs)
 {
     if (!monitor) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return {};
     }
 
@@ -104,7 +104,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
 
     auto obtainedAbility = monitor->waitForAbility(timeoutMs);
     if (!obtainedAbility) {
-        APP_LOGW("Invalid obtained ability");
+        HILOG_WARN("Invalid obtained ability");
         return {};
     }
 
@@ -119,14 +119,14 @@ std::shared_ptr<AbilityRuntime::Context> AbilityDelegator::GetAppContext() const
 AbilityDelegator::AbilityState AbilityDelegator::GetAbilityState(const sptr<IRemoteObject> &token)
 {
     if (!token) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return AbilityDelegator::AbilityState::UNINITIALIZED;
     }
 
     std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
     auto existedProperty = DoesPropertyExist(token);
     if (!existedProperty) {
-        APP_LOGW("Unknown ability token");
+        HILOG_WARN("Unknown ability token");
         return AbilityDelegator::AbilityState::UNINITIALIZED;
     }
 
@@ -137,7 +137,7 @@ sptr<IRemoteObject> AbilityDelegator::GetCurrentTopAbility()
 {
     sptr<IRemoteObject> topAbilityToken;
     if (AAFwk::AbilityManagerClient::GetInstance()->GetCurrentTopAbility(topAbilityToken)) {
-        APP_LOGE("Failed to get top ability");
+        HILOG_ERROR("Failed to get top ability");
         return {};
     }
 
@@ -151,52 +151,52 @@ std::string AbilityDelegator::GetThreadName() const
 
 void AbilityDelegator::Prepare()
 {
-    APP_LOGI("Enter");
+    HILOG_INFO("Enter");
     if (!testRunner_) {
-        APP_LOGW("Invalid TestRunner");
+        HILOG_WARN("Invalid TestRunner");
         return;
     }
 
-    APP_LOGI("Call TestRunner::Prepare()");
+    HILOG_INFO("Call TestRunner::Prepare()");
     testRunner_->Prepare();
 
     if (!delegatorThread_) {
         delegatorThread_ = std::make_unique<DelegatorThread>(true);
         if (!delegatorThread_) {
-            APP_LOGE("Create delegatorThread failed");
+            HILOG_ERROR("Create delegatorThread failed");
             return;
         }
     }
 
     auto runTask = [this]() { this->OnRun(); };
     if (!delegatorThread_->Run(runTask)) {
-        APP_LOGE("Run task on delegatorThread failed");
+        HILOG_ERROR("Run task on delegatorThread failed");
     }
 }
 
 void AbilityDelegator::OnRun()
 {
-    APP_LOGI("Enter");
+    HILOG_INFO("Enter");
     if (!testRunner_) {
-        APP_LOGW("Invalid TestRunner");
+        HILOG_WARN("Invalid TestRunner");
         return;
     }
 
-    APP_LOGI("Call TestRunner::Run(), Start run");
+    HILOG_INFO("Call TestRunner::Run(), Start run");
     testRunner_->Run();
-    APP_LOGI("Run finished");
+    HILOG_INFO("Run finished");
 }
 
 bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
 {
     if (!token) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return false;
     }
 
     auto ret = AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityForeground(token);
     if (ret) {
-        APP_LOGE("Failed to call DelegatorDoAbilityForeground, reson : %{public}d", ret);
+        HILOG_ERROR("Failed to call DelegatorDoAbilityForeground, reson : %{public}d", ret);
         return false;
     }
 
@@ -206,13 +206,13 @@ bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
 bool AbilityDelegator::DoAbilityBackground(const sptr<IRemoteObject> &token)
 {
     if (!token) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return false;
     }
 
     auto ret = AAFwk::AbilityManagerClient::GetInstance()->DelegatorDoAbilityBackground(token);
     if (ret) {
-        APP_LOGE("Failed to call DelegatorDoAbilityBackground, reson : %{public}d", ret);
+        HILOG_ERROR("Failed to call DelegatorDoAbilityBackground, reson : %{public}d", ret);
         return false;
     }
 
@@ -221,16 +221,16 @@ bool AbilityDelegator::DoAbilityBackground(const sptr<IRemoteObject> &token)
 
 std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutMs)
 {
-    APP_LOGI("command : %{public}s, timeout : %{public}" PRId64, cmd.data(), timeoutMs);
+    HILOG_INFO("command : %{public}s, timeout : %{public}" PRId64, cmd.data(), timeoutMs);
 
     if (cmd.empty()) {
-        APP_LOGE("Invalid cmd");
+        HILOG_ERROR("Invalid cmd");
         return {};
     }
 
     auto testObserver = iface_cast<ITestObserver>(observer_);
     if (!testObserver) {
-        APP_LOGW("Invalid testObserver");
+        HILOG_WARN("Invalid testObserver");
         return {};
     }
 
@@ -240,10 +240,10 @@ std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std:
 
 void AbilityDelegator::Print(const std::string &msg)
 {
-    APP_LOGI("message to print : %{public}s", msg.data());
+    HILOG_INFO("message to print : %{public}s", msg.data());
     auto testObserver = iface_cast<ITestObserver>(observer_);
     if (!testObserver) {
-        APP_LOGW("Invalid testObserver");
+        HILOG_WARN("Invalid testObserver");
         return;
     }
 
@@ -253,7 +253,7 @@ void AbilityDelegator::Print(const std::string &msg)
 void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -261,7 +261,7 @@ void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityP
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -279,7 +279,7 @@ void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityP
 void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -287,7 +287,7 @@ void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegator
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -305,7 +305,7 @@ void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegator
 void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -313,7 +313,7 @@ void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegato
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -331,7 +331,7 @@ void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegato
 void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -339,7 +339,7 @@ void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegat
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -357,7 +357,7 @@ void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegat
 void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -365,7 +365,7 @@ void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbi
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -383,7 +383,7 @@ void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbi
 void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -391,7 +391,7 @@ void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbi
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -409,7 +409,7 @@ void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbi
 void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return;
     }
 
@@ -417,7 +417,7 @@ void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityPr
 
     std::unique_lock<std::mutex> lck(mutexMonitor_);
     if (abilityMonitors_.empty()) {
-        APP_LOGW("Empty abilityMonitors");
+        HILOG_WARN("Empty abilityMonitors");
         return;
     }
 
@@ -450,7 +450,7 @@ AbilityDelegator::AbilityState AbilityDelegator::ConvertAbilityState(
             abilityState = AbilityDelegator::AbilityState::STOPPED;
             break;
         default:
-            APP_LOGE("Unknown lifecycleState");
+            HILOG_ERROR("Unknown lifecycleState");
             break;
     }
 
@@ -460,11 +460,11 @@ AbilityDelegator::AbilityState AbilityDelegator::ConvertAbilityState(
 void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
     if (!ability) {
-        APP_LOGW("Invalid ability property");
+        HILOG_WARN("Invalid ability property");
         return;
     }
 
-    APP_LOGW("ability property : name : %{public}s, state : %{public}d",
+    HILOG_WARN("ability property : name : %{public}s, state : %{public}d",
         ability->name_.data(), ability->lifecycleState_);
 
     std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
@@ -481,18 +481,18 @@ void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegator
 std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)
 {
     if (!token) {
-        APP_LOGW("Invalid input parameter");
+        HILOG_WARN("Invalid input parameter");
         return {};
     }
 
     for (auto &it : abilityProperties_) {
         if (!it) {
-            APP_LOGW("Invalid ability property");
+            HILOG_WARN("Invalid ability property");
             continue;
         }
 
         if (token == it->token_) {
-            APP_LOGI("Porperty exists");
+            HILOG_INFO("Porperty exists");
             return it;
         }
     }
@@ -502,23 +502,23 @@ std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::DoesPropertyExist(c
 
 void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resultCode)
 {
-    APP_LOGI("Enter");
+    HILOG_INFO("Enter");
 
     if (!observer_) {
-        APP_LOGE("Invalid observer");
+        HILOG_ERROR("Invalid observer");
         return;
     }
 
     auto delegatorArgs = AbilityDelegatorRegistry::GetArguments();
     if (!delegatorArgs) {
-        APP_LOGE("Invalid delegator args");
+        HILOG_ERROR("Invalid delegator args");
         return;
     }
 
     const auto &bundleName = delegatorArgs->GetTestBundleName();
     auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
     if (err) {
-        APP_LOGE("MainThread::FinishUserTest is failed %{public}d", err);
+        HILOG_ERROR("MainThread::FinishUserTest is failed %{public}d", err);
     }
 }
 }  // namespace AppExecFwk

@@ -19,7 +19,7 @@
 #include "ability_impl.h"
 #include "ability_state.h"
 #include "abs_shared_result_set.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "context_deal.h"
 #include "continuation_manager.h"
 #include "continuation_handler.h"

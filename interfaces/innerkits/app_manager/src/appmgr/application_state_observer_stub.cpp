@@ -15,7 +15,7 @@
 
 #include "application_state_observer_stub.h"
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
 
@@ -52,11 +52,11 @@ ApplicationStateObserverStub::~ApplicationStateObserverStub()
 int ApplicationStateObserverStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("ApplicationStateObserverStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("ApplicationStateObserverStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = ApplicationStateObserverStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 
@@ -92,7 +92,7 @@ int32_t ApplicationStateObserverStub::HandleOnForegroundApplicationChanged(Messa
 {
     std::unique_ptr<AppStateData> processData(data.ReadParcelable<AppStateData>());
     if (!processData) {
-        APP_LOGE("ReadParcelable<AppStateData> failed");
+        HILOG_ERROR("ReadParcelable<AppStateData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -104,7 +104,7 @@ int32_t ApplicationStateObserverStub::HandleOnAbilityStateChanged(MessageParcel 
 {
     std::unique_ptr<AbilityStateData> abilityStateData(data.ReadParcelable<AbilityStateData>());
     if (!abilityStateData) {
-        APP_LOGE("ReadParcelable<AbilityStateData> failed");
+        HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -116,7 +116,7 @@ int32_t ApplicationStateObserverStub::HandleOnExtensionStateChanged(MessageParce
 {
     std::unique_ptr<AbilityStateData> abilityStateData(data.ReadParcelable<AbilityStateData>());
     if (!abilityStateData) {
-        APP_LOGE("ReadParcelable<AbilityStateData> failed");
+        HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -128,7 +128,7 @@ int32_t ApplicationStateObserverStub::HandleOnProcessCreated(MessageParcel &data
 {
     std::unique_ptr<ProcessData> processData(data.ReadParcelable<ProcessData>());
     if (!processData) {
-        APP_LOGE("ReadParcelable<ProcessData> failed");
+        HILOG_ERROR("ReadParcelable<ProcessData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -140,7 +140,7 @@ int32_t ApplicationStateObserverStub::HandleOnProcessDied(MessageParcel &data, M
 {
     std::unique_ptr<ProcessData> processData(data.ReadParcelable<ProcessData>());
     if (!processData) {
-        APP_LOGE("ReadParcelable<ProcessData> failed");
+        HILOG_ERROR("ReadParcelable<ProcessData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -152,7 +152,7 @@ int32_t ApplicationStateObserverStub::HandleOnApplicationStateChanged(MessagePar
 {
     std::unique_ptr<AppStateData> processData(data.ReadParcelable<AppStateData>());
     if (!processData) {
-        APP_LOGE("ReadParcelable<AppStateData> failed");
+        HILOG_ERROR("ReadParcelable<AppStateData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -162,7 +162,7 @@ int32_t ApplicationStateObserverStub::HandleOnApplicationStateChanged(MessagePar
 
 void ApplicationStateObserverRecipient::OnRemoteDied(const wptr<IRemoteObject> &__attribute__((unused)) remote)
 {
-    APP_LOGE("ApplicationStateObserverRecipient On remote died.");
+    HILOG_ERROR("ApplicationStateObserverRecipient On remote died.");
     if (handler_) {
         handler_(remote);
     }

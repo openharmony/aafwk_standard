@@ -14,7 +14,7 @@
  */
 
 #include "main_thread.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace OHOS;
 using namespace OHOS::AppExecFwk;

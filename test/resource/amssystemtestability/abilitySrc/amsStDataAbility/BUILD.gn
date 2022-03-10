@@ -27,12 +27,13 @@ config("verify_act_ability_config") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/services/bundlemgr/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
+    "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "${EVENT_DIR}/kits/native/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsStDataAbility\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsStDataAbility\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 config("verify_act_ability_public_config") {

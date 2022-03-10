@@ -16,8 +16,8 @@
 #include "datashare_connection.h"
 
 #include "ability_manager_client.h"
-#include "app_log_wrapper.h"
 #include "datashare_proxy.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -52,18 +52,18 @@ sptr<DataShareConnection> DataShareConnection::GetInstance()
 void DataShareConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     if (remoteObject == nullptr) {
-        APP_LOGE("DataShareConnection::OnAbilityConnectDone failed, remote is nullptr");
+        HILOG_ERROR("DataShareConnection::OnAbilityConnectDone failed, remote is nullptr");
         return;
     }
     dataShareProxy_ = iface_cast<DataShareProxy>(remoteObject);
     if (dataShareProxy_ == nullptr) {
-        APP_LOGE("DataShareConnection::OnAbilityConnectDone failed, dataShareProxy_ is nullptr");
+        HILOG_ERROR("DataShareConnection::OnAbilityConnectDone failed, dataShareProxy_ is nullptr");
         return;
     }
     isConnected_.store(true);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 
 /**
@@ -77,10 +77,10 @@ void DataShareConnection::OnAbilityConnectDone(
  */
 void DataShareConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     dataShareProxy_ = nullptr;
     isConnected_.store(false);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 
 /**
@@ -88,9 +88,9 @@ void DataShareConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName 
  */
 void DataShareConnection::ConnectDataShareExtAbility(const AAFwk::Want &want, const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->ConnectAbility(want, this, token);
-    APP_LOGI("%{public}s called end, ret=%{public}d", __func__, ret);
+    HILOG_INFO("%{public}s called end, ret=%{public}d", __func__, ret);
 }
 
 /**
@@ -98,11 +98,11 @@ void DataShareConnection::ConnectDataShareExtAbility(const AAFwk::Want &want, co
  */
 void DataShareConnection::DisconnectDataShareExtAbility()
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     dataShareProxy_ = nullptr;
     isConnected_.store(false);
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(this);
-    APP_LOGI("%{public}s called end, ret=%{public}d", __func__, ret);
+    HILOG_INFO("%{public}s called end, ret=%{public}d", __func__, ret);
 }
 
 /**

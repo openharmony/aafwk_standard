@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "provider_connect_proxy.h"
@@ -30,7 +30,7 @@ namespace AppExecFwk {
 void ProviderConnectProxy::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    APP_LOGD("%{public}s, abilityName:%{public}s,resultCode:%{public}d",
+    HILOG_DEBUG("%{public}s, abilityName:%{public}s,resultCode:%{public}d",
         __func__, element.GetAbilityName().c_str(), resultCode);
     int error;
     MessageParcel data;
@@ -38,28 +38,28 @@ void ProviderConnectProxy::OnAbilityConnectDone(
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
         return;
     }
 
     if (!data.WriteParcelable(&element)) {
-        APP_LOGE("%{public}s, failed to write element", __func__);
+        HILOG_ERROR("%{public}s, failed to write element", __func__);
         return;
     }
 
     if (!data.WriteRemoteObject(remoteObject)) {
-        APP_LOGE("%{public}s, failed to write remote object ", __func__);
+        HILOG_ERROR("%{public}s, failed to write remote object ", __func__);
         return;
     }
 
     if (!data.WriteInt32(resultCode)) {
-        APP_LOGE("%{public}s, failed to write resultCode", __func__);
+        HILOG_ERROR("%{public}s, failed to write resultCode", __func__);
         return;
     }
 
     error = Remote()->SendRequest(IAbilityConnection::ON_ABILITY_CONNECT_DONE, data, reply, option);
     if (error != ERR_OK) {
-        APP_LOGE("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
         return;
     }
 }
@@ -70,28 +70,29 @@ void ProviderConnectProxy::OnAbilityConnectDone(
  */
 void ProviderConnectProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    APP_LOGD("%{public}s, element:%{public}s, resultCode:%{public}d", __func__, element.GetURI().c_str(), resultCode);
+    HILOG_DEBUG(
+        "%{public}s, element:%{public}s, resultCode:%{public}d", __func__, element.GetURI().c_str(), resultCode);
     int error;
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
         return;
     }
     if (!data.WriteParcelable(&element)) {
-        APP_LOGE("%{public}s, failed to write element", __func__);
+        HILOG_ERROR("%{public}s, failed to write element", __func__);
         return;
     }
     if (!data.WriteInt32(resultCode)) {
-        APP_LOGE("%{public}s, failed to write resultCode", __func__);
+        HILOG_ERROR("%{public}s, failed to write resultCode", __func__);
         return;
     }
 
     error = Remote()->SendRequest(IAbilityConnection::ON_ABILITY_DISCONNECT_DONE, data, reply, option);
     if (error != ERR_OK) {
-        APP_LOGE("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
         return;
     }
 }
@@ -99,7 +100,7 @@ void ProviderConnectProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementName
 bool ProviderConnectProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(ProviderConnectProxy::GetDescriptor())) {
-        APP_LOGE("%{public}s, failed to write interface token", __func__);
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
         return false;
     }
     return true;

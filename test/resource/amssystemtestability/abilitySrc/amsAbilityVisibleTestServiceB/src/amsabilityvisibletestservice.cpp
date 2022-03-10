@@ -14,7 +14,7 @@
  */
 
 #include "amsabilityvisibletestservice.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 using namespace OHOS::EventFwk;
@@ -26,7 +26,7 @@ AmsAbilityVisibleTestService::~AmsAbilityVisibleTestService()
 
 void AmsAbilityVisibleTestService::OnStart(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnStart");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnStart");
     pageAbilityEvent.SubscribeEvent(STEventName::g_eventList, shared_from_this());
     Ability::OnStart(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStart;
@@ -35,7 +35,7 @@ void AmsAbilityVisibleTestService::OnStart(const Want &want)
 
 void AmsAbilityVisibleTestService::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnCommand");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnCommand");
 
     Ability::OnCommand(want, restart, startId);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnCommand;
@@ -44,7 +44,7 @@ void AmsAbilityVisibleTestService::OnCommand(const AAFwk::Want &want, bool resta
 
 void AmsAbilityVisibleTestService::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnNewWant");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnNewWant");
 
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnNewWant;
@@ -53,7 +53,7 @@ void AmsAbilityVisibleTestService::OnNewWant(const Want &want)
 
 void AmsAbilityVisibleTestService::OnStop()
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnStop");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnStop");
 
     Ability::OnStop();
     pageAbilityEvent.UnsubscribeEvent();
@@ -63,7 +63,7 @@ void AmsAbilityVisibleTestService::OnStop()
 
 void AmsAbilityVisibleTestService::OnActive()
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnActive");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnActive");
 
     Ability::OnActive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnActive;
@@ -72,7 +72,7 @@ void AmsAbilityVisibleTestService::OnActive()
 
 void AmsAbilityVisibleTestService::OnInactive()
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnInactive");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnInactive");
 
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnInactive;
@@ -81,7 +81,7 @@ void AmsAbilityVisibleTestService::OnInactive()
 
 void AmsAbilityVisibleTestService::OnBackground()
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnBackground");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnBackground");
 
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnBackground;
@@ -90,7 +90,7 @@ void AmsAbilityVisibleTestService::OnBackground()
 
 sptr<IRemoteObject> AmsAbilityVisibleTestService::OnConnect(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnConnect");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnConnect");
 
     sptr<IRemoteObject> ret = Ability::OnConnect(want);
     GetWantInfo(want);
@@ -127,7 +127,7 @@ sptr<IRemoteObject> AmsAbilityVisibleTestService::OnConnect(const Want &want)
 
 void AmsAbilityVisibleTestService::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AmsAbilityVisibleTestService::OnDisconnect");
+    HILOG_INFO("AmsAbilityVisibleTestService::OnDisconnect");
 
     Ability::OnDisconnect(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnDisconnect;

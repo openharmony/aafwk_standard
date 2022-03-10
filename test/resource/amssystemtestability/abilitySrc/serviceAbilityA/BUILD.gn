@@ -19,8 +19,8 @@ config("service_ability_a_config") {
   visibility = [ ":*" ]
   include_dirs = [ "${SUBDEMOSYSTEM_DIR}/include" ]
   defines = [
-    "APP_LOG_TAG = \"serviceAbilityA\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"serviceAbilityA\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 ohos_shared_library("serviceAbilityA") {

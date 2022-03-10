@@ -14,7 +14,7 @@
  */
 
 #include "dummy_result_set.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -43,7 +43,7 @@ ResultSet *ResultSet::Unmarshalling(Parcel &parcel)
 {
     ResultSet *resultSet = new (std::nothrow) ResultSet();
     if (resultSet && !resultSet->ReadFromParcel(parcel)) {
-        APP_LOGE("ResultSet::Unmarshalling ReadFromParcel failed");
+        HILOG_ERROR("ResultSet::Unmarshalling ReadFromParcel failed");
         delete resultSet;
         resultSet = nullptr;
     }
@@ -58,7 +58,7 @@ ResultSet *ResultSet::Unmarshalling(Parcel &parcel)
 bool ResultSet::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteString16(Str8ToStr16(testInf_))) {
-        APP_LOGE("ResultSet::Marshalling WriteString16 failed");
+        HILOG_ERROR("ResultSet::Marshalling WriteString16 failed");
         return false;
     }
     return true;

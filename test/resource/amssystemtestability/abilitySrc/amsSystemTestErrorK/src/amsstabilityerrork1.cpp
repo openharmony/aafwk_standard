@@ -28,19 +28,19 @@ void AmsStAbilityErrorK1::OnStart(const Want &want)
     int errorCode3 = 0;
     errorCode1 = errorCode2 / errorCode3;
 
-    APP_LOGI("AmsStAbilityErrorK1::onStart");
+    HILOG_INFO("AmsStAbilityErrorK1::onStart");
     Ability::OnStart(want);
 }
 
 void AmsStAbilityErrorK1::OnStop()
 {
-    APP_LOGI("AmsStAbilityErrorK1::onStop");
+    HILOG_INFO("AmsStAbilityErrorK1::onStop");
     Ability::OnStop();
 }
 
 void AmsStAbilityErrorK1::OnActive()
 {
-    APP_LOGI("AmsStAbilityErrorK1::OnActive");
+    HILOG_INFO("AmsStAbilityErrorK1::OnActive");
     Ability::OnActive();
     if (!targetBundle.empty() && !targetAbility.empty()) {
         Want want;
@@ -55,13 +55,13 @@ void AmsStAbilityErrorK1::OnActive()
 
 void AmsStAbilityErrorK1::OnInactive()
 {
-    APP_LOGI("AmsStAbilityErrorK1::OnInactive");
+    HILOG_INFO("AmsStAbilityErrorK1::OnInactive");
     Ability::OnInactive();
 }
 
 void AmsStAbilityErrorK1::OnBackground()
 {
-    APP_LOGI("AmsStAbilityErrorK1::OnBackground");
+    HILOG_INFO("AmsStAbilityErrorK1::OnBackground");
     Ability::OnBackground();
 }
 

@@ -17,6 +17,7 @@
 
 #include <memory>
 
+#include "hilog_wrapper.h"
 #include "parcel_macro.h"
 
 namespace OHOS {
@@ -87,7 +88,7 @@ DataAbilityResult *DataAbilityResult::CreateFromParcel(Parcel &parcel)
 {
     DataAbilityResult *dataAbilityResult = new (std::nothrow) DataAbilityResult(parcel);
     if (dataAbilityResult == nullptr) {
-        APP_LOGE("DataAbilityResult::CreateFromParcel dataAbilityResult is nullptr");
+        HILOG_ERROR("DataAbilityResult::CreateFromParcel dataAbilityResult is nullptr");
     }
     return dataAbilityResult;
 }

@@ -14,9 +14,9 @@
  */
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_constants.h"
 #include "form_supply_stub.h"
+#include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
@@ -44,11 +44,11 @@ FormSupplyStub::~FormSupplyStub()
  */
 int FormSupplyStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("FormSupplyStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("FormSupplyStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = FormSupplyStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("%{public}s failed, local descriptor is not equal to remote", __func__);
+        HILOG_ERROR("%{public}s failed, local descriptor is not equal to remote", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
@@ -72,7 +72,7 @@ int FormSupplyStub::HandleOnAcquire(MessageParcel &data, MessageParcel &reply)
 {
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -81,12 +81,12 @@ int FormSupplyStub::HandleOnAcquire(MessageParcel &data, MessageParcel &reply)
     do {
         errCode = want->GetIntParam(Constants::PROVIDER_FLAG, ERR_OK);
         if (errCode != ERR_OK) {
-            APP_LOGE("%{public}s, provider error", __func__);
+            HILOG_ERROR("%{public}s, provider error", __func__);
             break;
         }
         std::unique_ptr<FormProviderInfo> formInfo(data.ReadParcelable<FormProviderInfo>());
         if (formInfo == nullptr) {
-            APP_LOGE("%{public}s, failed to ReadParcelable<FormProviderInfo>", __func__);
+            HILOG_ERROR("%{public}s, failed to ReadParcelable<FormProviderInfo>", __func__);
             errCode = ERR_APPEXECFWK_PARCEL_ERROR;
             break;
         }
@@ -111,7 +111,7 @@ int FormSupplyStub::HandleOnEventHandle(MessageParcel &data, MessageParcel &repl
 {
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<Want>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }

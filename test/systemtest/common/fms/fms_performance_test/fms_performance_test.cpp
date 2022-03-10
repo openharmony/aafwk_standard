@@ -20,7 +20,7 @@
 #include <iostream>
 #include <sys/time.h>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ability_handler.h"
 #include "ability_info.h"
 #include "ability_local_record.h"

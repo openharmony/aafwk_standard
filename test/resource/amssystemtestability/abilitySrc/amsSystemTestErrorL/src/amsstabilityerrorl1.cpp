@@ -24,19 +24,19 @@ void AmsStAbilityErrorL1::OnStart(const Want &want)
     targetBundle = mWant.GetStringParam("targetBundle");
     targetAbility = mWant.GetStringParam("targetAbility");
 
-    APP_LOGI("AmsStAbilityErrorL1::onStart");
+    HILOG_INFO("AmsStAbilityErrorL1::onStart");
     Ability::OnStart(want);
 }
 
 void AmsStAbilityErrorL1::OnStop()
 {
-    APP_LOGI("AmsStAbilityErrorL1::onStop");
+    HILOG_INFO("AmsStAbilityErrorL1::onStop");
     Ability::OnStop();
 }
 
 void AmsStAbilityErrorL1::OnActive()
 {
-    APP_LOGI("AmsStAbilityErrorL1::OnActive");
+    HILOG_INFO("AmsStAbilityErrorL1::OnActive");
     Ability::OnActive();
     if (!targetBundle.empty() && !targetAbility.empty()) {
         Want want;
@@ -51,13 +51,13 @@ void AmsStAbilityErrorL1::OnActive()
 
 void AmsStAbilityErrorL1::OnInactive()
 {
-    APP_LOGI("AmsStAbilityErrorL1::OnInactive");
+    HILOG_INFO("AmsStAbilityErrorL1::OnInactive");
     Ability::OnInactive();
 }
 
 void AmsStAbilityErrorL1::OnBackground()
 {
-    APP_LOGI("AmsStAbilityErrorL1::OnBackground");
+    HILOG_INFO("AmsStAbilityErrorL1::OnBackground");
     Ability::OnBackground();
 }
 

@@ -50,7 +50,7 @@ ohos_systemtest("FmsStressTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"FmsStressTest\"" ]
+  defines = [ "AMS_LOG_TAG = \"FmsStressTest\"" ]
 
   external_deps = [
     "ability_base:base",

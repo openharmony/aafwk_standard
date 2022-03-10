@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "continuation_device_callback_proxy.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
 /**
@@ -30,28 +30,28 @@ ContinuationDeviceCallbackProxy::~ContinuationDeviceCallbackProxy()
 {}
 void ContinuationDeviceCallbackProxy::Connect(const std::string &deviceId, const std::string &deviceType)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     std::shared_ptr<IContinuationDeviceCallback> callback = nullptr;
     callback = callback_.lock();
     if (callback == nullptr) {
-        APP_LOGE("%{public}s callback is null", __func__);
+        HILOG_ERROR("%{public}s callback is null", __func__);
         return;
     }
     callback->OnDeviceConnectDone(deviceId, deviceType);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 
 void ContinuationDeviceCallbackProxy::Disconnect(const std::string &deviceId)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     std::shared_ptr<IContinuationDeviceCallback> callback = nullptr;
     callback = callback_.lock();
     if (callback == nullptr) {
-        APP_LOGE("%{public}s callback is null", __func__);
+        HILOG_ERROR("%{public}s callback is null", __func__);
         return;
     }
     callback->OnDeviceDisconnectDone(deviceId);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

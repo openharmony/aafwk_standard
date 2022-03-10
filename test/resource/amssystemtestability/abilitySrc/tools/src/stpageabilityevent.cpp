@@ -132,12 +132,12 @@ int STPageAbilityEvent::GetOnDisconnectCount()
 
 void STPageAbilityEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("DataTestPageAEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("DataTestPageAEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("DataTestPageAEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("DataTestPageAEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("DataTestPageAEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("DataTestPageAEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (!this->ability_.lock()) {
-        APP_LOGI("STPageAbilityEventSubscriber:ability_ is nullptr");
+        HILOG_INFO("STPageAbilityEventSubscriber:ability_ is nullptr");
     }
     if (eventName.compare("requ_page_ability_terminate") == 0) {
         std::string target = data.GetData();
@@ -153,7 +153,7 @@ void STPageAbilityEventSubscriber::OnReceiveEvent(const CommonEventData &data)
             if (stub_.promote()) {
                 (this->ability_.lock())->DisconnectAbility(stub_.promote());
             }
-            APP_LOGI("GetMyProcessMemoryInfo:stub_ is nullptr");
+            HILOG_INFO("GetMyProcessMemoryInfo:stub_ is nullptr");
         }
     }
     if (eventName.compare("requ_page_ability_terminate_caller") == 0) {

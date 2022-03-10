@@ -51,8 +51,8 @@ config("module_private_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"AbilityUnitTest\"",
-    "LOG_DOMAIN = 0xD002201",
+    "AMS_LOG_TAG = \"AbilityUnitTest\"",
+    "AMS_LOG_DOMAIN = 0xD002201",
   ]
 
   if (ability_runtime_graphics) {
@@ -86,8 +86,8 @@ config("module_ability_context_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"AbilityUnitTest\"",
-    "LOG_DOMAIN = 0xD002201",
+    "AMS_LOG_TAG = \"AbilityUnitTest\"",
+    "AMS_LOG_DOMAIN = 0xD002201",
   ]
 }
 
@@ -567,6 +567,7 @@ ohos_unittest("ability_impl_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
@@ -913,8 +914,8 @@ config("data_uri_utils_test_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"AbilityUnitTest\"",
-    "LOG_DOMAIN = 0xD002201",
+    "AMS_LOG_TAG = \"AbilityUnitTest\"",
+    "AMS_LOG_DOMAIN = 0xD002201",
   ]
 }
 ohos_unittest("data_uri_utils_test") {
