@@ -196,8 +196,6 @@ bool AbilityManagerService::Init()
     HILOG_INFO("ams config parse");
     useNewMission_ = amsConfigResolver_->IsUseNewMission();
 #ifdef SUPPORT_GRAPHICS
-    SetStackManager(userId, true);
-
     InitMissionListManager(userId, true);
 #endif
     SwitchManagers(U0_USER_ID, false);
@@ -4242,7 +4240,7 @@ int AbilityManagerService::DelegatorDoAbilityBackground(const sptr<IRemoteObject
 
 int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)
 {
-    HILOG_DEBUG("DoAbilityForeground, sceneFlag:%{public}d", flag);
+    HILOG_DEBUG("DoAbilityForeground, sceneFlag:%{public}u", flag);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
     if (!VerificationToken(token) && !VerificationAllToken(token)) {
         HILOG_ERROR("%{public}s token error.", __func__);
@@ -4275,7 +4273,7 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
 
 int AbilityManagerService::DoAbilityBackground(const sptr<IRemoteObject> &token, uint32_t flag)
 {
-    HILOG_DEBUG("DoAbilityBackground, sceneFlag:%{public}d", flag);
+    HILOG_DEBUG("DoAbilityBackground, sceneFlag:%{public}u", flag);
     CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
