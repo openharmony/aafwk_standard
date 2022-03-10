@@ -524,7 +524,7 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
     std::string straceStr = "";
-    // [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr);
+    // [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr)
     return straceStr;
 }
 }  // namespace AbilityRuntime

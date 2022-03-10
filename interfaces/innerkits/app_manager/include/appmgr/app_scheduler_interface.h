@@ -131,6 +131,15 @@ public:
 
     virtual void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) = 0;
 
+    /**
+     *
+     * @brief The handle of application not response process.
+     *
+     * @param sigMessage Recieve the sig message.
+     *
+     */
+    virtual void ScheduleANRProcess() = 0;
+
     enum class Message {
         SCHEDULE_FOREGROUND_APPLICATION_TRANSACTION = 0,
         SCHEDULE_BACKGROUND_APPLICATION_TRANSACTION,
@@ -145,6 +154,7 @@ public:
         SCHEDULE_PROCESS_SECURITY_EXIT_TRANSACTION,
         SCHEDULE_ABILITY_STAGE_INFO,
         SCHEDULE_ACCEPT_WANT,
+        SCHEDULE_ANR_PROCESS,
     };
 };
 }  // namespace AppExecFwk
