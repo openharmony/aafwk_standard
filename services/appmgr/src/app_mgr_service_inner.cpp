@@ -1874,12 +1874,8 @@ int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, c
         moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
     }
     if (moduelJson) {
-        std::string moudleName;
-        auto testRunnerName = want.GetStringParam("-s unittest");
-        auto pos = testRunnerName.find(":");
-        if (pos != std::string::npos) {
-            moudleName = testRunnerName.substr(0, pos);
-        } else {
+        std::string moudleName = want.GetStringParam("-m");
+        if (moudleName.empty()) {
             UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
             return ERR_INVALID_VALUE;
         }

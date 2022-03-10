@@ -17,7 +17,9 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const std::string AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME {"-p"};
+const std::string AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME {"-b"};
+const std::string AbilityDelegatorArgs::KEY_TEST_PACKAGE_NAME {"-p"};
+const std::string AbilityDelegatorArgs::KEY_TEST_MODULE_NAME {"-m"};
 const std::string AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS {"-s unittest"};
 const std::string AbilityDelegatorArgs::KEY_TEST_CASE {"-s class"};
 const std::string AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT {"-w"};
@@ -48,24 +50,24 @@ std::string AbilityDelegatorArgs::GetTestBundleName() const
     return bundleName_;
 }
 
+std::string AbilityDelegatorArgs::GetTestPackageName() const
+{
+    return GetParamValue(AbilityDelegatorArgs::KEY_TEST_PACKAGE_NAME);
+}
+
+std::string AbilityDelegatorArgs::GetTestModuleName() const
+{
+    return GetParamValue(AbilityDelegatorArgs::KEY_TEST_MODULE_NAME);
+}
+
 std::string AbilityDelegatorArgs::GetTestRunnerClassName() const
 {
-    auto target = params_.find(AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS);
-    if (target != params_.end()) {
-        return target->second;
-    }
-
-    return {};
+    return GetParamValue(AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS);
 }
 
 std::string AbilityDelegatorArgs::GetTestCaseName() const
 {
-    auto target = params_.find(AbilityDelegatorArgs::KEY_TEST_CASE);
-    if (target != params_.end()) {
-        return target->second;
-    }
-
-    return {};
+    return GetParamValue(AbilityDelegatorArgs::KEY_TEST_CASE);
 }
 
 void AbilityDelegatorArgs::SetTestParam(const std::map<std::string, std::string> &params)
@@ -76,6 +78,12 @@ void AbilityDelegatorArgs::SetTestParam(const std::map<std::string, std::string>
 std::map<std::string, std::string> AbilityDelegatorArgs::GetTestParam() const
 {
     return params_;
+}
+
+std::string AbilityDelegatorArgs::GetParamValue(const std::string &key) const
+{
+    auto target = params_.find(key);
+    return (target != params_.end()) ? target->second : std::string();
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
