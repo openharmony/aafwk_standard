@@ -928,7 +928,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3500, TestSize.Level1)
         pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
-    pendingManager_->ClearPendingWantRecordTask("bundleName2");
+    pendingManager_->ClearPendingWantRecordTask("bundleName2", 1);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 0);
 }
 
@@ -965,7 +965,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3600, TestSize.Level1)
         pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
-    pendingManager_->ClearPendingWantRecordTask("bundleName1");
+    pendingManager_->ClearPendingWantRecordTask("bundleName1", 1);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 1);
 }
 
@@ -1002,7 +1002,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3700, TestSize.Level1)
         pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo1.userId, wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
-    pendingManager_->ClearPendingWantRecordTask("bundleName3");
+    pendingManager_->ClearPendingWantRecordTask("bundleName3", 1);
     EXPECT_EQ((int)pendingManager_->wantRecords_.size(), 2);
 }
 

@@ -119,7 +119,7 @@ private:
 
 private:
     std::recursive_mutex userLock_;
-    int32_t currentUserId_ = USER_ID_NO_HEAD;
+    int32_t currentUserId_ = USER_ID_DEFAULT;
     std::unordered_map<int32_t, std::shared_ptr<UserItem>> userItems_;
     std::shared_ptr<UserEventHandler> eventHandler_;
 };

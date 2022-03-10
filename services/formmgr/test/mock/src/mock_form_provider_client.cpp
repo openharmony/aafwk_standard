@@ -39,6 +39,7 @@ int MockFormProviderClient::AcquireProviderFormInfo(const int64_t formId, const 
     sptr<IFormSupply> formSupply = iface_cast<IFormSupply>(callerToken);
     if (formSupply == nullptr) {
         HILOG_ERROR("failed to get formSupplyProxy");
+        return ERR_OK;
     }
 
     FormProviderInfo formProviderInfo;

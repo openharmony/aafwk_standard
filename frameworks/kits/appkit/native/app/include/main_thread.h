@@ -210,6 +210,13 @@ public:
 
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
 
+    /**
+     *
+     * @brief The handle of application not response process.
+     *
+     */
+    void ScheduleANRProcess() override;
+
 private:
     /**
      *
@@ -380,15 +387,6 @@ private:
 
     /**
      *
-     * @brief The handle of application not response process.
-     *
-     * @param sigMessage Receive the sig message.
-     *
-     */
-    static void HandleANRProcess(int sigMessage);
-
-    /**
-     *
      * @brief Check whether the OHOSApplication is ready.
      *
      * @return if the OHOSApplication is ready, return true. else return false.
@@ -407,6 +405,15 @@ private:
      *
      */
     bool PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record);
+
+    /**
+     *
+     * @brief The handle of application not response process.
+     *
+     * @param sigMessage Recieve the sig message.
+     *
+     */
+    void HandleScheduleANRProcess();
 
     class MainHandler : public EventHandler {
     public:
@@ -435,6 +442,7 @@ private:
     std::shared_ptr<ApplicationImpl> applicationImpl_ = nullptr;
     std::shared_ptr<MainHandler> mainHandler_ = nullptr;
     std::shared_ptr<WatchDog> watchDogHandler_ = nullptr;
+    std::shared_ptr<std::thread> handleANRThread_ = nullptr;
     std::shared_ptr<AbilityRecordMgr> abilityRecordMgr_ = nullptr;
     MainThreadState mainThreadState_ = MainThreadState::INIT;
     sptr<IAppMgr> appMgr_ = nullptr;  // appMgrService Handler

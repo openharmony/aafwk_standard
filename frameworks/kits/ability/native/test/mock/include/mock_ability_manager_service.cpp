@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,9 +26,7 @@ using OHOS::AppExecFwk::ElementName;
 namespace OHOS {
 namespace AAFwk {
 MockAbilityManagerService::MockAbilityManagerService() : abilityScheduler_(nullptr)
-{
-    abilityScheduler_ = nullptr;
-}
+{}
 
 MockAbilityManagerService::~MockAbilityManagerService()
 {}
@@ -173,7 +171,7 @@ int MockAbilityManagerService::KillProcess(const std::string &bundleName)
     return 0;
 }
 
-int MockAbilityManagerService::UninstallApp(const std::string &bundleName)
+int MockAbilityManagerService::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     return 0;
 }

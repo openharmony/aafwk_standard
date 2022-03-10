@@ -452,6 +452,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
     HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> ret;
     if (!CheckCallingPermission(abilityInfo_->readPermission)) {
+        HILOG_ERROR("%{public}s Check calling permission failed.", __func__);
         return ret;
     }
 

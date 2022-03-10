@@ -38,6 +38,5 @@ ohos_moduletest("AmsAppRunningRecordModuleTest") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":AmsAppRunningRecordModuleTest" ]
+  # deps = [ ":AmsAppRunningRecordModuleTest" ]
 }

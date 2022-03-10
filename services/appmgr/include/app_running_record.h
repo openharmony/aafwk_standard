@@ -485,6 +485,7 @@ public:
     bool IsStartSpecifiedAbility() const;
     void ScheduleAcceptWant(const std::string &moduleName);
     void ScheduleAcceptWantDone();
+    void ApplicationTerminated();
     const AAFwk::Want &GetSpecifiedWant() const;
     void SetDebugApp(bool isDebugApp);
     void SetRenderRecord(const std::shared_ptr<RenderRecord> &record);
