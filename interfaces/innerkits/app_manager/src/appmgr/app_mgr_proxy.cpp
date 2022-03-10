@@ -651,5 +651,31 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
         return;
     }
 }
+
+void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
+{
+    APP_LOGD("start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_SYNC);
+    if (!WriteInterfaceToken(data)) {
+        return;
+    }
+    if (!data.WriteInt32(pid)) {
+        APP_LOGE("parcel WriteInt32 failed");
+        return;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        APP_LOGE("Remote() is NULL");
+        return;
+    }
+    int32_t ret =
+        remote->SendRequest(static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+    }
+    APP_LOGD("end");
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
