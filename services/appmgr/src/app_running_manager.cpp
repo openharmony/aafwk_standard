@@ -18,8 +18,8 @@
 #include "datetime_ex.h"
 #include "iremote_object.h"
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
+#include "hilog_wrapper.h"
 #include "os_account_manager.h"
 #include "perf_profile.h"
 
@@ -35,12 +35,12 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CreateAppRunningRecord(
 {
     std::lock_guard<std::recursive_mutex> guard(lock_);
     if (!appInfo) {
-        APP_LOGE("param error");
+        HILOG_ERROR("param error");
         return nullptr;
     }
 
     if (processName.empty()) {
-        APP_LOGE("processName error");
+        HILOG_ERROR("processName error");
         return nullptr;
     }
 
@@ -54,7 +54,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CreateAppRunningRecord(
     std::string signCode;
     ClipStringContent(rule, bundleInfo.appId, signCode);
 
-    APP_LOGI("Create processName : %{public}s | recordId : %{public}d | signCode : %{public}s",
+    HILOG_INFO("Create processName : %{public}s | recordId : %{public}d | signCode : %{public}s",
         processName.c_str(), recordId, signCode.c_str());
     appRecord->SetSignCode(signCode);
     appRecord->SetJointUserId(bundleInfo.jointUserId);
@@ -65,14 +65,14 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CreateAppRunningRecord(
 std::shared_ptr<AppRunningRecord> AppRunningManager::CheckAppRunningRecordIsExist(const std::string &appName,
     const std::string &processName, const int uid, const BundleInfo &bundleInfo)
 {
-    APP_LOGI("CheckAppRunningRecordIsExist appName : %{public}s | processName : %{public}s | uid : %{public}d",
+    HILOG_INFO("CheckAppRunningRecordIsExist appName : %{public}s | processName : %{public}s | uid : %{public}d",
         appName.c_str(), processName.c_str(), uid);
     std::lock_guard<std::recursive_mutex> guard(lock_);
 
     std::regex rule("[a-zA-Z.]+[-_#]{1}");
     std::string signCode;
     auto jointUserId = bundleInfo.jointUserId;
-    APP_LOGI("jointUserId : %{public}s", jointUserId.c_str());
+    HILOG_INFO("jointUserId : %{public}s", jointUserId.c_str());
     ClipStringContent(rule, bundleInfo.appId, signCode);
 
     auto FindSameProcess = [signCode, processName, jointUserId](const auto &pair) {
@@ -87,11 +87,11 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CheckAppRunningRecordIsExis
         for (const auto &item : appRunningRecordMap_) {
             const auto &appRecord = item.second;
             if (appRecord && appRecord->GetProcessName() == processName && !(appRecord->IsTerminating())) {
-                APP_LOGI("appRecord->GetProcessName() : %{public}s", appRecord->GetProcessName().c_str());
+                HILOG_INFO("appRecord->GetProcessName() : %{public}s", appRecord->GetProcessName().c_str());
                 auto appInfoList = appRecord->GetAppInfoList();
-                APP_LOGI("appInfoList : %{public}zu", appInfoList.size());
+                HILOG_INFO("appInfoList : %{public}zu", appInfoList.size());
                 auto isExist = [&appName, &uid](const std::shared_ptr<ApplicationInfo> &appInfo) {
-                    APP_LOGI("appInfo->name : %{public}s", appInfo->name.c_str());
+                    HILOG_INFO("appInfo->name : %{public}s", appInfo->name.c_str());
                     return appInfo->name == appName && appInfo->uid == uid;
                 };
                 auto appInfoIter = std::find_if(appInfoList.begin(), appInfoList.end(), isExist);
@@ -123,7 +123,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::GetAppRunningRecordByAbilit
     for (const auto &item : appRunningRecordMap_) {
         const auto &appRecord = item.second;
         if (appRecord && appRecord->GetAbilityRunningRecordByToken(abilityToken)) {
-            APP_LOGI("appRecord is exit");
+            HILOG_INFO("appRecord is exit");
             return appRecord;
         }
     }
@@ -202,12 +202,12 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::OnRemoteDied(const wptr<IRe
 {
     std::lock_guard<std::recursive_mutex> guard(lock_);
     if (remote == nullptr) {
-        APP_LOGE("remote is null");
+        HILOG_ERROR("remote is null");
         return nullptr;
     }
     sptr<IRemoteObject> object = remote.promote();
     if (!object) {
-        APP_LOGE("object is null");
+        HILOG_ERROR("object is null");
         return nullptr;
     }
     const auto &iter =
@@ -218,7 +218,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::OnRemoteDied(const wptr<IRe
             return false;
         });
     if (iter == appRunningRecordMap_.end()) {
-        APP_LOGE("remote is not exist in the map.");
+        HILOG_ERROR("remote is not exist in the map.");
         return nullptr;
     }
     auto appRecord = iter->second;
@@ -249,16 +249,16 @@ void AppRunningManager::ClearAppRunningRecordMap()
 
 void AppRunningManager::HandleTerminateTimeOut(int64_t eventId)
 {
-    APP_LOGI("Handle terminate timeout.");
+    HILOG_INFO("Handle terminate timeout.");
     auto abilityRecord = GetAbilityRunningRecord(eventId);
     if (!abilityRecord) {
-        APP_LOGE("abilityRecord is nullptr.");
+        HILOG_ERROR("abilityRecord is nullptr.");
         return;
     }
     auto abilityToken = abilityRecord->GetToken();
     auto appRecord = GetTerminatingAppRunningRecord(abilityToken);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr.");
+        HILOG_ERROR("appRecord is nullptr.");
         return;
     }
     appRecord->AbilityTerminated(abilityToken);
@@ -279,7 +279,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::GetTerminatingAppRunningRec
 
 std::shared_ptr<AbilityRunningRecord> AppRunningManager::GetAbilityRunningRecord(const int64_t eventId)
 {
-    APP_LOGI("Get ability running record by eventId.");
+    HILOG_INFO("Get ability running record by eventId.");
     std::lock_guard<std::recursive_mutex> guard(lock_);
     for (auto &item : appRunningRecordMap_) {
         if (item.second) {
@@ -294,7 +294,7 @@ std::shared_ptr<AbilityRunningRecord> AppRunningManager::GetAbilityRunningRecord
 
 std::shared_ptr<AppRunningRecord> AppRunningManager::GetAppRunningRecord(const int64_t eventId)
 {
-    APP_LOGI("Get app running record by eventId.");
+    HILOG_INFO("Get app running record by eventId.");
     std::lock_guard<std::recursive_mutex> guard(lock_);
     auto iter = std::find_if(appRunningRecordMap_.begin(), appRunningRecordMap_.end(), [&eventId](const auto &pair) {
         return pair.second->GetEventId() == eventId;
@@ -304,15 +304,15 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::GetAppRunningRecord(const i
 
 void AppRunningManager::HandleAbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("Handle ability attach timeOut.");
+    HILOG_INFO("Handle ability attach timeOut.");
     if (token == nullptr) {
-        APP_LOGE("token is nullptr.");
+        HILOG_ERROR("token is nullptr.");
         return;
     }
 
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr.");
+        HILOG_ERROR("appRecord is nullptr.");
         return;
     }
 
@@ -330,15 +330,15 @@ void AppRunningManager::HandleAbilityAttachTimeOut(const sptr<IRemoteObject> &to
 
 void AppRunningManager::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("Prepare terminate.");
+    HILOG_INFO("Prepare terminate.");
     if (token == nullptr) {
-        APP_LOGE("token is nullptr.");
+        HILOG_ERROR("token is nullptr.");
         return;
     }
 
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr.");
+        HILOG_ERROR("appRecord is nullptr.");
         return;
     }
 
@@ -349,15 +349,15 @@ void AppRunningManager::PrepareTerminate(const sptr<IRemoteObject> &token)
 
 void AppRunningManager::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("Terminate ability.");
+    HILOG_INFO("Terminate ability.");
     if (!token) {
-        APP_LOGE("token is nullptr.");
+        HILOG_ERROR("token is nullptr.");
         return;
     }
 
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr.");
+        HILOG_ERROR("appRecord is nullptr.");
         return;
     }
 
@@ -374,7 +374,7 @@ void AppRunningManager::GetRunningProcessInfoByToken(
     std::lock_guard<std::recursive_mutex> guard(lock_);
     auto appRecord = GetAppRunningRecordByAbilityToken(token);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr");
+        HILOG_ERROR("appRecord is nullptr");
         return;
     }
 
@@ -388,15 +388,15 @@ void AppRunningManager::ClipStringContent(const std::regex &re, const std::strin
 {
     std::smatch basket;
     if (std::regex_search(sorce, basket, re)) {
-        APP_LOGI("prefix str: [%{public}s]", basket.prefix().str().c_str());
-        APP_LOGI("suffix str: [%{public}s]", basket.suffix().str().c_str());
+        HILOG_INFO("prefix str: [%{public}s]", basket.prefix().str().c_str());
+        HILOG_INFO("suffix str: [%{public}s]", basket.suffix().str().c_str());
         afferCutStr = basket.prefix().str() + basket.suffix().str();
     }
 }
 
 void AppRunningManager::GetForegroundApplications(std::vector<AppStateData> &list)
 {
-    APP_LOGI("%{public}s, begin.", __func__);
+    HILOG_INFO("%{public}s, begin.", __func__);
     std::lock_guard<std::recursive_mutex> guard(lock_);
     for (const auto &item : appRunningRecordMap_) {
         const auto &appRecord = item.second;
@@ -406,24 +406,24 @@ void AppRunningManager::GetForegroundApplications(std::vector<AppStateData> &lis
             appData.uid = appRecord->GetUid();
             appData.state = static_cast<int32_t>(ApplicationState::APP_STATE_FOREGROUND);
             list.push_back(appData);
-            APP_LOGI("%{public}s, bundleName:%{public}s", __func__, appData.bundleName.c_str());
+            HILOG_INFO("%{public}s, bundleName:%{public}s", __func__, appData.bundleName.c_str());
         }
     }
 }
 
 void AppRunningManager::HandleAddAbilityStageTimeOut(const int64_t eventId)
 {
-    APP_LOGD("Handle add ability stage timeout.");
+    HILOG_DEBUG("Handle add ability stage timeout.");
     auto abilityRecord = GetAbilityRunningRecord(eventId);
     if (!abilityRecord) {
-        APP_LOGE("abilityRecord is nullptr");
+        HILOG_ERROR("abilityRecord is nullptr");
         return;
     }
 
     auto abilityToken = abilityRecord->GetToken();
     auto appRecord = GetTerminatingAppRunningRecord(abilityToken);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr");
+        HILOG_ERROR("appRecord is nullptr");
         return;
     }
 
@@ -432,17 +432,17 @@ void AppRunningManager::HandleAddAbilityStageTimeOut(const int64_t eventId)
 
 void AppRunningManager::HandleStartSpecifiedAbilityTimeOut(const int64_t eventId)
 {
-    APP_LOGD("Handle receive multi instances timeout.");
+    HILOG_DEBUG("Handle receive multi instances timeout.");
     auto abilityRecord = GetAbilityRunningRecord(eventId);
     if (!abilityRecord) {
-        APP_LOGE("abilityRecord is nullptr");
+        HILOG_ERROR("abilityRecord is nullptr");
         return;
     }
 
     auto abilityToken = abilityRecord->GetToken();
     auto appRecord = GetTerminatingAppRunningRecord(abilityToken);
     if (!appRecord) {
-        APP_LOGE("appRecord is nullptr");
+        HILOG_ERROR("appRecord is nullptr");
         return;
     }
 
@@ -451,13 +451,13 @@ void AppRunningManager::HandleStartSpecifiedAbilityTimeOut(const int64_t eventId
 
 void AppRunningManager::UpdateConfiguration(const Configuration &config)
 {
-    APP_LOGI("call %{public}s", __func__);
+    HILOG_INFO("call %{public}s", __func__);
     std::lock_guard<std::recursive_mutex> guard(lock_);
-    APP_LOGI("current app size %{public}d", static_cast<int>(appRunningRecordMap_.size()));
+    HILOG_INFO("current app size %{public}d", static_cast<int>(appRunningRecordMap_.size()));
     for (const auto &item : appRunningRecordMap_) {
         const auto &appRecord = item.second;
         if (appRecord) {
-            APP_LOGI("Notification app [%{public}s]", appRecord->GetName().c_str());
+            HILOG_INFO("Notification app [%{public}s]", appRecord->GetName().c_str());
             appRecord->UpdateConfiguration(config);
         }
     }
@@ -477,12 +477,12 @@ void AppRunningManager::OnRemoteRenderDied(const wptr<IRemoteObject> &remote)
 {
     std::lock_guard<std::recursive_mutex> guard(lock_);
     if (remote == nullptr) {
-        APP_LOGE("remote is null");
+        HILOG_ERROR("remote is null");
         return;
     }
     sptr<IRemoteObject> object = remote.promote();
     if (!object) {
-        APP_LOGE("promote failed.");
+        HILOG_ERROR("promote failed.");
         return;
     }
 

@@ -15,7 +15,6 @@
 
 #include <cinttypes>
 
-#include "app_log_wrapper.h"
 #include "form_constants.h"
 #include "form_data_mgr.h"
 #include "form_host_interface.h"
@@ -25,6 +24,7 @@
 #include "form_supply_callback.h"
 #include "form_task_mgr.h"
 #include "form_util.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -40,7 +40,7 @@ FormTaskMgr::~FormTaskMgr() {}
 void FormTaskMgr::PostAcquireTask(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return;
     }
     std::function<void()> acquireProviderFormInfoFunc = std::bind(&FormTaskMgr::AcquireProviderFormInfo,
@@ -56,7 +56,7 @@ void FormTaskMgr::PostAcquireTask(const int64_t formId, const Want &want, const 
 void FormTaskMgr::PostDeleteTask(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return;
     }
     std::function<void()> notifyFormDeleteFunc = std::bind(&FormTaskMgr::NotifyFormDelete,
@@ -75,7 +75,7 @@ void FormTaskMgr::PostDeleteTask(const int64_t formId, const Want &want, const s
 void FormTaskMgr::PostRefreshTask(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> notifyFormUpdateFunc = std::bind(&FormTaskMgr::NotifyFormUpdate,
@@ -94,7 +94,7 @@ void FormTaskMgr::PostRefreshTask(const int64_t formId, const Want &want, const 
 void FormTaskMgr::PostCastTempTask(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return;
     }
     std::function<void()> notifyCastTempFunc = std::bind(&FormTaskMgr::NotifyCastTemp,
@@ -114,7 +114,7 @@ void FormTaskMgr::PostAcquireTaskToHost(const int64_t formId, const FormRecord &
     const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return;
     }
     std::function<void()> acquireTaskToHostFunc = std::bind(&FormTaskMgr::AcquireTaskToHost,
@@ -133,14 +133,14 @@ void FormTaskMgr::PostAcquireTaskToHost(const int64_t formId, const FormRecord &
 void FormTaskMgr::PostUpdateTaskToHost(const int64_t formId, const FormRecord &record,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
 
-    APP_LOGD("%{public}s, post the task of updateTaskToHostFunc.", __func__);
+    HILOG_DEBUG("%{public}s, post the task of updateTaskToHostFunc.", __func__);
     std::function<void()> updateTaskToHostFunc = std::bind(&FormTaskMgr::UpdateTaskToHost,
         this, formId, record, remoteObject);
     eventHandler_->PostTask(updateTaskToHostFunc, FORM_TASK_DELAY_TIME);
@@ -160,7 +160,7 @@ void FormTaskMgr::PostUpdateTaskToHost(const int64_t formId, const FormRecord &r
 void FormTaskMgr::PostHostDiedTask(const sptr<IRemoteObject> &remoteHost)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate", __func__);
         return;
     }
     std::function<void()> postTaskFunc = std::bind(&FormTaskMgr::HostDied,
@@ -181,7 +181,7 @@ void FormTaskMgr::PostEventNotifyTask(const std::vector<int64_t> &formEvent, con
     const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> eventNotifyFunc = std::bind(&FormTaskMgr::EventNotify,
@@ -198,7 +198,7 @@ void FormTaskMgr::PostProviderBatchDeleteTask(std::set<int64_t> &formIds, const 
     const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> batchDeleteFunc = std::bind(&FormTaskMgr::ProviderBatchDelete,
@@ -216,7 +216,7 @@ void FormTaskMgr::PostFormEventTask(const int64_t formId, const std::string &mes
     const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> formEventFunc = std::bind(&FormTaskMgr::FireFormEvent,
@@ -231,15 +231,15 @@ void FormTaskMgr::PostFormEventTask(const int64_t formId, const std::string &mes
  */
 void FormTaskMgr::PostUninstallTaskToHost(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     if (eventHandler_ == nullptr) {
-        APP_LOGE("%{public}s fail, eventhandler invalidate.", __func__);
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> uninstallFunc = std::bind(&FormTaskMgr::FormUninstall,
         this, formIds, remoteObject);
     eventHandler_->PostTask(uninstallFunc, FORM_TASK_DELAY_TIME);
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 
 /**
@@ -277,19 +277,19 @@ void FormTaskMgr::NotifyFormDelete(const int64_t formId, const Want &want, const
  */
 void FormTaskMgr::NotifyFormUpdate(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
     sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
     if (formProviderProxy == nullptr) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, failed to get formProviderProxy", __func__);
+        HILOG_ERROR("%{public}s fail, failed to get formProviderProxy", __func__);
         return;
     }
     int error = formProviderProxy->NotifyFormUpdate(formId, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, Failed to notify form update.", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to notify form update.", __func__);
     }
 }
 
@@ -305,20 +305,20 @@ void FormTaskMgr::NotifyFormUpdate(const int64_t formId, const Want &want, const
 void FormTaskMgr::EventNotify(const std::vector<int64_t> &formEvents, const int32_t formVisibleType,
     const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
     sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
     if (formProviderProxy == nullptr) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, failed to get formProviderProxy", __func__);
+        HILOG_ERROR("%{public}s fail, failed to get formProviderProxy", __func__);
         return;
     }
 
     int error = formProviderProxy->EventNotify(formEvents, formVisibleType, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, Failed to send event notify.", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to send event notify.", __func__);
     }
 }
 
@@ -332,20 +332,20 @@ void FormTaskMgr::EventNotify(const std::vector<int64_t> &formEvents, const int3
  */
 void FormTaskMgr::NotifyCastTemp(const int64_t formId, const Want &want, const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
     sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
     if (formProviderProxy == nullptr) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, failed to get formProviderProxy", __func__);
+        HILOG_ERROR("%{public}s fail, failed to get formProviderProxy", __func__);
         return;
     }
 
     int error = formProviderProxy->NotifyFormCastTempForm(formId, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, Failed to get acquire provider form info", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to get acquire provider form info", __func__);
     }
 }
 
@@ -360,15 +360,15 @@ void FormTaskMgr::NotifyCastTemp(const int64_t formId, const Want &want, const s
 void FormTaskMgr::AcquireTaskToHost(const int64_t formId, const FormRecord &record,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("FormTaskMgr AcquireTaskToHost, formId:%{public}" PRId64 "", formId);
+    HILOG_INFO("FormTaskMgr AcquireTaskToHost, formId:%{public}" PRId64 "", formId);
 
     sptr<IFormHost> remoteFormHost = iface_cast<IFormHost>(remoteObject);
     if (remoteFormHost == nullptr) {
-        APP_LOGE("%{public}s fail, Failed to get form host proxy", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to get form host proxy", __func__);
         return;
     }
 
-    APP_LOGD("FormTaskMgr remoteFormHost OnAcquired");
+    HILOG_DEBUG("FormTaskMgr remoteFormHost OnAcquired");
     remoteFormHost->OnAcquired(CreateFormJsInfo(formId, record));
 }
 
@@ -383,18 +383,18 @@ void FormTaskMgr::AcquireTaskToHost(const int64_t formId, const FormRecord &reco
 void FormTaskMgr::UpdateTaskToHost(const int64_t formId, const FormRecord &record,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s start.", __func__);
+    HILOG_INFO("%{public}s start.", __func__);
 
     sptr<IFormHost> remoteFormHost = iface_cast<IFormHost>(remoteObject);
     if (remoteFormHost == nullptr) {
-        APP_LOGE("%{public}s fail, Failed to get form host proxy.", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to get form host proxy.", __func__);
         return;
     }
 
-    APP_LOGD("%{public}s, FormTaskMgr remoteFormHost OnUpdate.", __func__);
+    HILOG_DEBUG("%{public}s, FormTaskMgr remoteFormHost OnUpdate.", __func__);
     remoteFormHost->OnUpdate(CreateFormJsInfo(formId, record));
 
-    APP_LOGI("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**
@@ -403,9 +403,9 @@ void FormTaskMgr::UpdateTaskToHost(const int64_t formId, const FormRecord &recor
  */
 void FormTaskMgr::HostDied(const sptr<IRemoteObject> &remoteHost)
 {
-    APP_LOGI("%{public}s, remote client died event", __func__);
+    HILOG_INFO("%{public}s, remote client died event", __func__);
     if (remoteHost == nullptr) {
-        APP_LOGI("%{public}s, remote client died, invalid param", __func__);
+        HILOG_INFO("%{public}s, remote client died, invalid param", __func__);
         return;
     }
     FormDataMgr::GetInstance().HandleHostDied(remoteHost);
@@ -419,12 +419,12 @@ void FormTaskMgr::HostDied(const sptr<IRemoteObject> &remoteHost)
 void FormTaskMgr::ProviderBatchDelete(std::set<int64_t> &formIds, const Want &want,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
     sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
     if (formProviderProxy == nullptr) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s fail, Failed to get formProviderProxy", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to get formProviderProxy", __func__);
         return;
     }
     std::vector<int64_t> vFormIds;
@@ -432,7 +432,7 @@ void FormTaskMgr::ProviderBatchDelete(std::set<int64_t> &formIds, const Want &wa
     int error = formProviderProxy->NotifyFormsDelete(vFormIds, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s failed", __func__);
+        HILOG_ERROR("%{public}s failed", __func__);
     }
 }
 /**
@@ -445,21 +445,21 @@ void FormTaskMgr::ProviderBatchDelete(std::set<int64_t> &formIds, const Want &wa
 void FormTaskMgr::FireFormEvent(const int64_t formId, const std::string &message, const Want &want,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
     sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
     if (formProviderProxy == nullptr) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s, Failed to get formProviderProxy", __func__);
+        HILOG_ERROR("%{public}s, Failed to get formProviderProxy", __func__);
         return;
     }
 
     int error = formProviderProxy->FireFormEvent(formId, message, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
-        APP_LOGE("%{public}s, Failed to fire message event to form provider", __func__);
+        HILOG_ERROR("%{public}s, Failed to fire message event to form provider", __func__);
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 
 /**
@@ -470,16 +470,16 @@ void FormTaskMgr::FireFormEvent(const int64_t formId, const std::string &message
 void FormTaskMgr::FormUninstall(const std::vector<int64_t> &formIds,
     const sptr<IRemoteObject> &remoteObject)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     sptr<IFormHost> remoteFormHost = iface_cast<IFormHost>(remoteObject);
     if (remoteFormHost == nullptr) {
-        APP_LOGE("%{public}s fail, Failed to get form host proxy.", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to get form host proxy.", __func__);
         return;
     }
 
     remoteFormHost->OnUninstall(formIds);
 
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 
 /**
@@ -490,7 +490,7 @@ void FormTaskMgr::FormUninstall(const std::vector<int64_t> &formIds,
  */
 FormJsInfo FormTaskMgr::CreateFormJsInfo(const int64_t formId, const FormRecord &record)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     FormJsInfo form;
     form.formId = formId;
     form.bundleName = record.bundleName;
@@ -502,7 +502,7 @@ FormJsInfo FormTaskMgr::CreateFormJsInfo(const int64_t formId, const FormRecord 
     form.formProviderData = record.formProviderInfo.GetFormData();
     form.formSrc = record.formSrc;
     form.formWindow = record.formWindow;
-    APP_LOGI("%{public}s end, jsPath: %{public}s, data: %{public}s", __func__,
+    HILOG_INFO("%{public}s end, jsPath: %{public}s, data: %{public}s", __func__,
         form.jsFormCodePath.c_str(), form.formData.c_str());
     return form;
 }

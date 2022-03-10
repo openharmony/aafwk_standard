@@ -17,11 +17,11 @@
 #include <cinttypes>
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_constants.h"
 #include "form_delete_connection.h"
 #include "form_supply_callback.h"
 #include "form_task_mgr.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "want.h"
@@ -43,9 +43,9 @@ FormDeleteConnection::FormDeleteConnection(const int64_t formId, const std::stri
 void FormDeleteConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s, abilityName:%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
+        HILOG_ERROR("%{public}s, abilityName:%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
            __func__, element.GetAbilityName().c_str(), formId_, resultCode);
         return;
     }
@@ -53,7 +53,7 @@ void FormDeleteConnection::OnAbilityConnectDone(
 
     Want want;
     want.SetParam(Constants::FORM_CONNECT_ID, this->GetConnectId());
-    APP_LOGD("%{public}s, connectId :%{public}ld", __func__, this->GetConnectId());
+    HILOG_DEBUG("%{public}s, connectId :%{public}ld", __func__, this->GetConnectId());
     FormTaskMgr::GetInstance().PostDeleteTask(formId_, want, remoteObject);
 }
 }  // namespace AppExecFwk

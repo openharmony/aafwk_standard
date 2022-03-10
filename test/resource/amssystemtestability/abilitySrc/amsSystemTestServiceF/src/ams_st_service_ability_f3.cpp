@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ams_st_service_ability_f3.h"
 #include "common_event.h"
 #include "common_event_manager.h"
@@ -25,7 +25,7 @@ const std::string APP_F3_RESP_EVENT_NAME = "resp_com_ohos_amsst_service_app_f3";
 
 std::vector<std::string> AmsStServiceAbilityF3::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
-    APP_LOGI("AmsStServiceAbilityF3 <<<<GetFileTypes>>>>");
+    HILOG_INFO("AmsStServiceAbilityF3 <<<<GetFileTypes>>>>");
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "GetFileTypes");
     std::vector<std::string> fileType = {"filetypes"};
     return fileType;
@@ -33,7 +33,7 @@ std::vector<std::string> AmsStServiceAbilityF3::GetFileTypes(const Uri &uri, con
 
 void AmsStServiceAbilityF3::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityF3::onStart");
+    HILOG_INFO("AmsStServiceAbilityF3::onStart");
 
     GetWantInfo(want);
     Ability::OnStart(want);
@@ -41,14 +41,14 @@ void AmsStServiceAbilityF3::OnStart(const Want &want)
 }
 void AmsStServiceAbilityF3::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityF3::OnNewWant");
+    HILOG_INFO("AmsStServiceAbilityF3::OnNewWant");
 
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
 void AmsStServiceAbilityF3::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsStServiceAbilityF3::OnCommand");
+    HILOG_INFO("AmsStServiceAbilityF3::OnCommand");
 
     GetWantInfo(want);
     Ability::OnCommand(want, restart, startId);
@@ -56,28 +56,28 @@ void AmsStServiceAbilityF3::OnCommand(const AAFwk::Want &want, bool restart, int
 }
 void AmsStServiceAbilityF3::OnStop()
 {
-    APP_LOGI("AmsStServiceAbilityF3::onStop");
+    HILOG_INFO("AmsStServiceAbilityF3::onStop");
 
     Ability::OnStop();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
 void AmsStServiceAbilityF3::OnActive()
 {
-    APP_LOGI("AmsStServiceAbilityF3::OnActive");
+    HILOG_INFO("AmsStServiceAbilityF3::OnActive");
 
     Ability::OnActive();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
 void AmsStServiceAbilityF3::OnInactive()
 {
-    APP_LOGI("AmsStServiceAbilityF3::OnInactive");
+    HILOG_INFO("AmsStServiceAbilityF3::OnInactive");
 
     Ability::OnInactive();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
 void AmsStServiceAbilityF3::OnBackground()
 {
-    APP_LOGI("AmsStServiceAbilityF3::OnBackground");
+    HILOG_INFO("AmsStServiceAbilityF3::OnBackground");
 
     Ability::OnBackground();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
@@ -98,7 +98,7 @@ void AmsStServiceAbilityF3::GetWantInfo(const Want &want)
 }
 bool AmsStServiceAbilityF3::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
-    APP_LOGI("AmsStServiceAbilityF3::PublishEvent eventName = %s, code = %d, data = %s",
+    HILOG_INFO("AmsStServiceAbilityF3::PublishEvent eventName = %s, code = %d, data = %s",
         eventName.c_str(),
         code,
         data.c_str());

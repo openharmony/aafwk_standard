@@ -31,8 +31,8 @@ config("amsConfigurationUpdatedSingletonTestConfig") {
     "${SUBST_TOOLS_DIR}/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsConfigurationUpdatedSingletonTest\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsConfigurationUpdatedSingletonTest\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
   cflags = []
   if (target_cpu == "arm") {

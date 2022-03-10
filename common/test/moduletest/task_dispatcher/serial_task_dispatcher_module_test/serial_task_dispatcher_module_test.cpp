@@ -23,7 +23,7 @@
 #undef private
 #undef protected
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;

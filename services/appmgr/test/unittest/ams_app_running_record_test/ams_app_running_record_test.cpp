@@ -22,11 +22,11 @@
 #include "iremote_object.h"
 #include "refbase.h"
 #include "application_info.h"
-#include "app_log_wrapper.h"
 #include "app_record_id.h"
 #include "app_scheduler_host.h"
 #include "ability_info.h"
 #include "ability_running_record.h"
+#include "hilog_wrapper.h"
 #include "mock_app_scheduler.h"
 #include "mock_ability_token.h"
 #include "mock_app_spawn_client.h"
@@ -536,7 +536,7 @@ HWTEST_F(AmsAppRunningRecordTest, DeleteAppRunningRecord_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_001 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -555,7 +555,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_001, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _, _)).Times(1);
     service_->AttachApplication(newPid, mockAppSchedulerClient_);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_001 end");
 }
 
 /*
@@ -568,7 +568,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_002 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_002 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -586,7 +586,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_002, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(invalidPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_002 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_002 end");
 }
 
 /*
@@ -599,7 +599,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_003, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_003 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_003 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -617,7 +617,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_003, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(anotherPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_003 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_003 end");
 }
 
 /*
@@ -630,7 +630,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_003, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_004, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_004 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_004 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -646,7 +646,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_004, TestSize.Level1)
     auto record = StartLoadAbility(token, abilityInfo, appInfo, newPid);
     service_->AttachApplication(newPid, nullptr);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_004 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_004 end");
 }
 
 /*
@@ -659,7 +659,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_004, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_005, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_005 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_005 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -684,7 +684,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_005, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
     service_->AttachApplication(newPid, GetMockedAppSchedulerClient());
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_005 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_005 end");
 }
 
 /*
@@ -697,7 +697,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_005, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AttachApplication_006, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_006 start");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_006 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -736,7 +736,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_006, TestSize.Level1)
     service_->AttachApplication(PID, mockAppSchedulerClient_);
     EXPECT_NE(record->GetApplicationClient(), nullptr);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest AttachApplication_006 end");
+    HILOG_INFO("AmsAppRunningRecordTest AttachApplication_006 end");
 }
 
 /*
@@ -749,7 +749,7 @@ HWTEST_F(AmsAppRunningRecordTest, AttachApplication_006, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_001 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -774,7 +774,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_001, TestSize.Level1)
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_001 end");
 }
 
 /*
@@ -787,7 +787,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_002 start");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_002 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -831,7 +831,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_002, TestSize.Level1)
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_002 end");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_002 end");
 }
 
 /*
@@ -844,7 +844,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_003, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_003 start");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_003 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -868,7 +868,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_003, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _, _)).Times(0);
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_003 end");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_003 end");
 }
 
 /*
@@ -881,7 +881,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_003, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_004, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_004 start");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_004 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -918,7 +918,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_004, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchAbility(_, _, _)).Times(1);
     sptr<IRemoteObject> token2 = new (std::nothrow) MockAbilityToken();
     service_->LoadAbility(token2, nullptr, abilityInfo2, appInfo, nullptr);
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_004 end");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_004 end");
 }
 
 /*
@@ -931,7 +931,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_004, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_005, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_005 start");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_005 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -974,7 +974,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_005, TestSize.Level1)
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     service_->LaunchApplication(record);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_READY);
-    APP_LOGI("AmsAppRunningRecordTest LaunchAbilityForApp_005 end");
+    HILOG_INFO("AmsAppRunningRecordTest LaunchAbilityForApp_005 end");
 }
 
 /*
@@ -987,13 +987,13 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_005, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest TerminateAbility_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest TerminateAbility_001 start");
 
     auto record = GetTestAppRunningRecord();
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleCleanAbility(_)).Times(0);
     record->TerminateAbility(GetMockToken(), false);
 
-    APP_LOGI("AmsAppRunningRecordTest TerminateAbility_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest TerminateAbility_001 end");
 }
 
 /*
@@ -1006,7 +1006,7 @@ HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_002, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest TerminateAbility_002 start");
+    HILOG_INFO("AmsAppRunningRecordTest TerminateAbility_002 start");
 
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -1028,7 +1028,7 @@ HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_002, TestSize.Level1)
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleCleanAbility(_)).Times(0);
     record->TerminateAbility(GetMockToken(), false);
 
-    APP_LOGI("AmsAppRunningRecordTest TerminateAbility_002 end");
+    HILOG_INFO("AmsAppRunningRecordTest TerminateAbility_002 end");
 }
 
 /*
@@ -1041,13 +1041,13 @@ HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_002, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, AbilityTerminated_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest AbilityTerminated_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest AbilityTerminated_001 start");
 
     auto record = GetTestAppRunningRecord();
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleTerminateApplication()).Times(0);
     record->AbilityTerminated(nullptr);
 
-    APP_LOGI("AmsAppRunningRecordTest AbilityTerminated_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest AbilityTerminated_001 end");
 }
 
 /*
@@ -1060,7 +1060,7 @@ HWTEST_F(AmsAppRunningRecordTest, AbilityTerminated_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, GetAbilityRunningRecord_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest GetAbilityRunningRecord_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest GetAbilityRunningRecord_001 start");
 
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -1081,7 +1081,7 @@ HWTEST_F(AmsAppRunningRecordTest, GetAbilityRunningRecord_001, TestSize.Level1)
     std::string abilityName = "not_exist_ability_name";
     EXPECT_EQ(nullptr, record->GetAbilityRunningRecord(abilityName));
 
-    APP_LOGI("AmsAppRunningRecordTest GetAbilityRunningRecord_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest GetAbilityRunningRecord_001 end");
 }
 
 /*
@@ -1094,12 +1094,12 @@ HWTEST_F(AmsAppRunningRecordTest, GetAbilityRunningRecord_001, TestSize.Level1)
  */
 HWTEST_F(AmsAppRunningRecordTest, GetAbilityRunningRecordByToken_001, TestSize.Level1)
 {
-    APP_LOGI("AmsAppRunningRecordTest GetAbilityRunningRecordByToken_001 start");
+    HILOG_INFO("AmsAppRunningRecordTest GetAbilityRunningRecordByToken_001 start");
 
     auto record = GetTestAppRunningRecord();
     EXPECT_EQ(nullptr, record->GetAbilityRunningRecordByToken(nullptr));
 
-    APP_LOGI("AmsAppRunningRecordTest GetAbilityRunningRecordByToken_001 end");
+    HILOG_INFO("AmsAppRunningRecordTest GetAbilityRunningRecordByToken_001 end");
 }
 
 /*

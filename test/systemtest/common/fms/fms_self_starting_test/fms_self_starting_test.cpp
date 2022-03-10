@@ -24,7 +24,7 @@
 #include "ability_info.h"
 #include "ability_local_record.h"
 #include "ability_start_setting.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "context_deal.h"
@@ -121,7 +121,7 @@ void FmsSelfStartingTest::SetUpTestCase()
             want.SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, FORM_TEMP_FORM_FLAG_FALSE);
             want.SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, FORM_TEMP_FORM_FLAG_FALSE);
             want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME1, FORM_PROVIDER_ABILITY_NAME1);
-            APP_LOGI("%{public}s, formCount: %{public}d", __func__, iCount + 1);
+            HILOG_INFO("%{public}s, formCount: %{public}d", __func__, iCount + 1);
             want.SetParam(Constants::PARAM_FORM_ADD_COUNT, iCount + 1);
             // Set Want info end
             int errorCode = STtools::SystemTestFormUtil::DistributedDataAddForm(want);
@@ -141,7 +141,7 @@ void FmsSelfStartingTest::SetUpTestCase()
             want.SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, FORM_TEMP_FORM_FLAG_TRUE);
             want.SetParam(Constants::PARAM_FORM_TEMPORARY_KEY, FORM_TEMP_FORM_FLAG_TRUE);
             want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME2, FORM_PROVIDER_ABILITY_NAME2);
-            APP_LOGI("%{public}s, formCount: %{public}d", __func__, iCount + 1);
+            HILOG_INFO("%{public}s, formCount: %{public}d", __func__, iCount + 1);
             want.SetParam(Constants::PARAM_FORM_ADD_COUNT, iCount + 1);
             // Set Want info end
             int errorCode = STtools::SystemTestFormUtil::DistributedDataAddForm(want);

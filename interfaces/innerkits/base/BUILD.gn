@@ -15,7 +15,6 @@ import("//build/ohos.gni")
 
 config("base_config") {
   visibility = [ ":*" ]
-  include_dirs = [ "//utils/native/base/include" ]
 }
 
 config("base_public_config") {
@@ -47,7 +46,7 @@ ohos_shared_library("base") {
   ]
   configs = [ ":base_config" ]
   public_configs = [ ":base_public_config" ]
-  deps = [ "//utils/native/base:utils" ]
+  external_deps = [ "utils_base:utils" ]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"

@@ -14,7 +14,7 @@
  */
 
 #include "page_ability_impl.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -29,7 +29,7 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
     AbilityImpl::SetUseNewMission(targetState.useNewMission);
-    APP_LOGI("PageAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
+    HILOG_INFO("PageAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
              "isNewWant: %{public}d, sceneFlag: %{public}d",
         lifecycleState_,
         targetState.state,
@@ -39,7 +39,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
         }
-        APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
+        HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
     }
 
@@ -70,11 +70,11 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         ret = AbilityTransaction(want, targetState);
     }
     if (ret) {
-        APP_LOGI("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
-        APP_LOGI("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
-    APP_LOGI("PageAbilityImpl::HandleAbilityTransaction end");
+    HILOG_INFO("PageAbilityImpl::HandleAbilityTransaction end");
 }
 
 /**
@@ -88,7 +88,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
  */
 bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGI("PageAbilityImpl::AbilityTransaction begin");
+    HILOG_INFO("PageAbilityImpl::AbilityTransaction begin");
     bool ret = true;
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
@@ -124,11 +124,11 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
         }
         default: {
             ret = false;
-            APP_LOGE("PageAbilityImpl::HandleAbilityTransaction state error");
+            HILOG_ERROR("PageAbilityImpl::HandleAbilityTransaction state error");
             break;
         }
     }
-    APP_LOGI("PageAbilityImpl::AbilityTransaction end: retVal = %{public}d", (int)ret);
+    HILOG_INFO("PageAbilityImpl::AbilityTransaction end: retVal = %{public}d", (int)ret);
     return ret;
 }
 
@@ -143,7 +143,7 @@ bool PageAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycl
  */
 bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGI("PageAbilityImpl::AbilityTransaction begin");
+    HILOG_INFO("PageAbilityImpl::AbilityTransaction begin");
     bool ret = true;
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
@@ -175,11 +175,11 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
         }
         default: {
             ret = false;
-            APP_LOGE("PageAbilityImpl::HandleAbilityTransaction state error");
+            HILOG_ERROR("PageAbilityImpl::HandleAbilityTransaction state error");
             break;
         }
     }
-    APP_LOGI("PageAbilityImpl::AbilityTransaction end: retVal = %{public}d", (int)ret);
+    HILOG_INFO("PageAbilityImpl::AbilityTransaction end: retVal = %{public}d", (int)ret);
     return ret;
 }
 
@@ -193,18 +193,18 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
  */
 void PageAbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
-    APP_LOGI("PageAbilityImpl::DoKeyDown begin");
+    HILOG_INFO("PageAbilityImpl::DoKeyDown begin");
     if (ability_ == nullptr) {
-        APP_LOGE("PageAbilityImpl::DoKeyDown ability_ == nullptr");
+        HILOG_ERROR("PageAbilityImpl::DoKeyDown ability_ == nullptr");
         return;
     }
     auto abilitInfo = ability_->GetAbilityInfo();
-    APP_LOGI("PageAbilityImpl::DoKeyDown called %{public}s And Focus is %{public}s",
+    HILOG_INFO("PageAbilityImpl::DoKeyDown called %{public}s And Focus is %{public}s",
         abilitInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyDown(keyEvent);
-    APP_LOGI("PageAbilityImpl::DoKeyDown end");
+    HILOG_INFO("PageAbilityImpl::DoKeyDown end");
 }
 
 /**
@@ -217,18 +217,18 @@ void PageAbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
  */
 void PageAbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
 {
-    APP_LOGI("PageAbilityImpl::DoKeyUp begin");
+    HILOG_INFO("PageAbilityImpl::DoKeyUp begin");
     if (ability_ == nullptr) {
-        APP_LOGE("PageAbilityImpl::DoKeyUp ability_ == nullptr");
+        HILOG_ERROR("PageAbilityImpl::DoKeyUp ability_ == nullptr");
         return;
     }
     auto abilitInfo = ability_->GetAbilityInfo();
-    APP_LOGI("PageAbilityImpl::DoKeyUp called %{public}s And Focus is %{public}s",
+    HILOG_INFO("PageAbilityImpl::DoKeyUp called %{public}s And Focus is %{public}s",
         abilitInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyUp(keyEvent);
-    APP_LOGI("PageAbilityImpl::DoKeyUp end");
+    HILOG_INFO("PageAbilityImpl::DoKeyUp end");
 }
 
 /**
@@ -241,18 +241,18 @@ void PageAbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
  */
 void PageAbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
 {
-    APP_LOGI("PageAbilityImpl::DoPointerEvent begin");
+    HILOG_INFO("PageAbilityImpl::DoPointerEvent begin");
     if (ability_ == nullptr) {
-        APP_LOGE("PageAbilityImpl::DoPointerEvent ability_ == nullptr");
+        HILOG_ERROR("PageAbilityImpl::DoPointerEvent ability_ == nullptr");
         return;
     }
     auto abilitInfo = ability_->GetAbilityInfo();
-    APP_LOGI("PageAbilityImpl::DoPointerEvent called %{public}s And Focus is %{public}s",
+    HILOG_INFO("PageAbilityImpl::DoPointerEvent called %{public}s And Focus is %{public}s",
         abilitInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnPointerEvent(pointerEvent);
-    APP_LOGI("PageAbilityImpl::DoPointerEvent end");
+    HILOG_INFO("PageAbilityImpl::DoPointerEvent end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

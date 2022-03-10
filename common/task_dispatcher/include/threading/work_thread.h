@@ -20,7 +20,7 @@
 
 #include "thread_factory.h"
 #include "task.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "appexecfwk_errors.h"
 
 namespace OHOS {

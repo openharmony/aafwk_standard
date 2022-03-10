@@ -17,7 +17,7 @@
 #define private public
 #include "serial_task_dispatcher.h"
 #undef private
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "default_worker_pool_config.h"
 #include "task.h"

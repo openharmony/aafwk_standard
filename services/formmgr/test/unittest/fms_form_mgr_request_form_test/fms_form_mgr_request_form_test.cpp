@@ -14,7 +14,6 @@
  */
 
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "form_data_mgr.h"
 #define private public
@@ -23,6 +22,7 @@
 #include "form_mgr_service.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
+#include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
@@ -106,7 +106,7 @@ void FmsFormMgrRequestFormTest::TearDown()
  */
 HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_001, TestSize.Level0)
 {
-    APP_LOGI("fms_form_mgr_request_test_001 start");
+    HILOG_INFO("fms_form_mgr_request_test_001 start");
 
     int64_t formId {0X0000FFFF00000000};
     int callingUid {0};
@@ -128,7 +128,7 @@ HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_001, TestSize.Level0)
     token_->Wait();
     FormDataMgr::GetInstance().DeleteFormRecord(formId);
     FormDataMgr::GetInstance().DeleteHostRecord(token_, formId);
-    APP_LOGI("fms_form_mgr_request_test_001 end");
+    HILOG_INFO("fms_form_mgr_request_test_001 end");
 }
 
 /*
@@ -141,7 +141,7 @@ HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_001, TestSize.Level0)
  */
 HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_003, TestSize.Level0)
 {
-    APP_LOGI("fms_form_mgr_request_test_003 start");
+    HILOG_INFO("fms_form_mgr_request_test_003 start");
 
     int64_t formId {0X00AAAAFF00000000};
     FormItemInfo record;
@@ -158,7 +158,7 @@ HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_003, TestSize.Level0)
     token_->Wait();
     FormDataMgr::GetInstance().DeleteFormRecord(formId);
     FormDataMgr::GetInstance().DeleteHostRecord(token_, formId);
-    APP_LOGI("fms_form_mgr_request_test_003 end");
+    HILOG_INFO("fms_form_mgr_request_test_003 end");
 }
 
 /*
@@ -171,7 +171,7 @@ HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_003, TestSize.Level0)
  */
 HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_004, TestSize.Level0)
 {
-    APP_LOGI("fms_form_mgr_request_test_004 start");
+    HILOG_INFO("fms_form_mgr_request_test_004 start");
     int64_t formId {0X000ABCFF00000000};
     int64_t fakeFormId {0X0ABCDEFF00000000};
     FormItemInfo record;
@@ -191,6 +191,6 @@ HWTEST_F(FmsFormMgrRequestFormTest, RequestForm_004, TestSize.Level0)
     token_->Wait();
     FormDataMgr::GetInstance().DeleteFormRecord(formId);
     FormDataMgr::GetInstance().DeleteHostRecord(token_, formId);
-    APP_LOGI("fms_form_mgr_request_test_004 end");
+    HILOG_INFO("fms_form_mgr_request_test_004 end");
 }
 }

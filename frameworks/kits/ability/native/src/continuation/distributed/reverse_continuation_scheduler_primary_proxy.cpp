@@ -15,7 +15,7 @@
  */
 
 #include "reverse_continuation_scheduler_primary_proxy.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -30,25 +30,25 @@ ReverseContinuationSchedulerPrimaryProxy::ReverseContinuationSchedulerPrimaryPro
  */
 void ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated()
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
     if (!data.WriteInterfaceToken(ReverseContinuationSchedulerPrimaryProxy::GetDescriptor())) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated write interface token failed");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated write interface token failed");
         return;
     }
     sptr<IRemoteObject> remoteObject = Remote();
     if (remoteObject == nullptr) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated Remote() is nullptr");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated Remote() is nullptr");
         return;
     }
     if (!remoteObject->SendRequest(
         IReverseContinuationSchedulerPrimary::NOTIFY_REPLICA_TERMINATED, data, reply, option)) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated SendRequest return false");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated SendRequest return false");
         return;
     }
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
 }
 
 /**
@@ -59,28 +59,28 @@ void ReverseContinuationSchedulerPrimaryProxy::NotifyReplicaTerminated()
  */
 bool ReverseContinuationSchedulerPrimaryProxy::ContinuationBack(const AAFwk::Want &want)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
     if (!data.WriteInterfaceToken(ReverseContinuationSchedulerPrimaryProxy::GetDescriptor())) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack write interface token failed");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack write interface token failed");
         return false;
     }
     if (!data.WriteParcelable(&want)) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack fail to WriteParcelable");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack fail to WriteParcelable");
         return false;
     }
     sptr<IRemoteObject> remoteObject = Remote();
     if (remoteObject == nullptr) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack Remote() is nullptr");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack Remote() is nullptr");
         return false;
     }
     if (!remoteObject->SendRequest(IReverseContinuationSchedulerPrimary::CONTINUATION_BACK, data, reply, option)) {
-        APP_LOGE("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack SendRequest return false");
+        HILOG_ERROR("ReverseContinuationSchedulerPrimaryProxy::ContinuationBack SendRequest return false");
         return false;
     }
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
     return true;
 }
 

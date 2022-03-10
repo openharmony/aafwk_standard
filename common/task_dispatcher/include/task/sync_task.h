@@ -22,7 +22,7 @@
 #include "runnable.h"
 #include "task_priority.h"
 #include "task.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "base_task_dispatcher.h"
 
 namespace OHOS {

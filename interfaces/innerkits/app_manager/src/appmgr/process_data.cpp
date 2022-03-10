@@ -15,7 +15,7 @@
 
 #include "process_data.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -37,7 +37,7 @@ ProcessData *ProcessData::Unmarshalling(Parcel &parcel)
 {
     ProcessData *processData = new (std::nothrow) ProcessData();
     if (processData && !processData->ReadFromParcel(parcel)) {
-        APP_LOGW("processData failed, because ReadFromParcel failed");
+        HILOG_WARN("processData failed, because ReadFromParcel failed");
         delete processData;
         processData = nullptr;
     }

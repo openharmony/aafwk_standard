@@ -23,6 +23,7 @@ config("fmsSystemTestHostCommonAConfig") {
     "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/services/abilitymgr/include",
+    "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
@@ -33,8 +34,8 @@ config("fmsSystemTestHostCommonAConfig") {
     "//foundation/distributedschedule/safwk/services/safwk/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"formManagerSystemTest\"",
-    "LOG_DOMAIN = 0xD002666",
+    "AMS_LOG_TAG = \"formManagerSystemTest\"",
+    "AMS_LOG_DOMAIN = 0xD002666",
   ]
 }
 ohos_shared_library("fmsSystemTestHostCommonA") {

@@ -27,9 +27,9 @@ std::shared_ptr<Thread> DefaultThreadFactory::Create()
         int value = std::atomic_fetch_add(&index_, 1);
         std::string name = std::string("PoolThread-") + std::to_string(value);
         pThread->thread_name_ = name;
-        APP_LOGI("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
+        HILOG_INFO("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
     } else {
-        APP_LOGE("DefaultThreadFactory::Create error, thread is nullptr");
+        HILOG_ERROR("DefaultThreadFactory::Create error, thread is nullptr");
     }
 
     return pThread;

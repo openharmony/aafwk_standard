@@ -15,7 +15,7 @@
 
 #include "ability_state_data.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -48,7 +48,7 @@ AbilityStateData *AbilityStateData::Unmarshalling(Parcel &parcel)
 {
     AbilityStateData *abilityStateData = new (std::nothrow) AbilityStateData();
     if (abilityStateData && !abilityStateData->ReadFromParcel(parcel)) {
-        APP_LOGW("AbilityStateData failed, because ReadFromParcel failed");
+        HILOG_WARN("AbilityStateData failed, because ReadFromParcel failed");
         delete abilityStateData;
         abilityStateData = nullptr;
     }
