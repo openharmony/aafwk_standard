@@ -3899,7 +3899,7 @@ void AbilityManagerService::PauseOldConnectManager(int32_t userId)
         HILOG_INFO("%{public}s, u0 not stop, id:%{public}d-----nullptr", __func__, userId);
         return;
     }
-    
+
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
     auto it = connectManagers_.find(userId);
     if (it == connectManagers_.end()) {
@@ -4185,7 +4185,7 @@ int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObj
         return ERR_INVALID_VALUE;
     }
 
-    std::string bundleName = want.GetStringParam("-p");
+    std::string bundleName = want.GetStringParam("-b");
     if (bundleName.empty()) {
         HILOG_ERROR("Invalid bundle name");
         return ERR_INVALID_VALUE;

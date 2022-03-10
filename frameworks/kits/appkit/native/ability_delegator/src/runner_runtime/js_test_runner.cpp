@@ -41,31 +41,23 @@ JsTestRunner::JsTestRunner(
     JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
     : jsRuntime_(jsRuntime)
 {
-    std::string prefix;
-    std::string tempTestRunnerName = args->GetTestRunnerClassName();
-    auto testRunnerName = tempTestRunnerName;
-
-    auto pos = tempTestRunnerName.find(":");
-    if (pos != std::string::npos) {
-        prefix = tempTestRunnerName.substr(0, pos);
-        testRunnerName = tempTestRunnerName.substr(pos + 1);
+    if (args) {
+        std::string srcPath;
+        if (bundleInfo.hapModuleInfos.back().isModuleJson) {
+            srcPath.append(args->GetTestModuleName());
+            srcPath.append("/ets/TestRunner/");
+        } else {
+            srcPath.append(args->GetTestPackageName());
+            srcPath.append("/assets/js/TestRunner/");
+        }
+        srcPath.append(args->GetTestRunnerClassName());
+        srcPath.append(".abc");
+        srcPath_ = srcPath;
     }
-
-    std::string srcPath;
-    if (bundleInfo.hapModuleInfos.back().isModuleJson) {
-        srcPath.append(prefix);
-        srcPath.append("/ets/TestRunner/");
-    } else {
-        srcPath.append(args->GetTestBundleName());
-        srcPath.append("/assets/js/TestRunner/");
-    }
-    srcPath.append(testRunnerName);
-    srcPath.append(".abc");
-    srcPath_ = srcPath;
-    HILOG_INFO("JsTestRunner srcPath is %{public}s", srcPath.c_str());
+    HILOG_INFO("JsTestRunner srcPath is %{public}s", srcPath_.c_str());
 
     std::string moduleName;
-    jsTestRunnerObj_ = jsRuntime_.LoadModule(moduleName, srcPath);
+    jsTestRunnerObj_ = jsRuntime_.LoadModule(moduleName, srcPath_);
 }
 
 JsTestRunner::~JsTestRunner() = default;
