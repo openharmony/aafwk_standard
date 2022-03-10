@@ -1227,7 +1227,7 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         if (opt == "-h" || opt == "--help") {
             resultReceiver_.append(HELP_MSG_TEST);
             return OHOS::ERR_OK;
-        } else if (opt == "-p" || opt == "-w") {
+        } else if (opt == "-b" || opt == "-w" || opt == "-p" || opt == "-m") {
             if (i >= argc_ - 1) {
                 return TestCommandError("error: option [" + opt + "] requires a value.\n");
             }
@@ -1256,7 +1256,7 @@ bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::stri
 {
     HILOG_INFO("enter");
 
-    std::vector<std::string> opts = {"-p", "-s unittest"};
+    std::vector<std::string> opts = {"-b", "-s unittest"};
     for (auto opt : opts) {
         auto it = params.find(opt);
         if (it == params.end()) {
