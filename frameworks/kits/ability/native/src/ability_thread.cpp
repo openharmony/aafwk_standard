@@ -16,6 +16,7 @@
 #include "ability_thread.h"
 
 #include "ability_context_impl.h"
+#include "ability_impl.h"
 #include "ability_impl_factory.h"
 #include "ability_loader.h"
 #include "ability_state.h"
@@ -1600,10 +1601,11 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
 void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    if (!currentAbility_) {
-        HILOG_ERROR("currentAbility is nullptr.");
+    if (currentAbility_ == nullptr) {
+        HILOG_INFO("currentAbility is nullptr.");
         return;
     }
+
     if (!params.empty()) {
         if (abilityImpl_->IsStageBasedModel()) {
             auto scene = currentAbility_->GetScene();

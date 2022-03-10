@@ -111,24 +111,6 @@ HWTEST(TaskDispatcherContextTest, GetWorkerThreadsInfo_0100, Function | MediumTe
     GTEST_LOG_(INFO) << "GetWorkerThreadsInfo_0100 end";
 }
 /**
- * @tc.number:GetWorkerThreadsInfo_0200
- * @tc.name: GetWorkerThreadsInfo
- * @tc.desc: 1.create  TaskDispatcherContext by TaskExecutor
- *           2.GetWorkerThreadsInfo successfully
- */
-HWTEST(TaskDispatcherContextTest, GetWorkerThreadsInfo_0200, Function | MediumTest | Level1)
-{
-    GTEST_LOG_(INFO) << "TaskDispatcherContext_0200 start";
-    const std::shared_ptr<WorkerPoolConfig> config = std::make_shared<DefaultWorkerPoolConfig>();
-    const std::shared_ptr<TaskExecutor> testTaskExecutor = std::make_shared<TaskExecutor>(config);
-    std::shared_ptr<TaskDispatcherContext> taskDispatcherContext =
-        std::make_shared<TaskDispatcherContext>(testTaskExecutor);
-    std::map<std::string, long> workerThreadsInfo = taskDispatcherContext->GetWorkerThreadsInfo();
-    bool flag = (workerThreadsInfo.size() == 0);
-    EXPECT_TRUE(flag);
-    GTEST_LOG_(INFO) << "TaskDispatcherContext_0200 end";
-}
-/**
  * @tc.number:CreateSerialDispatcher_0100
  * @tc.name: CreateSerialDispatcher
  * @tc.desc: 1.CreateSerialDispatcher
