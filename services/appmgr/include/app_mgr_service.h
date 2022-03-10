@@ -36,7 +36,6 @@
 #include "app_running_record.h"
 #include "app_scheduler_proxy.h"
 #include "ams_mgr_scheduler.h"
-#include "ams_mgr_scheduler.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -214,13 +213,6 @@ public:
         int32_t sharedFd, pid_t &renderPid) override;
 
     virtual void AttachRenderProcess(const sptr<IRemoteObject> &shceduler) override;
-
-    /**
-     * Post a task to the not response process.
-     *
-     * @param pid, the not response process id.
-     */
-    virtual void PostANRTaskByProcessID(const pid_t pid) override;
 
 private:
     /**

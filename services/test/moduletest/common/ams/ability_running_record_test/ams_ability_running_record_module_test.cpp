@@ -136,9 +136,6 @@ public:
         appLaunchTime = 0;
     }
 
-    void ScheduleANRProcess() override
-    {}
-
 private:
     int abilityLaunchTime = 0;
     int appLaunchTime = 0;

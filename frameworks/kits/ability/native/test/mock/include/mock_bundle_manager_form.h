@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -287,7 +287,7 @@ public:
     {
         return "";
     };
-    // obtains information about an application bundle contained in an ohos Ability Package (HAP).
+    // obtains information about an application bundle contained in a ohos Ability Package (HAP).
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override
     {

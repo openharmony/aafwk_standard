@@ -116,7 +116,6 @@ int AbilityConnectionStub::OnRemoteRequest(
             auto remoteObject = data.ReadRemoteObject();
             if (remoteObject == nullptr) {
                 HILOG_ERROR("callback stub receive remoteObject is nullptr");
-                delete element;
                 return ERR_INVALID_VALUE;
             }
             auto resultCode = data.ReadInt32();

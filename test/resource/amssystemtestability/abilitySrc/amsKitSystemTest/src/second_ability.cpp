@@ -4601,7 +4601,7 @@ void SecondAbility::WantSetParamShortCase3(int code)
 {
     std::string key = "key";
     short value = 999;
-    short size = 5;
+    int size = 5;
     Want want;
     for (short i = 0; i < size; i++) {
         want.SetParam(key, static_cast<short>(i * value));
@@ -4615,7 +4615,7 @@ void SecondAbility::WantSetParamShortCase4(int code)
 {
     std::string key = "key";
     short value = 999;
-    short size = 5;
+    int size = 5;
     Want want;
     for (short i = 0; i < size; i++) {
         want.SetParam(key + std::to_string(i), static_cast<short>(i * value));
@@ -4667,7 +4667,7 @@ void SecondAbility::WantSetParamShortArrayCase2(int code)
 void SecondAbility::WantSetParamShortArrayCase3(int code)
 {
     std::string key = "key";
-    short size = 5;
+    int size = 5;
     short sValue = 999;
     std::vector<short> value(size, sValue * size);
     Want want;
@@ -4683,7 +4683,7 @@ void SecondAbility::WantSetParamShortArrayCase3(int code)
 void SecondAbility::WantSetParamShortArrayCase4(int code)
 {
     std::string key = "key";
-    short size = 5;
+    int size = 5;
     short value = 999;
     Want want;
     for (short i = 1; i <= size; i++) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ void FormAbilityB::AcquireFormCallback::OnAcquired(const int32_t result, const F
         ability_->FMS_deleteFormCommon(strFormId);
     }
 }
-
 void FormAbilityB::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -58,7 +57,6 @@ void FormAbilityB::AcquireFormCallback::OnFormUninstall(const int64_t formId) co
 {
     HILOG_INFO("%{public}s called", __func__);
 }
-
 void FormAbilityB::FMS_deleteFormCommon(std::string strFormId)
 {
     HILOG_INFO("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
@@ -103,7 +101,6 @@ void FormAbilityB::FMS_acquireForm_1400(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1400, EVENT_CODE_1400, "false");
     }
 }
-
 void FormAbilityB::FMS_acquireForm_1500(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -150,7 +147,6 @@ void FormAbilityB::FMS_acquireForm_1800_2(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1800_2, EVENT_CODE_1820, "");
     }
 }
-
 void FormAbilityB::FMS_acquireForm_1800_3(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -190,7 +186,6 @@ void FormAbilityB::FMS_acquireForm_2400_1(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2400_1, EVENT_CODE_2410, "false");
     }
 }
-
 void FormAbilityB::FMS_acquireForm_3100(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -213,7 +208,6 @@ void FormAbilityB::FMS_acquireForm_3100(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3100, EVENT_CODE_3100, "");
     }
 }
-
 void FormAbilityB::FMS_acquireForm_tempForm(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -287,18 +281,15 @@ void FormAbilityB::FMS_acquireFormTempBatch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "false");
     }
 }
-
 FormAbilityB::~FormAbilityB()
 {
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
 }
-
 void FormAbilityB::OnStart(const Want &want)
 {
     HILOG_INFO("FormAbilityB::onStart");
     Ability::OnStart(want);
 }
-
 void FormAbilityB::OnActive()
 {
     HILOG_INFO("FormAbilityB::OnActive");
@@ -313,21 +304,18 @@ void FormAbilityB::OnStop()
 
     Ability::OnStop();
 }
-
 void FormAbilityB::OnInactive()
 {
     HILOG_INFO("FormAbilityB::OnInactive");
 
     Ability::OnInactive();
 }
-
 void FormAbilityB::OnBackground()
 {
     HILOG_INFO("FormAbilityB::OnBackground");
 
     Ability::OnBackground();
 }
-
 void FormAbilityB::SubscribeEvent()
 {
     HILOG_INFO("FormAbilityB::SubscribeEvent");

@@ -162,14 +162,6 @@ public:
     sptr<IRemoteObject> GetAbilityTokenByMissionId(int32_t missionId);
 
     /**
-     * Handle uninstall bundle.
-     *
-     * @param bundleName name of bundle.
-     * @param uid the uid of bundle.
-     */
-    void HandleUnInstallApp(const std::string &bundleName, int32_t uid);
-
-    /**
      * @brief dump mission
      *
      * @param info dump result.
@@ -189,7 +181,6 @@ public:
     std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const;
 private:
     std::string GetTypeName();
-    bool MatchedInitialMission(const std::shared_ptr<Mission>& mission, const std::string &bundleName, int32_t uid);
 
     MissionListType type_;
     std::list<std::shared_ptr<Mission>> missions_ {};

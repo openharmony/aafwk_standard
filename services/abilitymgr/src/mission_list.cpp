@@ -259,41 +259,6 @@ std::string MissionList::GetTypeName()
     }
 }
 
-void MissionList::HandleUnInstallApp(const std::string &bundleName, int32_t uid)
-{
-    for (auto it = missions_.begin(); it != missions_.end();) {
-        auto mission = *it;
-        if (MatchedInitialMission(mission, bundleName, uid)) {
-            missions_.erase(it++);
-        } else {
-            it++;
-        }
-    }
-}
-
-bool MissionList::MatchedInitialMission(const std::shared_ptr<Mission>& mission,
-    const std::string &bundleName, int32_t uid)
-{
-    if (!mission) {
-        return false;
-    }
-
-    auto abilityRecord = mission->GetAbilityRecord();
-    if (!abilityRecord) {
-        return false;
-    }
-
-    if (abilityRecord->GetAbilityInfo().bundleName == bundleName && abilityRecord->GetUid() == uid) {
-        abilityRecord->SetIsUninstallAbility();
-        if (abilityRecord->IsAbilityState(AbilityState::INITIAL)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
 void MissionList::Dump(std::vector<std::string>& info)
 {
     std::string dumpInfo = "  MissionList Type #" + GetTypeName();

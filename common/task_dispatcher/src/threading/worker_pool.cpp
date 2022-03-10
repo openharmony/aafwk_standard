@@ -49,7 +49,7 @@ WorkerPool::~WorkerPool()
 
 bool WorkerPool::Init(const std::shared_ptr<WorkerPoolConfig> &config)
 {
-    if (!CheckConfigParams(config)) {
+    if (CheckConfigParams(config) == false) {
         HILOG_ERROR("WorkerPool::checkConfigParams  parameters are illegal");
         return false;
     }

@@ -559,9 +559,6 @@ std::shared_ptr<AbilityRecord> AbilityConnectManager::GetServiceRecordByToken(co
 {
     std::lock_guard<std::recursive_mutex> guard(Lock_);
     auto IsMatch = [token](auto service) {
-        if (!service.second) {
-            return false;
-        }
         sptr<IRemoteObject> srcToken = service.second->GetToken();
         return srcToken == token;
     };
@@ -1109,22 +1106,6 @@ void AbilityConnectManager::GetExtensionRunningInfo(std::shared_ptr<AbilityRecor
         extensionInfo.clientPackage.emplace_back(package);
     }
     info.emplace_back(extensionInfo);
-}
-
-void AbilityConnectManager::StopAllExtensions()
-{
-    HILOG_INFO("StopAllExtensions begin.");
-    std::lock_guard<std::recursive_mutex> guard(Lock_);
-    auto mgr = shared_from_this();
-    auto task = [mgr](ServiceMapType::reference service) {
-        auto abilityRecord = service.second;
-        CHECK_POINTER(abilityRecord);
-        if (abilityRecord->GetAbilityInfo().type == AbilityType::EXTENSION) {
-            mgr->TerminateAbilityLocked(abilityRecord->GetToken());
-        }
-    };
-    std::for_each(serviceMap_.begin(), serviceMap_.end(), task);
-    HILOG_INFO("StopAllExtensions end.");
 }
 }  // namespace AAFwk
 }  // namespace OHOS

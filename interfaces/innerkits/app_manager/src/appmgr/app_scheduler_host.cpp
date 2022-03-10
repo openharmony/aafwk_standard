@@ -50,8 +50,6 @@ AppSchedulerHost::AppSchedulerHost()
         &AppSchedulerHost::HandleScheduleAbilityStage;
     memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ACCEPT_WANT)] =
         &AppSchedulerHost::HandleScheduleAcceptWant;
-    memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ANR_PROCESS)] =
-        &AppSchedulerHost::HandleScheduleANRProcess;
 }
 
 AppSchedulerHost::~AppSchedulerHost()
@@ -61,7 +59,7 @@ AppSchedulerHost::~AppSchedulerHost()
 
 int AppSchedulerHost::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("AppSchedulerHost::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppSchedulerHost::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppSchedulerHost::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
@@ -211,13 +209,6 @@ int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageP
     }
     auto moduleName = data.ReadString();
     ScheduleAcceptWant(*want, moduleName);
-    return NO_ERROR;
-}
-
-int32_t AppSchedulerHost::HandleScheduleANRProcess(MessageParcel &data, MessageParcel &reply)
-{
-    BYTRACE(BYTRACE_TAG_APP);
-    ScheduleANRProcess();
     return NO_ERROR;
 }
 }  // namespace AppExecFwk
