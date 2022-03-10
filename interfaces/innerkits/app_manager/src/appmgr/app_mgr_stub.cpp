@@ -76,6 +76,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleStartRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::ATTACH_RENDER_PROCESS)] =
         &AppMgrStub::HandleAttachRenderProcess;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
+        &AppMgrStub::HandlePostANRTaskByProcessID;
 }
 
 AppMgrStub::~AppMgrStub()
@@ -383,6 +385,13 @@ int32_t AppMgrStub::HandleAttachRenderProcess(MessageParcel &data, MessageParcel
 {
     sptr<IRemoteObject> scheduler = data.ReadParcelable<IRemoteObject>();
     AttachRenderProcess(scheduler);
+    return NO_ERROR;
+}
+
+int32_t AppMgrStub::HandlePostANRTaskByProcessID(MessageParcel &data, MessageParcel &reply)
+{
+    auto pid = data.ReadInt32();
+    PostANRTaskByProcessID(pid);
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

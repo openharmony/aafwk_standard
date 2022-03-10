@@ -457,5 +457,16 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
         service->AttachRenderProcess(renderScheduler->AsObject());
     }
 }
+
+void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        APP_LOGE("service is nullptr");
+        return;
+    }
+
+    service->PostANRTaskByProcessID(pid);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

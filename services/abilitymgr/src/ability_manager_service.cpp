@@ -4101,10 +4101,7 @@ int AbilityManagerService::SendANRProcessID(int pid)
     }
 #endif
     handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
-    if (kill(pid, SIGUSR1) != ERR_OK) {
-        HILOG_ERROR("Send sig to app not response process failed");
-        return SEND_USR1_SIG_FAIL;
-    }
+    appScheduler_->PostANRTaskByProcessID(pid);
     return ERR_OK;
 }
 

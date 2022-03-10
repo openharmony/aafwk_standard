@@ -623,6 +623,11 @@ void MainThread::HandleTerminateApplicationLocal()
     if (watchDogHandler_ != nullptr) {
         watchDogHandler_->Stop();
     }
+    if (handleANRThread_ != nullptr && handleANRThread_->joinable()) {
+        handleANRThread_->join();
+        handleANRThread_ = nullptr;
+    }
+
     int ret = runner->Stop();
     if (ret != ERR_OK) {
         HILOG_ERROR("MainThread::HandleTerminateApplicationLocal failed. runner->Run failed ret = %{public}d", ret);
@@ -1333,6 +1338,11 @@ void MainThread::HandleTerminateApplication()
     if (watchDogHandler_ != nullptr) {
         watchDogHandler_->Stop();
     }
+    if (handleANRThread_ != nullptr && handleANRThread_->joinable()) {
+        handleANRThread_->join();
+        handleANRThread_ = nullptr;
+    }
+    
     HILOG_INFO("MainThread::handleTerminateApplication before stop runner");
     int ret = runner->Stop();
     HILOG_INFO("MainThread::handleTerminateApplication after stop runner");
@@ -1453,35 +1463,48 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     HILOG_INFO("MainThread:Init end.");
 }
 
-void MainThread::HandleANRProcess(int sigMessage)
+void MainThread::ScheduleANRProcess()
 {
-    if (sigMessage == SIGUSR1) {
-        HILOG_INFO("MainThread:HandleANRProcess start.");
-        int rFD = -1;
-        std::string mainThreadStackInfo;
-        if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_STACKTRACE))) < 0) {
-            HILOG_ERROR("MainThread::HandleANRProcess request file eescriptor failed");
-            return;
-        }
-        auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
-        if (jsRuntime != nullptr) {
-            mainThreadStackInfo= jsRuntime->BuildNativeAndJsBackStackTrace();
-            if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
-                HILOG_ERROR("MainThread::HandleANRProcess write main thread stack info failed");
-            }
-        }
-        OHOS::HiviewDFX::DfxDumpCatcher dumplog;
-        std::string proStackInfo;
-        if (dumplog.DumpCatch(getpid(), 0, proStackInfo) == false) {
-            HILOG_ERROR("MainThread::HandleANRProcess get process stack info failed");
-        }
-        if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != proStackInfo.size()) {
-            HILOG_ERROR("MainThread::HandleANRProcess write process stack info failed");
-        }
-        if (rFD != -1) {
-            close(rFD);
+    APP_LOGI("MainThread::ScheduleANRProcess called begin");
+    if (handleANRThread_ == nullptr) {
+        handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess, this);
+    }
+    APP_LOGI("MainThread::ScheduleANRProcess called end.");
+}
+
+void MainThread::HandleScheduleANRProcess()
+{
+    APP_LOGI("MainThread:HandleScheduleANRProcess start.");
+    int rFD = -1;
+    std::string mainThreadStackInfo;
+    if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_STACKTRACE))) < 0) {
+        APP_LOGE("MainThread::HandleScheduleANRProcess request file eescriptor failed");
+        return;
+    }
+    APP_LOGI("MainThread:HandleScheduleANRProcess RequestFileDescriptor end.");
+    auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
+    if (jsRuntime != nullptr) {
+        mainThreadStackInfo= jsRuntime->BuildNativeAndJsBackStackTrace();
+        if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
+            APP_LOGE("MainThread::HandleScheduleANRProcess write main thread stack info failed");
         }
     }
+    APP_LOGI("HandleScheduleANRProcess write main thread stack info size: %{public}d", mainThreadStackInfo.size());
+    APP_LOGI("MainThread:HandleScheduleANRProcess BuildNativeAndJsBackStackTrace end.");
+    OHOS::HiviewDFX::DfxDumpCatcher dumplog;
+    std::string proStackInfo;
+    if (dumplog.DumpCatch(getpid(), 0, proStackInfo) == false) {
+        APP_LOGE("MainThread::HandleScheduleANRProcess get process stack info failed");
+    }
+    APP_LOGI("MainThread:HandleScheduleANRProcess DumpCatch end.");
+    if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != proStackInfo.size()) {
+        APP_LOGE("MainThread::HandleScheduleANRProcess write process stack info failed");
+    }
+    APP_LOGI("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d", proStackInfo.size());
+    if (rFD != -1) {
+        close(rFD);
+    }
+    APP_LOGI("MainThread:HandleScheduleANRProcess end.");
 }
 
 void MainThread::Start()
@@ -1503,14 +1526,6 @@ void MainThread::Start()
         HILOG_ERROR("MainThread::static failed. new MainThread failed");
         return;
     }
-
-    HILOG_INFO("MainThread::main Register sig handle start");
-    struct sigaction sigAct;
-    sigemptyset(&sigAct.sa_mask);
-    sigAct.sa_flags = 0;
-    sigAct.sa_handler = &MainThread::HandleANRProcess;
-    sigaction(SIGUSR1, &sigAct, NULL);
-    HILOG_INFO("MainThread::main Register sig handle end");
 
     HILOG_INFO("MainThread::main called start Init");
     thread->Init(runner, runnerWatchDog);
