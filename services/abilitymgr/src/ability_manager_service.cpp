@@ -1556,6 +1556,22 @@ int AbilityManagerService::MoveMissionToFront(int32_t missionId, const StartOpti
     auto options = std::make_shared<StartOptions>(startOptions);
     return currentMissionListManager_->MoveMissionToFront(missionId, options);
 }
+
+int32_t AbilityManagerService::GetMissionIdByToken(const sptr<IRemoteObject> &token)
+{
+    HILOG_INFO("request GetMissionIdByToken.");
+    if (!token) {
+        HILOG_ERROR("token is invalid.");
+        return -1;
+    }
+
+    if (IPCSkeleton::GetCallingPid() != getpid()) {
+        HILOG_ERROR("%{public}s: Only support same process call.", __func__);
+        return -1;
+    }
+
+    return GetMissionIdByAbilityToken(token);
+}
 #endif
 
 bool AbilityManagerService::IsAbilityControllerStartById(int32_t missionId)

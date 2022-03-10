@@ -679,6 +679,8 @@ public:
 
     virtual int MoveMissionToFront(int32_t missionId, const StartOptions &startOptions) override;
 
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
+
     virtual int StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag) override;
 
     virtual int StopSyncRemoteMissions(const std::string& devId) override;

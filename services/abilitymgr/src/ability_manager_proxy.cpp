@@ -2670,5 +2670,34 @@ int AbilityManagerProxy::SendANRProcessID(int pid)
     }
     return reply.ReadInt32();
 }
+
+int32_t AbilityManagerProxy::GetMissionIdByToken(const sptr<IRemoteObject> &token)
+{
+    if (!token) {
+        HILOG_ERROR("token is nullptr.");
+        return -1;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("data interface token failed.");
+        return -1;
+    }
+
+    if (!data.WriteParcelable(token)) {
+        HILOG_ERROR("data write failed.");
+        return -1;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::GET_MISSION_ID_BY_ABILITY_TOKEN, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return -1;
+    }
+
+    return reply.ReadInt32();
+}
 }  // namespace AAFwk
 }  // namespace OHOS

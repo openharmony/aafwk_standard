@@ -152,6 +152,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[DELEGATOR_DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DelegatorDoAbilityBackgroundInner;
     requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
     requestFuncMap_[DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DoAbilityBackgroundInner;
+    requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1175,6 +1176,17 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
     int result = MoveMissionToFront(missionId);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("MoveMissionToFront failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetMissionIdByTokenInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    int32_t missionId = GetMissionIdByToken(token);
+    if (!reply.WriteInt32(missionId)) {
+        HILOG_ERROR("GetMissionIdByToken write missionId failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
