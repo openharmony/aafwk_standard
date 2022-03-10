@@ -637,7 +637,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 break;
             }
             case 'l': {
-                if (isfirstCommand == false && optarg == nullptr) {
+                if (isfirstCommand == false) {
                     isfirstCommand = true;
                 } else {
                     // 'aa dumpsys -i 10 -element -lastpage'
