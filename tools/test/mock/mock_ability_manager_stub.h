@@ -117,6 +117,7 @@ public:
         ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
     MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
     MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
+    MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));

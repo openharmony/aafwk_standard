@@ -365,6 +365,10 @@ public:
     {
         return 0;
     }
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override
+    {
+        return 0;
+    }
     virtual int GetMissionInfos(const std::string& deviceId, int32_t numMax,
         std::vector<MissionInfo> &missionInfos) override
     {
