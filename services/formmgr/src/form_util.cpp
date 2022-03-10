@@ -135,7 +135,7 @@ bool FormUtil::GenerateUdidHash(int64_t &udidHash)
  * @brief Get current system nanosecond.
  * @return Current system nanosecond.
  */
-long FormUtil::GetCurrentNanosecond()
+int64_t FormUtil::GetCurrentNanosecond()
 {
     struct timespec ts;
     ts.tv_sec = 0;
@@ -147,7 +147,7 @@ long FormUtil::GetCurrentNanosecond()
  * @brief Get current system millisecond.
  * @return Current system millisecond.
  */
-long FormUtil::GetCurrentMillisecond()
+int64_t FormUtil::GetCurrentMillisecond()
 {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
@@ -158,7 +158,7 @@ long FormUtil::GetCurrentMillisecond()
  * @param tmAtTime tm time.
  * @return Millisecond.
  */
-long FormUtil::GetMillisecondFromTm(struct tm &tmAtTime)
+int64_t FormUtil::GetMillisecondFromTm(struct tm &tmAtTime)
 {
     time_t inputTime = mktime(&tmAtTime);
     if (inputTime == -1) {

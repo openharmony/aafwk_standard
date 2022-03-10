@@ -187,8 +187,7 @@ void AsyncTask::Execute(NativeEngine* engine, void* data)
     }
     auto me = static_cast<AsyncTask*>(data);
     if (me->execute_ && *(me->execute_)) {
-        HandleScope handleScope(*engine);
-        (*me->execute_)(*engine, *me);
+        (*me->execute_)();
     }
 }
 

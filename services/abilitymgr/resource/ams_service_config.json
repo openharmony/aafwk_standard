@@ -12,7 +12,7 @@
         "root_launcher_restart_max":15,
         "use_new_mission":true,
         "app_not_response_process_timeout_time" : 5000,
-        "ams_timeout_time" : 5000
+        "ams_timeout_time" : 60
     },
     "memorythreshold":{
         "home_application": "20"

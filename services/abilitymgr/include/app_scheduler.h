@@ -20,7 +20,6 @@
 #include <unordered_set>
 
 #include "ability_info.h"
-// #include "app_process_data.h"
 #include "appmgr/app_mgr_client.h"
 #include "appmgr/app_state_callback_host.h"
 #include "appmgr/start_specified_ability_response_stub.h"
@@ -253,6 +252,17 @@ public:
      * Start a user test
      */
     int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer, const AppExecFwk::BundleInfo &bundleInfo);
+
+    /**
+     * @brief Finish user test.
+     * @param msg user test message.
+     * @param resultCode user test result Code.
+     * @param bundleName user test bundleName.
+     * @param pid the user test process id.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
 
     int GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId);
     std::string ConvertAppState(const AppState &state);

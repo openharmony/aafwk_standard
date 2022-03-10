@@ -260,10 +260,10 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    data.WriteInt32(userId);
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
+    data.WriteInt32(userId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         APP_LOGE("Remote() is NULL");
@@ -307,7 +307,7 @@ void AppMgrProxy::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string 
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -317,13 +317,13 @@ void AppMgrProxy::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string 
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_SYSTEM_MEMORY_ATTR, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
 
     std::shared_ptr<SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<SystemMemoryAttr>());
     if (remoteRetsult == nullptr) {
-        APP_LOGE("recv SystemMemoryAttr faild");
+        APP_LOGE("recv SystemMemoryAttr failed");
         return;
     }
 
@@ -335,7 +335,7 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -345,7 +345,7 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_ADD_ABILITY_STAGE_INFO_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
     return;
@@ -509,12 +509,47 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
     return reply.ReadInt32();
 }
 
+int AppMgrProxy::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteString(msg)) {
+        APP_LOGE("msg write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteInt32(resultCode)) {
+        APP_LOGE("resultCode:WriteInt32 fail.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteString(bundleName)) {
+        APP_LOGE("bundleName write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteInt32(pid)) {
+        APP_LOGE("pid write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    int32_t ret =
+        Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::FINISH_USER_TEST), data, reply, option);
+    if (ret != NO_ERROR) {
+        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+    return reply.ReadInt32();
+}
+
 void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
 {
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return;
     }
 
@@ -524,7 +559,7 @@ void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Wa
     }
 
     if (!SendTransactCmd(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd faild");
+        APP_LOGE("SendTransactCmd failed");
         return;
     }
 }
@@ -535,10 +570,10 @@ int AppMgrProxy::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IR
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
 
-    data.WriteInt32(pid);
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
+    data.WriteInt32(pid);
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_ABILITY_RECORDS_BY_PROCESS_ID, data, reply)) {
         return ERR_NULL_OBJECT;
     }
@@ -563,7 +598,7 @@ int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcF
     MessageParcel reply;
     MessageOption option;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken faild");
+        APP_LOGE("WriteInterfaceToken failed");
         return ERR_FLATTEN_OBJECT;
     }
 
@@ -613,7 +648,7 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
     }
 
     if (!SendTransactCmd(IAppMgr::Message::ATTACH_RENDER_PROCESS, data, reply)) {
-        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS faild");
+        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS failed");
         return;
     }
 }

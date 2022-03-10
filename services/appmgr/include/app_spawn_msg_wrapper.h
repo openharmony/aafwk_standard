@@ -34,8 +34,8 @@ struct AppSpawnStartMsg {
     uint32_t accessTokenId;
     std::string apl;
     std::string bundleName;
-    std::string renderParam; // only webview spawn need this param.
-    bool coldStart; // only webview spawn need this param.
+    std::string renderParam; // only nweb spawn need this param.
+    bool coldStart; // only nweb spawn need this param.
 };
 
 using AppSpawnMsg = AppSpawn::ClientSocket::AppProperty;

@@ -27,6 +27,10 @@ using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int USER_ID = 100;
+}  // namespace
+
 class AbilityManagerProxyTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -49,6 +53,31 @@ void AbilityManagerProxyTest::SetUp()
 {
     mock_ = new AbilityManagerStubMock();
     proxy_ = std::make_shared<AbilityManagerProxy>(mock_);
+}
+
+/**
+ * @tc.name: AbilityManagerProxy_DumpSysState_0100
+ * @tc.desc: DumpSysState
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_DumpSysState_0100, TestSize.Level1)
+{
+    HILOG_INFO("AbilityManagerProxy_DumpSysState_0100 start");
+
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+
+    std::string args;
+    std::vector<std::string> info;
+    bool isClient = false;
+    bool isUserID = true;
+
+    proxy_->DumpSysState(args, info, isClient, isUserID, USER_ID);
+    EXPECT_EQ(IAbilityManager::DUMPSYS_STATE, mock_->code_);
+
+    HILOG_INFO("AbilityManagerProxy_DumpSysState_0100 end");
 }
 
 /*
@@ -785,6 +814,76 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseDataAbility_004, Te
 
     EXPECT_CALL(*mock_, SendRequest(_, _, _, _)).WillOnce(Return(TRANSACTION_ERR));
     EXPECT_EQ(proxy_->ReleaseDataAbility(scheduler, abilityRecord->GetToken()), TRANSACTION_ERR);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbilityByCall
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService StartAbilityByCall
+ * EnvConditions: NA
+ * CaseDescription: Verify the function StartAbilityByCall connect is nullptr.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_StartAbilityByCall_001, TestSize.Level1)
+{
+    Want want;
+    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IAbilityConnection> connect = nullptr;
+    EXPECT_EQ(proxy_->StartAbilityByCall(want, connect, callerToken), ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: StartAbilityByCall
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService StartAbilityByCall
+ * EnvConditions: NA
+ * CaseDescription: Verify the function StartAbilityByCall is normal flow.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_StartAbilityByCall_002, TestSize.Level1)
+{
+    Want want;
+    sptr<IRemoteObject> callerToken = nullptr;
+    sptr<IAbilityConnection> connect = new AbilityConnectCallback();
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    EXPECT_EQ(proxy_->StartAbilityByCall(want, connect, callerToken), ERR_OK);
+    EXPECT_EQ(IAbilityManager::START_CALL_ABILITY, mock_->code_);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ReleaseAbility
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService ReleaseAbility
+ * EnvConditions: NA
+ * CaseDescription: Verify the function ReleaseAbility connect is nullptr.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseAbility_001, TestSize.Level1)
+{
+    AppExecFwk::ElementName element;
+    sptr<IAbilityConnection> connect = nullptr;
+    EXPECT_EQ(proxy_->ReleaseAbility(connect, element), ERR_INVALID_VALUE);
+}
+
+/*
+ * Feature: AbilityManagerService
+ * Function: ReleaseAbility
+ * SubFunction: NA
+ * FunctionPoints: AbilityManagerService ReleaseAbility
+ * EnvConditions: NA
+ * CaseDescription: Verify the function ReleaseAbility is normal flow.
+ */
+HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_ReleaseAbility_002, TestSize.Level1)
+{
+    AppExecFwk::ElementName element;
+    sptr<IAbilityConnection> connect = new AbilityConnectCallback();
+    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
+        .Times(1)
+        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
+    EXPECT_EQ(proxy_->ReleaseAbility(connect, element), ERR_OK);
+    EXPECT_EQ(IAbilityManager::RELEASE_CALL_ABILITY, mock_->code_);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

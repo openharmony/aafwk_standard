@@ -15,22 +15,28 @@
 
 #include <gtest/gtest.h>
 
+#include "ability_manager_errors.h"
 #define private public
 #define protected public
+#include "ability_record.h"
 #include "app_scheduler.h"
 #undef private
 #undef protected
-
 #include "app_state_call_back_mock.h"
-#include "ability_record.h"
-#include "element_name.h"
 #include "app_process_data.h"
+#include "element_name.h"
 
+using namespace testing;
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int32_t USER_ID = 100;
+const std::string STRING_APP_STATE = "BEGIN";
+}  // namespace
+
 class AppSchedulerTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -73,6 +79,53 @@ AbilityRequest AppSchedulerTest::GenerateAbilityRequest(const std::string &devic
     return abilityRequest;
 }
 
+/**
+ * @tc.name: AppScheduler_GetConfiguration_0100
+ * @tc.desc: GetConfiguration
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AppSchedulerTest, AppScheduler_GetConfiguration_0100, TestSize.Level1)
+{
+    DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
+
+    Configuration config;
+    auto result = DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config);
+
+    EXPECT_EQ(result, INNER_ERR);
+}
+
+/**
+ * @tc.name: AppScheduler_GetProcessRunningInfosByUserId_0100
+ * @tc.desc: GetProcessRunningInfosByUserId
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AppSchedulerTest, AppScheduler_GetProcessRunningInfosByUserId_0100, TestSize.Level1)
+{
+    DelayedSingleton<AppScheduler>::GetInstance()->appMgrClient_ = nullptr;
+
+    std::vector<RunningProcessInfo> info;
+    int32_t userId = USER_ID;
+    auto result = DelayedSingleton<AppScheduler>::GetInstance()->GetProcessRunningInfosByUserId(info, userId);
+
+    EXPECT_EQ(result, INNER_ERR);
+}
+
+/**
+ * @tc.name: AppScheduler_ConvertAppState_0100
+ * @tc.desc: ConvertAppState
+ * @tc.type: FUNC
+ * @tc.require: SR000GH1GO
+ */
+HWTEST_F(AppSchedulerTest, AppScheduler_ConvertAppState_0100, TestSize.Level1)
+{
+    AppState state = AppState::BEGIN;
+    auto result = DelayedSingleton<AppScheduler>::GetInstance()->ConvertAppState(state);
+
+    EXPECT_EQ(result, STRING_APP_STATE);
+}
+
 /*
  * Feature: AppScheduler
  * Function: Init
@@ -85,50 +138,6 @@ HWTEST_F(AppSchedulerTest, AppScheduler_oprator_001, TestSize.Level1)
 {
     std::shared_ptr<AppStateCallbackMock> appStateMock;
     EXPECT_EQ(false, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock));
-}
-
-/*
- * Feature: AppScheduler
- * Function: Init
- * SubFunction: NA
- * FunctionPoints: AppScheduler Init
- * EnvConditions:NA
- * CaseDescription: Verify init success
- */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_002, TestSize.Level1)
-{
-    EXPECT_EQ(true, DelayedSingleton<AppScheduler>::GetInstance()->Init(appStateMock_));
-}
-
-/*
- * Feature: AppScheduler
- * Function: LoadAbility
- * SubFunction: NA
- * FunctionPoints: AppScheduler LoadAbility
- * EnvConditions:NA
- * CaseDescription: Verify the normal process of loadability
- */
-HWTEST_F(AppSchedulerTest, AppScheduler_oprator_003, TestSize.Level1)
-{
-    std::string deviceName = "device";
-    std::string abilityName = "FirstAbility";
-    std::string appName = "FirstApp";
-    std::string bundleName = "com.ix.First";
-    auto abilityReq = GenerateAbilityRequest(deviceName, abilityName, appName, bundleName);
-    auto record = AbilityRecord::CreateAbilityRecord(abilityReq);
-    auto token = record->GetToken();
-
-    std::string preDeviceName = "device";
-    std::string preAbilityName = "SecondAbility";
-    std::string preAppName = "SecondApp";
-    std::string preBundleName = "com.ix.Second";
-    auto preAbilityReq = GenerateAbilityRequest(preDeviceName, preAbilityName, preAppName, preBundleName);
-    auto preRecord = AbilityRecord::CreateAbilityRecord(preAbilityReq);
-    auto pretoken = preRecord->GetToken();
-
-    EXPECT_EQ((int)ERR_OK,
-        DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
-            token, pretoken, record->GetAbilityInfo(), record->GetApplicationInfo(), record->GetWant()));
 }
 
 /*

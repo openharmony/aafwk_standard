@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -621,7 +621,7 @@ void FifthAbility::WantParamsMarshallingCase7(int code)
     wParams.Marshalling(in);
     WantParams *wantParamsOut = WantParams::Unmarshalling(in);
 #ifdef WANT_PARAM_USE_LONG
-    bool result = (Long)::Unbox(ILong::Query(wantParamsOut->GetParam(key))) == value);
+    bool result = (Long)::Unbox(ILong::Query(wantParamsOut->GetParam(key))) == value;
 #else
     bool result = (String::Unbox(IString::Query(wantParamsOut->GetParam(key))) == strValue);
 #endif

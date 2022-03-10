@@ -33,6 +33,7 @@ public:
      */
     virtual void OnActive() = 0;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called back in response to an ON_BACKGROUND event.
      * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
@@ -50,6 +51,7 @@ public:
      * @param want Indicates the information for the ability or ability slice to go back to the ACTIVE state.
      */
     virtual void OnForeground(const Want &want) = 0;
+#endif
 
     /**
      * @brief Called back in response to an ON_INACTIVE event.

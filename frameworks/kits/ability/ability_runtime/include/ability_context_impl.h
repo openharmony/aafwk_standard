@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -152,16 +152,19 @@ public:
     ErrCode ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback) override;
 
     /**
-     * regist ability callback
+     * register ability callback
      *
      * @param abilityCallback Indicates the abilityCallback object.
      */
     void RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback) override;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * get current window mode
      */
     int GetCurrentWindowMode() override;
+#endif
+
 private:
     sptr<IRemoteObject> token_;
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;

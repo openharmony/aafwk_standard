@@ -647,6 +647,7 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
     return ret;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief notify multi window mode changed.
  *
@@ -674,6 +675,7 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
         HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %{public}d", err);
     }
 }
+#endif
 
 /**
  * @brief Registers an observer to DataObsMgr specified by the given Uri.
@@ -1032,10 +1034,9 @@ sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
         HILOG_ERROR("CallRequest failed, err %{public}d", result);
         return nullptr;
     }
-
-    auto call = reply.ReadParcelable<IRemoteObject>();
-    if (!call) {
-        HILOG_ERROR("CallRequest error");
+    auto call = reply.ReadRemoteObject();
+    if (call == nullptr) {
+        HILOG_ERROR("CallRequest failed, err remoteObject is nullptr");
         return nullptr;
     }
 

@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("appmgr_test_config") {
   configs = [
@@ -81,7 +82,7 @@ ohos_source_set("appmgr_test_source") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
+    "${services_path}/common:perm_verification",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
@@ -89,6 +90,10 @@ ohos_source_set("appmgr_test_source") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
@@ -112,7 +117,13 @@ group("unittest") {
     "unittest/ams_app_state_callback_test:unittest",
     "unittest/ams_app_workflow_test:unittest",
     "unittest/ams_ipc_interface_test:unittest",
+
+    # "unittest/ams_lmks_client_test:unittest",
+    "unittest/ams_mgr_kill_process_test:unittest",
+    "unittest/ams_mgr_proxy_test:unittest",
+    "unittest/ams_mgr_scheduler_dump_test:unittest",
     "unittest/ams_mgr_scheduler_test:unittest",
+    "unittest/ams_mgr_stub_test:unittest",
     "unittest/ams_recent_app_list_test:unittest",
     "unittest/ams_service_app_spawn_client_test:unittest",
     "unittest/ams_service_app_spawn_msg_wrapper_test:unittest",
@@ -120,6 +131,10 @@ group("unittest") {
     "unittest/ams_service_event_drive_test:unittest",
     "unittest/ams_service_load_ability_process_test:unittest",
     "unittest/ams_service_startup_test:unittest",
+    "unittest/app_mgr_proxy_test:unittest",
+    "unittest/app_mgr_service_dump_test:unittest",
     "unittest/app_mgr_service_event_handler_test:unittest",
+    "unittest/app_mgr_stub_test:unittest",
+    "unittest/app_running_processes_info_test:unittest",
   ]
 }

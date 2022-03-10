@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,11 +63,11 @@ int LocalCallContainer::StartAbilityInner(
             HILOG_ERROR("LocalCallContainer::Resolve abilityClient is nullptr");
             return ERR_INVALID_VALUE;
         }
-        sptr<IAbilityConnection> connect = iface_cast<IAbilityConnection>(this);
+        sptr<IAbilityConnection> connect = iface_cast<IAbilityConnection>(this->AsObject());
         HILOG_DEBUG("start ability by call, abilityClient->StartAbilityByCall call");
-        return abilityClient->StartAbilityByCall(want, this, callerToken);
+        return abilityClient->StartAbilityByCall(want, connect, callerToken);
     }
-    // already finish call requst.
+    // already finish call request.
     HILOG_DEBUG("start ability by call, callback->InvokeCallBack(remote) begin");
     callback->InvokeCallBack(remote);
     HILOG_DEBUG("start ability by call, callback->InvokeCallBack(remote) end");
@@ -77,7 +77,9 @@ int LocalCallContainer::StartAbilityInner(
 
 int LocalCallContainer::Release(const std::shared_ptr<CallerCallBack>& callback)
 {
+    HILOG_DEBUG("LocalCallContainer::Release begain.");
     auto isExist = [&callback](auto &record) {
+        HILOG_DEBUG("LocalCallContainer::Release begain1.");
         return record.second->RemoveCaller(callback);
     };
 
@@ -95,6 +97,7 @@ int LocalCallContainer::Release(const std::shared_ptr<CallerCallBack>& callback)
 
     if (record->IsExistCallBack()) {
         // just release callback.
+        HILOG_DEBUG("LocalCallContainer::Release begain2.");
         return ERR_OK;
     }
 
@@ -105,14 +108,14 @@ int LocalCallContainer::Release(const std::shared_ptr<CallerCallBack>& callback)
         HILOG_ERROR("LocalCallContainer::Resolve abilityClient is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<IAbilityConnection> connect = iface_cast<IAbilityConnection>(this);
+    sptr<IAbilityConnection> connect = iface_cast<IAbilityConnection>(this->AsObject());
     if (abilityClient->ReleaseAbility(connect, elementName) != ERR_OK) {
         HILOG_ERROR("ReleaseAbility failed.");
         return ERR_INVALID_VALUE;
     }
 
     callProxyRecords_.erase(iter);
-
+    HILOG_DEBUG("LocalCallContainer::Release end.");
     return ERR_OK;
 }
 
@@ -180,7 +183,6 @@ bool LocalCallContainer::GetCallLocalreocrd(
         localCallRecord = iter->second;
         return true;
     }
-
     return false;
 }
 

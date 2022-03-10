@@ -184,10 +184,9 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
         HILOG_ERROR("get target ability record failed, missionId: %{public}d", missionId);
         return MOVE_MISSION_FAILED;
     }
+    targetAbilityRecord->RemoveWindowMode();
     if (startOptions != nullptr) {
-        Want want(targetAbilityRecord->GetWant());
-        want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions->GetWindowMode());
-        targetAbilityRecord->SetWant(want);
+        targetAbilityRecord->SetWindowMode(startOptions->GetWindowMode());
     }
     // schedule target ability to foreground.
     targetAbilityRecord->ProcessForegroundAbility();
@@ -286,10 +285,36 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     }
 }
 
+static int32_t CallType2StartMethod(int32_t callType)
+{
+    switch (callType) {
+        case AbilityCallType::INVALID_TYPE:
+            return static_cast<int32_t>(StartMethod::START_NORMAL);
+        case AbilityCallType::CALL_REQUEST_TYPE:
+            return static_cast<int32_t>(StartMethod::START_CALL);
+        default:
+            break;
+    }
+    return -1;
+}
+
+static bool CallTypeFilter(int32_t callType)
+{
+    switch (callType) {
+        case AbilityCallType::CALL_REQUEST_TYPE:
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
 void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilityRequest,
     std::shared_ptr<Mission> &targetMission,
     std::shared_ptr<AbilityRecord> &targetRecord)
 {
+    auto startMethod = CallType2StartMethod(abilityRequest.callType);
+    HILOG_DEBUG("GetTargetMissionAndAbility called startMethod is %{public}d.", startMethod);
     auto reUsedMission = GetReusedMission(abilityRequest);
     if (reUsedMission) {
         HILOG_DEBUG("find reused mission in running list.");
@@ -299,7 +324,13 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
             targetRecord->SetWant(abilityRequest.want);
             targetRecord->SetIsNewWant(true);
         }
-        return;
+
+        if (!(targetMission->IsStartByCall()
+            && !CallTypeFilter(startMethod))) {
+            HILOG_DEBUG("mission exists. No update required");
+            return;
+        }
+        HILOG_DEBUG("mission exists. need to be updated");
     }
 
     // no reused mission, create a new one.
@@ -319,6 +350,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
 
     info.missionName = missionName;
     info.isSingletonMode = isSingleton;
+    info.startMethod = startMethod;
     info.missionInfo.runningState = 0;
     info.missionInfo.continuable = abilityRequest.abilityInfo.continuable;
     info.missionInfo.time = Time2str(time(0));
@@ -332,10 +364,22 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
             return;
         }
     }
-    targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName);
-    targetRecord->SetUseNewMission();
-    targetRecord->SetMission(targetMission);
+
+    if (targetMission == nullptr) {
+        HILOG_DEBUG("Make new mission data.");
+        targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+        targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName, startMethod);
+        targetRecord->SetUseNewMission();
+        targetRecord->SetMission(targetMission);
+    } else {
+        HILOG_DEBUG("Update old mission data.");
+        auto state = targetMission->UpdateMissionId(info.missionInfo.id, startMethod);
+        if (!state) {
+            HILOG_INFO("targetMission UpdateMissionId(%{public}d, %{public}d) failed", info.missionInfo.id,
+                startMethod);
+        }
+        HILOG_DEBUG("Update MissionId UpdateMissionId(%{public}d, %{public}d) end", info.missionInfo.id, startMethod);
+    }
 
     if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SPECIFIED) {
         targetRecord->SetSpecifiedFlag(abilityRequest.specifiedFlag);
@@ -614,7 +658,6 @@ void MissionListManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, 
         std::string element = abilityRecord->GetWant().GetElement().GetURI();
         HILOG_DEBUG("ability: %{public}s", element.c_str());
         abilityRecord->ForegroundAbility(abilityRecord->lifeCycleStateInfo_.sceneFlagBak);
-        abilityRecord->lifeCycleStateInfo_.sceneFlagBak = 0;
     }
 }
 
@@ -792,6 +835,8 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     CHECK_POINTER(abilityRecord);
+    // ability do not save window mode
+    abilityRecord->RemoveWindowMode();
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("ability: %{public}s", element.c_str());
 
@@ -898,9 +943,14 @@ int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &a
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("Terminate ability, ability is %{public}s", element.c_str());
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
-    if (abilityRecord->IsTerminating()) {
+    if (abilityRecord->IsTerminating() && !abilityRecord->IsForeground()) {
         HILOG_ERROR("Ability is on terminating.");
         return ERR_OK;
+    }
+
+    if (abilityRecord->IsTerminating() && abilityRecord->IsForeground()) {
+        HILOG_WARN("Ability is on terminating and ability state is foreground, force close");
+        flag = false;
     }
 
     // double check to avoid the ability has been removed
@@ -983,6 +1033,12 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
 {
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("RemoveTerminatingAbility, ability is %{public}s", element.c_str());
+    if (GetAbilityFromTerminateList(abilityRecord->GetToken())) {
+        abilityRecord->SetNextAbilityRecord(nullptr);
+        HILOG_DEBUG("find ability in terminating list, return");
+        return;
+    }
+
     auto missionList = abilityRecord->GetOwnedMissionList();
     CHECK_POINTER(missionList);
 
@@ -1021,12 +1077,24 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
         HILOG_DEBUG("needTopAbility is null");
         return;
     }
-    element = needTopAbility->GetWant().GetElement().GetURI();
+    AppExecFwk::ElementName elementName = needTopAbility->GetWant().GetElement();
     HILOG_DEBUG("next top ability is %{public}s, state is %{public}d, minimizeReason is %{public}d",
-        element.c_str(), needTopAbility->GetAbilityState(), needTopAbility->IsMinimizeFromUser());
+        elementName.GetURI().c_str(), needTopAbility->GetAbilityState(), needTopAbility->IsMinimizeFromUser());
+
+    // 5. if caller is recent, close
+    if (elementName.GetBundleName() == AbilityConfig::LAUNCHER_BUNDLE_NAME
+        && elementName.GetAbilityName() == AbilityConfig::LAUNCHER_RECENT_ABILITY_NAME) {
+        HILOG_DEBUG("next to need is recent, just to launcher");
+        needTopAbility = launcherList_->GetLauncherRoot();
+    }
+
+    if (!needTopAbility) {
+        HILOG_DEBUG("needTopAbility of launcherRoot is null");
+        return;
+    }
 
     if (!needTopAbility->IsForeground() && !needTopAbility->IsMinimizeFromUser()) {
-        HILOG_DEBUG("%{public}s is need to foreground", element.c_str());
+        HILOG_DEBUG("%{public}s is need to foreground", elementName.GetURI().c_str());
         abilityRecord->SetNextAbilityRecord(needTopAbility);
     }
 }
@@ -1248,7 +1316,7 @@ void MissionListManager::PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &a
         HILOG_ERROR("ability is nullptr");
         return;
     }
-    
+
     AppExecFwk::RunningProcessInfo processInfo;
     DelayedSingleton<AppScheduler>::GetInstance()->GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
     std::string msgContent;
@@ -1347,7 +1415,7 @@ void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<Ability
         HILOG_ERROR("MissionListManager on time out event: ability record is nullptr.");
         return;
     }
-    
+
     if (ability->GetMission()) {
         ability->GetMission()->SetMovingState(false);
     }
@@ -1379,10 +1447,10 @@ void MissionListManager::HandleTimeoutAndResumeAbility(const std::shared_ptr<Abi
 
     // complete mission list mvoing
     MoveToTerminateList(timeOutAbilityRecord);
-    
+
     // load and foreground timeout, notify appMs force terminate the ability.
     DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(timeOutAbilityRecord->GetToken());
-    
+
     // caller not exist or caller is service or timeout ability is launcher, back to launcher
     auto callerAbility = timeOutAbilityRecord->GetCallerRecord();
     if ((callerAbility == nullptr) ||
@@ -1455,7 +1523,7 @@ void MissionListManager::MoveToTerminateList(const std::shared_ptr<AbilityRecord
     if (missionList->GetType() == MissionListType::CURRENT && missionList->IsEmpty()) {
         RemoveMissionList(missionList);
     }
-    
+
     // load timeout will not wait for died event, directly remove.
     if (abilityRecord->IsAbilityState(AbilityState::INITIAL)) {
         HILOG_WARN("load timeout will not wait for died event, directly remove.");
@@ -1472,7 +1540,7 @@ void MissionListManager::MoveToTerminateList(const std::shared_ptr<AbilityRecord
     // other remove to terminate list.
     abilityRecord->SetTerminatingState();
     terminateAbilityList_.push_back(abilityRecord);
-    
+
     HILOG_INFO("MoveToDefaultList end");
 }
 
@@ -2087,7 +2155,7 @@ void MissionListManager::OnAcceptWantResponse(const AAFwk::Want &want, const std
     auto callerAbility = GetAbilityRecordByToken(abilityRequest.callerToken);
 
     if (!flag.empty()) {
-        auto mission = GetMissionBySpecifiedFlag(flag);
+        auto mission = GetMissionBySpecifiedFlag(want, flag);
         if (mission) {
             auto ability = mission->GetAbilityRecord();
             if (!ability) {
@@ -2126,24 +2194,25 @@ void MissionListManager::OnStartSpecifiedAbilityTimeoutResponse(const AAFwk::Wan
     StartAbility(currentTopAbility, callerAbility, abilityRequest);
 }
 
-std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(const std::string &flag) const
+std::shared_ptr<Mission> MissionListManager::GetMissionBySpecifiedFlag(
+    const AAFwk::Want &want, const std::string &flag) const
 {
     std::shared_ptr<Mission> mission = nullptr;
     for (auto missionList : currentMissionLists_) {
-        if (missionList && (mission = missionList->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+        if (missionList && (mission = missionList->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
             return mission;
         }
     }
 
-    if ((mission = defaultSingleList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+    if ((mission = defaultSingleList_->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
         return mission;
     }
 
-    if ((mission = launcherList_->GetMissionBySpecifiedFlag(flag)) != nullptr) {
+    if ((mission = launcherList_->GetMissionBySpecifiedFlag(want, flag)) != nullptr) {
         return mission;
     }
 
-    return defaultStandardList_->GetMissionBySpecifiedFlag(flag);
+    return defaultStandardList_->GetMissionBySpecifiedFlag(want, flag);
 }
 
 bool MissionListManager::MissionDmInitCallback::isInit_ = false;

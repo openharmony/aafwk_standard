@@ -13,6 +13,7 @@
 
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 module_output_path = "ability_runtime/application_test"
 
 #APP_INNERKITS_PATH = "//foundation/appexecfwk/standard/interfaces/innerkits"
@@ -24,9 +25,9 @@ config("module_private_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "//EOSP/communication/libsoftbus/../../../foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
@@ -50,8 +51,8 @@ config("module_context_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "//EOSP/communication/libsoftbus/../../../foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
@@ -95,7 +96,6 @@ ohos_unittest("context_deal_interface_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -105,6 +105,11 @@ ohos_unittest("context_deal_interface_test") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
+
+  if (ability_runtime_graphics) {
+    deps +=
+        [ "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client" ]
+  }
 }
 
 ohos_unittest("application_test") {

@@ -44,16 +44,41 @@ void AppLaunchData::SetUId(const int32_t uId)
     uId_ = uId;
 }
 
-void AppLaunchData::SetUserTestInfo(const UserTestRecord &record)
+void AppLaunchData::SetUserTestInfo(const std::shared_ptr<UserTestRecord> &record)
 {
     userTestRecord_ = record;
 }
 
 bool AppLaunchData::Marshalling(Parcel &parcel) const
 {
-    return (parcel.WriteParcelable(&applicationInfo_) && parcel.WriteParcelable(&profile_) &&
-            parcel.WriteParcelable(&processInfo_) && parcel.WriteInt32(recordId_) &&
-            parcel.WriteInt32(uId_) && parcel.WriteParcelable(&userTestRecord_));
+    if (!parcel.WriteParcelable(&applicationInfo_)) {
+        return false;
+    }
+    if (!parcel.WriteParcelable(&profile_)) {
+        return false;
+    }
+    if (!parcel.WriteParcelable(&processInfo_)) {
+        return false;
+    }
+    if (!parcel.WriteInt32(recordId_)) {
+        return false;
+    }
+    if (!parcel.WriteInt32(uId_)) {
+        return false;
+    }
+
+    bool valid = userTestRecord_ ? true : false;
+    if (!parcel.WriteBool(valid)) {
+        APP_LOGE("Failed to write the flag which indicate whether userTestRecord_ is null");
+        return false;
+    }
+    if (valid) {
+        if (!parcel.WriteParcelable(userTestRecord_.get())) {
+            APP_LOGE("Failed to write userTestRecord_");
+            return false;
+        }
+    }
+    return true;
 }
 
 bool AppLaunchData::ReadFromParcel(Parcel &parcel)
@@ -82,12 +107,14 @@ bool AppLaunchData::ReadFromParcel(Parcel &parcel)
     recordId_ = parcel.ReadInt32();
     uId_ = parcel.ReadInt32();
 
-    std::unique_ptr<UserTestRecord> userTestRecord(parcel.ReadParcelable<UserTestRecord>());
-    if (!userTestRecord) {
-        APP_LOGE("failed, userTestRecord is nullptr");
-        return false;
+    bool valid = parcel.ReadBool();
+    if (valid) {
+        userTestRecord_ = std::shared_ptr<UserTestRecord>(parcel.ReadParcelable<UserTestRecord>());
+        if (!userTestRecord_) {
+            APP_LOGE("failed, userTestRecord is nullptr");
+            return false;
+        }
     }
-    userTestRecord_ = *userTestRecord;
     return true;
 }
 
@@ -121,6 +148,11 @@ bool UserTestRecord::Marshalling(Parcel &parcel) const
             return false;
         }
     }
+
+    if (!parcel.WriteBool(isFinished)) {
+        APP_LOGE("Failed to write isFinished");
+        return false;
+    }
     return true;
 }
 
@@ -153,6 +185,8 @@ bool UserTestRecord::ReadFromParcel(Parcel &parcel)
             return false;
         }
     }
+
+    isFinished = parcel.ReadBool();
     return true;
 }
 }  // namespace AppExecFwk

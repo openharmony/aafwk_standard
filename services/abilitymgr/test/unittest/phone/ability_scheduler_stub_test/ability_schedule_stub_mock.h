@@ -107,11 +107,14 @@ public:
         return urivalue;
     }
 
+#ifdef SUPPORT_GRAPHICS
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override
     {}
 
     void NotifyTopActiveAbilityChanged(bool flag) override
     {}
+#endif
+
     virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
     {
         return true;
@@ -137,7 +140,7 @@ public:
     {}
     virtual sptr<IRemoteObject> CallRequest() override
     {
-        return sptr<IRemoteObject>(nullptr);
+        return sptr<IRemoteObject>(this);
     }
 };
 }  // namespace AAFwk

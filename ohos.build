@@ -118,7 +118,8 @@
       "test_list": [
         "//foundation/aafwk/standard/frameworks/kits/content/cpp/test:unittest",
         "//foundation/aafwk/standard/frameworks/kits/ability/native/test:unittest",
-        "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test:moduletest",
+        "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/moduletest:moduletest",
+        "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/unittest:unittest",
         "//foundation/aafwk/standard/frameworks/kits/test:moduletest",
         "//foundation/aafwk/standard/services/test:moduletest",
         "//foundation/aafwk/standard/services:unittest",
@@ -241,6 +242,15 @@
             ]
           },
           "name": "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration"
+        },
+        {
+          "header": {
+            "header_base": "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
+            "header_files": [
+              "uri.h"
+            ]
+          },
+          "name": "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri"
         }
       ],
       "test_list": [

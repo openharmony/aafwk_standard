@@ -1131,7 +1131,7 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_045, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: Schedule
  * FunctionPoints: Terminate ability
- * CaseDescription: Terminate ability when multiple abilities is backgroung and app is suspended.
+ * CaseDescription: Terminate ability when multiple abilities is background and app is suspended.
  */
 HWTEST_F(AmsAppLifeCycleTest, Schedule_046, TestSize.Level1)
 {
@@ -1833,6 +1833,60 @@ HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_001, TestSize.Level1)
 
 /*
  * Feature: AMS
+ * Function: AppLifeCycle
+ * SubFunction: ClearUpApplicationData
+ * FunctionPoints: ClearUpApplicationData
+ * CaseDescription: clear the application data.
+ */
+HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_002, TestSize.Level1)
+{
+    const pid_t NEW_PID = 1234;
+    auto abilityInfo = GetAbilityInfoByIndex("110");
+    auto appInfo = GetApplication();
+    sptr<IRemoteObject> token = GetMockToken();
+
+    auto appRecord = StartProcessAndLoadAbility(token, nullptr, abilityInfo, appInfo, NEW_PID);
+    appRecord->SetUid(101);
+
+    EXPECT_CALL(*mockBundleMgr, CleanBundleDataFiles(_, _)).Times(1).WillOnce(Return(101));
+    EXPECT_CALL(*mockBundleMgr, GetUidByBundleName(_, _)).Times(1);
+
+    sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
+    sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
+    appRecord->SetApplicationClient(client);
+
+    serviceInner_->ClearUpApplicationData(appRecord->GetBundleName(), appRecord->GetUid(), NEW_PID);
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle
+ * SubFunction: ClearUpApplicationData
+ * FunctionPoints: ClearUpApplicationData
+ * CaseDescription: clear the application data.
+ */
+HWTEST_F(AmsAppLifeCycleTest, ClearUpApplicationData_003, TestSize.Level1)
+{
+    const pid_t NEW_PID = 1234;
+    auto abilityInfo = GetAbilityInfoByIndex("110");
+    auto appInfo = GetApplication();
+    sptr<IRemoteObject> token = GetMockToken();
+
+    auto appRecord = StartProcessAndLoadAbility(token, nullptr, abilityInfo, appInfo, NEW_PID);
+    appRecord->SetUid(101);
+
+    EXPECT_CALL(*mockBundleMgr, CleanBundleDataFiles(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockBundleMgr, GetUidByBundleName(_, _)).Times(0);
+
+    sptr<MockAppScheduler> mockAppScheduler = new MockAppScheduler();
+    sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler.GetRefPtr());
+    appRecord->SetApplicationClient(client);
+
+    serviceInner_->ClearUpApplicationData(appRecord->GetBundleName(), appRecord->GetUid(), NEW_PID);
+}
+
+/*
+ * Feature: AMS
  * Function: AppLifeCycle::CreateAppRunningRecord
  * SubFunction: bundleMgr CheckPermission
  * FunctionPoints: UnsuspendApplication
@@ -1902,8 +1956,8 @@ HWTEST_F(AmsAppLifeCycleTest, CheckAppRunningRecordIsExist_001, TestSize.Level1)
  * Feature: AMS
  * Function: AppLifeCycle::StartResidentProcess
  * SubFunction: NA
- * FunctionPoints: NA
- * CaseDescription: NA
+ * FunctionPoints: start resident process
+ * CaseDescription: try to start a resident process
  */
 HWTEST_F(AmsAppLifeCycleTest, StartResidentProcess_001, TestSize.Level1)
 {
@@ -1952,8 +2006,8 @@ HWTEST_F(AmsAppLifeCycleTest, StartResidentProcess_001, TestSize.Level1)
  * Feature: AMS
  * Function: AppLifeCycle::StartResidentProcess
  * SubFunction: NA
- * FunctionPoints: NA
- * CaseDescription: NA
+ * FunctionPoints: start resident process
+ * CaseDescription: try to start a resident process
  */
 HWTEST_F(AmsAppLifeCycleTest, StartResidentProcess_002, TestSize.Level1)
 {
@@ -2006,10 +2060,27 @@ HWTEST_F(AmsAppLifeCycleTest, StartResidentProcess_002, TestSize.Level1)
 
 /*
  * Feature: AMS
+ * Function: AppLifeCycle::StartResidentProcess
+ * SubFunction: NA
+ * FunctionPoints: start resident process
+ * CaseDescription: try to start resident process
+ */
+HWTEST_F(AmsAppLifeCycleTest, StartResidentProcess_003, TestSize.Level1)
+{
+    std::vector<BundleInfo> infos;
+    serviceInner_->appRunningManager_->ClearAppRunningRecordMap();
+
+    // EMPTY VECTOR
+    serviceInner_->StartResidentProcess(infos, -1);
+
+    EXPECT_TRUE(serviceInner_->appRunningManager_->GetAppRunningRecordMap().empty());
+}
+/*
+ * Feature: AMS
  * Function: AppLifeCycle::RestartResidentProcess
  * SubFunction: NA
- * FunctionPoints: NA
- * CaseDescription: NA
+ * FunctionPoints: Guaranteed to re-pull
+ * CaseDescription: Restart the abnormal resident process
  */
 HWTEST_F(AmsAppLifeCycleTest, RestartResidentProcess_001, TestSize.Level1)
 {
@@ -2045,6 +2116,153 @@ HWTEST_F(AmsAppLifeCycleTest, RestartResidentProcess_001, TestSize.Level1)
 
     appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
     EXPECT_FALSE(appRecord);
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle::RestartResidentProcess
+ * SubFunction: NA
+ * FunctionPoints: Guaranteed to re-pull
+ * CaseDescription: Restart the abnormal resident process
+ */
+HWTEST_F(AmsAppLifeCycleTest, RestartResidentProcess_002, TestSize.Level1)
+{
+    pid_t pid = 123;
+    sptr<IRemoteObject> token = GetMockToken();
+    std::string appName = "KeepAliveApp";
+    std::string proc = "KeepAliveApplication";
+    int uid = 2100;
+
+    HapModuleInfo hapModuleInfo;
+    hapModuleInfo.moduleName = "KeepAliveApplication";
+    std::vector<BundleInfo> infos;
+    BundleInfo info;
+    info.name = proc;
+    info.uid = uid;
+    info.hapModuleInfos.push_back(hapModuleInfo);
+
+    ApplicationInfo appInfo;
+    appInfo.name = "KeepAliveApp";
+    appInfo.bundleName = "KeepAliveApplication";
+    appInfo.uid = 2100;
+    info.applicationInfo = appInfo;
+    infos.push_back(info);
+    BundleInfo bundleInfo;
+    bundleInfo.appId = "com.ohos.test.helloworld_code123";
+
+    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
+    EXPECT_FALSE(appRecord);
+
+    MockAppSpawnClient *mockClientPtrT = new (std::nothrow) MockAppSpawnClient();
+    EXPECT_TRUE(mockClientPtrT);
+    EXPECT_CALL(*mockClientPtrT, StartProcess(_, _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(pid), Return(ERR_OK)));
+
+    serviceInner_->SetAppSpawnClient(std::unique_ptr<MockAppSpawnClient>(mockClientPtrT));
+
+    serviceInner_->StartResidentProcess(infos, -1);
+
+    appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
+    EXPECT_TRUE(appRecord);
+
+    // Restart the existing application when there is no abnormality
+    serviceInner_->RestartResidentProcess(appRecord);
+
+    auto newAppRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(appName, proc, uid, bundleInfo);
+    EXPECT_TRUE(newAppRecord);
+    EXPECT_TRUE(appRecord == newAppRecord);
+    EXPECT_TRUE(appRecord->GetRecordId() == newAppRecord->GetRecordId());
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle::UpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: Environmental Change Notification
+ * CaseDescription: Determine the default value
+ */
+HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_001, TestSize.Level1)
+{
+    serviceInner_->Init();
+    auto configMgr = serviceInner_->GetConfiguration();
+    EXPECT_TRUE(configMgr);
+    auto language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    // has default value
+    EXPECT_TRUE(!language.empty());
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle::UpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: Environmental Change Notification
+ * CaseDescription: Trigger an environment change notification
+ */
+HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_002, TestSize.Level1)
+{
+    auto testLanguge = "ch-zh";
+    auto configUpdate = [testLanguge](const Configuration &config) {
+        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        EXPECT_TRUE(testLanguge == l);
+    };
+
+    auto testAppPreRecord =
+        CreateTestApplicationRecord(AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
+
+    EXPECT_CALL(*(testAppPreRecord.mockAppScheduler_), ScheduleConfigurationUpdated(_))
+        .Times(1)
+        .WillOnce(testing::Invoke(configUpdate));
+
+    Configuration config;
+    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    serviceInner_->UpdateConfiguration(config);
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle::UpdateConfiguration
+ * SubFunction: NA
+ * FunctionPoints: Environmental Change Notification
+ * CaseDescription: Trigger an environment change notification
+ */
+HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_003, TestSize.Level1)
+{
+    auto testLanguge = "ch-zh";
+    auto configUpdate = [testLanguge](const Configuration &config) {
+        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        EXPECT_TRUE(testLanguge == l);
+    };
+
+    auto testAppPreRecord =
+        CreateTestApplicationRecord(AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
+
+    EXPECT_CALL(*(testAppPreRecord.mockAppScheduler_), ScheduleConfigurationUpdated(_))
+        .Times(1)
+        .WillOnce(testing::Invoke(configUpdate));
+
+    Configuration config;
+    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    serviceInner_->UpdateConfiguration(config);
+    serviceInner_->UpdateConfiguration(config);
+}
+
+/*
+ * Feature: AMS
+ * Function: AppLifeCycle::GetGlobalConfiguration
+ * SubFunction: initialization
+ * FunctionPoints: NA
+ * CaseDescription: Initialize a persistent environment variable object
+ */
+HWTEST_F(AmsAppLifeCycleTest, GetGlobalConfiguration_001, TestSize.Level1)
+{
+    auto configMgr = serviceInner_->GetConfiguration();
+    EXPECT_TRUE(configMgr);
+
+    auto language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    EXPECT_TRUE(language.empty());
+
+    serviceInner_->GetGlobalConfiguration();
+    language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    EXPECT_TRUE(!language.empty());
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

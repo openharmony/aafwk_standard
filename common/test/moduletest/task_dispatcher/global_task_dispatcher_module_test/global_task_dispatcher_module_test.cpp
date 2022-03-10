@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,7 +68,7 @@ std::shared_ptr<TaskDispatcher> GlobalTaskDispatcherModuleTest::GetMtGlobalTaskD
 HWTEST_F(GlobalTaskDispatcherModuleTest, GetMtGlobalTaskDispatcherTest_001, TestSize.Level1)
 {
     auto name = std::string("GetMtGlobalTaskDispatcherTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     TaskPriority defaultPriority = TaskPriority::DEFAULT;
     std::shared_ptr<TaskDispatcher> defaultPtr1 = GetMtGlobalTaskDispatcher(defaultPriority);
     std::shared_ptr<TaskDispatcher> defaultPtr2 = GetMtGlobalTaskDispatcher(defaultPriority);
@@ -82,7 +82,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GetMtGlobalTaskDispatcherTest_001, Test
     EXPECT_NE(defaultPtr1.get(), highPtr1.get());
     EXPECT_NE(lowPtr1.get(), highPtr1.get());
     EXPECT_EQ(highPtr1.get(), highPtr2.get());
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -93,7 +93,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GetMtGlobalTaskDispatcherTest_001, Test
 HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_SyncDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("GlobalTaskDispatcher_SyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<TaskDispatcher> ptr = GetMtGlobalTaskDispatcher(TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     EXPECT_TRUE(count.load() == 0);
@@ -119,7 +119,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_SyncDispatchTest_0
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 2);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -154,7 +154,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncDispatchTest_
 HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncGroupDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("GlobalTaskDispatcher_AsyncGroupDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<TaskDispatcher> ptr = GetMtGlobalTaskDispatcher(TaskPriority::DEFAULT);
     // init
     std::atomic<int> count(0);
@@ -187,7 +187,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncGroupDispatch
     EXPECT_TRUE(ptr->GroupDispatchWait(group, 1000));
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     EXPECT_TRUE(count.load() == 3);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -198,7 +198,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncGroupDispatch
 HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncGroupDispatchTest_002, TestSize.Level1)
 {
     auto name = std::string("GlobalTaskDispatcher_AsyncGroupDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<TaskDispatcher> ptr = GetMtGlobalTaskDispatcher(TaskPriority::DEFAULT);
     long sleep1 = 200;
     std::shared_ptr<Group> group = ptr->CreateDispatchGroup();
@@ -216,7 +216,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_AsyncGroupDispatch
     }));
     bool result = ptr->GroupDispatchWait(group, 10);
     EXPECT_EQ(false, result);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -238,7 +238,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_ApplyDispatchTest_
         int index = count.fetch_add(1);
         EXPECT_TRUE(index >= repeatCount);
         EXPECT_TRUE(index < repeatCount * 2);
-        GTEST_LOG_(INFO) << name + " repeats1";
+        GTEST_LOG_(INFO) << (name + " repeats1");
     });
     ptr->ApplyDispatch(repeats1, repeatCount);
 
@@ -248,7 +248,7 @@ HWTEST_F(GlobalTaskDispatcherModuleTest, GlobalTaskDispatcher_ApplyDispatchTest_
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index < repeatCount);
-        GTEST_LOG_(INFO) << name + " repeats2";
+        GTEST_LOG_(INFO) << (name + " repeats2");
     });
     ptr->ApplyDispatch(repeats2, repeatCount);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -530,7 +530,7 @@ HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_HandleAbilityTransaction_080
 /**
  * @tc.number: AaFwk_PageAbilityImpl_HandleAbilityTransaction_0900
  * @tc.name: HandleAbilityTransaction
- * @tc.desc: Handle transactions in the Active/Background/Inactive/Inital states
+ * @tc.desc: Handle transactions in the Active/Background/Inactive/Initial states
  */
 HWTEST_F(PageAbilityImplTest, AaFwk_PageAbilityImpl_HandleAbilityTransaction_0900, Function | MediumTest | Level1)
 {

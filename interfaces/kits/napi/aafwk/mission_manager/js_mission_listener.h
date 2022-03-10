@@ -35,7 +35,7 @@ public:
     void OnMissionSnapshotChanged(int32_t missionId) override;
     void OnMissionMovedToFront(int32_t missionId) override;
     void AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject);
-    void RemoveJsListenerObject(int32_t listenerId);
+    bool RemoveJsListenerObject(int32_t listenerId);
     bool IsEmpty();
 
 private:

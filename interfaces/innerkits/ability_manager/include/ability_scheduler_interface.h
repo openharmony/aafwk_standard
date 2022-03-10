@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -228,6 +228,7 @@ public:
      */
     virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
+#ifdef SUPPORT_GRAPHICS
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
 
     /**
@@ -236,6 +237,7 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     virtual void NotifyTopActiveAbilityChanged(bool flag) = 0;
+#endif
 
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.
@@ -332,7 +334,7 @@ public:
         // ipc id for scheduling BatchInsert​
         SCHEDULE_BATCHINSERT,
 
-        // ipc id for dataAbilityObServer Reguster
+        // ipc id for dataAbilityObServer Register
         SCHEDULE_REGISTEROBSERVER,
 
         // ipc id for dataAbilityObServer UnReguster

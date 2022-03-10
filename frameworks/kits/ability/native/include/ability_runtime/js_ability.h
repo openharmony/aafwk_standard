@@ -46,13 +46,14 @@ public:
 
     void OnStart(const Want &want) override;
     void OnStop() override;
-
+#ifdef SUPPORT_GRAPHICS
     void OnSceneCreated() override;
     void onSceneDestroyed() override;
     void OnSceneRestored() override;
 
     void OnForeground(const Want &want) override;
     void OnBackground() override;
+#endif
     bool OnContinue(WantParams &wantParams) override;
     void OnConfigurationUpdated(const Configuration &configuration) override;
     void UpdateContextConfiguration() override;
@@ -65,18 +66,22 @@ public:
     sptr<IRemoteObject> CallRequest() override;
 
 protected:
+#ifdef SUPPORT_GRAPHICS
     void DoOnForeground(const Want &want) override;
     void RequsetFocus(const Want &want) override;
-
+#endif
 private:
     void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
     std::unique_ptr<NativeReference> CreateAppWindowStage();
+#ifdef SUPPORT_GRAPHICS
     void GetPageStackFromWant(const Want &want, std::string &pageStack);
+#endif
     std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> CreateADelegatorAbilityProperty();
 
     JsRuntime &jsRuntime_;
     std::shared_ptr<NativeReference> shellContextRef_;
     std::unique_ptr<NativeReference> jsAbilityObj_;
+    sptr<IRemoteObject> remoteCallee_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

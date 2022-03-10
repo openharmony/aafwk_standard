@@ -26,13 +26,13 @@ namespace AbilityDelegatorJs {
 using namespace OHOS::AbilityRuntime;
 NativeValue *CreateJsAbilityDelegator(NativeEngine &engine)
 {
-    HILOG_INFO("CreateJsAbilityDelegator is called");
+    HILOG_INFO("enter");
 
     NativeValue *objValue = engine.CreateObject();
     NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
     if (object == nullptr) {
         HILOG_ERROR("Failed to get object");
-        return nullptr;
+        return engine.CreateNull();
     }
 
     std::unique_ptr<JSAbilityDelegator> jsAbilityDelegator = std::make_unique<JSAbilityDelegator>();
@@ -54,7 +54,7 @@ NativeValue *CreateJsAbilityDelegator(NativeEngine &engine)
 
 NativeValue *SetAbilityDelegatorArgumentsPara(NativeEngine &engine, const std::map<std::string, std::string> &paras)
 {
-    HILOG_INFO("SetAbilityDelegatorArgumentsPara is called");
+    HILOG_INFO("enter");
     NativeValue *objValue = engine.CreateObject();
     NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
     if (object == nullptr) {
@@ -72,13 +72,13 @@ NativeValue *SetAbilityDelegatorArgumentsPara(NativeEngine &engine, const std::m
 NativeValue *CreateJsAbilityDelegatorArguments(
     NativeEngine &engine, const std::shared_ptr<AbilityDelegatorArgs> &abilityDelegatorArgs)
 {
-    HILOG_INFO("CreateJsAbilityDelegatorArguments is called");
+    HILOG_INFO("enter");
 
     NativeValue *objValue = engine.CreateObject();
     NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
     if (object == nullptr) {
         HILOG_ERROR("Failed to get object");
-        return nullptr;
+        return engine.CreateNull();
     }
 
     object->SetProperty("bundleName", CreateJsValue(engine, abilityDelegatorArgs->GetTestBundleName()));
@@ -90,32 +90,15 @@ NativeValue *CreateJsAbilityDelegatorArguments(
     return objValue;
 }
 
-NativeValue *CreateJsAbilityState(NativeEngine &engine, AbilityDelegator::AbilityState &lifeState)
-{
-    HILOG_INFO("CreateJsAbilityState is called");
-    NativeValue *objValue = CreateJsValue(engine, static_cast<int>(lifeState));
-    if (!objValue) {
-        HILOG_ERROR("CreateJsAbilityState objValue is nullptr");
-        return nullptr;
-    }
-    return objValue;
-}
-
-NativeValue *CreateJsBool(NativeEngine &engine, bool &flag)
-{
-    HILOG_INFO("CreateJsBool is called");
-    NativeValue *objValue = CreateJsValue(engine, static_cast<bool>(flag));
-    if (!objValue) {
-        HILOG_ERROR("CreateJsBool objValue is nullptr");
-        return nullptr;
-    }
-    return objValue;
-}
-
 NativeValue *CreateJsShellCmdResult(NativeEngine &engine, std::unique_ptr<ShellCmdResult> &shellResult)
 {
-    HILOG_INFO("CreateJsShellCmdResult is called");
+    HILOG_INFO("enter");
 
+    if (!shellResult) {
+        HILOG_ERROR("shellResult is null");
+        return nullptr;
+    }
+    
     NativeValue *objValue = engine.CreateObject();
     NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
     if (object == nullptr) {

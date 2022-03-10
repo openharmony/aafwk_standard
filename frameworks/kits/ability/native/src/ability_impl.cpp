@@ -46,10 +46,12 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     handler_ = handler;
     auto info = record->GetAbilityInfo();
     isStageBasedModel_ = info && info->isStageBasedModel;
+#ifdef SUPPORT_GRAPHICS
     if (info && info->type == AbilityType::PAGE) {
         ability_->SetSceneListener(
             sptr<WindowLifeCycleImpl>(new (std::nothrow) WindowLifeCycleImpl(token_, shared_from_this())));
     }
+#endif
     ability_->Init(record->GetAbilityInfo(), application, handler, token);
     lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
     abilityLifecycleCallbacks_ = application;
@@ -70,32 +72,37 @@ void AbilityImpl::Start(const Want &want)
         APP_LOGE("AbilityImpl::Start ability_ or abilityLifecycleCallbacks_ is nullptr");
         return;
     }
-
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AbilityType::PAGE) &&
         (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         ability_->HandleCreateAsContinuation(want);
     }
-
+#endif
     APP_LOGI("AbilityImpl::Start");
     ability_->OnStart(want);
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STARTED_NEW;
     } else {
+#endif
         if (ability_->GetAbilityInfo()->type == AbilityType::DATA) {
             lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
         } else {
             lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
         }
+#ifdef SUPPORT_GRAPHICS
     }
+#endif
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
-
+#ifdef SUPPORT_GRAPHICS
     // Multimodal Events Register
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (!ability_->GetAbilityInfo()->isStageBasedModel)) {
         WindowEventRegister();
     }
+#endif
     APP_LOGI("%{public}s end.", __func__);
 }
 
@@ -113,12 +120,16 @@ void AbilityImpl::Stop()
     }
 
     ability_->OnStop();
+#ifdef SUPPORT_GRAPHICS
     if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
         (ability_->GetAbilityInfo()->isStageBasedModel)) {
         lifecycleState_ = AAFwk::ABILITY_STATE_STOPED_NEW;
     } else {
+#endif
         lifecycleState_ = AAFwk::ABILITY_STATE_INITIAL;
+#ifdef SUPPORT_GRAPHICS
     }
+#endif
     abilityLifecycleCallbacks_->OnAbilityStop(ability_);
     ability_->Destroy(); // Release window and ability.
     ability_ = nullptr;
@@ -140,12 +151,12 @@ void AbilityImpl::Active()
 
     APP_LOGI("AbilityImpl::Active");
     ability_->OnActive();
-
+#ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
         ability_->OnTopActiveAbilityChanged(true);
         ability_->OnWindowFocusChanged(true);
     }
-
+#endif
     lifecycleState_ = AAFwk::ABILITY_STATE_ACTIVE;
     abilityLifecycleCallbacks_->OnAbilityActive(ability_);
     APP_LOGI("%{public}s end.", __func__);
@@ -166,12 +177,12 @@ void AbilityImpl::Inactive()
 
     APP_LOGI("AbilityImpl::Inactive");
     ability_->OnInactive();
-
+#ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {
         ability_->OnTopActiveAbilityChanged(false);
         ability_->OnWindowFocusChanged(false);
     }
-
+#endif
     lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
     abilityLifecycleCallbacks_->OnAbilityInactive(ability_);
     APP_LOGI("%{public}s end.", __func__);
@@ -191,6 +202,7 @@ int AbilityImpl::GetCompatibleVersion()
     return -1;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityImpl::AfterUnFocused()
 {
     APP_LOGI("%{public}s begin.", __func__);
@@ -311,6 +323,7 @@ void AbilityImpl::Background()
     abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
     APP_LOGI("%{public}s end.", __func__);
 }
+#endif
 
 /**
  * @brief Save data and states of an ability when it is restored by the system. and Calling information back to Ability.
@@ -428,6 +441,7 @@ int AbilityImpl::GetCurrentState()
     return lifecycleState_;
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Execution the KeyDown callback of the ability
  * @param keyEvent Indicates the key-down event.
@@ -466,6 +480,7 @@ void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEven
 {
     APP_LOGI("AbilityImpl::DoPointerEvent called");
 }
+#endif
 
 /**
  * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -486,32 +501,7 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
         return;
     }
 
-    if (resultData.HasParameter(OHOS_RESULT_PERMISSION_KEY) && resultData.HasParameter(OHOS_RESULT_PERMISSIONS_LIST) &&
-        resultData.HasParameter(OHOS_RESULT_CALLER_BUNDLERNAME)) {
-
-        if (resultCode > 0) {
-            std::vector<std::string> permissions = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST);
-            std::vector<std::string> grantYes = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_YES);
-            std::vector<std::string> grantNo = resultData.GetStringArrayParam(OHOS_RESULT_PERMISSIONS_LIST_NO);
-            std::vector<int> grantResult;
-            int intOK = 0;
-            for (size_t i = 0; i < permissions.size(); i++) {
-                intOK = 0;
-                for (size_t j = 0; j < grantYes.size(); j++) {
-                    if (permissions[i] == grantYes[j]) {
-                        intOK = 1;
-                        break;
-                    }
-                }
-                grantResult.push_back(intOK);
-            }
-            APP_LOGI("%{public}s begin OnRequestPermissionsFromUserResult.", __func__);
-            ability_->OnRequestPermissionsFromUserResult(requestCode, permissions, grantResult);
-            APP_LOGI("%{public}s end OnRequestPermissionsFromUserResult.", __func__);
-        } else {
-            APP_LOGI("%{public}s user cancel permissions.", __func__);
-        }
-    } else if (resultData.HasParameter(PERMISSION_KEY)) {
+    if (resultData.HasParameter(PERMISSION_KEY)) {
         std::vector<std::string> permissions = resultData.GetStringArrayParam(PERMISSION_KEY);
         std::vector<int> grantedResult(permissions.size(), -1);
         if (resultCode > 0) {
@@ -852,6 +842,7 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
     APP_LOGI("%{public}s end.", __func__);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
 {
     int32_t code = keyEvent->GetKeyAction();
@@ -885,6 +876,7 @@ void AbilityImpl::WindowEventRegister()
         }
     }
 }
+#endif
 
 /**
  * @brief Create a PostEvent timeout task. The default delay is 5000ms

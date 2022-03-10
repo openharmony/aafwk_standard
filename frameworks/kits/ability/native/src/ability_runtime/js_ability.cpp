@@ -26,15 +26,18 @@
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
 #include "napi_common_configuration.h"
+#ifdef SUPPORT_GRAPHICS
 #include "js_window_stage.h"
+#endif
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
 #include "string_wrapper.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
+#ifdef SUPPORT_GRAPHICS
 const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
-
+#endif
 Ability *JsAbility::Create(const std::unique_ptr<Runtime> &runtime)
 {
     return new JsAbility(static_cast<JsRuntime &>(*runtime));
@@ -172,6 +175,7 @@ void JsAbility::OnStop()
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 void JsAbility::OnSceneCreated()
 {
     Ability::OnSceneCreated();
@@ -263,6 +267,7 @@ void JsAbility::OnBackground()
         delegator->PostPerformBackground(CreateADelegatorAbilityProperty());
     }
 }
+#endif
 
 bool JsAbility::OnContinue(WantParams &wantParams)
 {
@@ -370,6 +375,12 @@ sptr<IRemoteObject> JsAbility::CallRequest()
         HILOG_WARN("JsAbility::CallRequest Obj is nullptr");
         return nullptr;
     }
+
+    if (remoteCallee_ != nullptr) {
+        HILOG_INFO("JsAbility::CallRequest get Callee remoteObj.");
+        return remoteCallee_;
+    }
+
     HandleScope handleScope(jsRuntime_);
     HILOG_DEBUG("JsAbility::CallRequest set runtime scope.");
     auto& nativeEngine = jsRuntime_.GetNativeEngine();
@@ -403,8 +414,9 @@ sptr<IRemoteObject> JsAbility::CallRequest()
         HILOG_ERROR("JsAbility::CallRequest obj is nullptr");
     }
 
+    remoteCallee_ = remoteObj;
     HILOG_INFO("JsAbility::CallRequest end.");
-    return remoteObj;
+    return remoteCallee_;
 }
 
 void JsAbility::OnRequestPermissionsFromUserResult(
@@ -447,6 +459,7 @@ void JsAbility::CallObjectMethod(const char *name, NativeValue *const *argv, siz
     nativeEngine.CallFunction(value, methodOnCreate, argv, argc);
 }
 
+#ifdef SUPPORT_GRAPHICS
 std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
 {
     HandleScope handleScope(jsRuntime_);
@@ -539,6 +552,7 @@ void JsAbility::DoOnForeground(const Want &want)
     scene_->GoForeground(Ability::sceneFlag_);
     HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);
 }
+#endif
 
 std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegatorAbilityProperty()
 {
@@ -550,6 +564,7 @@ std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegat
     return property;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void JsAbility::RequsetFocus(const Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -565,5 +580,6 @@ void JsAbility::RequsetFocus(const Want &want)
     }
     scene_->GoForeground(Ability::sceneFlag_);
 }
+#endif
 }  // namespace AbilityRuntime
 }  // namespace OHOS

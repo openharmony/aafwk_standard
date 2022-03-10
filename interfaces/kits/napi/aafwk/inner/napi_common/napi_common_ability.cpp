@@ -2052,12 +2052,6 @@ void GetAppVersionInfoExecuteCB(napi_env env, void *data)
     std::shared_ptr<AbilityInfo> abilityInfoPtr = appVersionInfoCB->cbBase.ability->GetAbilityInfo();
     std::shared_ptr<ApplicationInfo> appInfoPtr = appVersionInfoCB->cbBase.ability->GetApplicationInfo();
     if (abilityInfoPtr != nullptr && appInfoPtr != nullptr) {
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  bundleName = %{public}s", abilityInfoPtr->bundleName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  appName = %{public}s", abilityInfoPtr->appName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionName1 = %{public}s", abilityInfoPtr->versionName.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  name = %{public}s", appInfoPtr->name.c_str());
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionCode = %{public}d", appInfoPtr->versionCode);
-        HILOG_ERROR("NAPI_GetAppVersionInfo,  versionName2 = %{public}s", appInfoPtr->versionName.c_str());
         SaveAppVersionInfo(appVersionInfoCB->appVersionInfo, abilityInfoPtr->appName, appInfoPtr->versionName,
             appInfoPtr->versionCode);
     } else {
@@ -3095,7 +3089,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
         return;
     }
-
+#ifdef SUPPORT_GRAPHICS
     // inherit split mode
     auto windowMode = asyncCallbackInfo->ability->GetCurrentWindowMode();
     if (windowMode == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
@@ -3103,7 +3097,7 @@ void StartAbilityExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->param.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
     HILOG_INFO("window mode is %{public}d", windowMode);
-
+#endif
     ErrCode ret = ERR_OK;
     if (asyncCallbackInfo->param.setting == nullptr) {
         HILOG_INFO("%{public}s param.setting == nullptr call StartAbility.", __func__);

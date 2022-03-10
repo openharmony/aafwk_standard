@@ -58,14 +58,16 @@ public:
     NativeValue* ClearCallbackTimer(NativeEngine& engine, NativeCallbackInfo& info);
     std::string BuildNativeAndJsBackStackTrace();
 
+    virtual bool RunScript(const std::string& path);
+
 protected:
     JsRuntime() = default;
 
     virtual bool Initialize(const Options& options);
     void Deinitialize();
-    bool LoadModuleFile(const std::string& moduleName, const std::string& modulePath, std::vector<uint8_t>& content);
 
     bool isArkEngine_ = false;
+    bool debugMode_ = false;
     std::unique_ptr<NativeEngine> nativeEngine_;
     std::string codePath_;
     std::unique_ptr<NativeReference> methodRequireNapiRef_;

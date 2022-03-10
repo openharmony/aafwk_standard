@@ -24,7 +24,7 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/inclide",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
@@ -53,6 +53,7 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
