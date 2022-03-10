@@ -156,20 +156,20 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
         return ERR_INVALID_VALUE;
     }
 
-    bool status;
     APP_LOGI("OnContinue begin");
-    status = ability->OnContinue(wantParams);
-    APP_LOGI("OnContinue end");
-    if (!status) {
+    int32_t status = ability->OnContinue(wantParams);
+    APP_LOGI("OnContinue end, status: %{public}d", status);
+    if (status != OnContinueResult::AGREE) {
         APP_LOGE("OnContinue failed.");
         return CONTINUE_ON_CONTINUE_FAILED;
     }
     auto abilityInfo = abilityInfo_.lock();
     std::string &bundleName = abilityInfo->bundleName;
     ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerSync();
+
 #ifdef SUPPORT_GRAPHICS
-    status = GetContentInfo(wantParams);
-    if (!status) {
+    bool ret = GetContentInfo(wantParams);
+    if (!ret) {
         APP_LOGE("GetContentInfo failed.");
         return CONTINUE_GET_CONTENT_FAILED;
     }

@@ -1783,11 +1783,11 @@ std::weak_ptr<IContinuationRegisterManager> Ability::GetContinuationRegisterMana
 /**
  * @brief Callback function to ask the user to prepare for the migration .
  *
- * @return If the user allows migration and saves data suscessfully, it returns true; otherwise, it returns false.
+ * @return If the user allows migration and saves data suscessfully, it returns 0; otherwise, it returns errcode.
  */
-bool Ability::OnContinue(WantParams &wantParams)
+int32_t Ability::OnContinue(WantParams &wantParams)
 {
-    return false;
+    return ContinuationManager::OnContinueResult::Reject;
 }
 
 #ifdef SUPPORT_GRAPHICS
