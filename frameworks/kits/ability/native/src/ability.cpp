@@ -3203,8 +3203,10 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
     std::vector<std::string> strPredicatesList;
     strPredicatesList.clear();
     std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = operation->GetDataAbilityPredicates();
-    if (predicates) {
-        APP_LOGI("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
+    if (predicates == nullptr) {
+        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
+    } else {
+        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
         strPredicatesList = predicates->GetWhereArgs();
     }
 
