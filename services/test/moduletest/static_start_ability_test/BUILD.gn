@@ -127,6 +127,5 @@ ohos_moduletest("static_start_ability_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":static_start_ability_test" ]
+  # deps = [ ":static_start_ability_test" ]
 }
