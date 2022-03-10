@@ -323,7 +323,9 @@ bool JsRuntime::Initialize(const Options& options)
         return false;
     }
 
-    OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
+    if (options.loadAce) {
+        OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
+    }
     codePath_ = options.codePath;
 
     auto moduleManager = NativeModuleManager::GetInstance();
