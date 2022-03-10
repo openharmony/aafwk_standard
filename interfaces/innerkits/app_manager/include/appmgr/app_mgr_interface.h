@@ -172,6 +172,18 @@ public:
     virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const BundleInfo &bundleInfo) = 0;
 
+    /**
+     * @brief Finish user test.
+     * @param msg user test message.
+     * @param resultCode user test result Code.
+     * @param bundleName user test bundleName.
+     * @param pid the user test process id.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int FinishUserTest(
+        const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid) = 0;
+
     virtual void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag) = 0;
 
     /**
@@ -184,7 +196,7 @@ public:
     virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) = 0;
 
     /**
-     * Start webview render process, called by webview host.
+     * Start nweb render process, called by nweb host.
      *
      * @param renderParam, params passed to renderprocess.
      * @param ipcFd, ipc file descriptior for web browser and render process.
@@ -220,6 +232,7 @@ public:
         UNREGISTER_APPLICATION_STATE_OBSERVER,
         GET_FOREGROUND_APPLICATIONS,
         START_USER_TEST_PROCESS,
+        FINISH_USER_TEST,
         SCHEDULE_ACCEPT_WANT_DONE,
         APP_GET_ABILITY_RECORDS_BY_PROCESS_ID,
         START_RENDER_PROCESS,

@@ -21,6 +21,7 @@ config("module_private_config") {
   include_dirs = [
     "//utils/native/base/include",
     "//sdk/appexecfwk/appexecfwk_base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
     "//foundation/aafwk/standard/interfaces/innerkits/intent/include",
     "//foundation/appexecfwk/standard/common/log/include",
@@ -183,7 +184,6 @@ ohos_unittest("operation_test") {
   module_out_path = module_output_path
   sources = [
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content/operation_builder.h",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr/include/uri.h",
     "unittest/common/operation_test.cpp",
   ]
 
@@ -194,8 +194,8 @@ ohos_unittest("operation_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -242,9 +242,9 @@ ohos_unittest("skills_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -293,9 +293,9 @@ ohos_unittest("want_params_wrapper_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -317,9 +317,9 @@ ohos_unittest("want_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]

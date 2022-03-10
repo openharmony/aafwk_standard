@@ -43,7 +43,9 @@ void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk:
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
             if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+#ifdef SUPPORT_GRAPHICS
                 Background();
+#endif
                 Stop();
             }
             break;

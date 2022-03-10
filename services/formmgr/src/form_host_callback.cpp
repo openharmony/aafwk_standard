@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,19 @@
  * limitations under the License.
  */
 
+#include "form_host_callback.h"
+
 #include <cinttypes>
 
 #include "appexecfwk_errors.h"
 #include "app_log_wrapper.h"
-#include "form_host_callback.h"
 #include "form_host_interface.h"
 #include "form_task_mgr.h"
 #include "string_ex.h"
 
 namespace OHOS {
 namespace AppExecFwk {
+
 /**
  * @brief Request to give back a Form.
  * @param formId The Id of the forms to create.
@@ -37,7 +39,6 @@ void FormHostCallback::OnAcquired(const int64_t formId, const FormRecord& record
     APP_LOGD("FormHostCallback OnAcquired, formId:%{public}" PRId64 "", formId);
     FormTaskMgr::GetInstance().PostAcquireTaskToHost(formId, record, callerToken);
 }
-
 
 /**
 * @brief Form is updated.

@@ -56,6 +56,8 @@ public:
         void(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken, const int32_t visibility,
             const int32_t perceptibility, const int32_t connectionState));
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
+    MOCK_METHOD0(GetConfiguration, std::shared_ptr<Configuration>());
+
     void Post()
     {
         if (currentCount_ > 1) {

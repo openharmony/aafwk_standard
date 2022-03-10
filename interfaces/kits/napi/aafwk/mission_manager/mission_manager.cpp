@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,9 @@
 #include "js_runtime_utils.h"
 #include "mission_snapshot.h"
 #include "napi_common_start_options.h"
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
+#endif
 #include "start_options.h"
 
 #include <mutex>
@@ -158,11 +160,10 @@ private:
                     task.Reject(engine, CreateJsError(engine, errCode, "Invalidate params."));
                     return;
                 }
-                if (!missionListener) {
+                if (!missionListener || !missionListener->RemoveJsListenerObject(missionListenerId)) {
                     task.Reject(engine, CreateJsError(engine, ERR_NOT_OK, "Not registered yet."));
                     return;
                 }
-                missionListener->RemoveJsListenerObject(missionListenerId);
                 if (!missionListener->IsEmpty()) {
                     task.Resolve(engine, engine.CreateUndefined());
                     return;
@@ -302,9 +303,11 @@ private:
                     abilityObj->SetProperty(
                         "abilityName", CreateJsValue(engine, missionSnapshot.topAbility.GetAbilityName()));
                     object->SetProperty("ability", abilityValue);
+#ifdef SUPPORT_GRAPHICS
                     auto snapshotValue = reinterpret_cast<NativeValue*>(Media::PixelMapNapi::CreatePixelMap(
                         reinterpret_cast<napi_env>(&engine), missionSnapshot.snapshot));
                     object->SetProperty("snapshot", snapshotValue);
+#endif
                     task.Resolve(engine, objValue);
                 } else {
                     task.Reject(engine, CreateJsError(engine, ret, "Get mission snapshot failed."));

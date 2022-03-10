@@ -32,6 +32,7 @@ public:
     struct Options {
         Language lang = Language::JS;
         std::string codePath;
+        std::string packagePath;
         std::shared_ptr<AppExecFwk::EventRunner> eventRunner;
     };
 

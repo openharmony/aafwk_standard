@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,12 +51,12 @@ public:
 HWTEST(WorkerThreadTest, WorkerThread_ConstructorTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_ConstructorTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -75,7 +75,7 @@ HWTEST(WorkerThreadTest, WorkerThread_ConstructorTest_001, TestSize.Level0)
         EXPECT_EQ(thread->GetThreadName(), "");
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -89,12 +89,12 @@ HWTEST(WorkerThreadTest, WorkerThread_ConstructorTest_001, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_CreateThreadTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_CreateThreadTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto factory = std::make_shared<DefaultThreadFactory>();
     std::atomic<int> count(0);
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -119,7 +119,7 @@ HWTEST(WorkerThreadTest, WorkerThread_CreateThreadTest_001, TestSize.Level0)
         EXPECT_TRUE(thread->GetThread() != nullptr);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -133,12 +133,12 @@ HWTEST(WorkerThreadTest, WorkerThread_CreateThreadTest_001, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_IncTaskCountTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_IncTaskCountTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -155,7 +155,7 @@ HWTEST(WorkerThreadTest, WorkerThread_IncTaskCountTest_001, TestSize.Level0)
         EXPECT_EQ(thread->GetTaskCounter(), 2);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -169,12 +169,12 @@ HWTEST(WorkerThreadTest, WorkerThread_IncTaskCountTest_001, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_GetTaskCounterTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_GetTaskCounterTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -191,7 +191,7 @@ HWTEST(WorkerThreadTest, WorkerThread_GetTaskCounterTest_001, TestSize.Level0)
         EXPECT_EQ(thread->GetTaskCounter(), 2);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -205,12 +205,12 @@ HWTEST(WorkerThreadTest, WorkerThread_GetTaskCounterTest_001, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_GetThreadNameTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_GetThreadNameTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -236,17 +236,17 @@ HWTEST(WorkerThreadTest, WorkerThread_GetThreadNameTest_001, TestSize.Level0)
         EXPECT_EQ(thread->GetThreadName(), std::string("PoolThread-3"));
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(WorkerThreadTest, WorkerThread_GetThreadNameTest_002, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_GetThreadNameTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -259,7 +259,7 @@ HWTEST(WorkerThreadTest, WorkerThread_GetThreadNameTest_002, TestSize.Level0)
         EXPECT_EQ(thread->GetThreadName(), std::string(""));
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -273,12 +273,12 @@ HWTEST(WorkerThreadTest, WorkerThread_GetThreadNameTest_002, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_PollFirstTaskTest_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_PollFirstTaskTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -292,12 +292,12 @@ HWTEST(WorkerThreadTest, WorkerThread_PollFirstTaskTest_001, TestSize.Level0)
         EXPECT_EQ(thread->PollFirstTask(), nullptr);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(WorkerThreadTest, WorkerThread_PollFirstTaskTest_002, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_PollFirstTaskTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto firstTask = nullptr;
 
@@ -311,7 +311,7 @@ HWTEST(WorkerThreadTest, WorkerThread_PollFirstTaskTest_002, TestSize.Level0)
         EXPECT_EQ(thread->PollFirstTask(), firstTask);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /*
@@ -325,12 +325,12 @@ HWTEST(WorkerThreadTest, WorkerThread_PollFirstTaskTest_002, TestSize.Level0)
 HWTEST(WorkerThreadTest, WorkerThread_GetThread_001, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_GetThread_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::atomic<int> count(0);
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto taskRunner = std::make_shared<Runnable>([&count, &name]() {
         count++;
-        GTEST_LOG_(INFO) << name + "task end";
+        GTEST_LOG_(INFO) << (name + "task end");
     });
     auto priority = TaskPriority::DEFAULT;
     auto firstTask = std::make_shared<Task>(taskRunner, priority, nullptr);
@@ -345,12 +345,12 @@ HWTEST(WorkerThreadTest, WorkerThread_GetThread_001, TestSize.Level0)
         EXPECT_TRUE(thread->GetThread() != nullptr);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 HWTEST(WorkerThreadTest, WorkerThread_GetThread_002, TestSize.Level0)
 {
     auto name = std::string("WorkerThread_GetThread_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     auto factory = std::make_shared<DefaultThreadFactory>();
     auto firstTask = nullptr;
 
@@ -362,5 +362,5 @@ HWTEST(WorkerThreadTest, WorkerThread_GetThread_002, TestSize.Level0)
         EXPECT_EQ(thread->GetThread(), nullptr);
     }
 
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }

@@ -22,7 +22,9 @@
 #include "hilog_wrapper.h"
 #include "ipc_singleton.h"
 #include "js_runtime_utils.h"
+#ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
+#endif
 #include "os_account_manager.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
@@ -101,7 +103,7 @@ std::string ContextImpl::GetDatabaseDir()
     std::string dir;
     if (IsCreateBySystemApp()) {
         dir = CONTEXT_DATA_APP + currArea_ + CONTEXT_FILE_SEPARATOR + std::to_string(GetCurrentAccountId())
-		    + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE + GetBundleName();
+		    + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE + CONTEXT_FILE_SEPARATOR + GetBundleName();
     } else {
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
     }
@@ -281,6 +283,7 @@ void ContextImpl::InitResourceManager(
     }
 
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+#ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
     resConfig->SetLocaleInfo(locale);
@@ -292,6 +295,7 @@ void ContextImpl::InitResourceManager(
     } else {
         HILOG_ERROR("ContextImpl::InitResourceManager language: GetLocaleInfo is null.");
     }
+#endif
     resourceManager->UpdateResConfig(*resConfig);
     appContext->SetResourceManager(resourceManager);
 }

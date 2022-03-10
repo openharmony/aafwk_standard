@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-class StaticSubscriberExtension {
-    onCommonEventTriggered(event) {
-        console.log('onCommonEventTriggered, event:' + event.code);
+class StaticSubscriberExtensionAbility {
+    onReceiveEvent(event) {
+        console.log('onReceiveEvent, event:' + event.code);
     }
 }
 
-export default StaticSubscriberExtension
+export default StaticSubscriberExtensionAbility

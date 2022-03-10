@@ -12,12 +12,16 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("appmanager_napi") {
-  include_dirs = [
-    "//foundation/multimedia/image_standard/interfaces/innerkits/include",
-    "//foundation/appexecfwk/standard/kits/appkit/napi/app_manager",
-  ]
+  include_dirs =
+      [ "//foundation/multimedia/image_standard/interfaces/innerkits/include" ]
+
+  if (ability_runtime_graphics) {
+    include_dirs +=
+        [ "//foundation/appexecfwk/standard/kits/appkit/napi/app_manager" ]
+  }
 
   sources = [
     "app_manager_module.cpp",

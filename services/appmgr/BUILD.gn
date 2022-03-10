@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("appmgr_config") {
   include_dirs = [
@@ -25,6 +26,8 @@ config("appmgr_config") {
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//base/global/i18n_standard/frameworks/intl/include",
+    "//foundation/aafwk/standard/tools/aa/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
   ]
 }
 
@@ -78,7 +81,6 @@ ohos_shared_library("libams") {
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
     "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
@@ -86,6 +88,11 @@ ohos_shared_library("libams") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+    defines += [ "SUPPORT_GRAPHICS" ]
+  }
 
   external_deps = [
     "appspawn:appspawn_socket_client",

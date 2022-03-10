@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -110,7 +110,7 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
 
     if (isForeground) {
         SetCurrentUserId(userId);
-        // todo : notify wms switching now
+        // notify wms switching now
     }
 
     bool needStart = false;
@@ -275,27 +275,25 @@ void UserController::UserBootDone(std::shared_ptr<UserItem> &item)
 
 void UserController::BroadcastUserStarted(int32_t userId)
 {
-    // todo: broadcast event user start.
+    // broadcast event user start.
 }
 
 void UserController::BroadcastUserBackground(int32_t userId)
 {
-    // todo: broadcast event user switch to bg.
+    // broadcast event user switch to bg.
 }
 
 void UserController::BroadcastUserForeground(int32_t userId)
 {
-    // todo: broadcast event user switch to fg.
+    // broadcast event user switch to fg.
 }
 
 void UserController::BroadcastUserStopping(int32_t userId)
 {
-    // todo
 }
 
 void UserController::BroadcastUserStopped(int32_t userId)
 {
-    // todo
 }
 
 void UserController::SendSystemUserStart(int32_t userId)
@@ -438,24 +436,24 @@ void UserController::SendUserSwitchDone(int32_t userId)
 
 void UserController::HandleSystemUserStart(int32_t userId)
 {
-    // todo : notify system mgr user start.
+    // notify system mgr user start.
 }
 
 void UserController::HandleSystemUserCurrent(int32_t oldUserId, int32_t newUserId)
 {
-    // todo : notify system mgr user switch to new.
+    // notify system mgr user switch to new.
 }
 
 void UserController::HandleReportUserSwitch(int32_t oldUserId, int32_t newUserId,
     std::shared_ptr<UserItem> &usrItem)
 {
-    // todo : notify user switch observers, not support yet.
+    // notify user switch observers, not support yet.
 }
 
 void UserController::HandleUserSwitchTimeout(int32_t oldUserId, int32_t newUserId,
     std::shared_ptr<UserItem> &usrItem)
 {
-    // todo : other observers
+    // other observers
     SendContinueUserSwitch(oldUserId, newUserId, usrItem);
 }
 
@@ -471,8 +469,8 @@ void UserController::HandleContinueUserSwitch(int32_t oldUserId, int32_t newUser
 
 void UserController::HandleUserSwitchDone(int32_t userId)
 {
-    // todo : notify wms switching done.
-    // todo : notify user switch observers.
+    // notify wms switching done.
+    // notify user switch observers.
 }
 }
 }

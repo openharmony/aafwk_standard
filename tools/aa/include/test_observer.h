@@ -31,7 +31,7 @@ public:
     virtual void TestFinished(const std::string &msg, const int &resultCode) override;
     virtual ShellCommandResult ExecuteShellCommand(
         const std::string &cmd, const int64_t timeoutMs) override;
-    bool waitForFinish(const int64_t &timeoutMs);
+    bool WaitForFinish(const int64_t &timeoutMs);
 
 private:
     bool isFinished_;

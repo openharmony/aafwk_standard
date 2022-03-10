@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,11 +71,11 @@ void AppkitNativeModuleTestThird::TearDown(void)
     GTEST_LOG_(INFO) << "AppkitNativeModuleTestThird TearDown";
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", TestProcessInfo);
+    ProcessInfo processing("TestProcess", TestProcessInfo);
     appinf.name = "MockTestApplication";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);
@@ -100,7 +100,7 @@ HWTEST_F(AppkitNativeModuleTestThird, App_Context_ApplicationContext_0100, Funct
 
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
-    ProcessInfo processinf("TestProcess", 9998);
+    ProcessInfo processing("TestProcess", 9998);
     appinf.name = "MockTestApplication";
     appinf.cacheDir = "/hos/lib/cacheDir";
     appinf.dataBaseDir = "/hos/lib/dataBaseDir";
@@ -108,7 +108,7 @@ HWTEST_F(AppkitNativeModuleTestThird, App_Context_ApplicationContext_0100, Funct
     appinf.bundleName = "MockBundleName";
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
-    lanchdate.SetProcessInfo(processinf);
+    lanchdate.SetProcessInfo(processing);
     mockAppMgr->ScheduleLaunchApplication(lanchdate);
 
     usleep(USleepTime);

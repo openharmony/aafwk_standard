@@ -24,10 +24,8 @@
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
-using namespace OHOS::AppExecFwk;
 using namespace OHOS::AbilityRuntime;
 namespace {
-constexpr int32_t ARGC_ONE = 1;
 class JsAbilityDelegatorRegistry {
 public:
     JsAbilityDelegatorRegistry() = default;
@@ -35,7 +33,7 @@ public:
 
     static void Finalizer(NativeEngine *engine, void *data, void *hint)
     {
-        HILOG_INFO("JsAbilityDelegatorRegistry::Finalizer is called");
+        HILOG_INFO("enter");
         std::unique_ptr<JsAbilityDelegatorRegistry>(static_cast<JsAbilityDelegatorRegistry *>(data));
     }
 
@@ -54,41 +52,32 @@ public:
 private:
     NativeValue *OnGetAbilityDelegator(NativeEngine &engine, NativeCallbackInfo &info)
     {
-        HILOG_INFO("OnGetAbilityDelegator is called, argc = %{public}d", static_cast<int>(info.argc));
-
-        AsyncTask::CompleteCallback complete = [](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            HILOG_INFO("OnGetAbilityDelegator AsyncTask::CompleteCallback");
-            task.Resolve(engine, CreateJsAbilityDelegator(engine));
-        };
-        NativeValue *lastParam = (info.argc == ARGC_ONE) ? info.argv[0] : nullptr;
-        NativeValue *result = nullptr;
-        AsyncTask::Schedule(
-            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
-        return result;
+        HILOG_INFO("enter");
+        if (!AppExecFwk::AbilityDelegatorRegistry::GetAbilityDelegator()) {
+            HILOG_ERROR("Failed to get delegator object");
+            return engine.CreateNull();
+        }
+        return CreateJsAbilityDelegator(engine);
     }
 
     NativeValue *OnGetArguments(NativeEngine &engine, NativeCallbackInfo &info)
     {
-        HILOG_INFO("OnGetArguments is called, argc = %{public}d", static_cast<int>(info.argc));
+        HILOG_INFO("enter");
 
-        AsyncTask::CompleteCallback complete = [](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            std::shared_ptr<AppExecFwk::AbilityDelegatorArgs> abilityDelegatorArgs =
-                AppExecFwk::AbilityDelegatorRegistry::GetArguments();
-            task.Resolve(engine, CreateJsAbilityDelegatorArguments(engine, abilityDelegatorArgs));
-        };
-
-        NativeValue *lastParam = (info.argc == ARGC_ONE) ? info.argv[0] : nullptr;
-        NativeValue *result = nullptr;
-        AsyncTask::Schedule(
-            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
-        return result;
+        std::shared_ptr<AppExecFwk::AbilityDelegatorArgs> abilityDelegatorArgs =
+            AppExecFwk::AbilityDelegatorRegistry::GetArguments();
+        if (!abilityDelegatorArgs) {
+            HILOG_ERROR("Failed to get delegator args object");
+            return engine.CreateNull();
+        }
+        return CreateJsAbilityDelegatorArguments(engine, abilityDelegatorArgs);
     }
 };
 } // namespace
 
 NativeValue *JsAbilityDelegatorRegistryInit(NativeEngine *engine, NativeValue *exportObj)
 {
-    HILOG_INFO("JsAbilityDelegatorManagerInit is called");
+    HILOG_INFO("enter");
     if (engine == nullptr || exportObj == nullptr) {
         HILOG_ERROR("Invalid input parameters");
         return nullptr;
@@ -107,7 +96,34 @@ NativeValue *JsAbilityDelegatorRegistryInit(NativeEngine *engine, NativeValue *e
     BindNativeFunction(*engine, *object, "getAbilityDelegator", JsAbilityDelegatorRegistry::GetAbilityDelegator);
     BindNativeFunction(*engine, *object, "getArguments", JsAbilityDelegatorRegistry::GetArguments);
 
+    object->SetProperty("AbilityLifecycleState", AbilityLifecycleStateInit(engine));
+
     return engine->CreateUndefined();
+}
+
+NativeValue *AbilityLifecycleStateInit(NativeEngine *engine)
+{
+    HILOG_INFO("enter");
+
+    if (engine == nullptr) {
+        HILOG_ERROR("Invalid input parameters");
+        return nullptr;
+    }
+
+    NativeValue *objValue = engine->CreateObject();
+    NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    if (object == nullptr) {
+        HILOG_ERROR("Failed to get object");
+        return nullptr;
+    }
+
+    object->SetProperty("CREATE", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::CREATE));
+    object->SetProperty("FOREGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::FOREGROUND));
+    object->SetProperty("BACKGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::BACKGROUND));
+    object->SetProperty("DESTROY", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::DESTROY));
+
+    return objValue;
 }
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS

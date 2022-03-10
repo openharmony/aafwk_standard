@@ -463,5 +463,22 @@ void FormItemInfo::SetIcon(const std::string &icon)
 {
     icon_ = icon;
 }
+/**
+ * @brief Get deviceId_.
+ * @return deviceId_.
+ */
+std::string FormItemInfo::GetDeviceId()
+{
+    return deviceId_;
+}
+
+/**
+ * @brief Set value of  deviceId_.
+ * @param deviceId.
+ */
+void FormItemInfo::SetDeviceId(const std::string &deviceId)
+{
+    deviceId_ = deviceId;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -57,6 +57,17 @@ public:
         AppProcessData appProcessData;
         callback->OnAppStateChanged(appProcessData);
     }
+
+    MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
+
+    int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
+    {
+        code_ = code;
+
+        return 0;
+    }
+
+    int code_ = 0;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

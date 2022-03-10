@@ -274,7 +274,7 @@ NativeValue* JsAbilityContext::OnStartAbilityByCall(NativeEngine& engine, Native
         HILOG_INFO("OnStartAbilityByCall releaseListen is called %{public}s", str.c_str());
     };
 
-    auto callExecute = [calldata = calls] (NativeEngine& engine, AsyncTask& task) {
+    auto callExecute = [calldata = calls] () {
         HILOG_INFO("OnStartAbilityByCall callExecute begin, calls is %{public}p", calldata);
         constexpr int CALLER_TIME_OUT = 10; // 10s
         std::unique_lock<std::mutex> lock(calldata->mutexlock);
@@ -875,6 +875,7 @@ NativeValue* JsAbilityContext::WrapPermissionRequestResult(NativeEngine& engine,
 void JsAbilityContext::InheritWindowMode(AAFwk::Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
+#ifdef SUPPORT_GRAPHICS
     // only split mode need inherit
     auto context = context_.lock();
     if (!context) {
@@ -887,6 +888,7 @@ void JsAbilityContext::InheritWindowMode(AAFwk::Want &want)
         want.SetParam(Want::PARAM_RESV_WINDOW_MODE, windowMode);
     }
     HILOG_INFO("%{public}s called end. window mode is %{public}d", __func__, windowMode);
+#endif
 }
 
 void JsAbilityContext::ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,

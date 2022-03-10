@@ -28,7 +28,7 @@ AbilityMonitor::AbilityMonitor(const std::string &name, const std::shared_ptr<JS
 
 void AbilityMonitor::OnAbilityStart()
 {
-    HILOG_INFO("onAbilityCreate is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -36,12 +36,12 @@ void AbilityMonitor::OnAbilityStart()
 
     jsMonitor_->onAbilityCreate();
 
-    HILOG_INFO("onAbilityCreate is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnAbilityForeground()
 {
-    HILOG_INFO("onAbilityForeground is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -49,12 +49,12 @@ void AbilityMonitor::OnAbilityForeground()
 
     jsMonitor_->onAbilityForeground();
 
-    HILOG_INFO("onAbilityForeground is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnAbilityBackground()
 {
-    HILOG_INFO("onAbilityBackground is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -62,12 +62,12 @@ void AbilityMonitor::OnAbilityBackground()
 
     jsMonitor_->onAbilityBackground();
 
-    HILOG_INFO("onAbilityBackground is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnAbilityStop()
 {
-    HILOG_INFO("onAbilityDestroy is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -75,12 +75,12 @@ void AbilityMonitor::OnAbilityStop()
 
     jsMonitor_->onAbilityDestroy();
 
-    HILOG_INFO("onAbilityDestroy is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnWindowStageCreate()
 {
-    HILOG_INFO("onWindowStageCreate is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -88,12 +88,12 @@ void AbilityMonitor::OnWindowStageCreate()
 
     jsMonitor_->onWindowStageCreate();
 
-    HILOG_INFO("onWindowStageCreate is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnWindowStageRestore()
 {
-    HILOG_INFO("onWindowStageRestore is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -101,12 +101,12 @@ void AbilityMonitor::OnWindowStageRestore()
 
     jsMonitor_->onWindowStageRestore();
 
-    HILOG_INFO("onWindowStageRestore is called end");
+    HILOG_INFO("end");
 }
 
 void AbilityMonitor::OnWindowStageDestroy()
 {
-    HILOG_INFO("onWindowStageDestroy is called");
+    HILOG_INFO("enter");
 
     if (jsMonitor_ == nullptr) {
         return;
@@ -114,7 +114,7 @@ void AbilityMonitor::OnWindowStageDestroy()
 
     jsMonitor_->onWindowStageDestroy();
 
-    HILOG_INFO("onWindowStageDestroy is called end");
+    HILOG_INFO("end");
 }
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS

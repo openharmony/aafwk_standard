@@ -17,6 +17,7 @@
 #define OHOS_AAFWK_ABILITY_MANAGER_SERVICE_H
 
 #include <memory>
+#include <shared_mutex>
 #include <singleton.h>
 #include <thread_ex.h>
 #include <unordered_map>
@@ -648,7 +649,7 @@ public:
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
 
     /**
-     * set lock screen white list
+     * set lock screen Permit list
      *
      * @param isAllow whether to allow startup on lock screen.
      * @return Returns ERR_OK on success, others on failure.
@@ -811,8 +812,7 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode,
-        const std::string &bundleName, const sptr<IRemoteObject> &observer) override;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -877,6 +877,9 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+
+    bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
+        const std::string &mainAbility, std::string &uri);
 
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
@@ -956,7 +959,7 @@ private:
      * starting lanucher ability.
      *
      */
-    void StartingLauncherAbility();
+    bool StartingLauncherAbility(bool isBoot);
     /**
      * starting settings data ability.
      *
@@ -1057,7 +1060,9 @@ private:
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
+#ifdef SUPPORT_GRAPHICS
     void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
+#endif
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
@@ -1093,7 +1098,9 @@ private:
 
     int32_t InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
         AppExecFwk::AbilityInfo &abilityInfo);
+#ifdef SUPPORT_GRAPHICS
     int32_t ShowPickerDialog(const Want& want, int32_t userId);
+#endif
 
     // multi user
     void StartFreezingScreen();
@@ -1103,8 +1110,8 @@ private:
     void StartLauncherAbility(int32_t userId);
     void SwitchToUser(int32_t oldUserId, int32_t userId);
     void SwitchManagers(int32_t userId, bool switchUser = true);
-    void StartUserApps(int32_t userId);
-    void StartSystemAbilityByUser(int32_t userId);
+    void StartUserApps(int32_t userId, bool isBoot);
+    void StartSystemAbilityByUser(int32_t userId, bool isBoot);
     void PauseOldUser(int32_t userId);
     void PauseOldStackManager(int32_t userId);
     void PauseOldMissionListManager(int32_t userId);
@@ -1149,8 +1156,7 @@ private:
 
     void StartMainElement(int userId, std::vector<AppExecFwk::BundleInfo> &bundleInfos);
 
-    bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
-        const std::string &mainAbility, std::string &uri);
+    bool GetValidDataAbilityUri(const std::string &abilityInfoUri, std::string &adjustUri);
 
     constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
     constexpr static int WAITING_BOOT_ANIMATION_TIMER = 5;
@@ -1181,6 +1187,7 @@ private:
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;
     std::recursive_mutex globalLock_;
+    std::shared_mutex managersMutex_;
 
     std::multimap<std::string, std::string> timeoutMap_;
 };

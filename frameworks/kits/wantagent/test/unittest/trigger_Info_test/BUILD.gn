@@ -14,6 +14,7 @@
 import("//base/notification/ans_standard/notification.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ans_standard/wantagent"
 
@@ -29,7 +30,6 @@ ohos_unittest("trigger_Info_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${core_path}:ans_core",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
@@ -41,17 +41,21 @@ ohos_unittest("trigger_Info_test") {
   external_deps = [
     "ability_base:base",
     "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:ability_manager",
     "ability_runtime:abilitykit_native",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
-    "dmsfwk_standard:zuri",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "${core_path}:ans_core" ]
+  }
 }
 
 group("unittest") {

@@ -100,12 +100,14 @@ ErrCode AbilityManagerClient::ScheduleCommandAbilityDone(const sptr<IRemoteObjec
     return abms->ScheduleCommandAbilityDone(token);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
 {
     CHECK_REMOTE_OBJECT(remoteObject_);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     abms->AddWindowInfo(token, windowToken);
 }
+#endif
 
 ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, int32_t userId)
 {
@@ -250,12 +252,14 @@ ErrCode AbilityManagerClient::Connect()
     return ERR_OK;
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetAllStackInfo(stackInfo);
 }
+#endif
 
 ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
@@ -264,6 +268,7 @@ ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
     return abms->StopServiceAbility(want);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::GetRecentMissions(
     const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
@@ -345,6 +350,7 @@ ErrCode AbilityManagerClient::RemoveStack(int id)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->RemoveStack(id);
 }
+#endif
 
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
@@ -369,6 +375,7 @@ ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleNa
     return abms->ClearUpApplicationData(bundleName);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
 {
     if (token == nullptr) {
@@ -382,6 +389,7 @@ ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
     }
     return ERR_OK;
 }
+#endif
 
 ErrCode AbilityManagerClient::CompelVerifyPermission(
     const std::string &permission, int pid, int uid, std::string &message)
@@ -391,6 +399,7 @@ ErrCode AbilityManagerClient::CompelVerifyPermission(
     return abms->CompelVerifyPermission(permission, pid, uid, message);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::MoveMissionToFloatingStack(const MissionOption &missionOption)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -419,6 +428,7 @@ ErrCode AbilityManagerClient::MaximizeMultiWindow(int missionId)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MaximizeMultiWindow(missionId);
 }
+#endif
 
 ErrCode AbilityManagerClient::ChangeFocusAbility(
     const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
@@ -428,6 +438,7 @@ ErrCode AbilityManagerClient::ChangeFocusAbility(
     return abms->ChangeFocusAbility(lostFocusToken, getFocusToken);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -491,6 +502,7 @@ ErrCode AbilityManagerClient::GetMissionLockModeState()
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetMissionLockModeState();
 }
+#endif
 
 ErrCode AbilityManagerClient::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
@@ -643,12 +655,14 @@ ErrCode AbilityManagerClient::GetWantSenderInfo(const sptr<IWantSender> &target,
     return abms->GetWantSenderInfo(target, info);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::SetShowOnLockScreen(bool isAllow)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->SetShowOnLockScreen(isAllow);
 }
+#endif
 
 /**
  * Get system memory information.
@@ -662,6 +676,7 @@ void AbilityManagerClient::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &mem
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callback, AAFwk::WantParams &wantParams)
 {
@@ -675,6 +690,7 @@ ErrCode AbilityManagerClient::ContinueMission(const std::string &srcDeviceId, co
     int result = abms->ContinueMission(srcDeviceId, dstDeviceId, missionId, callback, wantParams);
     return result;
 }
+#endif
 
 ErrCode AbilityManagerClient::StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken,
     int32_t status)
@@ -695,6 +711,7 @@ void AbilityManagerClient::NotifyCompleteContinuation(const std::string &deviceI
     abms->NotifyCompleteContinuation(deviceId, sessionId, isSuccess);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::LockMissionForCleanup(int32_t missionId)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -794,6 +811,7 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId, const StartO
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MoveMissionToFront(missionId, startOptions);
 }
+#endif
 
 ErrCode AbilityManagerClient::StartAbilityByCall(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callToken)
@@ -833,6 +851,7 @@ ErrCode AbilityManagerClient::GetProcessRunningInfos(std::vector<AppExecFwk::Run
     return abms->GetProcessRunningInfos(info);
 }
 
+#ifdef SUPPORT_GRAPHICS
 /**
  * Start synchronizing remote device mission
  * @param devId, deviceId.
@@ -857,6 +876,8 @@ ErrCode AbilityManagerClient::StopSyncRemoteMissions(const std::string &devId)
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->StopSyncRemoteMissions(devId);
 }
+#endif
+
 ErrCode AbilityManagerClient::StartUser(int accountId)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -870,6 +891,7 @@ ErrCode AbilityManagerClient::StopUser(int accountId, const sptr<IStopUserCallba
     return abms->StopUser(accountId, callback);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -884,6 +906,7 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, in
     auto abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetMissionSnapshot(deviceId, missionId, snapshot);
 }
+#endif
 
 ErrCode AbilityManagerClient::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer)
 {
@@ -893,13 +916,13 @@ ErrCode AbilityManagerClient::StartUserTest(const Want &want, const sptr<IRemote
     return abms->StartUserTest(want, observer);
 }
 
-ErrCode AbilityManagerClient::FinishUserTest(const std::string &msg, const int &resultCode,
-    const std::string &bundleName, const sptr<IRemoteObject> &observer)
+ErrCode AbilityManagerClient::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
 
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->FinishUserTest(msg, resultCode, bundleName, observer);
+    return abms->FinishUserTest(msg, resultCode, bundleName);
 }
 
 ErrCode AbilityManagerClient::GetCurrentTopAbility(sptr<IRemoteObject> &token)
@@ -909,6 +932,7 @@ ErrCode AbilityManagerClient::GetCurrentTopAbility(sptr<IRemoteObject> &token)
     return abms->GetCurrentTopAbility(token);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -947,6 +971,7 @@ ErrCode AbilityManagerClient::DoAbilityBackground(const sptr<IRemoteObject> &tok
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->DoAbilityBackground(token, flag);
 }
+#endif
 
 ErrCode AbilityManagerClient::SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
     bool imAStabilityTest)

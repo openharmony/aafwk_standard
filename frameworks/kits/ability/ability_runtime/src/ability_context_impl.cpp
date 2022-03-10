@@ -353,11 +353,12 @@ ErrCode AbilityContextImpl::StartAbility(
 
 ErrCode AbilityContextImpl::ReleaseAbility(const std::shared_ptr<CallerCallBack> &callback)
 {
+    HILOG_DEBUG("AbilityContextImpl::Release begain.");
     if (!localCallContainer_) {
         HILOG_ERROR("%{public}s false.", __func__);
         return ERR_INVALID_VALUE;
     }
-
+    HILOG_DEBUG("AbilityContextImpl::Release end.");
     return localCallContainer_->Release(callback);
 }
 
@@ -377,6 +378,7 @@ void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbil
     abilityCallback_ = abilityCallback;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int AbilityContextImpl::GetCurrentWindowMode()
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -386,5 +388,6 @@ int AbilityContextImpl::GetCurrentWindowMode()
     }
     return abilityCallback->GetCurrentWindowMode();
 }
+#endif
 }  // namespace AbilityRuntime
 }  // namespace OHOS

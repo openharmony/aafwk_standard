@@ -411,6 +411,8 @@ private:
      */
     void PostTimeOutTask(const std::shared_ptr<AbilityRecord> &abilityRecord, uint32_t messageId);
 
+    bool IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord);
+
 private:
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     const std::string TASK_ON_ABILITY_DIED = "OnAbilityDiedTask";

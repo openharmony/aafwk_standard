@@ -17,7 +17,6 @@ var rpc = requireNapi("rpc")
 const EVENT_CALL_NOTIFY = 1;
 const REQUEST_SUCCESS = 0;
 const REQUEST_FAILED = 1;
-
 class Caller {
     constructor(obj) {
         console.log("Caller::constructor obj is " + typeof obj);
@@ -29,6 +28,12 @@ class Caller {
         console.log("Caller call method [" + method + "]");
         if (typeof method !== 'string' || typeof data !== 'object') {
             console.log("Caller call " + typeof method + " " + typeof data);
+            throw new Error("function input parameter error");
+            return;
+        }
+
+        if (method == '' || data == null) {
+            console.log("Caller call " + method + ", " + data);
             throw new Error("function input parameter error");
             return;
         }
@@ -53,6 +58,8 @@ class Caller {
 
         let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
         if (!status) {
+            msgData.reclaim();
+            msgReply.reclaim();
             console.log("Caller call return status " + status);
             throw new Error("Function execution exception");
             return ;
@@ -62,6 +69,8 @@ class Caller {
         let str = msgReply.readString();
         if (retval === REQUEST_SUCCESS && str === 'object') {
             console.log("Caller call return str " + str);
+            msgData.reclaim();
+            msgReply.reclaim();
         } else {
             console.log("Caller call retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();
@@ -80,10 +89,14 @@ class Caller {
             return undefined;
         }
 
+        if (method == '' || data == null) {
+            console.log("Caller callWithResult " + method + ", " + data);
+            return undefined;
+        }
+
         if (this.releaseCall) {
             console.log("Caller callWithResult this.callee release");
-            throw new Error("Function inner object error");
-            return;
+            return undefined;
         }
 
         if (this.__call_obj__.callee == null) {
@@ -100,6 +113,8 @@ class Caller {
         let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
         if (!status) {
             console.log("Caller callWithResult return data " + status);
+            msgData.reclaim();
+            msgReply.reclaim();
             return reply;
         }
 
@@ -108,6 +123,7 @@ class Caller {
         if (retval === REQUEST_SUCCESS && str === 'object') {
             reply = msgReply;
             console.log("Caller callWithResult return data " + str);
+            msgData.reclaim();
         } else {
             console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
             msgData.reclaim();

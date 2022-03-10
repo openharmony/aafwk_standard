@@ -287,6 +287,7 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify multi window mode changed.
      *
@@ -301,6 +302,7 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag);
+#endif
 
     /**
      * @brief continue ability to target device.
@@ -457,7 +459,7 @@ private:
     void HandleDisconnectAbility(const Want &want);
 
     /**
-     * @brief Handle the current commadn of Ability.
+     * @brief Handle the current command of Ability.
      *
      * @param want The Want object to command to.
      *
@@ -482,7 +484,7 @@ private:
     void HandleDisconnectExtension(const Want &want);
 
     /**
-     * @brief Handle the current commadn of Extension.
+     * @brief Handle the current command of Extension.
      *
      * @param want The Want object to command to.
      *

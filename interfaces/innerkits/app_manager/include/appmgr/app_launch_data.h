@@ -31,7 +31,8 @@ namespace AppExecFwk {
 struct UserTestRecord : public Parcelable {
     AAFwk::Want want;
     sptr<IRemoteObject> observer;
-    UserTestRecord() : observer(nullptr)
+    bool isFinished;
+    UserTestRecord() : observer(nullptr), isFinished(false)
     {}
 
     bool ReadFromParcel(Parcel &parcel);
@@ -81,7 +82,7 @@ public:
      *
      * @param UserTestRecord, user test info.
      */
-    void SetUserTestInfo(const UserTestRecord &record);
+    void SetUserTestInfo(const std::shared_ptr<UserTestRecord> &record);
 
     /**
      * @brief Obtains the info of the application.
@@ -138,7 +139,7 @@ public:
      *
      * @return Returns user test info.
      */
-    inline const UserTestRecord &GetUserTestInfo() const
+    inline std::shared_ptr<UserTestRecord> GetUserTestInfo() const
     {
         return userTestRecord_;
     }
@@ -171,7 +172,7 @@ private:
     ProcessInfo processInfo_;
     int32_t recordId_ = 0;
     int32_t uId_ = 0;
-    UserTestRecord userTestRecord_;
+    std::shared_ptr<UserTestRecord> userTestRecord_ = nullptr;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

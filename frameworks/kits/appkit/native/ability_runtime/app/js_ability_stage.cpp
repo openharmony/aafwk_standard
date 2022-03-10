@@ -218,7 +218,7 @@ NativeValue* JsAbilityStage::CallObjectMethod(const char* name, NativeValue * co
     }
 
     NativeValue* method = obj->GetProperty(name);
-    if (method == nullptr) {
+    if (method == nullptr || method->TypeOf() != NATIVE_FUNCTION) {
         HILOG_ERROR("Failed to get '%{public}s' from AbilityStage object", name);
         return nullptr;
     }

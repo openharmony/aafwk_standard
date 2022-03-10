@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ability_runtime/aafwk_L2"
 
@@ -29,6 +30,7 @@ config("module_private_config") {
     "//utils/native/base/include",
     "//sdk/appexecfwk_L2/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//utils/system/safwk/native/include",
@@ -97,12 +99,11 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
@@ -113,11 +114,15 @@ ohos_moduletest("ability_moduletest") {
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_moduletest("ability_conetxt_test") {
@@ -141,7 +146,6 @@ ohos_moduletest("ability_conetxt_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/mission_stack_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/stack_info.cpp",
-    "//foundation/distributedschedule/dmsfwk/utils/native/source/uri.cpp",
     "moduletest/cpp/abilitytest/ability_context_test.cpp",
   ]
 
@@ -159,10 +163,10 @@ ohos_moduletest("ability_conetxt_test") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -174,11 +178,40 @@ ohos_moduletest("ability_conetxt_test") {
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
+}
+
+ohos_moduletest("ability_thread_call_request_module_test") {
+  module_out_path = module_output_path
+  sources = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/context_container.cpp",
+    "//foundation/aafwk/standard/frameworks/kits/test/moduletest/cpp/abilitytest/ability_thread_call_request_module_test.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [ "ability_runtime:runtime" ]
 }
 
 ohos_moduletest("data_ability_operation_moduletest") {
@@ -231,12 +264,11 @@ ohos_moduletest("data_ability_operation_moduletest") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
@@ -247,11 +279,15 @@ ohos_moduletest("data_ability_operation_moduletest") {
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ohos_moduletest("data_ability_helper_module_test") {
@@ -280,10 +316,10 @@ ohos_moduletest("data_ability_helper_module_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -291,11 +327,14 @@ ohos_moduletest("data_ability_helper_module_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimodalinput_base:libmmi-client" ]
+  }
 }
 
 ################################################################################
@@ -307,6 +346,7 @@ group("moduletest") {
   if (is_phone_product) {
     deps += [
       ":ability_conetxt_test",
+      ":ability_thread_call_request_module_test",
 
       # ":ability_moduletest",
       ":data_ability_helper_module_test",

@@ -32,15 +32,19 @@
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "hisysevent.h"
+#include "in_process_call_wrapper.h"
+#include "ipc_skeleton.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
-#include "ipc_skeleton.h"
+#include "itest_observer.h"
 #include "os_account_manager.h"
 #include "permission/permission_kit.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "system_ability_definition.h"
+#ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
+#endif
 #include "uri_permission_manager_client.h"
 
 
@@ -150,7 +154,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         }
         bool isColdStart = want == nullptr ? false : want->GetBoolParam("coldStart", false);
         StartProcess(abilityInfo->applicationName, processName, isColdStart, appRecord,
-            abilityInfo->applicationInfo.uid, abilityInfo->applicationInfo.bundleName);
+            appInfo->uid, appInfo->bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
@@ -188,6 +192,15 @@ void AppMgrServiceInner::MakeProcessName(std::string &processName, const std::sh
         processName = abilityInfo->process;
         return;
     }
+    MakeProcessName(processName, appInfo, hapModuleInfo);
+}
+
+void AppMgrServiceInner::MakeProcessName(
+    std::string &processName, const std::shared_ptr<ApplicationInfo> &appInfo, HapModuleInfo &hapModuleInfo)
+{
+    if (!appInfo) {
+        return;
+    }
     if (!appInfo->process.empty()) {
         processName = appInfo->process;
         return;
@@ -211,14 +224,14 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         return false;
     }
 
-    auto userId = GetUserIdByUid(abilityInfo.applicationInfo.uid);
-    bool bundleMgrResult = bundleMgr_->GetBundleInfo(appInfo->bundleName,
-        BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId);
+    auto userId = GetUserIdByUid(appInfo->uid);
+    bool bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleInfo(appInfo->bundleName,
+        BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId));
     if (!bundleMgrResult) {
         APP_LOGE("GetBundleInfo is fail");
         return false;
     }
-    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo);
+    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo));
     if (!bundleMgrResult) {
         APP_LOGE("GetHapModuleInfo is fail");
         return false;
@@ -476,13 +489,13 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
     }
 
     int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (!bundleMgr_->CheckIsSystemAppByUid(callerUid)) {
+    if (!IN_PROCESS_CALL(bundleMgr_->CheckIsSystemAppByUid(callerUid))) {
         APP_LOGE("caller is not systemApp, callerUid %{public}d", callerUid);
         return ERR_INVALID_VALUE;
     }
 
     APP_LOGI("userId value is %{public}d", userId);
-    int uid = bundleMgr_->GetUidByBundleName(bundleName, userId);
+    int uid = IN_PROCESS_CALL(bundleMgr_->GetUidByBundleName(bundleName, userId));
     APP_LOGI("uid value is %{public}d", uid);
     if (!appRunningManager_->ProcessExitByBundleNameAndUid(bundleName, uid, pids)) {
         APP_LOGI("The process corresponding to the package name did not start");
@@ -535,7 +548,7 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
         return;
     }
     // 2.delete bundle side user data
-    if (!bundleMgr_->CleanBundleDataFiles(bundleName, userId)) {
+    if (!IN_PROCESS_CALL(bundleMgr_->CleanBundleDataFiles(bundleName, userId))) {
         APP_LOGE("Delete bundle side user data is fail");
         return;
     }
@@ -546,7 +559,8 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
         APP_LOGE("Kill Application by bundle name is fail");
         return;
     }
-    NotifyAppStatus(bundleName, EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
+    NotifyAppStatusByCallerUid(bundleName, userId, callerUid,
+        EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
 }
 
 int32_t AppMgrServiceInner::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
@@ -708,6 +722,9 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
 
     appRecord->SetEventHandler(eventHandler_);
     appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
+    if (want) {
+        appRecord->SetDebugApp(want->GetBoolParam("debugApp", false));
+    }
 
     if (preToken) {
         auto abilityRecord = appRecord->GetAbilityRunningRecordByToken(token);
@@ -1205,8 +1222,8 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     AppSpawnStartMsg startMsg;
     BundleInfo bundleInfo;
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
-    bool bundleMgrResult = bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
-        bundleInfos, userId);
+    bool bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleInfos(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES,
+        bundleInfos, userId));
     if (!bundleMgrResult) {
         APP_LOGE("GetBundleInfo is fail");
         return;
@@ -1230,7 +1247,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     APP_LOGD("StartProcess accessTokenId:%{public}d, apl:%{public}s, bundleName:%{public}s coldStart:%{public}d",
         startMsg.accessTokenId, startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
-    bundleMgrResult = bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids);
+    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));
     if (!bundleMgrResult) {
         APP_LOGE("GetBundleGids is fail");
         return;
@@ -1326,31 +1343,35 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     }
 
     auto appRecord = appRunningManager_->OnRemoteDied(remote);
-    if (appRecord) {
-        // clear uri permission
-        auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
-        auto appInfo = appRecord->GetApplicationInfo();
-        if (appInfo && upmClient) {
-            upmClient->RemoveUriPermission(appInfo->accessTokenId);
-        }
-
-        for (const auto &item : appRecord->GetAbilities()) {
-            const auto &abilityRecord = item.second;
-            appRecord->StateChangedNotifyObserver(abilityRecord,
-                static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
-        }
-        RemoveAppFromRecentListById(appRecord->GetRecordId());
-        OnProcessDied(appRecord);
-
-        // kill render if exist.
-        auto renderRecord = appRecord->GetRenderRecord();
-        if (renderRecord && renderRecord->GetPid() > 0) {
-            APP_LOGD("Kill render process when webviehost died.");
-            KillProcessByPid(renderRecord->GetPid());
-        }
+    if (!appRecord) {
+        return;
     }
 
-    if (appRecord && appRecord->IsKeepAliveApp()) {
+    FinishUserTestLocked("App died", -1, appRecord);
+
+    // clear uri permission
+    auto upmClient = AAFwk::UriPermissionManagerClient::GetInstance();
+    auto appInfo = appRecord->GetApplicationInfo();
+    if (appInfo && upmClient) {
+        upmClient->RemoveUriPermission(appInfo->accessTokenId);
+    }
+
+    for (const auto &item : appRecord->GetAbilities()) {
+        const auto &abilityRecord = item.second;
+        appRecord->StateChangedNotifyObserver(abilityRecord,
+            static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
+    }
+    RemoveAppFromRecentListById(appRecord->GetRecordId());
+    OnProcessDied(appRecord);
+
+    // kill render if exist.
+    auto renderRecord = appRecord->GetRenderRecord();
+    if (renderRecord && renderRecord->GetPid() > 0) {
+        APP_LOGD("Kill render process when nwebhost died.");
+        KillProcessByPid(renderRecord->GetPid());
+    }
+
+    if (appRecord->IsKeepAliveApp()) {
         appRecord->DecRestartResidentProcCount();
         if (appRecord->CanRestartResidentProc()) {
             auto restartProcss = [appRecord, innerService = shared_from_this()]() {
@@ -1536,7 +1557,7 @@ int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, in
         APP_LOGE("GetBundleManager fail");
         return ERR_NO_INIT;
     }
-    auto bmsUid = bundleMgr->GetUidByBundleName(bundleName, userId);
+    auto bmsUid = IN_PROCESS_CALL(bundleMgr->GetUidByBundleName(bundleName, userId));
     if (bmsUid == ROOT_UID || bmsUid == SYSTEM_UID) {
         APP_LOGI("uid is root or system, PERMISSION_GRANTED");
         message = ENUM_TO_STRING(PERMISSION_GRANTED);
@@ -1546,7 +1567,7 @@ int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, in
         APP_LOGI("check uid != bms uid, PERMISSION_NOT_GRANTED");
         return PERMISSION_NOT_GRANTED;
     }
-    auto result = bundleMgr->CheckPermissionByUid(bundleName, permission, userId);
+    auto result = IN_PROCESS_CALL(bundleMgr->CheckPermissionByUid(bundleName, permission, userId));
     if (result != PERMISSION_GRANTED) {
         return PERMISSION_NOT_GRANTED;
     }
@@ -1687,12 +1708,15 @@ void AppMgrServiceInner::RestartResidentProcess(std::shared_ptr<AppRunningRecord
 
     auto bundleMgr = remoteClientManager_->GetBundleManager();
     BundleInfo bundleInfo;
-    if (!bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo)) {
+    if (!IN_PROCESS_CALL(
+        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo))) {
         APP_LOGE("GetBundleInfo fail");
         return;
     }
     std::vector<BundleInfo> infos;
     infos.emplace_back(bundleInfo);
+    APP_LOGI("the resident process [%{public}s] remaining restarts num is [%{public}d]",
+        appRecord->GetProcessName().c_str(), (int)appRecord->GetRestartResidentProcCount());
     StartResidentProcess(infos, appRecord->GetRestartResidentProcCount());
 }
 
@@ -1706,6 +1730,22 @@ void AppMgrServiceInner::NotifyAppStatus(const std::string &bundleName, const st
     element.SetBundleName(bundleName);
     want.SetElement(element);
     want.SetParam(Constants::USER_ID, 0);
+    EventFwk::CommonEventData commonData {want};
+    EventFwk::CommonEventManager::PublishCommonEvent(commonData);
+}
+
+void AppMgrServiceInner::NotifyAppStatusByCallerUid(const std::string &bundleName, const int32_t userId,
+    const int32_t callerUid, const std::string &eventData)
+{
+    APP_LOGI("%{public}s called, bundle name is %{public}s, , userId is %{public}d, event is %{public}s",
+        __func__, bundleName.c_str(), userId, eventData.c_str());
+    Want want;
+    want.SetAction(eventData);
+    ElementName element;
+    element.SetBundleName(bundleName);
+    want.SetElement(element);
+    want.SetParam(Constants::USER_ID, userId);
+    want.SetParam(Constants::UID, callerUid);
     EventFwk::CommonEventData commonData {want};
     EventFwk::CommonEventManager::PublishCommonEvent(commonData);
 }
@@ -1843,16 +1883,27 @@ int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> 
     return ERR_OK;
 }
 
-int AppMgrServiceInner::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &bundleInfo)
+int AppMgrServiceInner::StartUserTestProcess(
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)
 {
+    APP_LOGI("Enter");
+    if (!observer) {
+        APP_LOGE("observer nullptr.");
+        return ERR_INVALID_VALUE;
+    }
     if (!appRunningManager_) {
         APP_LOGE("appRunningManager_ is nullptr");
         return ERR_INVALID_VALUE;
     }
 
-    auto processName = bundleInfo.applicationInfo.process.empty() ?
-        bundleInfo.applicationInfo.bundleName : bundleInfo.applicationInfo.process;
+    HapModuleInfo hapModuleInfo;
+    if (GetHapModuleInfoForTestRunner(want, observer, bundleInfo, hapModuleInfo)) {
+        APP_LOGE("Failed to get HapModuleInfo for TestRunner");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string processName;
+    MakeProcessName(processName, std::make_shared<ApplicationInfo>(bundleInfo.applicationInfo), hapModuleInfo);
     APP_LOGI("processName = [%{public}s]", processName.c_str());
 
     // Inspection records
@@ -1864,6 +1915,57 @@ int AppMgrServiceInner::StartUserTestProcess(const AAFwk::Want &want, const sptr
     }
 
     return StartEmptyProcess(want, observer, bundleInfo, processName);
+}
+
+int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+    const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo)
+{
+    APP_LOGI("Enter");
+    if (!observer) {
+        APP_LOGE("observer nullptr.");
+        return ERR_INVALID_VALUE;
+    }
+
+    bool moduelJson = false;
+    if (!bundleInfo.hapModuleInfos.empty()) {
+        moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
+    }
+    if (moduelJson) {
+        std::string moudleName;
+        auto testRunnerName = want.GetStringParam("-s unittest");
+        auto pos = testRunnerName.find(":");
+        if (pos != std::string::npos) {
+            moudleName = testRunnerName.substr(0, pos);
+        } else {
+            UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
+            return ERR_INVALID_VALUE;
+        }
+
+        bool found = false;
+        for (auto item : bundleInfo.hapModuleInfos) {
+            if (item.moduleName == moudleName) {
+                hapModuleInfo = item;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            UserTestAbnormalFinish(observer, "The specified module name is not found.");
+            return ERR_INVALID_VALUE;
+        }
+    }
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg)
+{
+    sptr<AAFwk::ITestObserver> observerProxy = iface_cast<AAFwk::ITestObserver>(observer);
+    if (!observerProxy) {
+        APP_LOGE("Failed to get ITestObserver proxy");
+        return ERR_INVALID_VALUE;
+    }
+    observerProxy->TestFinished(msg, -1);
+    return ERR_OK;
 }
 
 int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
@@ -1882,9 +1984,14 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
         return ERR_INVALID_VALUE;
     }
 
-    UserTestRecord testRecord;
-    testRecord.want = want;
-    testRecord.observer = observer;
+    std::shared_ptr<UserTestRecord> testRecord = std::make_shared<UserTestRecord>();
+    if (!testRecord) {
+        APP_LOGE("Failed to make UserTestRecord!");
+        return ERR_INVALID_VALUE;
+    }
+    testRecord->want = want;
+    testRecord->observer = observer;
+    testRecord->isFinished = false;
     appRecord->SetUserTestInfo(testRecord);
 
     StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
@@ -1898,6 +2005,66 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     appRecord->SetEventHandler(eventHandler_);
     appRecord->AddModules(appInfo, info.hapModuleInfos);
     APP_LOGI("StartEmptyProcess OK pid : [%{public}d]", appRecord->GetPriorityObject()->GetPid());
+
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::FinishUserTest(
+    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+{
+    APP_LOGI("Enter");
+    if (bundleName.empty()) {
+        APP_LOGE("Invalid bundle name.");
+        return ERR_INVALID_VALUE;
+    }
+    auto appRecord = GetAppRunningRecordByPid(pid);
+    if (!appRecord) {
+        APP_LOGE("no such appRecord");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto userTestRecord = appRecord->GetUserTestInfo();
+    if (!userTestRecord) {
+        APP_LOGE("unstart user test");
+        return ERR_INVALID_VALUE;
+    }
+
+    FinishUserTestLocked(msg, resultCode, appRecord);
+
+    int ret = KillApplication(bundleName);
+    if (ret) {
+        APP_LOGE("Failed to kill process.");
+        return ret;
+    }
+
+    return ERR_OK;
+}
+
+int AppMgrServiceInner::FinishUserTestLocked(
+    const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord)
+{
+    APP_LOGI("Enter");
+    if (!appRecord) {
+        APP_LOGE("Invalid appRecord");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::unique_lock<std::mutex> lck(userTestLock_);
+    auto userTestRecord = appRecord->GetUserTestInfo();
+    if (!userTestRecord) {
+        APP_LOGW("unstart user test");
+        return ERR_INVALID_VALUE;
+    }
+    if (!userTestRecord->isFinished) {
+        sptr<AAFwk::ITestObserver> observerProxy = iface_cast<AAFwk::ITestObserver>(userTestRecord->observer);
+        if (!observerProxy) {
+            APP_LOGE("Failed to get ITestObserver proxy");
+            return ERR_INVALID_VALUE;
+        }
+        observerProxy->TestFinished(msg, resultCode);
+
+        userTestRecord->isFinished = true;
+    }
 
     return ERR_OK;
 }
@@ -2043,10 +2210,13 @@ void AppMgrServiceInner::GetGlobalConfiguration()
         APP_LOGE("configuration_ is null");
         return;
     }
+
+#ifdef SUPPORT_GRAPHICS
     // Currently only this interface is known
     auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
     APP_LOGI("current global language is : %{public}s", language.c_str());
     configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+#endif
 
     // Assign to default colormode "light"
     APP_LOGI("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());
@@ -2218,7 +2388,7 @@ int AppMgrServiceInner::VerifyObserverPermission()
 int AppMgrServiceInner::StartRenderProcess(const pid_t hostPid, const std::string &renderParam,
     int32_t ipcFd, int32_t sharedFd, pid_t &renderPid)
 {
-    APP_LOGI("start render process, webview hostpid:%{public}d", hostPid);
+    APP_LOGI("start render process, nweb hostpid:%{public}d", hostPid);
     if (hostPid <= 0 || renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
         APP_LOGE("invalid param, hostPid:%{public}d, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
             hostPid, renderParam.c_str(), ipcFd, sharedFd);
@@ -2302,16 +2472,16 @@ int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecor
         return ERR_INVALID_VALUE;
     }
 
-    auto webviewSpawnClient = remoteClientManager_->GetWebviewSpawnClient();
-    if (!webviewSpawnClient) {
-        APP_LOGE("webviewSpawnClient is null");
+    auto nwebSpawnClient = remoteClientManager_->GetNWebSpawnClient();
+    if (!nwebSpawnClient) {
+        APP_LOGE("nwebSpawnClient is null");
         return ERR_INVALID_VALUE;
     }
 
     AppSpawnStartMsg startMsg = appRecord->GetStartMsg();
     startMsg.renderParam = renderRecord->GetRenderParam();
     pid_t pid = 0;
-    ErrCode errCode = webviewSpawnClient->StartProcess(startMsg, pid);
+    ErrCode errCode = nwebSpawnClient->StartProcess(startMsg, pid);
     if (FAILED(errCode)) {
         APP_LOGE("failed to spawn new render process, errCode %{public}08x", errCode);
         return ERR_INVALID_VALUE;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,13 +20,15 @@
 #include "image_info.h"
 #include "parcel.h"
 #include "element_name.h"
+#ifdef SUPPORT_GRAPHICS
 #include "foundation/multimedia/image_standard/interfaces/innerkits/include/pixel_map.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
 /**
  * @struct MissionPixelMap
- * MissionPixelMap is used to save informations about mission sanpshot.
+ * MissionPixelMap is used to save information about mission sanpshot.
  */
 struct MissionPixelMap : public Parcelable {
     AppExecFwk::ElementName topAbility;
@@ -39,8 +41,9 @@ struct MissionPixelMap : public Parcelable {
 
 struct MissionSnapshot : public Parcelable {
     AppExecFwk::ElementName topAbility;
+#ifdef SUPPORT_GRAPHICS
     std::shared_ptr<Media::PixelMap> snapshot;
-
+#endif
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
     static MissionSnapshot *Unmarshalling(Parcel &parcel);

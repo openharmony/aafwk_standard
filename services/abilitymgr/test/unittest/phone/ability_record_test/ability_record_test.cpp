@@ -743,5 +743,20 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetAbilityState_001, TestSize.Level1
     state = abilityRecord_->GetAbilityState();
     EXPECT_EQ(state, OHOS::AAFwk::AbilityState::ACTIVE);
 }
+
+/*
+ * Feature: AbilityRecord
+ * Function: SetSpecifiedFlag
+ * SubFunction: NA
+ * FunctionPoints: NA
+ * EnvConditions: NA
+ * CaseDescription: NA
+ */
+HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetSpecifiedFlag_001, TestSize.Level1)
+{
+    abilityRecord_->SetSpecifiedFlag("flag");
+    auto flag = abilityRecord_->GetSpecifiedFlag();
+    EXPECT_EQ(flag, "flag");
+}
 }  // namespace AAFwk
 }  // namespace OHOS

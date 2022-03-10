@@ -12,6 +12,7 @@
 # limitations under the License.
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
 
@@ -43,24 +44,29 @@ ohos_moduletest("dump_module_test") {
   }
   deps = [
     "${innerkits_path}/ability_manager:ability_manager",
+    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/appmgr_test_service:appmgr_test_service",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [
+      "//base/global/i18n_standard/frameworks/intl:intl_util",
+      "//third_party/libpng:libpng",
+    ]
+  }
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
@@ -73,6 +79,5 @@ ohos_moduletest("dump_module_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":dump_module_test" ]
+  # deps = [ ":dump_module_test" ]
 }
