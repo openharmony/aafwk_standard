@@ -357,10 +357,11 @@ public:
     /**
      * Uninstall app
      *
-     * @param bundleName.
+     * @param bundleName bundle name of uninstalling app.
+     * @param uid uid of bundle.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName) override;
+    virtual int UninstallApp(const std::string &bundleName, int32_t uid) override;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -680,6 +681,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int SendANRProcessID(int pid) override;
+
+    /**
+     * Get mission id by ability token.
+     *
+     * @param token The token of ability.
+     * @return Returns -1 if do not find mission, otherwise return mission id.
+     */
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
 
 private:
     template <typename T>

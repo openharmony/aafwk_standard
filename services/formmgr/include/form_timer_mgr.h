@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -138,7 +138,7 @@ public:
      * @param updateTime Update time.
      * @return Returns true on success, false on failure.
      */
-    bool OnDynamicTimeTrigger(long updateTime);
+    bool OnDynamicTimeTrigger(int64_t updateTime);
     /**
      * @brief Get interval timer task.
      * @param formId The Id of the form.
@@ -266,7 +266,7 @@ private:
      * @param updateAtItem Next at timer item.
      * @return Returns true on success, false on failure.
      */
-    bool FindNextAtTimerItem(const int nowTime, UpdateAtItem &updateAtItem);
+    bool FindNextAtTimerItem(const long nowTime, UpdateAtItem &updateAtItem);
     /**
      * @brief Clear update at timer resource.
      */
@@ -316,7 +316,7 @@ private:
      * @param nextTime The next update time.
      * @return Returns WantAgent.
      */
-    std::shared_ptr<WantAgent> GetDynamicWantAgent(long nextTime, int32_t userId);
+    std::shared_ptr<WantAgent> GetDynamicWantAgent(int64_t nextTime, int32_t userId);
 
     /**
      * @brief check if user is active or not.
@@ -362,13 +362,13 @@ private:
     std::shared_ptr<Utils::Timer> intervalTimer_ = nullptr;
     uint64_t updateAtTimerId_ = 0L;
     uint64_t dynamicAlarmTimerId_ = 0L;
-    uint64_t limiterTimerId_= 0L;
+    uint64_t limiterTimerId_ = 0L;
 
     std::shared_ptr<WantAgent> currentUpdateAtWantAgent = nullptr;
     std::shared_ptr<WantAgent> currentDynamicWantAgent = nullptr;
     std::shared_ptr<WantAgent> currentLimiterWantAgent = nullptr;
 
-    long dynamicWakeUpTime_ = LONG_MAX;
+    int64_t dynamicWakeUpTime_ = INT64_MAX;
     long atTimerWakeUpTime_ = LONG_MAX;
 };
 }  // namespace AppExecFwk

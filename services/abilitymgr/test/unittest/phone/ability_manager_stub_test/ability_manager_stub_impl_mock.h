@@ -225,7 +225,7 @@ public:
         return 0;
     }
 
-    virtual int UninstallApp(const std::string &bundleName)
+    virtual int UninstallApp(const std::string &bundleName, int32_t uid)
     {
         return 0;
     }
@@ -362,6 +362,10 @@ public:
         return 0;
     }
     virtual int MoveMissionToFront(int32_t missionId, const StartOptions &startOptions) override
+    {
+        return 0;
+    }
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override
     {
         return 0;
     }
