@@ -1183,8 +1183,9 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
     std::string hostBundleName {};
-    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleNameForUid(IPCSkeleton::GetCallingUid(), hostBundleName))) {
-        HILOG_ERROR("GetFormsInfoByModule,  failed to get form config info.");
+    auto callingUid = IPCSkeleton::GetCallingUid();
+    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleNameForUid(callingUid, hostBundleName))) {
+        HILOG_ERROR("GetFormsInfoByModule, failed to get form config info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
     itemInfo.SetHostBundleName(hostBundleName);
