@@ -24,13 +24,12 @@ ohos_shared_library("datashare") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
   ]
 
   sources = [
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
     "napi_datashare_helper.cpp",
     "native_datashare_module.cpp",
   ]

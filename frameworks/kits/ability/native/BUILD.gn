@@ -137,7 +137,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
     "//foundation/distributeddatamgr/objectstore/interfaces/innerkits/",
   ]
 
@@ -232,7 +231,7 @@ ohos_shared_library("abilitykit_native") {
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_ability_context.cpp",
     "${SUBSYSTEM_DIR}/src/ability_runtime/js_caller_complex.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
   ]
   configs = [ ":ability_config" ]
   public_configs = [

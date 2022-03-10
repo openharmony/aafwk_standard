@@ -24,7 +24,6 @@ ohos_shared_library("featureability") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/include",
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]
@@ -34,7 +33,7 @@ ohos_shared_library("featureability") {
 
     #"//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/napi_resultset_predicates.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_resultset/src/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
     "feature_ability.cpp",
     "feature_ability_constant.cpp",
     "napi_context.cpp",
