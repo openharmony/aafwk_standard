@@ -35,8 +35,8 @@ public:
 
     virtual bool Match(const std::shared_ptr<ADelegatorAbilityProperty> &ability, bool isNotify = false);
 
-    virtual std::shared_ptr<ADelegatorAbilityProperty> waitForAbility();
-    virtual std::shared_ptr<ADelegatorAbilityProperty> waitForAbility(const int64_t timeoutMs);
+    virtual std::shared_ptr<ADelegatorAbilityProperty> WaitForAbility();
+    virtual std::shared_ptr<ADelegatorAbilityProperty> WaitForAbility(const int64_t timeoutMs);
 
     virtual void OnAbilityStart();
     virtual void OnAbilityForeground();
