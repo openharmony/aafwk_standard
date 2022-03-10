@@ -48,6 +48,7 @@ private:
 
     JsRuntime &jsRuntime_;
     std::unique_ptr<NativeReference> jsTestRunnerObj_;
+    std::string srcPath_;
 };
 }  // namespace RunnerRuntime
 }  // namespace OHOS
