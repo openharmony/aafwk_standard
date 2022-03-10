@@ -76,7 +76,7 @@ AmsMgrStub::~AmsMgrStub()
 
 int AmsMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("AmsMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AmsMgrStub::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AmsMgrStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
