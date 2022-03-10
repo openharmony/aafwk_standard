@@ -23,8 +23,8 @@
 #include "system_ability_definition.h"
 
 #include "app_death_recipient.h"
-#include "app_log_wrapper.h"
 #include "app_mgr_constants.h"
+#include "hilog_wrapper.h"
 #include "perf_profile.h"
 #include "xcollie/watchdog.h"
 
@@ -57,51 +57,51 @@ REGISTER_SYSTEM_ABILITY_BY_ID(AppMgrService, APP_MGR_SERVICE_ID, true);
 AppMgrService::AppMgrService()
 {
     appMgrServiceInner_ = std::make_shared<AppMgrServiceInner>();
-    APP_LOGI("instance created with no para");
+    HILOG_INFO("instance created with no para");
     PerfProfile::GetInstance().SetAmsLoadStartTime(GetTickCount());
 }
 
 AppMgrService::AppMgrService(const int32_t serviceId, bool runOnCreate) : SystemAbility(serviceId, runOnCreate)
 {
     appMgrServiceInner_ = std::make_shared<AppMgrServiceInner>();
-    APP_LOGI("instance created");
+    HILOG_INFO("instance created");
     PerfProfile::GetInstance().SetAmsLoadStartTime(GetTickCount());
 }
 
 AppMgrService::~AppMgrService()
 {
-    APP_LOGI("instance destroyed");
+    HILOG_INFO("instance destroyed");
 }
 
 void AppMgrService::OnStart()
 {
-    APP_LOGI("ready to start service");
+    HILOG_INFO("ready to start service");
     if (appMgrServiceState_.serviceRunningState == ServiceRunningState::STATE_RUNNING) {
-        APP_LOGW("failed to start service since it's already running");
+        HILOG_WARN("failed to start service since it's already running");
         return;
     }
 
     ErrCode errCode = Init();
     if (FAILED(errCode)) {
-        APP_LOGE("init failed, errCode: %{public}08x", errCode);
+        HILOG_ERROR("init failed, errCode: %{public}08x", errCode);
         return;
     }
     appMgrServiceState_.serviceRunningState = ServiceRunningState::STATE_RUNNING;
-    APP_LOGI("start service success");
+    HILOG_INFO("start service success");
     PerfProfile::GetInstance().SetAmsLoadEndTime(GetTickCount());
     PerfProfile::GetInstance().Dump();
 }
 
 void AppMgrService::OnStop()
 {
-    APP_LOGI("ready to stop service");
+    HILOG_INFO("ready to stop service");
     appMgrServiceState_.serviceRunningState = ServiceRunningState::STATE_NOT_START;
     handler_.reset();
     runner_.reset();
     if (appMgrServiceInner_) {
         appMgrServiceInner_->OnStop();
     }
-    APP_LOGI("stop service success");
+    HILOG_INFO("stop service success");
 }
 
 void AppMgrService::SetInnerService(const std::shared_ptr<AppMgrServiceInner> &innerService)
@@ -119,48 +119,48 @@ AppMgrServiceState AppMgrService::QueryServiceState()
 
 ErrCode AppMgrService::Init()
 {
-    APP_LOGI("ready to init");
+    HILOG_INFO("ready to init");
     // start main thread message loop.
     runner_ = EventRunner::Create(Constants::APP_MGR_SERVICE_NAME);
     if (!runner_) {
-        APP_LOGE("init failed due to create runner error");
+        HILOG_ERROR("init failed due to create runner error");
         return ERR_INVALID_OPERATION;
     }
     if (!appMgrServiceInner_) {
-        APP_LOGE("init failed without inner service");
+        HILOG_ERROR("init failed without inner service");
         return ERR_INVALID_OPERATION;
     }
     appMgrServiceInner_->Init();
     handler_ = std::make_shared<AMSEventHandler>(runner_, appMgrServiceInner_);
     if (!handler_) {
-        APP_LOGE("init failed without handler");
+        HILOG_ERROR("init failed without handler");
         return ERR_INVALID_OPERATION;
     }
     appMgrServiceInner_->SetEventHandler(handler_);
     ErrCode openErr = appMgrServiceInner_->OpenAppSpawnConnection();
     if (FAILED(openErr)) {
-        APP_LOGW("failed to connect to AppSpawnDaemon! errCode: %{public}08x", openErr);
+        HILOG_WARN("failed to connect to AppSpawnDaemon! errCode: %{public}08x", openErr);
     }
     if (!Publish(this)) {
-        APP_LOGE("failed to publish appmgrservice to systemAbilityMgr");
+        HILOG_ERROR("failed to publish appmgrservice to systemAbilityMgr");
         return ERR_APPEXECFWK_SERVICE_NOT_CONNECTED;
     }
     amsMgrScheduler_ = new (std::nothrow) AmsMgrScheduler(appMgrServiceInner_, handler_);
     if (!amsMgrScheduler_) {
-        APP_LOGE("init failed without ams scheduler");
+        HILOG_ERROR("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
     }
     if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TIMEOUT) != 0) {
-        APP_LOGE("HiviewDFX::Watchdog::GetInstance AddThread Fail");
+        HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
-    APP_LOGI("init success");
+    HILOG_INFO("init success");
     return ERR_OK;
 }
 
 int32_t AppMgrService::CheckPermission(
     [[maybe_unused]] const int32_t recordId, [[maybe_unused]] const std::string &permission)
 {
-    APP_LOGI("check application's permission");
+    HILOG_INFO("check application's permission");
 
     return ERR_OK;
 }
@@ -168,7 +168,7 @@ int32_t AppMgrService::CheckPermission(
 void AppMgrService::AttachApplication(const sptr<IRemoteObject> &app)
 {
     if (!IsReady()) {
-        APP_LOGE("AttachApplication failed, not ready.");
+        HILOG_ERROR("AttachApplication failed, not ready.");
         return;
     }
 
@@ -222,11 +222,11 @@ void AppMgrService::AbilityCleaned(const sptr<IRemoteObject> &token)
 bool AppMgrService::IsReady() const
 {
     if (!appMgrServiceInner_) {
-        APP_LOGE("appMgrServiceInner is null");
+        HILOG_ERROR("appMgrServiceInner is null");
         return false;
     }
     if (!handler_) {
-        APP_LOGE("handler is null");
+        HILOG_ERROR("handler is null");
         return false;
     }
     return true;
@@ -250,7 +250,7 @@ void AppMgrService::StartupResidentProcess(const std::vector<AppExecFwk::BundleI
     if (!IsReady()) {
         return;
     }
-    APP_LOGI("Notify start resident process");
+    HILOG_INFO("Notify start resident process");
     std::function <void()> startupResidentProcess =
         std::bind(&AppMgrServiceInner::LoadResidentProcess, appMgrServiceInner_, bundleInfos);
     handler_->PostTask(startupResidentProcess, TASK_STARTUP_RESIDENT_PROCESS);
@@ -268,7 +268,7 @@ int32_t AppMgrService::ClearUpApplicationData(const std::string &bundleName)
         auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
             AAFwk::PermissionConstants::PERMISSION_CLEAN_APPLICATION_DATA);
         if (!isCallingPerm) {
-            APP_LOGE("%{public}s: Permission verification failed", __func__);
+            HILOG_ERROR("%{public}s: Permission verification failed", __func__);
             return ERR_PERMISSION_DENIED;
         }
     }
@@ -312,14 +312,14 @@ void AppMgrService::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::strin
     nlohmann::json memJson = nlohmann::json::parse(strConfig, nullptr, false);
     if (memJson.is_discarded()) {
         memThreshold = EXPERIENCE_MEM_THRESHOLD;
-        APP_LOGE("%{public}s, discarded memThreshold = %{public}d", __func__, EXPERIENCE_MEM_THRESHOLD);
+        HILOG_ERROR("%{public}s, discarded memThreshold = %{public}d", __func__, EXPERIENCE_MEM_THRESHOLD);
     } else {
         if (!memJson.contains("memoryThreshold")) {
             memThreshold = EXPERIENCE_MEM_THRESHOLD;
-            APP_LOGE("%{public}s, memThreshold = %{public}d", __func__, EXPERIENCE_MEM_THRESHOLD);
+            HILOG_ERROR("%{public}s, memThreshold = %{public}d", __func__, EXPERIENCE_MEM_THRESHOLD);
         } else {
             memThreshold = memJson.at("memorythreshold").get<int>();
-            APP_LOGI("memThreshold = %{public}d", memThreshold);
+            HILOG_INFO("memThreshold = %{public}d", memThreshold);
         }
     }
 
@@ -341,9 +341,9 @@ void AppMgrService::AddAbilityStageDone(const int32_t recordId)
 
 int32_t AppMgrService::RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    APP_LOGI("%{public}s begin", __func__);
+    HILOG_INFO("%{public}s begin", __func__);
     if (!IsReady()) {
-        APP_LOGE("%{public}s begin, not ready", __func__);
+        HILOG_ERROR("%{public}s begin, not ready", __func__);
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->RegisterApplicationStateObserver(observer);
@@ -351,9 +351,9 @@ int32_t AppMgrService::RegisterApplicationStateObserver(const sptr<IApplicationS
 
 int32_t AppMgrService::UnregisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    APP_LOGI("%{public}s begin", __func__);
+    HILOG_INFO("%{public}s begin", __func__);
     if (!IsReady()) {
-        APP_LOGE("%{public}s begin, not ready", __func__);
+        HILOG_ERROR("%{public}s begin, not ready", __func__);
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->UnregisterApplicationStateObserver(observer);
@@ -361,9 +361,9 @@ int32_t AppMgrService::UnregisterApplicationStateObserver(const sptr<IApplicatio
 
 int32_t AppMgrService::GetForegroundApplications(std::vector<AppStateData> &list)
 {
-    APP_LOGI("%{public}s begin", __func__);
+    HILOG_INFO("%{public}s begin", __func__);
     if (!IsReady()) {
-        APP_LOGE("%{public}s begin, not ready", __func__);
+        HILOG_ERROR("%{public}s begin, not ready", __func__);
         return ERR_INVALID_OPERATION;
     }
     return appMgrServiceInner_->GetForegroundApplications(list);
@@ -414,7 +414,7 @@ int32_t AppMgrService::StartRenderProcess(const std::string &renderParam, int32_
     int32_t sharedFd, pid_t &renderPid)
 {
     if (!IsReady()) {
-        APP_LOGE("StartRenderProcess failed, AppMgrService not ready.");
+        HILOG_ERROR("StartRenderProcess failed, AppMgrService not ready.");
         return ERR_INVALID_OPERATION;
     }
 
@@ -424,9 +424,9 @@ int32_t AppMgrService::StartRenderProcess(const std::string &renderParam, int32_
 
 void AppMgrService::AttachRenderProcess(const sptr<IRemoteObject> &scheduler)
 {
-    APP_LOGD("AttachRenderProcess called.");
+    HILOG_DEBUG("AttachRenderProcess called.");
     if (!IsReady()) {
-        APP_LOGE("AttachRenderProcess failed, not ready.");
+        HILOG_ERROR("AttachRenderProcess failed, not ready.");
         return;
     }
 

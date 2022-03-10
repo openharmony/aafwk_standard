@@ -20,14 +20,7 @@ config("appmgr_config") {
     "include",
     "${services_path}/common/include",
     "//base/startup/appspawn_standard/interfaces/innerkits/include",
-    "//utils/system/safwk/native/include",
-    "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
-    "//base/notification/ces_standard/frameworks/core/include",
-    "//base/notification/ces_standard/interfaces/innerkits/native/include",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
-    "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/aafwk/standard/tools/aa/include",
-    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
   ]
 }
 
@@ -60,33 +53,19 @@ ohos_shared_library("libams") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"AppMgrService\"",
-    "LOG_DOMAIN = 0xD001110",
+    "AMS_LOG_TAG = \"AppMgrService\"",
+    "AMS_LOG_DOMAIN = 0xD001110",
   ]
 
-  configs = [
-    ":appmgr_config",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config",
-    "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
-  ]
+  configs = [ ":appmgr_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
   ]
 
   if (ability_runtime_graphics) {
@@ -95,15 +74,27 @@ ohos_shared_library("libams") {
   }
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_runtime:app_manager",
     "appspawn:appspawn_socket_client",
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
+    "i18n_standard:intl_util",
     "ipc:ipc_core",
+    "os_account_standard:os_account_innerkits",
+    "permission_standard:libpermissionsdk_standard",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

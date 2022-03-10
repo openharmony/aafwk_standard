@@ -17,8 +17,8 @@
 #define FOUNDATION_APPEXECFWK_SERVICES_APPMGR_TEST_MOCK_APP_SERVICE_MGR_H
 
 #include "iremote_object.h"
-#include "app_log_wrapper.h"
 #include "app_service_manager.h"
+#include "hilog_wrapper.h"
 #include "mock_app_mgr_service.h"
 
 namespace OHOS {
@@ -30,7 +30,7 @@ public:
 
     virtual sptr<IRemoteObject> GetAppMgrService() const override
     {
-        APP_LOGD("Mock MockAppServiceMgr GetAppMgrService called");
+        HILOG_DEBUG("Mock MockAppServiceMgr GetAppMgrService called");
         return new MockAppMgrService();
     }
 };

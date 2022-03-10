@@ -24,13 +24,14 @@ config("amsSystemTestBConfig") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/services/bundlemgr/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
+    "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsSystemTestB\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsSystemTestB\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 ohos_shared_library("amsSystemTestB") {

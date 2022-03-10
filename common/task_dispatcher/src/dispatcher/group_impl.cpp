@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "group_impl.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
 GroupImpl::GroupImpl()
@@ -30,13 +30,13 @@ GroupImpl::GroupImpl()
  */
 bool GroupImpl::AwaitAllTasks(long timeout)
 {
-    APP_LOGI("GroupImpl::AwaitAllTasks start");
+    HILOG_INFO("GroupImpl::AwaitAllTasks start");
     if (count_.load() == 0) {
-        APP_LOGI("GroupImpl::AwaitAllTasks number of count_ is zero");
+        HILOG_INFO("GroupImpl::AwaitAllTasks number of count_ is zero");
         return true;
     }
     if (timeout <= 0L) {
-        APP_LOGW("GroupImpl::AwaitAllTasks timeout<=0");
+        HILOG_WARN("GroupImpl::AwaitAllTasks timeout<=0");
         return false;
     }
     bool success = true;
@@ -44,12 +44,12 @@ bool GroupImpl::AwaitAllTasks(long timeout)
     while (count_.load() > 0) {
         if (condition_.wait_for(lock, std::chrono::milliseconds(timeout)) == std::cv_status::timeout) {
             success = false;
-            APP_LOGI("GroupImpl::awaitAllTasks timeout");
+            HILOG_INFO("GroupImpl::awaitAllTasks timeout");
             break;
         }
-        APP_LOGI("GroupImpl::awaitAllTasks success");
+        HILOG_INFO("GroupImpl::awaitAllTasks success");
     }
-    APP_LOGI("GroupImpl::AwaitAllTasks end");
+    HILOG_INFO("GroupImpl::AwaitAllTasks end");
     return success;
 }
 
@@ -59,7 +59,7 @@ bool GroupImpl::AwaitAllTasks(long timeout)
  */
 void GroupImpl::Associate()
 {
-    APP_LOGI("GroupImpl::Associate called  add a task");
+    HILOG_INFO("GroupImpl::Associate called  add a task");
     count_.fetch_add(1);
 }
 /**
@@ -69,7 +69,7 @@ void GroupImpl::Associate()
 
 void GroupImpl::NotifyTaskDone()
 {
-    APP_LOGI("GroupImpl::NotifyTaskDone start. Called notify a task to complete");
+    HILOG_INFO("GroupImpl::NotifyTaskDone start. Called notify a task to complete");
     count_.fetch_sub(1);
     int newValue = count_.load();
     if (newValue > 0) {
@@ -79,7 +79,7 @@ void GroupImpl::NotifyTaskDone()
     condition_.notify_all();
     DrainNotifications();
 
-    APP_LOGI("GroupImpl::NotifyTaskDone end");
+    HILOG_INFO("GroupImpl::NotifyTaskDone end");
 }
 /**
  * @brief Adds the |notification| to notification list.
@@ -91,24 +91,24 @@ void GroupImpl::NotifyTaskDone()
  */
 bool GroupImpl::AddNotification(const std::shared_ptr<Runnable> &notification)
 {
-    APP_LOGI("GroupImpl::AddNotification start");
+    HILOG_INFO("GroupImpl::AddNotification start");
     if (count_.load() != 0) {
         std::unique_lock<std::mutex> lock(dataMutex_);
         if (notifications_.size() == MAX_TASK) {
-            APP_LOGW("GroupImpl::AddNotification called maximun number of tasks exceeded");
+            HILOG_WARN("GroupImpl::AddNotification called maximun number of tasks exceeded");
             return false;
         }
         if (count_.load() != 0) {
-            APP_LOGI("GroupImpl::AddNotification called add task");
+            HILOG_INFO("GroupImpl::AddNotification called add task");
             notifications_.push_back(notification);
             return true;
         }
     }
     if (notification) {
-        APP_LOGI("GroupImpl::AddNotification notification execute");
+        HILOG_INFO("GroupImpl::AddNotification notification execute");
         (*notification)();
     }
-    APP_LOGI("GroupImpl::AddNotification end");
+    HILOG_INFO("GroupImpl::AddNotification end");
     return true;
 }
 /**
@@ -118,14 +118,14 @@ bool GroupImpl::AddNotification(const std::shared_ptr<Runnable> &notification)
  */
 void GroupImpl::DrainNotifications()
 {
-    APP_LOGI("GroupImpl::DrainNotifications start");
+    HILOG_INFO("GroupImpl::DrainNotifications start");
     while (notifications_.size() > 0) {
         std::shared_ptr<Runnable> notification = notifications_.front();
         notifications_.pop_front();
-        APP_LOGI("GroupImpl::DrainNotifications execute notification");
+        HILOG_INFO("GroupImpl::DrainNotifications execute notification");
         (*notification)();
     }
-    APP_LOGI("GroupImpl::DrainNotifications end");
+    HILOG_INFO("GroupImpl::DrainNotifications end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

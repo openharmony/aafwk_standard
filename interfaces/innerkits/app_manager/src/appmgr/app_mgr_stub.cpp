@@ -20,11 +20,11 @@
 #include "iremote_object.h"
 
 #include "ability_info.h"
-#include "app_log_wrapper.h"
 #include "app_mgr_proxy.h"
 #include "app_scheduler_interface.h"
 #include "appexecfwk_errors.h"
 #include "bytrace.h"
+#include "hilog_wrapper.h"
 #include "iapp_state_callback.h"
 #include "want.h"
 #include "bundle_info.h"
@@ -85,11 +85,11 @@ AppMgrStub::~AppMgrStub()
 
 int AppMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("AppMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppMgrStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 
@@ -156,11 +156,11 @@ int32_t AppMgrStub::HandleGetAmsMgr(MessageParcel &data, MessageParcel &reply)
     int32_t result = NO_ERROR;
     sptr<IAmsMgr> amsMgr = GetAmsMgr();
     if (!amsMgr) {
-        APP_LOGE("abilitymgr instance is nullptr");
+        HILOG_ERROR("abilitymgr instance is nullptr");
         result = ERR_NO_INIT;
     } else {
         if (!reply.WriteParcelable(amsMgr->AsObject())) {
-            APP_LOGE("failed to reply abilitymgr instance to client, for write parcel error");
+            HILOG_ERROR("failed to reply abilitymgr instance to client, for write parcel error");
             result = ERR_APPEXECFWK_PARCEL_ERROR;
         }
     }
@@ -220,7 +220,7 @@ int32_t AppMgrStub::HandleGetSystemMemoryAttr(MessageParcel &data, MessageParcel
     data.ReadString(strConfig);
     GetSystemMemoryAttr(memoryInfo, strConfig);
     if (reply.WriteParcelable(&memoryInfo)) {
-        APP_LOGE("want write failed.");
+        HILOG_ERROR("want write failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
@@ -241,7 +241,7 @@ int32_t AppMgrStub::HandleStartupResidentProcess(MessageParcel &data, MessagePar
     for (int32_t i = 0; i < infoSize; i++) {
         std::unique_ptr<AppExecFwk::BundleInfo> bundleInfo(data.ReadParcelable<AppExecFwk::BundleInfo>());
         if (!bundleInfo) {
-            APP_LOGE("Read Parcelable infos failed.");
+            HILOG_ERROR("Read Parcelable infos failed.");
             return ERR_INVALID_VALUE;
         }
         bundleInfos.emplace_back(*bundleInfo);
@@ -287,12 +287,12 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
 {
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
     BundleInfo *bundleInfo = data.ReadParcelable<BundleInfo>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
     auto observer = data.ReadParcelable<IRemoteObject>();
@@ -333,7 +333,7 @@ int32_t AppMgrStub::HandleScheduleAcceptWantDone(MessageParcel &data, MessagePar
     auto recordId = data.ReadInt32();
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
     auto flag = data.ReadString();
@@ -351,7 +351,7 @@ int32_t AppMgrStub::HandleGetAbilityRecordsByProcessID(MessageParcel &data, Mess
     reply.WriteInt32(tokens.size());
     for (auto &it : tokens) {
         if (!reply.WriteRemoteObject(it)) {
-            APP_LOGE("failed to write query result.");
+            HILOG_ERROR("failed to write query result.");
             return ERR_FLATTEN_OBJECT;
         }
     }
@@ -369,11 +369,11 @@ int32_t AppMgrStub::HandleStartRenderProcess(MessageParcel &data, MessageParcel 
     int32_t renderPid = 0;
     int32_t result = StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
     if (!reply.WriteInt32(result)) {
-        APP_LOGE("write result error.");
+        HILOG_ERROR("write result error.");
         return ERR_INVALID_VALUE;
     }
     if (!reply.WriteInt32(renderPid)) {
-        APP_LOGE("write renderPid error.");
+        HILOG_ERROR("write renderPid error.");
         return ERR_INVALID_VALUE;
     }
     return result;

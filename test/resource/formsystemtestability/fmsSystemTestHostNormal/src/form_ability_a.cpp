@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "form_ability_a.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 #include "system_test_form_util.h"
@@ -41,12 +41,12 @@ std::vector<std::string> eventList = {
 };
 void FormAbilityA::AcquireFormCallback::OnAcquired(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     FormTestUtils::PublishEvent(this->caseName_, this->code_, std::to_string(formJsInfo.formId));
 }
 void FormAbilityA::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     FormTestUtils::PublishEvent(this->caseName_, this->code_ + 1, formJsInfo.formData);
 
     if (this->caseName_ == FORM_EVENT_RECV_ACQUIRE_FORM_1200
@@ -56,20 +56,20 @@ void FormAbilityA::AcquireFormCallback::OnUpdate(const int32_t result, const For
         || this->caseName_ == FORM_EVENT_RECV_ACQUIRE_FORM_1800_1
         || this->caseName_ == FORM_EVENT_RECV_ACQUIRE_FORM_1900) {
         std::string strFormId = std::to_string(formJsInfo.formId);
-        APP_LOGI("%{public}s, delete form, formId: %{public}s", __func__, strFormId.c_str());
+        HILOG_INFO("%{public}s, delete form, formId: %{public}s", __func__, strFormId.c_str());
         ability_->FMS_deleteFormCommon(strFormId);
     }
 }
 
 void FormAbilityA::AcquireFormCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityA::FMS_deleteFormCommon(std::string strFormId)
 {
-    APP_LOGI("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
+    HILOG_INFO("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
     if (strFormId.empty()) {
-        APP_LOGE("DeleteForm error, formId is 0");
+        HILOG_ERROR("DeleteForm error, formId is 0");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "false");
         return;
     }
@@ -78,17 +78,17 @@ void FormAbilityA::FMS_deleteFormCommon(std::string strFormId)
     bool bResult = DeleteForm(formId);
     sleep(1);
     if (bResult) {
-        APP_LOGI("DeleteForm end");
+        HILOG_INFO("DeleteForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "true");
     } else {
-        APP_LOGE("DeleteForm error");
+        HILOG_ERROR("DeleteForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "false");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_0300(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_0300, EVENT_CODE_300);
     // Set Want info begin
@@ -101,15 +101,15 @@ void FormAbilityA::FMS_acquireForm_0300(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(-1, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0300, EVENT_CODE_300, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_0400(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_0400, EVENT_CODE_400);
     // Set Want info begin
@@ -122,15 +122,15 @@ void FormAbilityA::FMS_acquireForm_0400(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0400, EVENT_CODE_400, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_0500(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_0500, EVENT_CODE_500);
     // Set Want info begin
@@ -144,15 +144,15 @@ void FormAbilityA::FMS_acquireForm_0500(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0500, EVENT_CODE_500, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_0600(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_0600, EVENT_CODE_600);
     // Set Want info begin
@@ -166,15 +166,15 @@ void FormAbilityA::FMS_acquireForm_0600(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0600, EVENT_CODE_600, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_0700(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_0700, EVENT_CODE_700);
     // Set Want info begin
@@ -187,15 +187,15 @@ void FormAbilityA::FMS_acquireForm_0700(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0700, EVENT_CODE_700, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_1000(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1000, EVENT_CODE_1000);
     // Set Want info begin
@@ -208,15 +208,15 @@ void FormAbilityA::FMS_acquireForm_1000(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1000, EVENT_CODE_1000, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_1100(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1100, EVENT_CODE_1100);
     callback->ability_ = this;
@@ -230,15 +230,15 @@ void FormAbilityA::FMS_acquireForm_1100(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1100, EVENT_CODE_1100, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_1200(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1200, EVENT_CODE_1200);
     callback->ability_ = this;
@@ -252,16 +252,16 @@ void FormAbilityA::FMS_acquireForm_1200(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1200, EVENT_CODE_1200, "");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_1500_1(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1500_1, EVENT_CODE_1510);
     callback->ability_ = this;
@@ -275,16 +275,16 @@ void FormAbilityA::FMS_acquireForm_1500_1(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1500_1, EVENT_CODE_1510, "");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_1600(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1600, EVENT_CODE_1600);
     callback->ability_ = this;
@@ -298,15 +298,15 @@ void FormAbilityA::FMS_acquireForm_1600(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1600, EVENT_CODE_1600, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_1600_1(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1600_1, EVENT_CODE_1610);
     callback->ability_ = this;
@@ -320,15 +320,15 @@ void FormAbilityA::FMS_acquireForm_1600_1(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1600_1, EVENT_CODE_1610, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_1800(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1800, EVENT_CODE_1800);
     callback->ability_ = this;
@@ -342,15 +342,15 @@ void FormAbilityA::FMS_acquireForm_1800(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1800, EVENT_CODE_1800, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_1800_1(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1800_1, EVENT_CODE_1810);
     callback->ability_ = this;
@@ -364,15 +364,15 @@ void FormAbilityA::FMS_acquireForm_1800_1(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1800_1, EVENT_CODE_1810, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_1900(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_1900, EVENT_CODE_1900);
     callback->ability_ = this;
@@ -386,15 +386,15 @@ void FormAbilityA::FMS_acquireForm_1900(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_1900, EVENT_CODE_1900, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_2100(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2100, EVENT_CODE_2100);
     callback->ability_ = this;
@@ -409,45 +409,45 @@ void FormAbilityA::FMS_acquireForm_2100(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(formId, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2100, EVENT_CODE_2100, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_2200(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2200, EVENT_CODE_2200);
 
     // Set Want info end
     bool bResult = CastTempForm(-1);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2200, EVENT_CODE_2200, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_2300(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2300, EVENT_CODE_2300);
 
     // Set Want info end
     bool bResult = CastTempForm(0);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2300, EVENT_CODE_2300, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_2400(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2400, EVENT_CODE_2400);
     callback->ability_ = this;
@@ -461,31 +461,31 @@ void FormAbilityA::FMS_acquireForm_2400(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2400, EVENT_CODE_2400, "");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_2500(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2500, EVENT_CODE_2500);
 
     // Set Want info end
     bool bResult = CastTempForm(EVENT_CODE_1234);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2500, EVENT_CODE_2500, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_2600_1(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2600_1, EVENT_CODE_2610);
 
@@ -499,16 +499,16 @@ void FormAbilityA::FMS_acquireForm_2600_1(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2600_1, EVENT_CODE_2610, "");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_2600(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2600, EVENT_CODE_2600);
     callback->ability_ = this;
@@ -516,10 +516,10 @@ void FormAbilityA::FMS_acquireForm_2600(std::string data)
     int64_t formId = std::stoll(data);
     bool bResult = CastTempForm(formId);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2600, EVENT_CODE_2600, "true");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2600, EVENT_CODE_2600, "false");
     }
 
@@ -528,7 +528,7 @@ void FormAbilityA::FMS_acquireForm_2600(std::string data)
 
 void FormAbilityA::FMS_acquireForm_2700(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2700, EVENT_CODE_2700);
 
@@ -536,9 +536,9 @@ void FormAbilityA::FMS_acquireForm_2700(std::string data)
     int64_t formId = std::stoll(data);
     bool bResult = CastTempForm(formId);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2700, EVENT_CODE_2700, "false");
     }
 
@@ -546,7 +546,7 @@ void FormAbilityA::FMS_acquireForm_2700(std::string data)
 }
 void FormAbilityA::FMS_acquireForm_2800(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2800, EVENT_CODE_2800);
 
@@ -554,9 +554,9 @@ void FormAbilityA::FMS_acquireForm_2800(std::string data)
     int64_t formId = std::stoll(data);
     bool bResult = CastTempForm(formId);
     if (bResult) {
-        APP_LOGI("CastTempForm end");
+        HILOG_INFO("CastTempForm end");
     } else {
-        APP_LOGE("CastTempForm error");
+        HILOG_ERROR("CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2800, EVENT_CODE_2800, "false");
     }
 
@@ -564,7 +564,7 @@ void FormAbilityA::FMS_acquireForm_2800(std::string data)
 }
 void FormAbilityA::FMS_acquireForm_2900(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2900, EVENT_CODE_2900);
     callback->ability_ = this;
@@ -578,16 +578,16 @@ void FormAbilityA::FMS_acquireForm_2900(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2900, EVENT_CODE_2900, "");
     }
 }
 
 void FormAbilityA::FMS_acquireForm_2900_1(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_2900_1, EVENT_CODE_2910);
     callback->ability_ = this;
@@ -601,15 +601,15 @@ void FormAbilityA::FMS_acquireForm_2900_1(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_2900_1, EVENT_CODE_2910, "");
     }
 }
 void FormAbilityA::FMS_acquireForm_3000(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_3000, EVENT_CODE_3000);
     // Set Want info begin
@@ -622,15 +622,15 @@ void FormAbilityA::FMS_acquireForm_3000(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3000, EVENT_CODE_3000, "false");
     }
 }
 void FormAbilityA::FMS_acquireForm_3100(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_3100, EVENT_CODE_3100);
     callback->ability_ = this;
@@ -644,9 +644,9 @@ void FormAbilityA::FMS_acquireForm_3100(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3100, EVENT_CODE_3100, "");
     }
 }
@@ -663,7 +663,7 @@ void FormAbilityA::FMS_acquireForm_3500(std::string data)
 
 void FormAbilityA::FMS_acquireForm_tempForm(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_TEMP, EVENT_CODE_TEMP);
 
@@ -677,15 +677,15 @@ void FormAbilityA::FMS_acquireForm_tempForm(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_TEMP, EVENT_CODE_TEMP, "");
     }
 }
 void FormAbilityA::FMS_acquireFormBatch(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     // Set Want info begin
     Want want;
     want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, FORM_DIMENSION_1);
@@ -695,22 +695,22 @@ void FormAbilityA::FMS_acquireFormBatch(std::string data)
     want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME1, FORM_PROVIDER_ABILITY_NAME1);
 
     int formCount = std::stoi(data);
-    APP_LOGI("%{public}s, formCount: %{public}d", __func__, formCount);
+    HILOG_INFO("%{public}s, formCount: %{public}d", __func__, formCount);
     want.SetParam(Constants::PARAM_FORM_ADD_COUNT, formCount);
     // Set Want info end
     int result = STtools::SystemTestFormUtil::BatchAddFormRecords(want);
     if (result == ERR_OK) {
-        APP_LOGI("Batch add form end");
+        HILOG_INFO("Batch add form end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "true");
     } else {
-        APP_LOGE("Batch add form error");
+        HILOG_ERROR("Batch add form error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "false");
     }
 }
 
 void FormAbilityA::FMS_acquireFormBatchB(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     // Set Want info begin
     Want want;
     want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, FORM_DIMENSION_1);
@@ -720,21 +720,21 @@ void FormAbilityA::FMS_acquireFormBatchB(std::string data)
     want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME2, FORM_PROVIDER_ABILITY_NAME2);
 
     int formCount = std::stoi(data);
-    APP_LOGI("%{public}s, formCount: %{public}d", __func__, formCount);
+    HILOG_INFO("%{public}s, formCount: %{public}d", __func__, formCount);
     want.SetParam(Constants::PARAM_FORM_ADD_COUNT, formCount);
     // Set Want info end
     int result = STtools::SystemTestFormUtil::BatchAddFormRecords(want);
     if (result == ERR_OK) {
-        APP_LOGI("Batch add form end");
+        HILOG_INFO("Batch add form end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH_B, EVENT_CODE_BATCH_B, "true");
     } else {
-        APP_LOGE("Batch add form error");
+        HILOG_ERROR("Batch add form error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH_B, EVENT_CODE_BATCH_B, "false");
     }
 }
 void FormAbilityA::FMS_acquireFormTempBatch(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     // Set Want info begin
     Want want;
     want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, FORM_DIMENSION_1);
@@ -745,27 +745,27 @@ void FormAbilityA::FMS_acquireFormTempBatch(std::string data)
     want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME1, FORM_PROVIDER_ABILITY_NAME1);
 
     int formCount = std::stoi(data);
-    APP_LOGI("%{public}s, formCount: %{public}d", __func__, formCount);
+    HILOG_INFO("%{public}s, formCount: %{public}d", __func__, formCount);
     want.SetParam(Constants::PARAM_FORM_ADD_COUNT, formCount);
     // Set Want info end
     int result = STtools::SystemTestFormUtil::BatchAddFormRecords(want);
     if (result == ERR_OK) {
-        APP_LOGI("Batch add temp form end");
+        HILOG_INFO("Batch add temp form end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "true");
     } else {
-        APP_LOGE("Batch add temp form error");
+        HILOG_ERROR("Batch add temp form error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "false");
     }
 }
 void FormAbilityA::FMS_deleteFormBatch(std::string strFormId)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     int result = STtools::SystemTestFormUtil::ClearFormRecords();
     if (result == ERR_OK) {
-        APP_LOGI("Clear form records end");
+        HILOG_INFO("Clear form records end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_CLEAR_FORM_BATCH, EVENT_CODE_CLEAR_BATCH, "true");
     } else {
-        APP_LOGE("Clear form records error");
+        HILOG_ERROR("Clear form records error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_CLEAR_FORM_BATCH, EVENT_CODE_CLEAR_BATCH, "false");
     }
 }
@@ -775,12 +775,12 @@ FormAbilityA::~FormAbilityA()
 }
 void FormAbilityA::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilityA::onStart");
+    HILOG_INFO("FormAbilityA::onStart");
     Ability::OnStart(want);
 }
 void FormAbilityA::OnActive()
 {
-    APP_LOGI("FormAbilityA::OnActive");
+    HILOG_INFO("FormAbilityA::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -788,25 +788,25 @@ void FormAbilityA::OnActive()
 
 void FormAbilityA::OnStop()
 {
-    APP_LOGI("FormAbilityA::OnStop");
+    HILOG_INFO("FormAbilityA::OnStop");
 
     Ability::OnStop();
 }
 void FormAbilityA::OnInactive()
 {
-    APP_LOGI("FormAbilityA::OnInactive");
+    HILOG_INFO("FormAbilityA::OnInactive");
 
     Ability::OnInactive();
 }
 void FormAbilityA::OnBackground()
 {
-    APP_LOGI("FormAbilityA::OnBackground");
+    HILOG_INFO("FormAbilityA::OnBackground");
 
     Ability::OnBackground();
 }
 void FormAbilityA::SubscribeEvent()
 {
-    APP_LOGI("FormAbilityA::SubscribeEvent");
+    HILOG_INFO("FormAbilityA::SubscribeEvent");
     MatchingSkills matchingSkills;
     for (const auto &e : eventList) {
         matchingSkills.AddEvent(e);
@@ -823,7 +823,7 @@ void FormAbilityA::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilityA::Init");
+    HILOG_INFO("FormAbilityA::Init");
     Ability::Init(abilityInfo, application, handler, token);
     memberFuncMap_[FORM_EVENT_REQ_ACQUIRE_FORM_0300] = &FormAbilityA::FMS_acquireForm_0300;
     memberFuncMap_[FORM_EVENT_REQ_ACQUIRE_FORM_0400] = &FormAbilityA::FMS_acquireForm_0400;
@@ -863,7 +863,7 @@ void FormAbilityA::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void FormAbilityA::handleEvent(std::string action, std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     if (calledFuncMap_.find(action) != calledFuncMap_.end()) {
         return;
     }
@@ -883,9 +883,9 @@ void FormAbilityA::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName, data.GetData());
 

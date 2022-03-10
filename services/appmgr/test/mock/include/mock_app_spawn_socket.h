@@ -19,8 +19,8 @@
 #include "gmock/gmock.h"
 #include "app_spawn_socket.h"
 #include "app_spawn_msg_wrapper.h"
+#include "hilog_wrapper.h"
 #include "securec.h"
-#include "app_log_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

@@ -15,9 +15,8 @@
 
 #include "app_mgr_proxy.h"
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
-
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
 
@@ -29,7 +28,7 @@ AppMgrProxy::AppMgrProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IAppMgr
 bool AppMgrProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AppMgrProxy::GetDescriptor())) {
-        APP_LOGE("write interface token failed");
+        HILOG_ERROR("write interface token failed");
         return false;
     }
     return true;
@@ -37,7 +36,7 @@ bool AppMgrProxy::WriteInterfaceToken(MessageParcel &data)
 
 void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
 {
-    APP_LOGD("AppMgrProxy::AttachApplication start");
+    HILOG_DEBUG("AppMgrProxy::AttachApplication start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -47,20 +46,20 @@ void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
     data.WriteParcelable(obj.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAppMgr::Message::APP_ATTACH_APPLICATION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -70,20 +69,20 @@ void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
     data.WriteInt32(recordId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppMgr::Message::APP_APPLICATION_FOREGROUNDED), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -93,20 +92,20 @@ void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
     data.WriteInt32(recordId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppMgr::Message::APP_APPLICATION_BACKGROUNDED), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -116,20 +115,20 @@ void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
     data.WriteInt32(recordId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppMgr::Message::APP_APPLICATION_TERMINATED), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &permission)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
 
     MessageParcel data;
     MessageParcel reply;
@@ -141,22 +140,22 @@ int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &
     data.WriteString(permission);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_PERMISSION_DENIED;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAppMgr::Message::APP_CHECK_PERMISSION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGE("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_ERROR("SendRequest is failed, error code: %{public}d", ret);
         return ERR_PERMISSION_DENIED;
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -166,20 +165,20 @@ void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
     data.WriteParcelable(token.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAppMgr::Message::APP_ABILITY_CLEANED), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
 {
-    APP_LOGD("begin to get Ams instance");
+    HILOG_DEBUG("begin to get Ams instance");
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
@@ -191,16 +190,16 @@ sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
     sptr<IRemoteObject> object = reply.ReadParcelable<IRemoteObject>();
     sptr<IAmsMgr> amsMgr = iface_cast<IAmsMgr>(object);
     if (!amsMgr) {
-        APP_LOGE("ams instance is nullptr");
+        HILOG_ERROR("ams instance is nullptr");
         return nullptr;
     }
-    APP_LOGD("get ams instance success");
+    HILOG_DEBUG("get ams instance success");
     return amsMgr;
 }
 
 int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -209,26 +208,26 @@ int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     if (!data.WriteString(bundleName)) {
-        APP_LOGE("parcel WriteString failed");
+        HILOG_ERROR("parcel WriteString failed");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAppMgr::Message::APP_CLEAR_UP_APPLICATION_DATA), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -237,7 +236,7 @@ int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &inf
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_ALL_RUNNING_PROCESSES, data, reply)) {
@@ -245,17 +244,17 @@ int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &inf
     }
     auto error = GetParcelableInfos<RunningProcessInfo>(reply, info);
     if (error != NO_ERROR) {
-        APP_LOGE("GetParcelableInfos fail, error: %{public}d", error);
+        HILOG_ERROR("GetParcelableInfos fail, error: %{public}d", error);
         return error;
     }
     int result = reply.ReadInt32();
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
     return result;
 }
 
 int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -266,7 +265,7 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
     data.WriteInt32(userId);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_RUNNING_PROCESSES_BY_USER_ID, data, reply)) {
@@ -274,11 +273,11 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
     }
     auto error = GetParcelableInfos<RunningProcessInfo>(reply, info);
     if (error != NO_ERROR) {
-        APP_LOGE("GetParcelableInfos fail, error: %{public}d", error);
+        HILOG_ERROR("GetParcelableInfos fail, error: %{public}d", error);
         return error;
     }
     int result = reply.ReadInt32();
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
     return result;
 }
 
@@ -287,12 +286,12 @@ bool AppMgrProxy::SendTransactCmd(IAppMgr::Message code, MessageParcel &data, Me
     MessageOption option(MessageOption::TF_SYNC);
     sptr<IRemoteObject> remote = Remote();
     if (!remote) {
-        APP_LOGE("fail to send transact cmd %{public}d due to remote object", code);
+        HILOG_ERROR("fail to send transact cmd %{public}d due to remote object", code);
         return false;
     }
     int32_t result = remote->SendRequest(static_cast<uint32_t>(code), data, reply, option);
     if (result != NO_ERROR) {
-        APP_LOGE("receive error transact code %{public}d in transact cmd %{public}d", result, code);
+        HILOG_ERROR("receive error transact code %{public}d in transact cmd %{public}d", result, code);
         return false;
     }
     return true;
@@ -307,23 +306,23 @@ void AppMgrProxy::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string 
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken failed");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
     if (!data.WriteString(strConfig)) {
-        APP_LOGE("want write failed.");
+        HILOG_ERROR("want write failed.");
         return;
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_SYSTEM_MEMORY_ATTR, data, reply)) {
-        APP_LOGE("SendTransactCmd failed");
+        HILOG_ERROR("SendTransactCmd failed");
         return;
     }
 
     std::shared_ptr<SystemMemoryAttr> remoteRetsult(reply.ReadParcelable<SystemMemoryAttr>());
     if (remoteRetsult == nullptr) {
-        APP_LOGE("recv SystemMemoryAttr failed");
+        HILOG_ERROR("recv SystemMemoryAttr failed");
         return;
     }
 
@@ -335,17 +334,17 @@ void AppMgrProxy::AddAbilityStageDone(const int32_t recordId)
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken failed");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
     if (!data.WriteInt32(recordId)) {
-        APP_LOGE("want write failed.");
+        HILOG_ERROR("want write failed.");
         return;
     }
 
     if (!SendTransactCmd(IAppMgr::Message::APP_ADD_ABILITY_STAGE_INFO_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd failed");
+        HILOG_ERROR("SendTransactCmd failed");
         return;
     }
     return;
@@ -356,24 +355,24 @@ void AppMgrProxy::StartupResidentProcess(const std::vector<AppExecFwk::BundleInf
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken failed");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
     if (!data.WriteInt32(bundleInfos.size())) {
-        APP_LOGE("write bundle info size failed.");
+        HILOG_ERROR("write bundle info size failed.");
         return;
     }
 
     for (auto &bundleInfo : bundleInfos) {
         if (!data.WriteParcelable(&bundleInfo)) {
-            APP_LOGE("write bundle info failed");
+            HILOG_ERROR("write bundle info failed");
             return;
         }
     }
 
     if (!SendTransactCmd(IAppMgr::Message::STARTUP_RESIDENT_PROCESS, data, reply)) {
-        APP_LOGE("SendTransactCmd failed");
+        HILOG_ERROR("SendTransactCmd failed");
         return;
     }
     return;
@@ -386,12 +385,12 @@ int AppMgrProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcel
     for (int32_t i = 0; i < infoSize; i++) {
         std::unique_ptr<T> info(reply.ReadParcelable<T>());
         if (!info) {
-            APP_LOGE("Read Parcelable infos failed");
+            HILOG_ERROR("Read Parcelable infos failed");
             return ERR_INVALID_VALUE;
         }
         parcelableInfos.emplace_back(*info);
     }
-    APP_LOGD("get parcelable infos success");
+    HILOG_DEBUG("get parcelable infos success");
     return NO_ERROR;
 }
 
@@ -399,10 +398,10 @@ int AppMgrProxy::RegisterApplicationStateObserver(
     const sptr<IApplicationStateObserver> &observer)
 {
     if (!observer) {
-        APP_LOGE("observer null");
+        HILOG_ERROR("observer null");
         return ERR_INVALID_VALUE;
     }
-    APP_LOGD("RegisterApplicationStateObserver start");
+    HILOG_DEBUG("RegisterApplicationStateObserver start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -410,14 +409,14 @@ int AppMgrProxy::RegisterApplicationStateObserver(
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(observer->AsObject())) {
-        APP_LOGE("observer write failed.");
+        HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
 
     auto error = Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::REGISTER_APPLICATION_STATE_OBSERVER),
         data, reply, option);
     if (error != NO_ERROR) {
-        APP_LOGE("Send request error: %{public}d", error);
+        HILOG_ERROR("Send request error: %{public}d", error);
         return error;
     }
     return reply.ReadInt32();
@@ -427,10 +426,10 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
     const sptr<IApplicationStateObserver> &observer)
 {
     if (!observer) {
-        APP_LOGE("observer null");
+        HILOG_ERROR("observer null");
         return ERR_INVALID_VALUE;
     }
-    APP_LOGD("UnregisterApplicationStateObserver start");
+    HILOG_DEBUG("UnregisterApplicationStateObserver start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -438,14 +437,14 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(observer->AsObject())) {
-        APP_LOGE("observer write failed.");
+        HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
 
     auto error = Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::UNREGISTER_APPLICATION_STATE_OBSERVER),
         data, reply, option);
     if (error != NO_ERROR) {
-        APP_LOGE("Send request error: %{public}d", error);
+        HILOG_ERROR("Send request error: %{public}d", error);
         return error;
     }
     return reply.ReadInt32();
@@ -453,7 +452,7 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
 
 int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
 {
-    APP_LOGD("GetForegroundApplications start");
+    HILOG_DEBUG("GetForegroundApplications start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -463,14 +462,14 @@ int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
     auto error = Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::GET_FOREGROUND_APPLICATIONS),
         data, reply, option);
     if (error != NO_ERROR) {
-        APP_LOGE("GetForegroundApplications fail, error: %{public}d", error);
+        HILOG_ERROR("GetForegroundApplications fail, error: %{public}d", error);
         return error;
     }
     int32_t infoSize = reply.ReadInt32();
     for (int32_t i = 0; i < infoSize; i++) {
         std::unique_ptr<AppStateData> info(reply.ReadParcelable<AppStateData>());
         if (!info) {
-            APP_LOGE("Read Parcelable infos failed.");
+            HILOG_ERROR("Read Parcelable infos failed.");
             return ERR_INVALID_VALUE;
         }
         list.emplace_back(*info);
@@ -489,21 +488,21 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(&want)) {
-        APP_LOGE("want write failed.");
+        HILOG_ERROR("want write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(observer)) {
-        APP_LOGE("observer write failed.");
+        HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(&bundleInfo)) {
-        APP_LOGE("bundleInfo write failed.");
+        HILOG_ERROR("bundleInfo write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
         Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::START_USER_TEST_PROCESS), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
     return reply.ReadInt32();
@@ -520,25 +519,25 @@ int AppMgrProxy::FinishUserTest(
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteString(msg)) {
-        APP_LOGE("msg write failed.");
+        HILOG_ERROR("msg write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteInt32(resultCode)) {
-        APP_LOGE("resultCode:WriteInt32 fail.");
+        HILOG_ERROR("resultCode:WriteInt32 fail.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteString(bundleName)) {
-        APP_LOGE("bundleName write failed.");
+        HILOG_ERROR("bundleName write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteInt32(pid)) {
-        APP_LOGE("pid write failed.");
+        HILOG_ERROR("pid write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
         Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::FINISH_USER_TEST), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
     return reply.ReadInt32();
@@ -549,17 +548,17 @@ void AppMgrProxy::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Wa
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken failed");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return;
     }
 
     if (!data.WriteInt32(recordId) || !data.WriteParcelable(&want) || !data.WriteString(flag)) {
-        APP_LOGE("want write failed.");
+        HILOG_ERROR("want write failed.");
         return;
     }
 
     if (!SendTransactCmd(IAppMgr::Message::SCHEDULE_ACCEPT_WANT_DONE, data, reply)) {
-        APP_LOGE("SendTransactCmd failed");
+        HILOG_ERROR("SendTransactCmd failed");
         return;
     }
 }
@@ -589,7 +588,7 @@ int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcF
     int32_t sharedFd, pid_t &renderPid)
 {
     if (renderParam.empty() || ipcFd <= 0 || sharedFd <= 0) {
-        APP_LOGE("Invalid params, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
+        HILOG_ERROR("Invalid params, renderParam:%{public}s, ipcFd:%{public}d, sharedFd:%{public}d",
             renderParam.c_str(), ipcFd, sharedFd);
         return -1;
     }
@@ -598,31 +597,31 @@ int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcF
     MessageParcel reply;
     MessageOption option;
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("WriteInterfaceToken failed");
+        HILOG_ERROR("WriteInterfaceToken failed");
         return ERR_FLATTEN_OBJECT;
     }
 
     if (!data.WriteString(renderParam)) {
-        APP_LOGE("want paramSize failed.");
+        HILOG_ERROR("want paramSize failed.");
         return -1;
     }
 
     if (!data.WriteFileDescriptor(ipcFd) || !data.WriteFileDescriptor(sharedFd)) {
-        APP_LOGE("want fd failed, ipcFd:%{public}d, sharedFd:%{public}d", ipcFd, sharedFd);
+        HILOG_ERROR("want fd failed, ipcFd:%{public}d, sharedFd:%{public}d", ipcFd, sharedFd);
         return -1;
     }
 
     int32_t ret =
         Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::START_RENDER_PROCESS), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("StartRenderProcess SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("StartRenderProcess SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
 
     auto result = reply.ReadInt32();
     renderPid = reply.ReadInt32();
     if (result != 0) {
-        APP_LOGW("StartRenderProcess failed, result: %{public}d", ret);
+        HILOG_WARN("StartRenderProcess failed, result: %{public}d", ret);
         return ret;
     }
     return 0;
@@ -631,11 +630,11 @@ int AppMgrProxy::StartRenderProcess(const std::string &renderParam, int32_t ipcF
 void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler)
 {
     if (!renderScheduler) {
-        APP_LOGE("renderScheduler is null");
+        HILOG_ERROR("renderScheduler is null");
         return;
     }
 
-    APP_LOGD("AttachRenderProcess start");
+    HILOG_DEBUG("AttachRenderProcess start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -643,12 +642,12 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
         return;
     }
     if (!data.WriteParcelable(renderScheduler)) {
-        APP_LOGE("renderScheduler write failed.");
+        HILOG_ERROR("renderScheduler write failed.");
         return;
     }
 
     if (!SendTransactCmd(IAppMgr::Message::ATTACH_RENDER_PROCESS, data, reply)) {
-        APP_LOGE("SendTransactCmd ATTACH_RENDER_PROCESS failed");
+        HILOG_ERROR("SendTransactCmd ATTACH_RENDER_PROCESS failed");
         return;
     }
 }

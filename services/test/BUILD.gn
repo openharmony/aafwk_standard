@@ -15,8 +15,8 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("aafwk_module_test_config") {
   defines = [
-    # "APP_LOG_TAG = \"AbilityMgrService\"",
-    # "LOG_DOMAIN = 0xD00111F",
+    # "AMS_LOG_TAG = \"AbilityMgrService\"",
+    # "AMS_LOG_DOMAIN = 0xD00111F",
   ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]

@@ -14,7 +14,7 @@
  */
 
 #include "third_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -29,7 +29,7 @@ void ThirdAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("ThirdAbility::Init");
+    HILOG_INFO("ThirdAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
@@ -40,7 +40,7 @@ ThirdAbility::~ThirdAbility()
 
 void ThirdAbility::OnStart(const Want &want)
 {
-    APP_LOGI("ThirdAbility::OnStart");
+    HILOG_INFO("ThirdAbility::OnStart");
     SubscribeEvent();
     Ability::OnStart(want);
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnStart");
@@ -48,7 +48,7 @@ void ThirdAbility::OnStart(const Want &want)
 
 void ThirdAbility::OnStop()
 {
-    APP_LOGI("ThirdAbility::OnStop");
+    HILOG_INFO("ThirdAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnStop");
@@ -56,41 +56,41 @@ void ThirdAbility::OnStop()
 
 void ThirdAbility::OnActive()
 {
-    APP_LOGI("ThirdAbility::OnActive");
+    HILOG_INFO("ThirdAbility::OnActive");
     Ability::OnActive();
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnActive");
 }
 
 void ThirdAbility::OnInactive()
 {
-    APP_LOGI("ThirdAbility::OnInactive");
+    HILOG_INFO("ThirdAbility::OnInactive");
     Ability::OnInactive();
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnInactive");
 }
 
 void ThirdAbility::OnBackground()
 {
-    APP_LOGI("ThirdAbility::OnBackground");
+    HILOG_INFO("ThirdAbility::OnBackground");
     Ability::OnBackground();
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnBackground");
 }
 
 void ThirdAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("ThirdAbility::OnForeground");
+    HILOG_INFO("ThirdAbility::OnForeground");
     Ability::OnForeground(want);
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnForeground");
 }
 
 void ThirdAbility::OnRestoreAbilityState(const PacMap &inState)
 {
-    APP_LOGI("ThirdAbility::OnRestoreAbilityState");
+    HILOG_INFO("ThirdAbility::OnRestoreAbilityState");
     Ability::OnRestoreAbilityState(inState);
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnRestoreAbilityState");
 }
 void ThirdAbility::OnSaveAbilityState(PacMap &outState)
 {
-    APP_LOGI("ThirdAbility::OnSaveAbilityState");
+    HILOG_INFO("ThirdAbility::OnSaveAbilityState");
     Ability::OnSaveAbilityState(outState);
     TestUtils::PublishEvent(g_EVENT_RESP_THIRD_LIFECYCLE, THIRD_ABILITY_CODE, "OnSaveAbilityState");
 }
@@ -113,9 +113,9 @@ void ThirdAbility::SubscribeEvent()
 
 void ThirdEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("ThirdEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("ThirdEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("ThirdEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("ThirdEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("ThirdEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("ThirdEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), g_EVENT_REQU_THIRD.c_str()) == 0) {
         auto target = data.GetData();
@@ -126,14 +126,14 @@ void ThirdEventSubscriber::OnReceiveEvent(const CommonEventData &data)
         if (mapTestFunc_.find(caseInfo[index_f]) != mapTestFunc_.end()) {
             mapTestFunc_[caseInfo[index_f]](std::stoi(caseInfo[index_s]), std::stoi(caseInfo[index_t]), data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
 
 void ThirdAbility::TestAbility(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("ThirdAbility::TestAbility");
+    HILOG_INFO("ThirdAbility::TestAbility");
     if (mapCase_.find(apiIndex) != mapCase_.end()) {
         if (caseIndex < (int)mapCase_[apiIndex].size()) {
             mapCase_[apiIndex][caseIndex](code);

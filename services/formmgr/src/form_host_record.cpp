@@ -117,9 +117,9 @@ sptr<IRemoteObject> FormHostRecord::GetClientStub() const
  */
 void FormHostRecord::OnAcquire(int64_t id, const FormRecord &record)
 {
-    APP_LOGD("FormHostRecord OnAcquire");
+    HILOG_DEBUG("FormHostRecord OnAcquire");
     if (clientImpl_ == nullptr) {
-        APP_LOGE("%{public}s: clientImpl_ can not be NULL", __func__);
+        HILOG_ERROR("%{public}s: clientImpl_ can not be NULL", __func__);
         return;
     }
 
@@ -133,10 +133,10 @@ void FormHostRecord::OnAcquire(int64_t id, const FormRecord &record)
  */
 void FormHostRecord::OnUpdate(int64_t id, const FormRecord &record)
 {
-    APP_LOGI("%{public}s start.", __func__);
+    HILOG_INFO("%{public}s start.", __func__);
 
     if (clientImpl_ == nullptr) {
-        APP_LOGE("%{public}s: clientImpl_ can not be null.", __func__);
+        HILOG_ERROR("%{public}s: clientImpl_ can not be null.", __func__);
         return;
     }
 
@@ -150,10 +150,10 @@ void FormHostRecord::OnUpdate(int64_t id, const FormRecord &record)
  */
 void FormHostRecord::OnFormUninstalled(std::vector<int64_t> &formIds)
 {
-    APP_LOGI("%{public}s start.", __func__);
+    HILOG_INFO("%{public}s start.", __func__);
 
     if (clientImpl_ == nullptr) {
-        APP_LOGE("%{public}s: clientImpl_ can not be null.", __func__);
+        HILOG_ERROR("%{public}s: clientImpl_ can not be null.", __func__);
         return;
     }
     clientImpl_->OnUninstall(formIds, clientStub_);
@@ -246,7 +246,7 @@ FormHostRecord FormHostRecord::CreateRecord(const FormItemInfo &info,
  */
 void FormHostRecord::ClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
-    APP_LOGD("Form remote died");
+    HILOG_DEBUG("Form remote died");
     FormTaskMgr::GetInstance().PostHostDiedTask(remote.promote());
 }
 

@@ -17,7 +17,7 @@
 #define FOUNDATION_APPEXECFWK_SERVICES_APPMGR_TEST_MOCK_APP_MGR_SERVICE_INNER_H
 
 #include "gmock/gmock.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "semaphore_ex.h"
 #include "app_mgr_service_inner.h"
 

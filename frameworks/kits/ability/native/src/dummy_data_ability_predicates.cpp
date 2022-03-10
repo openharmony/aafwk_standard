@@ -14,7 +14,7 @@
  */
 
 #include "dummy_data_ability_predicates.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -43,7 +43,7 @@ DataAbilityPredicates *DataAbilityPredicates::Unmarshalling(Parcel &parcel)
 {
     DataAbilityPredicates *dataAbilityPredicates = new (std::nothrow) DataAbilityPredicates();
     if (dataAbilityPredicates && !dataAbilityPredicates->ReadFromParcel(parcel)) {
-        APP_LOGE("DataAbilityPredicates::Unmarshalling ReadFromParcel failed");
+        HILOG_ERROR("DataAbilityPredicates::Unmarshalling ReadFromParcel failed");
         delete dataAbilityPredicates;
         dataAbilityPredicates = nullptr;
     }
@@ -58,7 +58,7 @@ DataAbilityPredicates *DataAbilityPredicates::Unmarshalling(Parcel &parcel)
 bool DataAbilityPredicates::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteString16(Str8ToStr16(testInf_))) {
-        APP_LOGE("dataAbilityPredicates::Marshalling WriteString16 failed");
+        HILOG_ERROR("dataAbilityPredicates::Marshalling WriteString16 failed");
         return false;
     }
     return true;

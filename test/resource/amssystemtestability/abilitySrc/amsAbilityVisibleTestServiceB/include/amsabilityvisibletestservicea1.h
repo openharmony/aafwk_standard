@@ -23,7 +23,7 @@
 #include "ability_connect_callback_proxy.h"
 #include "abs_shared_result_set.h"
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "data_ability_predicates.h"
@@ -46,7 +46,7 @@ public:
     void OnAbilityConnectDone(
         const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode) override
     {
-        APP_LOGI("AbilityConnectCallback::OnAbilityConnectDone:resultCode = %{public}d", resultCode);
+        HILOG_INFO("AbilityConnectCallback::OnAbilityConnectDone:resultCode = %{public}d", resultCode);
     }
 
     /**
@@ -57,7 +57,7 @@ public:
      */
     void OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode) override
     {
-        APP_LOGI("AbilityConnectCallback::OnAbilityDisconnectDone:resultCode = %{public}d", resultCode);
+        HILOG_INFO("AbilityConnectCallback::OnAbilityDisconnectDone:resultCode = %{public}d", resultCode);
     }
 };
 

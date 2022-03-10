@@ -158,7 +158,7 @@ public:
             }
         }
         bool ret = true;
-        APP_LOGD("%{public}s called, formId[%{public}s]", __func__, formId.c_str());
+        HILOG_DEBUG("%{public}s called, formId[%{public}s]", __func__, formId.c_str());
 
         DistributedKv::Status status = DistributedKv::Status::ERROR;
         std::vector<DistributedKv::Entry> allEntries;
@@ -169,20 +169,20 @@ public:
         }
 
         if (status != DistributedKv::Status::SUCCESS) {
-            APP_LOGE("get entries error: %{public}d", status);
+            HILOG_ERROR("get entries error: %{public}d", status);
             ret = false;
         } else {
             if (allEntries.empty()) {
-                APP_LOGE("%{public}s not match any FormInfo", formId.c_str());
+                HILOG_ERROR("%{public}s not match any FormInfo", formId.c_str());
                 ret = false;
             } else {
                 nlohmann::json jsonObject = nlohmann::json::parse(allEntries.front().value.ToString(), nullptr, false);
                 if (jsonObject.is_discarded()) {
-                    APP_LOGE("error key: %{private}s", allEntries.front().key.ToString().c_str());
+                    HILOG_ERROR("error key: %{private}s", allEntries.front().key.ToString().c_str());
                     ret = false;
                 }
                 if (innerFormInfo.FromJson(jsonObject) != true) {
-                    APP_LOGE("error key: %{private}s", allEntries.front().key.ToString().c_str());
+                    HILOG_ERROR("error key: %{private}s", allEntries.front().key.ToString().c_str());
                     ret = false;
                 }
             }

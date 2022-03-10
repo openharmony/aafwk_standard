@@ -50,7 +50,7 @@ ohos_systemtest("FormDeleteFormTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"FMSDeleteFormTest\"" ]
+  defines = [ "AMS_LOG_TAG = \"FMSDeleteFormTest\"" ]
 
   external_deps = [
     "ability_base:base",

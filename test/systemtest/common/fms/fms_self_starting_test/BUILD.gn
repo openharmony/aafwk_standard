@@ -55,7 +55,7 @@ ohos_systemtest("FmsSelfStartingTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = [ "APP_LOG_TAG = \"FmsSelfStartingTest\"" ]
+  defines = [ "AMS_LOG_TAG = \"FmsSelfStartingTest\"" ]
 
   external_deps = [
     "ability_base:base",

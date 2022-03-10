@@ -42,8 +42,8 @@ config("module_private_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"ApplicationUnitTest\"",
-    "LOG_DOMAIN = 0xD001151",
+    "AMS_LOG_TAG = \"ApplicationUnitTest\"",
+    "AMS_LOG_DOMAIN = 0xD001151",
   ]
 }
 
@@ -71,8 +71,8 @@ config("module_context_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"ApplicationUnitTest\"",
-    "LOG_DOMAIN = 0xD001151",
+    "AMS_LOG_TAG = \"ApplicationUnitTest\"",
+    "AMS_LOG_DOMAIN = 0xD001151",
   ]
 }
 
@@ -146,6 +146,7 @@ ohos_unittest("application_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
@@ -306,6 +307,7 @@ ohos_unittest("application_impl_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",

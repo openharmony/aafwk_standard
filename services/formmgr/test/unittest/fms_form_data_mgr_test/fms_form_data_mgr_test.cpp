@@ -18,13 +18,13 @@
 #include <string>
 #include <thread>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #define private public
 #include "form_data_mgr.h"
 #undef private
 #include "form_constants.h"
 #include "form_record.h"
+#include "hilog_wrapper.h"
 #include "mock_form_host_client.h"
 
 using namespace testing::ext;

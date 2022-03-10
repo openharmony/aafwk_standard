@@ -14,7 +14,7 @@
  */
 
 #include "ability_life_cycle_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "base_ability.h"
 #include "test_utils.h"
 
@@ -33,7 +33,7 @@ void AbilityLifeCycleAbility::Init(const std::shared_ptr<AbilityInfo> &abilityIn
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("AbilityLifeCycleAbility::Init called.");
+    HILOG_INFO("AbilityLifeCycleAbility::Init called.");
     BaseAbility::Init(abilityInfo, application, handler, token);
     SubscribeEvent();
 
@@ -59,7 +59,7 @@ void AbilityLifeCycleAbility::OnStart(const Want &want)
 {
     sequenceNumber_ = std::stoi(GetNoFromWantInfo(want));
     want_ = want;
-    APP_LOGI("AbilityLifeCycleAbility::OnStart");
+    HILOG_INFO("AbilityLifeCycleAbility::OnStart");
 
     BaseAbility::OnStart(want);
     TestUtils::PublishEvent(
@@ -72,7 +72,7 @@ void AbilityLifeCycleAbility::OnStart(const Want &want)
 
 void AbilityLifeCycleAbility::OnStop()
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnStop");
+    HILOG_INFO("AbilityLifeCycleAbility::OnStop");
     BaseAbility::OnStop();
     TestUtils::PublishEvent(
         APP_ABILITY_LIFE_CYCLE_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
@@ -84,7 +84,7 @@ void AbilityLifeCycleAbility::OnStop()
 
 void AbilityLifeCycleAbility::OnActive()
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnActive");
+    HILOG_INFO("AbilityLifeCycleAbility::OnActive");
     BaseAbility::OnActive();
     TestUtils::PublishEvent(
         APP_ABILITY_LIFE_CYCLE_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
@@ -96,7 +96,7 @@ void AbilityLifeCycleAbility::OnActive()
 
 void AbilityLifeCycleAbility::OnInactive()
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnInactive");
+    HILOG_INFO("AbilityLifeCycleAbility::OnInactive");
     BaseAbility::OnInactive();
     TestUtils::PublishEvent(
         APP_ABILITY_LIFE_CYCLE_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
@@ -108,7 +108,7 @@ void AbilityLifeCycleAbility::OnInactive()
 
 void AbilityLifeCycleAbility::OnBackground()
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnBackground");
+    HILOG_INFO("AbilityLifeCycleAbility::OnBackground");
     BaseAbility::OnBackground();
     TestUtils::PublishEvent(
         APP_ABILITY_LIFE_CYCLE_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
@@ -120,7 +120,7 @@ void AbilityLifeCycleAbility::OnBackground()
 
 void AbilityLifeCycleAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnForeground");
+    HILOG_INFO("AbilityLifeCycleAbility::OnForeground");
     BaseAbility::OnBackground();
     TestUtils::PublishEvent(
         APP_ABILITY_LIFE_CYCLE_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnForeground");
@@ -132,7 +132,7 @@ void AbilityLifeCycleAbility::OnForeground(const Want &want)
 
 void AbilityLifeCycleAbility::OnCommand(const Want &want, bool restart, int startId)
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnCommand");
+    HILOG_INFO("AbilityLifeCycleAbility::OnCommand");
 
     BaseAbility::OnCommand(want, restart, startId);
     TestUtils::PublishEvent(
@@ -145,7 +145,7 @@ void AbilityLifeCycleAbility::OnCommand(const Want &want, bool restart, int star
 
 sptr<IRemoteObject> AbilityLifeCycleAbility::OnConnect(const Want &want)
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnConnect");
+    HILOG_INFO("AbilityLifeCycleAbility::OnConnect");
 
     sptr<IRemoteObject> ret = BaseAbility::OnConnect(want);
     TestUtils::PublishEvent(
@@ -159,7 +159,7 @@ sptr<IRemoteObject> AbilityLifeCycleAbility::OnConnect(const Want &want)
 
 void AbilityLifeCycleAbility::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AbilityLifeCycleAbility::OnDisconnect");
+    HILOG_INFO("AbilityLifeCycleAbility::OnDisconnect");
 
     BaseAbility::OnDisconnect(want);
     TestUtils::PublishEvent(
@@ -777,10 +777,10 @@ void AbilityLifeCycleAbility::TestLifeCycleRemoveObserver()
 
 void AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI(
+    HILOG_INFO(
         "AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
 
     auto eventName = data.GetWant().GetAction();
     if (std::strcmp(eventName.c_str(), APP_ABILITY_LIFE_CYCLE_REQ_EVENT_NAME.c_str()) == 0) {
@@ -789,7 +789,7 @@ void AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent(const CommonEventDat
         if (func != mapTestFunc_.end()) {
             func->second();
         } else {
-            APP_LOGI("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent: CommonEventData error(%{public}s)",
+            HILOG_INFO("AbilityLifeCycleAbilityEventSubscriber::OnReceiveEvent: CommonEventData error(%{public}s)",
                 target.c_str());
         }
     }

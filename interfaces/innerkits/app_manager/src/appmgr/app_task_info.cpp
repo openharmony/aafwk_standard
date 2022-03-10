@@ -15,7 +15,7 @@
 
 #include "app_task_info.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -75,7 +75,7 @@ AppTaskInfo *AppTaskInfo::Unmarshalling(Parcel &parcel)
 {
     AppTaskInfo *appTaskInfo = new (std::nothrow) AppTaskInfo();
     if (appTaskInfo && !appTaskInfo->ReadFromParcel(parcel)) {
-        APP_LOGW("failed, because ReadFromParcel failed");
+        HILOG_WARN("failed, because ReadFromParcel failed");
         delete appTaskInfo;
         appTaskInfo = nullptr;
     }

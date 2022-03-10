@@ -14,7 +14,7 @@
  */
 
 #include "app_resident_process_info.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -30,7 +30,7 @@ AppResidentProcessInfo *AppResidentProcessInfo::Unmarshalling(Parcel &parcel)
 
 bool AppResidentProcessInfo::Marshalling(Parcel &parcel) const
 {
-    APP_LOGW("Marshalling");
+    HILOG_WARN("Marshalling");
     parcel.WriteBool(isKeepAliveApp_);
     parcel.WriteInt32(abilityStage_.size());
     for (auto &info : abilityStage_) {
@@ -48,7 +48,7 @@ bool AppResidentProcessInfo::ReadFromParcel(Parcel &parcel)
     for (int32_t i = 0; i < size; i++) {
         std::unique_ptr<HapModuleInfo> hapModuleInfo(parcel.ReadParcelable<HapModuleInfo>());
         if (!hapModuleInfo) {
-            APP_LOGE("ReadParcelable<AbilityInfo> failed");
+            HILOG_ERROR("ReadParcelable<AbilityInfo> failed");
             return false;
         }
         abilityStage_.emplace_back(*hapModuleInfo);
