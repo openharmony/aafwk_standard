@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -264,6 +264,7 @@ ohos_shared_library("abilitykit_native") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "os_account_standard:os_account_innerkits",
     "permission_standard:libpermissionsdk_standard",
     "resmgr_standard:global_resmgr",
     "samgr_standard:samgr_proxy",

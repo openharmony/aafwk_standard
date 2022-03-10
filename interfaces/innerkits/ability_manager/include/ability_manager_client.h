@@ -359,8 +359,6 @@ public:
      */
     ErrCode IsFirstInMission(const sptr<IRemoteObject> &token);
 
-    ErrCode CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
-
     /**
      * Save the top ability States and move them to the background
      * @return Returns ERR_OK on success, others on failure.

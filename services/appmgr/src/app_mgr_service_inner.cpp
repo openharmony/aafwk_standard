@@ -66,8 +66,6 @@ const std::string FUNC_NAME = "main";
 const std::string SO_PATH = "system/lib64/libmapleappkit.z.so";
 const std::string RENDER_PARAM = "invalidparam";
 const int32_t SIGNAL_KILL = 9;
-const std::string REQ_PERMISSION = "ohos.permission.LOCATION_IN_BACKGROUND";
-constexpr int32_t SYSTEM_UID = 1000;
 constexpr int32_t USER_SCALE = 200000;
 #define ENUM_TO_STRING(s) #s
 
@@ -1518,57 +1516,6 @@ void AppMgrServiceInner::HandleAddAbilityStageTimeOut(const int64_t eventId)
     }
 
     KillApplicationByRecord(appRecord);
-}
-
-int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    HILOG_INFO("compel verify permission");
-    message = ENUM_TO_STRING(PERMISSION_NOT_GRANTED);
-    if (!remoteClientManager_) {
-        HILOG_ERROR("remoteClientManager_ is nullptr");
-        return ERR_NO_INIT;
-    }
-    if (permission.empty()) {
-        HILOG_INFO("permission is empty, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    if (pid == getpid()) {
-        HILOG_INFO("pid is my pid, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    int userId = Constants::DEFAULT_USERID;
-    auto appRecord = GetAppRunningRecordByPid(pid);
-    if (!appRecord) {
-        HILOG_ERROR("app record is nullptr");
-        return PERMISSION_NOT_GRANTED;
-    }
-    auto bundleName = appRecord->GetBundleName();
-    if (appRecord->GetCloneInfo()) {
-        userId = Constants::C_UESRID;
-    }
-    auto bundleMgr = remoteClientManager_->GetBundleManager();
-    if (bundleMgr == nullptr) {
-        HILOG_ERROR("GetBundleManager fail");
-        return ERR_NO_INIT;
-    }
-    auto bmsUid = IN_PROCESS_CALL(bundleMgr->GetUidByBundleName(bundleName, userId));
-    if (bmsUid == ROOT_UID || bmsUid == SYSTEM_UID) {
-        HILOG_INFO("uid is root or system, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    if (bmsUid != uid) {
-        HILOG_INFO("check uid != bms uid, PERMISSION_NOT_GRANTED");
-        return PERMISSION_NOT_GRANTED;
-    }
-    auto result = IN_PROCESS_CALL(bundleMgr->CheckPermissionByUid(bundleName, permission, userId));
-    if (result != PERMISSION_GRANTED) {
-        return PERMISSION_NOT_GRANTED;
-    }
-    message = ENUM_TO_STRING(PERMISSION_GRANTED);
-    return ERR_OK;
 }
 
 void AppMgrServiceInner::GetRunningProcessInfoByToken(
