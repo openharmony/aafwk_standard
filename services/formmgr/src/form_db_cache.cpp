@@ -15,24 +15,24 @@
 
 #include <cinttypes>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "form_bms_helper.h"
 #include "form_db_cache.h"
 #include "form_db_info.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 FormDbCache::FormDbCache()
 {
-    APP_LOGI("FormDbCache is created");
+    HILOG_INFO("FormDbCache is created");
     dataStorage_ = std::make_shared<FormStorageMgr>();
     formDBInfos_.clear();
 }
 
 FormDbCache::~FormDbCache()
 {
-    APP_LOGI("FormDbCache is destroyed");
+    HILOG_INFO("FormDbCache is destroyed");
 }
 
 /**
@@ -41,12 +41,12 @@ FormDbCache::~FormDbCache()
  */
 void FormDbCache::Start()
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::lock_guard<std::mutex> lock(formDBInfosMutex_);
     std::vector<InnerFormInfo> innerFormInfos;
     innerFormInfos.clear();
     if (dataStorage_->LoadFormData(innerFormInfos) != ERR_OK) {
-        APP_LOGE("%{public}s, LoadFormData failed.", __func__);
+        HILOG_ERROR("%{public}s, LoadFormData failed.", __func__);
         return;
     }
 
@@ -63,17 +63,17 @@ void FormDbCache::Start()
  */
 ErrCode FormDbCache::SaveFormInfo(const FormDBInfo &formDBInfo)
 {
-    APP_LOGI("%{public}s called, formId:%{public}" PRId64 "", __func__, formDBInfo.formId);
+    HILOG_INFO("%{public}s called, formId:%{public}" PRId64 "", __func__, formDBInfo.formId);
     std::lock_guard<std::mutex> lock(formDBInfosMutex_);
     auto iter = find(formDBInfos_.begin(), formDBInfos_.end(), formDBInfo);
     if (iter != formDBInfos_.end()) {
         if (iter->Compare(formDBInfo) == false) {
-            APP_LOGW("%{public}s, need update, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
+            HILOG_WARN("%{public}s, need update, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
             *iter = formDBInfo;
             InnerFormInfo innerFormInfo(formDBInfo);
             return dataStorage_->ModifyStorageFormInfo(innerFormInfo);
         } else {
-            APP_LOGW("%{public}s, already exist, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
+            HILOG_WARN("%{public}s, already exist, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
             return ERR_OK;
         }
     } else {
@@ -90,16 +90,16 @@ ErrCode FormDbCache::SaveFormInfo(const FormDBInfo &formDBInfo)
  */
 ErrCode FormDbCache::SaveFormInfoNolock(const FormDBInfo &formDBInfo)
 {
-    APP_LOGI("%{public}s called, formId:%{public}" PRId64 "", __func__, formDBInfo.formId);
+    HILOG_INFO("%{public}s called, formId:%{public}" PRId64 "", __func__, formDBInfo.formId);
     auto iter = find(formDBInfos_.begin(), formDBInfos_.end(), formDBInfo);
     if (iter != formDBInfos_.end()) {
         if (iter->Compare(formDBInfo) == false) {
-            APP_LOGW("%{public}s, need update, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
+            HILOG_WARN("%{public}s, need update, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
             *iter = formDBInfo;
             InnerFormInfo innerFormInfo(formDBInfo);
             return dataStorage_->ModifyStorageFormInfo(innerFormInfo);
         } else {
-            APP_LOGW("%{public}s, already exist, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
+            HILOG_WARN("%{public}s, already exist, formId[%{public}" PRId64 "].", __func__, formDBInfo.formId);
             return ERR_OK;
         }
     } else {
@@ -121,7 +121,7 @@ ErrCode FormDbCache::DeleteFormInfo(int64_t formId)
     tmpForm.formId = formId;
     auto iter = find(formDBInfos_.begin(), formDBInfos_.end(), tmpForm);
     if (iter == formDBInfos_.end()) {
-        APP_LOGW("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
+        HILOG_WARN("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
     } else {
         formDBInfos_.erase(iter);
     }
@@ -164,7 +164,7 @@ ErrCode FormDbCache::DeleteFormInfoByBundleName(const std::string &bundleName, s
  */
 void FormDbCache::GetAllFormInfo(std::vector<FormDBInfo> &formDBInfos)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     std::lock_guard<std::mutex> lock(formDBInfosMutex_);
     formDBInfos = formDBInfos_;
 }
@@ -189,7 +189,7 @@ ErrCode FormDbCache::GetDBRecord(const int64_t formId, FormRecord &record) const
             return ERR_OK;
         }
     }
-    APP_LOGE("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
+    HILOG_ERROR("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
     return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
 }
 /**
@@ -207,7 +207,7 @@ ErrCode FormDbCache::GetDBRecord(const int64_t formId, FormDBInfo &record) const
             return ERR_OK;
         }
     }
-    APP_LOGE("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
+    HILOG_ERROR("%{public}s, not find formId[%{public}" PRId64 "]", __func__, formId);
     return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
 }
 /**
@@ -293,7 +293,7 @@ void FormDbCache::DeleteDBFormsByUserId(const int32_t userId)
             if (dataStorage_->DeleteStorageFormInfo(std::to_string(formId)) == ERR_OK) {
                 itRecord = formDBInfos_.erase(itRecord);
             } else {
-                APP_LOGE("%{public}s, failed to delete form, formId[%{public}" PRId64 "]", __func__, formId);
+                HILOG_ERROR("%{public}s, failed to delete form, formId[%{public}" PRId64 "]", __func__, formId);
                 itRecord++;
             }
         } else {

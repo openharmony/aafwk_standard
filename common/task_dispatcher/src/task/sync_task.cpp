@@ -37,26 +37,26 @@ void SyncTask::Run()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     auto threadId = std::this_thread::get_id();
-    APP_LOGI("SyncTask::Run begin thread=%{public}zu", CalculateHashCode(threadId));
+    HILOG_INFO("SyncTask::Run begin thread=%{public}zu", CalculateHashCode(threadId));
     Task::Run();
     executed_.store(true);
 
     // |waitTask| may have been multi invoked.
     condition_variable_.notify_all();
-    APP_LOGI("SyncTask::Run end thread=%{public}zu", CalculateHashCode(threadId));
+    HILOG_INFO("SyncTask::Run end thread=%{public}zu", CalculateHashCode(threadId));
 }
 
 void SyncTask::WaitTask()
 {
     auto threadId = std::this_thread::get_id();
-    APP_LOGI("SyncTask::WaitTask begin thread=%{public}zu", CalculateHashCode(threadId));
+    HILOG_INFO("SyncTask::WaitTask begin thread=%{public}zu", CalculateHashCode(threadId));
 
     std::unique_lock<std::mutex> lock(mutex_);
     while (executed_ == false) {
         condition_variable_.wait(lock);
     }
 
-    APP_LOGI("SyncTask::WaitTask end thread=%{public}zu", CalculateHashCode(threadId));
+    HILOG_INFO("SyncTask::WaitTask end thread=%{public}zu", CalculateHashCode(threadId));
 }
 
 }  // namespace AppExecFwk

@@ -18,7 +18,7 @@ config("runtime_config") {
 
   defines = [
     "AMS_LOG_TAG = \"Runtime\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 
   if (target_cpu == "arm64") {
@@ -30,8 +30,6 @@ config("runtime_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
   ]
 }
 
@@ -59,20 +57,21 @@ ohos_shared_library("runtime") {
   deps = [
     "//ark/js_runtime:libark_jsruntime",
     "//foundation/ace/ace_engine/frameworks/core:ace_container_scope",
-    "//foundation/ace/ace_engine/interfaces/innerkits/ace:ace_uicontent",
-    "//foundation/ace/napi:ace_napi",
     "//foundation/ace/napi:ace_napi_ark",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:app_manager",
+    "ace_engine_standard:ace_uicontent",
     "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
+    "napi:ace_napi",
+    "resmgr_standard:global_resmgr",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

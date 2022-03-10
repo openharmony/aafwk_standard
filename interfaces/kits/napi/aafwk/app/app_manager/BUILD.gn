@@ -31,27 +31,24 @@ ohos_shared_library("appmanager_napi") {
 
   configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
 
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/aafwk/standard/services/abilitymgr:abilityms" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image",
+    "napi:ace_napi",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   relative_install_dir = "module/application"

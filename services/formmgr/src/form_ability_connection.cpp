@@ -17,10 +17,10 @@
 #include <cinttypes>
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_ability_connection.h"
 #include "form_supply_callback.h"
 #include "form_task_mgr.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "want.h"
@@ -37,14 +37,14 @@ void FormAbilityConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
     if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
+        HILOG_ERROR("%{public}s, formId:%{public}" PRId64 ", resultCode:%{public}d",
         __func__, formId_, resultCode);
         return;
     }
 
     if (isFreeInstall_) {
         // Handle free install for form provider app
-        APP_LOGI("%{public}s current is Free Install.", __func__);
+        HILOG_INFO("%{public}s current is Free Install.", __func__);
     }
 }
 
@@ -55,12 +55,13 @@ void FormAbilityConnection::OnAbilityConnectDone(
  */
 void FormAbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    APP_LOGD("%{public}s, element:%{public}s, resultCode:%{public}d", __func__, element.GetURI().c_str(), resultCode);
+    HILOG_DEBUG(
+        "%{public}s, element:%{public}s, resultCode:%{public}d", __func__, element.GetURI().c_str(), resultCode);
     if (connectId_ != 0) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId_);
         connectId_ = 0;
     } else {
-        APP_LOGE("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
+        HILOG_ERROR("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
     }
 }
 
@@ -74,7 +75,7 @@ void FormAbilityConnection::OnConnectDied(const wptr<IRemoteObject> &remoteObjec
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId_);
         connectId_ = 0;
     } else {
-        APP_LOGE("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
+        HILOG_ERROR("%{public}s fail, connectId_ invalidate. connectId_: %{public}ld", __func__, connectId_);
     }
 }
 
@@ -84,7 +85,7 @@ void FormAbilityConnection::OnConnectDied(const wptr<IRemoteObject> &remoteObjec
  */
 void FormAbilityConnection::SetConnectId(long connectId)
 {
-    APP_LOGI("%{public}s, connectId_: %{public}ld", __func__, connectId);
+    HILOG_INFO("%{public}s, connectId_: %{public}ld", __func__, connectId);
     connectId_ = connectId;
 }
 

@@ -17,7 +17,7 @@
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ability_loader.h"
 #include "verify_act_data_ability.h"
 
@@ -48,14 +48,14 @@ int InsertTestOpenCallback::OnUpgrade(NativeRdb::RdbStore &store, int oldVersion
 
 void VerifyActDataAbility::OnStart(const Want &want)
 {
-    APP_LOGI("VerifyActDataAbility OnStart");
+    HILOG_INFO("VerifyActDataAbility OnStart");
     sharedList_.clear();
     Ability::OnStart(want);
 }
 
 int VerifyActDataAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    APP_LOGI("VerifyActDataAbility <<<<Insert>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<Insert>>>>");
     return defaultReturn;
 }
 
@@ -67,7 +67,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> VerifyActDataAbility::Query(
     NativeRdb::RdbStoreConfig config(dbDir + "/" + DATABASE_FILE_NAME);
     InsertTestOpenCallback helper;
     testStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, helper, errCode);
-    APP_LOGI("VerifyActDataAbility <<<<Query>>>> Patch %{public}s", (dbDir + "/" + DATABASE_FILE_NAME).c_str());
+    HILOG_INFO("VerifyActDataAbility <<<<Query>>>> Patch %{public}s", (dbDir + "/" + DATABASE_FILE_NAME).c_str());
 
     int64_t id;
     NativeRdb::ValuesBucket values;
@@ -82,19 +82,19 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> VerifyActDataAbility::Query(
     values.PutBlob("blobType", std::vector<uint8_t> {1, 2, 3});
 
     if (testStore == nullptr) {
-        APP_LOGI("VerifyActDataAbility <<<<Query>>>> testStore is nullptr, data will be empty");
+        HILOG_INFO("VerifyActDataAbility <<<<Query>>>> testStore is nullptr, data will be empty");
         return nullptr;
     }
 
     if (testStore->Replace(id, "test", values) != 0) {
-        APP_LOGE("VerifyActDataAbility <<<<Query>>>> store->Replace Error");
+        HILOG_ERROR("VerifyActDataAbility <<<<Query>>>> store->Replace Error");
         return nullptr;
     }
 
     std::unique_ptr<NativeRdb::AbsSharedResultSet> rresultSet =
         testStore->QuerySql("SELECT * FROM test WHERE name = ?", std::vector<std::string> {"zhangsan"});
     if (rresultSet == nullptr) {
-        APP_LOGE("VerifyActDataAbility <<<<Query>>>> rresultSet is nullptr");
+        HILOG_ERROR("VerifyActDataAbility <<<<Query>>>> rresultSet is nullptr");
         return nullptr;
     }
 
@@ -106,28 +106,28 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> VerifyActDataAbility::Query(
 int VerifyActDataAbility::Update(
     const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("VerifyActDataAbility <<<<Update>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<Update>>>>");
     return defaultReturn;
 }
 int VerifyActDataAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("VerifyActDataAbility <<<<Delete>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<Delete>>>>");
     return defaultReturn;
 }
 std::string VerifyActDataAbility::GetType(const Uri &uri)
 {
-    APP_LOGI("VerifyActDataAbility <<<<GetType>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<GetType>>>>");
     std::string retval(uri.ToString());
     return retval;
 }
 int VerifyActDataAbility::OpenFile(const Uri &uri, const std::string &mode)
 {
-    APP_LOGI("VerifyActDataAbility <<<<OpenFile>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<OpenFile>>>>");
     return 0;
 }
 int VerifyActDataAbility::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
-    APP_LOGI("VerifyActDataAbility <<<<BatchInsert>>>>");
+    HILOG_INFO("VerifyActDataAbility <<<<BatchInsert>>>>");
     return Ability::BatchInsert(uri, values);
 }
 

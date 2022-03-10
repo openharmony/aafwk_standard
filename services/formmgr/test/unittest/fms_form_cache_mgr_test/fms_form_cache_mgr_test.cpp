@@ -15,10 +15,10 @@
 
 #include <gtest/gtest.h>
 
-#include "app_log_wrapper.h"
 #define private public
 #include "form_cache_mgr.h"
 #undef private
+#include "hilog_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS;
@@ -62,7 +62,7 @@ void FmsFormCacheMgrTest::TearDown()
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_001, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_001 start");
+    HILOG_INFO("fms_form_cache_mgr_test_001 start");
 
     std::string dataResult = "";
     formCacheMgr_.cacheData_[PARAM_FORM_ID_FIRST]= "{'a':'1','b':'2'}";
@@ -82,7 +82,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_001, TestSize.Level0)
 
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_002, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_002 start");
+    HILOG_INFO("fms_form_cache_mgr_test_002 start");
 
     std::string dataResult = "";
     formCacheMgr_.cacheData_[PARAM_FORM_ID_FIRST]= "{'a':'1','b':'2'}";
@@ -100,7 +100,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_002, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_003, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_003 start");
+    HILOG_INFO("fms_form_cache_mgr_test_003 start");
 
     std::string dataResult = "{'a':'1','b':'2'}";
     EXPECT_TRUE(formCacheMgr_.AddData(PARAM_FORM_ID_FIRST, dataResult));
@@ -118,7 +118,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_003, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_004, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_004 start");
+    HILOG_INFO("fms_form_cache_mgr_test_004 start");
 
     std::string dataResult1 = "{'a':'1','b':'2'}";
     std::string dataResult2 = "{'a':'2','b':'2'}";
@@ -138,7 +138,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_004, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_010, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_010 start");
+    HILOG_INFO("fms_form_cache_mgr_test_010 start");
 
     std::string dataResult1 = "{'a':'1','b':'2'}";
     std::string dataResult2 = "{'a':'2','b':'2'}";
@@ -157,7 +157,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_010, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_005, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_005 start");
+    HILOG_INFO("fms_form_cache_mgr_test_005 start");
 
     std::string dataResult = "";
     std::string dataResult1 = "{'a':'1','b':'2'}";
@@ -180,7 +180,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_005, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_006, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_006 start");
+    HILOG_INFO("fms_form_cache_mgr_test_006 start");
 
     EXPECT_TRUE(formCacheMgr_.DeleteData(PARAM_FORM_ID_SECOND));
 
@@ -196,7 +196,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_006, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_007, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_007 start");
+    HILOG_INFO("fms_form_cache_mgr_test_007 start");
 
     std::string dataResult = "";
     std::string dataResult1 = "{'a':'1','b':'2'}";
@@ -217,7 +217,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_007, TestSize.Level0)
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_008, TestSize.Level0)
 {
-    APP_LOGI("fms_form_cache_mgr_test_008 start");
+    HILOG_INFO("fms_form_cache_mgr_test_008 start");
 
     std::string dataResult1 = "{'a':'1','b':'2'}";
     EXPECT_FALSE(formCacheMgr_.UpdateData(PARAM_FORM_ID_FIRST, dataResult1));

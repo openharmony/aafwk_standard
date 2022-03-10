@@ -17,7 +17,7 @@
 #include <iostream>
 #include <numeric>
 #include <sstream>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -50,12 +50,12 @@ void KitTestAbilityManager::SubscribeEvent(const vector_conststr &eventList)
 
 void KitTestAbilityManager::AbilityManagerStByCode(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerStByCode");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerStByCode");
     if (mapStKitFunc_.find(apiIndex) != mapStKitFunc_.end() &&
         static_cast<int>(mapStKitFunc_[apiIndex].size()) > caseIndex) {
         mapStKitFunc_[apiIndex][caseIndex](code);
     } else {
-        APP_LOGI("AbilityManagerStByCode error");
+        HILOG_INFO("AbilityManagerStByCode error");
     }
 }
 
@@ -108,21 +108,21 @@ void KitTestAbilityManager::GetAllStackInfo(MissionStackInfo &missionStackInfo, 
 // GetAllRunningProcesses ST kit case
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase1(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase1");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase1");
     std::vector<RunningProcessInfo> info = AbilityManager::GetInstance().GetAllRunningProcesses();
     CompareProcessName(info, currentProcessInfo, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase2(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase2");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase2");
     std::vector<RunningProcessInfo> info = AbilityManager::GetInstance().GetAllRunningProcesses();
     CompareProcessName(info, launchProcessInfo, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase3(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase3");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase3");
     std::vector<RunningProcessInfo> info = AbilityManager::GetInstance().GetAllRunningProcesses();
     std::shared_ptr<ProcessInfo> processInfo = AbilityContext::GetProcessInfo();
     bool result = false;
@@ -136,49 +136,49 @@ void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase3(int code)
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase4(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase4");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase4");
     std::vector<RunningProcessInfo> info = AbilityManager::GetInstance().GetAllRunningProcesses();
     CompareProcessState(info, currentProcessInfo, AppProcessState::APP_STATE_FOREGROUND, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase5(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase5");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase5");
     auto index = 0;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase6(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase6");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase6");
     auto index = 1;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase7(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase7");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase7");
     auto index = 2;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase8(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase8");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase8");
     auto index = 3;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase9(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase9");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase9");
     auto index = 4;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase10(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase10");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase10");
     auto index = 5;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllRunningProcesses, index, code);
 }
@@ -186,7 +186,7 @@ void KitTestAbilityManager::AbilityManagerGetAllRunningProcessesCase10(int code)
 // GetAllStackInfo ST kit case
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase1(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase1");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase1");
     MissionStackInfo missionStackInfo;
     GetAllStackInfo(missionStackInfo, 1);
     bool result = (missionStackInfo.missionRecords.size() == 1);
@@ -195,7 +195,7 @@ void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase1(int code)
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase2(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase2");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase2");
     MissionStackInfo missionStackInfo;
     GetAllStackInfo(missionStackInfo, 1);
     auto abilityInfos = missionStackInfo.missionRecords[0].abilityRecordInfos;
@@ -205,7 +205,7 @@ void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase2(int code)
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase3(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase3");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase3");
     MissionStackInfo missionStackInfo;
     GetAllStackInfo(missionStackInfo, 0);
     bool result = (missionStackInfo.missionRecords.size() == 1);
@@ -214,7 +214,7 @@ void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase3(int code)
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase4(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase4");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase4");
     MissionStackInfo missionStackInfo;
     GetAllStackInfo(missionStackInfo, 0);
     auto abilityInfos = missionStackInfo.missionRecords[0].abilityRecordInfos;
@@ -224,35 +224,35 @@ void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase4(int code)
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase5(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase5");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase5");
     auto index = 0;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllStackInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase6(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase6");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase6");
     auto index = 1;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllStackInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase7(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase7");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase7");
     auto index = 2;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllStackInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase8(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase8");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase8");
     auto index = 3;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllStackInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerGetAllStackInfoCase9(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase9");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerGetAllStackInfoCase9");
     auto index = 4;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::GetAllStackInfo, index, code);
 }
@@ -268,7 +268,7 @@ void KitTestAbilityManager::QueryRecentAbilityMissionInfoParam(int numMax, int c
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase1(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase1");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase1");
     auto num = -1;
     auto size = 0;
     QueryRecentAbilityMissionInfoParam(num, code, size, RECENT_IGNORE_UNAVAILABLE);
@@ -276,7 +276,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase1(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase2(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase2");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase2");
     auto num = 3;
     auto size = 0;
     auto flag = -1;
@@ -285,7 +285,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase2(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase3(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase3");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase3");
     auto num = 3;
     auto size = 0;
     auto flag = 0;
@@ -294,7 +294,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase3(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase4(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase4");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase4");
     auto num = 3;
     auto size = 0;
     auto flag = 3;
@@ -303,7 +303,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase4(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase5(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase5");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase5");
     auto num = 3;
     auto size = 1;
     QueryRecentAbilityMissionInfoParam(num, code, size, RECENT_WITH_EXCLUDED);
@@ -311,7 +311,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase5(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase6(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase6");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase6");
     auto num = 3;
     auto size = 1;
     QueryRecentAbilityMissionInfoParam(num, code, size, RECENT_IGNORE_UNAVAILABLE);
@@ -319,7 +319,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase6(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase7(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase7");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase7");
     std::vector<AbilityMissionInfo> info;
     auto num = 3;
     info = AbilityManager::GetInstance().QueryRecentAbilityMissionInfo(num, RECENT_WITH_EXCLUDED);
@@ -332,28 +332,28 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase7(int
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase8(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase8");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase8");
     auto index = 0;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRecentAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase9(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase9");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase9");
     auto index = 1;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRecentAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase10(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase10");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase10");
     auto index = 2;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRecentAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase11(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase11");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase11");
     auto num = std::numeric_limits<int>::min();
     auto size = 0;
     QueryRecentAbilityMissionInfoParam(num, code, size, RECENT_WITH_EXCLUDED);
@@ -361,7 +361,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase11(in
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase12(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase12");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase12");
     auto num = std::numeric_limits<int>::max();
     auto size = 1;
     QueryRecentAbilityMissionInfoParam(num, code, size, RECENT_WITH_EXCLUDED);
@@ -369,7 +369,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase12(in
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase13(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase13");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase13");
     auto num = 3;
     auto size = 0;
     auto flag = std::numeric_limits<int>::min();
@@ -378,7 +378,7 @@ void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase13(in
 
 void KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase14(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase14");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRecentAbilityMissionInfoCase14");
     auto num = 3;
     auto size = 0;
     auto flag = std::numeric_limits<int>::max();
@@ -396,7 +396,7 @@ void KitTestAbilityManager::QueryRunningAbilityMissionInfoParam(int numMax, int 
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase1(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase1");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase1");
     auto num = -1;
     auto flag = 0;
     QueryRunningAbilityMissionInfoParam(num, code, flag);
@@ -404,7 +404,7 @@ void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase1(in
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase2(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase2");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase2");
     auto num = 0;
     auto flag = 0;
     QueryRunningAbilityMissionInfoParam(num, code, flag);
@@ -412,7 +412,7 @@ void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase2(in
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase3(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase3");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase3");
     auto num = 3;
     auto flag = 1;
     QueryRunningAbilityMissionInfoParam(num, code, flag);
@@ -420,7 +420,7 @@ void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase3(in
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase4(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase4");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase4");
     std::vector<AbilityMissionInfo> info;
     auto num = 3;
     info = AbilityManager::GetInstance().QueryRunningAbilityMissionInfo(num);
@@ -433,47 +433,47 @@ void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase4(in
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase5(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase5");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase5");
     auto index = 0;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRunningAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase6(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase6");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase6");
     auto index = 1;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRunningAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase7(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase7");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase7");
     auto index = 2;
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::QueryRunningAbilityMissionInfo, index, code);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase8(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase8");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase8");
     QueryRunningAbilityMissionInfoParam(std::numeric_limits<int>::min(), code, 0);
 }
 
 void KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase9(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase9");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerQueryRunningAbilityMissionInfoCase9");
     QueryRunningAbilityMissionInfoParam(std::numeric_limits<int>::max(), code, 1);
 }
 
 // MoveMissionToTop ST kit case
 void KitTestAbilityManager::AbilityManagerMoveMissionToTopCase1(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerMoveMissionToTopCase1");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerMoveMissionToTopCase1");
     StartAbilitySelf(bundleName, abilityName, AbilityManagerApi::MoveMissionToTop, 0, code);
 }
 
 void KitTestAbilityManager::AbilityManagerMoveMissionToTopCase2(int code)
 {
-    APP_LOGI("KitTestAbilityManager::AbilityManagerMoveMissionToTopCase2");
+    HILOG_INFO("KitTestAbilityManager::AbilityManagerMoveMissionToTopCase2");
     moveMissionToTopCode = code;
     isMoveMissionToTop = true;
     Want wantEntity;
@@ -490,7 +490,7 @@ void KitTestAbilityManager::AbilityManagerClearUpApplicationDataCase1(int code)
 
 void KitTestAbilityManager::OnStart(const Want &want)
 {
-    APP_LOGI("KitTestAbilityManager::onStart");
+    HILOG_INFO("KitTestAbilityManager::onStart");
     Ability::OnStart(want);
     SubscribeEvent(g_requPageManagerAbilitySTVector);
     std::string eventData = GetAbilityName() + g_abilityStateOnStart;
@@ -499,7 +499,7 @@ void KitTestAbilityManager::OnStart(const Want &want)
 
 void KitTestAbilityManager::OnStop()
 {
-    APP_LOGI("KitTestAbilityManager::onStop");
+    HILOG_INFO("KitTestAbilityManager::onStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     std::string eventData = GetAbilityName() + g_abilityStateOnStop;
@@ -508,7 +508,7 @@ void KitTestAbilityManager::OnStop()
 
 void KitTestAbilityManager::OnActive()
 {
-    APP_LOGI("KitTestAbilityManager::OnActive");
+    HILOG_INFO("KitTestAbilityManager::OnActive");
     Ability::OnActive();
     if (isMoveMissionToTop) {
         TestUtils::PublishEvent(g_respPageManagerAbilityST, moveMissionToTopCode, "1");
@@ -521,7 +521,7 @@ void KitTestAbilityManager::OnActive()
 
 void KitTestAbilityManager::OnInactive()
 {
-    APP_LOGI("KitTestAbilityManager::OnInactive");
+    HILOG_INFO("KitTestAbilityManager::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + g_abilityStateOnInactive;
     TestUtils::PublishEvent(g_respPageManagerAbilityST, 0, eventData);
@@ -529,7 +529,7 @@ void KitTestAbilityManager::OnInactive()
 
 void KitTestAbilityManager::OnBackground()
 {
-    APP_LOGI("KitTestAbilityManager::OnBackground");
+    HILOG_INFO("KitTestAbilityManager::OnBackground");
     Ability::OnBackground();
     if (isMoveMissionToTop) {
         std::vector<AbilityMissionInfo> info;
@@ -548,7 +548,7 @@ void KitTestAbilityManager::OnBackground()
 
 void KitTestAbilityManager::OnForeground(const Want &want)
 {
-    APP_LOGI("KitTestAbilityManager::OnForeground");
+    HILOG_INFO("KitTestAbilityManager::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnForeground;
     TestUtils::PublishEvent(g_respPageManagerAbilityST, 0, eventData);
@@ -556,7 +556,7 @@ void KitTestAbilityManager::OnForeground(const Want &want)
 
 void KitTestAbilityManager::OnNewWant(const Want &want)
 {
-    APP_LOGI("KitTestAbilityManager::OnNewWant");
+    HILOG_INFO("KitTestAbilityManager::OnNewWant");
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnNewWant;
     TestUtils::PublishEvent(g_respPageManagerAbilityST, 0, eventData);
@@ -565,9 +565,9 @@ void KitTestAbilityManager::OnNewWant(const Want &want)
 // KitTestManagerEventSubscriber Class
 void KitTestManagerEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (g_requPageManagerAbilityST == eventName) {
         auto target = data.GetData();
@@ -586,7 +586,7 @@ void KitTestManagerEventSubscriber::OnReceiveEvent(const CommonEventData &data)
             if (keyMap == "TerminateAbility") {
                 KitTerminateAbility();
             } else {
-                APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+                HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
             }
         }
     }

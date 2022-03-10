@@ -19,7 +19,7 @@
 #include <atomic>
 
 #include "thread_factory.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

@@ -18,7 +18,7 @@
 #include <mutex>
 #include <stdio.h>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "data_ability_helper.h"
 
 namespace OHOS {
@@ -53,9 +53,9 @@ bool AmsStDataAbilityDataB::PublishEvent(const std::string &eventName, const int
 
 void DataTestDataBEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("DataTestDataBEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("DataTestDataBEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("DataTestDataBEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("DataTestDataBEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("DataTestDataBEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("DataTestDataBEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (eventName.compare(testEventName) == 0 && ABILITY_DATA_B_CODE == data.GetCode()) {
         std::string target = data.GetData();
@@ -86,7 +86,7 @@ void AmsStDataAbilityDataB::SubscribeEvent(const Want &want)
 
 void AmsStDataAbilityDataB::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStDataAbilityDataB OnStart");
+    HILOG_INFO("AmsStDataAbilityDataB OnStart");
     SubscribeEvent(want);
     originWant_ = want;
     Ability::OnStart(want);
@@ -95,21 +95,21 @@ void AmsStDataAbilityDataB::OnStart(const Want &want)
 
 int AmsStDataAbilityDataB::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    APP_LOGI("AmsStDataAbilityDataB <<<<Insert>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<Insert>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, "Insert");
     return DEFAULT_INSERT_RESULT;
 }
 
 int AmsStDataAbilityDataB::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStDataAbilityDataB <<<<Delete>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<Delete>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, "Delete");
     return DEFAULT_DELETE_RESULT;
 }
 
 int AmsStDataAbilityDataB::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStDataAbilityDataB <<<<Update>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<Update>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, "Update");
     return DEFAULT_UPDATE_RESULT;
 }
@@ -118,7 +118,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStDataAbilityDataB::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     subscriber_->vectorOperator_ = columns;
-    APP_LOGI("AmsStDataAbilityDataB <<<<Query>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<Query>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, OPERATOR_QUERY);
 
     STtools::WaitCompleted(event, OPERATOR_QUERY, ABILITY_DATA_B_CODE);
@@ -134,7 +134,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStDataAbilityDataB::Query(
 
 std::vector<std::string> AmsStDataAbilityDataB::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
-    APP_LOGI("AmsStDataAbilityDataB <<<<GetFileTypes>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<GetFileTypes>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, "GetFileTypes");
     std::vector<std::string> fileType {"filetypes"};
     return fileType;
@@ -142,12 +142,12 @@ std::vector<std::string> AmsStDataAbilityDataB::GetFileTypes(const Uri &uri, con
 
 int AmsStDataAbilityDataB::OpenFile(const Uri &uri, const std::string &mode)
 {
-    APP_LOGI("AmsStDataAbilityDataB <<<<OpenFile>>>>");
+    HILOG_INFO("AmsStDataAbilityDataB <<<<OpenFile>>>>");
     FILE *fd1 = fopen("/system/app/test.txt", "r");
     if (fd1 == nullptr)
         return -1;
     int fd = fileno(fd1);
-    APP_LOGI("AmsStDataAbilityDataB fd: %{public}d", fd);
+    HILOG_INFO("AmsStDataAbilityDataB fd: %{public}d", fd);
     PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, "OpenFile");
     fclose(fd1);
     return fd;
@@ -197,23 +197,23 @@ static void GetResult(std::shared_ptr<STtools::StOperator> child, std::shared_pt
 
 void DataTestDataBEventSubscriber::TestPost(const std::string funName)
 {
-    APP_LOGI("DataTestDataBEventSubscriber::TestPost %{public}s", funName.c_str());
+    HILOG_INFO("DataTestDataBEventSubscriber::TestPost %{public}s", funName.c_str());
     STtools::StOperator allOperator {};
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator_);
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(mainAbility_->GetContext());
     for (auto child : allOperator.GetChildOperator()) {
         /// data ability
         if (child->GetAbilityType() == ABILITY_TYPE_DATA) {
-            APP_LOGI("---------------------targetAbility_--------------------");
+            HILOG_INFO("---------------------targetAbility_--------------------");
             Uri dataAbilityUri("dataability:///" + child->GetBundleName() + "." + child->GetAbilityName());
             std::string result;
             if (helper != nullptr) {
-                APP_LOGI("---------------------helper--------------------");
+                HILOG_INFO("---------------------helper--------------------");
                 GetResult(child, helper, dataAbilityUri, result);
             }
             mainAbility_->PublishEvent(abilityEventName, ABILITY_DATA_B_CODE, child->GetOperatorName() + " " + result);
         } else if (child->GetAbilityType() == ABILITY_TYPE_PAGE) {
-            APP_LOGI("---------------------StartPageAbility--------------------");
+            HILOG_INFO("---------------------StartPageAbility--------------------");
             std::vector<std::string> vectoroperator;
             if (child->GetChildOperator().size() != 0) {
                 vectoroperator = STtools::SerializationStOperatorToVector(*child);

@@ -51,19 +51,19 @@ ohos_source_set("tools_aa_source_set") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "${innerkits_path}/base:base",
-    "${innerkits_path}/want:want",
     "${services_path}/abilitymgr:abilityms",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 }
 
