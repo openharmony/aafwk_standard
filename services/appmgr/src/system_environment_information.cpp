@@ -98,7 +98,7 @@ static void RequestSystemMemoryInfo(std::map<std::string, std::string> &memInfo)
 
     while (fgets(buff, sizeof(buff), fp) != nullptr) {
         std::string strbuf(buff);
-        memset_s(buff, sizeof(buff), 0x00, sizeof(buff));
+        (void)memset_s(buff, sizeof(buff), 0x00, sizeof(buff));
         std::smatch sm;
         std::smatch smData;
         bool flag = false;
