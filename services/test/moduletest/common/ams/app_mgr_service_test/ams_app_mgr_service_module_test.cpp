@@ -68,6 +68,8 @@ public:
     {}
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override
     {}
+    void ScheduleANRProcess() override
+    {}
 };
 class AppMgrServiceModuleTest : public testing::Test {
 public:

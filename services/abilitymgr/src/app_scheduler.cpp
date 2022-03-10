@@ -377,5 +377,11 @@ int AppScheduler::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<I
 
     return ERR_OK;
 }
+
+void AppScheduler::PostANRTaskByProcessID(const pid_t pid)
+{
+    CHECK_POINTER(appMgrClient_);
+    appMgrClient_->PostANRTaskByProcessID(pid);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
