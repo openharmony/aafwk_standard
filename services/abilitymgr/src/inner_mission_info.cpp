@@ -20,36 +20,20 @@
 
 namespace OHOS {
 namespace AAFwk {
-namespace {
-const std::string KEY_MISSION_NAME = "MissionName";
-const std::string KEY_IS_SINGLETON = "IsSingleton";
-const std::string KEY_MISSION_ID = "MissionId";
-const std::string KEY_RUNNING_STATE = "RunningState";
-const std::string KEY_LOCKED_STATE = "LockedState";
-const std::string KEY_CONTINUABLE = "Continuable";
-const std::string KEY_TIME = "Time";
-const std::string KEY_LABEL = "Label";
-const std::string KEY_ICON_PATH = "IconPath";
-const std::string KEY_WANT = "Want";
-const std::string KEY_START_METHOD = "StartMethod";
-const std::string KEY_BUNDLE_NAME = "BundleName";
-const std::string KEY_UID = "Uid";
-}
 std::string InnerMissionInfo::ToJsonStr() const
 {
     nlohmann::json value;
-    value[KEY_MISSION_NAME] = missionName;
-    value[KEY_IS_SINGLETON] = isSingletonMode;
-    value[KEY_BUNDLE_NAME] = bundleName;
-    value[KEY_UID] = uid;
-    value[KEY_MISSION_ID] = missionInfo.id;
-    value[KEY_RUNNING_STATE] = missionInfo.runningState;
-    value[KEY_LOCKED_STATE] = missionInfo.lockedState;
-    value[KEY_CONTINUABLE] = missionInfo.continuable;
-    value[KEY_TIME] = missionInfo.time;
-    value[KEY_LABEL] = missionInfo.label;
-    value[KEY_ICON_PATH] = missionInfo.iconPath;
-    value[KEY_WANT] = missionInfo.want.ToUri();
+    value["MissionName"] = missionName;
+    value["IsSingleton"] = isSingletonMode;
+    value["StartMethod"] = startMethod;
+    value["MissionId"] = missionInfo.id;
+    value["RunningState"] = missionInfo.runningState;
+    value["LockedState"] = missionInfo.lockedState;
+    value["Continuable"] = missionInfo.continuable;
+    value["Time"] = missionInfo.time;
+    value["Label"] = missionInfo.label;
+    value["IconPath"] = missionInfo.iconPath;
+    value["Want"] = missionInfo.want.ToUri();
 
     return value.dump();
 }
@@ -80,58 +64,50 @@ bool InnerMissionInfo::FromJsonStr(const std::string &jsonStr)
         }
         return false;
     };
-    if (!CheckJsonNode(KEY_MISSION_NAME, JsonType::STRING)) {
+    if (!CheckJsonNode("MissionName", JsonType::STRING)) {
         return false;
     }
-    missionName = value[KEY_MISSION_NAME].get<std::string>();
-    if (!CheckJsonNode(KEY_IS_SINGLETON, JsonType::BOOLEAN)) {
+    missionName = value["MissionName"].get<std::string>();
+    if (!CheckJsonNode("IsSingleton", JsonType::BOOLEAN)) {
         return false;
     }
-    isSingletonMode = value[KEY_IS_SINGLETON].get<bool>();
-    if (!CheckJsonNode(KEY_START_METHOD, JsonType::NUMBER)) {
+    isSingletonMode = value["IsSingleton"].get<bool>();
+    if (!CheckJsonNode("StartMethod", JsonType::NUMBER)) {
         return false;
     }
-    startMethod = value[KEY_START_METHOD].get<int32_t>();
-    if (!CheckJsonNode(KEY_BUNDLE_NAME, JsonType::STRING)) {
+    startMethod = value["StartMethod"].get<int32_t>();
+    if (!CheckJsonNode("MissionId", JsonType::NUMBER)) {
         return false;
     }
-    bundleName = value[KEY_BUNDLE_NAME].get<std::string>();
-    if (!CheckJsonNode(KEY_UID, JsonType::NUMBER)) {
+    missionInfo.id = value["MissionId"].get<int32_t>();
+    if (!CheckJsonNode("RunningState", JsonType::NUMBER)) {
         return false;
     }
-    uid = value[KEY_UID].get<int32_t>();
-    if (!CheckJsonNode(KEY_MISSION_ID, JsonType::NUMBER)) {
+    missionInfo.runningState = value["RunningState"].get<int32_t>();
+    if (!CheckJsonNode("LockedState", JsonType::BOOLEAN)) {
         return false;
     }
-    missionInfo.id = value[KEY_MISSION_ID].get<int32_t>();
-    if (!CheckJsonNode(KEY_RUNNING_STATE, JsonType::NUMBER)) {
+    missionInfo.lockedState = value["LockedState"].get<bool>();
+    if (!CheckJsonNode("Continuable", JsonType::BOOLEAN)) {
         return false;
     }
-    missionInfo.runningState = value[KEY_RUNNING_STATE].get<int32_t>();
-    if (!CheckJsonNode(KEY_LOCKED_STATE, JsonType::BOOLEAN)) {
+    missionInfo.continuable = value["Continuable"].get<bool>();
+    if (!CheckJsonNode("Time", JsonType::STRING)) {
         return false;
     }
-    missionInfo.lockedState = value[KEY_LOCKED_STATE].get<bool>();
-    if (!CheckJsonNode(KEY_CONTINUABLE, JsonType::BOOLEAN)) {
+    missionInfo.time = value["Time"].get<std::string>();
+    if (!CheckJsonNode("Label", JsonType::STRING)) {
         return false;
     }
-    missionInfo.continuable = value[KEY_CONTINUABLE].get<bool>();
-    if (!CheckJsonNode(KEY_TIME, JsonType::STRING)) {
+    missionInfo.label = value["Label"].get<std::string>();
+    if (!CheckJsonNode("IconPath", JsonType::STRING)) {
         return false;
     }
-    missionInfo.time = value[KEY_TIME].get<std::string>();
-    if (!CheckJsonNode(KEY_LABEL, JsonType::STRING)) {
+    missionInfo.iconPath = value["IconPath"].get<std::string>();
+    if (!CheckJsonNode("Want", JsonType::STRING)) {
         return false;
     }
-    missionInfo.label = value[KEY_LABEL].get<std::string>();
-    if (!CheckJsonNode(KEY_ICON_PATH, JsonType::STRING)) {
-        return false;
-    }
-    missionInfo.iconPath = value[KEY_ICON_PATH].get<std::string>();
-    if (!CheckJsonNode(KEY_WANT, JsonType::STRING)) {
-        return false;
-    }
-    Want* want = Want::ParseUri(value[KEY_WANT].get<std::string>());
+    Want* want = Want::ParseUri(value["Want"].get<std::string>());
     if (want) {
         missionInfo.want = *want;
     }

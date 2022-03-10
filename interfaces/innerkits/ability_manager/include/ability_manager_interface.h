@@ -394,11 +394,10 @@ public:
     /**
      * Uninstall app
      *
-     * @param bundleName bundle name of uninstalling app.
-     * @param uid uid of bundle.
+     * @param bundleName.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName, int32_t uid) = 0;
+    virtual int UninstallApp(const std::string &bundleName) = 0;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -728,14 +727,6 @@ public:
      */
     virtual int SendANRProcessID(int pid) = 0;
 
-    /**
-     * Get mission id by ability token.
-     *
-     * @param token The token of ability.
-     * @return Returns -1 if do not find mission, otherwise return mission id.
-     */
-    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
-
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -905,9 +896,6 @@ public:
 
         // ipc id for move mission to front by options (56)
         MOVE_MISSION_TO_FRONT_BY_OPTIONS,
-
-        // ipc for get mission id by ability token (57)
-        GET_MISSION_ID_BY_ABILITY_TOKEN,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

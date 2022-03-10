@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,6 @@ namespace AppExecFwk {
 const int REQUEST_UPDATE_AT_CODE = 1;
 const int REQUEST_LIMITER_CODE = 2;
 const int REQUEST_DYNAMIC_CODE = 3;
-const int SHIFT_BIT_LENGTH = 32;
 
 FormTimerMgr::FormTimerMgr()
 {
@@ -292,7 +291,7 @@ bool FormTimerMgr::AtTimerToIntervalTimer(const int64_t formId, const FormTimerC
     }
     targetItem.refreshTask.isUpdateAt = false;
     targetItem.refreshTask.period = timerCfg.updateDuration;
-    targetItem.refreshTask.refreshTime = INT64_MAX;
+    targetItem.refreshTask.refreshTime = LONG_MAX;
     if (!AddIntervalTimer(targetItem.refreshTask)) {
         HILOG_ERROR("%{public}s, failed to add interval timer", __func__);
         return false;
@@ -549,15 +548,15 @@ bool FormTimerMgr::OnUpdateAtTrigger(long updateTime)
  * @param updateTime Update time.
  * @return Returns true on success, false on failure.
  */
-bool FormTimerMgr::OnDynamicTimeTrigger(int64_t updateTime)
+bool FormTimerMgr::OnDynamicTimeTrigger(long updateTime)
 {
-    HILOG_INFO("%{public}s start, updateTime:%{public}" PRId64 "", __func__, updateTime);
+    HILOG_INFO("%{public}s start, updateTime:%{public}ld", __func__, updateTime);
     std::vector<FormTimer> updateList;
     {
         std::lock_guard<std::mutex> lock(dynamicMutex_);
         auto timeSinceEpoch = std::chrono::steady_clock::now().time_since_epoch();
         auto timeInSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceEpoch).count();
-        int64_t markedTime = timeInSec + Constants::ABS_REFRESH_MS;
+        long markedTime = timeInSec + Constants::ABS_REFRESH_MS;
         std::vector<DynamicRefreshItem>::iterator itItem;
         for (itItem = dynamicRefreshTasks_.begin(); itItem != dynamicRefreshTasks_.end();) {
             if (itItem->settedTime <= updateTime || itItem->settedTime <= markedTime) {
@@ -582,7 +581,7 @@ bool FormTimerMgr::OnDynamicTimeTrigger(int64_t updateTime)
     }
 
     if (!updateList.empty()) {
-        HILOG_INFO("%{public}s triggered, trigged time: %{public}" PRId64 "", __func__, updateTime);
+        HILOG_INFO("%{public}s triggered, trigged time: %{public}ld", __func__, updateTime);
         for (auto &task : updateList) {
             ExecTimerTask(task);
         }
@@ -742,8 +741,8 @@ bool FormTimerMgr::DeleteUpdateAtTimer(const int64_t formId)
         HILOG_ERROR("%{public}s, failed to update attimer alarm.", __func__);
         return false;
     }
-    HILOG_INFO("%{public}s end", __func__);
     return true;
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
  * @brief Delete dynamic refresh item.
@@ -769,8 +768,8 @@ bool FormTimerMgr::DeleteDynamicItem(const int64_t formId)
         HILOG_ERROR("%{public}s, failed to UpdateDynamicAlarm", __func__);
         return false;
     }
-    HILOG_INFO("%{public}s end", __func__);
     return true;
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
 * @brief interval timer task timeout.
@@ -814,8 +813,8 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
         return false;
     }
 
-    long nowAtTime = tmAtTime.tm_hour * Constants::MIN_PER_HOUR + tmAtTime.tm_min;
-    int64_t currentTime = FormUtil::GetCurrentMillisecond();
+    int nowAtTime = tmAtTime.tm_hour * Constants::MIN_PER_HOUR + tmAtTime.tm_min;
+    long currentTime = FormUtil::GetCurrentMillisecond();
     UpdateAtItem findedItem;
     bool bFinded = FindNextAtTimerItem(nowAtTime, findedItem);
     if (!bFinded) {
@@ -833,7 +832,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     tmAtTime.tm_sec = 0;
     tmAtTime.tm_hour = findedItem.refreshTask.hour;
     tmAtTime.tm_min = findedItem.refreshTask.min;
-    int64_t selectTime = FormUtil::GetMillisecondFromTm(tmAtTime);
+    long selectTime = FormUtil::GetMillisecondFromTm(tmAtTime);
     if (selectTime < currentTime) {
         tmAtTime.tm_mday += 1;
         nextWakeUpTime += (Constants::HOUR_PER_DAY * Constants::MIN_PER_HOUR);
@@ -940,7 +939,7 @@ bool FormTimerMgr::UpdateLimiterAlarm()
     tmAtTime.tm_sec = Constants::MAX_SECOND; // max value can be 61
     tmAtTime.tm_hour = Constants::MAX_HOUR;
     tmAtTime.tm_min = Constants::MAX_MININUTE;
-    int64_t limiterWakeUpTime = FormUtil::GetMillisecondFromTm(tmAtTime);
+    uint64_t limiterWakeUpTime = FormUtil::GetMillisecondFromTm(tmAtTime);
 
     auto timerOption = std::make_shared<FormTimerOption>();
     timerOption->SetType(timerOption->TIMER_TYPE_WAKEUP);
@@ -1016,7 +1015,7 @@ bool FormTimerMgr::UpdateDynamicAlarm()
     HILOG_INFO("%{public}s start", __func__);
     if (dynamicRefreshTasks_.empty()) {
         ClearDynamicResource();
-        dynamicWakeUpTime_ = INT64_MAX;
+        dynamicWakeUpTime_ = LONG_MAX;
         return true;
     }
 
@@ -1054,7 +1053,9 @@ bool FormTimerMgr::UpdateDynamicAlarm()
     if (!bRet) {
         HILOG_ERROR("%{public}s failed, init dynamic timer task error", __func__);
     }
-    HILOG_INFO("%{public}s end, dynamicWakeUpTime_ : %{public}" PRId64 ".", __func__, dynamicWakeUpTime_);
+
+    HILOG_INFO("%{public}s end, dynamicWakeUpTime_ : %{pubilc}ld.", __func__, dynamicWakeUpTime_);
+
     return true;
 }
 /**
@@ -1062,18 +1063,14 @@ bool FormTimerMgr::UpdateDynamicAlarm()
  * @param nextTime The next update time.
  * @return Returns WantAgent.
  */
-std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(int64_t nextTime, int32_t userId)
+std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(long nextTime, int32_t userId)
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("", "", "");
     want->SetElement(element);
     want->SetAction(Constants::ACTION_UPDATEATTIMER);
     want->SetParam(Constants::KEY_ACTION_TYPE, Constants::TYPE_DYNAMIC_UPDATE);
-    int nextTimeRight = static_cast<int>(nextTime);
-    int nextTimLeft = static_cast<int>(nextTime >> SHIFT_BIT_LENGTH);
-
-    want->SetParam(Constants::KEY_WAKEUP_TIME_LEFT, nextTimLeft);
-    want->SetParam(Constants::KEY_WAKEUP_TIME_RIGHT, nextTimeRight);
+    want->SetParam(Constants::KEY_WAKEUP_TIME, nextTime);
     std::vector<std::shared_ptr<AAFwk::Want>> wants;
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_DYNAMIC_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
@@ -1107,7 +1104,7 @@ void FormTimerMgr::ClearDynamicResource()
  * @param updateAtItem Next at timer item.
  * @return Returns true on success, false on failure.
  */
-bool FormTimerMgr::FindNextAtTimerItem(const long nowTime, UpdateAtItem &updateAtItem)
+bool FormTimerMgr::FindNextAtTimerItem(const int nowTime, UpdateAtItem &updateAtItem)
 {
     HILOG_INFO("%{public}s start", __func__);
     if (updateAtTimerTasks_.empty()) {
@@ -1260,13 +1257,9 @@ void FormTimerMgr::TimerReceiver::OnReceiveEvent(const EventFwk::CommonEventData
             }
             FormTimerMgr::GetInstance().OnUpdateAtTrigger(updateTime);
         } else if (type == Constants::TYPE_DYNAMIC_UPDATE) {
-            int updateTimeLeft = want.GetIntParam(Constants::KEY_WAKEUP_TIME_LEFT, -1);
-            int updateTimeRight = want.GetIntParam(Constants::KEY_WAKEUP_TIME_RIGHT, -1);
-            int64_t updateTime = static_cast<int64_t>(updateTimeLeft);
-            updateTime = updateTime << SHIFT_BIT_LENGTH;
-            updateTime |= updateTimeRight;
+            long updateTime = want.GetLongParam(Constants::KEY_WAKEUP_TIME, 0);
             if (updateTime <= 0) {
-                HILOG_ERROR("%{public}s failed, invalid updateTime:%{public}" PRId64 "", __func__, updateTime);
+                HILOG_ERROR("%{public}s failed, invalid updateTime:%{public}ld.", __func__, updateTime);
                 return;
             }
             FormTimerMgr::GetInstance().OnDynamicTimeTrigger(updateTime);

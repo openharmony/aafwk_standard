@@ -1245,7 +1245,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName3", 1);
+    abilityMgrServ_->UninstallApp("bundleName3");
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
 }
@@ -1288,7 +1288,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName2", 1);
+    abilityMgrServ_->UninstallApp("bundleName2");
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 0);
 }
@@ -1331,7 +1331,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName1", 1);
+    abilityMgrServ_->UninstallApp("bundleName1");
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }
@@ -1374,7 +1374,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName3", 1);
+    abilityMgrServ_->UninstallApp("bundleName3");
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }

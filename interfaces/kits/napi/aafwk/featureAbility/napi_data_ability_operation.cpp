@@ -94,13 +94,17 @@ napi_value BuildDataAbilityOperation(
     valuesBucket->Clear();
     napi_value jsValueBucket = GetPropertyValueByPropertyName(env, param, "valuesBucket", napi_object);
     UnwrapValuesBucket(valuesBucket, env, jsValueBucket);
-    builder->WithValuesBucket(valuesBucket);
+    if (valuesBucket != nullptr) {
+        builder->WithValuesBucket(valuesBucket);
+    }
 
     // get dataAbilityPredicates property
     std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = std::make_shared<NativeRdb::DataAbilityPredicates>();
     napi_value jsPredicates = GetPropertyValueByPropertyName(env, param, "predicates", napi_object);
     UnwrapDataAbilityPredicates(*predicates, env, jsPredicates);
-    builder->WithPredicates(predicates);
+    if (predicates != nullptr) {
+        builder->WithPredicates(predicates);
+    }
 
     // get expectedcount property
     int expectedCount = 0;

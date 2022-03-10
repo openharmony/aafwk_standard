@@ -150,7 +150,7 @@ public:
     {
         return 0;
     }
-    virtual int UninstallApp(const std::string &bundleName, int32_t uid) override
+    virtual int UninstallApp(const std::string &bundleName) override
     {
         return 0;
     }

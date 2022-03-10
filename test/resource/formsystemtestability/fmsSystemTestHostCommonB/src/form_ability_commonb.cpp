@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@ void FormAbilityCommonB::AcquireFormCallback::OnAcquired(const int32_t result, c
 {
     HILOG_INFO("%{public}s called[%{public}s]", __func__, std::to_string(formJsInfo.formId).c_str());
 }
-
 void FormAbilityCommonB::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -72,7 +71,6 @@ void FormAbilityCommonB::FMS_acquireForm(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ONE_NORMAL_FORM_B, EVENT_CODE_100, "");
     }
 }
-
 void FormAbilityCommonB::FMS_acquireForm_batch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -97,7 +95,6 @@ void FormAbilityCommonB::FMS_acquireForm_batch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "false");
     }
 }
-
 void FormAbilityCommonB::FMS_deleteFormBatch(std::string strFormId)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -110,7 +107,6 @@ void FormAbilityCommonB::FMS_deleteFormBatch(std::string strFormId)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_CLEAR_FORM_BATCH, EVENT_CODE_CLEAR_BATCH, "false");
     }
 }
-
 void FormAbilityCommonB::FMS_deleteForm(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -123,18 +119,15 @@ void FormAbilityCommonB::FMS_deleteForm(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ONE_NORMAL_FORM_B_DEL, EVENT_CODE_101, "false");
     }
 }
-
 FormAbilityCommonB::~FormAbilityCommonB()
 {
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
 }
-
 void FormAbilityCommonB::OnStart(const Want &want)
 {
     HILOG_INFO("FormAbilityCommonB::onStart");
     Ability::OnStart(want);
 }
-
 void FormAbilityCommonB::OnActive()
 {
     HILOG_INFO("FormAbilityCommonB::OnActive");
@@ -149,21 +142,18 @@ void FormAbilityCommonB::OnStop()
 
     Ability::OnStop();
 }
-
 void FormAbilityCommonB::OnInactive()
 {
     HILOG_INFO("FormAbilityCommonB::OnInactive");
 
     Ability::OnInactive();
 }
-
 void FormAbilityCommonB::OnBackground()
 {
     HILOG_INFO("FormAbilityCommonB::OnBackground");
 
     Ability::OnBackground();
 }
-
 void FormAbilityCommonB::SubscribeEvent()
 {
     HILOG_INFO("FormAbilityCommonB::SubscribeEvent");

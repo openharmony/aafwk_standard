@@ -156,7 +156,7 @@ public:
     int32_t DeviceIdDetermine(
         const Want &want, const sptr<IRemoteObject> &callerToken, int32_t requestCode, const int32_t callerUid);
     int32_t PendingWantPublishCommonEvent(const Want &want, const SenderInfo &senderInfo, int32_t callerUid);
-    void ClearPendingWantRecord(const std::string &bundleName, int32_t uid);
+    void ClearPendingWantRecord(const std::string &bundleName);
 
     void Dump(std::vector<std::string> &info);
     void DumpByRecordId(std::vector<std::string> &info, const std::string &args);
@@ -172,7 +172,7 @@ private:
 
     sptr<PendingWantRecord> GetPendingWantRecordByCode(int32_t code);
     static int32_t PendingRecordIdCreate();
-    void ClearPendingWantRecordTask(const std::string &bundleName, int32_t uid);
+    void ClearPendingWantRecordTask(const std::string &bundleName);
 
 private:
     std::map<std::shared_ptr<PendingWantKey>, sptr<PendingWantRecord>> wantRecords_;

@@ -36,19 +36,16 @@ sptr<AppExecFwk::AbilityThread> MockCreateAbilityThread()
     sptr<AppExecFwk::AbilityThread> abilitythread(new (std::nothrow) AppExecFwk::AbilityThread());
     if (abilitythread == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock abilityhreadptr is nullptr called";
-        return nullptr;
     }
 
     std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
     if (application == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock applicationptr is nullptr called";
-        return nullptr;
     }
 
     std::shared_ptr<AbilityInfo> info = std::make_shared<AbilityInfo>();
     if (info == nullptr) {
         GTEST_LOG_(INFO) << "mock_ability_thread_for_data_observer:mock AbilityInfo::info is nullptr called";
-        return nullptr;
     }
 
     info->name = std::string("MockAbilityTest");

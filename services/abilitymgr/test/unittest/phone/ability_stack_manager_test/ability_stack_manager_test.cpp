@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2199,7 +2199,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_061, TestSize.
     stackManager_->Init();
     auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
 
-    // default mission id
+    // defult mission id
     abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
         std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN));
     EXPECT_TRUE(abilityStartSetting);
@@ -2289,7 +2289,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_062, TestSize.
  * SubFunction: NA
  * FunctionPoints: Start the floating window according to the parameters
  * EnvConditions: NA
- * CaseDescription: a default ability + Start a floating window application
+ * CaseDescription: a defult ability + Start a floating window application
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_063, TestSize.Level1)
 {
@@ -2414,7 +2414,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_065, TestSize.
     EXPECT_TRUE(stact);
     EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
-    // radioAbility in the default stack
+    // radioAbility in the defult stack
     EXPECT_EQ(redioMissionRecord->GetMissionStack()->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
 }
 

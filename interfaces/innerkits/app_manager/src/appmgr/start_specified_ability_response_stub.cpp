@@ -65,7 +65,7 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnTimeoutResponse(MessageParcel
 int StartSpecifiedAbilityResponseStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("StartSpecifiedAbilityResponseStub::OnReceived, code = %{public}u, flags= %{public}d.",
+    HILOG_INFO("StartSpecifiedAbilityResponseStub::OnReceived, code = %{public}d, flags= %{public}d.",
         code, option.GetFlags());
     std::u16string descriptor = StartSpecifiedAbilityResponseStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,7 +64,7 @@ std::shared_ptr<ParallelTaskDispatcher> ParallelTaskDispatcherModuleTest::Create
 HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_LifeCycleTest_001, TestSize.Level1)
 {
     auto name = std::string("ParallelTaskDispatcher_LifeCycleTest_001");
-    GTEST_LOG_(INFO) << (name + " start");
+    GTEST_LOG_(INFO) << name + " start";
     std::shared_ptr<ParallelTaskDispatcher> ptr = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     std::shared_ptr<Runnable> runnable = std::make_shared<Runnable>([&]() {
@@ -161,7 +161,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncDispatchT
 HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncGroupDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("ParallelTaskDispatcher_AsyncGroupDispatchTest_001");
-    GTEST_LOG_(INFO) << (name + " start");
+    GTEST_LOG_(INFO) << name + " start";
     std::shared_ptr<ParallelTaskDispatcher> ptr = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     long sleep1 = 200;
@@ -205,7 +205,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncGroupDisp
 HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncGroupDispatchTest_002, TestSize.Level1)
 {
     auto name = std::string("ParallelTaskDispatcher_AsyncGroupDispatchTest_002");
-    GTEST_LOG_(INFO) << (name + " start");
+    GTEST_LOG_(INFO) << name + " start";
     std::shared_ptr<ParallelTaskDispatcher> ptr = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     std::shared_ptr<Group> group = ptr->CreateDispatchGroup();
     ptr->AsyncGroupDispatch(group, std::make_shared<Runnable>([&]() {
@@ -246,7 +246,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_ApplyDispatchT
         int index = count.fetch_add(1);
         EXPECT_TRUE(index >= repeatCount);
         EXPECT_TRUE(index < repeatCount * 2);
-        GTEST_LOG_(INFO) << (name + " repeats1");
+        GTEST_LOG_(INFO) << name + " repeats1";
     });
     ptr->ApplyDispatch(repeats1, repeatCount);
 

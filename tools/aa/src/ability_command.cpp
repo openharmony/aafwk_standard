@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -353,7 +353,9 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
 
 ErrCode AbilityManagerShellCommand::init()
 {
-    return AbilityManagerClient::GetInstance()->Connect();
+    ErrCode result = AbilityManagerClient::GetInstance()->Connect();
+
+    return result;
 }
 
 ErrCode AbilityManagerShellCommand::RunAsHelpCommand()
@@ -564,6 +566,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     int userID = DEFAULT_INVAL_VALUE;
     bool isfirstCommand = false;
     std::string args;
+
     for (auto it = argList_.begin(); it != argList_.end(); it++) {
         if (*it == "-c" || *it == "--client") {
             if (isClient == false) {
@@ -637,7 +640,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 break;
             }
             case 'l': {
-                if (isfirstCommand == false) {
+                if (isfirstCommand == false && optarg == nullptr) {
                     isfirstCommand = true;
                 } else {
                     // 'aa dumpsys -i 10 -element -lastpage'

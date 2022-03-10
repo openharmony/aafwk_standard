@@ -76,8 +76,6 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleStartRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::ATTACH_RENDER_PROCESS)] =
         &AppMgrStub::HandleAttachRenderProcess;
-    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
-        &AppMgrStub::HandlePostANRTaskByProcessID;
 }
 
 AppMgrStub::~AppMgrStub()
@@ -87,7 +85,7 @@ AppMgrStub::~AppMgrStub()
 
 int AppMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("AppMgrStub::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppMgrStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppMgrStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
@@ -385,13 +383,6 @@ int32_t AppMgrStub::HandleAttachRenderProcess(MessageParcel &data, MessageParcel
 {
     sptr<IRemoteObject> scheduler = data.ReadParcelable<IRemoteObject>();
     AttachRenderProcess(scheduler);
-    return NO_ERROR;
-}
-
-int32_t AppMgrStub::HandlePostANRTaskByProcessID(MessageParcel &data, MessageParcel &reply)
-{
-    auto pid = data.ReadInt32();
-    PostANRTaskByProcessID(pid);
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

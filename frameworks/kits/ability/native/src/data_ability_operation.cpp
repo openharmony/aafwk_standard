@@ -374,7 +374,7 @@ DataAbilityOperation *DataAbilityOperation::Unmarshalling(Parcel &in)
     HILOG_DEBUG("DataAbilityOperation::Unmarshalling start");
     DataAbilityOperation *dataAbilityOperation = new (std::nothrow) DataAbilityOperation();
     if (dataAbilityOperation != nullptr && !dataAbilityOperation->ReadFromParcel(in)) {
-        HILOG_ERROR("DataAbilityOperation::Unmarshalling dataAbilityOperation error");
+        HILOG_ERROR("DataAbilityOperation::Unmarshalling dataAbilityOperation(%p) error", dataAbilityOperation);
         delete dataAbilityOperation;
         dataAbilityOperation = nullptr;
     }

@@ -31,6 +31,7 @@ int TestClient::ConnectService()
     }
 
     sptr<IRemoteObject> object = saMgr->GetSystemAbility(IPC_TEST_SERVICE);
+
     if (object != nullptr) {
         ZLOGE(LABEL, "Got test Service object");
         testService_ = (new (std::nothrow) ZidlTestServiceProxy(object));
