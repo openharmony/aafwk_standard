@@ -27,7 +27,7 @@
 #undef private
 #undef protected
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "mock_app_spawn_socket.h"
 
 using namespace testing::ext;
@@ -62,10 +62,10 @@ public:
 
     int32_t OpenAppSpawnConnection() override
     {
-        APP_LOGI("MockedAppSpawnSocket::OpenAppSpawnConnection ready to openConnection!");
+        HILOG_INFO("MockedAppSpawnSocket::OpenAppSpawnConnection ready to openConnection!");
         gHasConnected_ = true;
         if (!gConnectSuccess_) {
-            APP_LOGE("MockedAppSpawnSocket::OpenAppSpawnConnection mock case failed to openConnection!");
+            HILOG_ERROR("MockedAppSpawnSocket::OpenAppSpawnConnection mock case failed to openConnection!");
             return ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED;
         }
         return ERR_OK;
@@ -73,21 +73,21 @@ public:
 
     void CloseAppSpawnConnection() override
     {
-        APP_LOGI("MockedAppSpawnSocket::CloseAppSpawnConnection ready to openConnection!");
+        HILOG_INFO("MockedAppSpawnSocket::CloseAppSpawnConnection ready to openConnection!");
     }
 
     int32_t WriteMessage([[maybe_unused]] const void *buf, [[maybe_unused]] int32_t len) override
     {
         if (!gHasConnected_) {
-            APP_LOGE("MockedAppSpawnSocket::WriteMessage mock case not openConnection!");
+            HILOG_ERROR("MockedAppSpawnSocket::WriteMessage mock case not openConnection!");
             return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
         }
         if (!gConnectSuccess_) {
-            APP_LOGE("MockedAppSpawnSocket::WriteMessage mock case failed to openConnection!");
+            HILOG_ERROR("MockedAppSpawnSocket::WriteMessage mock case failed to openConnection!");
             return ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED;
         }
         if (!gWriteMessageSuccess_) {
-            APP_LOGE("MockedAppSpawnSocket::WriteMessage mock case failed to writeMessage!");
+            HILOG_ERROR("MockedAppSpawnSocket::WriteMessage mock case failed to writeMessage!");
             return ERR_APPEXECFWK_SOCKET_WRITE_FAILED;
         }
         return ERR_OK;
@@ -96,15 +96,15 @@ public:
     int32_t ReadMessage(void *buf, [[maybe_unused]] int32_t len) override
     {
         if (!gHasConnected_) {
-            APP_LOGE("MockedAppSpawnSocket::ReadMessage mock case not openConnection!");
+            HILOG_ERROR("MockedAppSpawnSocket::ReadMessage mock case not openConnection!");
             return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
         }
         if (!gConnectSuccess_) {
-            APP_LOGE("MockedAppSpawnSocket::ReadMessage mock case failed to openConnection!");
+            HILOG_ERROR("MockedAppSpawnSocket::ReadMessage mock case failed to openConnection!");
             return ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED;
         }
         if (!gReadMessageSuccess_) {
-            APP_LOGE("MockedAppSpawnSocket::ReadMessage mock case failed to readMessage!");
+            HILOG_ERROR("MockedAppSpawnSocket::ReadMessage mock case failed to readMessage!");
             return ERR_APPEXECFWK_SOCKET_READ_FAILED;
         }
         AppSpawnPidMsg msg;
@@ -199,7 +199,7 @@ void AmsServiceAppSpawnClientModuleTest::TearDown()
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_001, TestSize.Level2)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_001 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_001 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
     std::shared_ptr<MockedAppMgrServiceInner> amsInner = std::make_shared<MockedAppMgrServiceInner>();
@@ -213,7 +213,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_001, TestSize
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, amsInner->QueryAppSpawnConnectionState());
     }
-    APP_LOGI("ConnectAppSpawnDaemon_001 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_001 end");
 }
 
 /*
@@ -226,7 +226,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_001, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_002, TestSize.Level2)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_002 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_002 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
     std::shared_ptr<MockedAppMgrServiceInner> amsInner = std::make_shared<MockedAppMgrServiceInner>();
@@ -248,7 +248,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_002, TestSize
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, amsInner->QueryAppSpawnConnectionState());
     }
-    APP_LOGI("ConnectAppSpawnDaemon_002 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_002 end");
 }
 
 /*
@@ -261,7 +261,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_002, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_003, TestSize.Level2)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_003 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_003 start");
     std::shared_ptr<AppMgrService> appMgrService = std::make_shared<AppMgrService>();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
     std::shared_ptr<MockedAppMgrServiceInner> amsInner = std::make_shared<MockedAppMgrServiceInner>();
@@ -278,7 +278,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_003, TestSize
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appMgrService->QueryServiceState().connectionState);
         EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, amsInner->QueryAppSpawnConnectionState());
     }
-    APP_LOGI("ConnectAppSpawnDaemon_003 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_003 end");
 }
 
 /*
@@ -291,7 +291,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_003, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_004, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_004 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_004 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -302,7 +302,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_004, TestSize
         EXPECT_EQ(ERR_OK, mockedAppSpawnSocket->OpenAppSpawnConnection());
         appSpawnClient->CloseConnection();
     }
-    APP_LOGI("ConnectAppSpawnDaemon_004 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_004 end");
 }
 
 /*
@@ -315,7 +315,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_004, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_005, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_005 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_005 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -330,7 +330,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_005, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_005 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_005 end");
 }
 
 /*
@@ -344,7 +344,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_005, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_006, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_006 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_006 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -362,7 +362,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_006, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_006 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_006 end");
 }
 
 /*
@@ -376,7 +376,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_006, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_007, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_007 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_007 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
 
@@ -396,7 +396,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_007, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_007 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_007 end");
 }
 
 /*
@@ -410,7 +410,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_007, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_008, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_008 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_008 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
 
@@ -430,7 +430,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_008, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_008 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_008 end");
 }
 
 /*
@@ -444,7 +444,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_008, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_009, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_009 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_009 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -459,7 +459,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_009, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_009 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_009 end");
 }
 
 /*
@@ -473,7 +473,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_009, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_010, TestSize.Level1)
 {
-    APP_LOGI("ConnectAppSpawnDaemon_010 start");
+    HILOG_INFO("ConnectAppSpawnDaemon_010 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockedAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockedAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -488,7 +488,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_010, TestSize
     }
     appSpawnClient->CloseConnection();
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ConnectAppSpawnDaemon_010 end");
+    HILOG_INFO("ConnectAppSpawnDaemon_010 end");
 }
 
 /*
@@ -501,7 +501,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ConnectAppSpawnDaemon_010, TestSize
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_001, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_001 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_001 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -523,7 +523,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_001, TestSi
     auto returnCode = appSpawnClient->StartProcess(params, newPid);
     EXPECT_EQ(pid, newPid);
     EXPECT_EQ(ERR_OK, returnCode);
-    APP_LOGI("ReconnectAppSpawnDaemon_001 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_001 end");
 }
 
 /*
@@ -536,7 +536,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_001, TestSi
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_002, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_002 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_002 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -559,7 +559,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_002, TestSi
     auto returnCode = appSpawnClient->StartProcessImpl(params, newPid);
     EXPECT_EQ(pid, newPid);
     EXPECT_EQ(ERR_OK, returnCode);
-    APP_LOGI("ReconnectAppSpawnDaemon_002 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_002 end");
 }
 
 /*
@@ -573,7 +573,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_002, TestSi
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_003, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_003 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_003 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -590,7 +590,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_003, TestSi
     auto returnCode = appSpawnClient->StartProcessImpl(params, newPid);
     EXPECT_NE(pid, newPid);
     EXPECT_EQ(ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED, returnCode);
-    APP_LOGI("ReconnectAppSpawnDaemon_003 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_003 end");
 }
 
 /*
@@ -604,7 +604,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_003, TestSi
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_004, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_004 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_004 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -632,7 +632,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_004, TestSi
     EXPECT_EQ(pid, newPid);
     EXPECT_EQ(ERR_OK, returnCode);
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ReconnectAppSpawnDaemon_004 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_004 end");
 }
 
 /*
@@ -645,7 +645,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_004, TestSi
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_005, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_005 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_005 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -660,7 +660,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_005, TestSi
     auto returnCode = appSpawnClient->StartProcess(params, newPid);
     EXPECT_EQ(ERR_APPEXECFWK_SOCKET_READ_FAILED, returnCode);
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ReconnectAppSpawnDaemon_005 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_005 end");
 }
 
 /*
@@ -675,7 +675,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_005, TestSi
  */
 HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_006, TestSize.Level1)
 {
-    APP_LOGI("ReconnectAppSpawnDaemon_006 start");
+    HILOG_INFO("ReconnectAppSpawnDaemon_006 start");
     std::shared_ptr<AppSpawnClient> appSpawnClient = std::make_shared<AppSpawnClient>();
     std::shared_ptr<MockAppSpawnSocket> mockedAppSpawnSocket = std::make_shared<MockAppSpawnSocket>();
     appSpawnClient->SetSocket(mockedAppSpawnSocket);
@@ -698,7 +698,7 @@ HWTEST_F(AmsServiceAppSpawnClientModuleTest, ReconnectAppSpawnDaemon_006, TestSi
     EXPECT_EQ(pid, newPid);
     EXPECT_EQ(ERR_OK, returnCode);
     EXPECT_EQ(SpawnConnectionState::STATE_NOT_CONNECT, appSpawnClient->QueryConnectionState());
-    APP_LOGI("ReconnectAppSpawnDaemon_006 end");
+    HILOG_INFO("ReconnectAppSpawnDaemon_006 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

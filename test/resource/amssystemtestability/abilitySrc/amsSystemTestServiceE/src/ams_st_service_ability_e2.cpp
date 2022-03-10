@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 #include "ams_st_service_ability_e2.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ability_context.h"
 #include "ability.h"
 
@@ -36,7 +36,7 @@ AmsStServiceAbilityE2::~AmsStServiceAbilityE2()
 
 std::vector<std::string> AmsStServiceAbilityE2::Split(std::string str, const std::string &token)
 {
-    APP_LOGI("AmsStServiceAbilityE2::Split");
+    HILOG_INFO("AmsStServiceAbilityE2::Split");
 
     std::vector<std::string> splitString;
     while (str.size()) {
@@ -54,12 +54,13 @@ std::vector<std::string> AmsStServiceAbilityE2::Split(std::string str, const std
     }
     return splitString;
 }
+
 void AmsStServiceAbilityE2::StartOtherAbility()
 {
-    APP_LOGI("AmsStServiceAbilityE2::StartOtherAbility begin targetBundle=%{public}s, targetAbility=%{public}s",
+    HILOG_INFO("AmsStServiceAbilityE2::StartOtherAbility begin targetBundle=%{public}s, targetAbility=%{public}s",
         targetBundle_.c_str(),
         targetAbility_.c_str());
-    APP_LOGI("AmsStServiceAbilityE2::StartOtherAbility begin nextTargetBundleConn=%{public}s, "
+    HILOG_INFO("AmsStServiceAbilityE2::StartOtherAbility begin nextTargetBundleConn=%{public}s, "
              "nextTargetAbilityConn=%{public}s",
         nextTargetBundleConn_.c_str(),
         nextTargetAbilityConn_.c_str());
@@ -80,13 +81,14 @@ void AmsStServiceAbilityE2::StartOtherAbility()
         }
     }
 }
+
 void AmsStServiceAbilityE2::ConnectOtherAbility()
 {
-    APP_LOGI(
+    HILOG_INFO(
         "AmsStServiceAbilityE2::ConnectOtherAbility begin targetBundleConn=%{public}s, targetAbilityConn=%{public}s",
         targetBundleConn_.c_str(),
         targetAbilityConn_.c_str());
-    APP_LOGI("AmsStServiceAbilityE2::ConnectOtherAbility begin nextTargetBundleConn=%{public}s, "
+    HILOG_INFO("AmsStServiceAbilityE2::ConnectOtherAbility begin nextTargetBundleConn=%{public}s, "
              "nextTargetAbilityConn=%{public}s",
         nextTargetBundleConn_.c_str(),
         nextTargetAbilityConn_.c_str());
@@ -105,62 +107,67 @@ void AmsStServiceAbilityE2::ConnectOtherAbility()
             want.SetParam("nextTargetAbilityConn", nextTargetAbilityConn_);
             stub_.push_back(new (std::nothrow) AbilityConnectCallback());
             connCallback_.push_back(new (std::nothrow) AbilityConnectionProxy(stub_[i]));
-            APP_LOGI("AmsStServiceAbilityE2::ConnectOtherAbility->ConnectAbility");
+            HILOG_INFO("AmsStServiceAbilityE2::ConnectOtherAbility->ConnectAbility");
             bool ret = ConnectAbility(want, connCallback_[i]);
             sleep(1);
             if (!ret) {
-                APP_LOGE("AmsStServiceAbilityE2::ConnectAbility failed!");
+                HILOG_ERROR("AmsStServiceAbilityE2::ConnectAbility failed!");
             }
         }
     }
-    APP_LOGI("AmsStServiceAbilityE2::ConnectOtherAbility end");
+    HILOG_INFO("AmsStServiceAbilityE2::ConnectOtherAbility end");
 }
+
 void AmsStServiceAbilityE2::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnStart");
+    HILOG_INFO("AmsStServiceAbilityE2::OnStart");
 
     GetWantInfo(want);
     Ability::OnStart(want);
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnStart");
     SubscribeEvent();
 }
+
 void AmsStServiceAbilityE2::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnCommand");
+    HILOG_INFO("AmsStServiceAbilityE2::OnCommand");
 
     GetWantInfo(want);
     Ability::OnCommand(want, restart, startId);
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnCommand");
 }
+
 void AmsStServiceAbilityE2::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnNewWant");
+    HILOG_INFO("AmsStServiceAbilityE2::OnNewWant");
 
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
+
 void AmsStServiceAbilityE2::DisConnectOtherAbility()
 {
-    APP_LOGI("AmsStServiceAbilityE2::DisConnectOtherAbility begin");
+    HILOG_INFO("AmsStServiceAbilityE2::DisConnectOtherAbility begin");
     if (connCallback_.size() > 0) {
         DisconnectAbility(connCallback_[0]);
         sleep(1);
     }
-    APP_LOGI("AmsStServiceAbilityE2::DisConnectOtherAbility end");
+    HILOG_INFO("AmsStServiceAbilityE2::DisConnectOtherAbility end");
 }
 
 void AmsStServiceAbilityE2::OnStop()
 {
-    APP_LOGI("AmsStServiceAbilityE2::onStop");
+    HILOG_INFO("AmsStServiceAbilityE2::onStop");
 
     Ability::OnStop();
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
+
 void AmsStServiceAbilityE2::GetDataByDataAbility()
 {
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(GetContext());
     if (helper == nullptr) {
-        APP_LOGE("AmsStServiceAbilityE2::GetDataByDataAbility:helper == nullptr");
+        HILOG_ERROR("AmsStServiceAbilityE2::GetDataByDataAbility:helper == nullptr");
         return;
     }
 
@@ -170,49 +177,55 @@ void AmsStServiceAbilityE2::GetDataByDataAbility()
 
     int count = result.size();
     if (count > 0) {
-        APP_LOGI("AmsStServiceAbilityE2::OnBackground get data ability data info result > 0!");
+        HILOG_INFO("AmsStServiceAbilityE2::OnBackground get data ability data info result > 0!");
         PublishEvent(APP_E2_RESP_EVENT_NAME, 1, "GetDataByDataAbility");
     } else {
-        APP_LOGI("AmsStServiceAbilityE2::OnBackground get data ability data info result = 0!");
+        HILOG_INFO("AmsStServiceAbilityE2::OnBackground get data ability data info result = 0!");
         PublishEvent(APP_E2_RESP_EVENT_NAME, 0, "GetDataByDataAbility");
     }
 }
+
 void AmsStServiceAbilityE2::OnActive()
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnActive");
+    HILOG_INFO("AmsStServiceAbilityE2::OnActive");
 
     Ability::OnActive();
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
+
 void AmsStServiceAbilityE2::OnInactive()
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnInactive");
+    HILOG_INFO("AmsStServiceAbilityE2::OnInactive");
 
     Ability::OnInactive();
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
+
 void AmsStServiceAbilityE2::OnBackground()
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnBackground");
+    HILOG_INFO("AmsStServiceAbilityE2::OnBackground");
 
     Ability::OnBackground();
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
 }
+
 sptr<IRemoteObject> AmsStServiceAbilityE2::OnConnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnConnect");
+    HILOG_INFO("AmsStServiceAbilityE2::OnConnect");
 
     Ability::OnConnect(want);
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnConnect");
     return nullptr;
 }
+
 void AmsStServiceAbilityE2::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityE2::OnDisconnect");
+    HILOG_INFO("AmsStServiceAbilityE2::OnDisconnect");
 
     Ability::OnDisconnect(want);
     PublishEvent(APP_E2_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnDisconnect");
 }
+
 void AmsStServiceAbilityE2::Clear()
 {
     shouldReturn_ = "";
@@ -226,6 +239,7 @@ void AmsStServiceAbilityE2::Clear()
     nextTargetAbilityConn_ = "";
     AmsStServiceAbilityE2::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
+
 void AmsStServiceAbilityE2::GetWantInfo(const Want &want)
 {
     Want mWant(want);
@@ -240,9 +254,10 @@ void AmsStServiceAbilityE2::GetWantInfo(const Want &want)
     nextTargetAbilityConn_ = mWant.GetStringParam("nextTargetAbilityConn");
     AmsStServiceAbilityE2::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
+
 bool AmsStServiceAbilityE2::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
-    APP_LOGI("AmsStServiceAbilityE2::PublishEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
+    HILOG_INFO("AmsStServiceAbilityE2::PublishEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
         eventName.c_str(),
         code,
         data.c_str());
@@ -255,6 +270,7 @@ bool AmsStServiceAbilityE2::PublishEvent(const std::string &eventName, const int
     commonData.SetData(data);
     return CommonEventManager::PublishCommonEvent(commonData);
 }
+
 bool AmsStServiceAbilityE2::SubscribeEvent()
 {
     MatchingSkills matchingSkills;
@@ -265,17 +281,18 @@ bool AmsStServiceAbilityE2::SubscribeEvent()
     subscriber_->mainAbility_ = this;
     return CommonEventManager::SubscribeCommonEvent(subscriber_);
 }
+
 void AmsStServiceAbilityE2::AppEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
     auto eventName = data.GetWant().GetAction();
     auto dataContent = data.GetData();
-    APP_LOGI("AmsStServiceAbilityE2::OnReceiveEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
+    HILOG_INFO("AmsStServiceAbilityE2::OnReceiveEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
         eventName.c_str(),
         data.GetCode(),
         dataContent.c_str());
     if (APP_E2_REQ_EVENT_NAME.compare(eventName) == 0) {
         if (funcMap_.find(dataContent) == funcMap_.end()) {
-            APP_LOGI(
+            HILOG_INFO(
                 "AmsStServiceAbilityE2::OnReceiveEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
                 eventName.c_str(),
                 data.GetCode(),

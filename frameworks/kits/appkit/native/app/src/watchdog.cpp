@@ -17,7 +17,7 @@
 
 #include <unistd.h>
 #include "hisysevent.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -60,13 +60,13 @@ void WatchDog::Init(const std::shared_ptr<EventHandler> &mainHandler, const std:
     WatchDog::currentHandler_ = watchDogHandler;
     if (watchDogThread_ == nullptr) {
         watchDogThread_ = std::make_shared<std::thread>(&WatchDog::Timer, this);
-        APP_LOGI("Watchdog is running!");
+        HILOG_INFO("Watchdog is running!");
     }
 }
 
 void WatchDog::Stop()
 {
-    APP_LOGI("Watchdog is stop !");
+    HILOG_INFO("Watchdog is stop !");
     stopWatchDog_.store(true);
     if (watchDogThread_ != nullptr && watchDogThread_->joinable()) {
         watchDogThread_->join();
@@ -120,7 +120,7 @@ bool WatchDog::Timer()
                     EVENT_KEY_PROCESS_NAME, applicationInfo_->process,
                     EVENT_KEY_MESSAGE, msgContent);
             }
-            APP_LOGI("Warning : main thread is not response!");
+            HILOG_INFO("Warning : main thread is not response!");
             };
             if (currentHandler_ != nullptr) {
                 currentHandler_->PostTask(timeoutTask, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);

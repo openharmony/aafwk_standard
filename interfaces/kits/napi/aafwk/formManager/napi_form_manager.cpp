@@ -454,6 +454,87 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     return;
 }
 
+static std::string GetStringByProp(napi_env env, napi_value value, const std::string& prop)
+{
+    std::string result;
+    bool propExist = false;
+    napi_value propValue = nullptr;
+    napi_valuetype valueType = napi_undefined;
+    napi_has_named_property(env, value, prop.c_str(), &propExist);
+    if (!propExist) {
+        HILOG_ERROR("%{public}s, prop[%{public}s] not exist.", __func__, prop.c_str());
+        return result;
+    }
+    napi_get_named_property(env, value, prop.c_str(), &propValue);
+    if (propValue == nullptr) {
+        HILOG_ERROR("%{public}s, prop[%{public}s] get failed.", __func__, prop.c_str());
+        return result;
+    }
+    napi_typeof(env, propValue, &valueType);
+    if (valueType != napi_string) {
+        HILOG_ERROR("%{public}s, prop[%{public}s] is not napi_string.", __func__, prop.c_str());
+        return result;
+    }
+    size_t size = 0;
+    if (napi_get_value_string_utf8(env, propValue, nullptr, 0, &size) != napi_ok) {
+        HILOG_ERROR("%{public}s, prop[%{public}s] get size failed.", __func__, prop.c_str());
+        return result;
+    }
+    result.reserve(size + 1);
+    result.resize(size);
+    if (napi_get_value_string_utf8(env, propValue, result.data(), (size + 1), &size) != napi_ok) {
+        HILOG_ERROR("%{public}s, prop[%{public}s] get value failed.", __func__, prop.c_str());
+        return "";
+    }
+    return result;
+}
+
+static bool UnwrapRawImageDataMap(napi_env env, napi_value value, std::map<std::string, int>& rawImageDataMap)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    bool propExist = false;
+    napi_value param = nullptr;
+    napi_valuetype valueType = napi_undefined;
+    napi_has_named_property(env, value, "image", &propExist);
+    if (!propExist) {
+        HILOG_ERROR("%{public}s, prop[image] not exist.", __func__);
+        return false;
+    }
+    napi_get_named_property(env, value, "image", &param);
+    if (param == nullptr) {
+        HILOG_ERROR("%{public}s, prop[image] get failed.", __func__);
+        return false;
+    }
+    napi_typeof(env, param, &valueType);
+    if (valueType != napi_object) {
+        HILOG_ERROR("%{public}s, prop[image]] is not napi_object.", __func__);
+        return false;
+    }
+    napi_valuetype jsValueType = napi_undefined;
+    napi_value jsProNameList = nullptr;
+    uint32_t jsProCount = 0;
+    NAPI_CALL_BASE(env, napi_get_property_names(env, param, &jsProNameList), false);
+    NAPI_CALL_BASE(env, napi_get_array_length(env, jsProNameList, &jsProCount), false);
+    HILOG_INFO("%{public}s called. Property size=%{public}d.", __func__, jsProCount);
+    napi_value jsProName = nullptr;
+    napi_value jsProValue = nullptr;
+    for (uint32_t index = 0; index < jsProCount; index++) {
+        NAPI_CALL_BASE(env, napi_get_element(env, jsProNameList, index, &jsProName), false);
+        std::string strProName = GetStringFromNAPI(env, jsProName);
+        HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
+        NAPI_CALL_BASE(env, napi_get_named_property(env, param, strProName.c_str(), &jsProValue), false);
+        NAPI_CALL_BASE(env, napi_typeof(env, jsProValue, &jsValueType), false);
+        int natValue = 0;
+        if (napi_get_value_int32(env, param, &natValue) != napi_ok) {
+            HILOG_INFO("%{public}s Property:%{public}s get value failed.", __func__, strProName.c_str());
+            continue;
+        }
+        rawImageDataMap.emplace(strProName, natValue);
+        HILOG_INFO("%{public}s called. Property value=%{public}d.", __func__, natValue);
+    }
+    return true;
+}
+
 /**
  * @brief  Call native kit function: DeleteForm
  *
@@ -1286,7 +1367,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
+    HILOG_INFO("%{public}s, argc size = [%{public}zu]", __func__, argc);
 
     // Check the value type of the arguments
     napi_valuetype valueType;
@@ -1308,11 +1389,12 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formId is not napi_string.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
     std::string strFormId = GetStringFromNAPI(env, argv[0]);
-    int64_t formId;
+    int64_t formId = 0;
     if (!ConvertStringToInt64(strFormId, formId)) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
@@ -1330,11 +1412,12 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formId ConvertStringToInt64 failed.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    if (valueType != napi_string) {
+    if (valueType != napi_object) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -1351,11 +1434,20 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         } else {
             asyncErrorInfo->type = PROMISE_FLG;
         }
+        HILOG_ERROR("%{public}s formBindingData is not napi_object.", __func__);
         return RetErrMsg(asyncErrorInfo);
     }
 
-    OHOS::AppExecFwk::FormProviderData *formProviderData = nullptr;
-    napi_unwrap(env, argv[1], (void**)&formProviderData);
+    auto formProviderData = std::make_shared<OHOS::AppExecFwk::FormProviderData>();
+    std::string formDataStr = GetStringByProp(env, argv[1], "data");
+    HILOG_INFO("%{public}s %{public}s - %{public}s.", __func__, strFormId.c_str(), formDataStr.c_str());
+    formProviderData->SetDataString(formDataStr);
+    std::map<std::string, int> rawImageDataMap;
+    UnwrapRawImageDataMap(env, argv[1], rawImageDataMap);
+    HILOG_INFO("%{public}s Image number is %{public}zu", __func__, rawImageDataMap.size());
+    for (const auto& entry : rawImageDataMap) {
+        formProviderData->AddImageData(entry.first, entry.second);
+    }
 
     AsyncUpdateFormCallbackInfo *asyncCallbackInfo = new
         AsyncUpdateFormCallbackInfo {
@@ -1365,7 +1457,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
             .deferred = nullptr,
             .callback = nullptr,
             .formId = formId,
-            .formProviderData = std::shared_ptr<OHOS::AppExecFwk::FormProviderData>(formProviderData),
+            .formProviderData = formProviderData,
             .result = 0,
         };
 

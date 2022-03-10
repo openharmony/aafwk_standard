@@ -14,7 +14,7 @@
  */
 
 #include "system_memory_attr.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -28,7 +28,7 @@ bool SystemMemoryAttr::ReadFromParcel(Parcel &parcel)
     parcel.ReadInt64(threshold_);
     isSysInlowMem_ = parcel.ReadBool();
 
-    APP_LOGD("SystemMemoryAttr::ReadFromParcel %{public}zu %{public}zu %{public}zu %{public}s",
+    HILOG_DEBUG("SystemMemoryAttr::ReadFromParcel %{public}zu %{public}zu %{public}zu %{public}s",
         static_cast<size_t>(availSysMem_),
         static_cast<size_t>(totalSysMem_),
         static_cast<size_t>(threshold_),
@@ -58,7 +58,7 @@ bool SystemMemoryAttr::Marshalling(Parcel &parcel) const
     parcel.WriteInt64(threshold_);
     parcel.WriteBool(isSysInlowMem_);
 
-    APP_LOGD("SystemMemoryAttr::Marshalling %{public}zu %{public}zu %{public}zu %{public}s",
+    HILOG_DEBUG("SystemMemoryAttr::Marshalling %{public}zu %{public}zu %{public}zu %{public}s",
         static_cast<size_t>(availSysMem_),
         static_cast<size_t>(totalSysMem_),
         static_cast<size_t>(threshold_),

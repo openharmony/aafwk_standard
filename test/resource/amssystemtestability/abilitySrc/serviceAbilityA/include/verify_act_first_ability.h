@@ -17,7 +17,7 @@
 #define VERIFY_ACT_FIRST_ABILITY
 #include "ability_loader.h"
 #include "common_event.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event_manager.h"
 #include "ability_connect_callback_stub.h"
 

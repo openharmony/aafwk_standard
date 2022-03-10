@@ -15,9 +15,9 @@
 
 #include "app_scheduler_host.h"
 #include "ability_info.h"
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "bytrace.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 
 namespace OHOS {
@@ -59,11 +59,11 @@ AppSchedulerHost::~AppSchedulerHost()
 
 int AppSchedulerHost::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("AppSchedulerHost::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppSchedulerHost::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppSchedulerHost::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 
@@ -117,7 +117,7 @@ int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, Messa
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<AbilityInfo> abilityInfo(data.ReadParcelable<AbilityInfo>());
     if (!abilityInfo) {
-        APP_LOGE("ReadParcelable<AbilityInfo> failed");
+        HILOG_ERROR("ReadParcelable<AbilityInfo> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -141,11 +141,11 @@ int32_t AppSchedulerHost::HandleScheduleLaunchApplication(MessageParcel &data, M
     std::unique_ptr<AppLaunchData> launchData(data.ReadParcelable<AppLaunchData>());
     std::unique_ptr<Configuration> config(data.ReadParcelable<Configuration>());
     if (!launchData) {
-        APP_LOGE("ReadParcelable<launchData> failed");
+        HILOG_ERROR("ReadParcelable<launchData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     if (!config) {
-        APP_LOGE("ReadParcelable<Configuration> failed");
+        HILOG_ERROR("ReadParcelable<Configuration> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -158,7 +158,7 @@ int32_t AppSchedulerHost::HandleScheduleAbilityStage(MessageParcel &data, Messag
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<HapModuleInfo> abilityStage(data.ReadParcelable<HapModuleInfo>());
     if (!abilityStage) {
-        APP_LOGE("ReadParcelable<launchData> failed");
+        HILOG_ERROR("ReadParcelable<launchData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -171,7 +171,7 @@ int32_t AppSchedulerHost::HandleScheduleProfileChanged(MessageParcel &data, Mess
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<Profile> profile(data.ReadParcelable<Profile>());
     if (!profile) {
-        APP_LOGE("ReadParcelable<Profile> failed");
+        HILOG_ERROR("ReadParcelable<Profile> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -184,7 +184,7 @@ int32_t AppSchedulerHost::HandleScheduleConfigurationUpdated(MessageParcel &data
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<Configuration> configuration(data.ReadParcelable<Configuration>());
     if (!configuration) {
-        APP_LOGE("ReadParcelable<Configuration> failed");
+        HILOG_ERROR("ReadParcelable<Configuration> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -204,7 +204,7 @@ int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageP
     BYTRACE(BYTRACE_TAG_APP);
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
     auto moduleName = data.ReadString();

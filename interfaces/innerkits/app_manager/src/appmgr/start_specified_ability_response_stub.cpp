@@ -15,7 +15,7 @@
 
 #include "start_specified_ability_response_stub.h"
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
 
@@ -41,7 +41,7 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnAcceptWantResponse(MessagePar
 {
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
 
@@ -54,7 +54,7 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnTimeoutResponse(MessageParcel
 {
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
-        APP_LOGE("want is nullptr");
+        HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
 
@@ -65,12 +65,12 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnTimeoutResponse(MessageParcel
 int StartSpecifiedAbilityResponseStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("StartSpecifiedAbilityResponseStub::OnReceived, code = %{public}d, flags= %{public}d.",
+    HILOG_INFO("StartSpecifiedAbilityResponseStub::OnReceived, code = %{public}u, flags= %{public}d.",
         code, option.GetFlags());
     std::u16string descriptor = StartSpecifiedAbilityResponseStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 

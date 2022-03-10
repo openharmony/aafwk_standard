@@ -14,7 +14,7 @@
  */
 #ifndef MAIN_SERVICE_ABILITY_H
 #define MAIN_SERVICE_ABILITY_H
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "iremote_broker.h"
 #include "iremote_object.h"
 #include "iremote_proxy.h"

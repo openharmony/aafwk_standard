@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "barrier_handler.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -24,9 +24,9 @@ BarrierHandler::BarrierHandler(const std::shared_ptr<TaskExecutor> &executor)
 
 ErrCode BarrierHandler::AddBarrier(std::shared_ptr<Task> &barrierTask)
 {
-    APP_LOGI("BarrierHandler::AddBarrier start");
+    HILOG_INFO("BarrierHandler::AddBarrier start");
     if (ListenToTask(barrierTask) != ERR_OK) {
-        APP_LOGE("BarrierHandler::AddBarrier listenToTask failed");
+        HILOG_ERROR("BarrierHandler::AddBarrier listenToTask failed");
         return ERR_APPEXECFWK_CHECK_FAILED;
     };
 
@@ -36,66 +36,66 @@ ErrCode BarrierHandler::AddBarrier(std::shared_ptr<Task> &barrierTask)
         std::shared_ptr<BarrierPair> pair = barrierQueue_.size() == 0 ? nullptr : barrierQueue_.back();
         if ((pair == nullptr) || ((!HasTask(pair->tasks_)) && (pair->barrier_ == nullptr))) {
             execNow = true;
-            APP_LOGI("BarrierHandler::AddBarrier need execute now");
+            HILOG_INFO("BarrierHandler::AddBarrier need execute now");
         }
         if ((pair == nullptr) || (pair->barrier_ != nullptr)) {
             std::set<std::shared_ptr<Task>> tmp;
             std::shared_ptr<BarrierPair> barrierPair = std::make_shared<BarrierPair>(tmp, barrierTask);
             if (barrierPair == nullptr) {
-                APP_LOGE("BarrierHandler::AddBarrier barrierPair is nullptr");
+                HILOG_ERROR("BarrierHandler::AddBarrier barrierPair is nullptr");
                 return ERR_APPEXECFWK_CHECK_FAILED;
             }
             barrierQueue_.push_back(barrierPair);
-            APP_LOGI("BarrierHandler::AddBarrier barrierQueue push barrierPair");
+            HILOG_INFO("BarrierHandler::AddBarrier barrierQueue push barrierPair");
         } else {
             pair->barrier_ = barrierTask;
         }
     }
 
     if (execNow) {
-        APP_LOGI("BarrierHandler::AddBarrier execute task");
+        HILOG_INFO("BarrierHandler::AddBarrier execute task");
         executor_->Execute(barrierTask);
     }
-    APP_LOGI("BarrierHandler::AddBarrier end");
+    HILOG_INFO("BarrierHandler::AddBarrier end");
     return ERR_OK;
 }
 
 ErrCode BarrierHandler::Intercept(std::shared_ptr<Task> &task)
 {
-    APP_LOGI("BarrierHandler::Intercept start");
+    HILOG_INFO("BarrierHandler::Intercept start");
     if (ListenToTask(task) != ERR_OK) {
-        APP_LOGE("BarrierHandler::Intercept listenToTask failed");
+        HILOG_ERROR("BarrierHandler::Intercept listenToTask failed");
         return ERR_APPEXECFWK_CHECK_FAILED;
     };
 
     // afterBarrier means is intercepted.
     bool intercepted = AddTaskAfterBarrier(task);
     if (intercepted) {
-        APP_LOGI("BarrierHandler::Intercept intercepted a task.");
+        HILOG_INFO("BarrierHandler::Intercept intercepted a task.");
     }
     ErrCode result = intercepted ? ERR_APPEXECFWK_INTERCEPT_TASK_EXECUTE_SUCCESS : ERR_APPEXECFWK_CHECK_FAILED;
-    APP_LOGI("BarrierHandler::Intercept end, result:%{public}d", result);
+    HILOG_INFO("BarrierHandler::Intercept end, result:%{public}d", result);
     return result;
 }
 
 ErrCode BarrierHandler::ListenToTask(std::shared_ptr<Task> &task)
 {
-    APP_LOGI("BarrierHandler::ListenToTask start");
+    HILOG_INFO("BarrierHandler::ListenToTask start");
     std::shared_ptr<MyTaskListener> ptrlistener = std::make_shared<MyTaskListener>();
     if (ptrlistener == nullptr) {
-        APP_LOGE("BarrierHandler::listenToTask make shared MyTaskListener is nullptr");
+        HILOG_ERROR("BarrierHandler::listenToTask make shared MyTaskListener is nullptr");
         return ERR_APPEXECFWK_CHECK_FAILED;
     }
     const std::function<void()> onTaskDone = std::bind(&BarrierHandler::OnTaskDone, this, task);
     ptrlistener->Callback(onTaskDone);
     task->AddTaskListener(ptrlistener);
-    APP_LOGI("BarrierHandler::ListenToTask end");
+    HILOG_INFO("BarrierHandler::ListenToTask end");
     return ERR_OK;
 }
 
 void BarrierHandler::OnTaskDone(std::shared_ptr<Task> &task)
 {
-    APP_LOGI("BarrierHandler::OnTaskDone start");
+    HILOG_INFO("BarrierHandler::OnTaskDone start");
     // remove from head of queue.
     // Under the premise that task cannot be reused.
     bool removed = false;
@@ -106,11 +106,11 @@ void BarrierHandler::OnTaskDone(std::shared_ptr<Task> &task)
             if (HasTask(barrierPair->tasks_)) {
                 removed = barrierPair->tasks_.erase(task) == 0 ? false : true;
                 if (barrierPair->tasks_.empty() && (barrierPair->barrier_ != nullptr)) {
-                    APP_LOGI("Barrier.onTaskDone execute barrier task after task done.");
+                    HILOG_INFO("Barrier.onTaskDone execute barrier task after task done.");
                     executor_->Execute(barrierPair->barrier_);
                 }
             } else if (task == (barrierPair->barrier_)) {
-                APP_LOGI("Barrier.onTaskDone remove a barrier.");
+                HILOG_INFO("Barrier.onTaskDone remove a barrier.");
                 barrierPair->barrier_ = nullptr;
                 removed = true;
                 // Driven to next barrier.
@@ -125,10 +125,10 @@ void BarrierHandler::OnTaskDone(std::shared_ptr<Task> &task)
                             executor_->Execute(*it);
                         }
                     } else if (nextPair->barrier_ != nullptr) {
-                        APP_LOGI("Barrier.onTaskDone execute barrier task after barrier done.");
+                        HILOG_INFO("Barrier.onTaskDone execute barrier task after barrier done.");
                         executor_->Execute(nextPair->barrier_);
                     } else {
-                        APP_LOGW("Barrier.onTaskDone: Detected an empty node.");
+                        HILOG_WARN("Barrier.onTaskDone: Detected an empty node.");
                     }
                 }
             }
@@ -136,20 +136,20 @@ void BarrierHandler::OnTaskDone(std::shared_ptr<Task> &task)
     }
 
     if (!removed) {
-        APP_LOGI("Barrier.onTaskDone: Task remove failed.");
+        HILOG_INFO("Barrier.onTaskDone: Task remove failed.");
     }
-    APP_LOGI("BarrierHandler::OnTaskDone end");
+    HILOG_INFO("BarrierHandler::OnTaskDone end");
 }
 
 bool BarrierHandler::AddTaskAfterBarrier(std::shared_ptr<Task> &task)
 {
-    APP_LOGI("BarrierHandler::AddTaskAfterBarrier start");
+    HILOG_INFO("BarrierHandler::AddTaskAfterBarrier start");
     std::unique_lock<std::mutex> lock(barrierLock_);
     std::shared_ptr<BarrierPair> pair = barrierQueue_.size() == 0 ? nullptr : barrierQueue_.back();
     if ((pair == nullptr) || (pair->barrier_ != nullptr)) {
         std::shared_ptr<BarrierPair> tmp = std::make_shared<BarrierPair>(CreateTaskSet(task), nullptr);
         if (tmp == nullptr) {
-            APP_LOGE("BarrierHandler::addTaskAfterBarrier make shared BarrierPair is nullptr");
+            HILOG_ERROR("BarrierHandler::addTaskAfterBarrier make shared BarrierPair is nullptr");
             return false;
         }
 
@@ -159,7 +159,7 @@ bool BarrierHandler::AddTaskAfterBarrier(std::shared_ptr<Task> &task)
     } else {
         pair->tasks_.insert(task);
     }
-    APP_LOGI("BarrierHandler::AddTaskAfterBarrier end");
+    HILOG_INFO("BarrierHandler::AddTaskAfterBarrier end");
     return (barrierQueue_.size() > 1);
 }
 

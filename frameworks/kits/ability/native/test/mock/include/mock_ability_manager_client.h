@@ -26,7 +26,7 @@
 #include "ability_context.h"
 #include "ability_manager_interface.h"
 #include "ability_scheduler_interface.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "iremote_object.h"
 #include "iremote_stub.h"
 #include "want.h"
@@ -106,8 +106,10 @@ public:
     {
         return true;
     };
+#ifdef SUPPORT_GRAPHICS
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) {};
     virtual void NotifyTopActiveAbilityChanged(bool flag) {};
+#endif
     virtual bool ScheduleNotifyChange(const Uri &uri)
     {
         return true;

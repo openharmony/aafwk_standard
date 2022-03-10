@@ -1831,7 +1831,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_035, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult ability, put in float stack
+    // start default ability, put in float stack
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1877,7 +1877,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_036, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1906,7 +1906,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_037, TestSize.Level1)
     auto topAbilityRecord1 = stackManager_->GetCurrentTopAbility();
     topAbilityRecord1->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1971,7 +1971,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_038, TestSize.Level1)
  * SubFunction: Try moving other applications to the floating window stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the defult ability to the floating window stack
+ * CaseDescription: Move the default ability to the floating window stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_039, TestSize.Level1)
 {
@@ -2166,7 +2166,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
  * SubFunction: moving other applications to the floating window stack or Full screen stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the float ability to the defult stack
+ * CaseDescription: Move the float ability to the default stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
 {
@@ -2190,8 +2190,10 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecord->SetScheduler(scheduler);
 
+#ifdef SUPPORT_GRAPHICS
     EXPECT_CALL(*scheduler, NotifyMultiWinModeChanged(testing::_, testing::_)).Times(1);
     EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_)).Times(2);
+#endif
 
     EXPECT_EQ(topAbilityRecord->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
@@ -2248,7 +2250,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_045, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     radioAbilityRecord->SetScheduler(scheduler);
 
-    // top float ability move to defult stack
+    // top float ability move to default stack
     ref = stackManager_->MaximizeMultiWindow(radioAbilityRecord->GetMissionRecordId());
     EXPECT_EQ(ERR_OK, ref);
 
@@ -2308,11 +2310,13 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_046, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordlauncher->SetScheduler(schedulerluncher);
 
+#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
 
     EXPECT_CALL(*schedulerluncher, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
+#endif
 
     EXPECT_FALSE(musicAbilityRecord->IsToEnd());
 
@@ -2358,6 +2362,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordLuncher->SetScheduler(schedulerluncher);
 
+#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
@@ -2373,6 +2378,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
     EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag));
+#endif
 
     // make sure both are active
     topAbilityRecordLuncher->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -2430,11 +2436,13 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
     EXPECT_CALL(*schedulerMusic, AsObject()).WillRepeatedly(Return(nullptr));
     musicAbilityRecord->SetScheduler(schedulerMusic);
 
+#ifdef SUPPORT_GRAPHICS
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
     EXPECT_CALL(*schedulerMusic, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag));
+#endif
 
     // set RadioAbility scheduler
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
@@ -2485,6 +2493,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordLuncher->SetScheduler(schedulerluncher);
 
+#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
@@ -2502,6 +2511,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
+#endif
 
     // make sure both are active
     topAbilityRecordLuncher->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -3466,7 +3476,9 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
+#ifdef SUPPORT_GRAPHICS
     EXPECT_EQ(stackManager_->curSysWindowMode_, SystemWindowMode::SPLITSCREEN_WINDOW_MODE);
+#endif
 
     auto missionId = topAbilityRecordRadio->GetMissionRecordId();
     ref = stackManager_->RemoveMissionRecordById(missionId);
@@ -3520,7 +3532,9 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
     auto topMissionRecordRadio = stackManager_->GetTopMissionRecord();
     EXPECT_TRUE(topMissionRecordRadio);
 
+#ifdef SUPPORT_GRAPHICS
     EXPECT_EQ(stackManager_->curSysWindowMode_, SystemWindowMode::SPLITSCREEN_WINDOW_MODE);
+#endif
 
     auto stackId = topMissionRecordRadio->GetMissionStack()->GetMissionStackId();
     stackManager_->RemoveStack(stackId);

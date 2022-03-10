@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,9 +27,9 @@ std::shared_ptr<Thread> DefaultThreadFactory::Create()
         int value = std::atomic_fetch_add(&index_, 1);
         std::string name = std::string("PoolThread-") + std::to_string(value);
         pThread->thread_name_ = name;
-        APP_LOGI("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
+        HILOG_INFO("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
     } else {
-        APP_LOGE("DefaultThreadFactory::Create error, thread is nullptr");
+        HILOG_ERROR("DefaultThreadFactory::Create error, thread is nullptr");
     }
 
     return pThread;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "task.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 namespace OHOS {
 namespace AppExecFwk {
 /**
@@ -30,7 +30,7 @@ Task::Task(const std::shared_ptr<Runnable> &runnable, const TaskPriority priorit
     priority_ = priority;
     baseTaskDispatcher_ = baseTaskDispatcher;
     std::atomic_init(&state_, 0U);
-    APP_LOGI("Task::Task init listener count=%{public}zu", taskListeners_.Size());
+    HILOG_INFO("Task::Task init listener count=%{public}zu", taskListeners_.Size());
 }
 Task::~Task()
 {}
@@ -42,17 +42,17 @@ Task::~Task()
  */
 void Task::Run()
 {
-    APP_LOGI("Task::Run task run called start");
+    HILOG_INFO("Task::Run task run called start");
     if (runnable_ == nullptr) {
-        APP_LOGI("Task::Run called runnable_ is null");
+        HILOG_INFO("Task::Run called runnable_ is null");
         return;
     }
     // Task cannot be reused.
     if (EnterExecute()) {
-        APP_LOGI("Task::Run runnable_ Run called start");
+        HILOG_INFO("Task::Run runnable_ Run called start");
         (*runnable_.get())();
     }
-    APP_LOGI("Task::Run runnable_ Run called end");
+    HILOG_INFO("Task::Run runnable_ Run called end");
 }
 
 /**
@@ -94,11 +94,11 @@ long Task::GetSequence() const
 bool Task::Revoke()
 {
     if (runnable_ == nullptr) {
-        APP_LOGE("Task.Revoke called runnable_ is null");
+        HILOG_ERROR("Task.Revoke called runnable_ is null");
         return false;
     }
     RevokeResult result = SetRevoked();
-    APP_LOGI("Task.Revoke result: %{public}u", result);
+    HILOG_INFO("Task.Revoke result: %{public}u", result);
     if (result == SUCCESS) {
         OnTaskCanceled();
     }
@@ -112,7 +112,7 @@ bool Task::Revoke()
  */
 void Task::AddTaskListener(const std::shared_ptr<TaskListener> &listener)
 {
-    APP_LOGI("Task.AddTaskListener listener called start");
+    HILOG_INFO("Task.AddTaskListener listener called start");
     taskListeners_.Offer(listener);
 }
 
@@ -136,7 +136,7 @@ void Task::BeforeTaskExecute()
 void Task::AfterTaskExecute()
 {
     if ((state_ & EXECUTED) == EXECUTED) {
-        APP_LOGI("Task.AfterTaskExecute taskStage called AFTER_EXECUTE");
+        HILOG_INFO("Task.AfterTaskExecute taskStage called AFTER_EXECUTE");
         ConcurrentQueueStatusUpdate(TaskStage::AFTER_EXECUTE);
     }
 }
@@ -148,7 +148,7 @@ void Task::AfterTaskExecute()
  */
 void Task::OnTaskCanceled()
 {
-    APP_LOGI("Task.OnTaskCanceled taskStage called REVOKED");
+    HILOG_INFO("Task.OnTaskCanceled taskStage called REVOKED");
     ConcurrentQueueStatusUpdate(TaskStage::REVOKED);
 }
 
@@ -165,11 +165,11 @@ bool Task::EnterExecute()
         if ((state_ & stateNotIn) == 0) {
             // Not executed or revoked
             if (state_.compare_exchange_strong(value, EXECUTED)) {
-                APP_LOGI("Task.EnterExecute return success");
+                HILOG_INFO("Task.EnterExecute return success");
                 return true;
             }
         } else {
-            APP_LOGE("Task.EnterExecute return fail, state=%{public}d, stateNotIn=%{public}d", value, stateNotIn);
+            HILOG_ERROR("Task.EnterExecute return fail, state=%{public}d, stateNotIn=%{public}d", value, stateNotIn);
             return false;
         }
     }
@@ -180,16 +180,16 @@ Task::RevokeResult Task::SetRevoked()
     while (true) {
         unsigned int value = state_.load();
         if ((value & REVOKED) == REVOKED) {
-            APP_LOGW("Task.SetRevoked return ALREADY_REVOKED");
+            HILOG_WARN("Task.SetRevoked return ALREADY_REVOKED");
             return ALREADY_REVOKED;
         }
         if ((value & EXECUTED) == 0) {
             if (state_.compare_exchange_strong(value, REVOKED)) {
-                APP_LOGI("Task.SetRevoked return SUCCESS");
+                HILOG_INFO("Task.SetRevoked return SUCCESS");
                 return SUCCESS;
             }
         } else {
-            APP_LOGE("Task.SetRevoked return FAIL");
+            HILOG_ERROR("Task.SetRevoked return FAIL");
             return FAIL;
         }
     }
@@ -197,7 +197,7 @@ Task::RevokeResult Task::SetRevoked()
 
 void Task::ConcurrentQueueStatusUpdate(const TaskStage::TASKSTAGE taskstage)
 {
-    APP_LOGI("Task.ConcurrentQueueStatusUpdate taskListeners_ called start");
+    HILOG_INFO("Task.ConcurrentQueueStatusUpdate taskListeners_ called start");
     for (auto iter = taskListeners_.Begin(); iter != taskListeners_.End(); iter++) {
         (*iter)->OnChanged(taskstage);
     }
@@ -208,9 +208,10 @@ void Task::ConcurrentQueueStatusUpdate(const TaskStage::TASKSTAGE taskstage)
 
 bool Task::operator==(std::shared_ptr<Task> &rec) const
 {
-    return this->sequence_ == rec->sequence_ && this->state_ == rec->state_ && this->priority_ == rec->priority_ &&
-           this->revocable_ == rec->revocable_ && this->runnable_ == rec->runnable_ &&
-           this->baseTaskDispatcher_ == rec->baseTaskDispatcher_;
+    return ((this->sequence_ == rec->sequence_) && (this->state_ == rec->state_) &&
+           (this->priority_ == rec->priority_) &&
+           (this->revocable_ == rec->revocable_) && (this->runnable_ == rec->runnable_) &&
+           (this->baseTaskDispatcher_ == rec->baseTaskDispatcher_));
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

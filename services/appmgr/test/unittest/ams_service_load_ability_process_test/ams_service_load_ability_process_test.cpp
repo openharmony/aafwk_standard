@@ -22,10 +22,10 @@
 #include "ability_running_record.h"
 #include "app_mgr_service.h"
 #include "app_running_record.h"
-#include "app_log_wrapper.h"
 #include "app_record_id.h"
 #include "ability_info.h"
 #include "application_info.h"
+#include "hilog_wrapper.h"
 #include "mock_app_scheduler.h"
 #include "mock_bundle_manager.h"
 #include "mock_ability_token.h"
@@ -123,7 +123,7 @@ std::shared_ptr<AppRunningRecord> AmsServiceLoadAbilityProcessTest::StartLoadAbi
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_001 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -153,7 +153,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_001, TestSize.Level1)
     EXPECT_NE(abilityRecord, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityRecord);
     EXPECT_EQ(abilityRecord->GetState(), AbilityState::ABILITY_STATE_CREATE);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_001 end");
 }
 
 /*
@@ -166,7 +166,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_002 start");
 
     EXPECT_TRUE(service_ != nullptr);
     service_->ClearRecentAppList();
@@ -229,7 +229,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_002, TestSize.Level1)
     EXPECT_NE(abilityRecord2, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityRecord2);
     EXPECT_EQ(abilityRecord2->GetState(), AbilityState::ABILITY_STATE_CREATE);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_002 end");
 }
 
 /*
@@ -242,7 +242,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_003, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_003 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_003 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -260,7 +260,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_003, TestSize.Level1)
 
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_003 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_003 end");
 }
 
 /*
@@ -273,7 +273,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_003, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_004, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_004 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_004 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = "";
@@ -291,7 +291,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_004, TestSize.Level1)
     service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_004 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_004 end");
 }
 
 /*
@@ -304,7 +304,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_004, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_005, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_005 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_005 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -321,7 +321,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_005, TestSize.Level1)
     service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_005 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_005 end");
 }
 
 /*
@@ -334,7 +334,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_005, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_006, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_006 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_006 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -352,7 +352,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_006, TestSize.Level1)
     service_->LoadAbility(token, nullptr, abilityInfo, appInfo, nullptr);
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_006 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_006 end");
 }
 
 /*
@@ -365,7 +365,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_006, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_007, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_007 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_007 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -407,7 +407,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_007, TestSize.Level1)
     EXPECT_EQ(record2, record);
     const auto &abilityMap2 = record2->GetAbilities();
     EXPECT_EQ(abilityMap2.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_007 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_007 end");
 }
 
 /*
@@ -420,7 +420,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_007, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_008, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_008 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_008 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -473,7 +473,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_008, TestSize.Level1)
     CHECK_POINTER_IS_NULLPTR(abilityRecord2);
     EXPECT_EQ(abilityRecord2->GetState(), AbilityState::ABILITY_STATE_CREATE);
     EXPECT_EQ(abilityRecord2->GetPreToken(), token);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LoadAbility_008 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LoadAbility_008 end");
 }
 
 /*
@@ -486,7 +486,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LoadAbility_008, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest RequestProcess_001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest RequestProcess_001 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -516,7 +516,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_001, TestSize.Level1)
     CHECK_POINTER_IS_NULLPTR(record);
     EXPECT_EQ(record->GetPriorityObject()->GetPid(), PID);
     EXPECT_EQ(record->GetState(), ApplicationState::APP_STATE_CREATE);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest RequestProcess_001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest RequestProcess_001 end");
 }
 
 /*
@@ -529,7 +529,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest RequestProcess_002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest RequestProcess_002 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -549,7 +549,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_002, TestSize.Level1)
 
     const auto &recordMap = service_->GetRecordMap();
     EXPECT_EQ(recordMap.size(), (uint32_t)0);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest RequestProcess_002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest RequestProcess_002 end");
 }
 
 /*
@@ -562,7 +562,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, RequestProcess_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest SavePid_001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest SavePid_001 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -587,7 +587,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_001, TestSize.Level1)
     auto record = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     EXPECT_EQ(record->GetPriorityObject()->GetPid(), PID);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest SavePid_001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest SavePid_001 end");
 }
 
 /*
@@ -600,7 +600,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest SavePid_002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest SavePid_002 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -622,7 +622,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_002, TestSize.Level1)
     auto record = service_->appRunningManager_->CheckAppRunningRecordIsExist(
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     EXPECT_EQ(record, nullptr);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest SavePid_002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest SavePid_002 end");
 }
 
 /*
@@ -635,7 +635,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, SavePid_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LaunchMode_001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LaunchMode_001 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -665,7 +665,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_001, TestSize.Level1)
     EXPECT_NE(abilityRecord, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityRecord);
     EXPECT_EQ(abilityRecord->GetState(), AbilityState::ABILITY_STATE_CREATE);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LaunchMode_001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LaunchMode_001 end");
 }
 
 /*
@@ -678,7 +678,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LaunchMode_002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LaunchMode_002 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -721,7 +721,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_002, TestSize.Level1)
     EXPECT_EQ(record2, record);
     const auto &abilityMap2 = record2->GetAbilities();
     EXPECT_EQ(abilityMap2.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest LaunchMode_002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest LaunchMode_002 end");
 }
 
 /*
@@ -734,7 +734,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, LaunchMode_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_001 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -788,7 +788,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_001, TestSize.Level1)
     EXPECT_NE(abilityrecord1, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityrecord1);
     EXPECT_EQ(abilityrecord1->GetState(), AbilityState::ABILITY_STATE_READY);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_001 end");
 }
 
 /*
@@ -801,7 +801,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_002 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -850,7 +850,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_002, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
     EXPECT_EQ(abilityMap1.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_002 end");
 }
 
 /*
@@ -863,7 +863,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_003, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_003 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_003 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -916,7 +916,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_003, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
     EXPECT_EQ(abilityMap1.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_003 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_003 end");
 }
 
 /*
@@ -929,7 +929,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_003, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_004, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_004 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_004 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -976,7 +976,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_004, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
     EXPECT_EQ(abilityMap1.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_004 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_004 end");
 }
 
 /*
@@ -989,7 +989,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_004, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_005, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_005 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_005 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -1042,7 +1042,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_005, TestSize.Level1)
     EXPECT_NE(abilityrecord1, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityrecord1);
     EXPECT_EQ(abilityrecord1->GetState(), AbilityState::ABILITY_STATE_READY);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_005 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_005 end");
 }
 
 /*
@@ -1055,7 +1055,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_005, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_006, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_006 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_006 start");
     sptr<IRemoteObject> token = GetMockToken();
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
@@ -1100,7 +1100,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_006, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     const auto &abilityMap1 = record1->GetAbilities();
     EXPECT_EQ(abilityMap1.size(), (uint32_t)1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartAbility_006 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartAbility_006 end");
 }
 
 /*
@@ -1113,7 +1113,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartAbility_006, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess001, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess001 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess001 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -1157,7 +1157,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess001, TestSize.Level1)
     EXPECT_NE(abilityRecord, nullptr);
     CHECK_POINTER_IS_NULLPTR(abilityRecord);
     EXPECT_EQ(abilityRecord->GetState(), AbilityState::ABILITY_STATE_CREATE);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess001 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess001 end");
 }
 
 /*
@@ -1170,7 +1170,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess001, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess002, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess002 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess002 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -1200,7 +1200,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess002, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     EXPECT_NE(record1, nullptr);
     CHECK_POINTER_IS_NULLPTR(record1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess002 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess002 end");
 }
 
 /*
@@ -1213,7 +1213,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess002, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess003, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess003 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess003 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -1244,7 +1244,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess003, TestSize.Level1)
         appInfo->name, GetTestAppName(), appInfo->uid, bundleInfo);
     EXPECT_NE(record1, nullptr);
     CHECK_POINTER_IS_NULLPTR(record1);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess003 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess003 end");
 }
 
 /*
@@ -1257,7 +1257,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess003, TestSize.Level1)
  */
 HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess004, TestSize.Level1)
 {
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess004 start");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess004 start");
     auto abilityInfo = std::make_shared<AbilityInfo>();
     abilityInfo->name = GetTestAbilityName();
     abilityInfo->applicationName = GetTestAppName();
@@ -1292,7 +1292,7 @@ HWTEST_F(AmsServiceLoadAbilityProcessTest, StartProcess004, TestSize.Level1)
         abilityInfo->applicationInfo.bundleName);
     auto record1 = service_->GetAppRunningRecordByAppRecordId(record->GetRecordId());
     EXPECT_EQ(record1, nullptr);
-    APP_LOGI("AmsServiceLoadAbilityProcessTest StartProcess004 end");
+    HILOG_INFO("AmsServiceLoadAbilityProcessTest StartProcess004 end");
 }
 
 }  // namespace AppExecFwk

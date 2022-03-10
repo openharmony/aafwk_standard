@@ -344,7 +344,7 @@ ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue
 ErrCode AbilityContextImpl::StartAbility(
     const AAFwk::Want& want, const std::shared_ptr<CallerCallBack> &callback)
 {
-    if (!localCallContainer_) {
+    if (localCallContainer_ == nullptr) {
         localCallContainer_ = new (std::nothrow)LocalCallContainer();
     }
 
@@ -378,6 +378,7 @@ void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbil
     abilityCallback_ = abilityCallback;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int AbilityContextImpl::GetCurrentWindowMode()
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -387,5 +388,6 @@ int AbilityContextImpl::GetCurrentWindowMode()
     }
     return abilityCallback->GetCurrentWindowMode();
 }
+#endif
 }  // namespace AbilityRuntime
 }  // namespace OHOS

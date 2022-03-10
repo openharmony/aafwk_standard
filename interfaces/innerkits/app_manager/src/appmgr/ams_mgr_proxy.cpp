@@ -18,8 +18,8 @@
 #include "iremote_object.h"
 #include "string_ex.h"
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -29,7 +29,7 @@ AmsMgrProxy::AmsMgrProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<IAmsMgr
 bool AmsMgrProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AmsMgrProxy::GetDescriptor())) {
-        APP_LOGE("write interface token failed");
+        HILOG_ERROR("write interface token failed");
         return false;
     }
     return true;
@@ -39,9 +39,9 @@ void AmsMgrProxy::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
     const std::shared_ptr<AAFwk::Want> &want)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     if (!abilityInfo || !appInfo) {
-        APP_LOGE("param error");
+        HILOG_ERROR("param error");
         return;
     }
 
@@ -56,24 +56,24 @@ void AmsMgrProxy::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     data.WriteParcelable(abilityInfo.get());
     data.WriteParcelable(appInfo.get());
     if (!data.WriteParcelable(want.get())) {
-        APP_LOGE("Write data want failed.");
+        HILOG_ERROR("Write data want failed.");
         return;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::LOAD_ABILITY), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -83,20 +83,20 @@ void AmsMgrProxy::TerminateAbility(const sptr<IRemoteObject> &token)
     data.WriteParcelable(token.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::TERMINATE_ABILITY), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::UpdateAbilityState(const sptr<IRemoteObject> &token, const AbilityState state)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -107,20 +107,20 @@ void AmsMgrProxy::UpdateAbilityState(const sptr<IRemoteObject> &token, const Abi
     data.WriteInt32(static_cast<int32_t>(state));
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::UPDATE_ABILITY_STATE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::UpdateExtensionState(const sptr<IRemoteObject> &token, const ExtensionState state)
 {
-    APP_LOGD("UpdateExtensionState start");
+    HILOG_DEBUG("UpdateExtensionState start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -131,22 +131,22 @@ void AmsMgrProxy::UpdateExtensionState(const sptr<IRemoteObject> &token, const E
     data.WriteInt32(static_cast<int32_t>(state));
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::UPDATE_EXTENSION_STATE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::RegisterAppStateCallback(const sptr<IAppStateCallback> &callback)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     if (!callback) {
-        APP_LOGE("callback is nullptr");
+        HILOG_ERROR("callback is nullptr");
         return;
     }
 
@@ -159,21 +159,21 @@ void AmsMgrProxy::RegisterAppStateCallback(const sptr<IAppStateCallback> &callba
     data.WriteParcelable(callback->AsObject());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is nullptr");
+        HILOG_ERROR("Remote() is nullptr");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAmsMgr::Message::REGISTER_APP_STATE_CALLBACK), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const int32_t visibility, const int32_t perceptibility, const int32_t connectionState)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -187,20 +187,20 @@ void AmsMgrProxy::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, cons
     data.WriteInt32(static_cast<int32_t>(connectionState));
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::TERMINATE_ABILITY), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -210,20 +210,20 @@ void AmsMgrProxy::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
     data.WriteParcelable(token.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::TERMINATE_ABILITY), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::KillProcessesByUserId(int32_t userId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -231,25 +231,25 @@ void AmsMgrProxy::KillProcessesByUserId(int32_t userId)
         return;
     }
     if (!data.WriteInt32(userId)) {
-        APP_LOGE("parcel WriteInt32 failed");
+        HILOG_ERROR("parcel WriteInt32 failed");
         return;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::KILL_PROCESSES_BY_USERID), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 int32_t AmsMgrProxy::KillProcessWithAccount(const std::string &bundleName, const int accountId)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
 
     MessageParcel data;
     MessageParcel reply;
@@ -260,35 +260,35 @@ int32_t AmsMgrProxy::KillProcessWithAccount(const std::string &bundleName, const
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
 
     if (!data.WriteString(bundleName)) {
-        APP_LOGE("parcel WriteString failed");
+        HILOG_ERROR("parcel WriteString failed");
         return ERR_FLATTEN_OBJECT;
     }
 
     if (!data.WriteInt32(accountId)) {
-        APP_LOGE("parcel WriteInt32 failed");
+        HILOG_ERROR("parcel WriteInt32 failed");
         return ERR_FLATTEN_OBJECT;
     }
 
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::KILL_PROCESS_WITH_ACCOUNT), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
 
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 
     return reply.ReadInt32();
 }
 
 int32_t AmsMgrProxy::KillApplication(const std::string &bundleName)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -297,17 +297,17 @@ int32_t AmsMgrProxy::KillApplication(const std::string &bundleName)
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     if (!data.WriteString(bundleName)) {
-        APP_LOGE("parcel WriteString failed");
+        HILOG_ERROR("parcel WriteString failed");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::KILL_APPLICATION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
     return reply.ReadInt32();
@@ -315,7 +315,7 @@ int32_t AmsMgrProxy::KillApplication(const std::string &bundleName)
 
 int32_t AmsMgrProxy::KillApplicationByUid(const std::string &bundleName, const int uid)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -324,21 +324,21 @@ int32_t AmsMgrProxy::KillApplicationByUid(const std::string &bundleName, const i
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     if (!data.WriteString(bundleName)) {
-        APP_LOGE("parcel WriteString failed");
+        HILOG_ERROR("parcel WriteString failed");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteInt32(uid)) {
-        APP_LOGE("uid write failed.");
+        HILOG_ERROR("uid write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::KILL_APPLICATION_BYUID), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
     return reply.ReadInt32();
@@ -346,7 +346,7 @@ int32_t AmsMgrProxy::KillApplicationByUid(const std::string &bundleName, const i
 
 void AmsMgrProxy::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -356,20 +356,20 @@ void AmsMgrProxy::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
     data.WriteParcelable(token.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::ABILITY_ATTACH_TIMEOUT), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 void AmsMgrProxy::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -379,21 +379,21 @@ void AmsMgrProxy::PrepareTerminate(const sptr<IRemoteObject> &token)
     data.WriteParcelable(token.GetRefPtr());
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::PREPARE_TERMINATE_ABILITY),
             data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGD("end");
+    HILOG_DEBUG("end");
 }
 
 int AmsMgrProxy::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
 {
-    APP_LOGD("start");
+    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -401,18 +401,18 @@ int AmsMgrProxy::CompelVerifyPermission(const std::string &permission, int pid, 
         return ERR_INVALID_DATA;
     }
     if (!data.WriteString16(Str8ToStr16(permission)) || !data.WriteInt32(pid) || !data.WriteInt32(uid)) {
-        APP_LOGE("%{public}s, write failed", __func__);
+        HILOG_ERROR("%{public}s, write failed", __func__);
         return ERR_INVALID_DATA;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_NULL_OBJECT;
     }
     auto ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::COMPEL_VERIFY_PERMISSION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ERR_INVALID_DATA;
     }
     message = Str16ToStr8(reply.ReadString16());
@@ -435,19 +435,19 @@ void AmsMgrProxy::GetRunningProcessInfoByToken(
 
     auto remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     auto ret = remote->SendRequest(
         static_cast<uint32_t>(IAmsMgr::Message::GET_RUNNING_PROCESS_INFO_BY_TOKEN), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return;
     }
 
     std::unique_ptr<AppExecFwk::RunningProcessInfo> processInfo(reply.ReadParcelable<AppExecFwk::RunningProcessInfo>());
     if (processInfo == nullptr) {
-        APP_LOGE("recv process info faild");
+        HILOG_ERROR("recv process info faild");
         return;
     }
 
@@ -465,27 +465,27 @@ void AmsMgrProxy::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFw
     }
 
     if (!data.WriteParcelable(&want) || !data.WriteParcelable(&abilityInfo)) {
-        APP_LOGE("Write data failed.");
+        HILOG_ERROR("Write data failed.");
         return;
     }
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote is nullptr.");
+        HILOG_ERROR("Remote is nullptr.");
         return;
     }
     auto ret = remote->SendRequest(
         static_cast<uint32_t>(IAmsMgr::Message::START_SPECIFIED_ABILITY), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
 }
 
 void AmsMgrProxy::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response)
 {
-    APP_LOGD("Register multi instances response by proxy.");
+    HILOG_DEBUG("Register multi instances response by proxy.");
     if (!response) {
-        APP_LOGE("response is nullptr");
+        HILOG_ERROR("response is nullptr");
         return;
     }
 
@@ -499,19 +499,19 @@ void AmsMgrProxy::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifi
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote is nullptr.");
+        HILOG_ERROR("Remote is nullptr.");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAmsMgr::Message::REGISTER_START_SPECIFIED_ABILITY_RESPONSE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
 }
 
 void AmsMgrProxy::UpdateConfiguration(const Configuration &config)
 {
-    APP_LOGI("UpdateConfiguration start");
+    HILOG_INFO("UpdateConfiguration start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -519,51 +519,51 @@ void AmsMgrProxy::UpdateConfiguration(const Configuration &config)
         return;
     }
     if (!data.WriteParcelable(&config)) {
-        APP_LOGE("parcel config failed");
+        HILOG_ERROR("parcel config failed");
         return;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::UPDATE_CONFIGURATION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    APP_LOGI("UpdateConfiguration end");
+    HILOG_INFO("UpdateConfiguration end");
 }
 
 int AmsMgrProxy::GetConfiguration(Configuration &config)
 {
-    APP_LOGI("GetConfiguration start");
+    HILOG_INFO("GetConfiguration start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
     if (!WriteInterfaceToken(data)) {
-        APP_LOGE("parcel data failed");
+        HILOG_ERROR("parcel data failed");
         return ERR_INVALID_DATA;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return ERR_INVALID_DATA;
     }
     int32_t ret =
         remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::GET_CONFIGURATION), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ERR_INVALID_DATA;
     }
 
     std::unique_ptr<Configuration> info(reply.ReadParcelable<Configuration>());
     if (!info) {
-        APP_LOGE("read configuration failed.");
+        HILOG_ERROR("read configuration failed.");
         return ERR_UNKNOWN_OBJECT;
     }
     config = *info;
-    APP_LOGI("GetConfiguration end");
+    HILOG_INFO("GetConfiguration end");
     return NO_ERROR;
 }
 }  // namespace AppExecFwk

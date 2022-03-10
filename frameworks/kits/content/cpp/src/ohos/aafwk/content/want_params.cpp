@@ -15,7 +15,7 @@
 
 #include "want_params.h"
 
-#include "app_log_wrapper.h"
+#include "ability_base_log_wrapper.h"
 #include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/base_interfaces.h"
 #include "ohos/aafwk/base/base_object.h"
@@ -33,8 +33,6 @@
 #include "string_ex.h"
 #include "want_params_wrapper.h"
 
-using namespace OHOS::AppExecFwk;
-
 namespace OHOS {
 namespace AAFwk {
 UnsupportedData::~UnsupportedData()
@@ -51,7 +49,7 @@ UnsupportedData::UnsupportedData(const UnsupportedData &other) : key(other.key),
 {
     buffer = new uint8_t[size];
     if (memcpy_s(buffer, size, other.buffer, size) != EOK) {
-        APP_LOGI("copy construct fail due to memcpy");
+        ABILITYBASE_LOGI("copy construct fail due to memcpy");
 
         key.clear();
         type = 0;
@@ -79,7 +77,7 @@ UnsupportedData &UnsupportedData::operator=(const UnsupportedData &other)
     size = other.size;
     buffer = new uint8_t[size];
     if (memcpy_s(buffer, size, other.buffer, size) != EOK) {
-        APP_LOGI("copy assignment fail due to memcpy");
+        ABILITYBASE_LOGI("copy assignment fail due to memcpy");
 
         key.clear();
         type = 0;
@@ -726,7 +724,7 @@ bool WantParams::WriteArrayToParcelBool(Parcel &parcel, IArray *ao) const
     }
 
     for (std::vector<int8_t>::size_type i = 0; i < array.size(); i++) {
-        APP_LOGI("%{public}s bool of array: %{public}d", __func__, array[i]);
+        ABILITYBASE_LOGI("%{public}s bool of array: %{public}d", __func__, array[i]);
         intArray.push_back(array[i]);
     }
     return parcel.WriteInt32Vector(intArray);
@@ -857,10 +855,10 @@ bool WantParams::WriteArrayToParcel(Parcel &parcel, IArray *ao) const
 
 bool WantParams::ReadFromParcelArrayString(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<std::u16string> value;
     if (!parcel.ReadString16Vector(&value)) {
-        APP_LOGI("%{public}s read string of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read string of array fail.", __func__);
         return false;
     }
 
@@ -872,18 +870,18 @@ bool WantParams::ReadFromParcelArrayString(Parcel &parcel, sptr<IArray> &ao)
         }
         return true;
     } else {
-        APP_LOGI("%{public}s create string of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s create string of array fail.", __func__);
     }
     return false;
 }
 
 bool WantParams::ReadFromParcelArrayBool(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<int32_t> value;
     std::vector<int8_t> boolValue;
     if (!parcel.ReadInt32Vector(&value)) {
-        APP_LOGI("%{public}s read bool of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read bool of array fail.", __func__);
         return false;
     }
 
@@ -896,10 +894,10 @@ bool WantParams::ReadFromParcelArrayBool(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayByte(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<int8_t> value;
     if (!parcel.ReadInt8Vector(&value)) {
-        APP_LOGI("%{public}s read byte of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read byte of array fail.", __func__);
         return false;
     }
     return SetArray<int8_t, Byte>(g_IID_IByte, value, ao);
@@ -907,10 +905,10 @@ bool WantParams::ReadFromParcelArrayByte(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayChar(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<int32_t> value;
     if (!parcel.ReadInt32Vector(&value)) {
-        APP_LOGI("%{public}s char bool of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s char bool of array fail.", __func__);
         return false;
     }
     return SetArray<int32_t, Char>(g_IID_IChar, value, ao);
@@ -918,10 +916,10 @@ bool WantParams::ReadFromParcelArrayChar(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayShort(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<short> value;
     if (!parcel.ReadInt16Vector(&value)) {
-        APP_LOGI("%{public}s read short of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read short of array fail.", __func__);
         return false;
     }
     return SetArray<short, Short>(g_IID_IShort, value, ao);
@@ -929,10 +927,10 @@ bool WantParams::ReadFromParcelArrayShort(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayInt(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<int> value;
     if (!parcel.ReadInt32Vector(&value)) {
-        APP_LOGI("%{public}s read int of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read int of array fail.", __func__);
         return false;
     }
     return SetArray<int, Integer>(g_IID_IInteger, value, ao);
@@ -940,10 +938,10 @@ bool WantParams::ReadFromParcelArrayInt(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<int64_t> value;
     if (!parcel.ReadInt64Vector(&value)) {
-        APP_LOGI("%{public}s read long of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read long of array fail.", __func__);
         return false;
     }
 
@@ -960,10 +958,10 @@ bool WantParams::ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<float> value;
     if (!parcel.ReadFloatVector(&value)) {
-        APP_LOGI("%{public}s read float of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read float of array fail.", __func__);
         return false;
     }
     return SetArray<float, Float>(g_IID_IFloat, value, ao);
@@ -971,10 +969,10 @@ bool WantParams::ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao)
 
 bool WantParams::ReadFromParcelArrayDouble(Parcel &parcel, sptr<IArray> &ao)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    ABILITYBASE_LOGI("%{public}s called.", __func__);
     std::vector<double> value;
     if (!parcel.ReadDoubleVector(&value)) {
-        APP_LOGI("%{public}s read double of array fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read double of array fail.", __func__);
         return false;
     }
     return SetArray<double, Double>(g_IID_IDouble, value, ao);
@@ -985,34 +983,34 @@ bool WantParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
     switch (type) {
         case VALUE_TYPE_STRINGARRAY:
         case VALUE_TYPE_CHARSEQUENCEARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_STRINGARRAY|VALUE_TYPE_CHARSEQUENCEARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_STRINGARRAY|VALUE_TYPE_CHARSEQUENCEARRAY.", __func__);
             return ReadFromParcelArrayString(parcel, ao);
         case VALUE_TYPE_BOOLEANARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_BOOLEANARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_BOOLEANARRAY.", __func__);
             return ReadFromParcelArrayBool(parcel, ao);
         case VALUE_TYPE_BYTEARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_BYTEARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_BYTEARRAY.", __func__);
             return ReadFromParcelArrayByte(parcel, ao);
         case VALUE_TYPE_CHARARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_CHARARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_CHARARRAY.", __func__);
             return ReadFromParcelArrayChar(parcel, ao);
         case VALUE_TYPE_SHORTARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_SHORTARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_SHORTARRAY.", __func__);
             return ReadFromParcelArrayShort(parcel, ao);
         case VALUE_TYPE_INTARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_INTARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_INTARRAY.", __func__);
             return ReadFromParcelArrayInt(parcel, ao);
         case VALUE_TYPE_LONGARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_LONGARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_LONGARRAY.", __func__);
             return ReadFromParcelArrayLong(parcel, ao);
         case VALUE_TYPE_FLOATARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_FLOATARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_FLOATARRAY.", __func__);
             return ReadFromParcelArrayFloat(parcel, ao);
         case VALUE_TYPE_DOUBLEARRAY:
-            APP_LOGI("%{public}s type=VALUE_TYPE_DOUBLEARRAY.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=VALUE_TYPE_DOUBLEARRAY.", __func__);
             return ReadFromParcelArrayDouble(parcel, ao);
         default:
-            APP_LOGI("%{public}s type=UNKNOWN, nothing to do.", __func__);
+            ABILITYBASE_LOGI("%{public}s type=UNKNOWN, nothing to do.", __func__);
             break;
     }
 
@@ -1023,102 +1021,102 @@ bool WantParams::ReadFromParcelString(Parcel &parcel, const std::string &key)
 {
     std::u16string value = parcel.ReadString16();
     std::string strValue(Str16ToStr8(value));
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     sptr<IInterface> intf = String::Box(Str16ToStr8(value));
     if (intf) {
         SetParam(key, intf);
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
     }
     return true;
 }
 
 bool WantParams::ReadFromParcelBool(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int8_t value;
     if (parcel.ReadInt8(value)) {
         sptr<IInterface> intf = Boolean::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelInt8(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int8_t value;
     if (parcel.ReadInt8(value)) {
         sptr<IInterface> intf = Byte::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelChar(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int32_t value;
     if (parcel.ReadInt32(value)) {
         sptr<IInterface> intf = Char::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelShort(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     short value;
     if (parcel.ReadInt16(value)) {
         sptr<IInterface> intf = Short::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelInt(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int value;
     if (parcel.ReadInt32(value)) {
         sptr<IInterface> intf = Integer::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
@@ -1133,7 +1131,7 @@ bool WantParams::ReadFromParcelWantParamWrapper(Parcel &parcel, const std::strin
 }
 bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     int64_t value;
     if (parcel.ReadInt64(value)) {
         std::string strValue(std::to_string(value));
@@ -1145,47 +1143,47 @@ bool WantParams::ReadFromParcelLong(Parcel &parcel, const std::string &key)
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelFloat(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     float value;
     if (parcel.ReadFloat(value)) {
         sptr<IInterface> intf = Float::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
 
 bool WantParams::ReadFromParcelDouble(Parcel &parcel, const std::string &key)
 {
-    APP_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
+    ABILITYBASE_LOGI("%{public}s key=%{public}s.", __func__, key.c_str());
     double value;
     if (parcel.ReadDouble(value)) {
         sptr<IInterface> intf = Double::Box(value);
         if (intf) {
             SetParam(key, intf);
         } else {
-            APP_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
+            ABILITYBASE_LOGI("%{public}s insert param fail: key=%{public}s", __func__, key.c_str());
         }
         return true;
     } else {
-        APP_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
+        ABILITYBASE_LOGI("%{public}s read data fail: key=%{public}s", __func__, key.c_str());
         return false;
     }
 }
@@ -1280,20 +1278,20 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
 {
     int32_t size;
     if (!parcel.ReadInt32(size)) {
-        APP_LOGI("%{public}s read size fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read size fail.", __func__);
         return false;
     }
-    APP_LOGI("%{public}s size=%{public}d.", __func__, size);
+    ABILITYBASE_LOGI("%{public}s size=%{public}d.", __func__, size);
     for (int32_t i = 0; i < size; i++) {
-        APP_LOGI("%{public}s get i=%{public}d", __func__, i);
+        ABILITYBASE_LOGI("%{public}s get i=%{public}d", __func__, i);
         std::u16string key = parcel.ReadString16();
         int type;
         if (!parcel.ReadInt32(type)) {
-            APP_LOGI("%{public}s read type fail.", __func__);
+            ABILITYBASE_LOGI("%{public}s read type fail.", __func__);
             return false;
         }
         if (!ReadFromParcelParam(parcel, Str16ToStr8(key), type)) {
-            APP_LOGI("%{public}s get i=%{public}d fail.", __func__, i);
+            ABILITYBASE_LOGI("%{public}s get i=%{public}d fail.", __func__, i);
             return false;
         }
     }
@@ -1309,26 +1307,26 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 {
     int32_t bufferSize;
     if (!parcel.ReadInt32(bufferSize)) {
-        APP_LOGI("%{public}s read bufferSize fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read bufferSize fail.", __func__);
         return nullptr;
     }
-    APP_LOGI("%{public}s bufferSize=%{public}d.", __func__, bufferSize);
+    ABILITYBASE_LOGI("%{public}s bufferSize=%{public}d.", __func__, bufferSize);
 
     // Corresponding to Parcel#writeByteArray() in Java.
     int32_t length;
     if (!parcel.ReadInt32(length)) {
-        APP_LOGI("%{public}s read length fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read length fail.", __func__);
         return nullptr;
     }
     const uint8_t *dataInBytes = parcel.ReadUnpadBuffer(bufferSize);
     if (dataInBytes == nullptr) {
-        APP_LOGI("%{public}s read buffer fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s read buffer fail.", __func__);
         return nullptr;
     }
 
     Parcel tempParcel;
     if (!tempParcel.WriteBuffer(dataInBytes, bufferSize)) {
-        APP_LOGI("%{public}s tempParcel.WriteBuffer fail.", __func__);
+        ABILITYBASE_LOGI("%{public}s tempParcel.WriteBuffer fail.", __func__);
         return nullptr;
     }
 
@@ -1342,21 +1340,22 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 
 void WantParams::DumpInfo(int level) const
 {
-    APP_LOGI("=======WantParams::DumpInfo level: %{public}d start=============", level);
+    ABILITYBASE_LOGI("=======WantParams::DumpInfo level: %{public}d start=============", level);
     int params_size = params_.size();
-    APP_LOGI("===WantParams::params_: count %{public}d =============", params_size);
+    ABILITYBASE_LOGI("===WantParams::params_: count %{public}d =============", params_size);
     int typeId = VALUE_TYPE_NULL;
     for (auto it : params_) {
         typeId = VALUE_TYPE_NULL;
         typeId = WantParams::GetDataType(it.second);
         if (typeId != VALUE_TYPE_NULL) {
             std::string value = WantParams::GetStringByType(it.second, typeId);
-            APP_LOGI("=WantParams::params_[%{public}s] : %{public}s =============", it.first.c_str(), value.c_str());
+            ABILITYBASE_LOGI(
+                "=WantParams::params_[%{public}s] : %{public}s =============", it.first.c_str(), value.c_str());
         } else {
-            APP_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
+            ABILITYBASE_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
         }
     }
-    APP_LOGI("=======WantParams::DumpInfo level: %{public}d end=============", level);
+    ABILITYBASE_LOGI("=======WantParams::DumpInfo level: %{public}d end=============", level);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

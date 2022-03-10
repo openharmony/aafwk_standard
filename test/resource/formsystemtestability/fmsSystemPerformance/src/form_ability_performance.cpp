@@ -16,7 +16,7 @@
 #include <numeric>
 #include <sstream>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 #include "form_ability_performance.h"
@@ -50,15 +50,15 @@ static std::string g_moduleName = "formmodule001";
 void FormAbilityPerformance::PerformanceFormCallback::OnAcquired(
     const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
-    APP_LOGI("%{public}s formId: %{public}s", __func__, std::to_string(formJsInfo.formId).c_str());
-    APP_LOGI("%{public}s bundleName: %{public}s", __func__, formJsInfo.bundleName.c_str());
-    APP_LOGI("%{public}s abilityName: %{public}s", __func__, formJsInfo.abilityName.c_str());
-    APP_LOGI("%{public}s formName: %{public}s", __func__, formJsInfo.formName.c_str());
-    APP_LOGI("%{public}s formTempFlg: %{public}d", __func__, formJsInfo.formTempFlg);
-    APP_LOGI("%{public}s jsFormCodePath: %{public}s", __func__, formJsInfo.jsFormCodePath.c_str());
-    APP_LOGI("%{public}s formData: %{public}s", __func__, formJsInfo.formData.c_str());
-    APP_LOGI("%{public}s formProviderData GetDataString: %{public}s",
+    HILOG_INFO("%{public}s called", __func__);
+    HILOG_INFO("%{public}s formId: %{public}s", __func__, std::to_string(formJsInfo.formId).c_str());
+    HILOG_INFO("%{public}s bundleName: %{public}s", __func__, formJsInfo.bundleName.c_str());
+    HILOG_INFO("%{public}s abilityName: %{public}s", __func__, formJsInfo.abilityName.c_str());
+    HILOG_INFO("%{public}s formName: %{public}s", __func__, formJsInfo.formName.c_str());
+    HILOG_INFO("%{public}s formTempFlg: %{public}d", __func__, formJsInfo.formTempFlg);
+    HILOG_INFO("%{public}s jsFormCodePath: %{public}s", __func__, formJsInfo.jsFormCodePath.c_str());
+    HILOG_INFO("%{public}s formData: %{public}s", __func__, formJsInfo.formData.c_str());
+    HILOG_INFO("%{public}s formProviderData GetDataString: %{public}s",
         __func__, formJsInfo.formProviderData.GetDataString().c_str());
 
     g_formId = std::to_string(formJsInfo.formId);
@@ -80,15 +80,15 @@ void FormAbilityPerformance::PerformanceFormCallback::OnAcquired(
 
 void FormAbilityPerformance::PerformanceFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
-    APP_LOGI("%{public}s formId: %{public}s", __func__, std::to_string(formJsInfo.formId).c_str());
-    APP_LOGI("%{public}s bundleName: %{public}s", __func__, formJsInfo.bundleName.c_str());
-    APP_LOGI("%{public}s abilityName: %{public}s", __func__, formJsInfo.abilityName.c_str());
-    APP_LOGI("%{public}s formName: %{public}s", __func__, formJsInfo.formName.c_str());
-    APP_LOGI("%{public}s formTempFlg: %{public}d", __func__, formJsInfo.formTempFlg);
-    APP_LOGI("%{public}s jsFormCodePath: %{public}s", __func__, formJsInfo.jsFormCodePath.c_str());
-    APP_LOGI("%{public}s formData: %{public}s", __func__, formJsInfo.formData.c_str());
-    APP_LOGI("%{public}s formProviderData GetDataString: %{public}s",
+    HILOG_INFO("%{public}s called", __func__);
+    HILOG_INFO("%{public}s formId: %{public}s", __func__, std::to_string(formJsInfo.formId).c_str());
+    HILOG_INFO("%{public}s bundleName: %{public}s", __func__, formJsInfo.bundleName.c_str());
+    HILOG_INFO("%{public}s abilityName: %{public}s", __func__, formJsInfo.abilityName.c_str());
+    HILOG_INFO("%{public}s formName: %{public}s", __func__, formJsInfo.formName.c_str());
+    HILOG_INFO("%{public}s formTempFlg: %{public}d", __func__, formJsInfo.formTempFlg);
+    HILOG_INFO("%{public}s jsFormCodePath: %{public}s", __func__, formJsInfo.jsFormCodePath.c_str());
+    HILOG_INFO("%{public}s formData: %{public}s", __func__, formJsInfo.formData.c_str());
+    HILOG_INFO("%{public}s formProviderData GetDataString: %{public}s",
         __func__, formJsInfo.formProviderData.GetDataString().c_str());
 
     if (this->caseName_ == FORM_EVENT_RECV_PERFORMANCE_TEST_0100) {
@@ -108,7 +108,7 @@ void FormAbilityPerformance::PerformanceFormCallback::OnUpdate(const int32_t res
 
 void FormAbilityPerformance::PerformanceFormCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 
 void FormAbilityPerformance::FMS_performanceTest_0100(std::string data)
@@ -126,9 +126,9 @@ void FormAbilityPerformance::FMS_performanceTest_0100(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0100] AcquireForm end");
+        HILOG_INFO("[FMS_performanceTest_0100] AcquireForm end");
     } else {
-        APP_LOGE("[FMS_performanceTest_0100] AcquireForm error");
+        HILOG_ERROR("[FMS_performanceTest_0100] AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0100, EVENT_CODE_100, "false");
     }
 }
@@ -137,10 +137,10 @@ void FormAbilityPerformance::FMS_performanceTest_0200(std::string data)
 {
     bool bResult = DeleteForm(atoll(g_formId.c_str()));
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0200] DeleteForm end");
+        HILOG_INFO("[FMS_performanceTest_0200] DeleteForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0200, EVENT_CODE_200, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0200] DeleteForm error");
+        HILOG_ERROR("[FMS_performanceTest_0200] DeleteForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0200, EVENT_CODE_200, "false");
     }
 }
@@ -150,10 +150,10 @@ void FormAbilityPerformance::FMS_performanceTest_0300(std::string data)
     bool isReleaseCache = false;
     bool bResult = ReleaseForm(atoll(g_formId.c_str()), isReleaseCache);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0300] ReleaseForm end");
+        HILOG_INFO("[FMS_performanceTest_0300] ReleaseForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0300, EVENT_CODE_300, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0300] ReleaseForm error");
+        HILOG_ERROR("[FMS_performanceTest_0300] ReleaseForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0300, EVENT_CODE_300, "false");
     }
 }
@@ -162,10 +162,10 @@ void FormAbilityPerformance::FMS_performanceTest_0400(std::string data)
 {
     bool bResult = CastTempForm(atoll(g_formId.c_str()));
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0400] CastTempForm end");
+        HILOG_INFO("[FMS_performanceTest_0400] CastTempForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0400, EVENT_CODE_400, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0400] CastTempForm error");
+        HILOG_ERROR("[FMS_performanceTest_0400] CastTempForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0400, EVENT_CODE_400, "false");
     }
 }
@@ -176,10 +176,10 @@ void FormAbilityPerformance::FMS_performanceTest_0500(std::string data)
     formIds.push_back(atoll(g_formId.c_str()));
     bool bResult = NotifyVisibleForms(formIds);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0500] NotifyVisibleForms end");
+        HILOG_INFO("[FMS_performanceTest_0500] NotifyVisibleForms end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0500, EVENT_CODE_500, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0500] NotifyVisibleForms error");
+        HILOG_ERROR("[FMS_performanceTest_0500] NotifyVisibleForms error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0500, EVENT_CODE_500, "false");
     }
 }
@@ -190,10 +190,10 @@ void FormAbilityPerformance::FMS_performanceTest_0600(std::string data)
     formIds.push_back(atoll(g_formId.c_str()));
     bool bResult = NotifyInvisibleForms(formIds);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0600] NotifyInvisibleForms end");
+        HILOG_INFO("[FMS_performanceTest_0600] NotifyInvisibleForms end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0600, EVENT_CODE_600, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0600] NotifyInvisibleForms error");
+        HILOG_ERROR("[FMS_performanceTest_0600] NotifyInvisibleForms error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0600, EVENT_CODE_600, "false");
     }
 }
@@ -202,10 +202,10 @@ void FormAbilityPerformance::FMS_performanceTest_0700(std::string data)
 {
     bool bResult = RequestForm(atoll(g_formId.c_str()));
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_0700] RequestForm end");
+        HILOG_INFO("[FMS_performanceTest_0700] RequestForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_0700, EVENT_CODE_700, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_0700] RequestForm error");
+        HILOG_ERROR("[FMS_performanceTest_0700] RequestForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1300, EVENT_CODE_700, "false");
     }
 }
@@ -215,10 +215,10 @@ void FormAbilityPerformance::FMS_performanceTest_1300(std::string data)
     std::vector<FormInfo> formInfos;
     bool bResult = GetAllFormsInfo(formInfos);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_1300] GetAllFormsInfo end");
+        HILOG_INFO("[FMS_performanceTest_1300] GetAllFormsInfo end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1300, EVENT_CODE_1300, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_1300] GetAllFormsInfo error");
+        HILOG_ERROR("[FMS_performanceTest_1300] GetAllFormsInfo error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1300, EVENT_CODE_1300, "false");
     }
 }
@@ -228,10 +228,10 @@ void FormAbilityPerformance::FMS_performanceTest_1400(std::string data)
     std::vector<FormInfo> formInfos;
     bool bResult = GetFormsInfoByApp(g_bundleName, formInfos);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_1400] GetFormsInfoByApp end");
+        HILOG_INFO("[FMS_performanceTest_1400] GetFormsInfoByApp end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1400, EVENT_CODE_1400, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_1400] GetFormsInfoByApp error");
+        HILOG_ERROR("[FMS_performanceTest_1400] GetFormsInfoByApp error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1400, EVENT_CODE_1400, "false");
     }
 }
@@ -241,10 +241,10 @@ void FormAbilityPerformance::FMS_performanceTest_1500(std::string data)
     std::vector<FormInfo> formInfos;
     bool bResult = GetFormsInfoByModule(g_bundleName, g_moduleName, formInfos);
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_1500] GetFormsInfoByModule end");
+        HILOG_INFO("[FMS_performanceTest_1500] GetFormsInfoByModule end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1500, EVENT_CODE_1500, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_1500] GetFormsInfoByModule error");
+        HILOG_ERROR("[FMS_performanceTest_1500] GetFormsInfoByModule error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1500, EVENT_CODE_1500, "false");
     }
 }
@@ -253,23 +253,23 @@ void FormAbilityPerformance::FMS_performanceTest_1600(std::string data)
 {
     bool bResult = CheckFMSReady();
     if (bResult) {
-        APP_LOGI("[FMS_performanceTest_1600] CheckFMSReady end");
+        HILOG_INFO("[FMS_performanceTest_1600] CheckFMSReady end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1600, EVENT_CODE_1600, "true");
     } else {
-        APP_LOGE("[FMS_performanceTest_1600] CheckFMSReady error");
+        HILOG_ERROR("[FMS_performanceTest_1600] CheckFMSReady error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_PERFORMANCE_TEST_1600, EVENT_CODE_1600, "false");
     }
 }
 
 void FormAbilityPerformance::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilityPerformance::onStart");
+    HILOG_INFO("FormAbilityPerformance::onStart");
     Ability::OnStart(want);
 }
 
 void FormAbilityPerformance::OnActive()
 {
-    APP_LOGI("FormAbilityPerformance::OnActive");
+    HILOG_INFO("FormAbilityPerformance::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -277,7 +277,7 @@ void FormAbilityPerformance::OnActive()
 
 void FormAbilityPerformance::OnStop()
 {
-    APP_LOGI("FormAbilityPerformance::OnStop");
+    HILOG_INFO("FormAbilityPerformance::OnStop");
 
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
@@ -285,14 +285,14 @@ void FormAbilityPerformance::OnStop()
 
 void FormAbilityPerformance::OnInactive()
 {
-    APP_LOGI("FormAbilityPerformance::OnInactive");
+    HILOG_INFO("FormAbilityPerformance::OnInactive");
 
     Ability::OnInactive();
 }
 
 void FormAbilityPerformance::OnBackground()
 {
-    APP_LOGI("FormAbilityPerformance::OnBackground");
+    HILOG_INFO("FormAbilityPerformance::OnBackground");
 
     Ability::OnBackground();
 }
@@ -315,7 +315,7 @@ void FormAbilityPerformance::Init(const std::shared_ptr<AbilityInfo> &abilityInf
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilityPerformance::Init");
+    HILOG_INFO("FormAbilityPerformance::Init");
     Ability::Init(abilityInfo, application, handler, token);
 
     memberFuncMap_[FORM_EVENT_REQ_PERFORMANCE_TEST_0100] = &FormAbilityPerformance::FMS_performanceTest_0100;
@@ -335,7 +335,7 @@ void FormAbilityPerformance::Init(const std::shared_ptr<AbilityInfo> &abilityInf
 
 void FormAbilityPerformance::handleEvent(std::string action, std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     if (calledFuncMap_.find(action) != calledFuncMap_.end()) {
         return;
     }
@@ -355,7 +355,7 @@ void FormAbilityPerformance::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s, code=%{public}d, data=%{public}s",
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s, code=%{public}d, data=%{public}s",
         data.GetWant().GetAction().c_str(), data.GetCode(), data.GetData().c_str());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName, data.GetData());

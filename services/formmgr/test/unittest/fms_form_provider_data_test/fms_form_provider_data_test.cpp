@@ -20,10 +20,10 @@
 #include <string>
 #include <thread>
 
-#include "app_log_wrapper.h"
 #define private public
 #include "form_provider_data.h"
 #undef private
+#include "hilog_wrapper.h"
 #include "nlohmann/json.hpp"
 
 using namespace testing::ext;
@@ -52,9 +52,9 @@ void FmsFormProviderDataTest::SetUp()
 {
     DIR *dirptr = opendir(FORM_DB_DATA_BASE_FILE_DIR.c_str());
     if (dirptr == nullptr) {
-        APP_LOGW("%{public}s, opendir is fail", __func__);
+        HILOG_WARN("%{public}s, opendir is fail", __func__);
         if (-1 == mkdir(FORM_DB_DATA_BASE_FILE_DIR.c_str(), S_IRWXU)) {
-            APP_LOGE("%{public}s, dir create fail", __func__);
+            HILOG_ERROR("%{public}s, dir create fail", __func__);
             return;
         }
     } else {

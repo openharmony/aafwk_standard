@@ -17,7 +17,7 @@
 #define private public
 #include "work_thread.h"
 #undef private
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "default_thread_factory.h"
 #include "default_worker_pool_config.h"
 #include "task_priority.h"

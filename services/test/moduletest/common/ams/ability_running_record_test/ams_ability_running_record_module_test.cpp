@@ -15,12 +15,12 @@
 
 #include "ability_running_record.h"
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
 #include "app_record_id.h"
 #include "app_scheduler_host.h"
 #include "ability_info.h"
 #include "application_info.h"
 #include "app_running_record.h"
+#include "hilog_wrapper.h"
 #include "mock_ability_token.h"
 
 using namespace testing::ext;
@@ -205,7 +205,7 @@ std::shared_ptr<AppRunningRecord> AmsAbilityRunningRecordModuleTest::QueryAppRun
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_001, TestSize.Level1)
 {
-    APP_LOGI("AddAbilityRunningRecord_001 start");
+    HILOG_INFO("AddAbilityRunningRecord_001 start");
     auto appRunningRecord = QueryAppRunningRecord();
     auto caseAbilityInfo = std::make_shared<AbilityInfo>();
     caseAbilityInfo->name = ABILITY_RECORD_NAME;
@@ -225,7 +225,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_001, TestSiz
     EXPECT_TRUE(abilityRunningRecordWithSameName == nullptr);
     appRunningRecord->ClearAbility(caseAbilityRunningRecord);
     EXPECT_TRUE(appRunningRecord->GetAbilityRunningRecordByToken(token) == nullptr);
-    APP_LOGI("AddAbilityRunningRecord_001 end");
+    HILOG_INFO("AddAbilityRunningRecord_001 end");
 }
 
 /*
@@ -238,7 +238,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_001, TestSiz
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_002, TestSize.Level1)
 {
-    APP_LOGI("AddAbilityRunningRecord_002 start");
+    HILOG_INFO("AddAbilityRunningRecord_002 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -259,7 +259,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_002, TestSiz
         EXPECT_EQ(caseAbilityRunningRecord, appRunningRecord->GetAbilityRunningRecordByToken(token));
         EXPECT_EQ(caseAbilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_BEGIN);
     }
-    APP_LOGI("AddAbilityRunningRecord_002 end");
+    HILOG_INFO("AddAbilityRunningRecord_002 end");
 }
 
 /*
@@ -272,7 +272,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, AddAbilityRunningRecord_002, TestSiz
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_001, TestSize.Level1)
 {
-    APP_LOGI("UpdateAbilityRunningRecord_001 start");
+    HILOG_INFO("UpdateAbilityRunningRecord_001 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -298,7 +298,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_001, Test
         appRunningRecord->UpdateAbilityState(token, AbilityState::ABILITY_STATE_BACKGROUND);
         EXPECT_EQ(caseAbilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_BACKGROUND);
     }
-    APP_LOGI("UpdateAbilityRunningRecord_001 end");
+    HILOG_INFO("UpdateAbilityRunningRecord_001 end");
 }
 
 /*
@@ -311,7 +311,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_001, Test
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_002, TestSize.Level1)
 {
-    APP_LOGI("UpdateAbilityRunningRecord_002 start");
+    HILOG_INFO("UpdateAbilityRunningRecord_002 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -333,7 +333,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_002, Test
         appRunningRecord->UpdateAbilityState(token, AbilityState::ABILITY_STATE_END);
         EXPECT_EQ(caseAbilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_BEGIN);
     }
-    APP_LOGI("UpdateAbilityRunningRecord_002 end");
+    HILOG_INFO("UpdateAbilityRunningRecord_002 end");
 }
 
 /*
@@ -346,7 +346,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_002, Test
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_003, TestSize.Level1)
 {
-    APP_LOGI("UpdateAbilityRunningRecord_003 start");
+    HILOG_INFO("UpdateAbilityRunningRecord_003 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -372,7 +372,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_003, Test
         appRunningRecord->UpdateAbilityState(token, AbilityState::ABILITY_STATE_READY);
         EXPECT_EQ(caseAbilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_BACKGROUND);
     }
-    APP_LOGI("UpdateAbilityRunningRecord_003 end");
+    HILOG_INFO("UpdateAbilityRunningRecord_003 end");
 }
 
 /*
@@ -385,7 +385,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, UpdateAbilityRunningRecord_003, Test
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_001, TestSize.Level1)
 {
-    APP_LOGI("ClearAbilityRunningRecord_001 start");
+    HILOG_INFO("ClearAbilityRunningRecord_001 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -413,7 +413,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_001, TestS
         appRunningRecord->ClearAbility(caseAbilityRunningRecord);
         EXPECT_TRUE(appRunningRecord->GetAbilityRunningRecordByToken(token) == nullptr);
     }
-    APP_LOGI("ClearAbilityRunningRecord_001 end");
+    HILOG_INFO("ClearAbilityRunningRecord_001 end");
 }
 
 /*
@@ -426,7 +426,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_001, TestS
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_002, TestSize.Level1)
 {
-    APP_LOGI("ClearAbilityRunningRecord_002 start");
+    HILOG_INFO("ClearAbilityRunningRecord_002 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -452,7 +452,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_002, TestS
         auto abilityMap = appRunningRecord->GetAbilities();
         EXPECT_TRUE(abilityMap.empty());
     }
-    APP_LOGI("ClearAbilityRunningRecord_002 end");
+    HILOG_INFO("ClearAbilityRunningRecord_002 end");
 }
 
 /*
@@ -465,7 +465,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, ClearAbilityRunningRecord_002, TestS
  */
 HWTEST_F(AmsAbilityRunningRecordModuleTest, OperateAbilityRunningRecord_001, TestSize.Level1)
 {
-    APP_LOGI("OperateAbilityRunningRecord_001 start");
+    HILOG_INFO("OperateAbilityRunningRecord_001 start");
     int i;
     auto appRunningRecord = QueryAppRunningRecord();
     auto appInfo = std::make_shared<ApplicationInfo>();
@@ -493,7 +493,7 @@ HWTEST_F(AmsAbilityRunningRecordModuleTest, OperateAbilityRunningRecord_001, Tes
         appRunningRecord->ClearAbility(caseAbilityRunningRecord);
         EXPECT_TRUE(appRunningRecord->GetAbilityRunningRecordByToken(token) == nullptr);
     }
-    APP_LOGI("OperateAbilityRunningRecord_001 end");
+    HILOG_INFO("OperateAbilityRunningRecord_001 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

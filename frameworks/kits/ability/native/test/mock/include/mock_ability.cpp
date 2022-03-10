@@ -16,7 +16,7 @@
 #include "ability.h"
 #include <gtest/gtest.h>
 #include "ability_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
@@ -27,16 +27,17 @@ REGISTER_AA(Ability)
 void Ability::Init(std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<OHOSApplication> &application,
     std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("Ability::Init called.");
+    HILOG_INFO("Ability::Init called.");
 
     abilityInfo_ = abilityInfo;
     handler_ = handler;
     AbilityContext::token_ = token;
-
+#ifdef SUPPORT_GRAPHICS
     // page ability only.
     if (abilityInfo_->type == AbilityType::PAGE) {
         abilityWindow_ = std::make_shared<AbilityWindow>();
     }
+#endif
     lifecycle_ = std::make_shared<LifeCycle>();
     abilityLifecycleExecutor_ = std::make_shared<AbilityLifecycleExecutor>();
     application_ = application;
@@ -66,6 +67,7 @@ void Ability::OnActive()
 void Ability::OnInactive()
 {}
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnForeground(const Want &want)
 {
     return;
@@ -75,6 +77,7 @@ void Ability::OnBackground()
 {
     return;
 }
+#endif
 
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
@@ -99,6 +102,7 @@ void Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSet
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
 {
     return false;
@@ -143,11 +147,11 @@ void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int
 void Ability::SetUIContent(const WindowConfig &config)
 {
     if (abilityWindow_ == nullptr) {
-        APP_LOGE("Ability::SetUIContent abilityWindow_ is nullptr");
+        HILOG_ERROR("Ability::SetUIContent abilityWindow_ is nullptr");
         return;
     }
 
-    APP_LOGI("Ability::SetUIContent called");
+    HILOG_INFO("Ability::SetUIContent called");
     abilityWindow_->SetWindowConfig(config);
 }
 
@@ -158,7 +162,7 @@ void Ability::SetUIContent(const WindowConfig &config)
  */
 std::unique_ptr<Window> &Ability::GetWindow(int windowID)
 {
-    APP_LOGI("Ability::GetWindow called windowID = %d.", windowID);
+    HILOG_INFO("Ability::GetWindow called windowID = %d.", windowID);
 
     return abilityWindow_->GetWindow(windowID);
 }
@@ -177,6 +181,7 @@ bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &ke
 {
     return false;
 }
+#endif
 
 void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
@@ -184,10 +189,12 @@ void Ability::OnRequestPermissionsFromUserResult(
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnLeaveForeground()
 {
     return;
 }
+#endif
 
 std::string Ability::GetType(const Uri &uri)
 {
@@ -247,17 +254,17 @@ void Ability::OnBackPressed()
 
 void Ability::OnNewWant(const Want &want)
 {
-    APP_LOGI("Ability::OnNewWant called");
+    HILOG_INFO("Ability::OnNewWant called");
 }
 
 void Ability::OnRestoreAbilityState(const PacMap &inState)
 {
-    APP_LOGI("Ability::OnRestoreAbilityState called");
+    HILOG_INFO("Ability::OnRestoreAbilityState called");
 }
 
 void Ability::OnSaveAbilityState(const PacMap &outState)
 {
-    APP_LOGI("Ability::OnSaveAbilityState called");
+    HILOG_INFO("Ability::OnSaveAbilityState called");
 }
 
 void Ability::OnEventDispatch()
@@ -265,10 +272,12 @@ void Ability::OnEventDispatch()
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::OnWindowFocusChanged(bool hasFocus)
 {
     return;
 }
+#endif
 
 void Ability::SetWant(const AAFwk::Want &want)
 {
@@ -283,20 +292,22 @@ std::shared_ptr<AAFwk::Want> Ability::GetWant()
 void Ability::SetResult(int resultCode, const Want &resultData)
 {
     if (abilityInfo_ == nullptr) {
-        APP_LOGI("Ability::SetResult nullptr == abilityInfo_");
+        HILOG_INFO("Ability::SetResult nullptr == abilityInfo_");
         return;
     }
-    APP_LOGI("Ability::SetResult called type = %{public}d", abilityInfo_->type);
+    HILOG_INFO("Ability::SetResult called type = %{public}d", abilityInfo_->type);
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         AbilityContext::resultWant_ = resultData;
         AbilityContext::resultCode_ = resultCode;
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
 {
     return;
 }
+#endif
 
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
@@ -387,16 +398,16 @@ std::shared_ptr<Uri> Ability::DenormalizeUri(const Uri &uri)
 
 std::shared_ptr<LifeCycle> Ability::GetLifecycle()
 {
-    APP_LOGI("Ability::GetLifecycle called");
+    HILOG_INFO("Ability::GetLifecycle called");
     return lifecycle_;
 }
 
 AbilityLifecycleExecutor::LifecycleState Ability::GetState()
 {
-    APP_LOGI("Ability::GetState called");
+    HILOG_INFO("Ability::GetState called");
 
     if (abilityLifecycleExecutor_ == nullptr) {
-        APP_LOGI("Ability::GetState error. abilityLifecycleExecutor_ == nullptr.");
+        HILOG_INFO("Ability::GetState error. abilityLifecycleExecutor_ == nullptr.");
         return AbilityLifecycleExecutor::LifecycleState::UNINITIALIZED;
     }
 
@@ -405,13 +416,13 @@ AbilityLifecycleExecutor::LifecycleState Ability::GetState()
 
 void Ability::StartAbility(const Want &want)
 {
-    APP_LOGI("Ability::StartAbility called");
+    HILOG_INFO("Ability::StartAbility called");
     AbilityContext::StartAbility(want, -1);
 }
 
 void Ability::TerminateAbility()
 {
-    APP_LOGI("Ability::TerminateAbility called");
+    HILOG_INFO("Ability::TerminateAbility called");
     AbilityContext::TerminateAbility();
 }
 
@@ -430,9 +441,11 @@ void Ability::AddActionRoute(const std::string &action, const std::string &entry
     return;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int Ability::SetWindowBackgroundColor(int red, int green, int blue)
 {
     return -1;
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

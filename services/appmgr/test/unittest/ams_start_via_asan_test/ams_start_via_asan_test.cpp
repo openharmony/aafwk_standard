@@ -16,7 +16,7 @@
 #include "start_via_asan.h"
 #include <gtest/gtest.h>
 #include "properties.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace testing::ext;
 namespace OHOS {
@@ -51,12 +51,12 @@ void AmsStartViaAsanTest::TearDown()
  */
 HWTEST_F(AmsStartViaAsanTest, IsAsanVersion_001, TestSize.Level1)
 {
-    APP_LOGD("IsAsanVersion_001 start");
+    HILOG_DEBUG("IsAsanVersion_001 start");
     std::string appName = "com.ohos.hiworld";
     bool result = DelayedSingleton<StartViaAsan>::GetInstance()->IsAsanVersion(appName);
     EXPECT_EQ(result, false);
 
-    APP_LOGD("IsAsanVersion_001 end");
+    HILOG_DEBUG("IsAsanVersion_001 end");
 }
 
 /*
@@ -69,12 +69,12 @@ HWTEST_F(AmsStartViaAsanTest, IsAsanVersion_001, TestSize.Level1)
  */
 HWTEST_F(AmsStartViaAsanTest, GetAsanStartMsg_001, TestSize.Level1)
 {
-    APP_LOGD("GetAsanStartMsg_001 start");
+    HILOG_DEBUG("GetAsanStartMsg_001 start");
     std::string appName = "com.ohos.hiworld";
     AppSpawnStartMsg startMsg = {appName, "clsName", "funcName", "soPath"};
     DelayedSingleton<StartViaAsan>::GetInstance()->GetAsanStartMsg(startMsg);
     EXPECT_EQ(startMsg.arg, "wrap." + appName);
-    APP_LOGD("GetAsanStartMsg_001 end");
+    HILOG_DEBUG("GetAsanStartMsg_001 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

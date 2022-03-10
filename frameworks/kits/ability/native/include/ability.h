@@ -25,16 +25,21 @@
 #include "ability_event_interface.h"
 #include "ability_lifecycle_executor.h"
 #include "ability_lifecycle_interface.h"
+#ifdef SUPPORT_GRAPHICS
 #include "ability_window.h"
+#endif
 #include "appexecfwk_errors.h"
 #include "configuration.h"
 #include "context.h"
 #include "continuation_handler.h"
 #include "continuation_state.h"
+#ifdef SUPPORT_GRAPHICS
 #include "display_manager.h"
+#endif
 #include "dummy_ability_package.h"
 #include "dummy_component_container.h"
 #include "dummy_notification_request.h"
+#ifdef SUPPORT_GRAPHICS
 #include "form_callback_interface.h"
 #include "form_constants.h"
 #include "form_death_callback.h"
@@ -42,14 +47,17 @@
 #include "form_provider_info.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/key_event.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/pointer_event.h"
+#endif
 #include "iability_callback.h"
 #include "iremote_object.h"
 #include "pac_map.h"
 #include "want.h"
 #include "want_agent.h"
+#ifdef SUPPORT_GRAPHICS
 #include "window_option.h"
 #include "window_scene.h"
 #include "wm_common.h"
+#endif
 #include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;
@@ -63,14 +71,18 @@ class ValuesBucket;
 namespace AbilityRuntime {
 class Runtime;
 }
+#ifdef SUPPORT_GRAPHICS
 class KeyEvent;
+#endif
 namespace AppExecFwk {
 class DataAbilityResult;
 class DataAbilityOperation;
 class AbilityPostEventTimeout;
 class OHOSApplication;
 class AbilityHandler;
+#ifdef SUPPORT_GRAPHICS
 class AbilityWindow;
+#endif
 class ILifeCycle;
 class ContinuationManager;
 class ContinuationRegisterManager;
@@ -78,14 +90,18 @@ class IContinuationRegisterManager;
 class Ability : public IAbilityEvent,
                 public ILifeCycle,
                 public AbilityContext,
+#ifdef SUPPORT_GRAPHICS
                 public FormCallbackInterface,
+                public OHOS::Rosen::DisplayManager::IDisplayListener,
+                public OHOS::Rosen::IDisplayMoveListener,
+#endif
                 public IAbilityContinuation,
                 public IAbilityCallback,
-                public std::enable_shared_from_this<Ability>,
-                public OHOS::Rosen::DisplayManager::IDisplayListener,
-                public OHOS::Rosen::IDisplayMoveListener {
+                public std::enable_shared_from_this<Ability> {
 public:
+#ifdef SUPPORT_GRAPHICS
     friend class PageAbilityImpl;
+#endif
     friend class NewAbilityImpl;
 
     static Ability* Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime);
@@ -125,6 +141,7 @@ public:
      */
     virtual void AddActionRoute(const std::string &action, const std::string &entry) final;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Sets the background color of the window in RGB color mode.
      *
@@ -137,6 +154,7 @@ public:
      * @return Returns the result of SetWindowBackgroundColor
      */
     virtual int SetWindowBackgroundColor(int red, int green, int blue) final;
+#endif
 
     /**
      * @brief Destroys this Page or Service ability.
@@ -168,6 +186,7 @@ public:
      */
     bool IsUpdatingConfigurations() override;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Informs the system of the time required for drawing this Page ability.
      *
@@ -189,6 +208,7 @@ public:
      * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
      */
     virtual void SetUIContent(int layoutRes) final;
+#endif
 
     /**
      * Start other ability for result.
@@ -272,6 +292,7 @@ public:
      */
     virtual void OnInactive();
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called after instantiating WindowScene.
      *
@@ -349,6 +370,7 @@ public:
      * @return Returns true if the event is handled; returns false otherwise.
      */
     virtual void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
+#endif
 
     /**
      * @brief Called when this Service ability is connected for the first time.
@@ -368,6 +390,7 @@ public:
      */
     virtual void OnDisconnect(const Want &want);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Inflates UI controls by using ComponentContainer.
      * You can create a ComponentContainer instance that contains multiple components.
@@ -430,6 +453,7 @@ public:
      * @return Returns true if this ability currently has window focus; returns false otherwise.
      */
     bool HasWindowFocus();
+#endif
 
     /**
     * @description: Obtains api version based on ability.
@@ -444,6 +468,7 @@ public:
     */
     void SetCompatibleVersion(int compatibleVersion);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called when a key is lone pressed.
      *
@@ -454,6 +479,7 @@ public:
      * is not handled and should be passed to other handlers.
      */
     virtual bool OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent);
+#endif
 
     /**
      * @brief Called back after permissions are requested by using
@@ -471,12 +497,14 @@ public:
     virtual void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called when this ability is about to leave the foreground and enter the background due to a user
      * operation, for example, when the user touches the Home key.
      *
      */
     virtual void OnLeaveForeground();
+#endif
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -667,12 +695,14 @@ public:
      */
     virtual void SetResult(int resultCode, const Want &resultData) final;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Sets the type of audio whose volume will be adjusted by the volume button.
      *
      * @param volumeType Indicates the AudioManager.AudioVolumeType to set.
      */
     virtual void SetVolumeTypeAdjustedByKey(int volumeType);
+#endif
 
     /**
      * @brief Called back when Service is started.
@@ -869,12 +899,14 @@ public:
      */
     virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Obtains the type of audio whose volume is adjusted by the volume button.
      *
      * @return Returns the AudioManager.AudioVolumeType.
      */
     int GetVolumeTypeAdjustedByKey();
+#endif
 
     /**
      * @brief Obtains the lifecycle state of this ability.
@@ -973,6 +1005,7 @@ public:
      */
     std::shared_ptr<AbilityPostEventTimeout> CreatePostEventTimeouter(std::string taskstr);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * Releases an obtained form by its ID.
      *
@@ -1038,6 +1071,7 @@ public:
      * </ul>
      */
     ErrCode DeleteForm(const int64_t formId);
+#endif
 
     /**
      * @brief Keep this Service ability in the background and displays a notification bar.
@@ -1054,6 +1088,7 @@ public:
      */
     virtual int StopBackgroundRunning() final;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief The form callback.
      */
@@ -1319,7 +1354,7 @@ public:
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
     ErrCode GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
-
+#endif
     /**
      * @brief Get the error message by error code.
      * @param errorCode the error code return form fms.
@@ -1357,12 +1392,14 @@ public:
      */
     virtual bool OnContinue(WantParams &wantParams);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Get page ability stack info.
      *
      * @return A string represents page ability stack info, empty if failed;
      */
     virtual std::string GetContentInfo();
+#endif
 
     /**
      * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
@@ -1440,6 +1477,7 @@ public:
      */
     virtual void OnRemoteTerminated() override;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Set WindowScene listener
      *
@@ -1447,6 +1485,7 @@ public:
      * @return None.
      */
     void SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener);
+#endif
 
 	/**
      * @brief request a remote object of callee from this ability.
@@ -1454,18 +1493,22 @@ public:
      */
     virtual sptr<IRemoteObject> CallRequest();
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called back at ability context.
      */
     virtual int GetCurrentWindowMode() override;
 
     uint32_t sceneFlag_ = 0;
+#endif
 protected:
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Acquire a form provider remote object.
      * @return Returns form provider remote object.
      */
     sptr<IRemoteObject> GetFormRemoteObject();
+#endif
 
     /**
      * @brief Acquire the launch parameter.
@@ -1473,6 +1516,7 @@ protected:
      */
     const AAFwk::LaunchParam& GetLaunchParam() const;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief process when foreground executed.
      *
@@ -1492,6 +1536,7 @@ protected:
      * @return window option.
      */
     sptr<Rosen::WindowOption> GetWindowOption(const Want &want);
+#endif
 
     /**
      * @brief judge where invoke resoreWindowStage in continuation
@@ -1514,6 +1559,7 @@ protected:
      */
     void NotityContinuationResult(const Want& want, bool success);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief override Rosen::DisplayManager::IDisplayListener virtual callback function
      *
@@ -1530,14 +1576,15 @@ protected:
      * @param to the displayId after display move
      */
     void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to) override;
-
+#endif
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
-    std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
     std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
-    sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
     LaunchParam launchParam_;
-
+#ifdef SUPPORT_GRAPHICS
+    std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
+    sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
+#endif
 private:
     std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
         std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
@@ -1581,11 +1628,14 @@ private:
     std::shared_ptr<AbilityLifecycleExecutor> abilityLifecycleExecutor_ = nullptr;
     std::shared_ptr<OHOSApplication> application_ = nullptr;
     std::vector<std::string> types_;
+#ifdef SUPPORT_GRAPHICS
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
+#endif
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
-
+#ifdef SUPPORT_GRAPHICS
     bool bWindowFocus_ = false;
+#endif
     int compatibleVersion_ = 0;
 
     static const std::string SYSTEM_UI;
@@ -1601,12 +1651,13 @@ private:
 
     // If session id cannot get from want, assign it as default.
     static const int DEFAULT_DMS_SESSION_ID;
-
+#ifdef SUPPORT_GRAPHICS
     std::vector<int64_t> lostedByReconnectTempForms_;
     std::map<int64_t, std::shared_ptr<FormCallback>> appCallbacks_;
+#endif
     std::map<int64_t, Want> userReqParams_;
     sptr<IBundleMgr> iBundleMgr_;
-
+#ifdef SUPPORT_GRAPHICS
     static const int32_t OHOS_FORM_ACQUIRE_FORM = 0;
     static const int32_t OHOS_FORM_UPDATE_FORM = 1;
 
@@ -1615,9 +1666,11 @@ private:
     static const int32_t DISABLE_FORM_UPDATE = 6;
     static const int32_t RELEASE_FORM = 8;
     static const int32_t RELEASE_CACHED_FORM = 9;
+#endif
     static const int64_t MIN_NEXT_TIME = 5;
 
 private:
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Delete or release form with formId.
      *
@@ -1693,6 +1746,7 @@ private:
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
     bool ReAcquireForm(const int64_t formId, const Want &want);
+#endif
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

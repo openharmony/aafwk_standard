@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,18 +30,18 @@ public:
     virtual ~TaskHandlerLibeventAdapter(){};
     bool Dispatch(const std::shared_ptr<Runnable> &runnable) override
     {
-        APP_LOGI("TaskHandlerLibeventAdapter::Dispatch called.");
+        HILOG_INFO("TaskHandlerLibeventAdapter::Dispatch called.");
         return EventHandler::PostTask(*(runnable.get()), EventQueue::Priority::HIGH);
     }
 
     bool Dispatch(const std::shared_ptr<Runnable> &runnable, long delayMs) override
     {
-        APP_LOGI("TaskHandlerLibeventAdapter::Delay Dispatch called.");
+        HILOG_INFO("TaskHandlerLibeventAdapter::Delay Dispatch called.");
         return EventHandler::PostTask(*(runnable.get()), delayMs, EventQueue::Priority::HIGH);
     }
     bool DispatchSync(const std::shared_ptr<Runnable> &runnable) override
     {
-        APP_LOGI("TaskHandlerLibeventAdapter::Delay Dispatch Sync called.");
+        HILOG_INFO("TaskHandlerLibeventAdapter::Delay Dispatch Sync called.");
         return EventHandler::PostSyncTask(*(runnable.get()), EventQueue::Priority::HIGH);
     }
 };

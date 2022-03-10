@@ -43,8 +43,10 @@ public:
     MOCK_METHOD2(BatchInsert, int(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values));
     MOCK_METHOD1(NormalizeUri, Uri(const Uri &));
     MOCK_METHOD1(DenormalizeUri, Uri(const Uri &));
+#ifdef SUPPORT_GRAPHICS
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
+#endif
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD2(
         ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));

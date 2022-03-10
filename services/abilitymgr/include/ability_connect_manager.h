@@ -230,6 +230,8 @@ public:
 
     void DumpState(std::vector<std::string> &info, bool isClient, const std::string &args = "") const;
 
+    void StopAllExtensions();
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t CONNECT_TIMEOUT_MSG = 1;
@@ -410,6 +412,8 @@ private:
      * @param messageId, message id.
      */
     void PostTimeOutTask(const std::shared_ptr<AbilityRecord> &abilityRecord, uint32_t messageId);
+
+    bool IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
 private:
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";

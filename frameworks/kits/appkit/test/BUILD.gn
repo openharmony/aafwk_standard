@@ -37,8 +37,8 @@ config("module_private_config") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"ApplicationModuleTest\"",
-    "LOG_DOMAIN = 0xD001152",
+    "AMS_LOG_TAG = \"ApplicationModuleTest\"",
+    "AMS_LOG_DOMAIN = 0xD001152",
   ]
 }
 

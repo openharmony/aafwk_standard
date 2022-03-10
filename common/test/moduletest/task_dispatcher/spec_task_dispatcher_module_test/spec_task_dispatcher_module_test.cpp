@@ -18,6 +18,7 @@
 #include "spec_task_dispatcher.h"
 #include "app_log_wrapper.h"
 #include "base_task_dispatcher.h"
+#include "hilog_wrapper.h"
 #include "task_dispatcher_context.h"
 #include "task_dispatcher.h"
 

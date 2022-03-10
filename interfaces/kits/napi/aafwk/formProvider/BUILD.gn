@@ -39,6 +39,7 @@ ohos_shared_library("formprovider_napi") {
   external_deps = [
     "ability_runtime:ability_manager",
     "ability_runtime:runtime",
+    "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
   ]
 

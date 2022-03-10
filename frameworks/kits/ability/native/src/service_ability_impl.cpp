@@ -14,7 +14,7 @@
  */
 
 #include "service_ability_impl.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -28,13 +28,13 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
  */
 void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
-    APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
+    HILOG_INFO("ServiceAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
              "isNewWant: %{public}d",
         lifecycleState_,
         targetState.state,
         targetState.isNewWant);
     if (lifecycleState_ == targetState.state) {
-        APP_LOGE("Org lifeCycleState equals to Dst lifeCycleState.");
+        HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
     }
 
@@ -43,7 +43,9 @@ void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk:
     switch (targetState.state) {
         case AAFwk::ABILITY_STATE_INITIAL: {
             if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+#ifdef SUPPORT_GRAPHICS
                 Background();
+#endif
                 Stop();
             }
             break;
@@ -58,17 +60,17 @@ void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk:
         }
         default: {
             ret = false;
-            APP_LOGE("ServiceAbilityImpl::HandleAbilityTransaction state is error");
+            HILOG_ERROR("ServiceAbilityImpl::HandleAbilityTransaction state is error");
             break;
         }
     }
 
     if (ret) {
-        APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("ServiceAbilityImpl::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
-        APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("ServiceAbilityImpl::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
-    APP_LOGI("ServiceAbilityImpl::HandleAbilityTransaction end");
+    HILOG_INFO("ServiceAbilityImpl::HandleAbilityTransaction end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -15,14 +15,13 @@ import("//build/ohos.gni")
 
 config("intent_config") {
   visibility = [ ":*" ]
-  include_dirs = [ "//sdk/appexecfwk/appexecfwk_base/include" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"Ability\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"Ability\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 
@@ -32,6 +31,7 @@ config("intent_public_config") {
     "//utils/native/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/intent/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
+    "//foundation/aafwk/standard/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
   ]
 }
@@ -51,19 +51,17 @@ ohos_shared_library("intent") {
     #"${intentImpl}/want.cpp",
   ]
 
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/lsamgr:lsamgr",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
     "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:lsamgr",
+    "utils_base:utils",
   ]
 
   configs = [ ":intent_config" ]

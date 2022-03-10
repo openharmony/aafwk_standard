@@ -248,6 +248,7 @@ private:
     void LoadLibrary();
     void UnloadLibrary();
     bool CheckCallingPermission(const std::string &permission);
+    napi_value MakePredicates(napi_env env, const NativeRdb::DataAbilityPredicates &predicates);
 
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsObj_;

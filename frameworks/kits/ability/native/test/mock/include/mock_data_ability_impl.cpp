@@ -18,7 +18,7 @@
 #include "values_bucket.h"
 #include "data_ability_impl.h"
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 const int returnValueOpenfile = 11;
 const int returnValueInsert = 22;

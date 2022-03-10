@@ -46,6 +46,7 @@ ohos_unittest("ability_connect_manage_test") {
     "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
@@ -65,6 +66,5 @@ ohos_unittest("ability_connect_manage_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":ability_connect_manage_test" ]
+  # deps = [ ":ability_connect_manage_test" ]
 }
