@@ -2339,13 +2339,16 @@ void MissionListManager::UninstallApp(const std::string &bundleName, int32_t uid
 void MissionListManager::AddUninstallTags(const std::string &bundleName, int32_t uid)
 {
     HILOG_INFO("AddUninstallTags, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);
-    for (auto& missionList : currentMissionLists_) {
+    for (auto it = currentMissionLists_.begin(); it != currentMissionLists_.end();) {
+        auto missionList = *it;
         if (missionList) {
             missionList->HandleUnInstallApp(bundleName, uid); // add tag here.
             if (missionList->IsEmpty()) {
-                currentMissionLists_.remove(missionList);
+                currentMissionLists_.erase(it++);
+                continue;
             }
         }
+        it++;
     }
     defaultSingleList_->HandleUnInstallApp(bundleName, uid);
     defaultStandardList_->HandleUnInstallApp(bundleName, uid);
