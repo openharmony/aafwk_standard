@@ -46,6 +46,12 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("enableFormsUpdate", NAPI_EnableFormsUpdate),
         DECLARE_NAPI_FUNCTION("disableFormsUpdate", NAPI_DisableFormsUpdate),
         DECLARE_NAPI_FUNCTION("isSystemReady", NAPI_CheckFMSReady),
+        DECLARE_NAPI_FUNCTION("deleteInvalidForms", NAPI_DeleteInvalidForms),
+        DECLARE_NAPI_FUNCTION("acquireFormState", NAPI_AcquireFormState),
+        DECLARE_NAPI_FUNCTION("on", NAPI_RegisterFormUninstallObserver),
+        DECLARE_NAPI_FUNCTION("off", NAPI_UnregisterFormUninstallObserver),
+        DECLARE_NAPI_FUNCTION("notifyFormsVisible", NAPI_NotifyFormsVisible),
+        DECLARE_NAPI_FUNCTION("notifyFormsEnableUpdate", NAPI_NotifyFormsEnableUpdate),
         DECLARE_NAPI_FUNCTION("getAllFormsInfo", NAPI_GetAllFormsInfo),
         DECLARE_NAPI_FUNCTION("getFormsInfo", NAPI_GetFormsInfo),
     };

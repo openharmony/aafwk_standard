@@ -718,6 +718,98 @@ int FormMgrProxy::DistributedDataDeleteForm(const std::string &formId)
 }
 
 /**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms to delete.
+ * @param callerToken Caller ability token.
+ * @param numFormsDeleted Returns the number of the deleted forms.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrProxy::DeleteInvalidForms(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                     int32_t &numFormsDeleted)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteInt64Vector(formIds)) {
+        HILOG_ERROR("%{public}s, failed to write vector formIds", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+        if (!data.WriteParcelable(callerToken)) {
+        HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int error = Remote()->SendRequest(
+        static_cast<uint32_t>(
+            IFormMgr::Message::FORM_MGR_DELETE_INVALID_FORMS),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
+    }
+
+    int32_t result = reply.ReadInt32();
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to read reply result", __func__);
+        return result;
+    }
+    numFormsDeleted = reply.ReadInt32();
+    return result;
+}
+
+/**
+ * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+ * @param want Indicates a set of parameters to be transparently passed to the form provider.
+ * @param callerToken Caller ability token.
+ * @param stateInfo Returns the form's state info of the specify.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrProxy::AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken, FormStateInfo &stateInfo)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(callerToken)) {
+        HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int error = Remote()->SendRequest(
+        static_cast<uint32_t>(
+            IFormMgr::Message::FORM_MGR_ACQUIRE_FORM_STATE),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
+    }
+
+    int32_t result = reply.ReadInt32();
+    if (result != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to read reply result", __func__);
+        return result;
+    }
+    stateInfo.state = (FormState)reply.ReadInt32();
+    stateInfo.want = want;
+    return result;
+}
+
+/**
  * @brief Get All FormsInfo.
  * @param formInfos Return the forms' information of all forms provided.
  * @return Returns ERR_OK on success, others on failure.

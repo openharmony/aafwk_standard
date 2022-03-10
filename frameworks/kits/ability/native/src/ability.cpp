@@ -2490,6 +2490,17 @@ void Ability::OnVisibilityChanged(const std::map<int64_t, int32_t> &formEventsMa
  */
 void Ability::OnTriggerEvent(const int64_t formId, const std::string &message)
 {}
+
+/**
+ * @brief Called to notify the form supplier to acquire form state.
+ *
+ * @param want Indicates the detailed information about the form to be obtained, including
+ *             the bundle name, module name, ability name, form name and form dimension.
+ */
+FormState Ability::OnAcquireFormState(const Want &want)
+{
+    return FormState::DEFAULT;
+}
 /**
  * @brief Delete or release form with formId.
  *
@@ -2925,6 +2936,54 @@ bool Ability::CheckFMSReady()
     }
 
     return true;
+}
+
+/**
+ * @brief Delete the given invalid forms.
+ *
+ * @param formIds Indicates the ID of the forms to delete.
+ * @param numFormsDeleted Returns the number of the deleted forms.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::DeleteInvalidForms(const std::vector<int64_t> &formIds, int32_t &numFormsDeleted)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // DeleteInvalidForms request to fms
+    int resultCode = FormMgr::GetInstance().DeleteInvalidForms(formIds, FormHostClient::GetInstance(), numFormsDeleted);
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to DeleteInvalidForms, error code is %{public}d.", __func__, resultCode);
+    }
+    return resultCode;
+}
+
+/**
+ * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+ *
+ * @param want Indicates a set of parameters to be transparently passed to the form provider.
+ * @param stateInfo Returns the form's state info of the specify.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::AcquireFormState(const Want &want, FormStateInfo &stateInfo)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // AcquireFormState request to fms
+    int resultCode = FormMgr::GetInstance().AcquireFormState(want, FormHostClient::GetInstance(), stateInfo);
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to AcquireFormState, error code is %{public}d.", __func__, resultCode);
+    }
+    return resultCode;
 }
 
 /**

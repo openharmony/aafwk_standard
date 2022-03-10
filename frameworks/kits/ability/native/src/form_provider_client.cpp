@@ -368,6 +368,41 @@ int FormProviderClient::FireFormEvent(
         return disconnectErrorCode;
     }
 }
+
+/**
+ * @brief Acquire form state to form provider.
+ * @param wantArg The want of onAcquireFormState.
+ * @param want The want of the request.
+ * @param callerToken Form provider proxy object.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormProviderClient::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    // The error code for business operation.
+    int errorCode = ERR_OK;
+    FormState state = FormState::UNKNOWN;
+    do {
+        std::shared_ptr<Ability> ownerAbility = GetOwner();
+        if (ownerAbility == nullptr) {
+            HILOG_ERROR("%{public}s error, ownerAbility is nullptr.", __func__);
+            errorCode = ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY;
+            break;
+        }
+        if (!CheckIsSystemApp()) {
+            HILOG_ERROR("%{public}s caller permission denied", __func__);
+            errorCode = ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+            break;
+        }
+
+        HILOG_INFO("%{public}s come, %{public}s", __func__, ownerAbility->GetAbilityName().c_str());
+        state = ownerAbility->OnAcquireFormState(wantArg);
+    } while (false);
+
+    HandleAcquireStateResult(state, errorCode, want, callerToken);
+    return errorCode;
+}
+
 /**
  * @brief Set the owner ability of the form provider client.
  *
@@ -465,6 +500,21 @@ int  FormProviderClient::HandleDisconnect(const Want &want, const sptr<IRemoteOb
 
     formSupplyClient->OnEventHandle(want);
     return ERR_OK;
+}
+
+int FormProviderClient::HandleAcquireStateResult(FormState state, int errorCode, const Want &want,
+                                                 const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s start, form state is %{public}d", __func__, state);
+
+    sptr<IFormSupply> formSupplyClient = iface_cast<IFormSupply>(callerToken);
+    if (formSupplyClient == nullptr) {
+        HILOG_ERROR("%{public}s warn, IFormSupply is nullptr", __func__);
+        return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
+    }
+    formSupplyClient->OnAcquireStateResult(state, want);
+    HILOG_INFO("%{public}s end", __func__);
+    return errorCode;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

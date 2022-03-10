@@ -13,15 +13,20 @@
 
 import("//build/ohos.gni")
 ohos_shared_library("formmanager") {
-  include_dirs =
-      [ "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager" ]
+  include_dirs = [
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+  ]
 
   sources = [
     "napi_form_manager.cpp",
     "native_module.cpp",
   ]
 
-  deps = [ "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native" ]
+  deps = [
+    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+  ]
 
   external_deps = [
     "ability_base:base",

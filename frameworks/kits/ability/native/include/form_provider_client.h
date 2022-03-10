@@ -123,6 +123,16 @@ public:
         const std::string &message,
         const Want &want,
         const sptr<IRemoteObject> &callerToken) override;
+
+    /**
+     * @brief Acquire form state to form provider.
+     * @param wantArg The want of onAcquireFormState.
+     * @param want The want of the request.
+     * @param callerToken Form provider proxy object.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken) override;
+
     /**
      * @brief Set the owner ability of the form provider client.
      *
@@ -144,6 +154,8 @@ protected:
     int HandleDisconnect(const Want &want, const sptr<IRemoteObject> &callerToken);
     int HandleAcquire(const FormProviderInfo &formProviderInfo, const Want &newWant,
         const sptr<IRemoteObject> &callerToken);
+    int HandleAcquireStateResult(FormState state, int errorCode, const Want &want,
+                                 const sptr<IRemoteObject> &callerToken);
 
 private:
     std::shared_ptr<Ability> GetOwner();
