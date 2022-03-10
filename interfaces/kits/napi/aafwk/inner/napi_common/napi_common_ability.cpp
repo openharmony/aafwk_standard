@@ -694,7 +694,7 @@ void GetExternalCacheDirExecuteCallback(napi_env env, void *data)
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
     asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetExternalCacheDir();
     HILOG_INFO(
-        "%{public}s end. ExternalCacheDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
+        "%{public}s end. ExternalCacheDir=%{private}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
 /**
@@ -2952,12 +2952,12 @@ void UnwrapAbilityStartSettingForNumber(
     bool isReadValue32 = false;
     bool isReadDouble = false;
     if (napi_get_value_int32(env, param, &natValue32) == napi_ok) {
-        HILOG_INFO("%{public}s called. Property value=%{public}d.", __func__, natValue32);
+        HILOG_INFO("%{public}s called. Property value=%{private}d.", __func__, natValue32);
         isReadValue32 = true;
     }
 
     if (napi_get_value_double(env, param, &natValueDouble) == napi_ok) {
-        HILOG_INFO("%{public}s called. Property value=%{public}lf.", __func__, natValueDouble);
+        HILOG_INFO("%{public}s called. Property value=%{private}lf.", __func__, natValueDouble);
         isReadDouble = true;
     }
 
@@ -3003,7 +3003,7 @@ bool UnwrapAbilityStartSetting(napi_env env, napi_value param, AAFwk::AbilitySta
         switch (jsValueType) {
             case napi_string: {
                 std::string natValue = UnwrapStringFromJS(env, jsProValue);
-                HILOG_INFO("%{public}s called. Property value=%{public}s.", __func__, natValue.c_str());
+                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue.c_str());
                 setting.AddProperty(strProName, natValue);
                 break;
             }
