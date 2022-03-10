@@ -861,6 +861,8 @@ public:
 
     bool IsAbilityControllerForeground(const std::string &bundleName);
 
+    bool IsAbilityControllerStartById(int32_t missionId);
+
     void GrantUriPermission(const Want &want, int32_t validUserId, uint32_t targetTokenId);
 
     /**
