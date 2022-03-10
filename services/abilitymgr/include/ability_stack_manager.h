@@ -245,14 +245,6 @@ public:
     int RemoveMissionById(int missionId);
 
     /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int RemoveStack(int stackId);
-
-    /**
      * move the mission stack to the top.
      *
      * @param stack, target mission stack.

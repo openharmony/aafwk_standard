@@ -190,11 +190,6 @@ int MockAbilityManagerService::RemoveMission(int id)
     return 0;
 }
 
-int MockAbilityManagerService::RemoveStack(int id)
-{
-    return 0;
-}
-
 sptr<IAbilityScheduler> MockAbilityManagerService::AcquireDataAbility(
     const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken)
 {

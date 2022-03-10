@@ -799,54 +799,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveStack
- * EnvConditions: NA
- * CaseDescription: 1.stackid < 0, RemoveStack failed
- *                  2.stackid no exist, RemoveStack failed
- *                  3.don't allow remove luncher mission stack
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level1)
-{
-    EXPECT_EQ(abilityMs_->RemoveStack(-1), OHOS::ERR_INVALID_VALUE);
-    EXPECT_EQ(abilityMs_->RemoveStack(INT_MAX), REMOVE_STACK_ID_NOT_EXIST);
-    EXPECT_EQ(abilityMs_->RemoveStack(0), REMOVE_STACK_LAUNCHER_DENIED);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveStack
- * EnvConditions: NA
- * CaseDescription: remove default stack success
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
-{
-    Want want;
-    ElementName element("device", "com.ix.music", "MusicAbility");
-    want.SetElement(element);
-    auto result = StartAbility(want);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(OHOS::ERR_OK, result);
-    auto stackManage = abilityMs_->GetStackManager();
-    stackManage->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    Want want1;
-    ElementName element1("device", "com.ix.music", "MusicAbility");
-    want1.SetElement(element1);
-    auto result1 = StartAbility(want);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(OHOS::ERR_OK, result1);
-
-    EXPECT_EQ(stackManage->GetCurrentMissionStack()->GetMissionRecordCount(), 1);
-    EXPECT_EQ(abilityMs_->RemoveStack(1), ERR_OK);
-
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: ConnectAbility
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService ConnectAbility

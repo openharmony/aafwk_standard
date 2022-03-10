@@ -161,7 +161,6 @@ napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info 
 napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info);
 napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info);
-napi_value NAPI_ClearMissions(napi_env env, napi_callback_info info);
 napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);

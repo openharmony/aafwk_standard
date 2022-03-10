@@ -368,22 +368,6 @@ void STAbilityUtil::PullOperatorFromVector(StOperator &ParentOperator, std::vect
     }
 }
 
-int STAbilityUtil::RemoveStack(
-    int id, sptr<AAFwk::IAbilityManager> &abilityMs, const time_t &backHmoeDelay, const time_t &removeDelay)
-{
-    Want wantEntity;
-    wantEntity.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
-    StartAbility(wantEntity, abilityMs);
-    std::this_thread::sleep_for(std::chrono::milliseconds(backHmoeDelay));
-    if (!abilityMs) {
-        HILOG_INFO("RemoveStack abilityMs nullptr");
-        return OHOS::ERR_INVALID_VALUE;
-    }
-    int result = abilityMs->RemoveStack(id);
-    std::this_thread::sleep_for(std::chrono::milliseconds(removeDelay));
-    return result;
-}
-
 InstallToolStatusReceiver::InstallToolStatusReceiver()
 {
     std::cout << "create status receiver instance" << std::endl;
