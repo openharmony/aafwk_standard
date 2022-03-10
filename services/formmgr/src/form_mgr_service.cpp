@@ -20,7 +20,6 @@
 #include <string>
 #include <unistd.h>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
@@ -33,6 +32,7 @@
 #include "form_mgr_adapter.h"
 #include "form_task_mgr.h"
 #include "form_timer_mgr.h"
+#include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "permission/permission.h"
@@ -74,7 +74,7 @@ bool FormMgrService::IsReady() const
         return false;
     }
     if (!handler_) {
-        APP_LOGE("%{public}s fail, handler is null", __func__);
+        HILOG_ERROR("%{public}s fail, handler is null", __func__);
         return false;
     }
 
@@ -94,7 +94,7 @@ int FormMgrService::AddForm(const int64_t formId, const Want &want,
 {
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, add form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, add form permission denied", __func__);
         return ret;
     }
     return FormMgrAdapter::GetInstance().AddForm(formId, want, callerToken, formInfo);
@@ -110,7 +110,7 @@ int FormMgrService::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &
 {
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, delete form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, delete form permission denied", __func__);
         return ret;
     }
 
@@ -128,7 +128,7 @@ int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> 
 {
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, release form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, release form permission denied", __func__);
         return ret;
     }
 
@@ -157,11 +157,11 @@ int FormMgrService::UpdateForm(const int64_t formId,
  */
 int FormMgrService::RequestForm(const int64_t formId, const sptr<IRemoteObject> &callerToken, const Want &want)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, request form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, request form permission denied", __func__);
         return ret;
     }
 
@@ -177,7 +177,7 @@ int FormMgrService::RequestForm(const int64_t formId, const sptr<IRemoteObject> 
  */
 int FormMgrService::SetNextRefreshTime(const int64_t formId, const int64_t nextTime)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
 
     return FormMgrAdapter::GetInstance().SetNextRefreshTime(formId, nextTime);
 }
@@ -195,7 +195,7 @@ int FormMgrService::NotifyWhetherVisibleForms(const std::vector<int64_t> &formId
 {
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, event notify visible permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, event notify visible permission denied", __func__);
         return ret;
     }
 
@@ -212,7 +212,7 @@ int FormMgrService::CastTempForm(const int64_t formId, const sptr<IRemoteObject>
 {
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, cast temp form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, cast temp form permission denied", __func__);
         return ret;
     }
 
@@ -229,11 +229,11 @@ int FormMgrService::CastTempForm(const int64_t formId, const sptr<IRemoteObject>
 int FormMgrService::LifecycleUpdate(const std::vector<int64_t> &formIds,
     const sptr<IRemoteObject> &callerToken, const int32_t updateType)
 {
-    APP_LOGI("lifecycleUpdate.");
+    HILOG_INFO("lifecycleUpdate.");
 
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, delete form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, delete form permission denied", __func__);
         return ret;
     }
 
@@ -291,10 +291,10 @@ int FormMgrService::DumpFormTimerByFormId(const std::int64_t formId, std::string
  */
 int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        APP_LOGE("%{public}s fail, request form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, request form permission denied", __func__);
         return ret;
     }
     return FormMgrAdapter::GetInstance().MessageEvent(formId, want, callerToken);
@@ -323,27 +323,27 @@ int FormMgrService::ClearFormRecords()
 void FormMgrService::OnStart()
 {
     if (state_ == ServiceRunningState::STATE_RUNNING) {
-        APP_LOGW("%{public}s fail, Failed to start service since it's already running", __func__);
+        HILOG_WARN("%{public}s fail, Failed to start service since it's already running", __func__);
         return;
     }
 
-    APP_LOGI("Form Mgr Service start...");
+    HILOG_INFO("Form Mgr Service start...");
     ErrCode errCode = Init();
     if (errCode != ERR_OK) {
-        APP_LOGE("%{public}s fail, Failed to init, errCode: %{public}08x", __func__, errCode);
+        HILOG_ERROR("%{public}s fail, Failed to init, errCode: %{public}08x", __func__, errCode);
         return;
     }
 
     state_ = ServiceRunningState::STATE_RUNNING;
 
-    APP_LOGI("Form Mgr Service start success.");
+    HILOG_INFO("Form Mgr Service start success.");
 }
 /**
  * @brief Stop envent for the form manager service.
  */
 void FormMgrService::OnStop()
 {
-    APP_LOGI("stop service");
+    HILOG_INFO("stop service");
 
     state_ = ServiceRunningState::STATE_NOT_START;
 
@@ -362,12 +362,12 @@ ErrCode FormMgrService::Init()
 {
     runner_ = EventRunner::Create(NAME_FORM_MGR_SERVICE);
     if (!runner_) {
-        APP_LOGE("%{public}s fail, Failed to init due to create runner error", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to init due to create runner error", __func__);
         return ERR_INVALID_OPERATION;
     }
     handler_ = std::make_shared<EventHandler>(runner_);
     if (!handler_) {
-        APP_LOGE("%{public}s fail, Failed to init due to create handler error", __func__);
+        HILOG_ERROR("%{public}s fail, Failed to init due to create handler error", __func__);
         return ERR_INVALID_OPERATION;
     }
     FormTaskMgr::GetInstance().SetEventHandler(handler_);
@@ -376,7 +376,7 @@ ErrCode FormMgrService::Init()
      * so it can't affect the TDD test program */
     bool ret = Publish(DelayedSingleton<FormMgrService>::GetInstance().get());
     if (!ret) {
-        APP_LOGE("%{public}s fail, FormMgrService::Init Publish failed!", __func__);
+        HILOG_ERROR("%{public}s fail, FormMgrService::Init Publish failed!", __func__);
         return ERR_INVALID_OPERATION;
     }
 
@@ -396,7 +396,7 @@ ErrCode FormMgrService::Init()
     FormDbCache::GetInstance().Start();
     FormInfoMgr::GetInstance().Start();
 
-    APP_LOGI("init success");
+    HILOG_INFO("init success");
     return ERR_OK;
 }
 
@@ -410,7 +410,7 @@ ErrCode FormMgrService::CheckFormPermission()
     // get IBundleMgr
     sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
     if (iBundleMgr == nullptr) {
-        APP_LOGE("%{public}s error, failed to get IBundleMgr.", __func__);
+        HILOG_ERROR("%{public}s error, failed to get IBundleMgr.", __func__);
         return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
     }
 
@@ -425,7 +425,7 @@ ErrCode FormMgrService::CheckFormPermission()
     if (!isCallingPerm) {
         return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
     }
-    APP_LOGI("Permission verification ok!");
+    HILOG_ERROR("Permission verification ok!");
     return ERR_OK;
 }
 
@@ -436,7 +436,7 @@ ErrCode FormMgrService::CheckFormPermission()
  */
 int FormMgrService::DistributedDataAddForm(const Want &want)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().DistributedDataAddForm(want);
 }
 
@@ -447,7 +447,7 @@ int FormMgrService::DistributedDataAddForm(const Want &want)
  */
 int FormMgrService::DistributedDataDeleteForm(const std::string &formId)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().DistributedDataDeleteForm(formId);
 }
 
@@ -458,7 +458,7 @@ int FormMgrService::DistributedDataDeleteForm(const std::string &formId)
  */
 int FormMgrService::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetAllFormsInfo(formInfos);
 }
 
@@ -470,7 +470,7 @@ int FormMgrService::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
  */
 int FormMgrService::GetFormsInfoByApp(std::string &bundleName, std::vector<FormInfo> &formInfos)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetFormsInfoByApp(bundleName, formInfos);
 }
 
@@ -484,7 +484,7 @@ int FormMgrService::GetFormsInfoByApp(std::string &bundleName, std::vector<FormI
 int FormMgrService::GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
                                          std::vector<FormInfo> &formInfos)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
 }  // namespace AppExecFwk

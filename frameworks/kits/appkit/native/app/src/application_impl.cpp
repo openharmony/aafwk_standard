@@ -15,7 +15,7 @@
 
 #include "application_impl.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "ohos_application.h"
 #include "uri_permission_manager_client.h"
 
@@ -33,7 +33,7 @@ ApplicationImpl::ApplicationImpl() : curState_(APP_STATE_CREATE), recordId_(0)
 void ApplicationImpl::SetApplication(const std::shared_ptr<OHOSApplication> &application)
 {
     if (application == nullptr) {
-        APP_LOGE("ApplicationImpl::SetApplication failed, application is nullptr");
+        HILOG_ERROR("ApplicationImpl::SetApplication failed, application is nullptr");
         return;
     }
     this->application_ = application;
@@ -47,13 +47,13 @@ void ApplicationImpl::SetApplication(const std::shared_ptr<OHOSApplication> &app
  */
 bool ApplicationImpl::PerformAppReady()
 {
-    APP_LOGD("ApplicationImpl::PerformAppReady called");
+    HILOG_DEBUG("ApplicationImpl::PerformAppReady called");
     if (curState_ == APP_STATE_CREATE) {
         application_->OnStart();
         curState_ = APP_STATE_READY;
         return true;
     }
-    APP_LOGE("ApplicationImpl::PerformAppReady error! curState is %{public}d", curState_);
+    HILOG_ERROR("ApplicationImpl::PerformAppReady error! curState is %{public}d", curState_);
     return false;
 }
 
@@ -65,13 +65,13 @@ bool ApplicationImpl::PerformAppReady()
  */
 bool ApplicationImpl::PerformForeground()
 {
-    APP_LOGD("ApplicationImpl::performForeground called");
+    HILOG_DEBUG("ApplicationImpl::performForeground called");
     if ((curState_ == APP_STATE_READY) || (curState_ == APP_STATE_BACKGROUND)) {
         application_->OnForeground();
         curState_ = APP_STATE_FOREGROUND;
         return true;
     }
-    APP_LOGE("ApplicationImpl::performForeground error! curState is %{public}d", curState_);
+    HILOG_ERROR("ApplicationImpl::performForeground error! curState is %{public}d", curState_);
     return false;
 }
 
@@ -83,13 +83,13 @@ bool ApplicationImpl::PerformForeground()
  */
 bool ApplicationImpl::PerformBackground()
 {
-    APP_LOGD("ApplicationImpl::performBackground called");
+    HILOG_DEBUG("ApplicationImpl::performBackground called");
     if (curState_ == APP_STATE_FOREGROUND) {
         application_->OnBackground();
         curState_ = APP_STATE_BACKGROUND;
         return true;
     }
-    APP_LOGE("ApplicationImpl::performBackground error! curState is %{public}d", curState_);
+    HILOG_ERROR("ApplicationImpl::performBackground error! curState is %{public}d", curState_);
     return false;
 }
 
@@ -101,14 +101,14 @@ bool ApplicationImpl::PerformBackground()
  */
 bool ApplicationImpl::PerformTerminate()
 {
-    APP_LOGD("ApplicationImpl::PerformTerminate called");
+    HILOG_DEBUG("ApplicationImpl::PerformTerminate called");
     if (curState_ == APP_STATE_BACKGROUND) {
         application_->OnTerminate();
         curState_ = APP_STATE_TERMINATED;
         RemoveUriPermission();
         return true;
     }
-    APP_LOGE("ApplicationImpl::performTerminate error! curState is %{public}d", curState_);
+    HILOG_ERROR("ApplicationImpl::performTerminate error! curState is %{public}d", curState_);
     return false;
 }
 
@@ -120,7 +120,7 @@ bool ApplicationImpl::PerformTerminate()
  */
 void ApplicationImpl::PerformTerminateStrong()
 {
-    APP_LOGD("ApplicationImpl::PerformTerminateStrong called");
+    HILOG_DEBUG("ApplicationImpl::PerformTerminateStrong called");
     application_->OnTerminate();
     RemoveUriPermission();
 }
@@ -129,12 +129,12 @@ void ApplicationImpl::RemoveUriPermission()
 {
     auto appContext = application_->GetAppContext();
     if (!appContext) {
-        APP_LOGE("ApplicationImpl::RemoveUriPermission: Get appliction context failed.");
+        HILOG_ERROR("ApplicationImpl::RemoveUriPermission: Get appliction context failed.");
         return;
     }
     auto appInfo = appContext->GetApplicationInfo();
     if (!appInfo) {
-        APP_LOGE("ApplicationImpl::RemoveUriPermission: Get appliction info failed.");
+        HILOG_ERROR("ApplicationImpl::RemoveUriPermission: Get appliction info failed.");
         return;
     }
     auto uriPermMgrClient = AAFwk::UriPermissionManagerClient::GetInstance();
@@ -149,7 +149,7 @@ void ApplicationImpl::RemoveUriPermission()
  */
 void ApplicationImpl::PerformMemoryLevel(int level)
 {
-    APP_LOGD("ApplicationImpl::PerformMemoryLevel called");
+    HILOG_DEBUG("ApplicationImpl::PerformMemoryLevel called");
     application_->OnMemoryLevel(level);
 }
 
@@ -161,7 +161,7 @@ void ApplicationImpl::PerformMemoryLevel(int level)
  */
 void ApplicationImpl::PerformConfigurationUpdated(const Configuration &config)
 {
-    APP_LOGD("ApplicationImpl::PerformConfigurationUpdated called");
+    HILOG_DEBUG("ApplicationImpl::PerformConfigurationUpdated called");
     application_->OnConfigurationUpdated(config);
 }
 

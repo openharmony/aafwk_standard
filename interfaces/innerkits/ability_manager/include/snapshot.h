@@ -19,9 +19,11 @@
 #include <iremote_broker.h>
 
 namespace OHOS {
+#ifdef SUPPORT_GRAPHICS
 namespace Media {
 class PixelMap;
 }
+#endif
 namespace AAFwk {
 /**
  * @class Snapshot
@@ -31,6 +33,7 @@ class Snapshot {
 public:
     Snapshot() = default;
     ~Snapshot() = default;
+#ifdef SUPPORT_GRAPHICS
     const std::shared_ptr<Media::PixelMap>& GetPixelMap() const
     {
         return pixelMap_;
@@ -41,6 +44,7 @@ public:
     }
 private:
     std::shared_ptr<Media::PixelMap> pixelMap_ = nullptr;
+#endif
 };
 
 /**

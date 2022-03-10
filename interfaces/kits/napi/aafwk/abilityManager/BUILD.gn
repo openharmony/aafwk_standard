@@ -12,13 +12,12 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("abilitymanager") {
   include_dirs = [
-    "//foundation/ace/napi/interfaces/kits",
     "//third_party/node/src",
     "//foundation/aafwk/standard/services/common/include",
-    "//foundation/multimedia/image_standard/interfaces/kits/js/common/include/",
     "//utils/system/safwk/native/include",
     "./",
   ]
@@ -36,23 +35,30 @@ ohos_shared_library("abilitymanager") {
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/aafwk/standard/services/appmgr:libams",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/appexecfwk/standard/libs/libeventhandler:libeventhandler_target",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image",
-    "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image",
+    "multimedia_image_standard:image_native",
+    "napi:ace_napi",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
+
+  if (ability_runtime_graphics) {
+    include_dirs += [ "//foundation/multimedia/image_standard/interfaces/kits/js/common/include/" ]
+    deps += [
+      "//foundation/multimedia/image_standard/interfaces/innerkits:image",
+      "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+    ]
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
 
   relative_install_dir = "module/app"
 

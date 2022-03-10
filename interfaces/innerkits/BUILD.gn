@@ -10,6 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import("//foundation/aafwk/standard/feature.gni")
 
 group("innerkits_target") {
   deps = [
@@ -23,7 +24,9 @@ group("innerkits_target") {
 }
 
 group("fms_innerkits_target") {
-  deps = [ "form_manager:form_manager" ]
+  if (ability_runtime_graphics) {
+    deps = [ "form_manager:form_manager" ]
+  }
 }
 
 group("base_innerkits_target") {

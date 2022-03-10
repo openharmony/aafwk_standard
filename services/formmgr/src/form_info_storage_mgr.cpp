@@ -16,7 +16,7 @@
 #include "form_info_storage_mgr.h"
 #include <thread>
 #include <unistd.h>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "kvstore_death_recipient_callback.h"
 
 namespace OHOS {
@@ -28,17 +28,17 @@ const int32_t CHECK_INTERVAL = 100000;  // 100ms
 
 KvStoreDeathRecipientCallbackFormInfoStorage::KvStoreDeathRecipientCallbackFormInfoStorage()
 {
-    APP_LOGI("create kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("create kvstore death recipient callback instance %{public}p", this);
 }
 
 KvStoreDeathRecipientCallbackFormInfoStorage::~KvStoreDeathRecipientCallbackFormInfoStorage()
 {
-    APP_LOGI("destroy kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("destroy kvstore death recipient callback instance %{public}p", this);
 }
 
 void KvStoreDeathRecipientCallbackFormInfoStorage::OnRemoteDied()
 {
-    APP_LOGI("OnRemoteDied, register data change listener begin");
+    HILOG_INFO("OnRemoteDied, register data change listener begin");
     std::thread([] {
         int32_t times = 0;
         FormInfoStorageMgr &formInfoStorageMgr = FormInfoStorageMgr::GetInstance();
@@ -47,14 +47,14 @@ void KvStoreDeathRecipientCallbackFormInfoStorage::OnRemoteDied()
             // init kvStore.
             if (formInfoStorageMgr.ResetKvStore()) {
                 // register data change listener again.
-                APP_LOGI("current times is %{public}d", times);
+                HILOG_INFO("current times is %{public}d", times);
                 break;
             }
             usleep(CHECK_INTERVAL);
         }
     }).detach();
 
-    APP_LOGI("OnRemoteDied, register data change listener end");
+    HILOG_INFO("OnRemoteDied, register data change listener end");
 }
 
 FormInfoStorageMgr::FormInfoStorageMgr()
@@ -62,10 +62,10 @@ FormInfoStorageMgr::FormInfoStorageMgr()
     DistributedKv::Status status = GetKvStore();
     if (status == DistributedKv::Status::IPC_ERROR) {
         status = GetKvStore();
-        APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+        HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
     RegisterKvStoreDeathListener();
-    APP_LOGI("FormInfoStorageMgr is created");
+    HILOG_INFO("FormInfoStorageMgr is created");
 }
 
 FormInfoStorageMgr::~FormInfoStorageMgr()
@@ -75,11 +75,11 @@ FormInfoStorageMgr::~FormInfoStorageMgr()
 
 ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std::string>> &formInfos)
 {
-    APP_LOGI("FormInfoStorageMgr load all form infos");
+    HILOG_INFO("FormInfoStorageMgr load all form infos");
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
         if (!CheckKvStore()) {
-            APP_LOGE("kvStore is nullptr");
+            HILOG_ERROR("kvStore is nullptr");
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
@@ -89,11 +89,11 @@ ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std
     status = GetEntries(allEntries);
     if (status == DistributedKv::Status::IPC_ERROR) {
         status = GetEntries(allEntries);
-        APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+        HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
 
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("get entries error: %{public}d", status);
+        HILOG_ERROR("get entries error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
@@ -107,15 +107,15 @@ ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std
 ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, std::string &formInfos)
 {
     if (bundleName.empty()) {
-        APP_LOGE("bundleName is empty.");
+        HILOG_ERROR("bundleName is empty.");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    APP_LOGI("FormInfoStorageMgr get form info, bundleName=%{public}s", bundleName.c_str());
+    HILOG_INFO("FormInfoStorageMgr get form info, bundleName=%{public}s", bundleName.c_str());
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
         if (!CheckKvStore()) {
-            APP_LOGE("kvStore is nullptr");
+            HILOG_ERROR("kvStore is nullptr");
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
@@ -129,12 +129,12 @@ ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, st
     }
 
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("get entries error: %{public}d", status);
+        HILOG_ERROR("get entries error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
     if (allEntries.empty()) {
-        APP_LOGE("%{public}s not match any FormInfo", bundleName.c_str());
+        HILOG_ERROR("%{public}s not match any FormInfo", bundleName.c_str());
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
@@ -145,15 +145,15 @@ ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, st
 ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, const std::string &formInfos)
 {
     if (bundleName.empty()) {
-        APP_LOGE("bundleName is empty.");
+        HILOG_ERROR("bundleName is empty.");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    APP_LOGI("FormInfoStorageMgr save form info, bundleName=%{public}s", bundleName.c_str());
+    HILOG_INFO("FormInfoStorageMgr save form info, bundleName=%{public}s", bundleName.c_str());
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
         if (!CheckKvStore()) {
-            APP_LOGE("kvStore is nullptr");
+            HILOG_ERROR("kvStore is nullptr");
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
@@ -166,11 +166,11 @@ ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, c
         status = kvStorePtr_->Put(key, value);
         if (status == DistributedKv::Status::IPC_ERROR) {
             status = kvStorePtr_->Put(key, value);
-            APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+            HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
         }
     }
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("save formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("save formInfos to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
@@ -179,15 +179,15 @@ ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, c
 ErrCode FormInfoStorageMgr::RemoveBundleFormInfos(const std::string &bundleName)
 {
     if (bundleName.empty()) {
-        APP_LOGE("bundleName is empty.");
+        HILOG_ERROR("bundleName is empty.");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    APP_LOGI("FormInfoStorageMgr remove form info, bundleName=%{public}s", bundleName.c_str());
+    HILOG_INFO("FormInfoStorageMgr remove form info, bundleName=%{public}s", bundleName.c_str());
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
         if (!CheckKvStore()) {
-            APP_LOGE("kvStore is nullptr");
+            HILOG_ERROR("kvStore is nullptr");
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
@@ -199,12 +199,12 @@ ErrCode FormInfoStorageMgr::RemoveBundleFormInfos(const std::string &bundleName)
         status = kvStorePtr_->Delete(key);
         if (status == DistributedKv::Status::IPC_ERROR) {
             status = kvStorePtr_->Delete(key);
-            APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+            HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
         }
     }
 
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("remove formInfos from kvStore error: %{public}d", status);
+        HILOG_ERROR("remove formInfos from kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
@@ -213,15 +213,15 @@ ErrCode FormInfoStorageMgr::RemoveBundleFormInfos(const std::string &bundleName)
 ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName, const std::string &formInfos)
 {
     if (bundleName.empty()) {
-        APP_LOGE("bundleName is empty.");
+        HILOG_ERROR("bundleName is empty.");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    APP_LOGI("FormInfoStorageMgr update form info, bundleName=%{public}s", bundleName.c_str());
+    HILOG_INFO("FormInfoStorageMgr update form info, bundleName=%{public}s", bundleName.c_str());
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
         if (!CheckKvStore()) {
-            APP_LOGE("kvStore is nullptr");
+            HILOG_ERROR("kvStore is nullptr");
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
@@ -232,10 +232,10 @@ ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName,
     status = kvStorePtr_->Delete(key);
     if (status == DistributedKv::Status::IPC_ERROR) {
         status = kvStorePtr_->Delete(key);
-        APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+        HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
     if (status != DistributedKv::Status::SUCCESS && status != DistributedKv::Status::KEY_NOT_FOUND) {
-        APP_LOGE("update formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("update formInfos to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
@@ -243,10 +243,10 @@ ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName,
     status = kvStorePtr_->Put(key, value);
     if (status == DistributedKv::Status::IPC_ERROR) {
         status = kvStorePtr_->Put(key, value);
-        APP_LOGW("distribute database ipc error and try to call again, result = %{public}d", status);
+        HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("update formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("update formInfos to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
@@ -263,9 +263,9 @@ DistributedKv::Status FormInfoStorageMgr::GetKvStore()
 
     DistributedKv::Status status = dataManager_.GetSingleKvStore(options, appId_, storeId_, kvStorePtr_);
     if (status != DistributedKv::Status::SUCCESS) {
-        APP_LOGE("return error: %{public}d", status);
+        HILOG_ERROR("return error: %{public}d", status);
     } else {
-        APP_LOGI("get kvStore success");
+        HILOG_INFO("get kvStore success");
     }
     return status;
 }
@@ -281,7 +281,7 @@ bool FormInfoStorageMgr::CheckKvStore()
         if (status == DistributedKv::Status::SUCCESS && kvStorePtr_ != nullptr) {
             return true;
         }
-        APP_LOGI("CheckKvStore, Times: %{public}d", tryTimes);
+        HILOG_INFO("CheckKvStore, Times: %{public}d", tryTimes);
         usleep(SLEEP_INTERVAL);
         tryTimes--;
     }
@@ -290,7 +290,7 @@ bool FormInfoStorageMgr::CheckKvStore()
 
 void FormInfoStorageMgr::RegisterKvStoreDeathListener()
 {
-    APP_LOGI("register kvStore death listener");
+    HILOG_INFO("register kvStore death listener");
     std::shared_ptr<DistributedKv::KvStoreDeathRecipient> callback =
         std::make_shared<KvStoreDeathRecipientCallbackFormInfoStorage>();
     dataManager_.RegisterKvStoreServiceDeathRecipient(callback);
@@ -304,7 +304,7 @@ bool FormInfoStorageMgr::ResetKvStore()
     if (status == DistributedKv::Status::SUCCESS && kvStorePtr_ != nullptr) {
         return true;
     }
-    APP_LOGW("failed");
+    HILOG_WARN("failed");
     return false;
 }
 
@@ -317,7 +317,7 @@ DistributedKv::Status FormInfoStorageMgr::GetEntries(std::vector<DistributedKv::
         // sync call GetEntries, the callback will be trigger at once
         status = kvStorePtr_->GetEntries(key, allEntries);
     }
-    APP_LOGI("get all entries status: %{public}d", status);
+    HILOG_INFO("get all entries status: %{public}d", status);
     return status;
 }
 }  // namespace AppExecFwk

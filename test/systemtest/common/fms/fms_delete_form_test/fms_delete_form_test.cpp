@@ -22,7 +22,7 @@
 #include "ability_info.h"
 #include "ability_local_record.h"
 #include "ability_start_setting.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "context_deal.h"

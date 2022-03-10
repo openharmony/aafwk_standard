@@ -14,10 +14,10 @@
  */
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "app_scheduler_interface.h"
 #include "errors.h"
 #include "form_host_stub.h"
+#include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
@@ -47,11 +47,11 @@ FormHostStub::~FormHostStub()
  */
 int FormHostStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("FormHostStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("FormHostStub::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = FormHostStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("%{public}s failed, local descriptor is not equal to remote", __func__);
+        HILOG_ERROR("%{public}s failed, local descriptor is not equal to remote", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
@@ -75,7 +75,7 @@ int FormHostStub::HandleAcquired(MessageParcel &data, MessageParcel &reply)
 {
     std::unique_ptr<FormJsInfo> formInfo(data.ReadParcelable<FormJsInfo>());
     if (!formInfo) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<FormJsInfo>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<FormJsInfo>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     OnAcquired(*formInfo);
@@ -92,7 +92,7 @@ int FormHostStub::HandleOnUpdate(MessageParcel &data, MessageParcel &reply)
 {
     std::unique_ptr<FormJsInfo> formInfo(data.ReadParcelable<FormJsInfo>());
     if (!formInfo) {
-        APP_LOGE("%{public}s, failed to ReadParcelable<FormJsInfo>", __func__);
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<FormJsInfo>", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     OnUpdate(*formInfo);

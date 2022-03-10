@@ -13,10 +13,12 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 group("tools_target") {
-  deps = [
-    "aa:tools_aa",
-    "fm:tools_fm",
-  ]
+  deps = [ "aa:tools_aa" ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "fm:tools_fm" ]
+  }
 }

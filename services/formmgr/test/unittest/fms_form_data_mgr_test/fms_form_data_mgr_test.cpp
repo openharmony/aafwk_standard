@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,13 +18,13 @@
 #include <string>
 #include <thread>
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #define private public
 #include "form_data_mgr.h"
 #undef private
 #include "form_constants.h"
 #include "form_record.h"
+#include "hilog_wrapper.h"
 #include "mock_form_host_client.h"
 
 using namespace testing::ext;
@@ -259,7 +259,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_AllotFormRecord_006, TestSize.Le
  * @tc.desc: Verify that the return value is correct.
  * @tc.details:
  *      SetUpdateDuration is 0.(call ParseAtTimerConfig)
- *      获取配置项scheduledUpdateTime_为无效值
+ *      Gets the configuration item scheduledUpdateTime_ an invalid value.
  */
 HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_AllotFormRecord_007, TestSize.Level0)
 {

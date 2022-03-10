@@ -28,14 +28,8 @@ group("unittest") {
 config("dataobsms_config") {
   include_dirs = [
     "include/",
-    "${innerkits_path}/base/include",
     "${services_path}/common/include",
-    "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
-    "//prebuilts/jdk/jdk8/linux-x86/include",
-    "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -48,22 +42,20 @@ ohos_shared_library("dataobsms") {
 
   configs = [ ":dataobsms_config" ]
 
-  deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "${innerkits_path}/dataobs_manager:dataobs_manager" ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:zuri",
+    "ability_runtime:abilitykit_native",
+    "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

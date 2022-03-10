@@ -17,7 +17,7 @@
 #include <iostream>
 #include <numeric>
 #include <sstream>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -44,12 +44,12 @@ void ThirdAbility::SubscribeEvent(const vector_conststr &eventList)
 
 void ThirdAbility::ProcessInfoStByCode(int apiIndex, int caseIndex, int code)
 {
-    APP_LOGI("ThirdAbility::ProcessInfoStByCode");
+    HILOG_INFO("ThirdAbility::ProcessInfoStByCode");
     if (mapStKitFunc_.find(apiIndex) != mapStKitFunc_.end() &&
         static_cast<int>(mapStKitFunc_[apiIndex].size()) > caseIndex) {
         mapStKitFunc_[apiIndex][caseIndex](code);
     } else {
-        APP_LOGI("ProcessInfoStByCode error");
+        HILOG_INFO("ProcessInfoStByCode error");
     }
 }
 
@@ -349,7 +349,7 @@ void ThirdAbility::ProcessInfoProcessInfoStringintCase6(int code)
 
 void ThirdAbility::OnStart(const Want &want)
 {
-    APP_LOGI("ThirdAbility::onStart");
+    HILOG_INFO("ThirdAbility::onStart");
     GetWantInfo(want);
     Ability::OnStart(want);
     SubscribeEvent(g_requPageThirdAbilitySTVector);
@@ -359,7 +359,7 @@ void ThirdAbility::OnStart(const Want &want)
 
 void ThirdAbility::OnStop()
 {
-    APP_LOGI("ThirdAbility::onStop");
+    HILOG_INFO("ThirdAbility::onStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     std::string eventData = GetAbilityName() + g_abilityStateOnStop;
@@ -368,7 +368,7 @@ void ThirdAbility::OnStop()
 
 void ThirdAbility::OnActive()
 {
-    APP_LOGI("ThirdAbility::OnActive");
+    HILOG_INFO("ThirdAbility::OnActive");
     Ability::OnActive();
     std::string startBundleName = this->Split(targetBundle_, ",");
     std::string startAabilityName = this->Split(targetAbility_, ",");
@@ -392,7 +392,7 @@ void ThirdAbility::OnActive()
 
 void ThirdAbility::OnInactive()
 {
-    APP_LOGI("ThirdAbility::OnInactive");
+    HILOG_INFO("ThirdAbility::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + g_abilityStateOnInactive;
     TestUtils::PublishEvent(g_respPageThirdAbilityST, 0, eventData);
@@ -400,7 +400,7 @@ void ThirdAbility::OnInactive()
 
 void ThirdAbility::OnBackground()
 {
-    APP_LOGI("ThirdAbility::OnBackground");
+    HILOG_INFO("ThirdAbility::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + g_abilityStateOnBackground;
     TestUtils::PublishEvent(g_respPageThirdAbilityST, 0, eventData);
@@ -408,7 +408,7 @@ void ThirdAbility::OnBackground()
 
 void ThirdAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("ThirdAbility::OnForeground");
+    HILOG_INFO("ThirdAbility::OnForeground");
     GetWantInfo(want);
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnForeground;
@@ -417,7 +417,7 @@ void ThirdAbility::OnForeground(const Want &want)
 
 void ThirdAbility::OnNewWant(const Want &want)
 {
-    APP_LOGI("ThirdAbility::OnNewWant");
+    HILOG_INFO("ThirdAbility::OnNewWant");
     GetWantInfo(want);
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + g_abilityStateOnNewWant;
@@ -457,9 +457,9 @@ std::string ThirdAbility::Split(std::string &str, std::string delim)
 
 void KitTestThirdEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (g_requPageThirdAbilityST == eventName) {
         auto target = data.GetData();
@@ -478,7 +478,7 @@ void KitTestThirdEventSubscriber::OnReceiveEvent(const CommonEventData &data)
             if (keyMap == "TerminateAbility") {
                 KitTerminateAbility();
             } else {
-                APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+                HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
             }
         }
     }

@@ -14,10 +14,12 @@
  */
 
 #include "ability_impl_factory.h"
-#include "app_log_wrapper.h"
 #include "data_ability_impl.h"
+#include "hilog_wrapper.h"
 #include "new_ability_impl.h"
+#ifdef SUPPORT_GRAPHICS
 #include "page_ability_impl.h"
+#endif
 #include "service_ability_impl.h"
 
 namespace OHOS {
@@ -49,14 +51,15 @@ std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std
     int compatibleVersion)
 {
     if (info == nullptr) {
-        APP_LOGE("AbilityImplFactory::MakeAbilityImplObject is error nullptr == info ");
+        HILOG_ERROR("AbilityImplFactory::MakeAbilityImplObject is error nullptr == info ");
         return nullptr;
     }
 
     std::shared_ptr<AbilityImpl> abilityImpl = nullptr;
-    APP_LOGI("AbilityImplFactory::MakeAbilityImplObject type:%{public}d, isStageBasedModel:%{public}d", info->type,
+    HILOG_INFO("AbilityImplFactory::MakeAbilityImplObject type:%{public}d, isStageBasedModel:%{public}d", info->type,
         info->isStageBasedModel);
     switch (info->type) {
+#ifdef SUPPORT_GRAPHICS
         case AppExecFwk::AbilityType::PAGE:
             if (info->isStageBasedModel) {
                 abilityImpl = std::make_shared<NewAbilityImpl>();
@@ -64,6 +67,7 @@ std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std
                 abilityImpl = std::make_shared<PageAbilityImpl>();
             }
             break;
+#endif
         case AppExecFwk::AbilityType::SERVICE:
             abilityImpl = std::make_shared<ServiceAbilityImpl>();
             break;
@@ -71,7 +75,7 @@ std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std
             abilityImpl = std::make_shared<DataAbilityImpl>();
             break;
         default:
-            APP_LOGE("AbilityImplFactory::MakeAbilityImplObject is error");
+            HILOG_ERROR("AbilityImplFactory::MakeAbilityImplObject is error");
             break;
     }
 

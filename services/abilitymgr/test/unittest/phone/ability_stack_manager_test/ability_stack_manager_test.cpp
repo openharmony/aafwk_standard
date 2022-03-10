@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2199,7 +2199,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_061, TestSize.
     stackManager_->Init();
     auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
 
-    // defult mission id
+    // default mission id
     abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
         std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN));
     EXPECT_TRUE(abilityStartSetting);
@@ -2289,7 +2289,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_062, TestSize.
  * SubFunction: NA
  * FunctionPoints: Start the floating window according to the parameters
  * EnvConditions: NA
- * CaseDescription: a defult ability + Start a floating window application
+ * CaseDescription: a default ability + Start a floating window application
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_063, TestSize.Level1)
 {
@@ -2414,7 +2414,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_065, TestSize.
     EXPECT_TRUE(stact);
     EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
-    // radioAbility in the defult stack
+    // radioAbility in the default stack
     EXPECT_EQ(redioMissionRecord->GetMissionStack()->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
 }
 
@@ -3462,6 +3462,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_093, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_094, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     stackManager_->curSysWindowMode_ = SystemWindowMode::SPLITSCREEN_WINDOW_MODE;
 
@@ -3474,6 +3475,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_094, TestSize.
         index = mode.find(split);
         EXPECT_TRUE(index != std::string::npos);
     }
+#endif
 }
 
 /*
@@ -3638,6 +3640,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_099, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0100, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
     auto str = stackManager_->ConvertWindowModeState(SystemWindowMode::DEFAULT_WINDOW_MODE);
     EXPECT_EQ(str, "default window mode");
@@ -3647,6 +3650,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0100, TestSize
     EXPECT_EQ(str, "floating window mode");
     str = stackManager_->ConvertWindowModeState(SystemWindowMode::FLOATING_AND_SPLITSCREEN_WINDOW_MODE);
     EXPECT_EQ(str, "floating and split screen window mode");
+#endif
 }
 
 /*
@@ -3750,6 +3754,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0103, TestSize
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
 
     auto result = stackManager_->StartAbility(radioAbilityRequest_);
@@ -3773,6 +3778,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize
 
     ref = stackManager_->CheckMultiWindowCondition(missionOptions);
     EXPECT_EQ(MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION, ref);
+#endif
 }
 
 /*
@@ -3785,6 +3791,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0104, TestSize
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0105, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     auto result = stackManager_->StartAbility(radioAbilityRequest_);
     EXPECT_EQ(0, result);
@@ -3798,6 +3805,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0105, TestSize
     missionOptions.push_back(mission);
     auto ref = stackManager_->CheckMultiWindowCondition(missionOptions);
     EXPECT_EQ(ERR_OK, ref);
+#endif
 }
 
 /*

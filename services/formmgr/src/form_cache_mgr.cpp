@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_cache_mgr.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 FormCacheMgr::FormCacheMgr()
 {
-    APP_LOGI("create form cache manager instance");
+    HILOG_INFO("create form cache manager instance");
 }
 FormCacheMgr::~FormCacheMgr()
 {
-    APP_LOGI("destroy form cache manager instance");
+    HILOG_INFO("destroy form cache manager instance");
 }
 
 /**
@@ -35,15 +35,15 @@ FormCacheMgr::~FormCacheMgr()
  */
 bool FormCacheMgr::GetData(const int64_t formId, std::string &data) const
 {
-    APP_LOGI("get cache data");
+    HILOG_INFO("get cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
     if (cacheData_.empty()) {
-        APP_LOGE("form cache is empty");
+        HILOG_ERROR("form cache is empty");
         return false;
     }
     auto formData = cacheData_.find(formId);
     if (formData == cacheData_.end()) {
-        APP_LOGE("cache data not find");
+        HILOG_ERROR("cache data not find");
         return false;
     }
 
@@ -60,7 +60,7 @@ bool FormCacheMgr::GetData(const int64_t formId, std::string &data) const
  */
 bool FormCacheMgr::AddData(const int64_t formId, const std::string &data)
 {
-    APP_LOGI("add new cache data");
+    HILOG_INFO("add new cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
     cacheData_[formId] = data;
     return true;
@@ -73,11 +73,11 @@ bool FormCacheMgr::AddData(const int64_t formId, const std::string &data)
  */
 bool FormCacheMgr::DeleteData(const int64_t formId)
 {
-    APP_LOGI("delete cache data");
+    HILOG_INFO("delete cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
     auto formData = cacheData_.find(formId);
     if (formData == cacheData_.end()) {
-        APP_LOGW("cache data is not exist");
+        HILOG_WARN("cache data is not exist");
         return true;
     }
 
@@ -92,11 +92,11 @@ bool FormCacheMgr::DeleteData(const int64_t formId)
  */
 bool FormCacheMgr::UpdateData(const int64_t formId, const std::string &data)
 {
-    APP_LOGI("update cache data");
+    HILOG_INFO("update cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
     auto formData = cacheData_.find(formId);
     if (formData == cacheData_.end()) {
-        APP_LOGE("cache data is not exist");
+        HILOG_ERROR("cache data is not exist");
         return false;
     }
 
@@ -110,15 +110,15 @@ bool FormCacheMgr::UpdateData(const int64_t formId, const std::string &data)
  */
 bool FormCacheMgr::IsExist(const int64_t formId) const
 {
-    APP_LOGI("get cache data");
+    HILOG_INFO("get cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
     if (cacheData_.empty()) {
-        APP_LOGE("form cache is empty");
+        HILOG_ERROR("form cache is empty");
         return false;
     }
     auto formData = cacheData_.find(formId);
     if (formData == cacheData_.end()) {
-        APP_LOGE("cache data not find");
+        HILOG_ERROR("cache data not find");
         return false;
     }
 

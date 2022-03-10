@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,42 +13,40 @@
  * limitations under the License.
  */
 #include "service_ability_a.h"
-// #include "app_log_wrapper.h"
-// #include "iremote_broker.h"
-// #include "iremote_object.h"
-// #include "iremote_proxy.h"
-// #include "iremote_stub.h"
-// #include "main_service_ability.h"
 #include "test_ability_connection.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 void ServiceAbilityA::OnStart(const Want &want)
 {
-    APP_LOGI("ServiceAbilityA OnStart");
+    HILOG_INFO("ServiceAbilityA OnStart");
     Ability::OnStart(want);
 }
+
 void ServiceAbilityA::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("ServiceAbilityA::OnCommand");
+    HILOG_INFO("ServiceAbilityA::OnCommand");
     Ability::OnCommand(want, restart, startId);
 }
+
 sptr<IRemoteObject> ServiceAbilityA::OnConnect(const Want &want)
 {
-    APP_LOGI("ServiceAbilityA::OnConnect");
+    HILOG_INFO("ServiceAbilityA::OnConnect");
     sptr<IServiceRemoteTest> remoteObject = sptr<IServiceRemoteTest>(new (std::nothrow) TestAbilityConnection());
 
     Ability::OnConnect(want);
     return remoteObject->AsObject();
 }
+
 void ServiceAbilityA::OnDisconnect(const Want &want)
 {
-    APP_LOGI("ServiceAbilityA::OnDisconnect");
+    HILOG_INFO("ServiceAbilityA::OnDisconnect");
     Ability::OnDisconnect(want);
 }
+
 void ServiceAbilityA::OnStop()
 {
-    APP_LOGI("ServiceAbilityA::OnStop");
+    HILOG_INFO("ServiceAbilityA::OnStop");
     Ability::OnStop();
 }
 REGISTER_AA(ServiceAbilityA);

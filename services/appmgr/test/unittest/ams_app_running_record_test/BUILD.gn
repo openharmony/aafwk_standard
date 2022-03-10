@@ -72,6 +72,5 @@ ohos_unittest("AmsAppRunningRecordTest") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":AmsAppRunningRecordTest" ]
+  # deps = [ ":AmsAppRunningRecordTest" ]
 }

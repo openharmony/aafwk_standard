@@ -17,13 +17,13 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
-#include "app_log_wrapper.h"
 #define private public
 #include "form_db_cache.h"
 #include "form_mgr_adapter.h"
 #include "form_storage_mgr.h"
 #undef private
 #include "form_record.h"
+#include "hilog_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS;

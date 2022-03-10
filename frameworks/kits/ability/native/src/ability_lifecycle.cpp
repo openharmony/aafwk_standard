@@ -14,7 +14,7 @@
  */
 
 #include "ability_lifecycle_observer_interface.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -29,7 +29,7 @@ namespace AppExecFwk {
  */
 LifeCycle::Event LifeCycle::GetLifecycleState()
 {
-    APP_LOGI("LifeCycle::GetLifecycleState: called");
+    HILOG_INFO("LifeCycle::GetLifecycleState: called");
     return state_;
 }
 
@@ -43,10 +43,10 @@ LifeCycle::Event LifeCycle::GetLifecycleState()
  */
 void LifeCycle::AddObserver(const std::shared_ptr<ILifecycleObserver> &observer)
 {
-    APP_LOGI("LifeCycle::AddObserver: called");
+    HILOG_INFO("LifeCycle::AddObserver: called");
 
     if (observer == nullptr) {
-        APP_LOGI("LifeCycle::AddObserver: observer is null");
+        HILOG_INFO("LifeCycle::AddObserver: observer is null");
         return;
     }
 
@@ -61,9 +61,9 @@ void LifeCycle::AddObserver(const std::shared_ptr<ILifecycleObserver> &observer)
  */
 void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event, const Want &want)
 {
-    APP_LOGI("LifeCycle::DispatchLifecycle: event:%{public}d", event);
+    HILOG_INFO("LifeCycle::DispatchLifecycle: event:%{public}d", event);
     if ((event != LifeCycle::Event::ON_FOREGROUND) && (event != LifeCycle::Event::ON_START)) {
-        APP_LOGE("event value error: event is %{public}d", event);
+        HILOG_ERROR("event value error: event is %{public}d", event);
         return;
     }
 
@@ -71,12 +71,14 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event, const Want &wan
     if (callbacks_.size() != 0) {
         for (auto &callback : callbacks_) {
             switch (event) {
+#ifdef SUPPORT_GRAPHICS
                 case ON_FOREGROUND: {
                     if (callback != nullptr) {
                         callback->OnForeground(want);
                     }
                     break;
                 }
+#endif
                 case ON_START: {
                     if (callback != nullptr) {
                         callback->OnStart(want);
@@ -100,10 +102,10 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event, const Want &wan
  */
 void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event)
 {
-    APP_LOGI("LifeCycle::DispatchLifecycle: event:%{public}d", event);
+    HILOG_INFO("LifeCycle::DispatchLifecycle: event:%{public}d", event);
     if ((event != LifeCycle::Event::ON_ACTIVE) && (event != LifeCycle::Event::ON_BACKGROUND) &&
         (event != LifeCycle::Event::ON_INACTIVE) && (event != LifeCycle::Event::ON_STOP)) {
-        APP_LOGE("event value error: event is %{public}d", event);
+        HILOG_ERROR("event value error: event is %{public}d", event);
         return;
     }
 
@@ -117,12 +119,14 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event)
                     }
                     break;
                 }
+#ifdef SUPPORT_GRAPHICS
                 case ON_BACKGROUND: {
                     if (callback != nullptr) {
                         callback->OnBackground();
                     }
                     break;
                 }
+#endif
                 case ON_INACTIVE: {
                     if (callback != nullptr) {
                         callback->OnInactive();
@@ -155,10 +159,10 @@ void LifeCycle::DispatchLifecycle(const LifeCycle::Event &event)
  */
 void LifeCycle::RemoveObserver(const std::shared_ptr<ILifecycleObserver> &observer)
 {
-    APP_LOGI("LifeCycle::RemoveObserver: called");
+    HILOG_INFO("LifeCycle::RemoveObserver: called");
 
     if (observer == nullptr) {
-        APP_LOGI("LifeCycle::RemoveObserver: observer is null");
+        HILOG_INFO("LifeCycle::RemoveObserver: observer is null");
         return;
     }
 

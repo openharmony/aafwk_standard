@@ -60,7 +60,7 @@ public:
 
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
-    MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, const int userId));
+    MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
     MOCK_METHOD1(TerminateAbilityByRecordId, int(const int64_t recordId));
 
     MOCK_METHOD1(LockMissionForCleanup, int(int32_t missionId));
@@ -74,6 +74,7 @@ public:
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
+    MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
 
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));

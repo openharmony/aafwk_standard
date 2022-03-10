@@ -159,11 +159,11 @@ void TaskList::makeDispatcher()
 
 void TaskList::executeSyncDispatch()
 {
-    APP_LOGI("TaskList::executeSyncDispatch");
+    HILOG_INFO("TaskList::executeSyncDispatch");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeSyncDispatch execute");
+    HILOG_INFO("TaskList::executeSyncDispatch execute");
     auto runnable = funcList.front();
     funcList.pop();
     taskDispatcher->SyncDispatch(runnable);
@@ -171,11 +171,11 @@ void TaskList::executeSyncDispatch()
 };
 void TaskList::executeAsyncDispatch()
 {
-    APP_LOGI("TaskList::executeAsyncDispatch");
+    HILOG_INFO("TaskList::executeAsyncDispatch");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeAsyncDispatch execute");
+    HILOG_INFO("TaskList::executeAsyncDispatch execute");
     auto runnable = funcList.front();
     funcList.pop();
     std::shared_ptr<Revocable> revocable = taskDispatcher->AsyncDispatch(runnable);
@@ -184,11 +184,11 @@ void TaskList::executeAsyncDispatch()
 };
 void TaskList::executeDelayDispatch()
 {
-    APP_LOGI("TaskList::executeDelayDispatch");
+    HILOG_INFO("TaskList::executeDelayDispatch");
     if (funcList.size() == 0 || delayTimes.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeDelayDispatch execute");
+    HILOG_INFO("TaskList::executeDelayDispatch execute");
     auto runnable = funcList.front();
     funcList.pop();
     std::shared_ptr<Revocable> revocable = taskDispatcher->DelayDispatch(runnable, delayTimes.front());
@@ -198,11 +198,11 @@ void TaskList::executeDelayDispatch()
 };
 void TaskList::executeSyncDispatchBarrier()
 {
-    APP_LOGI("TaskList::executeSyncDispatchBarrier");
+    HILOG_INFO("TaskList::executeSyncDispatchBarrier");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeSyncDispatchBarrier execute");
+    HILOG_INFO("TaskList::executeSyncDispatchBarrier execute");
     auto runnable = funcList.front();
     funcList.pop();
     taskDispatcher->SyncDispatchBarrier(runnable);
@@ -210,11 +210,11 @@ void TaskList::executeSyncDispatchBarrier()
 };
 void TaskList::executeAsyncDispatchBarrier()
 {
-    APP_LOGI("TaskList::executeAsyncDispatchBarrier");
+    HILOG_INFO("TaskList::executeAsyncDispatchBarrier");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeAsyncDispatchBarrier execute");
+    HILOG_INFO("TaskList::executeAsyncDispatchBarrier execute");
     auto runnable = funcList.front();
     funcList.pop();
     taskDispatcher->AsyncDispatchBarrier(runnable);
@@ -222,17 +222,17 @@ void TaskList::executeAsyncDispatchBarrier()
 };
 void TaskList::executeCreateDispatchGroup()
 {
-    APP_LOGI("TaskList::executeCreateDispatchGroup execute");
+    HILOG_INFO("TaskList::executeCreateDispatchGroup execute");
     group = taskDispatcher->CreateDispatchGroup();
     return;
 };
 void TaskList::executeAsyncGroupDispatch()
 {
-    APP_LOGI("TaskList::executeAsyncGroupDispatch");
+    HILOG_INFO("TaskList::executeAsyncGroupDispatch");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeAsyncGroupDispatch execute");
+    HILOG_INFO("TaskList::executeAsyncGroupDispatch execute");
     auto runnable = funcList.front();
     funcList.pop();
     std::shared_ptr<Revocable> revocable = taskDispatcher->AsyncGroupDispatch(group, runnable);
@@ -241,33 +241,33 @@ void TaskList::executeAsyncGroupDispatch()
 };
 bool TaskList::executeGroupDispatchWait()
 {
-    APP_LOGI("TaskList::executeGroupDispatchWait");
+    HILOG_INFO("TaskList::executeGroupDispatchWait");
     if (groupWaitTimes.size() == 0) {
         return false;
     }
-    APP_LOGI("TaskList::executeGroupDispatchWait execute");
+    HILOG_INFO("TaskList::executeGroupDispatchWait execute");
     long waitTimeout = groupWaitTimes.front();
     groupWaitTimes.pop();
     return taskDispatcher->GroupDispatchWait(group, waitTimeout);
 };
 void TaskList::executeGroupDispatchNotify()
 {
-    APP_LOGI("TaskList::executeGroupDispatchNotify");
+    HILOG_INFO("TaskList::executeGroupDispatchNotify");
     if (funcList.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeGroupDispatchNotify execute");
+    HILOG_INFO("TaskList::executeGroupDispatchNotify execute");
     auto runnable = funcList.front();
     funcList.pop();
     taskDispatcher->GroupDispatchNotify(group, runnable);
 };
 void TaskList::executeApplyDispatch()
 {
-    APP_LOGI("TaskList::executeApplyDispatch");
+    HILOG_INFO("TaskList::executeApplyDispatch");
     if (funcList.size() == 0 || applyTimes.size() == 0) {
         return;
     }
-    APP_LOGI("TaskList::executeApplyDispatch execute");
+    HILOG_INFO("TaskList::executeApplyDispatch execute");
     auto func = funcList.front();
     funcList.pop();
     auto runnable = std::make_shared<IteratableTask<long>>([func](long applyTime) { (*func.get())(); });
@@ -276,7 +276,7 @@ void TaskList::executeApplyDispatch()
 };
 bool TaskList::executeRevokeTask()
 {
-    APP_LOGI("TaskList::executeRevokeTask");
+    HILOG_INFO("TaskList::executeRevokeTask");
     if (revokeTaskNumber.size() == 0 || revocableList.size() == 0) {
         if (revokeTaskNumber.size() > 0) {
             revokeTaskNumber.pop();
@@ -287,7 +287,7 @@ bool TaskList::executeRevokeTask()
         revokeTaskNumber.pop();
         return false;
     }
-    APP_LOGI("TaskList::executeRevokeTask execute");
+    HILOG_INFO("TaskList::executeRevokeTask execute");
     bool result = revocableList[revokeTaskNumber.front() - 1]->Revoke();
     revokeTaskNumber.pop();
     return result;

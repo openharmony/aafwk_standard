@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef OHOS_APP_DISPATCHER_SERIAL_TASK_DISPATCHER_H
 #define OHOS_APP_DISPATCHER_SERIAL_TASK_DISPATCHER_H
 

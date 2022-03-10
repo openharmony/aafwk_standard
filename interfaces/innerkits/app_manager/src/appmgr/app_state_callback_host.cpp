@@ -15,9 +15,9 @@
 
 #include "app_state_callback_host.h"
 
-#include "app_log_wrapper.h"
 #include "appexecfwk_errors.h"
 #include "bytrace.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
 
@@ -41,11 +41,11 @@ AppStateCallbackHost::~AppStateCallbackHost()
 int AppStateCallbackHost::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("AppStateCallbackHost::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppStateCallbackHost::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppStateCallbackHost::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        APP_LOGE("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 
@@ -61,12 +61,12 @@ int AppStateCallbackHost::OnRemoteRequest(
 
 void AppStateCallbackHost::OnAbilityRequestDone(const sptr<IRemoteObject> &, const AbilityState)
 {
-    APP_LOGD("called");
+    HILOG_DEBUG("called");
 }
 
 void AppStateCallbackHost::OnAppStateChanged(const AppProcessData &)
 {
-    APP_LOGD("called");
+    HILOG_DEBUG("called");
 }
 
 int32_t AppStateCallbackHost::HandleOnAppStateChanged(MessageParcel &data, MessageParcel &reply)
@@ -74,7 +74,7 @@ int32_t AppStateCallbackHost::HandleOnAppStateChanged(MessageParcel &data, Messa
     BYTRACE(BYTRACE_TAG_APP);
     std::unique_ptr<AppProcessData> processData(data.ReadParcelable<AppProcessData>());
     if (!processData) {
-        APP_LOGE("ReadParcelable<AppProcessData> failed");
+        HILOG_ERROR("ReadParcelable<AppProcessData> failed");
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 

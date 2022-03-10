@@ -26,12 +26,13 @@ config("amsAbilityVisibleTestServiceBConfig") {
     "//foundation/appexecfwk/standard/services/bundlemgr/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
     "//foundation/aafwk/standard/services/abilitymgr/include",
+    "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "${SUBST_TOOLS_DIR}/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsAbilityVisibleTestServiceB\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsAbilityVisibleTestServiceB\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 ohos_shared_library("amsAbilityVisibleTestServiceB") {

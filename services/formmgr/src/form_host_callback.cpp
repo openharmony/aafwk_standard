@@ -18,9 +18,9 @@
 #include <cinttypes>
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_host_interface.h"
 #include "form_task_mgr.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -36,7 +36,7 @@ namespace AppExecFwk {
 void FormHostCallback::OnAcquired(const int64_t formId, const FormRecord& record,
     const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGD("FormHostCallback OnAcquired, formId:%{public}" PRId64 "", formId);
+    HILOG_DEBUG("FormHostCallback OnAcquired, formId:%{public}" PRId64 "", formId);
     FormTaskMgr::GetInstance().PostAcquireTaskToHost(formId, record, callerToken);
 }
 
@@ -49,16 +49,16 @@ void FormHostCallback::OnAcquired(const int64_t formId, const FormRecord& record
 */
 void FormHostCallback::OnUpdate(const int64_t formId, const FormRecord &record, const sptr<IRemoteObject> &callerToken)
 {
-    APP_LOGI("%{public}s start.", __func__);
+    HILOG_INFO("%{public}s start.", __func__);
 
     // check formId
     if (formId < 0) {
-        APP_LOGE("%{public}s: OnUpdate invalid param, formId:%{public}" PRId64 ".", __func__, formId);
+        HILOG_ERROR("%{public}s: OnUpdate invalid param, formId:%{public}" PRId64 ".", __func__, formId);
         return;
     }
 
     if (callerToken == nullptr) {
-        APP_LOGE("%{public}s: callerToken can not be NULL", __func__);
+        HILOG_ERROR("%{public}s: callerToken can not be NULL", __func__);
         return;
     }
 
@@ -76,12 +76,12 @@ void  FormHostCallback::OnUninstall(std::vector<int64_t> &formIds, const sptr<IR
 {
     // check formId
     if (formIds.size() <= 0) {
-        APP_LOGE("%{public}s: OnUninstall invalid param, formIds is empty.", __func__);
+        HILOG_ERROR("%{public}s: OnUninstall invalid param, formIds is empty.", __func__);
         return;
     }
 
     if (callerToken == nullptr) {
-        APP_LOGE("%{public}s: callerToken can not be NULL", __func__);
+        HILOG_ERROR("%{public}s: callerToken can not be NULL", __func__);
         return;
     }
     // post updateTask to host

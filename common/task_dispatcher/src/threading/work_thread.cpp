@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,10 +30,10 @@ WorkerThread::WorkerThread(const std::shared_ptr<Delegate> &delegate, const std:
 void WorkerThread::Join()
 {
     if ((thread_) && (thread_->thread_) && thread_->thread_->joinable()) {
-        APP_LOGI("WorkerThread::Join joinable thread");
+        HILOG_INFO("WorkerThread::Join joinable thread");
         thread_->thread_->join();
     }
-    APP_LOGI("WorkerThread::Join end");
+    HILOG_INFO("WorkerThread::Join end");
 }
 
 void WorkerThread::CreateThread()
@@ -48,7 +48,7 @@ void WorkerThread::CreateThread()
 
     // start a thread to run task function.
     thread_->thread_ = std::make_shared<std::thread>(task);
-    APP_LOGI("WorkerThread::CreateThread start thread. ");
+    HILOG_INFO("WorkerThread::CreateThread start thread. ");
 }
 
 void WorkerThread::IncTaskCount()
