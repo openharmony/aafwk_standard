@@ -1179,10 +1179,15 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
 
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityFromTerminateList(const sptr<IRemoteObject> &token)
 {
+    if (!token) {
+        return nullptr;
+    }
+
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     for (auto abilityRecord : terminateAbilityList_) {
         // token is type of IRemoteObject, abilityRecord->GetToken() is type of Token extending from IRemoteObject.
-        if (abilityRecord && token == abilityRecord->GetToken()->AsObject()) {
+        if (abilityRecord && abilityRecord->GetToken() &&
+            abilityRecord->GetToken() && token == abilityRecord->GetToken()->AsObject()) {
             return abilityRecord;
         }
     }
