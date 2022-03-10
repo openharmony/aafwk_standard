@@ -1687,6 +1687,11 @@ int AbilityManagerService::ReleaseDataAbility(
     sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s, called.", __func__);
+    if (!dataAbilityScheduler || !callerToken) {
+        HILOG_ERROR("dataAbilitySchedule or callerToken is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
     bool isSystem = (IPCSkeleton::GetCallingUid() <= AppExecFwk::Constants::BASE_SYS_UID);
     if (!isSystem) {
         HILOG_INFO("callerToken not system %{public}s", __func__);

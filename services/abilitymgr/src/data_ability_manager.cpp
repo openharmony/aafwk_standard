@@ -135,7 +135,8 @@ int DataAbilityManager::Release(
     DataAbilityRecordPtr dataAbilityRecord;
 
     for (it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+        if (it->second && it->second->GetScheduler() &&
+            it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             dataAbilityRecord = it->second;
             break;
         }
