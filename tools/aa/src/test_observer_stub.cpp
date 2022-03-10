@@ -49,8 +49,8 @@ int TestObserverStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Messag
         }
         case static_cast<uint32_t>(ITestObserver::Message::AA_EXECUTE_SHELL_COMMAND): {
             std::string cmd = data.ReadString();
-            int64_t timeoutMs = data.ReadInt64();
-            ShellCommandResult result = ExecuteShellCommand(cmd, timeoutMs);
+            int64_t timeoutSecs = data.ReadInt64();
+            ShellCommandResult result = ExecuteShellCommand(cmd, timeoutSecs);
             if (!reply.WriteParcelable(&result)) {
                 HILOG_ERROR("Failed to write reply ShellCommandResult!");
                 return ERR_INVALID_VALUE;

@@ -57,12 +57,12 @@ bool IAbilityMonitor::Match(const std::shared_ptr<ADelegatorAbilityProperty> &ab
     return true;
 }
 
-std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility()
+std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::WaitForAbility()
 {
-    return waitForAbility(MAX_TIME_OUT);
+    return WaitForAbility(MAX_TIME_OUT);
 }
 
-std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility(const int64_t timeoutMs)
+std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::WaitForAbility(const int64_t timeoutMs)
 {
     auto realTime = timeoutMs;
     if (timeoutMs <= 0) {

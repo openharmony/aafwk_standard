@@ -61,7 +61,7 @@ JsTestRunner::JsTestRunner(
     }
     srcPath.append(testRunnerName);
     srcPath.append(".abc");
-
+    srcPath_ = srcPath;
     HILOG_INFO("JsTestRunner srcPath is %{public}s", srcPath.c_str());
 
     std::string moduleName;
@@ -91,8 +91,8 @@ void JsTestRunner::CallObjectMethod(const char *name, NativeValue *const *argv, 
     HILOG_INFO("JsTestRunner::CallObjectMethod(%{public}s)", name);
 
     if (!jsTestRunnerObj_) {
-        HILOG_ERROR("Not found test_runner.js");
-        ReportFinished("Not found test_runner.js");
+        HILOG_ERROR("Not found %{public}s", srcPath_.c_str());
+        ReportFinished("Not found " + srcPath_);
         return;
     }
 
