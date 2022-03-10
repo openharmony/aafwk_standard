@@ -291,12 +291,14 @@ void Ability::OnStart(const Want &want)
                 HILOG_ERROR("%{public}s error, resConfig is nullptr.", __func__);
                 return;
             }
-            resConfig->SetScreenDensity(ConvertDensity(density));
-            resConfig->SetDirection(ConvertDirection(height, width));
             auto resourceManager = GetResourceManager();
             if (resourceManager != nullptr) {
+                resourceManager->GetResConfig(*resConfig);
+                resConfig->SetScreenDensity(ConvertDensity(density));
+                resConfig->SetDirection(ConvertDirection(height, width));
                 resourceManager->UpdateResConfig(*resConfig);
-                HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
+                HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                    resConfig->GetScreenDensity(), resConfig->GetDirection());
             }
         }
     }
@@ -1012,8 +1014,13 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
 
     // Notify ResourceManager
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
-    if (resConfig != nullptr) {
-        HILOG_INFO("make resource mgr data");
+    if (resConfig == nullptr) {
+        HILOG_ERROR("Create res config failed.");
+        return;
+    }
+    auto resourceManager = GetResourceManager();
+    if (resourceManager != nullptr) {
+        resourceManager->GetResConfig(*resConfig);
 #ifdef SUPPORT_GRAPHICS
         if (!language.empty()) {
             UErrorCode status = U_ZERO_ERROR;
@@ -1025,13 +1032,10 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
         }
 #endif
         resConfig->SetColorMode(ConvertColorMode(colormode));
-
-        auto resourceManager = GetResourceManager();
-        if (resourceManager != nullptr) {
-            resourceManager->UpdateResConfig(*resConfig);
-            HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
-        }
+        resourceManager->UpdateResConfig(*resConfig);
+        HILOG_INFO("Notify ResourceManager, colorMode: %{public}d.", resConfig->GetColorMode());
     }
+
 #ifdef SUPPORT_GRAPHICS
     // Notify WindowScene
     if (scene_ != nullptr && !language.empty()) {
@@ -3525,13 +3529,14 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     int32_t height = display->GetHeight();
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     if (resConfig != nullptr) {
-        resConfig->SetScreenDensity(ConvertDensity(density));
-        resConfig->SetDirection(ConvertDirection(height, width));
-
         auto resourceManager = GetResourceManager();
         if (resourceManager != nullptr) {
+            resourceManager->GetResConfig(*resConfig);
+            resConfig->SetScreenDensity(ConvertDensity(density));
+            resConfig->SetDirection(ConvertDirection(height, width));
             resourceManager->UpdateResConfig(*resConfig);
-            HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
+            HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                resConfig->GetScreenDensity(), resConfig->GetDirection());
         }
     }
 
@@ -3572,6 +3577,19 @@ void Ability::OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to)
     float density = display->GetVirtualPixelRatio();
     int32_t width = display->GetWidth();
     int32_t height = display->GetHeight();
+    std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    if (resConfig != nullptr) {
+        auto resourceManager = GetResourceManager();
+        if (resourceManager != nullptr) {
+            resourceManager->GetResConfig(*resConfig);
+            resConfig->SetScreenDensity(ConvertDensity(density));
+            resConfig->SetDirection(ConvertDirection(height, width));
+            resourceManager->UpdateResConfig(*resConfig);
+            HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                resConfig->GetScreenDensity(), resConfig->GetDirection());
+        }
+    }
+
     Configuration newConfig;
     newConfig.AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(to));
     newConfig.AddItem(to, ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));
