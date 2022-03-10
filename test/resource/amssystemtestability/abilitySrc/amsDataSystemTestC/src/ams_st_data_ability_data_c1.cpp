@@ -18,7 +18,7 @@
 #include <mutex>
 #include <cstdio>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "data_ability_helper.h"
 
 namespace OHOS {
@@ -53,9 +53,9 @@ bool AmsStDataAbilityDataC1::PublishEvent(const std::string &eventName, const in
 
 void DataTestDataC1EventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("DataTestDataC1EventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("DataTestDataC1EventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("DataTestDataC1EventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("DataTestDataC1EventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("DataTestDataC1EventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("DataTestDataC1EventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (eventName.compare(testEventName) == 0 && ABILITY_DATA_C1_CODE == data.GetCode()) {
         std::string target = data.GetData();
@@ -86,7 +86,7 @@ void AmsStDataAbilityDataC1::SubscribeEvent(const Want &want)
 
 void AmsStDataAbilityDataC1::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 OnStart");
+    HILOG_INFO("AmsStDataAbilityDataC1 OnStart");
     SubscribeEvent(want);
     originWant_ = want;
     Ability::OnStart(want);
@@ -95,18 +95,18 @@ void AmsStDataAbilityDataC1::OnStart(const Want &want)
 
 int AmsStDataAbilityDataC1::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<Insert>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<Insert>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, "Insert");
     if (fd <= 0) {
-        APP_LOGI("AmsStDataAbilityDataC1 <<<<Insert>>>> file fd <= 0");
+        HILOG_INFO("AmsStDataAbilityDataC1 <<<<Insert>>>> file fd <= 0");
         return DEFAULT_INSERT_RESULT;
     }
     int dupFd = dup(fd);
     FILE *file = fdopen(dupFd, "r");
     if (file == nullptr) {
-        APP_LOGI("AmsStDataAbilityDataC1 <<<<Insert>>>> file == nullptr");
+        HILOG_INFO("AmsStDataAbilityDataC1 <<<<Insert>>>> file == nullptr");
     } else {
-        APP_LOGI("AmsStDataAbilityDataC1 <<<<Insert>>>> file != nullptr");
+        HILOG_INFO("AmsStDataAbilityDataC1 <<<<Insert>>>> file != nullptr");
         fclose(file);
         file = nullptr;
     }
@@ -115,14 +115,14 @@ int AmsStDataAbilityDataC1::Insert(const Uri &uri, const NativeRdb::ValuesBucket
 
 int AmsStDataAbilityDataC1::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<Delete>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<Delete>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, "Delete");
     return DEFAULT_DELETE_RESULT;
 }
 
 int AmsStDataAbilityDataC1::Update(const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<Update>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<Update>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, "Update");
     return DEFAULT_UPDATE_RESULT;
 }
@@ -131,7 +131,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStDataAbilityDataC1::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
     subscriber_->vectorOperator_ = columns;
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<Query>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<Query>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, OPERATOR_QUERY);
 
     STtools::WaitCompleted(event, OPERATOR_QUERY, ABILITY_DATA_C1_CODE);
@@ -147,7 +147,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AmsStDataAbilityDataC1::Query(
 
 std::vector<std::string> AmsStDataAbilityDataC1::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<GetFileTypes>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<GetFileTypes>>>>");
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, "GetFileTypes");
     std::vector<std::string> fileType {"filetypes"};
     return fileType;
@@ -155,15 +155,15 @@ std::vector<std::string> AmsStDataAbilityDataC1::GetFileTypes(const Uri &uri, co
 
 int AmsStDataAbilityDataC1::OpenFile(const Uri &uri, const std::string &mode)
 {
-    APP_LOGI("AmsStDataAbilityDataC1 <<<<OpenFile>>>>");
+    HILOG_INFO("AmsStDataAbilityDataC1 <<<<OpenFile>>>>");
 
     FILE *fd1 = fopen("/system/vendor/test.txt", "r");
     if (fd1 == nullptr) {
-        APP_LOGI("AmsStDataAbilityDataC1 <<<<OpenFile>>>> fdr == nullptr");
+        HILOG_INFO("AmsStDataAbilityDataC1 <<<<OpenFile>>>> fdr == nullptr");
         return -1;
     }
     fd = fileno(fd1);
-    APP_LOGI("AmsStDataAbilityDataC1 fd: %{public}d", fd);
+    HILOG_INFO("AmsStDataAbilityDataC1 fd: %{public}d", fd);
     PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, "OpenFile");
     return fd;
 }
@@ -213,20 +213,20 @@ void DataTestDataC1EventSubscriber::GetResultBySelf(
     std::shared_ptr<STtools::StOperator> child, AmsStDataAbilityDataC1 *mainAbility, Uri dataAbilityUri, string &result)
 {
     if (child->GetOperatorName() == OPERATOR_INSERT) {
-        APP_LOGI("---------------------Insert--------------------");
+        HILOG_INFO("---------------------Insert--------------------");
         NativeRdb::ValuesBucket bucket;
         result = std::to_string(mainAbility->Insert(dataAbilityUri, bucket));
     } else if (child->GetOperatorName() == OPERATOR_DELETE) {
-        APP_LOGI("---------------------Delete--------------------");
+        HILOG_INFO("---------------------Delete--------------------");
         NativeRdb::DataAbilityPredicates predicates;
         result = std::to_string(mainAbility->Delete(dataAbilityUri, predicates));
     } else if (child->GetOperatorName() == OPERATOR_UPDATE) {
-        APP_LOGI("---------------------Update--------------------");
+        HILOG_INFO("---------------------Update--------------------");
         NativeRdb::ValuesBucket bucket;
         NativeRdb::DataAbilityPredicates predicates;
         result = std::to_string(mainAbility->Update(dataAbilityUri, bucket, predicates));
     } else if (child->GetOperatorName() == OPERATOR_QUERY) {
-        APP_LOGI("---------------------Query--------------------");
+        HILOG_INFO("---------------------Query--------------------");
         std::vector<std::string> columns = STtools::SerializationStOperatorToVector(*child);
         NativeRdb::DataAbilityPredicates predicates;
         std::shared_ptr<NativeRdb::AbsSharedResultSet> resultValue = mainAbility->Query(dataAbilityUri, columns, predicates);
@@ -236,7 +236,7 @@ void DataTestDataC1EventSubscriber::GetResultBySelf(
             resultValue->GetString(0, result);
         }
     } else if (child->GetOperatorName() == OPERATOR_GETFILETYPES) {
-        APP_LOGI("---------------------GetFileTypes--------------------");
+        HILOG_INFO("---------------------GetFileTypes--------------------");
         std::vector<std::string> types = mainAbility->GetFileTypes(dataAbilityUri, child->GetMessage());
         if (types.size() > 0) {
             result = types[0];
@@ -244,7 +244,7 @@ void DataTestDataC1EventSubscriber::GetResultBySelf(
             result = "failed";
         }
     } else if (child->GetOperatorName() == OPERATOR_OPENFILE) {
-        APP_LOGI("---------------------OpenFile--------------------");
+        HILOG_INFO("---------------------OpenFile--------------------");
         FILE *file = fopen("/system/vendor/test.txt", "r");
         if (file == nullptr) {
             return;
@@ -262,7 +262,7 @@ void DataTestDataC1EventSubscriber::GetResultBySelf(
 
 void DataTestDataC1EventSubscriber::TestPost(const std::string funName)
 {
-    APP_LOGI("DataTestDataC1EventSubscriber::TestPost %{public}s", funName.c_str());
+    HILOG_INFO("DataTestDataC1EventSubscriber::TestPost %{public}s", funName.c_str());
     STtools::StOperator allOperator {};
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator_);
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(mainAbility_->GetContext());
@@ -275,15 +275,15 @@ void DataTestDataC1EventSubscriber::TestPost(const std::string funName)
             GetResultBySelf(child, mainAbility_, dataAbilityUri, result);
             mainAbility_->PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, child->GetOperatorName() + " " + result);
         } else if (child->GetAbilityType() == ABILITY_TYPE_DATA) {
-            APP_LOGI("---------------------targetAbility_--------------------");
+            HILOG_INFO("---------------------targetAbility_--------------------");
             Uri dataAbilityUri("dataability:///" + child->GetBundleName() + "." + child->GetAbilityName());
             if (helper != nullptr) {
-                APP_LOGI("---------------------helper--------------------");
+                HILOG_INFO("---------------------helper--------------------");
                 GetResult(child, helper, dataAbilityUri, result);
             }
             mainAbility_->PublishEvent(abilityEventName, ABILITY_DATA_C1_CODE, child->GetOperatorName() + " " + result);
         } else if (child->GetAbilityType() == ABILITY_TYPE_PAGE) {
-            APP_LOGI("---------------------StartPageAbility--------------------");
+            HILOG_INFO("---------------------StartPageAbility--------------------");
             std::vector<std::string> vectoroperator;
             if (child->GetChildOperator().size() != 0) {
                 vectoroperator = STtools::SerializationStOperatorToVector(*child);

@@ -14,7 +14,7 @@
  */
 
 #include "main_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 
 namespace OHOS {
@@ -27,7 +27,7 @@ void MainAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("MainAbility::Init");
+    HILOG_INFO("MainAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
@@ -38,7 +38,7 @@ MainAbility::~MainAbility()
 
 void MainAbility::OnStart(const Want &want)
 {
-    APP_LOGI("MainAbility::OnStart");
+    HILOG_INFO("MainAbility::OnStart");
     SubscribeEvent();
     Ability::OnStart(want);
     bIsBlockUpdate = false;
@@ -48,7 +48,7 @@ void MainAbility::OnStart(const Want &want)
 
 void MainAbility::OnStop()
 {
-    APP_LOGI("MainAbility::OnStop");
+    HILOG_INFO("MainAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     callbackSeq += "OnStop";  // OnInactiveOnBackgroundOnStop
@@ -58,7 +58,7 @@ void MainAbility::OnStop()
 
 void MainAbility::OnActive()
 {
-    APP_LOGI("MainAbility::OnActive====<");
+    HILOG_INFO("MainAbility::OnActive====<");
     Ability::OnActive();
     callbackSeq += "OnActive";  // OnStartOnActive
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, callbackSeq);
@@ -71,7 +71,7 @@ void MainAbility::OnBlockProcess(bool &bIsBlockFlag)
 
     if (bIsBlockFlag) {
         while (i-- > 0) {
-            APP_LOGI("MainAbility::OnBlockProcess time left %{public}d", i);
+            HILOG_INFO("MainAbility::OnBlockProcess time left %{public}d", i);
             sleep(1);
         }
         bIsBlockFlag = false;
@@ -83,7 +83,7 @@ void MainAbility::OnConfigurationUpdated(const Configuration &configuration)
     std::string languageValue;
     std::string orientationValue;
 
-    APP_LOGI("MainAbility::OnConfigurationUpdated====<");
+    HILOG_INFO("MainAbility::OnConfigurationUpdated====<");
     Ability::OnConfigurationUpdated(configuration);
     OnBlockProcess(bIsBlockUpdate);
     languageValue = configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
@@ -97,7 +97,7 @@ void MainAbility::OnConfigurationUpdated(const Configuration &configuration)
 
 void MainAbility::OnInactive()
 {
-    APP_LOGI("MainAbility::OnInactive");
+    HILOG_INFO("MainAbility::OnInactive");
     Ability::OnInactive();
     callbackSeq += "OnInactive";
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, "OnInactive");
@@ -105,7 +105,7 @@ void MainAbility::OnInactive()
 
 void MainAbility::OnBackground()
 {
-    APP_LOGI("MainAbility::OnBackground");
+    HILOG_INFO("MainAbility::OnBackground");
     Ability::OnBackground();
     callbackSeq += "OnBackground";
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, "OnBackground");
@@ -113,7 +113,7 @@ void MainAbility::OnBackground()
 
 void MainAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("MainAbility::OnForeground");
+    HILOG_INFO("MainAbility::OnForeground");
     Ability::OnForeground(want);
     callbackSeq += "OnForeground";
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, "OnForeground");
@@ -137,16 +137,16 @@ void MainAbility::SubscribeEvent()
 
 void MainAbilityEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("MainAbilityEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("MainAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("MainAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("MainAbilityEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("MainAbilityEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("MainAbilityEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (strcmp(eventName.c_str(), g_EVENT_REQU_MAIN.c_str()) == 0) {
         auto target = data.GetData();
         if (mapTestFunc_.find(target) != mapTestFunc_.end()) {
             mapTestFunc_[target](target, data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
@@ -157,7 +157,7 @@ void MainAbility::StartNext(std::string action, int code)
     std::string targetAbility = "SecondAbility";
     Want want;
 
-    APP_LOGI("MainAbility::StartNext");
+    HILOG_INFO("MainAbility::StartNext");
     want.SetElementName(targetBundle, targetAbility);
     StartAbility(want);
 }

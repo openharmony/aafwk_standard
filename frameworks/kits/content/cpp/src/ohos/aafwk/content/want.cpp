@@ -33,7 +33,7 @@
 #include "ohos/aafwk/base/double_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
-#include "parcel_macro.h"
+#include "parcel_macro_base.h"
 #include "string_ex.h"
 #include "want_params_wrapper.h"
 
@@ -167,7 +167,7 @@ OHOS::AppExecFwk::ElementName Want::GetElement() const
 Want &Want::SetElementName(const std::string &bundleName, const std::string &abilityName)
 {
     if (bundleName.empty() || abilityName.empty()) {
-        APP_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
+        ABILITYBASE_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
         return *this;
     }
 
@@ -186,7 +186,7 @@ Want &Want::SetElementName(const std::string &bundleName, const std::string &abi
 Want &Want::SetElementName(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
 {
     if (bundleName.empty() || abilityName.empty()) {
-        APP_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
+        ABILITYBASE_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
         return *this;
     }
     operation_.SetDeviceId(deviceId);
@@ -1932,14 +1932,14 @@ bool Want::CheckAndSetParameters(Want &want, const std::string &key, std::string
 
 void Want::DumpInfo(int level) const
 {
-    APP_LOGI("==================Want::DumpInfo level: %{public}d start=============", level);
+    ABILITYBASE_LOGI("==================Want::DumpInfo level: %{public}d start=============", level);
     operation_.DumpInfo(level);
     parameters_.DumpInfo(level);
 
     if (picker_ != nullptr) {
         picker_->DumpInfo(level + 1);
     }
-    APP_LOGI("==================Want::DumpInfo level: %{public}d end=============", level);
+    ABILITYBASE_LOGI("==================Want::DumpInfo level: %{public}d end=============", level);
 }
 
 nlohmann::json Want::ToJson() const
@@ -1980,7 +1980,7 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
         || (wantJson.find("action") == jsonObjectEnd)
         || (wantJson.find("parameters") == jsonObjectEnd)
         || (wantJson.find("entities") == jsonObjectEnd)) {
-        APP_LOGE("Incomplete wantJson");
+        ABILITYBASE_LOGE("Incomplete wantJson");
         return false;
     }
 
@@ -2022,7 +2022,7 @@ std::string Want::ToString() const
 Want *Want::FromString(std::string &string)
 {
     if (string.empty()) {
-        APP_LOGE("Invalid string.");
+        ABILITYBASE_LOGE("Invalid string.");
         return nullptr;
     }
 

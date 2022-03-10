@@ -18,8 +18,8 @@
 #include "app_mgr_service_inner.h"
 #undef private
 #include <gtest/gtest.h>
-#include "app_log_wrapper.h"
 #include "app_mgr_service_inner.h"
+#include "hilog_wrapper.h"
 #include "mock_ability_token.h"
 #include "mock_app_scheduler.h"
 #include "mock_app_spawn_client.h"
@@ -165,13 +165,13 @@ sptr<IRemoteObject> AppDeathRecipientTest::GetApp(int32_t pid, int size)
 
 HWTEST_F(AppDeathRecipientTest, AppDeathRecipient_001, TestSize.Level1)
 {
-    APP_LOGI("AppDeathRecipient_001 start");
+    HILOG_INFO("AppDeathRecipient_001 start");
     appDeathRecipientObject_->SetEventHandler(handler_);
     EXPECT_TRUE(appDeathRecipientObject_->handler_.lock() != nullptr);
 
     appDeathRecipientObject_->SetAppMgrServiceInner(appMgrServiceInner_);
     EXPECT_TRUE(appDeathRecipientObject_->appMgrServiceInner_.lock() != nullptr);
-    APP_LOGI("AppDeathRecipient_001 end");
+    HILOG_INFO("AppDeathRecipient_001 end");
 }
 
 /*
@@ -202,7 +202,7 @@ HWTEST_F(AppDeathRecipientTest, AppDeathRecipient_002, TestSize.Level1)
 
     WaitUntilTaskFinished(handler_);
     EXPECT_EQ(0, static_cast<int>(appDeathRecipientObject_->appMgrServiceInner_.lock()->GetRecentAppList().size()));
-    APP_LOGI("AppDeathRecipient_002 start");
+    HILOG_INFO("AppDeathRecipient_002 start");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

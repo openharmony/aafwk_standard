@@ -18,7 +18,7 @@
 #include <future>
 #include <gtest/gtest.h>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "../include/fuzz_test_manager.h"
 #include "../include/get_param.h"
 #include "nlohmann/json.hpp"

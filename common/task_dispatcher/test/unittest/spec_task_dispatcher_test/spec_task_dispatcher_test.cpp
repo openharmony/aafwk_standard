@@ -116,7 +116,7 @@ HWTEST(SpecTaskDispatcherTest, SyncDispatch_0100, Function | MediumTest | Level1
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 0);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 1);
 
@@ -126,7 +126,7 @@ HWTEST(SpecTaskDispatcherTest, SyncDispatch_0100, Function | MediumTest | Level1
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 1);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 2);
 
@@ -136,7 +136,7 @@ HWTEST(SpecTaskDispatcherTest, SyncDispatch_0100, Function | MediumTest | Level1
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 2);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 3);
 
@@ -184,7 +184,7 @@ HWTEST(SpecTaskDispatcherTest, AsyncDispatch_0100, Function | MediumTest | Level
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 0);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 0);
 
@@ -194,7 +194,7 @@ HWTEST(SpecTaskDispatcherTest, AsyncDispatch_0100, Function | MediumTest | Level
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 1);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 0);
 
@@ -204,7 +204,7 @@ HWTEST(SpecTaskDispatcherTest, AsyncDispatch_0100, Function | MediumTest | Level
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 2);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }));
     EXPECT_TRUE(count.load() == 0);
 
@@ -279,7 +279,7 @@ HWTEST(SpecTaskDispatcherTest, DelayDispatch_0100, Function | MediumTest | Level
         // execute second
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 2);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }),
         sleep1);
     EXPECT_TRUE(count.load() == 0);
@@ -289,7 +289,7 @@ HWTEST(SpecTaskDispatcherTest, DelayDispatch_0100, Function | MediumTest | Level
         // execute first
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 0 || index == 1);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }),
         sleep2);
     EXPECT_TRUE(count.load() == 0);
@@ -299,7 +299,7 @@ HWTEST(SpecTaskDispatcherTest, DelayDispatch_0100, Function | MediumTest | Level
         // execute first
         int index = count.fetch_add(1);
         EXPECT_TRUE(index == 0 || index == 1);
-        APP_LOGD("task %{public}d end, elapsed %{public}d ms", index, sleep);
+        HILOG_DEBUG("task %{public}d end, elapsed %{public}d ms", index, sleep);
     }),
         sleep3);
     EXPECT_TRUE(count.load() == 0);

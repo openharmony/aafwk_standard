@@ -15,7 +15,7 @@
  */
 
 #include "base_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -25,63 +25,63 @@ void BaseAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("BaseAbility::Init called.");
+    HILOG_INFO("BaseAbility::Init called.");
 
     Ability::Init(abilityInfo, application, handler, token);
 }
 
 void BaseAbility::OnStart(const Want &want)
 {
-    APP_LOGI("BaseAbility::OnStart");
+    HILOG_INFO("BaseAbility::OnStart");
 
     Ability::OnStart(want);
 }
 
 void BaseAbility::OnStop()
 {
-    APP_LOGI("BaseAbility::OnStop");
+    HILOG_INFO("BaseAbility::OnStop");
 
     Ability::OnStop();
 }
 
 void BaseAbility::OnActive()
 {
-    APP_LOGI("BaseAbility::OnActive");
+    HILOG_INFO("BaseAbility::OnActive");
 
     Ability::OnActive();
 }
 
 void BaseAbility::OnInactive()
 {
-    APP_LOGI("BaseAbility::OnInactive");
+    HILOG_INFO("BaseAbility::OnInactive");
 
     Ability::OnInactive();
 }
 
 void BaseAbility::OnBackground()
 {
-    APP_LOGI("BaseAbility::OnBackground");
+    HILOG_INFO("BaseAbility::OnBackground");
 
     Ability::OnBackground();
 }
 
 void BaseAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("BaseAbility::OnForeground");
+    HILOG_INFO("BaseAbility::OnForeground");
 
     Ability::OnForeground(want);
 }
 
 void BaseAbility::OnCommand(const Want &want, bool restart, int startId)
 {
-    APP_LOGI("BaseAbility::OnCommand");
+    HILOG_INFO("BaseAbility::OnCommand");
 
     Ability::OnCommand(want, restart, startId);
 }
 
 sptr<IRemoteObject> BaseAbility::OnConnect(const Want &want)
 {
-    APP_LOGI("BaseAbility::OnConnect");
+    HILOG_INFO("BaseAbility::OnConnect");
 
     sptr<IRemoteObject> ret = Ability::OnConnect(want);
     return ret;
@@ -89,14 +89,14 @@ sptr<IRemoteObject> BaseAbility::OnConnect(const Want &want)
 
 void BaseAbility::OnDisconnect(const Want &want)
 {
-    APP_LOGI("BaseAbility::OnDisconnect");
+    HILOG_INFO("BaseAbility::OnDisconnect");
 
     Ability::OnDisconnect(want);
 }
 
 void BaseAbility::OnNewWant(const Want &want)
 {
-    APP_LOGI("BaseAbility::OnNewWant");
+    HILOG_INFO("BaseAbility::OnNewWant");
 
     Ability::OnNewWant(want);
 }

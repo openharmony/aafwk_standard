@@ -14,7 +14,7 @@
  */
 
 #include "app_loader.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -38,7 +38,7 @@ ApplicationLoader &ApplicationLoader::GetInstance()
 void ApplicationLoader::RegisterApplication(const std::string &bundleName, const CreateApplication &createFunc)
 {
     applications_.emplace(bundleName, createFunc);
-    APP_LOGD("ApplicationLoader::RegisterApplication:%{public}s", bundleName.c_str());
+    HILOG_DEBUG("ApplicationLoader::RegisterApplication:%{public}s", bundleName.c_str());
 }
 
 /**
@@ -49,7 +49,7 @@ OHOSApplication *ApplicationLoader::GetApplicationByName()
 {
     auto it = applications_.find("OHOSApplication");
     if (it == applications_.end()) {
-        APP_LOGE("ApplicationLoader::GetApplicationByName failed:OHOSApplication");
+        HILOG_ERROR("ApplicationLoader::GetApplicationByName failed:OHOSApplication");
     } else {
         return it->second();
     }

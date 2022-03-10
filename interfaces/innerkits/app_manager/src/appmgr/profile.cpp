@@ -17,7 +17,7 @@
 
 #include "string_ex.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -35,7 +35,7 @@ Profile *Profile::Unmarshalling(Parcel &parcel)
 {
     Profile *profile = new (std::nothrow) Profile();
     if (profile && !profile->ReadFromParcel(parcel)) {
-        APP_LOGW("failed, because ReadFromParcel failed");
+        HILOG_WARN("failed, because ReadFromParcel failed");
         delete profile;
         profile = nullptr;
     }

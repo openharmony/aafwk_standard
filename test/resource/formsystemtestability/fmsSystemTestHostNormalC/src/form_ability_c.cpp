@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "form_ability_c.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 #include "system_test_form_util.h"
@@ -31,24 +31,24 @@ std::vector<std::string> eventList = {
 };
 void FormAbilityC::AcquireFormCallback::OnAcquired(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     FormTestUtils::PublishEvent(this->caseName_, this->code_, std::to_string(formJsInfo.formId));
 }
 void FormAbilityC::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     FormTestUtils::PublishEvent(this->caseName_, this->code_ + 1, formJsInfo.formData);
 }
 
 void FormAbilityC::AcquireFormCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityC::FMS_deleteFormCommon(std::string strFormId)
 {
-    APP_LOGI("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
+    HILOG_INFO("%{public}s called, formId: %{public}s", __func__, strFormId.c_str());
     if (strFormId.empty()) {
-        APP_LOGE("DeleteForm error, formId is 0");
+        HILOG_ERROR("DeleteForm error, formId is 0");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "false");
         return;
     }
@@ -57,17 +57,17 @@ void FormAbilityC::FMS_deleteFormCommon(std::string strFormId)
     bool bResult = DeleteForm(formId);
     sleep(1);
     if (bResult) {
-        APP_LOGI("DeleteForm end");
+        HILOG_INFO("DeleteForm end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "true");
     } else {
-        APP_LOGE("DeleteForm error");
+        HILOG_ERROR("DeleteForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_COMMON, EVENT_CODE_999, "false");
     }
 }
 
 void FormAbilityC::FMS_acquireForm_3100(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_3100, EVENT_CODE_3100);
     callback->ability_ = this;
@@ -81,16 +81,16 @@ void FormAbilityC::FMS_acquireForm_3100(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3100, EVENT_CODE_3100, "");
     }
 }
 
 void FormAbilityC::FMS_acquireForm_3200(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::shared_ptr<AcquireFormCallback> callback =
         std::make_shared<AcquireFormCallback>(FORM_EVENT_RECV_ACQUIRE_FORM_3200, EVENT_CODE_3200);
     callback->ability_ = this;
@@ -104,15 +104,15 @@ void FormAbilityC::FMS_acquireForm_3200(std::string data)
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_3200, EVENT_CODE_3200, "false");
     }
 }
 void FormAbilityC::FMS_acquireFormBatch(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     // Set Want info begin
     Want want;
     want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, FORM_DIMENSION_1);
@@ -122,22 +122,22 @@ void FormAbilityC::FMS_acquireFormBatch(std::string data)
     want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME1, FORM_PROVIDER_ABILITY_NAME1);
 
     int formCount = std::stoi(data);
-    APP_LOGI("%{public}s, formCount: %{public}d", __func__, formCount);
+    HILOG_INFO("%{public}s, formCount: %{public}d", __func__, formCount);
     want.SetParam(Constants::PARAM_FORM_ADD_COUNT, formCount);
     // Set Want info end
     int result = STtools::SystemTestFormUtil::BatchAddFormRecords(want);
     if (result == ERR_OK) {
-        APP_LOGI("Batch add form end");
+        HILOG_INFO("Batch add form end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "true");
     } else {
-        APP_LOGE("Batch add form error");
+        HILOG_ERROR("Batch add form error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "false");
     }
 }
 
 void FormAbilityC::FMS_acquireFormTempBatch(std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     // Set Want info begin
     Want want;
     want.SetParam(Constants::PARAM_FORM_DIMENSION_KEY, FORM_DIMENSION_1);
@@ -148,15 +148,15 @@ void FormAbilityC::FMS_acquireFormTempBatch(std::string data)
     want.SetElementName(FORM_TEST_DEVICEID, FORM_PROVIDER_BUNDLE_NAME1, FORM_PROVIDER_ABILITY_NAME1);
 
     int formCount = std::stoi(data);
-    APP_LOGI("%{public}s, formCount: %{public}d", __func__, formCount);
+    HILOG_INFO("%{public}s, formCount: %{public}d", __func__, formCount);
     want.SetParam(Constants::PARAM_FORM_ADD_COUNT, formCount);
     // Set Want info end
     int result = STtools::SystemTestFormUtil::BatchAddFormRecords(want);
     if (result == ERR_OK) {
-        APP_LOGI("Batch add temp form end");
+        HILOG_INFO("Batch add temp form end");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "true");
     } else {
-        APP_LOGE("Batch add temp form error");
+        HILOG_ERROR("Batch add temp form error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "false");
     }
 }
@@ -166,12 +166,12 @@ FormAbilityC::~FormAbilityC()
 }
 void FormAbilityC::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilityC::onStart");
+    HILOG_INFO("FormAbilityC::onStart");
     Ability::OnStart(want);
 }
 void FormAbilityC::OnActive()
 {
-    APP_LOGI("FormAbilityC::OnActive");
+    HILOG_INFO("FormAbilityC::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -179,25 +179,25 @@ void FormAbilityC::OnActive()
 
 void FormAbilityC::OnStop()
 {
-    APP_LOGI("FormAbilityC::OnStop");
+    HILOG_INFO("FormAbilityC::OnStop");
 
     Ability::OnStop();
 }
 void FormAbilityC::OnInactive()
 {
-    APP_LOGI("FormAbilityC::OnInactive");
+    HILOG_INFO("FormAbilityC::OnInactive");
 
     Ability::OnInactive();
 }
 void FormAbilityC::OnBackground()
 {
-    APP_LOGI("FormAbilityC::OnBackground");
+    HILOG_INFO("FormAbilityC::OnBackground");
 
     Ability::OnBackground();
 }
 void FormAbilityC::SubscribeEvent()
 {
-    APP_LOGI("FormAbilityC::SubscribeEvent");
+    HILOG_INFO("FormAbilityC::SubscribeEvent");
     MatchingSkills matchingSkills;
     for (const auto &e : eventList) {
         matchingSkills.AddEvent(e);
@@ -214,7 +214,7 @@ void FormAbilityC::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilityC::Init");
+    HILOG_INFO("FormAbilityC::Init");
     Ability::Init(abilityInfo, application, handler, token);
     memberFuncMap_[FORM_EVENT_REQ_DELETE_FORM_COMMON] = &FormAbilityC::FMS_deleteFormCommon;
     memberFuncMap_[FORM_EVENT_REQ_ACQUIRE_FORM_BATCH] = &FormAbilityC::FMS_acquireFormBatch;
@@ -227,7 +227,7 @@ void FormAbilityC::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void FormAbilityC::handleEvent(std::string action, std::string data)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     if (calledFuncMap_.find(action) != calledFuncMap_.end()) {
         return;
     }
@@ -247,9 +247,9 @@ void FormAbilityC::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName, data.GetData());
     CommonEventManager::UnSubscribeCommonEvent(ability_->subscriber_);

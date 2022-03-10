@@ -27,34 +27,33 @@ ohos_shared_library("abilitymanager_napi") {
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
     "//third_party/icu/icu4c/source/common",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
-    "//foundation/communication/ipc/ipc/native/src/napi/include",
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
+    "ability_runtime:app_manager",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
+    "napi:ace_napi",
+    "resmgr_standard:global_resmgr",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   relative_install_dir = "module/application"

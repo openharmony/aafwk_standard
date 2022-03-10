@@ -15,8 +15,8 @@
 
 #include "app_death_recipient.h"
 
-#include "app_log_wrapper.h"
 #include "app_mgr_service_inner.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -27,18 +27,18 @@ const std::string TASK_ON_REMOTE_DIED = "OnRemoteDiedTask";
 void AppDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
     if (remote == nullptr) {
-        APP_LOGE("remote is null");
+        HILOG_ERROR("remote is null");
         return;
     }
 
     auto handler = handler_.lock();
     if (!handler) {
-        APP_LOGE("handler is null");
+        HILOG_ERROR("handler is null");
         return;
     }
     auto serviceInner = appMgrServiceInner_.lock();
     if (!serviceInner) {
-        APP_LOGE("serviceInner is null");
+        HILOG_ERROR("serviceInner is null");
         return;
     }
 

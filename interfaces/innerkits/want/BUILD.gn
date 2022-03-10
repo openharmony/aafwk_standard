@@ -21,8 +21,8 @@ config("want_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"Ability\"",
-    "LOG_DOMAIN = 0xD002200",
+    "ABILITYBASE_LOG_TAG = \"Ability\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002200",
   ]
 }
 
@@ -32,9 +32,8 @@ config("want_public_config") {
     "//utils/native/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/log/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/aafwk/standard/frameworks/kits/content/cpp/src",
     "//third_party/jsoncpp/include",
@@ -61,12 +60,13 @@ ohos_shared_library("want") {
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//third_party/jsoncpp:jsoncpp",
-    "//utils/native/base:utils",
   ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
+  ]
 
   configs = [ ":want_config" ]
   public_configs = [ ":want_public_config" ]

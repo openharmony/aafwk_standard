@@ -15,8 +15,9 @@
 
 #include "ability_controller_proxy.h"
 
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
-#include "app_log_wrapper.h"
+
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -27,7 +28,7 @@ AbilityControllerProxy::AbilityControllerProxy(
 bool AbilityControllerProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(AbilityControllerProxy::GetDescriptor())) {
-        APP_LOGE("write interface token failed");
+        HILOG_ERROR("write interface token failed");
         return false;
     }
     return true;
@@ -45,14 +46,14 @@ bool AbilityControllerProxy::AllowAbilityStart(const Want &want, const std::stri
     data.WriteString(bundleName);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return true;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_START),
         data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return true;
     }
     return reply.ReadBool();
@@ -69,14 +70,14 @@ bool AbilityControllerProxy::AllowAbilityBackground(const std::string &bundleNam
     data.WriteString(bundleName);
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote() is NULL");
+        HILOG_ERROR("Remote() is NULL");
         return true;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IAbilityController::Message::TRANSACT_ON_ALLOW_ABILITY_BACKGROUND),
         data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return true;
     }
     return reply.ReadBool();

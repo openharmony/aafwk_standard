@@ -22,7 +22,7 @@
 #include <mutex>
 #include <queue>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "task.h"
 #include "task_priority.h"
 
@@ -80,7 +80,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
         while (queue_.empty() && !stopFlag_) {
-            APP_LOGI("BlockingQueue::Take empty_wait");
+            HILOG_INFO("BlockingQueue::Take empty_wait");
             empty_.wait(lock);
         }
 
@@ -98,7 +98,7 @@ public:
         std::unique_lock<std::mutex> lock(mutex_);
         while (queue_.empty() && !stopFlag_) {
             if (empty_.wait_until(lock, timeout) == std::cv_status::timeout) {
-                APP_LOGI("BlockingQueue::Poll timeout");
+                HILOG_INFO("BlockingQueue::Poll timeout");
                 break;
             }
         }

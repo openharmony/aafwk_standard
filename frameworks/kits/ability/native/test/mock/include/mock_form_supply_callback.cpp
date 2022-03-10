@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "mock_form_supply_callback.h"
 
 namespace OHOS {
@@ -40,7 +40,7 @@ sptr<MockFormSupplyCallback> MockFormSupplyCallback::GetInstance()
  */
 int MockFormSupplyCallback::OnAcquire(const FormProviderInfo &formProviderInfo, const Want& want)
 {
-    APP_LOGI("MockFormSupplyCallback::OnAcquire called.");
+    HILOG_INFO("MockFormSupplyCallback::OnAcquire called.");
     return 1;
 }
 
@@ -52,7 +52,7 @@ int MockFormSupplyCallback::OnAcquire(const FormProviderInfo &formProviderInfo, 
  */
 int MockFormSupplyCallback::OnEventHandle(const Want& want)
 {
-    APP_LOGI("MockFormSupplyCallback::OnEventHandle called.");
+    HILOG_INFO("MockFormSupplyCallback::OnEventHandle called.");
     return 1;
 }
 }  // namespace AppExecFwk

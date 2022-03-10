@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include <chrono>
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "iability_monitor.h"
 
 using namespace std::chrono_literals;
@@ -26,27 +26,27 @@ IAbilityMonitor::IAbilityMonitor(const std::string &abilityName) : abilityName_(
 bool IAbilityMonitor::Match(const std::shared_ptr<ADelegatorAbilityProperty> &ability, bool isNotify)
 {
     if (!ability) {
-        APP_LOGW("Invalid ability property");
+        HILOG_WARN("Invalid ability property");
         return false;
     }
 
     const auto &aName = ability->name_;
 
     if (abilityName_.empty() || aName.empty()) {
-        APP_LOGW("Invalid name");
+        HILOG_WARN("Invalid name");
         return false;
     }
 
     if (abilityName_.compare(aName)) {
-        APP_LOGW("Different name");
+        HILOG_WARN("Different name");
         return false;
     }
 
-    APP_LOGI("Matched : ability name : %{public}s, isNotify : %{public}s",
+    HILOG_INFO("Matched : ability name : %{public}s, isNotify : %{public}s",
         abilityName_.data(), (isNotify ? "true" : "false"));
 
     if (isNotify) {
-        APP_LOGI("Matched : notify ability matched");
+        HILOG_INFO("Matched : notify ability matched");
         {
             std::lock_guard<std::mutex> matchLock(mMatch_);
             matchedAbility_ = ability;
@@ -66,7 +66,7 @@ std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility(const
 {
     auto realTime = timeoutMs;
     if (timeoutMs <= 0) {
-        APP_LOGW("Timeout should be a positive number");
+        HILOG_WARN("Timeout should be a positive number");
         realTime = MAX_TIME_OUT;
     }
 
@@ -74,7 +74,7 @@ std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::waitForAbility(const
 
     auto condition = [this] { return this->matchedAbility_ != nullptr; };
     if (!cvMatch_.wait_for(matchLock, realTime * 1ms, condition)) {
-        APP_LOGW("Wait ability timeout");
+        HILOG_WARN("Wait ability timeout");
     }
 
     return matchedAbility_;

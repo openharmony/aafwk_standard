@@ -16,8 +16,8 @@
 #ifndef FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_FORMMGR_FORM_HOST_PROXY_H
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_FORMMGR_FORM_HOST_PROXY_H
 
-#include "app_log_wrapper.h"
 #include "form_host_interface.h"
+#include "hilog_wrapper.h"
 #include "iremote_proxy.h"
 
 namespace OHOS {

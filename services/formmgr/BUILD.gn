@@ -18,7 +18,6 @@ config("formmgr_config") {
   include_dirs = [
     "include",
     "//third_party/json/include",
-    "//utils/system/safwk/native/include",
 
     #    "//base/miscservices/time/interfaces/innerkits/include",
   ]
@@ -31,10 +30,7 @@ group("fms_target") {
 ohos_shared_library("libfms") {
   include_dirs = [
     "${services_path}/common:perm_verification",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
 
@@ -75,13 +71,12 @@ ohos_shared_library("libfms") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"FormMgrService\"",
-    "LOG_DOMAIN = 0xD001120",
+    "AMS_LOG_TAG = \"FormMgrService\"",
+    "AMS_LOG_DOMAIN = 0xD001120",
   ]
 
   configs = [
     ":formmgr_config",
-    "//base/miscservices/time/services:time_service_config",
     "${aafwk_path}/interfaces/innerkits/form_manager:formmgr_sdk_config",
   ]
   cflags = []
@@ -90,13 +85,8 @@ ohos_shared_library("libfms") {
   }
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/common:perm_verification",
-    "//base/miscservices/time/services:time_service",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
-    "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
-    "//utils/native/base:utils",
 
     #  "//third_party/libuuid:libuuid_static",
   ]
@@ -105,11 +95,15 @@ ohos_shared_library("libfms") {
     "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "distributeddatamgr:distributeddata_inner",
+    "eventhandler:libeventhandler",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -119,6 +113,8 @@ ohos_shared_library("libfms") {
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "time_native:time_service",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
