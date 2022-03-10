@@ -201,6 +201,7 @@ bool AbilityManagerService::Init()
     InitMissionListManager(userId, true);
 #endif
     SwitchManagers(U0_USER_ID, false);
+    SwitchManagers(MAIN_USER_ID, true);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
     if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
