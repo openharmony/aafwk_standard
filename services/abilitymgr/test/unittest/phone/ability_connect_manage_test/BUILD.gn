@@ -66,6 +66,5 @@ ohos_unittest("ability_connect_manage_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":ability_connect_manage_test" ]
+  # deps = [ ":ability_connect_manage_test" ]
 }

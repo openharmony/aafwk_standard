@@ -156,6 +156,7 @@ string ExtraParams::GetTargetBundleName() const
 {
     return targetBundleName_;
 }
+
 /**
  * @brief Sets the description used for device filtering.
  *

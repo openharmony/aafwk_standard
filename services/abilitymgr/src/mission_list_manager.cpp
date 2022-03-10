@@ -351,6 +351,8 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     info.missionName = missionName;
     info.isSingletonMode = isSingleton;
     info.startMethod = startMethod;
+    info.bundleName = abilityRequest.abilityInfo.bundleName;
+    info.uid = abilityRequest.uid;
     info.missionInfo.runningState = 0;
     info.missionInfo.continuable = abilityRequest.abilityInfo.continuable;
     info.missionInfo.time = Time2str(time(0));
@@ -931,7 +933,7 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
 
     // new version. started by caller, sdheduler call request
     if (abilityRecord->IsStartedByCall() && abilityRecord->IsStartToBackground() && abilityRecord->IsReady()) {
-        HILOG_DEBUG("call request after completing backgroud state");
+        HILOG_DEBUG("call request after completing background state");
         abilityRecord->CallRequest();
         abilityRecord->SetStartToBackground(false);
     }
@@ -1177,10 +1179,15 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
 
 std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityFromTerminateList(const sptr<IRemoteObject> &token)
 {
+    if (!token) {
+        return nullptr;
+    }
+
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     for (auto abilityRecord : terminateAbilityList_) {
         // token is type of IRemoteObject, abilityRecord->GetToken() is type of Token extending from IRemoteObject.
-        if (abilityRecord && token == abilityRecord->GetToken()->AsObject()) {
+        if (abilityRecord && abilityRecord->GetToken() &&
+            abilityRecord->GetToken() && token == abilityRecord->GetToken()->AsObject()) {
             return abilityRecord;
         }
     }
@@ -1793,10 +1800,13 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
     }
 
     // update running state.
-    InnerMissionInfo info;
-    if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(), info) == 0) {
-        info.missionInfo.runningState = -1;
-        DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+    if (!ability->IsUninstallAbility()) {
+        InnerMissionInfo info;
+        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+            mission->GetMissionId(), info) == 0) {
+            info.missionInfo.runningState = -1;
+            DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+        }
     }
 
     // start launcher
@@ -2306,6 +2316,44 @@ std::shared_ptr<AbilityRecord> MissionListManager::GetCurrentTopAbility(const st
     }
 
     return {};
+}
+
+void MissionListManager::UninstallApp(const std::string &bundleName, int32_t uid)
+{
+    HILOG_INFO("Uninstall app, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);
+    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
+    CHECK_POINTER(abilityManagerService);
+    auto handler = abilityManagerService->GetEventHandler();
+    CHECK_POINTER(handler);
+    std::weak_ptr<MissionListManager> wpMgr = shared_from_this();
+    auto task = [wpMgr, bundleName, uid]() {
+        HILOG_INFO("Handle Uninstall app, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);
+        auto mgr = wpMgr.lock();
+        if (mgr) {
+            mgr->AddUninstallTags(bundleName, uid);
+        }
+    };
+    handler->PostTask(task);
+}
+
+void MissionListManager::AddUninstallTags(const std::string &bundleName, int32_t uid)
+{
+    HILOG_INFO("AddUninstallTags, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);
+    for (auto& missionList : currentMissionLists_) {
+        if (missionList) {
+            missionList->HandleUnInstallApp(bundleName, uid); // add tag here.
+            if (missionList->IsEmpty()) {
+                currentMissionLists_.remove(missionList);
+            }
+        }
+    }
+    defaultSingleList_->HandleUnInstallApp(bundleName, uid);
+    defaultStandardList_->HandleUnInstallApp(bundleName, uid);
+    std::list<int32_t> matchedMissions;
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->HandleUnInstallApp(bundleName, uid, matchedMissions);
+    if (listenerController_) {
+        listenerController_->HandleUnInstallApp(matchedMissions);
+    }
 }
 
 bool MissionListManager::IsStarted()

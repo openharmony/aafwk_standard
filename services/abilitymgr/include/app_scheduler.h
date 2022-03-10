@@ -211,6 +211,15 @@ public:
     int KillApplication(const std::string &bundleName);
 
     /**
+     * kill the application by uid
+     *
+     * @param bundleName name of bundle.
+     * @param uid uid of bundle.
+     * @return 0 if success.
+     */
+    int KillApplicationByUid(const std::string &bundleName, int32_t uid);
+
+    /**
      * clear the application data
      *
      * @param bundleName.
@@ -285,6 +294,13 @@ public:
      * @return Returns true on success, others on failure.
      */
     int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
+    /**
+     * Post a task to the not response process.
+     *
+     * @param pid, the not response process id.
+     */
+    void PostANRTaskByProcessID(const pid_t pid);
 
 protected:
     /**
