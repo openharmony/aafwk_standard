@@ -3235,7 +3235,9 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
         HILOG_INFO("Ability::ParsePredictionArgsReference push_back done");
     }
 
-    predicates->SetWhereArgs(strPredicatesList);
+    if (predicates) {
+        predicates->SetWhereArgs(strPredicatesList);
+    }
 
     return predicates;
 }
