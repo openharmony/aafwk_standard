@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ void AmsStServiceAbilityF3::OnStart(const Want &want)
     Ability::OnStart(want);
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnStart");
 }
-
 void AmsStServiceAbilityF3::OnNewWant(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityF3::OnNewWant");
@@ -47,7 +46,6 @@ void AmsStServiceAbilityF3::OnNewWant(const Want &want)
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
-
 void AmsStServiceAbilityF3::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
     HILOG_INFO("AmsStServiceAbilityF3::OnCommand");
@@ -56,7 +54,6 @@ void AmsStServiceAbilityF3::OnCommand(const AAFwk::Want &want, bool restart, int
     Ability::OnCommand(want, restart, startId);
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnCommand");
 }
-
 void AmsStServiceAbilityF3::OnStop()
 {
     HILOG_INFO("AmsStServiceAbilityF3::onStop");
@@ -64,7 +61,6 @@ void AmsStServiceAbilityF3::OnStop()
     Ability::OnStop();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
-
 void AmsStServiceAbilityF3::OnActive()
 {
     HILOG_INFO("AmsStServiceAbilityF3::OnActive");
@@ -72,7 +68,6 @@ void AmsStServiceAbilityF3::OnActive()
     Ability::OnActive();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
-
 void AmsStServiceAbilityF3::OnInactive()
 {
     HILOG_INFO("AmsStServiceAbilityF3::OnInactive");
@@ -80,7 +75,6 @@ void AmsStServiceAbilityF3::OnInactive()
     Ability::OnInactive();
     PublishEvent(APP_F3_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
-
 void AmsStServiceAbilityF3::OnBackground()
 {
     HILOG_INFO("AmsStServiceAbilityF3::OnBackground");
@@ -95,7 +89,6 @@ void AmsStServiceAbilityF3::Clear()
     targetBundle_ = "";
     targetAbility_ = "";
 }
-
 void AmsStServiceAbilityF3::GetWantInfo(const Want &want)
 {
     Want mWant(want);
@@ -103,7 +96,6 @@ void AmsStServiceAbilityF3::GetWantInfo(const Want &want)
     targetBundle_ = mWant.GetStringParam("targetBundle");
     targetAbility_ = mWant.GetStringParam("targetAbility");
 }
-
 bool AmsStServiceAbilityF3::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
     HILOG_INFO("AmsStServiceAbilityF3::PublishEvent eventName = %s, code = %d, data = %s",

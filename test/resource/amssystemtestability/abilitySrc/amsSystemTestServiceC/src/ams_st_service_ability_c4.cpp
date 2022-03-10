@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,6 @@ void AmsStServiceAbilityC4::OnStart(const Want &want)
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnStart");
     SubscribeEvent();
 }
-
 void AmsStServiceAbilityC4::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnCommand");
@@ -52,7 +51,6 @@ void AmsStServiceAbilityC4::OnCommand(const AAFwk::Want &want, bool restart, int
     Ability::OnCommand(want, restart, startId);
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnCommand");
 }
-
 void AmsStServiceAbilityC4::OnNewWant(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnNewWant");
@@ -60,7 +58,6 @@ void AmsStServiceAbilityC4::OnNewWant(const Want &want)
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
-
 void AmsStServiceAbilityC4::OnStop()
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnStop");
@@ -68,7 +65,6 @@ void AmsStServiceAbilityC4::OnStop()
     Ability::OnStop();
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
-
 void AmsStServiceAbilityC4::OnActive()
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnActive");
@@ -76,7 +72,6 @@ void AmsStServiceAbilityC4::OnActive()
     Ability::OnActive();
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
-
 void AmsStServiceAbilityC4::OnInactive()
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnInactive");
@@ -84,7 +79,6 @@ void AmsStServiceAbilityC4::OnInactive()
     Ability::OnInactive();
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
-
 void AmsStServiceAbilityC4::OnBackground()
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnBackground");
@@ -92,7 +86,6 @@ void AmsStServiceAbilityC4::OnBackground()
     Ability::OnBackground();
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnBackground");
 }
-
 sptr<IRemoteObject> AmsStServiceAbilityC4::OnConnect(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnConnect");
@@ -101,7 +94,6 @@ sptr<IRemoteObject> AmsStServiceAbilityC4::OnConnect(const Want &want)
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnConnect");
     return ret;
 }
-
 void AmsStServiceAbilityC4::OnDisconnect(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityC4::OnDisconnect");
@@ -109,28 +101,24 @@ void AmsStServiceAbilityC4::OnDisconnect(const Want &want)
     Ability::OnDisconnect(want);
     PublishEvent(APP_C4_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnDisconnect");
 }
-
 void AmsStServiceAbilityC4::StopSelfAbility()
 {
     HILOG_INFO("AmsStServiceAbilityC4::StopSelfAbility");
 
     TerminateAbility();
 }
-
 void AmsStServiceAbilityC4::DisConnectOtherAbility()
 {
     HILOG_INFO("AmsStServiceAbilityC4::DisConnectOtherAbility begin");
 
     HILOG_INFO("AmsStServiceAbilityB3::DisConnectOtherAbility end");
 }
-
 void AmsStServiceAbilityC4::Clear()
 {
     shouldReturn_ = "";
     targetBundle_ = "";
     targetAbility_ = "";
 }
-
 void AmsStServiceAbilityC4::GetWantInfo(const Want &want)
 {
     Want mWant(want);
@@ -138,7 +126,6 @@ void AmsStServiceAbilityC4::GetWantInfo(const Want &want)
     targetBundle_ = mWant.GetStringParam("targetBundle");
     targetAbility_ = mWant.GetStringParam("targetAbility");
 }
-
 bool AmsStServiceAbilityC4::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
     HILOG_INFO("AmsStServiceAbilityC4::PublishEvent eventName = %{public}s, code = %{public}d, data = %{public}s",

@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 SUBSYSTEM_DIR = "//foundation/aafwk/standard/frameworks/kits/ability/native"
 INNERKITS_PATH = "//foundation/aafwk/standard/interfaces/innerkits"
@@ -254,6 +253,7 @@ ohos_shared_library("abilitykit_native") {
     "ability_runtime:task_dispatcher",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
+    "background_task_mgr:bgtaskmgr_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
@@ -269,12 +269,6 @@ ohos_shared_library("abilitykit_native") {
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
-
-  defines = []
-  if (background_task_mgr_continuous_task_enable) {
-    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines += [ "BGTASKMGR_CONTINUOUS_TASK_ENABLE" ]
-  }
 
   public_deps = [
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",

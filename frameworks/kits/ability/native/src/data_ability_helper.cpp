@@ -250,7 +250,8 @@ std::shared_ptr<DataAbilityHelper> DataAbilityHelper::Creator(
 
     if (uri->GetScheme() != SchemeOhos) {
         HILOG_ERROR("DataAbilityHelper::Creator (context, uri, tryBind) failed, the Scheme is not dataability, Scheme: "
-            "%{public}s", uri->GetScheme().c_str());
+                 "%{public}s",
+            uri->GetScheme().c_str());
         return nullptr;
     }
 
@@ -854,31 +855,25 @@ bool DataAbilityHelper::CheckUriParam(const Uri &uri)
         return false;
     }
 
-    // do not directly use uri_ here, otherwise, it will probably crash.
-    std::vector<std::string> segments;
-    {
-        std::lock_guard<std::mutex> guard(lock_);
-        if (!uri_) {
-            HILOG_INFO("DataAbilityHelper::CheckUriParam uri_ is nullptr, no need check");
-            return true;
-        }
-
-        if (!CheckOhosUri(*uri_)) {
-            HILOG_ERROR("DataAbilityHelper::CheckUriParam failed. CheckOhosUri uri_ failed");
+    auto uriSp = uri_; // do not directly use uri_ here, otherwise, it will crash.
+    if (uriSp != nullptr) {
+        if (!CheckOhosUri(*uriSp)) {
+            HILOG_ERROR("DataAbilityHelper::CheckUriParam failed. CheckOhosUri uriSp failed");
             return false;
         }
 
-        uri_->GetPathSegments(segments);
+        std::vector<std::string> checkSegments;
+        checkUri.GetPathSegments(checkSegments);
+
+        std::vector<std::string> segments;
+        uriSp->GetPathSegments(segments);
+
+        if (checkSegments.empty() || segments.empty() || checkSegments[0] != segments[0]) {
+            HILOG_ERROR(
+                "DataAbilityHelper::CheckUriParam failed. the dataability in uri doesn't equal the one in uriSp.");
+            return false;
+        }
     }
-
-    std::vector<std::string> checkSegments;
-    checkUri.GetPathSegments(checkSegments);
-
-    if (checkSegments.empty() || segments.empty() || checkSegments[0] != segments[0]) {
-        HILOG_ERROR("DataAbilityHelper::CheckUriParam failed. dataability in uri doesn't equal the one in uri_.");
-        return false;
-    }
-
     HILOG_INFO("DataAbilityHelper::CheckUriParam end.");
     return true;
 }

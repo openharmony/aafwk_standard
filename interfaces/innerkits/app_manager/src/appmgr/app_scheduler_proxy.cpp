@@ -337,25 +337,5 @@ void AppSchedulerProxy::ScheduleAcceptWant(const AAFwk::Want &want, const std::s
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
 }
-
-void AppSchedulerProxy::ScheduleANRProcess()
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        HILOG_ERROR("Remote() is NULL");
-        return;
-    }
-    int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ANR_PROCESS), data, reply, option);
-    if (ret != NO_ERROR) {
-        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
-    }
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -365,7 +365,6 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
         HILOG_ERROR("get app record failed");
         return;
     }
-    appRecord->ApplicationTerminated();
     // Maybe can't get in here
     if (appRecord->IsKeepAliveApp()) {
         return;
@@ -920,7 +919,7 @@ void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &to
         return;
     }
 
-    // before exec ScheduleProcessSecurityExit return
+    // befor exec ScheduleProcessSecurityExit return
     // The resident process won't let him die
     if (appRecord->IsKeepAliveApp()) {
         return;
@@ -1482,6 +1481,12 @@ void AppMgrServiceInner::HandleTerminateApplicationTimeOut(const int64_t eventId
     auto appRecord = appRunningManager_->GetAppRunningRecord(eventId);
     if (!appRecord) {
         HILOG_ERROR("appRecord is nullptr");
+        return;
+    }
+
+    auto abilityRecord = appRecord->GetAbilityRunningRecord(eventId);
+    if (!abilityRecord) {
+        HILOG_ERROR("abilityRecord is nullptr");
         return;
     }
     appRecord->SetState(ApplicationState::APP_STATE_TERMINATED);

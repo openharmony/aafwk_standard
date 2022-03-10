@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,12 +28,10 @@ void FormAbilityNoPerm::AcquireFormCallback::OnAcquired(const int32_t result, co
 {
     HILOG_INFO("%{public}s called", __func__);
 }
-
 void FormAbilityNoPerm::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
 }
-
 void FormAbilityNoPerm::AcquireFormCallback::OnFormUninstall(const int64_t formId) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -97,7 +95,6 @@ void FormAbilityNoPerm::OnStart(const Want &want)
     };
     SubscribeEvent(eventList);
 }
-
 void FormAbilityNoPerm::OnActive()
 {
     HILOG_INFO("FormAbilityNoPerm::OnActive");
@@ -112,21 +109,18 @@ void FormAbilityNoPerm::OnStop()
 
     Ability::OnStop();
 }
-
 void FormAbilityNoPerm::OnInactive()
 {
     HILOG_INFO("FormAbilityNoPerm::OnInactive");
 
     Ability::OnInactive();
 }
-
 void FormAbilityNoPerm::OnBackground()
 {
     HILOG_INFO("FormAbilityNoPerm::OnBackground");
 
     Ability::OnBackground();
 }
-
 void FormAbilityNoPerm::SubscribeEvent(const std::vector<std::string> &eventList)
 {
     MatchingSkills matchingSkills;

@@ -43,8 +43,6 @@ namespace Constants {
     const std::string SYSTEM_PARAM_FORM_REFRESH_MIN_TIME = "persist.sys.fms.form.refresh.min.time";
     const std::string ACTION_UPDATEATTIMER = "form_update_at_timer";
     const std::string KEY_WAKEUP_TIME = "wakeUpTime";
-    const std::string KEY_WAKEUP_TIME_LEFT = "wakeUpTimeLeft";
-    const std::string KEY_WAKEUP_TIME_RIGHT = "wakeUpTimeRight";
     const std::string KEY_ACTION_TYPE = "form_update_action_type";
     const std::string ABS_CODE_PATH = "/data/app/el1/bundle/public";
     const std::string LOCAL_CODE_PATH = "/data/storage/el1/bundle";

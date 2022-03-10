@@ -157,8 +157,6 @@ public:
      * @param handler the snapshotHandler
      */
     void RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
-
-    void HandleUnInstallApp(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions);
 private:
     /**
      * @brief Boot query mission info.
@@ -166,10 +164,7 @@ private:
      */
     bool LoadAllMissionInfo();
 
-    void GetMatchedMission(const std::string &bundleName, int32_t uid, std::list<int32_t> &missions);
-
 private:
-    int32_t currentMisionId_ = MIN_MISSION_ID;
     std::unordered_map<int32_t, bool> missionIdMap_; // key:distributed misisonid, vaule: has been saved
     std::list<InnerMissionInfo> missionInfoList_;
     std::shared_ptr<TaskDataPersistenceMgr> taskDataPersistenceMgr_;

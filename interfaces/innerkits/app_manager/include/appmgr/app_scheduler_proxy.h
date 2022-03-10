@@ -134,15 +134,6 @@ public:
 
     virtual void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
 
-    /**
-     *
-     * @brief The handle of application not response process.
-     *
-     * @param sigMessage Recieve the sig message.
-     *
-     */
-    virtual void ScheduleANRProcess() override;
-
 private:
     bool WriteInterfaceToken(MessageParcel &data);
     static inline BrokerDelegator<AppSchedulerProxy> delegator_;

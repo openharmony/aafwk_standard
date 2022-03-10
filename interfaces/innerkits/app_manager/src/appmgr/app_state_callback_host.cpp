@@ -41,7 +41,7 @@ AppStateCallbackHost::~AppStateCallbackHost()
 int AppStateCallbackHost::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("AppStateCallbackHost::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("AppStateCallbackHost::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = AppStateCallbackHost::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {

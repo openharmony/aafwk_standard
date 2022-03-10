@@ -1640,7 +1640,7 @@ void GetElementNameExecuteCB(napi_env env, void *data)
     }
 
     std::shared_ptr<ElementName> elementName = elementNameCB->cbBase.ability->GetElementName();
-    if (elementName != nullptr) {
+    if (elementNameCB != nullptr) {
         elementNameCB->deviceId = elementName->GetDeviceID();
         elementNameCB->bundleName = elementName->GetBundleName();
         elementNameCB->abilityName = elementName->GetAbilityName();

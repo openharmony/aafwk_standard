@@ -20,7 +20,6 @@ ohos_shared_library("datashare") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataShare",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",

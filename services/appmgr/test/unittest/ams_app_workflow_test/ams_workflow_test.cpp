@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -639,7 +639,7 @@ HWTEST_F(AmsWorkFlowTest, ScreenOn_001, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: WorkFlow
  * FunctionPoints: ScreenOn
- * CaseDescription: when multiple abilities on background, previous is one ability, simulate screen on
+ * CaseDescription: when multiple abilities on backgroud, previous is one ability, simulate screen on
  */
 HWTEST_F(AmsWorkFlowTest, ScreenOn_002, TestSize.Level1)
 {
@@ -666,7 +666,7 @@ HWTEST_F(AmsWorkFlowTest, ScreenOn_002, TestSize.Level1)
  * Function: AppLifeCycle
  * SubFunction: WorkFlow
  * FunctionPoints: ScreenOn
- * CaseDescription: when multiple abilities on background, all abilities are previous, simulate screen on
+ * CaseDescription: when multiple abilities on backgroud, all abilities are previous, simulate screen on
  */
 HWTEST_F(AmsWorkFlowTest, ScreenOn_003, TestSize.Level1)
 {

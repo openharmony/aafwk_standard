@@ -24,11 +24,3 @@ dispatcher_path = "${aafwk_path}/common/task_dispatcher"
 
 system_test_app_path =
     "${aafwk_path}/test/resource/amssystemtestability/abilitySrc"
-
-declare_args() {
-  background_task_mgr_continuous_task_enable = true
-
-  if (!defined(global_parts_info.resourceschedule_background_task_mgr)) {
-    background_task_mgr_continuous_task_enable = false
-  }
-}

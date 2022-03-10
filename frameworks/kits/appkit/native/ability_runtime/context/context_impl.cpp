@@ -73,7 +73,7 @@ std::string ContextImpl::GetBundleCodeDir()
     if (IsCreateBySystemApp()) {
         dir = std::regex_replace(appInfo->codePath, std::regex(ABS_CODE_PATH), LOCAL_BUNDLES);
     } else {
-        dir = LOCAL_CODE_PATH;
+        dir = CONTEXT_DATA_STORAGE + CONTEXT_ELS[0] + CONTEXT_BUNDLE;
     }
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetBundleCodeDir:%{public}s", dir.c_str());

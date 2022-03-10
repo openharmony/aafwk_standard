@@ -96,7 +96,7 @@ void AppMgrEventHandler::ScheduleAbilityTransaction(const AppExecFwk::InnerEvent
     auto abilityToken = tokenMap_[abilitySched];
 
     if (abilityToken == nullptr) {
-        HILOG_ERROR("abilityToken unavailable.");
+        HILOG_ERROR("abilityToken unavailable. object: %p", object.get());
         return;
     }
 
@@ -139,7 +139,7 @@ void AppMgrEventHandler::ScheduleDisconnectAbilityTransaction(const AppExecFwk::
     auto abilityToken = tokenMap_[abilitySched];
 
     if (abilityToken == nullptr) {
-        HILOG_ERROR("abilityToken unavailable.");
+        HILOG_ERROR("abilityToken unavailable. object: %p", object.get());
         return;
     }
 
