@@ -636,15 +636,6 @@ public:
     ErrCode MoveMissionToFront(int32_t missionId);
     ErrCode MoveMissionToFront(int32_t missionId, const StartOptions &startOptions);
 
-    /**
-     * @brief Get mission id by ability token.
-     *
-     * @param token ability token.
-     * @param missionId output mission id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode GetMissionIdByToken(const sptr<IRemoteObject> &token, int32_t &missionId);
-
 	/**
      * Start Ability, connect session with common ability.
      *

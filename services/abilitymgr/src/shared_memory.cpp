@@ -93,7 +93,7 @@ void* SharedMemory::PopSharedMemory(int shmKey, int size)
         HILOG_ERROR("size is invalid: %{public}d.", size);
         return nullptr;
     }
-
+    void *data = reinterpret_cast<void *>(malloc(size));
     int shmId = shmget(shmKey, 0, 0 | SHM_READ_WRITE_PERMISSIONS);
     if (shmId == -1) {
         HILOG_ERROR("shmId is invalid: %{public}d, %{public}d.", shmId, errno);
@@ -107,20 +107,17 @@ void* SharedMemory::PopSharedMemory(int shmKey, int size)
         return nullptr;
     }
 
-    void *data = reinterpret_cast<void *>(malloc(size));
     int retCode = memcpy_s(data, size, shared, size);
     if (retCode != EOK) {
         shmdt(shared);
         ReleaseShmId(shmId);
         HILOG_ERROR("Failed to memory copy, retCode[%{public}d].", retCode);
-        free(data);
         return nullptr;
     }
 
     if (shmdt(shared) == -1) {
         ReleaseShmId(shmId);
         HILOG_ERROR("shmdt failed: %{public}d.", errno);
-        free(data);
         return nullptr;
     }
 

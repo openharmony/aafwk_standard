@@ -435,25 +435,5 @@ void AppMgrService::AttachRenderProcess(const sptr<IRemoteObject> &scheduler)
         appMgrServiceInner_, pid, iface_cast<IRenderScheduler>(scheduler));
     handler_->PostTask(fun, TASK_ATTACH_RENDER_PROCESS);
 }
-
-void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
-{
-    HILOG_DEBUG("PostANRTaskByProcessID called.");
-    if (!IsReady()) {
-        HILOG_ERROR("AttachRenderProcess failed, not ready.");
-        return;
-    }
-    auto appRecord = appMgrServiceInner_->GetAppRunningRecordByPid(pid);
-    if (!appRecord) {
-        HILOG_ERROR("no such appRecord");
-        return;
-    }
-    auto object = appRecord->GetApplicationClient();
-    if (!object) {
-        HILOG_ERROR("GetApplicationClient failed.");
-        return;
-    }
-    object->ScheduleANRProcess();
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

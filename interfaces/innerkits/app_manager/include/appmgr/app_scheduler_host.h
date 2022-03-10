@@ -48,7 +48,6 @@ private:
     int32_t HandleScheduleConfigurationUpdated(MessageParcel &data, MessageParcel &reply);
     int32_t HandleScheduleProcessSecurityExit(MessageParcel &data, MessageParcel &reply);
     int32_t HandleScheduleAcceptWant(MessageParcel &data, MessageParcel &reply);
-    int32_t HandleScheduleANRProcess(MessageParcel &data, MessageParcel &reply);
 
     using AppSchedulerFunc = int32_t (AppSchedulerHost::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, AppSchedulerFunc> memberFuncMap_;

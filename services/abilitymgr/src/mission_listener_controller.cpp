@@ -133,31 +133,6 @@ void MissionListenerController::NotifyMissionDestroyed(int32_t missionId)
     handler_->PostTask(task);
 }
 
-void MissionListenerController::HandleUnInstallApp(const std::list<int32_t> &missions)
-{
-    if (!handler_) {
-        HILOG_ERROR("handler not init");
-        return;
-    }
-
-    if (missions.empty()) {
-        return;
-    }
-
-    auto task = [weak = weak_from_this(), missions]() {
-        auto self = weak.lock();
-        if (self == nullptr) {
-            HILOG_ERROR("self is nullptr, NotifyMissionDestroyed failed.");
-            return;
-        }
-        for (auto id : missions) {
-            self->NotifyListeners(id, Cmd::ON_MISSION_DESTROYED);
-        }
-    };
-    handler_->PostTask(task);
-
-}
-
 void MissionListenerController::NotifyMissionSnapshotChanged(int32_t missionId)
 {
     if (!handler_) {

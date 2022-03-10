@@ -34,7 +34,6 @@ void AbilityConnection::OnAbilityConnectDone(
     HILOG_DEBUG("%{public}s begin.", __func__);
     if (abilityConnectCallback_ == nullptr) {
         HILOG_ERROR("%{public}s abilityConnectCallback is nullptr.", __func__);
-        return;
     }
     SetRemoteObject(remoteObject);
     SetResultCode(resultCode);
@@ -48,7 +47,6 @@ void AbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &e
     HILOG_DEBUG("%{public}s begin, resultCode:%{public}d.", __func__, resultCode);
     if (abilityConnectCallback_ == nullptr) {
         HILOG_ERROR("%{public}s abilityConnectCallback is nullptr.", __func__);
-        return;
     }
     // if resultCode < 0 that means the connectReceiver is died
     if (resultCode == DIED) {

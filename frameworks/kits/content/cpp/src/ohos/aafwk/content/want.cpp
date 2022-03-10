@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1341,7 +1341,7 @@ Want &Want::SetUriAndType(const Uri &uri, const std::string &type)
 /**
  * @description: Converts a Want into a URI string containing a representation of it.
  * @param want Indicates the want description.--Want.
- * @return  Returns an encoding URI string describing the Want object.
+ * @return  Returns a encoding URI string describing the Want object.
  */
 std::string Want::WantToUri(Want &want)
 {

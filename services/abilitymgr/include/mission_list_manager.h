@@ -339,8 +339,6 @@ public:
      */
     std::shared_ptr<AbilityRecord> GetCurrentTopAbility(const std::string &bundleName);
 
-    void UninstallApp(const std::string &bundleName, int32_t uid);
-
     bool IsStarted();
     void PauseManager();
     void ResumeManager();
@@ -408,8 +406,6 @@ private:
     std::shared_ptr<AbilityRecord> GetAbilityRecordByName(const AppExecFwk::ElementName &element);
     int CallAbilityLocked(const AbilityRequest &abilityRequest);
     void UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord>& abilityRecord);
-
-    void AddUninstallTags(const std::string &bundleName, int32_t uid);
 
 private:
     int userId_;

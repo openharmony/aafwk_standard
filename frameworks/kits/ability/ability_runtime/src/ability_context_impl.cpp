@@ -344,7 +344,7 @@ ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue
 ErrCode AbilityContextImpl::StartAbility(
     const AAFwk::Want& want, const std::shared_ptr<CallerCallBack> &callback)
 {
-    if (localCallContainer_ == nullptr) {
+    if (!localCallContainer_) {
         localCallContainer_ = new (std::nothrow)LocalCallContainer();
     }
 

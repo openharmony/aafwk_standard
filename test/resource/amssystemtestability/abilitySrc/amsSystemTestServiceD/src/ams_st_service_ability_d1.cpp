@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,6 @@ std::vector<std::string> AmsStServiceAbilityD1::Split(std::string str, const std
     }
     return splitString;
 }
-
 void AmsStServiceAbilityD1::StartOtherAbility()
 {
     HILOG_INFO("AmsStServiceAbilityD1::StartOtherAbility begin targetBundle=%{public}s, targetAbility=%{public}s",
@@ -82,7 +81,6 @@ void AmsStServiceAbilityD1::StartOtherAbility()
         }
     }
 }
-
 void AmsStServiceAbilityD1::ConnectOtherAbility()
 {
     HILOG_INFO(
@@ -145,7 +143,6 @@ void AmsStServiceAbilityD1::OnStart(const Want &want)
     PublishEvent(APP_D1_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnStart");
     SubscribeEvent();
 }
-
 void AmsStServiceAbilityD1::OnNewWant(const Want &want)
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnNewWant");
@@ -153,7 +150,6 @@ void AmsStServiceAbilityD1::OnNewWant(const Want &want)
     GetWantInfo(want);
     Ability::OnNewWant(want);
 }
-
 void AmsStServiceAbilityD1::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnCommand");
@@ -162,7 +158,6 @@ void AmsStServiceAbilityD1::OnCommand(const AAFwk::Want &want, bool restart, int
     Ability::OnCommand(want, restart, startId);
     PublishEvent(APP_D1_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnCommand");
 }
-
 void AmsStServiceAbilityD1::OnStop()
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnStop");
@@ -170,7 +165,6 @@ void AmsStServiceAbilityD1::OnStop()
     Ability::OnStop();
     PublishEvent(APP_D1_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INITIAL, "OnStop");
 }
-
 void AmsStServiceAbilityD1::GetDataByDataAbility()
 {
     HILOG_INFO("AmsStServiceAbilityD1::GetDataByDataAbility");
@@ -194,7 +188,6 @@ void AmsStServiceAbilityD1::GetDataByDataAbility()
         PublishEvent(APP_D1_RESP_EVENT_NAME, 0, "GetDataByDataAbility");
     }
 }
-
 void AmsStServiceAbilityD1::OnActive()
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnActive");
@@ -202,7 +195,6 @@ void AmsStServiceAbilityD1::OnActive()
     Ability::OnActive();
     PublishEvent(APP_D1_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::ACTIVE, "OnActive");
 }
-
 void AmsStServiceAbilityD1::OnInactive()
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnInactive");
@@ -210,7 +202,6 @@ void AmsStServiceAbilityD1::OnInactive()
     Ability::OnInactive();
     PublishEvent(APP_D1_RESP_EVENT_NAME, AbilityLifecycleExecutor::LifecycleState::INACTIVE, "OnInactive");
 }
-
 void AmsStServiceAbilityD1::OnBackground()
 {
     HILOG_INFO("AmsStServiceAbilityD1::OnBackground");
@@ -232,7 +223,6 @@ void AmsStServiceAbilityD1::Clear()
     nextTargetAbilityConn_ = "";
     AmsStServiceAbilityD1::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
-
 void AmsStServiceAbilityD1::GetWantInfo(const Want &want)
 {
     Want mWant(want);
@@ -247,7 +237,6 @@ void AmsStServiceAbilityD1::GetWantInfo(const Want &want)
     nextTargetAbilityConn_ = mWant.GetStringParam("nextTargetAbilityConn");
     AmsStServiceAbilityD1::AbilityConnectCallback::onAbilityConnectDoneCount = 0;
 }
-
 bool AmsStServiceAbilityD1::PublishEvent(const std::string &eventName, const int &code, const std::string &data)
 {
     HILOG_INFO("AmsStServiceAbilityD1::PublishEvent eventName = %{public}s, code = %{public}d, data = %{public}s",
@@ -263,7 +252,6 @@ bool AmsStServiceAbilityD1::PublishEvent(const std::string &eventName, const int
     commonData.SetData(data);
     return CommonEventManager::PublishCommonEvent(commonData);
 }
-
 bool AmsStServiceAbilityD1::SubscribeEvent()
 {
     MatchingSkills matchingSkills;
@@ -274,7 +262,6 @@ bool AmsStServiceAbilityD1::SubscribeEvent()
     subscriber_->mainAbility_ = this;
     return CommonEventManager::SubscribeCommonEvent(subscriber_);
 }
-
 void AmsStServiceAbilityD1::AppEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
     auto eventName = data.GetWant().GetAction();

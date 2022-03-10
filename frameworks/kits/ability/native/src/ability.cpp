@@ -23,9 +23,7 @@
 #include "ability_post_event_timeout.h"
 #include "ability_runtime/js_ability.h"
 #include "abs_shared_result_set.h"
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
 #include "background_task_mgr_helper.h"
-#endif
 #include "bytrace.h"
 #include "configuration_convertor.h"
 #include "connection_manager.h"
@@ -33,9 +31,7 @@
 #include "continuation_manager.h"
 #include "continuation_register_manager.h"
 #include "continuation_register_manager_proxy.h"
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
 #include "continuous_task_param.h"
-#endif
 #include "data_ability_operation.h"
 #include "data_ability_predicates.h"
 #include "data_ability_result.h"
@@ -2120,14 +2116,10 @@ ErrCode Ability::DeleteForm(const int64_t formId)
  */
 int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent)
 {
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
     uint32_t defaultBgMode = 0;
     BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
-#else
-    return ERR_INVALID_OPERATION;
-#endif
 }
 
 /**
@@ -2137,11 +2129,7 @@ int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &
  */
 int Ability::StopBackgroundRunning()
 {
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
-#else
-    return ERR_INVALID_OPERATION;
-#endif
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -3247,9 +3235,7 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
         HILOG_INFO("Ability::ParsePredictionArgsReference push_back done");
     }
 
-    if (predicates) {
-        predicates->SetWhereArgs(strPredicatesList);
-    }
+    predicates->SetWhereArgs(strPredicatesList);
 
     return predicates;
 }

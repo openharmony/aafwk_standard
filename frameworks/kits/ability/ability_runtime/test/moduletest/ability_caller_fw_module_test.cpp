@@ -55,7 +55,7 @@ void AbilityCallerTest::SetUpTestCase(void)
     OHOS::sptr<OHOS::IRemoteObject> abilityObject = new (std::nothrow) MockServiceAbilityManagerService();
 
     auto sysMgr = OHOS::DelayedSingleton<SysMrgClient>::GetInstance();
-    if (sysMgr == nullptr) {
+    if (sysMgr == NULL) {
         GTEST_LOG_(ERROR) << "fail to get ISystemAbilityManager";
         return;
     }
