@@ -462,7 +462,7 @@ void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
     if (service == nullptr) {
-        APP_LOGE("service is nullptr");
+        HILOG_ERROR("service is nullptr");
         return;
     }
 

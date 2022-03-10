@@ -438,19 +438,19 @@ void AppMgrService::AttachRenderProcess(const sptr<IRemoteObject> &scheduler)
 
 void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
 {
-    APP_LOGD("PostANRTaskByProcessID called.");
+    HILOG_DEBUG("PostANRTaskByProcessID called.");
     if (!IsReady()) {
-        APP_LOGE("AttachRenderProcess failed, not ready.");
+        HILOG_ERROR("AttachRenderProcess failed, not ready.");
         return;
     }
     auto appRecord = appMgrServiceInner_->GetAppRunningRecordByPid(pid);
     if (!appRecord) {
-        APP_LOGE("no such appRecord");
+        HILOG_ERROR("no such appRecord");
         return;
     }
     auto object = appRecord->GetApplicationClient();
     if (!object) {
-        APP_LOGE("GetApplicationClient failed.");
+        HILOG_ERROR("GetApplicationClient failed.");
         return;
     }
     object->ScheduleANRProcess();
