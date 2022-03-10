@@ -14,8 +14,8 @@
  */
 #include "connect_callback_stub.h"
 
-#include "app_log_wrapper.h"
 #include "ipc_types.h"
+#include "hilog_wrapper.h"
 #include "string_ex.h"
 
 namespace OHOS {
@@ -29,20 +29,20 @@ ConnectCallbackStub::ConnectCallbackStub()
 
 int ConnectCallbackStub::ConnectInner(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     string deviceId = Str16ToStr8(data.ReadString16());
     string deviceType = Str16ToStr8(data.ReadString16());
     Connect(deviceId, deviceType);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
     return OHOS::ERR_NONE;
 }
 
 int ConnectCallbackStub::DisconnectInner(MessageParcel &data, MessageParcel &reply)
 {
-    APP_LOGI("%{public}s called begin", __func__);
+    HILOG_INFO("%{public}s called begin", __func__);
     string deviceId = Str16ToStr8(data.ReadString16());
     Disconnect(deviceId);
-    APP_LOGI("%{public}s called end", __func__);
+    HILOG_INFO("%{public}s called end", __func__);
     return OHOS::ERR_NONE;
 }
 /**
@@ -55,10 +55,10 @@ int ConnectCallbackStub::DisconnectInner(MessageParcel &data, MessageParcel &rep
 int ConnectCallbackStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     std::u16string token = data.ReadInterfaceToken();
     if (token.compare(IConnectCallback::GetDescriptor()) != 0) {
-        APP_LOGE("%{public}s Descriptor is wrong", __func__);
+        HILOG_ERROR("%{public}s Descriptor is wrong", __func__);
         return OHOS::ERR_INVALID_REPLY;
     }
     auto localFuncIt = memberFuncMap_.find(code);
@@ -68,7 +68,7 @@ int ConnectCallbackStub::OnRemoteRequest(
             return (this->*memberFunc)(data, reply);
         }
     }
-    APP_LOGI("ConnectCallbackStub::OnRemoteRequest, default case, need check.");
+    HILOG_INFO("ConnectCallbackStub::OnRemoteRequest, default case, need check.");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 }  // namespace AppExecFwk

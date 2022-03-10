@@ -18,7 +18,7 @@
 #include <cstring>
 #include <mutex>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "data_ability_helper.h"
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
@@ -51,9 +51,9 @@ bool AmsStDataAbilityPageB::PublishEvent(const std::string &eventName, const int
 
 void DataTestPageBEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("DataTestPageBEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("DataTestPageBEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("DataTestPageBEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("DataTestPageBEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("DataTestPageBEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("DataTestPageBEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (eventName.compare("event_data_test_action") == 0 && ABILITY_PAGE_B_CODE == data.GetCode()) {
         auto target = data.GetData();
@@ -61,7 +61,7 @@ void DataTestPageBEventSubscriber::OnReceiveEvent(const CommonEventData &data)
         if (func != mapTestFunc_.end()) {
             func->second();
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
@@ -91,7 +91,7 @@ void AmsStDataAbilityPageB::SubscribeEvent(const Want &want)
 
 void AmsStDataAbilityPageB::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStDataAbilityPageB::onStart");
+    HILOG_INFO("AmsStDataAbilityPageB::onStart");
     originWant_ = want;
     SubscribeEvent(want);
     Ability::OnStart(want);
@@ -100,21 +100,21 @@ void AmsStDataAbilityPageB::OnStart(const Want &want)
 
 void AmsStDataAbilityPageB::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStDataAbilityPageB::OnNewWant");
+    HILOG_INFO("AmsStDataAbilityPageB::OnNewWant");
     originWant_ = want;
     Ability::OnNewWant(want);
 }
 
 void AmsStDataAbilityPageB::OnStop()
 {
-    APP_LOGI("AmsStDataAbilityPageB::onStop");
+    HILOG_INFO("AmsStDataAbilityPageB::onStop");
     Ability::OnStop();
     PublishEvent(abilityEventName, ABILITY_PAGE_B_CODE, "OnStop");
 }
 
 void AmsStDataAbilityPageB::OnActive()
 {
-    APP_LOGI("AmsStDataAbilityPageB::OnActive");
+    HILOG_INFO("AmsStDataAbilityPageB::OnActive");
     Ability::OnActive();
     PublishEvent(abilityEventName, ABILITY_PAGE_B_CODE, "OnActive");
     GetWantInfo(originWant_);
@@ -123,14 +123,14 @@ void AmsStDataAbilityPageB::OnActive()
 
 void AmsStDataAbilityPageB::OnInactive()
 {
-    APP_LOGI("AmsStDataAbilityPageB::OnInactive");
+    HILOG_INFO("AmsStDataAbilityPageB::OnInactive");
     Ability::OnInactive();
     PublishEvent(abilityEventName, ABILITY_PAGE_B_CODE, "OnInactive");
 }
 
 void AmsStDataAbilityPageB::OnBackground()
 {
-    APP_LOGI("AmsStDataAbilityPageB::OnBackground");
+    HILOG_INFO("AmsStDataAbilityPageB::OnBackground");
     Ability::OnBackground();
     PublishEvent(abilityEventName, ABILITY_PAGE_B_CODE, "OnBackground");
 }
@@ -143,11 +143,11 @@ void AmsStDataAbilityPageB::GetWantInfo(const Want &want)
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator);
 
     for (auto child : allOperator.GetChildOperator()) {
-        APP_LOGI("-----------------targetBundle:%{public}s", child->GetBundleName().c_str());
-        APP_LOGI("-----------------targetAbility:%{public}s", child->GetAbilityName().c_str());
-        APP_LOGI("-----------------targetAbilityType:%{public}s", child->GetAbilityType().c_str());
-        APP_LOGI("-----------------operatorName:%{public}s", child->GetOperatorName().c_str());
-        APP_LOGI("-----------------childOperatorNum:%{public}zu", child->GetChildOperator().size());
+        HILOG_INFO("-----------------targetBundle:%{public}s", child->GetBundleName().c_str());
+        HILOG_INFO("-----------------targetAbility:%{public}s", child->GetAbilityName().c_str());
+        HILOG_INFO("-----------------targetAbilityType:%{public}s", child->GetAbilityType().c_str());
+        HILOG_INFO("-----------------operatorName:%{public}s", child->GetOperatorName().c_str());
+        HILOG_INFO("-----------------childOperatorNum:%{public}zu", child->GetChildOperator().size());
     }
 }
 
@@ -195,23 +195,23 @@ static void GetResult(std::shared_ptr<STtools::StOperator> child, std::shared_pt
 
 void DataTestPageBEventSubscriber::TestPost(const std::string funName)
 {
-    APP_LOGI("DataTestPageBEventSubscriber::TestPost %{public}s", funName.c_str());
+    HILOG_INFO("DataTestPageBEventSubscriber::TestPost %{public}s", funName.c_str());
     STtools::StOperator allOperator {};
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator_);
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(mainAbility_->GetContext());
     for (auto child : allOperator.GetChildOperator()) {
         /// data ability
         if (child->GetAbilityType() == "2") {
-            APP_LOGI("---------------------targetAbility_--------------------");
+            HILOG_INFO("---------------------targetAbility_--------------------");
             Uri dataAbilityUri("dataability:///" + child->GetBundleName() + "." + child->GetAbilityName());
             std::string result;
             if (helper != nullptr) {
-                APP_LOGI("---------------------helper--------------------");
+                HILOG_INFO("---------------------helper--------------------");
                 GetResult(child, helper, dataAbilityUri, result);
             }
             mainAbility_->PublishEvent(abilityEventName, ABILITY_PAGE_B_CODE, child->GetOperatorName() + " " + result);
         } else if (child->GetAbilityType() == "0") {
-            APP_LOGI("---------------------StartPageAbility--------------------");
+            HILOG_INFO("---------------------StartPageAbility--------------------");
             std::vector<std::string> vectoroperator;
             if (child->GetChildOperator().size() != 0) {
                 vectoroperator = STtools::SerializationStOperatorToVector(*child);

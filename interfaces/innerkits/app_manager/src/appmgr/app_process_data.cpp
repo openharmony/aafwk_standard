@@ -15,7 +15,7 @@
 
 #include "app_process_data.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 #include "nlohmann/json.hpp"
 #include "string_ex.h"
@@ -75,7 +75,7 @@ AppProcessData *AppProcessData::Unmarshalling(Parcel &parcel)
 {
     AppProcessData *appProcessData = new (std::nothrow) AppProcessData();
     if (appProcessData && !appProcessData->ReadFromParcel(parcel)) {
-        APP_LOGW("failed, because ReadFromParcel failed");
+        HILOG_WARN("failed, because ReadFromParcel failed");
         delete appProcessData;
         appProcessData = nullptr;
     }

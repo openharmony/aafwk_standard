@@ -15,7 +15,7 @@
 
 #include "start_specified_ability_response_proxy.h"
 #include "ipc_types.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -26,7 +26,7 @@ StartSpecifiedAbilityResponseProxy::StartSpecifiedAbilityResponseProxy(const spt
 bool StartSpecifiedAbilityResponseProxy::WriteInterfaceToken(MessageParcel &data)
 {
     if (!data.WriteInterfaceToken(StartSpecifiedAbilityResponseProxy::GetDescriptor())) {
-        APP_LOGE("write interface token failed");
+        HILOG_ERROR("write interface token failed");
         return false;
     }
     return true;
@@ -35,7 +35,7 @@ bool StartSpecifiedAbilityResponseProxy::WriteInterfaceToken(MessageParcel &data
 void StartSpecifiedAbilityResponseProxy::OnAcceptWantResponse(
     const AAFwk::Want &want, const std::string &flag)
 {
-    APP_LOGD("On accept want by proxy.");
+    HILOG_DEBUG("On accept want by proxy.");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -43,25 +43,25 @@ void StartSpecifiedAbilityResponseProxy::OnAcceptWantResponse(
         return;
     }
     if (!data.WriteParcelable(&want) || !data.WriteString(flag)) {
-        APP_LOGE("Write data failed.");
+        HILOG_ERROR("Write data failed.");
         return;
     }
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote is nullptr.");
+        HILOG_ERROR("Remote is nullptr.");
         return;
     }
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IStartSpecifiedAbilityResponse::Message::ON_ACCEPT_WANT_RESPONSE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
 }
 
 void StartSpecifiedAbilityResponseProxy::OnTimeoutResponse(const AAFwk::Want &want)
 {
-    APP_LOGD("On timeout response by proxy.");
+    HILOG_DEBUG("On timeout response by proxy.");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -69,19 +69,19 @@ void StartSpecifiedAbilityResponseProxy::OnTimeoutResponse(const AAFwk::Want &wa
         return;
     }
     if (!data.WriteParcelable(&want)) {
-        APP_LOGE("Write data failed.");
+        HILOG_ERROR("Write data failed.");
         return;
     }
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        APP_LOGE("Remote is nullptr.");
+        HILOG_ERROR("Remote is nullptr.");
         return;
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(
         IStartSpecifiedAbilityResponse::Message::ON_TIMEOUT_RESPONSE), data, reply, option);
     if (ret != NO_ERROR) {
-        APP_LOGW("SendRequest is failed, error code: %{public}d", ret);
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
 }
 }  // namespace AppExecFwk

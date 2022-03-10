@@ -32,8 +32,8 @@ config("taskDispatcherTestBConfig") {
     "//foundation/appexecfwk/standard/test/systemtest/common/task_dispatcher/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"taskDispatcherTestB\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"taskDispatcherTestB\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
   cflags = []
   if (target_cpu == "arm") {

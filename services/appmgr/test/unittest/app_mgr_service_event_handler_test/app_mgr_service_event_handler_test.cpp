@@ -17,11 +17,11 @@
 #include "app_mgr_service_event_handler.h"
 #undef private
 
-#include "app_log_wrapper.h"
 #include "app_mgr_service_inner.h"
 #include <gtest/gtest.h>
 #include <memory>
 #include "mock_app_scheduler.h"
+#include "hilog_wrapper.h"
 #include "inner_event.h"
 #include <gtest/gtest.h>
 
@@ -113,20 +113,20 @@ MockAMSEventHandler::~MockAMSEventHandler()
 
 HWTEST_F(AMSEventHandlerTest, app_mgr_service_event_handler_test_001, TestSize.Level1)
 {
-    APP_LOGI("app_mgr_service_event_handler_test start");
+    HILOG_INFO("app_mgr_service_event_handler_test start");
 
     if (!runner_) {
-        APP_LOGI("app_mgr_service_event_handler_test : runner_ is null");
+        HILOG_INFO("app_mgr_service_event_handler_test : runner_ is null");
     }
 
     if (!testAms) {
-        APP_LOGI("app_mgr_service_event_handler_test : testAms is null");
+        HILOG_INFO("app_mgr_service_event_handler_test : testAms is null");
     }
     EXPECT_FALSE(eventHandler_);
     // init
     eventHandler_ = std::make_shared<MockAMSEventHandler>(runner_, testAms);
     EXPECT_TRUE(eventHandler_);
-    APP_LOGI("app_mgr_service_event_handler_test end");
+    HILOG_INFO("app_mgr_service_event_handler_test end");
 }
 
 /*
@@ -140,7 +140,7 @@ HWTEST_F(AMSEventHandlerTest, app_mgr_service_event_handler_test_001, TestSize.L
 
 HWTEST_F(AMSEventHandlerTest, app_mgr_service_event_handler_test_002, TestSize.Level1)
 {
-    APP_LOGI("app_mgr_service_event_handler_test start");
+    HILOG_INFO("app_mgr_service_event_handler_test start");
 
     if (!eventHandler_) {
         eventHandler_ = std::make_shared<MockAMSEventHandler>(runner_, testAms);
@@ -160,7 +160,7 @@ HWTEST_F(AMSEventHandlerTest, app_mgr_service_event_handler_test_002, TestSize.L
     WaitUntilTaskFinished(eventHandler_);
     EXPECT_TRUE(eventHandlerFlag_);
 
-    APP_LOGI("app_mgr_service_event_handler_test end");
+    HILOG_INFO("app_mgr_service_event_handler_test end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

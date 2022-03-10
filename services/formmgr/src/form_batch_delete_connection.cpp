@@ -15,12 +15,12 @@
  */
 
 #include "appexecfwk_errors.h"
-#include "app_log_wrapper.h"
 #include "form_batch_delete_connection.h"
 #include "form_constants.h"
 #include "form_supply_callback.h"
 #include "form_task_mgr.h"
 #include "form_util.h"
+#include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "message_parcel.h"
 #include "want.h"
@@ -42,9 +42,9 @@ FormBatchDeleteConnection::FormBatchDeleteConnection(const std::set<int64_t> &fo
 void FormBatchDeleteConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    APP_LOGI("%{public}s called.", __func__);
+    HILOG_INFO("%{public}s called.", __func__);
     if (resultCode != ERR_OK) {
-        APP_LOGE("%{public}s, abilityName:%{public}s, resultCode:%{public}d",
+        HILOG_ERROR("%{public}s, abilityName:%{public}s, resultCode:%{public}d",
             __func__, element.GetAbilityName().c_str(), resultCode);
         return;
     }

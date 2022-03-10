@@ -17,14 +17,14 @@
 #include "data_ability_predicates.h"
 #include "values_bucket.h"
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "verify_act_page_ability.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 void VerifyActPageAbility::OnStart(const Want &want)
 {
-    APP_LOGI("----------VerifyActPageAbility::onStart begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStart begin----------");
     // Test DataAbility
     EventFwk::MatchingSkills MatchingSkillsDataAbility;
     MatchingSkillsDataAbility.AddEvent("Test_DataAbility");
@@ -33,69 +33,69 @@ void VerifyActPageAbility::OnStart(const Want &want)
     EventFwk::CommonEventManager::SubscribeCommonEvent(subscriberDataAbility);
     subscriberDataAbility->DataAbility_ = Ability::GetContext();
 
-    APP_LOGI("----------VerifyActPageAbility::onStart end----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStart end----------");
     Ability::OnStart(want);
 }
 void VerifyActPageAbility::OnStop()
 {
-    APP_LOGI("----------VerifyActPageAbility::onStop begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStop begin----------");
     if (subscriberDataAbility != nullptr) {
         EventFwk::CommonEventManager::UnSubscribeCommonEvent(subscriberDataAbility);
     }
-    APP_LOGI("----------VerifyActPageAbility::onStop end----------");
-    APP_LOGI("----------VerifyActPageAbility::onStop TimerThreadDestoryBegin----------");
-    APP_LOGI("----------VerifyActPageAbility::onStop TimerThreadDestoryEnd----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStop end----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStop TimerThreadDestoryBegin----------");
+    HILOG_INFO("----------VerifyActPageAbility::onStop TimerThreadDestoryEnd----------");
     Ability::OnStop();
 }
 void VerifyActPageAbility::OnActive()
 {
-    APP_LOGI("----------VerifyActPageAbility::OnActive begin----------");
-    APP_LOGI("----------VerifyActPageAbility::OnActive end----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnActive begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnActive end----------");
     Ability::OnActive();
 }
 void VerifyActPageAbility::OnInactive()
 {
-    APP_LOGI("----------VerifyActPageAbility::OnInactive begin----------");
-    APP_LOGI("----------VerifyActPageAbility::OnInactive end----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnInactive begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnInactive end----------");
     Ability::OnInactive();
 }
 void VerifyActPageAbility::OnBackground()
 {
-    APP_LOGI("----------VerifyActPageAbility::OnBackground begin----------");
-    APP_LOGI("----------VerifyActPageAbility::OnBackground end----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnBackground begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnBackground end----------");
     Ability::OnBackground();
 }
 void VerifyActPageAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("----------VerifyActPageAbility::OnForeground begin----------");
-    APP_LOGI("----------VerifyActPageAbility::OnForeground end----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnForeground begin----------");
+    HILOG_INFO("----------VerifyActPageAbility::OnForeground end----------");
     Ability::OnForeground(want);
 }
 void CommentDataAbilityTest::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {
-    APP_LOGI("----------OnReceiveEvent---------DataAbility_%{public}ld", DataAbility_.use_count());
+    HILOG_INFO("----------OnReceiveEvent---------DataAbility_%{public}ld", DataAbility_.use_count());
     auto dataAbility = DataAbility_.lock();
     if (dataAbility == nullptr) {
         return;
     }
-    APP_LOGI("----------OnReceiveEvent----------dataAbility%{public}ld", dataAbility.use_count());
+    HILOG_INFO("----------OnReceiveEvent----------dataAbility%{public}ld", dataAbility.use_count());
     std::shared_ptr<Uri> uri = std::make_shared<Uri>("dataability:///com.ix.VerifyActDataAbility");
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(dataAbility, uri, false);
     if (helper != nullptr) {
-        APP_LOGI("-----------OnReceiveEvent helper isn't null-----------");
+        HILOG_INFO("-----------OnReceiveEvent helper isn't null-----------");
         Uri uri_DataAbility("dataability:///com.ix.VerifyActDataAbility");
-        APP_LOGI("-----------OnReceiveEvent data.GetCode() ====%{public}d ---------", data.GetCode());
+        HILOG_INFO("-----------OnReceiveEvent data.GetCode() ====%{public}d ---------", data.GetCode());
         switch (data.GetCode()) {
             case INSERT: {
                 NativeRdb::ValuesBucket valueBucket;
                 int result = helper->Insert(uri_DataAbility, valueBucket);
-                APP_LOGI("-----------insertTest::OnReceiveEvent result = %{public}d", result);
+                HILOG_INFO("-----------insertTest::OnReceiveEvent result = %{public}d", result);
                 break;
             }
             case DELETE: {
                 NativeRdb::DataAbilityPredicates dataAbilityPredicate("dumy Predicates");
                 int result = helper->Delete(uri_DataAbility, dataAbilityPredicate);
-                APP_LOGI("-----------deleteTest::OnReceiveEvent result = %{public}d", result);
+                HILOG_INFO("-----------deleteTest::OnReceiveEvent result = %{public}d", result);
                 break;
             }
             default:

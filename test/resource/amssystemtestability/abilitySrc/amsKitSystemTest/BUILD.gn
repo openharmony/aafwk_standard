@@ -20,6 +20,7 @@ config("amsKitSystemTestconfig") {
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${aafwk_path}/services/abilitymgr/include",
+    "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
@@ -31,8 +32,8 @@ config("amsKitSystemTestconfig") {
     "//third_party/jsoncpp/include",
   ]
   defines = [
-    "APP_LOG_TAG = \"amsKitSystemTest\"",
-    "LOG_DOMAIN = 0xD002200",
+    "AMS_LOG_TAG = \"amsKitSystemTest\"",
+    "AMS_LOG_DOMAIN = 0xD002200",
   ]
 }
 ohos_shared_library("amsKitSystemTest") {

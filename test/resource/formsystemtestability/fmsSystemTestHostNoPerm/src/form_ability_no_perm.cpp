@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "form_ability_no_perm.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "form_st_common_info.h"
 #include "form_test_utils.h"
 
@@ -26,15 +26,15 @@ namespace OHOS {
 namespace AppExecFwk {
 void FormAbilityNoPerm::AcquireFormCallback::OnAcquired(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityNoPerm::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 void FormAbilityNoPerm::AcquireFormCallback::OnFormUninstall(const int64_t formId) const
 {
-    APP_LOGI("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
 }
 
 void FormAbilityNoPerm::FMS_acquireForm_0200()
@@ -50,9 +50,9 @@ void FormAbilityNoPerm::FMS_acquireForm_0200()
     // Set Want info end
     bool bResult = AcquireForm(0, want, callback);
     if (bResult) {
-        APP_LOGI("AcquireForm end");
+        HILOG_INFO("AcquireForm end");
     } else {
-        APP_LOGE("AcquireForm error");
+        HILOG_ERROR("AcquireForm error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_0200, EVENT_CODE_200, "false");
     }
 }
@@ -62,9 +62,9 @@ void FormAbilityNoPerm::FMS_deleteForm_0200()
     int64_t formId = 1;
     bool bResult = DeleteForm(formId);
     if (bResult) {
-        APP_LOGI("[FMS_deleteForm_0200] end");
+        HILOG_INFO("[FMS_deleteForm_0200] end");
     } else {
-        APP_LOGE("[FMS_deleteForm_0200] error");
+        HILOG_ERROR("[FMS_deleteForm_0200] error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_0200, EVENT_CODE_200, "false");
     }
 }
@@ -75,9 +75,9 @@ void FormAbilityNoPerm::FMS_releaseForm_0200()
     bool isReleaseCache = true;
     bool bResult = ReleaseForm(formId, isReleaseCache);
     if (bResult) {
-        APP_LOGI("[FMS_releaseForm_0200] end");
+        HILOG_INFO("[FMS_releaseForm_0200] end");
     } else {
-        APP_LOGE("[FMS_releaseForm_0200] error");
+        HILOG_ERROR("[FMS_releaseForm_0200] error");
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0200, EVENT_CODE_200, "false");
     }
 }
@@ -85,7 +85,7 @@ void FormAbilityNoPerm::FMS_releaseForm_0200()
 
 void FormAbilityNoPerm::OnStart(const Want &want)
 {
-    APP_LOGI("FormAbilityNoPerm::onStart");
+    HILOG_INFO("FormAbilityNoPerm::onStart");
     Ability::OnStart(want);
 
     std::vector<std::string> eventList = {
@@ -97,7 +97,7 @@ void FormAbilityNoPerm::OnStart(const Want &want)
 }
 void FormAbilityNoPerm::OnActive()
 {
-    APP_LOGI("FormAbilityNoPerm::OnActive");
+    HILOG_INFO("FormAbilityNoPerm::OnActive");
     Ability::OnActive();
     std::string eventData = GetAbilityName() + FORM_ABILITY_STATE_ONACTIVE;
     FormTestUtils::PublishEvent(FORM_EVENT_ABILITY_ONACTIVED, 0, eventData);
@@ -105,19 +105,19 @@ void FormAbilityNoPerm::OnActive()
 
 void FormAbilityNoPerm::OnStop()
 {
-    APP_LOGI("FormAbilityNoPerm::OnStop");
+    HILOG_INFO("FormAbilityNoPerm::OnStop");
 
     Ability::OnStop();
 }
 void FormAbilityNoPerm::OnInactive()
 {
-    APP_LOGI("FormAbilityNoPerm::OnInactive");
+    HILOG_INFO("FormAbilityNoPerm::OnInactive");
 
     Ability::OnInactive();
 }
 void FormAbilityNoPerm::OnBackground()
 {
-    APP_LOGI("FormAbilityNoPerm::OnBackground");
+    HILOG_INFO("FormAbilityNoPerm::OnBackground");
 
     Ability::OnBackground();
 }
@@ -139,7 +139,7 @@ void FormAbilityNoPerm::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("FormAbilityNoPerm::Init");
+    HILOG_INFO("FormAbilityNoPerm::Init");
     Ability::Init(abilityInfo, application, handler, token);
 
     memberFuncMap_[FORM_EVENT_REQ_ACQUIRE_FORM_0200] = &FormAbilityNoPerm::FMS_acquireForm_0200;
@@ -164,8 +164,8 @@ void FormAbilityNoPerm::Clear()
 
 void FormEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("FormEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     ability_->handleEvent(eventName);
 }

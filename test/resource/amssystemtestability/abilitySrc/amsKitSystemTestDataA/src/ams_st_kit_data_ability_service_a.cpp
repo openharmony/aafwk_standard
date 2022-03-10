@@ -18,7 +18,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "data_ability_helper.h"
 #include "abs_shared_result_set.h"
 #include "data_ability_predicates.h"
@@ -51,9 +51,9 @@ bool AmsStKitDataAbilityServiceA::PublishEvent(const std::string &eventName, con
 
 void KitTestServiceAEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    APP_LOGI("KitTestServiceAEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
-    APP_LOGI("KitTestServiceAEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
-    APP_LOGI("KitTestServiceAEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
+    HILOG_INFO("KitTestServiceAEventSubscriber::OnReceiveEvent:event=%{public}s", data.GetWant().GetAction().c_str());
+    HILOG_INFO("KitTestServiceAEventSubscriber::OnReceiveEvent:data=%{public}s", data.GetData().c_str());
+    HILOG_INFO("KitTestServiceAEventSubscriber::OnReceiveEvent:code=%{public}d", data.GetCode());
     auto eventName = data.GetWant().GetAction();
     if (eventName.compare("event_data_test_action") == 0 && ABILITY_SERVICE_CODE == data.GetCode()) {
         auto target = data.GetData();
@@ -61,7 +61,7 @@ void KitTestServiceAEventSubscriber::OnReceiveEvent(const CommonEventData &data)
         if (func != mapTestFunc_.end()) {
             func->second();
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
@@ -92,7 +92,7 @@ void AmsStKitDataAbilityServiceA::SubscribeEvent(const Want &want)
 
 void AmsStKitDataAbilityServiceA::OnStart(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::onStart");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::onStart");
     originWant_ = want;
     SubscribeEvent(want);
     Ability::OnStart(want);
@@ -101,42 +101,42 @@ void AmsStKitDataAbilityServiceA::OnStart(const Want &want)
 
 void AmsStKitDataAbilityServiceA::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::OnNewWant");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::OnNewWant");
     originWant_ = want;
     Ability::OnNewWant(want);
 }
 
 void AmsStKitDataAbilityServiceA::OnStop()
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::onStop");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::onStop");
     Ability::OnStop();
     PublishEvent(abilityEventName, ABILITY_SERVICE_CODE, "OnStop");
 }
 
 void AmsStKitDataAbilityServiceA::OnActive()
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::OnActive");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::OnActive");
     Ability::OnActive();
     PublishEvent(abilityEventName, ABILITY_SERVICE_CODE, "OnActive");
 }
 
 void AmsStKitDataAbilityServiceA::OnInactive()
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::OnInactive");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::OnInactive");
     Ability::OnInactive();
     PublishEvent(abilityEventName, ABILITY_SERVICE_CODE, "OnInactive");
 }
 
 void AmsStKitDataAbilityServiceA::OnBackground()
 {
-    APP_LOGI("AmsStKitDataAbilityServiceA::OnBackground");
+    HILOG_INFO("AmsStKitDataAbilityServiceA::OnBackground");
     Ability::OnBackground();
     PublishEvent(abilityEventName, ABILITY_SERVICE_CODE, "OnBackground");
 }
 
 void AmsStKitDataAbilityServiceA::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnCommand");
+    HILOG_INFO("AmsStServiceAbilityA1::OnCommand");
 
     GetWantInfo(want);
     Ability::OnCommand(want, restart, startId);
@@ -145,7 +145,7 @@ void AmsStKitDataAbilityServiceA::OnCommand(const AAFwk::Want &want, bool restar
 
 sptr<IRemoteObject> AmsStKitDataAbilityServiceA::OnConnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnConnect");
+    HILOG_INFO("AmsStServiceAbilityA1::OnConnect");
 
     sptr<IRemoteObject> ret = Ability::OnConnect(want);
     PublishEvent(abilityEventName, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnConnect");
@@ -153,7 +153,7 @@ sptr<IRemoteObject> AmsStKitDataAbilityServiceA::OnConnect(const Want &want)
 }
 void AmsStKitDataAbilityServiceA::OnDisconnect(const Want &want)
 {
-    APP_LOGI("AmsStServiceAbilityA1::OnDisconnect");
+    HILOG_INFO("AmsStServiceAbilityA1::OnDisconnect");
 
     Ability::OnDisconnect(want);
     PublishEvent(abilityEventName, AbilityLifecycleExecutor::LifecycleState::BACKGROUND, "OnDisconnect");
@@ -167,11 +167,11 @@ void AmsStKitDataAbilityServiceA::GetWantInfo(const Want &want)
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator);
 
     for (auto child : allOperator.GetChildOperator()) {
-        APP_LOGI("-----------------targetBundle:%{public}s", child->GetBundleName().c_str());
-        APP_LOGI("-----------------targetAbility:%{public}s", child->GetAbilityName().c_str());
-        APP_LOGI("-----------------targetAbilityType:%{public}s", child->GetAbilityType().c_str());
-        APP_LOGI("-----------------operatorName:%{public}s", child->GetOperatorName().c_str());
-        APP_LOGI("-----------------childOperatorNum:%{public}zu", child->GetChildOperator().size());
+        HILOG_INFO("-----------------targetBundle:%{public}s", child->GetBundleName().c_str());
+        HILOG_INFO("-----------------targetAbility:%{public}s", child->GetAbilityName().c_str());
+        HILOG_INFO("-----------------targetAbilityType:%{public}s", child->GetAbilityType().c_str());
+        HILOG_INFO("-----------------operatorName:%{public}s", child->GetOperatorName().c_str());
+        HILOG_INFO("-----------------childOperatorNum:%{public}zu", child->GetChildOperator().size());
     }
 }
 
@@ -222,23 +222,23 @@ static void GetResult(std::shared_ptr<STtools::StOperator> child, std::shared_pt
 
 void KitTestServiceAEventSubscriber::TestPost(const std::string funName)
 {
-    APP_LOGI("KitTestServiceAEventSubscriber::TestPost %{public}s", funName.c_str());
+    HILOG_INFO("KitTestServiceAEventSubscriber::TestPost %{public}s", funName.c_str());
     STtools::StOperator allOperator {};
     STtools::DeserializationStOperatorFromVector(allOperator, vectorOperator_);
     std::shared_ptr<DataAbilityHelper> helper = DataAbilityHelper::Creator(mainAbility_->GetContext());
     for (auto child : allOperator.GetChildOperator()) {
         /// data ability
         if (child->GetAbilityType() == "2") {
-            APP_LOGI("---------------------targetAbility_--------------------");
+            HILOG_INFO("---------------------targetAbility_--------------------");
             Uri dataAbilityUri("dataability:///" + child->GetBundleName() + "." + child->GetAbilityName());
             std::string result;
             if (helper != nullptr) {
-                APP_LOGI("---------------------helper--------------------");
+                HILOG_INFO("---------------------helper--------------------");
                 GetResult(child, helper, *mainAbility_, dataAbilityUri, result);
             }
             mainAbility_->PublishEvent(abilityEventName, ABILITY_SERVICE_CODE, child->GetOperatorName() + " " + result);
         } else if (child->GetAbilityType() == "0") {
-            APP_LOGI("---------------------StartPageAbility--------------------");
+            HILOG_INFO("---------------------StartPageAbility--------------------");
             std::vector<std::string> vectoroperator;
             if (child->GetChildOperator().size() != 0) {
                 vectoroperator = STtools::SerializationStOperatorToVector(*child);

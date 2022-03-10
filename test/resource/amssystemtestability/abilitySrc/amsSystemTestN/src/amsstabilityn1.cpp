@@ -21,7 +21,7 @@ void AmsStAbilityN1::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("AmsStAbilityN1::Init");
+    HILOG_INFO("AmsStAbilityN1::Init");
     Ability::Init(abilityInfo, application, handler, token);
     pageAbilityEvent.SubscribeEvent(STEventName::g_eventList, shared_from_this());
     SendPath("Init");
@@ -30,7 +30,7 @@ void AmsStAbilityN1::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 void AmsStAbilityN1::OnStart(const Want &want)
 {
     GetWantInfo(want);
-    APP_LOGI("AmsStAbilityN1::onStart");
+    HILOG_INFO("AmsStAbilityN1::onStart");
     Ability::OnStart(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStart;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnStartCount(), eventData);
@@ -39,7 +39,7 @@ void AmsStAbilityN1::OnStart(const Want &want)
 
 void AmsStAbilityN1::OnNewWant(const Want &want)
 {
-    APP_LOGI("AmsStAbilityN1::OnNewWant");
+    HILOG_INFO("AmsStAbilityN1::OnNewWant");
     Ability::OnNewWant(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnNewWant;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnNewWantCount(), eventData);
@@ -48,7 +48,7 @@ void AmsStAbilityN1::OnNewWant(const Want &want)
 
 void AmsStAbilityN1::OnForeground(const Want &want)
 {
-    APP_LOGI("AmsStAbilityN1::OnForeground");
+    HILOG_INFO("AmsStAbilityN1::OnForeground");
     Ability::OnForeground(want);
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnForeground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnForegroundCount(), eventData);
@@ -57,7 +57,7 @@ void AmsStAbilityN1::OnForeground(const Want &want)
 
 void AmsStAbilityN1::OnStop()
 {
-    APP_LOGI("AmsStAbilityN1::onStop");
+    HILOG_INFO("AmsStAbilityN1::onStop");
     Ability::OnStop();
     pageAbilityEvent.UnsubscribeEvent();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnStop;
@@ -67,7 +67,7 @@ void AmsStAbilityN1::OnStop()
 
 void AmsStAbilityN1::OnActive()
 {
-    APP_LOGI("AmsStAbilityN1::OnActive");
+    HILOG_INFO("AmsStAbilityN1::OnActive");
     Ability::OnActive();
     std::string startBundleName = this->Split(targetBundle, ",");
     std::string startAbilityName = this->Split(targetAbility, ",");
@@ -92,7 +92,7 @@ void AmsStAbilityN1::OnActive()
 
 void AmsStAbilityN1::OnInactive()
 {
-    APP_LOGI("AmsStAbilityN1::OnInactive");
+    HILOG_INFO("AmsStAbilityN1::OnInactive");
     Ability::OnInactive();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnInactive;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnInactiveCount(), eventData);
@@ -101,7 +101,7 @@ void AmsStAbilityN1::OnInactive()
 
 void AmsStAbilityN1::OnBackground()
 {
-    APP_LOGI("AmsStAbilityN1::OnBackground");
+    HILOG_INFO("AmsStAbilityN1::OnBackground");
     Ability::OnBackground();
     std::string eventData = GetAbilityName() + STEventName::g_abilityStateOnBackground;
     pageAbilityEvent.PublishEvent(STEventName::g_eventName, pageAbilityEvent.GetOnBackgroundCount(), eventData);

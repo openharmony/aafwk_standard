@@ -15,8 +15,8 @@
 
 #include <cinttypes>
 
-#include "app_log_wrapper.h"
 #include "form_constants.h"
+#include "hilog_wrapper.h"
 #include "form_refresh_limiter.h"
 
 namespace OHOS {
@@ -28,17 +28,17 @@ namespace AppExecFwk {
  */
 bool FormRefreshLimiter::AddItem(const int64_t formId)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
     if (info == limiterMap_.end()) {
         LimitInfo limitInfo;
         std::pair<std::map<int64_t, LimitInfo>::iterator, bool> retVal =
             limiterMap_.emplace(formId, limitInfo);
-        APP_LOGI("%{public}s end", __func__);
+        HILOG_INFO("%{public}s end", __func__);
         return retVal.second;
     } else {
-        APP_LOGI("%{public}s end, already exist", __func__);
+        HILOG_INFO("%{public}s end, already exist", __func__);
         return true;
     }
 }
@@ -48,27 +48,27 @@ bool FormRefreshLimiter::AddItem(const int64_t formId)
  */
 void FormRefreshLimiter::DeleteItem(const int64_t formId)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
     if (info != limiterMap_.end()) {
         limiterMap_.erase(formId);
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
  * @brief Reset limit info.
  */
 void FormRefreshLimiter::ResetLimit()
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(limiterMutex_);
     for (auto &infoPair : limiterMap_) {
         infoPair.second.refreshCount = 0;
         infoPair.second.isReported = false;
         infoPair.second.remindFlag = false;
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
  * @brief Refresh enable or not.
@@ -77,7 +77,7 @@ void FormRefreshLimiter::ResetLimit()
  */
 bool FormRefreshLimiter::IsEnableRefresh(const int64_t formId)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     bool isEnable = false;
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
@@ -88,10 +88,10 @@ bool FormRefreshLimiter::IsEnableRefresh(const int64_t formId)
 
         if (info->second.refreshCount == Constants::LIMIT_COUNT && !info->second.isReported) {
             info->second.isReported = true;
-            APP_LOGI("report refresh to 50 count,formId:%{public}" PRId64 "", formId);
+            HILOG_INFO("report refresh to 50 count,formId:%{public}" PRId64 "", formId);
         }
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
     return isEnable;
 }
 /**
@@ -101,7 +101,7 @@ bool FormRefreshLimiter::IsEnableRefresh(const int64_t formId)
  */
 int FormRefreshLimiter::GetRefreshCount(const int64_t formId) const
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     // -1 means not added or already removed.
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
@@ -109,7 +109,7 @@ int FormRefreshLimiter::GetRefreshCount(const int64_t formId) const
         return info->second.refreshCount;
     }
 
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
     return -1;
 }
 /**
@@ -118,18 +118,18 @@ int FormRefreshLimiter::GetRefreshCount(const int64_t formId) const
  */
 void FormRefreshLimiter::Increase(const int64_t formId)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
     if (info != limiterMap_.end()) {
         info->second.refreshCount++;
-        APP_LOGI("increase,formId:%{public}" PRId64 ", count:%{public}d", formId, info->second.refreshCount);
+        HILOG_INFO("increase,formId:%{public}" PRId64 ", count:%{public}d", formId, info->second.refreshCount);
         if (info->second.refreshCount == Constants::LIMIT_COUNT && !info->second.isReported) {
             info->second.isReported = true;
-            APP_LOGI("report refresh to 50 count,formId:%{public}" PRId64 "", formId);
+            HILOG_INFO("report refresh to 50 count,formId:%{public}" PRId64 "", formId);
         }
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
  * @brief Mark remind flag.
@@ -137,7 +137,7 @@ void FormRefreshLimiter::Increase(const int64_t formId)
  */
 void FormRefreshLimiter::MarkRemind(const int64_t formId)
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::lock_guard<std::mutex> lock(limiterMutex_);
     auto info = limiterMap_.find(formId);
     if (info != limiterMap_.end()) {
@@ -145,7 +145,7 @@ void FormRefreshLimiter::MarkRemind(const int64_t formId)
             info->second.remindFlag = true;
         }
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
 }
 /**
  * @brief Get remind list.
@@ -153,7 +153,7 @@ void FormRefreshLimiter::MarkRemind(const int64_t formId)
  */
 std::vector<int64_t> FormRefreshLimiter::GetRemindList() const
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::vector<int64_t> result;
     std::lock_guard<std::mutex> lock(limiterMutex_);
     for (auto &infoPair : limiterMap_) {
@@ -161,7 +161,7 @@ std::vector<int64_t> FormRefreshLimiter::GetRemindList() const
             result.emplace_back(infoPair.first);
         }
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
     return result;
 }
 /**
@@ -170,7 +170,7 @@ std::vector<int64_t> FormRefreshLimiter::GetRemindList() const
  */
 std::vector<int64_t> FormRefreshLimiter::GetRemindListAndResetLimit()
 {
-    APP_LOGI("%{public}s start", __func__);
+    HILOG_INFO("%{public}s start", __func__);
     std::vector<int64_t> result;
     std::lock_guard<std::mutex> lock(limiterMutex_);
     for (auto &infoPair : limiterMap_) {
@@ -182,7 +182,7 @@ std::vector<int64_t> FormRefreshLimiter::GetRemindListAndResetLimit()
         infoPair.second.isReported = false;
         infoPair.second.remindFlag = false;
     }
-    APP_LOGI("%{public}s end", __func__);
+    HILOG_INFO("%{public}s end", __func__);
     return result;
 }
 /**

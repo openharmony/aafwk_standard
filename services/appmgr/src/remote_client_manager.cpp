@@ -15,10 +15,10 @@
 
 #include "remote_client_manager.h"
 
+#include "hilog_wrapper.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
-#include "app_log_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -50,7 +50,7 @@ sptr<IBundleMgr> RemoteClientManager::GetBundleManager()
             bundleManager_ =
                 iface_cast<AppExecFwk::IBundleMgr>(systemManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID));
         } else {
-            APP_LOGE("AppMgrServiceInner::GetBundleManager fail to get SAMGR");
+            HILOG_ERROR("AppMgrServiceInner::GetBundleManager fail to get SAMGR");
         }
     }
     return bundleManager_;

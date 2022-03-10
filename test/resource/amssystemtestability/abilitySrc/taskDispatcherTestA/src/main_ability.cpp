@@ -14,7 +14,7 @@
  */
 
 #include "main_ability.h"
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 #include "test_utils.h"
 #include <algorithm>
 #include <condition_variable>
@@ -91,7 +91,7 @@ bool IsAscend(const std::vector<size_t> &vec)
 
 bool OuterTaskExecuted(TestSetting setting)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::OuterTaskExecuted begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::OuterTaskExecuted begin");
     std::string expectedTaskId;
     bool executed = true;
     for (int i = 0; i < testTaskCount; i++) {
@@ -113,13 +113,13 @@ bool OuterTaskExecuted(TestSetting setting)
         expectedTaskId = delimiter + outerGroupNotifyId + delimiter;
         executed = executed && (task_execution_sequence.find(expectedTaskId) != string::npos);
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::OuterTaskExecuted end result:%{public}d", executed);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::OuterTaskExecuted end result:%{public}d", executed);
     return executed;
 }
 
 bool InnerTaskExecuted(TestSetting setting)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::InnerTaskExecuted begin");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::InnerTaskExecuted begin");
     std::string expectedTaskId;
     bool executed = true;
     for (int i = 0; i < testTaskCount; i++) {
@@ -149,7 +149,7 @@ bool InnerTaskExecuted(TestSetting setting)
             executed = executed && (task_execution_sequence.find(expectedTaskId) != string::npos);
         }
     }
-    APP_LOGI("-- -- -- -- -- --MainAbility::InnerTaskExecuted end result:%{public}d", executed);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::InnerTaskExecuted end result:%{public}d", executed);
     return executed;
 }
 
@@ -263,14 +263,14 @@ void GetTaskIndex(std::vector<size_t> &outerTaskIndex, std::vector<std::vector<s
     setTaskIndex(outerSyncBarrierId, outerTaskIndex);
     setTaskIndex(outerAsyncBarrierId, outerTaskIndex);
     setTaskIndex(outerGroupNotifyId, outerTaskIndex);
-    APP_LOGI("-- -- -- -- -- --MainAbility::GetTaskIndex end");
+    HILOG_INFO("-- -- -- -- -- --MainAbility::GetTaskIndex end");
 }
 
 void MainAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
     const std::shared_ptr<OHOSApplication> &application, std::shared_ptr<AbilityHandler> &handler,
     const sptr<IRemoteObject> &token)
 {
-    APP_LOGI("MainAbility::Init");
+    HILOG_INFO("MainAbility::Init");
     Ability::Init(abilityInfo, application, handler, token);
 }
 
@@ -281,7 +281,7 @@ MainAbility::~MainAbility()
 
 void MainAbility::OnStart(const Want &want)
 {
-    APP_LOGI("MainAbility::onStart");
+    HILOG_INFO("MainAbility::onStart");
     SubscribeEvent();
     Ability::OnStart(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, Ability::GetState(), "onStart");
@@ -289,7 +289,7 @@ void MainAbility::OnStart(const Want &want)
 
 void MainAbility::OnStop()
 {
-    APP_LOGI("MainAbility::OnStop");
+    HILOG_INFO("MainAbility::OnStop");
     Ability::OnStop();
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, Ability::GetState(), "OnStop");
@@ -297,28 +297,28 @@ void MainAbility::OnStop()
 
 void MainAbility::OnActive()
 {
-    APP_LOGI("MainAbility::OnActive");
+    HILOG_INFO("MainAbility::OnActive");
     Ability::OnActive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, 0, "OnActive");
 }
 
 void MainAbility::OnInactive()
 {
-    APP_LOGI("MainAbility::OnInactive");
+    HILOG_INFO("MainAbility::OnInactive");
     Ability::OnInactive();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, Ability::GetState(), "OnInactive");
 }
 
 void MainAbility::OnBackground()
 {
-    APP_LOGI("MainAbility::OnBackground");
+    HILOG_INFO("MainAbility::OnBackground");
     Ability::OnBackground();
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, Ability::GetState(), "OnBackground");
 }
 
 void MainAbility::OnForeground(const Want &want)
 {
-    APP_LOGI("MainAbility::OnForeground");
+    HILOG_INFO("MainAbility::OnForeground");
     Ability::OnForeground(want);
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, Ability::GetState(), "OnForeground");
 }
@@ -345,14 +345,14 @@ void FirstEventSubscriber::OnReceiveEvent(const CommonEventData &data)
     if (std::strcmp(eventName.c_str(), g_EVENT_REQU_FIRST.c_str()) == 0) {
         auto target = data.GetData();
         auto caseInfo = TestUtils::split(target, "_");
-        APP_LOGI("FirstEventSubscriber::OnReceiveEvent:caseInfo.size()=%{public}zu", caseInfo.size());
+        HILOG_INFO("FirstEventSubscriber::OnReceiveEvent:caseInfo.size()=%{public}zu", caseInfo.size());
         if (caseInfo.size() < numThree) {
             return;
         }
         if (mapTestFunc_.find(caseInfo[numZero]) != mapTestFunc_.end()) {
             mapTestFunc_[caseInfo[numZero]](std::stoi(caseInfo[numOne]), std::stoi(caseInfo[numTwo]), data.GetCode());
         } else {
-            APP_LOGI("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
+            HILOG_INFO("OnReceiveEvent: CommonEventData error(%{public}s)", target.c_str());
         }
     }
 }
@@ -500,7 +500,7 @@ int MainAbility::Dispatch(TestSetting outerSetting, TestSetting innerSetting)
 // level1:global, sync level2:parallel, sync
 void MainAbility::GlobalCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -530,7 +530,7 @@ void MainAbility::GlobalCase1(int code)
 // level1:global, sync level2:parallel, async
 void MainAbility::GlobalCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -556,7 +556,7 @@ void MainAbility::GlobalCase2(int code)
 // level1:global, sync level2:parallel, delay
 void MainAbility::GlobalCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -583,7 +583,7 @@ void MainAbility::GlobalCase3(int code)
 // level1:global, sync level2:parallel, group
 void MainAbility::GlobalCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -610,7 +610,7 @@ void MainAbility::GlobalCase4(int code)
 // level1:global, sync level2:parallel, group wait
 void MainAbility::GlobalCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -639,7 +639,7 @@ void MainAbility::GlobalCase5(int code)
 // level1:global, sync level2:parallel, group notify
 void MainAbility::GlobalCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -668,7 +668,7 @@ void MainAbility::GlobalCase6(int code)
 // level1:global, sync level2:parallel, sync barrier
 void MainAbility::GlobalCase7(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -697,7 +697,7 @@ void MainAbility::GlobalCase7(int code)
 // level1:global, sync level2:parallel, async barrier
 void MainAbility::GlobalCase8(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -726,7 +726,7 @@ void MainAbility::GlobalCase8(int code)
 // level1:global, sync level2:parallel, apply
 void MainAbility::GlobalCase9(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -753,7 +753,7 @@ void MainAbility::GlobalCase9(int code)
 // level1:global, sync level2:serial, sync
 void MainAbility::GlobalCase10(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -782,7 +782,7 @@ void MainAbility::GlobalCase10(int code)
 // level1:global, sync level2:serial, async
 void MainAbility::GlobalCase11(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -811,7 +811,7 @@ void MainAbility::GlobalCase11(int code)
 // level1:global, sync level2:serial, delay
 void MainAbility::GlobalCase12(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -841,7 +841,7 @@ void MainAbility::GlobalCase12(int code)
 // level1:global, sync level2:serial, apply
 void MainAbility::GlobalCase13(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -868,7 +868,7 @@ void MainAbility::GlobalCase13(int code)
 // level1:global, async level2:parallel, sync
 void MainAbility::GlobalCase14(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -896,7 +896,7 @@ void MainAbility::GlobalCase14(int code)
 // level1:global, async level2:parallel, async
 void MainAbility::GlobalCase15(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -918,7 +918,7 @@ void MainAbility::GlobalCase15(int code)
 // level1:global, async level2:parallel, delay
 void MainAbility::GlobalCase16(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -941,7 +941,7 @@ void MainAbility::GlobalCase16(int code)
 // level1:global, async level2:parallel, group
 void MainAbility::GlobalCase17(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -964,7 +964,7 @@ void MainAbility::GlobalCase17(int code)
 // level1:global, async level2:parallel, group wait
 void MainAbility::GlobalCase18(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -989,7 +989,7 @@ void MainAbility::GlobalCase18(int code)
 // level1:global, async level2:parallel, group notify
 void MainAbility::GlobalCase19(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1014,7 +1014,7 @@ void MainAbility::GlobalCase19(int code)
 // level1:global, async level2:parallel, sync barrier
 void MainAbility::GlobalCase20(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1039,7 +1039,7 @@ void MainAbility::GlobalCase20(int code)
 // level1:global, async level2:parallel, async barrier
 void MainAbility::GlobalCase21(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1064,7 +1064,7 @@ void MainAbility::GlobalCase21(int code)
 // level1:global, async level2:parallel, apply
 void MainAbility::GlobalCase22(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1087,7 +1087,7 @@ void MainAbility::GlobalCase22(int code)
 // level1:global, async level2:serial, sync
 void MainAbility::GlobalCase23(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1115,7 +1115,7 @@ void MainAbility::GlobalCase23(int code)
 // level1:global, async level2:serial, async
 void MainAbility::GlobalCase24(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1143,7 +1143,7 @@ void MainAbility::GlobalCase24(int code)
 // level1:global, async level2:serial, delay
 void MainAbility::GlobalCase25(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1172,7 +1172,7 @@ void MainAbility::GlobalCase25(int code)
 // level1:global, async level2:serial, apply
 void MainAbility::GlobalCase26(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1195,7 +1195,7 @@ void MainAbility::GlobalCase26(int code)
 // level1:global, delay level2:parallel, sync
 void MainAbility::GlobalCase27(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1224,7 +1224,7 @@ void MainAbility::GlobalCase27(int code)
 // level1:global, delay level2:parallel, async
 void MainAbility::GlobalCase28(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1247,7 +1247,7 @@ void MainAbility::GlobalCase28(int code)
 // level1:global, delay level2:parallel, delay
 void MainAbility::GlobalCase29(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1271,7 +1271,7 @@ void MainAbility::GlobalCase29(int code)
 // level1:global, delay level2:parallel, group
 void MainAbility::GlobalCase30(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1295,7 +1295,7 @@ void MainAbility::GlobalCase30(int code)
 // level1:global, delay level2:parallel, group wait
 void MainAbility::GlobalCase31(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1321,7 +1321,7 @@ void MainAbility::GlobalCase31(int code)
 // level1:global, delay level2:parallel, group notify
 void MainAbility::GlobalCase32(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1347,7 +1347,7 @@ void MainAbility::GlobalCase32(int code)
 // level1:global, delay level2:parallel, sync barrier
 void MainAbility::GlobalCase33(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1373,7 +1373,7 @@ void MainAbility::GlobalCase33(int code)
 // level1:global, delay level2:parallel, async barrier
 void MainAbility::GlobalCase34(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1399,7 +1399,7 @@ void MainAbility::GlobalCase34(int code)
 // level1:global, delay level2:parallel, apply
 void MainAbility::GlobalCase35(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1423,7 +1423,7 @@ void MainAbility::GlobalCase35(int code)
 // level1:global, delay level2:serial, sync
 void MainAbility::GlobalCase36(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1452,7 +1452,7 @@ void MainAbility::GlobalCase36(int code)
 // level1:global, delay level2:serial, async
 void MainAbility::GlobalCase37(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1481,7 +1481,7 @@ void MainAbility::GlobalCase37(int code)
 // level1:global, delay level2:serial, delay
 void MainAbility::GlobalCase38(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1511,7 +1511,7 @@ void MainAbility::GlobalCase38(int code)
 // level1:global, delay level2:serial, apply
 void MainAbility::GlobalCase39(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1535,7 +1535,7 @@ void MainAbility::GlobalCase39(int code)
 // level1:global, group level2:parallel, sync
 void MainAbility::GlobalCase40(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1564,7 +1564,7 @@ void MainAbility::GlobalCase40(int code)
 // level1:global, group level2:parallel, async
 void MainAbility::GlobalCase41(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1587,7 +1587,7 @@ void MainAbility::GlobalCase41(int code)
 // level1:global, group level2:parallel, delay
 void MainAbility::GlobalCase42(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1611,7 +1611,7 @@ void MainAbility::GlobalCase42(int code)
 // level1:global, group level2:parallel, group
 void MainAbility::GlobalCase43(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1635,7 +1635,7 @@ void MainAbility::GlobalCase43(int code)
 // level1:global, group level2:parallel, group wait
 void MainAbility::GlobalCase44(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1661,7 +1661,7 @@ void MainAbility::GlobalCase44(int code)
 // level1:global, group level2:parallel, group notify
 void MainAbility::GlobalCase45(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1687,7 +1687,7 @@ void MainAbility::GlobalCase45(int code)
 // level1:global, group level2:parallel, sync barrier
 void MainAbility::GlobalCase46(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1713,7 +1713,7 @@ void MainAbility::GlobalCase46(int code)
 // level1:global, group level2:parallel, async barrier
 void MainAbility::GlobalCase47(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1739,7 +1739,7 @@ void MainAbility::GlobalCase47(int code)
 // level1:global, group level2:parallel, apply
 void MainAbility::GlobalCase48(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1763,7 +1763,7 @@ void MainAbility::GlobalCase48(int code)
 // level1:global, group level2:serial, sync
 void MainAbility::GlobalCase49(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1792,7 +1792,7 @@ void MainAbility::GlobalCase49(int code)
 // level1:global, group level2:serial, async
 void MainAbility::GlobalCase50(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1821,7 +1821,7 @@ void MainAbility::GlobalCase50(int code)
 // level1:global, group level2:serial, delay
 void MainAbility::GlobalCase51(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1851,7 +1851,7 @@ void MainAbility::GlobalCase51(int code)
 // level1:global, group level2:serial, apply
 void MainAbility::GlobalCase52(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1875,7 +1875,7 @@ void MainAbility::GlobalCase52(int code)
 // level1:global, group wait level2:parallel, sync
 void MainAbility::GlobalCase53(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1906,7 +1906,7 @@ void MainAbility::GlobalCase53(int code)
 // level1:global, group wait level2:parallel, async
 void MainAbility::GlobalCase54(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1931,7 +1931,7 @@ void MainAbility::GlobalCase54(int code)
 // level1:global, group wait level2:parallel, delay
 void MainAbility::GlobalCase55(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1957,7 +1957,7 @@ void MainAbility::GlobalCase55(int code)
 // level1:global, group wait level2:parallel, group
 void MainAbility::GlobalCase56(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -1983,7 +1983,7 @@ void MainAbility::GlobalCase56(int code)
 // level1:global, group wait level2:parallel, group wait
 void MainAbility::GlobalCase57(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2011,7 +2011,7 @@ void MainAbility::GlobalCase57(int code)
 // level1:global, group wait level2:parallel, group notify
 void MainAbility::GlobalCase58(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2039,7 +2039,7 @@ void MainAbility::GlobalCase58(int code)
 // level1:global, group wait level2:parallel, sync barrier
 void MainAbility::GlobalCase59(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2067,7 +2067,7 @@ void MainAbility::GlobalCase59(int code)
 // level1:global, group wait level2:parallel, async barrier
 void MainAbility::GlobalCase60(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2095,7 +2095,7 @@ void MainAbility::GlobalCase60(int code)
 // level1:global, group wait level2:parallel, apply
 void MainAbility::GlobalCase61(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2121,7 +2121,7 @@ void MainAbility::GlobalCase61(int code)
 // level1:global, group wait level2:serial, sync
 void MainAbility::GlobalCase62(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2152,7 +2152,7 @@ void MainAbility::GlobalCase62(int code)
 // level1:global, group wait level2:serial, async
 void MainAbility::GlobalCase63(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2183,7 +2183,7 @@ void MainAbility::GlobalCase63(int code)
 // level1:global, group wait level2:serial, delay
 void MainAbility::GlobalCase64(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2215,7 +2215,7 @@ void MainAbility::GlobalCase64(int code)
 // level1:global, group wait level2:serial, apply
 void MainAbility::GlobalCase65(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2241,7 +2241,7 @@ void MainAbility::GlobalCase65(int code)
 // level1:global, group notify level2:parallel, sync
 void MainAbility::GlobalCase66(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2272,7 +2272,7 @@ void MainAbility::GlobalCase66(int code)
 // level1:global, group notify level2:parallel, async
 void MainAbility::GlobalCase67(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2297,7 +2297,7 @@ void MainAbility::GlobalCase67(int code)
 // level1:global, group notify level2:parallel, delay
 void MainAbility::GlobalCase68(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2323,7 +2323,7 @@ void MainAbility::GlobalCase68(int code)
 // level1:global, group notify level2:parallel, group
 void MainAbility::GlobalCase69(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2349,7 +2349,7 @@ void MainAbility::GlobalCase69(int code)
 // level1:global, group notify level2:parallel, group wait
 void MainAbility::GlobalCase70(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2377,7 +2377,7 @@ void MainAbility::GlobalCase70(int code)
 // level1:global, group notify level2:parallel, group notify
 void MainAbility::GlobalCase71(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2405,7 +2405,7 @@ void MainAbility::GlobalCase71(int code)
 // level1:global, group notify level2:parallel, sync barrier
 void MainAbility::GlobalCase72(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2433,7 +2433,7 @@ void MainAbility::GlobalCase72(int code)
 // level1:global, group notify level2:parallel, async barrier
 void MainAbility::GlobalCase73(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2461,7 +2461,7 @@ void MainAbility::GlobalCase73(int code)
 // level1:global, group notify level2:parallel, apply
 void MainAbility::GlobalCase74(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2487,7 +2487,7 @@ void MainAbility::GlobalCase74(int code)
 // level1:global, group notify level2:serial, sync
 void MainAbility::GlobalCase75(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2518,7 +2518,7 @@ void MainAbility::GlobalCase75(int code)
 // level1:global, group notify level2:serial, async
 void MainAbility::GlobalCase76(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2549,7 +2549,7 @@ void MainAbility::GlobalCase76(int code)
 // level1:global, group notify level2:serial, delay
 void MainAbility::GlobalCase77(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2581,7 +2581,7 @@ void MainAbility::GlobalCase77(int code)
 // level1:global, group notify level2:serial, apply
 void MainAbility::GlobalCase78(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2607,7 +2607,7 @@ void MainAbility::GlobalCase78(int code)
 // level1:global, apply level2:parallel, sync
 void MainAbility::GlobalCase79(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2636,7 +2636,7 @@ void MainAbility::GlobalCase79(int code)
 // level1:global, apply level2:parallel, async
 void MainAbility::GlobalCase80(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2659,7 +2659,7 @@ void MainAbility::GlobalCase80(int code)
 // level1:global, apply level2:parallel, delay
 void MainAbility::GlobalCase81(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2683,7 +2683,7 @@ void MainAbility::GlobalCase81(int code)
 // level1:global, apply level2:parallel, group
 void MainAbility::GlobalCase82(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2707,7 +2707,7 @@ void MainAbility::GlobalCase82(int code)
 // level1:global, apply level2:parallel, group wait
 void MainAbility::GlobalCase83(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2733,7 +2733,7 @@ void MainAbility::GlobalCase83(int code)
 // level1:global, apply level2:parallel, group notify
 void MainAbility::GlobalCase84(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2759,7 +2759,7 @@ void MainAbility::GlobalCase84(int code)
 // level1:global, apply level2:parallel, sync barrier
 void MainAbility::GlobalCase85(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2785,7 +2785,7 @@ void MainAbility::GlobalCase85(int code)
 // level1:global, apply level2:parallel, async barrier
 void MainAbility::GlobalCase86(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2811,7 +2811,7 @@ void MainAbility::GlobalCase86(int code)
 // level1:global, apply level2:parallel, apply
 void MainAbility::GlobalCase87(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2835,7 +2835,7 @@ void MainAbility::GlobalCase87(int code)
 // level1:global, apply level2:serial, sync
 void MainAbility::GlobalCase88(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2864,7 +2864,7 @@ void MainAbility::GlobalCase88(int code)
 // level1:global, apply level2:serial, async
 void MainAbility::GlobalCase89(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2893,7 +2893,7 @@ void MainAbility::GlobalCase89(int code)
 // level1:global, apply level2:serial, delay
 void MainAbility::GlobalCase90(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2923,7 +2923,7 @@ void MainAbility::GlobalCase90(int code)
 // level1:global, apply level2:serial, apply
 void MainAbility::GlobalCase91(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2947,7 +2947,7 @@ void MainAbility::GlobalCase91(int code)
 // level1:parallel, sync level2:parallel, sync
 void MainAbility::ParallelCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -2976,7 +2976,7 @@ void MainAbility::ParallelCase1(int code)
 // level1:parallel, sync level2:parallel, async
 void MainAbility::ParallelCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3002,7 +3002,7 @@ void MainAbility::ParallelCase2(int code)
 // level1:parallel, sync level2:parallel, delay
 void MainAbility::ParallelCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3029,7 +3029,7 @@ void MainAbility::ParallelCase3(int code)
 // level1:parallel, sync level2:parallel, group
 void MainAbility::ParallelCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3056,7 +3056,7 @@ void MainAbility::ParallelCase4(int code)
 // level1:parallel, sync level2:parallel, group wait
 void MainAbility::ParallelCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3085,7 +3085,7 @@ void MainAbility::ParallelCase5(int code)
 // level1:parallel, sync level2:parallel, group notify
 void MainAbility::ParallelCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3114,7 +3114,7 @@ void MainAbility::ParallelCase6(int code)
 // level1:parallel, sync level2:parallel, sync barrier
 void MainAbility::ParallelCase7(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3143,7 +3143,7 @@ void MainAbility::ParallelCase7(int code)
 // level1:parallel, sync level2:parallel, async barrier
 void MainAbility::ParallelCase8(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3172,7 +3172,7 @@ void MainAbility::ParallelCase8(int code)
 // level1:parallel, sync level2:parallel, apply
 void MainAbility::ParallelCase9(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3199,7 +3199,7 @@ void MainAbility::ParallelCase9(int code)
 // level1:parallel, sync level2:serial, sync
 void MainAbility::ParallelCase10(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3228,7 +3228,7 @@ void MainAbility::ParallelCase10(int code)
 // level1:parallel, sync level2:serial, async
 void MainAbility::ParallelCase11(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3257,7 +3257,7 @@ void MainAbility::ParallelCase11(int code)
 // level1:parallel, sync level2:serial, delay
 void MainAbility::ParallelCase12(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3287,7 +3287,7 @@ void MainAbility::ParallelCase12(int code)
 // level1:parallel, sync level2:serial, apply
 void MainAbility::ParallelCase13(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3314,7 +3314,7 @@ void MainAbility::ParallelCase13(int code)
 // level1:parallel, async level2:parallel, sync
 void MainAbility::ParallelCase14(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3342,7 +3342,7 @@ void MainAbility::ParallelCase14(int code)
 // level1:parallel, async level2:parallel, async
 void MainAbility::ParallelCase15(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3364,7 +3364,7 @@ void MainAbility::ParallelCase15(int code)
 // level1:parallel, async level2:parallel, delay
 void MainAbility::ParallelCase16(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3387,7 +3387,7 @@ void MainAbility::ParallelCase16(int code)
 // level1:parallel, async level2:parallel, group
 void MainAbility::ParallelCase17(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3410,7 +3410,7 @@ void MainAbility::ParallelCase17(int code)
 // level1:parallel, async level2:parallel, group wait
 void MainAbility::ParallelCase18(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3435,7 +3435,7 @@ void MainAbility::ParallelCase18(int code)
 // level1:parallel, async level2:parallel, group notify
 void MainAbility::ParallelCase19(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3460,7 +3460,7 @@ void MainAbility::ParallelCase19(int code)
 // level1:parallel, async level2:parallel, sync barrier
 void MainAbility::ParallelCase20(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3485,7 +3485,7 @@ void MainAbility::ParallelCase20(int code)
 // level1:parallel, async level2:parallel, async barrier
 void MainAbility::ParallelCase21(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3510,7 +3510,7 @@ void MainAbility::ParallelCase21(int code)
 // level1:parallel, async level2:parallel, apply
 void MainAbility::ParallelCase22(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3533,7 +3533,7 @@ void MainAbility::ParallelCase22(int code)
 // level1:parallel, async level2:serial, sync
 void MainAbility::ParallelCase23(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3561,7 +3561,7 @@ void MainAbility::ParallelCase23(int code)
 // level1:parallel, async level2:serial, async
 void MainAbility::ParallelCase24(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3589,7 +3589,7 @@ void MainAbility::ParallelCase24(int code)
 // level1:parallel, async level2:serial, delay
 void MainAbility::ParallelCase25(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3618,7 +3618,7 @@ void MainAbility::ParallelCase25(int code)
 // level1:parallel, async level2:serial, apply
 void MainAbility::ParallelCase26(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3641,7 +3641,7 @@ void MainAbility::ParallelCase26(int code)
 // level1:parallel, delay level2:parallel, sync
 void MainAbility::ParallelCase27(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3670,7 +3670,7 @@ void MainAbility::ParallelCase27(int code)
 // level1:parallel, delay level2:parallel, async
 void MainAbility::ParallelCase28(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3693,7 +3693,7 @@ void MainAbility::ParallelCase28(int code)
 // level1:parallel, delay level2:parallel, delay
 void MainAbility::ParallelCase29(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3717,7 +3717,7 @@ void MainAbility::ParallelCase29(int code)
 // level1:parallel, delay level2:parallel, group
 void MainAbility::ParallelCase30(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3741,7 +3741,7 @@ void MainAbility::ParallelCase30(int code)
 // level1:parallel, delay level2:parallel, group wait
 void MainAbility::ParallelCase31(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3767,7 +3767,7 @@ void MainAbility::ParallelCase31(int code)
 // level1:parallel, delay level2:parallel, group notify
 void MainAbility::ParallelCase32(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3793,7 +3793,7 @@ void MainAbility::ParallelCase32(int code)
 // level1:parallel, delay level2:parallel, sync barrier
 void MainAbility::ParallelCase33(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3819,7 +3819,7 @@ void MainAbility::ParallelCase33(int code)
 // level1:parallel, delay level2:parallel, async barrier
 void MainAbility::ParallelCase34(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3845,7 +3845,7 @@ void MainAbility::ParallelCase34(int code)
 // level1:parallel, delay level2:parallel, apply
 void MainAbility::ParallelCase35(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3869,7 +3869,7 @@ void MainAbility::ParallelCase35(int code)
 // level1:parallel, delay level2:serial, sync
 void MainAbility::ParallelCase36(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3898,7 +3898,7 @@ void MainAbility::ParallelCase36(int code)
 // level1:parallel, delay level2:serial, async
 void MainAbility::ParallelCase37(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3927,7 +3927,7 @@ void MainAbility::ParallelCase37(int code)
 // level1:parallel, delay level2:serial, delay
 void MainAbility::ParallelCase38(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3957,7 +3957,7 @@ void MainAbility::ParallelCase38(int code)
 // level1:parallel, delay level2:serial, apply
 void MainAbility::ParallelCase39(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -3981,7 +3981,7 @@ void MainAbility::ParallelCase39(int code)
 // level1:parallel, group level2:parallel, sync
 void MainAbility::ParallelCase40(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4010,7 +4010,7 @@ void MainAbility::ParallelCase40(int code)
 // level1:parallel, group level2:parallel, async
 void MainAbility::ParallelCase41(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4033,7 +4033,7 @@ void MainAbility::ParallelCase41(int code)
 // level1:parallel, group level2:parallel, delay
 void MainAbility::ParallelCase42(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4057,7 +4057,7 @@ void MainAbility::ParallelCase42(int code)
 // level1:parallel, group level2:parallel, group
 void MainAbility::ParallelCase43(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4081,7 +4081,7 @@ void MainAbility::ParallelCase43(int code)
 // level1:parallel, group level2:parallel, group wait
 void MainAbility::ParallelCase44(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4107,7 +4107,7 @@ void MainAbility::ParallelCase44(int code)
 // level1:parallel, group level2:parallel, group notify
 void MainAbility::ParallelCase45(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4133,7 +4133,7 @@ void MainAbility::ParallelCase45(int code)
 // level1:parallel, group level2:parallel, sync barrier
 void MainAbility::ParallelCase46(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4159,7 +4159,7 @@ void MainAbility::ParallelCase46(int code)
 // level1:parallel, group level2:parallel, async barrier
 void MainAbility::ParallelCase47(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4185,7 +4185,7 @@ void MainAbility::ParallelCase47(int code)
 // level1:parallel, group level2:parallel, apply
 void MainAbility::ParallelCase48(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4209,7 +4209,7 @@ void MainAbility::ParallelCase48(int code)
 // level1:parallel, group level2:serial, sync
 void MainAbility::ParallelCase49(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4238,7 +4238,7 @@ void MainAbility::ParallelCase49(int code)
 // level1:parallel, group level2:serial, async
 void MainAbility::ParallelCase50(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4267,7 +4267,7 @@ void MainAbility::ParallelCase50(int code)
 // level1:parallel, group level2:serial, delay
 void MainAbility::ParallelCase51(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4297,7 +4297,7 @@ void MainAbility::ParallelCase51(int code)
 // level1:parallel, group level2:serial, apply
 void MainAbility::ParallelCase52(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4321,7 +4321,7 @@ void MainAbility::ParallelCase52(int code)
 // level1:parallel, group wait level2:parallel, sync
 void MainAbility::ParallelCase53(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4352,7 +4352,7 @@ void MainAbility::ParallelCase53(int code)
 // level1:parallel, group wait level2:parallel, async
 void MainAbility::ParallelCase54(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4377,7 +4377,7 @@ void MainAbility::ParallelCase54(int code)
 // level1:parallel, group wait level2:parallel, delay
 void MainAbility::ParallelCase55(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4403,7 +4403,7 @@ void MainAbility::ParallelCase55(int code)
 // level1:parallel, group wait level2:parallel, group
 void MainAbility::ParallelCase56(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4429,7 +4429,7 @@ void MainAbility::ParallelCase56(int code)
 // level1:parallel, group wait level2:parallel, group wait
 void MainAbility::ParallelCase57(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4457,7 +4457,7 @@ void MainAbility::ParallelCase57(int code)
 // level1:parallel, group wait level2:parallel, group notify
 void MainAbility::ParallelCase58(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4485,7 +4485,7 @@ void MainAbility::ParallelCase58(int code)
 // level1:parallel, group wait level2:parallel, sync barrier
 void MainAbility::ParallelCase59(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4513,7 +4513,7 @@ void MainAbility::ParallelCase59(int code)
 // level1:parallel, group wait level2:parallel, async barrier
 void MainAbility::ParallelCase60(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4541,7 +4541,7 @@ void MainAbility::ParallelCase60(int code)
 // level1:parallel, group wait level2:parallel, apply
 void MainAbility::ParallelCase61(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4567,7 +4567,7 @@ void MainAbility::ParallelCase61(int code)
 // level1:parallel, group wait level2:serial, sync
 void MainAbility::ParallelCase62(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4598,7 +4598,7 @@ void MainAbility::ParallelCase62(int code)
 // level1:parallel, group wait level2:serial, async
 void MainAbility::ParallelCase63(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4629,7 +4629,7 @@ void MainAbility::ParallelCase63(int code)
 // level1:parallel, group wait level2:serial, delay
 void MainAbility::ParallelCase64(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4661,7 +4661,7 @@ void MainAbility::ParallelCase64(int code)
 // level1:parallel, group wait level2:serial, apply
 void MainAbility::ParallelCase65(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4687,7 +4687,7 @@ void MainAbility::ParallelCase65(int code)
 // level1:parallel, group notify level2:parallel, sync
 void MainAbility::ParallelCase66(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4718,7 +4718,7 @@ void MainAbility::ParallelCase66(int code)
 // level1:parallel, group notify level2:parallel, async
 void MainAbility::ParallelCase67(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4743,7 +4743,7 @@ void MainAbility::ParallelCase67(int code)
 // level1:parallel, group notify level2:parallel, delay
 void MainAbility::ParallelCase68(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4769,7 +4769,7 @@ void MainAbility::ParallelCase68(int code)
 // level1:parallel, group notify level2:parallel, group
 void MainAbility::ParallelCase69(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4795,7 +4795,7 @@ void MainAbility::ParallelCase69(int code)
 // level1:parallel, group notify level2:parallel, group wait
 void MainAbility::ParallelCase70(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4823,7 +4823,7 @@ void MainAbility::ParallelCase70(int code)
 // level1:parallel, group notify level2:parallel, group notify
 void MainAbility::ParallelCase71(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4851,7 +4851,7 @@ void MainAbility::ParallelCase71(int code)
 // level1:parallel, group notify level2:parallel, sync barrier
 void MainAbility::ParallelCase72(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4879,7 +4879,7 @@ void MainAbility::ParallelCase72(int code)
 // level1:parallel, group notify level2:parallel, async barrier
 void MainAbility::ParallelCase73(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4907,7 +4907,7 @@ void MainAbility::ParallelCase73(int code)
 // level1:parallel, group notify level2:parallel, apply
 void MainAbility::ParallelCase74(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4933,7 +4933,7 @@ void MainAbility::ParallelCase74(int code)
 // level1:parallel, group notify level2:serial, sync
 void MainAbility::ParallelCase75(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4964,7 +4964,7 @@ void MainAbility::ParallelCase75(int code)
 // level1:parallel, group notify level2:serial, async
 void MainAbility::ParallelCase76(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -4995,7 +4995,7 @@ void MainAbility::ParallelCase76(int code)
 // level1:parallel, group notify level2:serial, delay
 void MainAbility::ParallelCase77(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5027,7 +5027,7 @@ void MainAbility::ParallelCase77(int code)
 // level1:parallel, group notify level2:serial, apply
 void MainAbility::ParallelCase78(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5053,7 +5053,7 @@ void MainAbility::ParallelCase78(int code)
 // level1:parallel, sync barrier level2:parallel, sync
 void MainAbility::ParallelCase79(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5084,7 +5084,7 @@ void MainAbility::ParallelCase79(int code)
 // level1:parallel, sync barrier level2:parallel, async
 void MainAbility::ParallelCase80(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5109,7 +5109,7 @@ void MainAbility::ParallelCase80(int code)
 // level1:parallel, sync barrier level2:parallel, delay
 void MainAbility::ParallelCase81(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5135,7 +5135,7 @@ void MainAbility::ParallelCase81(int code)
 // level1:parallel, sync barrier level2:parallel, group
 void MainAbility::ParallelCase82(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5161,7 +5161,7 @@ void MainAbility::ParallelCase82(int code)
 // level1:parallel, sync barrier level2:parallel, group wait
 void MainAbility::ParallelCase83(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5189,7 +5189,7 @@ void MainAbility::ParallelCase83(int code)
 // level1:parallel, sync barrier level2:parallel, group notify
 void MainAbility::ParallelCase84(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5217,7 +5217,7 @@ void MainAbility::ParallelCase84(int code)
 // level1:parallel, sync barrier level2:parallel, sync barrier
 void MainAbility::ParallelCase85(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5245,7 +5245,7 @@ void MainAbility::ParallelCase85(int code)
 // level1:parallel, sync barrier level2:parallel, async barrier
 void MainAbility::ParallelCase86(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5273,7 +5273,7 @@ void MainAbility::ParallelCase86(int code)
 // level1:parallel, sync barrier level2:parallel, apply
 void MainAbility::ParallelCase87(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5299,7 +5299,7 @@ void MainAbility::ParallelCase87(int code)
 // level1:parallel, sync barrier level2:serial, sync
 void MainAbility::ParallelCase88(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5330,7 +5330,7 @@ void MainAbility::ParallelCase88(int code)
 // level1:parallel, sync barrier level2:serial, async
 void MainAbility::ParallelCase89(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5361,7 +5361,7 @@ void MainAbility::ParallelCase89(int code)
 // level1:parallel, sync barrier level2:serial, delay
 void MainAbility::ParallelCase90(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5393,7 +5393,7 @@ void MainAbility::ParallelCase90(int code)
 // level1:parallel, sync barrier level2:serial, apply
 void MainAbility::ParallelCase91(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5419,7 +5419,7 @@ void MainAbility::ParallelCase91(int code)
 // level1:parallel, async barrier level2:parallel, sync
 void MainAbility::ParallelCase92(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5450,7 +5450,7 @@ void MainAbility::ParallelCase92(int code)
 // level1:parallel, async barrier level2:parallel, async
 void MainAbility::ParallelCase93(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5475,7 +5475,7 @@ void MainAbility::ParallelCase93(int code)
 // level1:parallel, async barrier level2:parallel, delay
 void MainAbility::ParallelCase94(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5501,7 +5501,7 @@ void MainAbility::ParallelCase94(int code)
 // level1:parallel, async barrier level2:parallel, group
 void MainAbility::ParallelCase95(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5527,7 +5527,7 @@ void MainAbility::ParallelCase95(int code)
 // level1:parallel, async barrier level2:parallel, group wait
 void MainAbility::ParallelCase96(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5555,7 +5555,7 @@ void MainAbility::ParallelCase96(int code)
 // level1:parallel, async barrier level2:parallel, group notify
 void MainAbility::ParallelCase97(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5583,7 +5583,7 @@ void MainAbility::ParallelCase97(int code)
 // level1:parallel, async barrier level2:parallel, sync barrier
 void MainAbility::ParallelCase98(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5611,7 +5611,7 @@ void MainAbility::ParallelCase98(int code)
 // level1:parallel, async barrier level2:parallel, async barrier
 void MainAbility::ParallelCase99(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5639,7 +5639,7 @@ void MainAbility::ParallelCase99(int code)
 // level1:parallel, async barrier level2:parallel, apply
 void MainAbility::ParallelCase100(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5665,7 +5665,7 @@ void MainAbility::ParallelCase100(int code)
 // level1:parallel, async barrier level2:serial, sync
 void MainAbility::ParallelCase101(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5696,7 +5696,7 @@ void MainAbility::ParallelCase101(int code)
 // level1:parallel, async barrier level2:serial, async
 void MainAbility::ParallelCase102(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5727,7 +5727,7 @@ void MainAbility::ParallelCase102(int code)
 // level1:parallel, async barrier level2:serial, delay
 void MainAbility::ParallelCase103(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5759,7 +5759,7 @@ void MainAbility::ParallelCase103(int code)
 // level1:parallel, async barrier level2:serial, apply
 void MainAbility::ParallelCase104(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5785,7 +5785,7 @@ void MainAbility::ParallelCase104(int code)
 // level1:parallel, apply level2:parallel, sync
 void MainAbility::ParallelCase105(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5814,7 +5814,7 @@ void MainAbility::ParallelCase105(int code)
 // level1:parallel, apply level2:parallel, async
 void MainAbility::ParallelCase106(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5837,7 +5837,7 @@ void MainAbility::ParallelCase106(int code)
 // level1:parallel, apply level2:parallel, delay
 void MainAbility::ParallelCase107(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5861,7 +5861,7 @@ void MainAbility::ParallelCase107(int code)
 // level1:parallel, apply level2:parallel, group
 void MainAbility::ParallelCase108(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5885,7 +5885,7 @@ void MainAbility::ParallelCase108(int code)
 // level1:parallel, apply level2:parallel, group wait
 void MainAbility::ParallelCase109(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5911,7 +5911,7 @@ void MainAbility::ParallelCase109(int code)
 // level1:parallel, apply level2:parallel, group notify
 void MainAbility::ParallelCase110(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5937,7 +5937,7 @@ void MainAbility::ParallelCase110(int code)
 // level1:parallel, apply level2:parallel, sync barrier
 void MainAbility::ParallelCase111(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5963,7 +5963,7 @@ void MainAbility::ParallelCase111(int code)
 // level1:parallel, apply level2:parallel, async barrier
 void MainAbility::ParallelCase112(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -5989,7 +5989,7 @@ void MainAbility::ParallelCase112(int code)
 // level1:parallel, apply level2:parallel, apply
 void MainAbility::ParallelCase113(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6013,7 +6013,7 @@ void MainAbility::ParallelCase113(int code)
 // level1:parallel, apply level2:serial, sync
 void MainAbility::ParallelCase114(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6042,7 +6042,7 @@ void MainAbility::ParallelCase114(int code)
 // level1:parallel, apply level2:serial, async
 void MainAbility::ParallelCase115(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6071,7 +6071,7 @@ void MainAbility::ParallelCase115(int code)
 // level1:parallel, apply level2:serial, delay
 void MainAbility::ParallelCase116(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6101,7 +6101,7 @@ void MainAbility::ParallelCase116(int code)
 // level1:parallel, apply level2:serial, apply
 void MainAbility::ParallelCase117(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6125,7 +6125,7 @@ void MainAbility::ParallelCase117(int code)
 // level1:serial, sync level2:parallel, sync
 void MainAbility::SerialCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6154,7 +6154,7 @@ void MainAbility::SerialCase1(int code)
 // level1:serial, sync level2:parallel, async
 void MainAbility::SerialCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6180,7 +6180,7 @@ void MainAbility::SerialCase2(int code)
 // level1:serial, sync level2:parallel, delay
 void MainAbility::SerialCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6207,7 +6207,7 @@ void MainAbility::SerialCase3(int code)
 // level1:serial, sync level2:parallel, group
 void MainAbility::SerialCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6234,7 +6234,7 @@ void MainAbility::SerialCase4(int code)
 // level1:serial, sync level2:parallel, group wait
 void MainAbility::SerialCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6263,7 +6263,7 @@ void MainAbility::SerialCase5(int code)
 // level1:serial, sync level2:parallel, group notify
 void MainAbility::SerialCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6292,7 +6292,7 @@ void MainAbility::SerialCase6(int code)
 // level1:serial, sync level2:parallel, sync barrier
 void MainAbility::SerialCase7(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6321,7 +6321,7 @@ void MainAbility::SerialCase7(int code)
 // level1:serial, sync level2:parallel, async barrier
 void MainAbility::SerialCase8(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6350,7 +6350,7 @@ void MainAbility::SerialCase8(int code)
 // level1:serial, sync level2:parallel, apply
 void MainAbility::SerialCase9(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6377,7 +6377,7 @@ void MainAbility::SerialCase9(int code)
 // level1:serial, sync level2:serial, sync
 void MainAbility::SerialCase10(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6406,7 +6406,7 @@ void MainAbility::SerialCase10(int code)
 // level1:serial, sync level2:serial, async
 void MainAbility::SerialCase11(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6435,7 +6435,7 @@ void MainAbility::SerialCase11(int code)
 // level1:serial, sync level2:serial, delay
 void MainAbility::SerialCase12(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6465,7 +6465,7 @@ void MainAbility::SerialCase12(int code)
 // level1:serial, sync level2:serial, apply
 void MainAbility::SerialCase13(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6492,7 +6492,7 @@ void MainAbility::SerialCase13(int code)
 // level1:serial, async level2:parallel, sync
 void MainAbility::SerialCase14(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6521,7 +6521,7 @@ void MainAbility::SerialCase14(int code)
 // level1:serial, async level2:parallel, async
 void MainAbility::SerialCase15(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6547,7 +6547,7 @@ void MainAbility::SerialCase15(int code)
 // level1:serial, async level2:parallel, delay
 void MainAbility::SerialCase16(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6574,7 +6574,7 @@ void MainAbility::SerialCase16(int code)
 // level1:serial, async level2:parallel, group
 void MainAbility::SerialCase17(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6601,7 +6601,7 @@ void MainAbility::SerialCase17(int code)
 // level1:serial, async level2:parallel, group wait
 void MainAbility::SerialCase18(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6630,7 +6630,7 @@ void MainAbility::SerialCase18(int code)
 // level1:serial, async level2:parallel, group notify
 void MainAbility::SerialCase19(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6659,7 +6659,7 @@ void MainAbility::SerialCase19(int code)
 // level1:serial, async level2:parallel, sync barrier
 void MainAbility::SerialCase20(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6688,7 +6688,7 @@ void MainAbility::SerialCase20(int code)
 // level1:serial, async level2:parallel, async barrier
 void MainAbility::SerialCase21(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6717,7 +6717,7 @@ void MainAbility::SerialCase21(int code)
 // level1:serial, async level2:parallel, apply
 void MainAbility::SerialCase22(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6744,7 +6744,7 @@ void MainAbility::SerialCase22(int code)
 // level1:serial, async level2:serial, sync
 void MainAbility::SerialCase23(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6773,7 +6773,7 @@ void MainAbility::SerialCase23(int code)
 // level1:serial, async level2:serial, async
 void MainAbility::SerialCase24(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6802,7 +6802,7 @@ void MainAbility::SerialCase24(int code)
 // level1:serial, async level2:serial, delay
 void MainAbility::SerialCase25(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6832,7 +6832,7 @@ void MainAbility::SerialCase25(int code)
 // level1:serial, async level2:serial, apply
 void MainAbility::SerialCase26(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6859,7 +6859,7 @@ void MainAbility::SerialCase26(int code)
 // level1:serial, delay level2:parallel, sync
 void MainAbility::SerialCase27(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6889,7 +6889,7 @@ void MainAbility::SerialCase27(int code)
 // level1:serial, delay level2:parallel, async
 void MainAbility::SerialCase28(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6916,7 +6916,7 @@ void MainAbility::SerialCase28(int code)
 // level1:serial, delay level2:parallel, delay
 void MainAbility::SerialCase29(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6944,7 +6944,7 @@ void MainAbility::SerialCase29(int code)
 // level1:serial, delay level2:parallel, group
 void MainAbility::SerialCase30(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -6972,7 +6972,7 @@ void MainAbility::SerialCase30(int code)
 // level1:serial, delay level2:parallel, group wait
 void MainAbility::SerialCase31(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7002,7 +7002,7 @@ void MainAbility::SerialCase31(int code)
 // level1:serial, delay level2:parallel, group notify
 void MainAbility::SerialCase32(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7032,7 +7032,7 @@ void MainAbility::SerialCase32(int code)
 // level1:serial, delay level2:parallel, sync barrier
 void MainAbility::SerialCase33(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7062,7 +7062,7 @@ void MainAbility::SerialCase33(int code)
 // level1:serial, delay level2:parallel, async barrier
 void MainAbility::SerialCase34(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7092,7 +7092,7 @@ void MainAbility::SerialCase34(int code)
 // level1:serial, delay level2:parallel, apply
 void MainAbility::SerialCase35(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7120,7 +7120,7 @@ void MainAbility::SerialCase35(int code)
 // level1:serial, delay level2:serial, sync
 void MainAbility::SerialCase36(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7150,7 +7150,7 @@ void MainAbility::SerialCase36(int code)
 // level1:serial, delay level2:serial, async
 void MainAbility::SerialCase37(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7180,7 +7180,7 @@ void MainAbility::SerialCase37(int code)
 // level1:serial, delay level2:serial, delay
 void MainAbility::SerialCase38(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7211,7 +7211,7 @@ void MainAbility::SerialCase38(int code)
 // level1:serial, delay level2:serial, apply
 void MainAbility::SerialCase39(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7239,7 +7239,7 @@ void MainAbility::SerialCase39(int code)
 // level1:serial, apply level2:parallel, sync
 void MainAbility::SerialCase40(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7268,7 +7268,7 @@ void MainAbility::SerialCase40(int code)
 // level1:serial, apply level2:parallel, async
 void MainAbility::SerialCase41(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7291,7 +7291,7 @@ void MainAbility::SerialCase41(int code)
 // level1:serial, apply level2:parallel, delay
 void MainAbility::SerialCase42(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7315,7 +7315,7 @@ void MainAbility::SerialCase42(int code)
 // level1:serial, apply level2:parallel, group
 void MainAbility::SerialCase43(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7339,7 +7339,7 @@ void MainAbility::SerialCase43(int code)
 // level1:serial, apply level2:parallel, group wait
 void MainAbility::SerialCase44(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7365,7 +7365,7 @@ void MainAbility::SerialCase44(int code)
 // level1:serial, apply level2:parallel, group notify
 void MainAbility::SerialCase45(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7391,7 +7391,7 @@ void MainAbility::SerialCase45(int code)
 // level1:serial, apply level2:parallel, sync barrier
 void MainAbility::SerialCase46(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7417,7 +7417,7 @@ void MainAbility::SerialCase46(int code)
 // level1:serial, apply level2:parallel, async barrier
 void MainAbility::SerialCase47(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7443,7 +7443,7 @@ void MainAbility::SerialCase47(int code)
 // level1:serial, apply level2:parallel, apply
 void MainAbility::SerialCase48(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7467,7 +7467,7 @@ void MainAbility::SerialCase48(int code)
 // level1:serial, apply level2:serial, sync
 void MainAbility::SerialCase49(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7496,7 +7496,7 @@ void MainAbility::SerialCase49(int code)
 // level1:serial, apply level2:serial, async
 void MainAbility::SerialCase50(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7525,7 +7525,7 @@ void MainAbility::SerialCase50(int code)
 // level1:serial, apply level2:serial, delay
 void MainAbility::SerialCase51(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7555,7 +7555,7 @@ void MainAbility::SerialCase51(int code)
 // level1:serial, apply level2:serial, apply
 void MainAbility::SerialCase52(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7579,7 +7579,7 @@ void MainAbility::SerialCase52(int code)
 // level1:spec, sync level2:parallel, sync
 void MainAbility::SpecCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7608,7 +7608,7 @@ void MainAbility::SpecCase1(int code)
 // level1:spec, sync level2:parallel, async
 void MainAbility::SpecCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7634,7 +7634,7 @@ void MainAbility::SpecCase2(int code)
 // level1:spec, sync level2:parallel, delay
 void MainAbility::SpecCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7661,7 +7661,7 @@ void MainAbility::SpecCase3(int code)
 // level1:spec, sync level2:parallel, group
 void MainAbility::SpecCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7688,7 +7688,7 @@ void MainAbility::SpecCase4(int code)
 // level1:spec, sync level2:parallel, group wait
 void MainAbility::SpecCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7717,7 +7717,7 @@ void MainAbility::SpecCase5(int code)
 // level1:spec, sync level2:parallel, group notify
 void MainAbility::SpecCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7746,7 +7746,7 @@ void MainAbility::SpecCase6(int code)
 // level1:spec, sync level2:parallel, sync barrier
 void MainAbility::SpecCase7(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7775,7 +7775,7 @@ void MainAbility::SpecCase7(int code)
 // level1:spec, sync level2:parallel, async barrier
 void MainAbility::SpecCase8(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7804,7 +7804,7 @@ void MainAbility::SpecCase8(int code)
 // level1:spec, sync level2:parallel, apply
 void MainAbility::SpecCase9(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7831,7 +7831,7 @@ void MainAbility::SpecCase9(int code)
 // level1:spec, sync level2:serial, sync
 void MainAbility::SpecCase10(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7860,7 +7860,7 @@ void MainAbility::SpecCase10(int code)
 // level1:spec, sync level2:serial, async
 void MainAbility::SpecCase11(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7889,7 +7889,7 @@ void MainAbility::SpecCase11(int code)
 // level1:spec, sync level2:serial, delay
 void MainAbility::SpecCase12(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7919,7 +7919,7 @@ void MainAbility::SpecCase12(int code)
 // level1:spec, sync level2:serial, apply
 void MainAbility::SpecCase13(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7946,7 +7946,7 @@ void MainAbility::SpecCase13(int code)
 // level1:spec, async level2:parallel, sync
 void MainAbility::SpecCase14(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7974,7 +7974,7 @@ void MainAbility::SpecCase14(int code)
 // level1:spec, async level2:parallel, async
 void MainAbility::SpecCase15(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -7996,7 +7996,7 @@ void MainAbility::SpecCase15(int code)
 // level1:spec, async level2:parallel, delay
 void MainAbility::SpecCase16(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8019,7 +8019,7 @@ void MainAbility::SpecCase16(int code)
 // level1:spec, async level2:parallel, group
 void MainAbility::SpecCase17(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8042,7 +8042,7 @@ void MainAbility::SpecCase17(int code)
 // level1:spec, async level2:parallel, group wait
 void MainAbility::SpecCase18(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8067,7 +8067,7 @@ void MainAbility::SpecCase18(int code)
 // level1:spec, async level2:parallel, group notify
 void MainAbility::SpecCase19(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8092,7 +8092,7 @@ void MainAbility::SpecCase19(int code)
 // level1:spec, async level2:parallel, sync barrier
 void MainAbility::SpecCase20(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8117,7 +8117,7 @@ void MainAbility::SpecCase20(int code)
 // level1:spec, async level2:parallel, async barrier
 void MainAbility::SpecCase21(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8142,7 +8142,7 @@ void MainAbility::SpecCase21(int code)
 // level1:spec, async level2:parallel, apply
 void MainAbility::SpecCase22(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8165,7 +8165,7 @@ void MainAbility::SpecCase22(int code)
 // level1:spec, async level2:serial, sync
 void MainAbility::SpecCase23(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8193,7 +8193,7 @@ void MainAbility::SpecCase23(int code)
 // level1:spec, async level2:serial, async
 void MainAbility::SpecCase24(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8221,7 +8221,7 @@ void MainAbility::SpecCase24(int code)
 // level1:spec, async level2:serial, delay
 void MainAbility::SpecCase25(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8250,7 +8250,7 @@ void MainAbility::SpecCase25(int code)
 // level1:spec, async level2:serial, apply
 void MainAbility::SpecCase26(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8273,7 +8273,7 @@ void MainAbility::SpecCase26(int code)
 // level1:spec, delay level2:parallel, sync
 void MainAbility::SpecCase27(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8302,7 +8302,7 @@ void MainAbility::SpecCase27(int code)
 // level1:spec, delay level2:parallel, async
 void MainAbility::SpecCase28(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8325,7 +8325,7 @@ void MainAbility::SpecCase28(int code)
 // level1:spec, delay level2:parallel, delay
 void MainAbility::SpecCase29(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8349,7 +8349,7 @@ void MainAbility::SpecCase29(int code)
 // level1:spec, delay level2:parallel, group
 void MainAbility::SpecCase30(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8373,7 +8373,7 @@ void MainAbility::SpecCase30(int code)
 // level1:spec, delay level2:parallel, group wait
 void MainAbility::SpecCase31(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8399,7 +8399,7 @@ void MainAbility::SpecCase31(int code)
 // level1:spec, delay level2:parallel, group notify
 void MainAbility::SpecCase32(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8425,7 +8425,7 @@ void MainAbility::SpecCase32(int code)
 // level1:spec, delay level2:parallel, sync barrier
 void MainAbility::SpecCase33(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8451,7 +8451,7 @@ void MainAbility::SpecCase33(int code)
 // level1:spec, delay level2:parallel, async barrier
 void MainAbility::SpecCase34(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8477,7 +8477,7 @@ void MainAbility::SpecCase34(int code)
 // level1:spec, delay level2:parallel, apply
 void MainAbility::SpecCase35(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8501,7 +8501,7 @@ void MainAbility::SpecCase35(int code)
 // level1:spec, delay level2:serial, sync
 void MainAbility::SpecCase36(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8530,7 +8530,7 @@ void MainAbility::SpecCase36(int code)
 // level1:spec, delay level2:serial, async
 void MainAbility::SpecCase37(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8559,7 +8559,7 @@ void MainAbility::SpecCase37(int code)
 // level1:spec, delay level2:serial, delay
 void MainAbility::SpecCase38(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8589,7 +8589,7 @@ void MainAbility::SpecCase38(int code)
 // level1:spec, delay level2:serial, apply
 void MainAbility::SpecCase39(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8613,7 +8613,7 @@ void MainAbility::SpecCase39(int code)
 // level1:spec, apply level2:parallel, sync
 void MainAbility::SpecCase40(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8642,7 +8642,7 @@ void MainAbility::SpecCase40(int code)
 // level1:spec, apply level2:parallel, async
 void MainAbility::SpecCase41(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8665,7 +8665,7 @@ void MainAbility::SpecCase41(int code)
 // level1:spec, apply level2:parallel, delay
 void MainAbility::SpecCase42(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8689,7 +8689,7 @@ void MainAbility::SpecCase42(int code)
 // level1:spec, apply level2:parallel, group
 void MainAbility::SpecCase43(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8713,7 +8713,7 @@ void MainAbility::SpecCase43(int code)
 // level1:spec, apply level2:parallel, group wait
 void MainAbility::SpecCase44(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8739,7 +8739,7 @@ void MainAbility::SpecCase44(int code)
 // level1:spec, apply level2:parallel, group notify
 void MainAbility::SpecCase45(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8765,7 +8765,7 @@ void MainAbility::SpecCase45(int code)
 // level1:spec, apply level2:parallel, sync barrier
 void MainAbility::SpecCase46(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8791,7 +8791,7 @@ void MainAbility::SpecCase46(int code)
 // level1:spec, apply level2:parallel, async barrier
 void MainAbility::SpecCase47(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8817,7 +8817,7 @@ void MainAbility::SpecCase47(int code)
 // level1:spec, apply level2:parallel, apply
 void MainAbility::SpecCase48(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8841,7 +8841,7 @@ void MainAbility::SpecCase48(int code)
 // level1:spec, apply level2:serial, sync
 void MainAbility::SpecCase49(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8870,7 +8870,7 @@ void MainAbility::SpecCase49(int code)
 // level1:spec, apply level2:serial, async
 void MainAbility::SpecCase50(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8899,7 +8899,7 @@ void MainAbility::SpecCase50(int code)
 // level1:spec, apply level2:serial, delay
 void MainAbility::SpecCase51(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8929,7 +8929,7 @@ void MainAbility::SpecCase51(int code)
 // level1:spec, apply level2:serial, apply
 void MainAbility::SpecCase52(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     TestSetting outerSetting;
     TestSetting innerSetting;
@@ -8970,7 +8970,7 @@ static void addTaskFromList(TaskList &dispatcher, const std::vector<TestOperatio
 }
 void MainAbility::HybridCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9000,7 +9000,7 @@ void MainAbility::HybridCase1(int code)
 };
 void MainAbility::HybridCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::PARALLEL, context, "parallel"};
@@ -9034,7 +9034,7 @@ void MainAbility::HybridCase2(int code)
 };
 void MainAbility::HybridCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList serialDispatcher = TaskList {TestDispatcher::SERIAL, context, "serial"};
@@ -9061,7 +9061,7 @@ void MainAbility::HybridCase3(int code)
 };
 void MainAbility::HybridCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList mainDispatcher = TaskList {TestDispatcher::MAIN, context, "main"};
@@ -9088,7 +9088,7 @@ void MainAbility::HybridCase4(int code)
 };
 void MainAbility::HybridCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9134,7 +9134,7 @@ void MainAbility::HybridCase5(int code)
 };
 void MainAbility::HybridCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9180,7 +9180,7 @@ void MainAbility::HybridCase6(int code)
 };
 void MainAbility::HybridCase7(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9233,7 +9233,7 @@ void MainAbility::HybridCase7(int code)
 };
 void MainAbility::HybridCase8(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9282,7 +9282,7 @@ void MainAbility::HybridCase8(int code)
 };
 void MainAbility::HybridCase9(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9331,7 +9331,7 @@ void MainAbility::HybridCase9(int code)
 };
 void MainAbility::HybridCase10(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9384,7 +9384,7 @@ void MainAbility::HybridCase10(int code)
 };
 void MainAbility::HybridCase11(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9439,7 +9439,7 @@ void MainAbility::HybridCase11(int code)
 };
 void MainAbility::HybridCase12(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9499,7 +9499,7 @@ void MainAbility::HybridCase12(int code)
 };
 void MainAbility::HybridCase13(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9556,7 +9556,7 @@ void MainAbility::HybridCase13(int code)
 };
 void MainAbility::HybridCase14(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9615,7 +9615,7 @@ void MainAbility::HybridCase14(int code)
 };
 void MainAbility::HybridCase15(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9676,7 +9676,7 @@ void MainAbility::HybridCase15(int code)
 };
 void MainAbility::HybridCase16(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9737,7 +9737,7 @@ void MainAbility::HybridCase16(int code)
 };
 void MainAbility::HybridCase17(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9792,7 +9792,7 @@ void MainAbility::HybridCase17(int code)
 };
 void MainAbility::HybridCase18(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9849,7 +9849,7 @@ void MainAbility::HybridCase18(int code)
 };
 void MainAbility::HybridCase19(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9907,7 +9907,7 @@ void MainAbility::HybridCase19(int code)
 };
 void MainAbility::HybridCase20(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -9968,7 +9968,7 @@ void MainAbility::HybridCase20(int code)
 };
 void MainAbility::HybridCase21(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10028,7 +10028,7 @@ void MainAbility::HybridCase21(int code)
 };
 void MainAbility::HybridCase22(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10088,7 +10088,7 @@ void MainAbility::HybridCase22(int code)
 };
 void MainAbility::HybridCase23(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10150,7 +10150,7 @@ void MainAbility::HybridCase23(int code)
 };
 void MainAbility::HybridCase24(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10216,7 +10216,7 @@ void MainAbility::HybridCase24(int code)
 };
 void MainAbility::HybridCase25(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10273,7 +10273,7 @@ void MainAbility::HybridCase25(int code)
 };
 void MainAbility::HybridCase26(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10329,7 +10329,7 @@ void MainAbility::HybridCase26(int code)
 };
 void MainAbility::HybridCase27(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10392,7 +10392,7 @@ void MainAbility::HybridCase27(int code)
 
 void MainAbility::MultiAppCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList globalDispatcher = TaskList {TestDispatcher::GLOBAL, context, "global"};
@@ -10424,7 +10424,7 @@ void MainAbility::MultiAppCase1(int code)
 
 void MainAbility::MultiAppCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::PARALLEL, context, "parallel"};
@@ -10456,7 +10456,7 @@ void MainAbility::MultiAppCase2(int code)
 
 void MainAbility::MultiAppCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList serialDispatcher = TaskList {TestDispatcher::SERIAL, context, "serial"};
@@ -10488,7 +10488,7 @@ void MainAbility::MultiAppCase3(int code)
 
 void MainAbility::MultiAppCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList mainDispatcher = TaskList {TestDispatcher::MAIN, context, "main"};
@@ -10520,7 +10520,7 @@ void MainAbility::MultiAppCase4(int code)
 
 void MainAbility::ExtraCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     int taskId = 0;
@@ -10543,7 +10543,7 @@ void MainAbility::ExtraCase1(int code)
 
 void MainAbility::FillInDispathcer()
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     const int fullThreadNum = 32;
     const int waitTime = 2;
     auto context = GetContext();
@@ -10561,7 +10561,7 @@ void MainAbility::FillInDispathcer()
 }
 void MainAbility::PriorityCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10598,7 +10598,7 @@ void MainAbility::PriorityCase1(int code)
 }
 void MainAbility::PriorityCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10635,7 +10635,7 @@ void MainAbility::PriorityCase2(int code)
 }
 void MainAbility::PriorityCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10672,7 +10672,7 @@ void MainAbility::PriorityCase3(int code)
 }
 void MainAbility::PriorityCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10708,7 +10708,7 @@ void MainAbility::PriorityCase4(int code)
 }
 void MainAbility::PriorityCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10745,7 +10745,7 @@ void MainAbility::PriorityCase5(int code)
 }
 void MainAbility::RevokeCase1(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10764,7 +10764,7 @@ void MainAbility::RevokeCase1(int code)
 }
 void MainAbility::RevokeCase2(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::GLOBAL, context, "parallel"};
@@ -10781,7 +10781,7 @@ void MainAbility::RevokeCase2(int code)
 }
 void MainAbility::RevokeCase3(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::GLOBAL, context, "parallel"};
@@ -10800,7 +10800,7 @@ void MainAbility::RevokeCase3(int code)
 }
 void MainAbility::RevokeCase4(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::GLOBAL, context, "parallel"};
@@ -10818,7 +10818,7 @@ void MainAbility::RevokeCase4(int code)
 }
 void MainAbility::RevokeCase5(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     FillInDispathcer();
     Reset();
     auto context = GetContext();
@@ -10838,7 +10838,7 @@ void MainAbility::RevokeCase5(int code)
 }
 void MainAbility::RevokeCase6(int code)
 {
-    APP_LOGI("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
+    HILOG_INFO("-- -- -- -- -- --MainAbility::%{public}s", __FUNCTION__);
     Reset();
     auto context = GetContext();
     TaskList parallelDispatcher = TaskList {TestDispatcher::GLOBAL, context, "parallel"};

@@ -18,7 +18,7 @@
 #define private public
 #include "ams_mgr_scheduler.h"
 #undef private
-#include "app_log_wrapper.h"
+#include "hilog_wrapper.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -57,7 +57,7 @@ void AmsMgrSchedulerDumpTest::TearDown()
  */
 HWTEST_F(AmsMgrSchedulerDumpTest, AmsMgrSchedulerDump_GetConfiguration_0100, TestSize.Level0)
 {
-    APP_LOGI("AmsMgrSchedulerDump_GetConfiguration_0100 start");
+    HILOG_INFO("AmsMgrSchedulerDump_GetConfiguration_0100 start");
 
     auto appMgrServiceInner = std::make_shared<AppMgrServiceInner>();
     EXPECT_NE(appMgrServiceInner, nullptr);
@@ -80,7 +80,7 @@ HWTEST_F(AmsMgrSchedulerDumpTest, AmsMgrSchedulerDump_GetConfiguration_0100, Tes
     EXPECT_EQ(result, ERR_OK);
     EXPECT_EQ(configFromAmsMgrScheduler.defaultDisplayId_, config->defaultDisplayId_);
 
-    APP_LOGI("AmsMgrSchedulerDump_GetConfiguration_0100 end");
+    HILOG_INFO("AmsMgrSchedulerDump_GetConfiguration_0100 end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
