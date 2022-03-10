@@ -154,7 +154,6 @@ public:
 
     int RemoveMission(int id) override;
 
-    int RemoveStack(int id) override;
     int PowerOff() override;
     int PowerOn() override;
     int LockMission(int missionId) override

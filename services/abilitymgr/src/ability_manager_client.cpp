@@ -343,13 +343,6 @@ ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
 
     return error;
 }
-
-ErrCode AbilityManagerClient::RemoveStack(int id)
-{
-    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->RemoveStack(id);
-}
 #endif
 
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
