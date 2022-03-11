@@ -163,9 +163,11 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
         HILOG_ERROR("OnContinue failed.");
         return CONTINUE_ON_CONTINUE_FAILED;
     }
+#ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
     auto abilityInfo = abilityInfo_.lock();
     std::string &bundleName = abilityInfo->bundleName;
     ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerSync();
+#endif
 
 #ifdef SUPPORT_GRAPHICS
     bool ret = GetContentInfo(wantParams);

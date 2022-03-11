@@ -27,9 +27,15 @@ system_test_app_path =
 
 declare_args() {
   background_task_mgr_continuous_task_enable = true
+  distributed_data_object_enable = true
 
   if (defined(global_parts_info) &&
       !defined(global_parts_info.resourceschedule_background_task_mgr)) {
     background_task_mgr_continuous_task_enable = false
+  }
+
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.distributeddataobject)) {
+    distributed_data_object_enable = false
   }
 }
