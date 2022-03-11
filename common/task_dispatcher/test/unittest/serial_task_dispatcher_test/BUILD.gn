@@ -45,5 +45,5 @@ ohos_unittest("SerialTaskDispatcherTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":SerialTaskDispatcherTest" ]
+  # deps = [ ":SerialTaskDispatcherTest" ]
 }
