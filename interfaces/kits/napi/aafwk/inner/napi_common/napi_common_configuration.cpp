@@ -27,7 +27,7 @@ bool InnerWrapConfigurationString(
     napi_env env, napi_value jsObject, const std::string &key, const std::string &value)
 {
     if (!value.empty()) {
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{public}s", __func__, key.c_str(), value.c_str());
+        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), value.c_str());
         napi_value jsValue = WrapStringToJS(env, value);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);

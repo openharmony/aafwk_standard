@@ -26,6 +26,8 @@ namespace AppExecFwk {
 class AbilityDelegatorArgs {
 public:
     static const std::string KEY_TEST_BUNDLE_NAME;
+    static const std::string KEY_TEST_PACKAGE_NAME;
+    static const std::string KEY_TEST_MODULE_NAME;
     static const std::string KEY_TEST_RUNNER_CLASS;
     static const std::string KEY_TEST_CASE;
     static const std::string KEY_TEST_WAIT_TIMEOUT;
@@ -39,11 +41,16 @@ public:
     void SetTestBundleName(const std::string &bundleName);
     std::string GetTestBundleName() const;
 
+    std::string GetTestPackageName() const;
+    std::string GetTestModuleName() const;
     std::string GetTestRunnerClassName() const;
     std::string GetTestCaseName() const;
 
     void SetTestParam(const std::map<std::string, std::string> &params);
     std::map<std::string, std::string> GetTestParam() const;
+
+private:
+    std::string GetParamValue(const std::string &key) const;
 
 private:
     std::string bundleName_;

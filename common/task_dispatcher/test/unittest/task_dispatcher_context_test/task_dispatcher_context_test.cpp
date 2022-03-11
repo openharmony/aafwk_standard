@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -109,24 +109,6 @@ HWTEST(TaskDispatcherContextTest, GetWorkerThreadsInfo_0100, Function | MediumTe
     bool flag = (workerThreadsInfo.size() == 0);
     EXPECT_TRUE(flag);
     GTEST_LOG_(INFO) << "GetWorkerThreadsInfo_0100 end";
-}
-/**
- * @tc.number:GetWorkerThreadsInfo_0200
- * @tc.name: GetWorkerThreadsInfo
- * @tc.desc: 1.create  TaskDispatcherContext by TaskExecutor
- *           2.GetWorkerThreadsInfo successfully
- */
-HWTEST(TaskDispatcherContextTest, GetWorkerThreadsInfo_0200, Function | MediumTest | Level1)
-{
-    GTEST_LOG_(INFO) << "TaskDispatcherContext_0200 start";
-    const std::shared_ptr<WorkerPoolConfig> config = std::make_shared<DefaultWorkerPoolConfig>();
-    const std::shared_ptr<TaskExecutor> testTaskExecutor = std::make_shared<TaskExecutor>(config);
-    std::shared_ptr<TaskDispatcherContext> taskDispatcherContext =
-        std::make_shared<TaskDispatcherContext>(testTaskExecutor);
-    std::map<std::string, long> workerThreadsInfo = taskDispatcherContext->GetWorkerThreadsInfo();
-    bool flag = (workerThreadsInfo.size() == 0);
-    EXPECT_TRUE(flag);
-    GTEST_LOG_(INFO) << "TaskDispatcherContext_0200 end";
 }
 /**
  * @tc.number:CreateSerialDispatcher_0100

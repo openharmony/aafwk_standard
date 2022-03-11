@@ -132,10 +132,7 @@ ErrCode AppMgrService::Init()
     }
     appMgrServiceInner_->Init();
     handler_ = std::make_shared<AMSEventHandler>(runner_, appMgrServiceInner_);
-    if (!handler_) {
-        HILOG_ERROR("init failed without handler");
-        return ERR_INVALID_OPERATION;
-    }
+
     appMgrServiceInner_->SetEventHandler(handler_);
     ErrCode openErr = appMgrServiceInner_->OpenAppSpawnConnection();
     if (FAILED(openErr)) {
@@ -434,6 +431,26 @@ void AppMgrService::AttachRenderProcess(const sptr<IRemoteObject> &scheduler)
     auto fun = std::bind(&AppMgrServiceInner::AttachRenderProcess,
         appMgrServiceInner_, pid, iface_cast<IRenderScheduler>(scheduler));
     handler_->PostTask(fun, TASK_ATTACH_RENDER_PROCESS);
+}
+
+void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
+{
+    HILOG_DEBUG("PostANRTaskByProcessID called.");
+    if (!IsReady()) {
+        HILOG_ERROR("AttachRenderProcess failed, not ready.");
+        return;
+    }
+    auto appRecord = appMgrServiceInner_->GetAppRunningRecordByPid(pid);
+    if (!appRecord) {
+        HILOG_ERROR("no such appRecord");
+        return;
+    }
+    auto object = appRecord->GetApplicationClient();
+    if (!object) {
+        HILOG_ERROR("GetApplicationClient failed.");
+        return;
+    }
+    object->ScheduleANRProcess();
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

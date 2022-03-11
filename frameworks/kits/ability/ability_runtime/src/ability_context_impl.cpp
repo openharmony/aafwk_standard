@@ -278,7 +278,6 @@ void AbilityContextImpl::MinimizeAbility(bool fromUser)
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContext::MinimizeAbility is failed %{public}d", err);
     }
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 ErrCode AbilityContextImpl::TerminateSelf()
@@ -289,7 +288,6 @@ ErrCode AbilityContextImpl::TerminateSelf()
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContextImpl::TerminateSelf is failed %{public}d", err);
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return err;
 }
 
@@ -315,6 +313,7 @@ void AbilityContextImpl::RequestPermissionsFromUser(const std::vector<std::strin
     HILOG_INFO("%{public}s called.", __func__);
     if (permissions.size() == 0 || requestCode < 0) {
         HILOG_ERROR("%{public}s. The params are invalid.", __func__);
+        return;
     }
     AAFwk::Want want;
     want.SetElementName(GRANT_ABILITY_BUNDLE_NAME, GRANT_ABILITY_ABILITY_NAME);
@@ -344,7 +343,7 @@ ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue
 ErrCode AbilityContextImpl::StartAbility(
     const AAFwk::Want& want, const std::shared_ptr<CallerCallBack> &callback)
 {
-    if (!localCallContainer_) {
+    if (localCallContainer_ == nullptr) {
         localCallContainer_ = new (std::nothrow)LocalCallContainer();
     }
 

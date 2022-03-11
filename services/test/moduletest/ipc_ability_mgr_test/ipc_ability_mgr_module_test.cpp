@@ -521,32 +521,6 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_016, TestSize.Level1)
  * Feature: AAFwk
  * Function: AbilityManagerService
  * SubFunction: IPC of client and server
- * FunctionPoints: RemoveStack
- * EnvConditions: NA
- * CaseDescription: verify RemoveStack IPC between client and server.
- */
-HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_017, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_017 start";
-
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
-        sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
-        EXPECT_CALL(*mockAbilityMgr, RemoveStack(_))
-            .Times(1)
-            .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->RemoveStack(1);
-        mockAbilityMgr->Wait();
-    }
-
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_017 end";
-}
-
-/*
- * Feature: AAFwk
- * Function: AbilityManagerService
- * SubFunction: IPC of client and server
  * FunctionPoints: MoveMissionToTop
  * EnvConditions: NA
  * CaseDescription: verify MoveMissionToTop IPC between client and server.

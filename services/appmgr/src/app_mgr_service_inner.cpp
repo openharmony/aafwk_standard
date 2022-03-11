@@ -66,8 +66,6 @@ const std::string FUNC_NAME = "main";
 const std::string SO_PATH = "system/lib64/libmapleappkit.z.so";
 const std::string RENDER_PARAM = "invalidparam";
 const int32_t SIGNAL_KILL = 9;
-const std::string REQ_PERMISSION = "ohos.permission.LOCATION_IN_BACKGROUND";
-constexpr int32_t SYSTEM_UID = 1000;
 constexpr int32_t USER_SCALE = 200000;
 #define ENUM_TO_STRING(s) #s
 
@@ -231,7 +229,7 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         HILOG_ERROR("GetBundleInfo is fail");
         return false;
     }
-    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo));
+    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo);
     if (!bundleMgrResult) {
         HILOG_ERROR("GetHapModuleInfo is fail");
         return false;
@@ -365,6 +363,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
         HILOG_ERROR("get app record failed");
         return;
     }
+    appRecord->ApplicationTerminated();
     // Maybe can't get in here
     if (appRecord->IsKeepAliveApp()) {
         return;
@@ -919,7 +918,7 @@ void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &to
         return;
     }
 
-    // befor exec ScheduleProcessSecurityExit return
+    // before exec ScheduleProcessSecurityExit return
     // The resident process won't let him die
     if (appRecord->IsKeepAliveApp()) {
         return;
@@ -1483,12 +1482,6 @@ void AppMgrServiceInner::HandleTerminateApplicationTimeOut(const int64_t eventId
         HILOG_ERROR("appRecord is nullptr");
         return;
     }
-
-    auto abilityRecord = appRecord->GetAbilityRunningRecord(eventId);
-    if (!abilityRecord) {
-        HILOG_ERROR("abilityRecord is nullptr");
-        return;
-    }
     appRecord->SetState(ApplicationState::APP_STATE_TERMINATED);
     appRecord->RemoveAppDeathRecipient();
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
@@ -1523,57 +1516,6 @@ void AppMgrServiceInner::HandleAddAbilityStageTimeOut(const int64_t eventId)
     }
 
     KillApplicationByRecord(appRecord);
-}
-
-int AppMgrServiceInner::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    HILOG_INFO("compel verify permission");
-    message = ENUM_TO_STRING(PERMISSION_NOT_GRANTED);
-    if (!remoteClientManager_) {
-        HILOG_ERROR("remoteClientManager_ is nullptr");
-        return ERR_NO_INIT;
-    }
-    if (permission.empty()) {
-        HILOG_INFO("permission is empty, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    if (pid == getpid()) {
-        HILOG_INFO("pid is my pid, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    int userId = Constants::DEFAULT_USERID;
-    auto appRecord = GetAppRunningRecordByPid(pid);
-    if (!appRecord) {
-        HILOG_ERROR("app record is nullptr");
-        return PERMISSION_NOT_GRANTED;
-    }
-    auto bundleName = appRecord->GetBundleName();
-    if (appRecord->GetCloneInfo()) {
-        userId = Constants::C_UESRID;
-    }
-    auto bundleMgr = remoteClientManager_->GetBundleManager();
-    if (bundleMgr == nullptr) {
-        HILOG_ERROR("GetBundleManager fail");
-        return ERR_NO_INIT;
-    }
-    auto bmsUid = IN_PROCESS_CALL(bundleMgr->GetUidByBundleName(bundleName, userId));
-    if (bmsUid == ROOT_UID || bmsUid == SYSTEM_UID) {
-        HILOG_INFO("uid is root or system, PERMISSION_GRANTED");
-        message = ENUM_TO_STRING(PERMISSION_GRANTED);
-        return ERR_OK;
-    }
-    if (bmsUid != uid) {
-        HILOG_INFO("check uid != bms uid, PERMISSION_NOT_GRANTED");
-        return PERMISSION_NOT_GRANTED;
-    }
-    auto result = IN_PROCESS_CALL(bundleMgr->CheckPermissionByUid(bundleName, permission, userId));
-    if (result != PERMISSION_GRANTED) {
-        return PERMISSION_NOT_GRANTED;
-    }
-    message = ENUM_TO_STRING(PERMISSION_GRANTED);
-    return ERR_OK;
 }
 
 void AppMgrServiceInner::GetRunningProcessInfoByToken(
@@ -1709,8 +1651,10 @@ void AppMgrServiceInner::RestartResidentProcess(std::shared_ptr<AppRunningRecord
 
     auto bundleMgr = remoteClientManager_->GetBundleManager();
     BundleInfo bundleInfo;
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto userId = GetUserIdByUid(callerUid);
     if (!IN_PROCESS_CALL(
-        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo))) {
+        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId))) {
         HILOG_ERROR("GetBundleInfo fail");
         return;
     }
@@ -1932,12 +1876,8 @@ int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, c
         moduelJson = bundleInfo.hapModuleInfos.back().isModuleJson;
     }
     if (moduelJson) {
-        std::string moudleName;
-        auto testRunnerName = want.GetStringParam("-s unittest");
-        auto pos = testRunnerName.find(":");
-        if (pos != std::string::npos) {
-            moudleName = testRunnerName.substr(0, pos);
-        } else {
+        std::string moudleName = want.GetStringParam("-m");
+        if (moudleName.empty()) {
             UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
             return ERR_INVALID_VALUE;
         }

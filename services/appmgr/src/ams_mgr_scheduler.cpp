@@ -223,14 +223,6 @@ bool AmsMgrScheduler::IsReady() const
     return true;
 }
 
-int AmsMgrScheduler::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    if (!IsReady()) {
-        return ERR_INVALID_OPERATION;
-    }
-    return amsMgrServiceInner_->CompelVerifyPermission(permission, pid, uid, message);
-}
-
 void AmsMgrScheduler::GetRunningProcessInfoByToken(
     const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info)
 {

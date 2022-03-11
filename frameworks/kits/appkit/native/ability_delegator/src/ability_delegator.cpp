@@ -83,7 +83,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<I
 
     AddAbilityMonitor(monitor);
 
-    auto obtainedAbility = monitor->waitForAbility();
+    auto obtainedAbility = monitor->WaitForAbility();
     if (!obtainedAbility) {
         HILOG_WARN("Invalid obtained ability");
         return {};
@@ -102,7 +102,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
 
     AddAbilityMonitor(monitor);
 
-    auto obtainedAbility = monitor->waitForAbility(timeoutMs);
+    auto obtainedAbility = monitor->WaitForAbility(timeoutMs);
     if (!obtainedAbility) {
         HILOG_WARN("Invalid obtained ability");
         return {};
@@ -187,8 +187,17 @@ void AbilityDelegator::OnRun()
     HILOG_INFO("Run finished");
 }
 
+ErrCode AbilityDelegator::StartAbility(const AAFwk::Want &want)
+{
+    HILOG_INFO("Enter");
+
+    return AbilityManagerClient::GetInstance()->StartAbility(want);
+}
+
 bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
 {
+    HILOG_INFO("Enter");
+
     if (!token) {
         HILOG_WARN("Invalid input parameter");
         return false;
@@ -205,6 +214,8 @@ bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
 
 bool AbilityDelegator::DoAbilityBackground(const sptr<IRemoteObject> &token)
 {
+    HILOG_INFO("Enter");
+
     if (!token) {
         HILOG_WARN("Invalid input parameter");
         return false;
@@ -219,9 +230,9 @@ bool AbilityDelegator::DoAbilityBackground(const sptr<IRemoteObject> &token)
     return true;
 }
 
-std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutMs)
+std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec)
 {
-    HILOG_INFO("command : %{public}s, timeout : %{public}" PRId64, cmd.data(), timeoutMs);
+    HILOG_INFO("command : %{public}s, timeout : %{public}" PRId64, cmd.data(), timeoutSec);
 
     if (cmd.empty()) {
         HILOG_ERROR("Invalid cmd");
@@ -234,7 +245,7 @@ std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std:
         return {};
     }
 
-    auto result = testObserver->ExecuteShellCommand(cmd, timeoutMs);
+    auto result = testObserver->ExecuteShellCommand(cmd, timeoutSec);
     return std::make_unique<ShellCmdResult>(result);
 }
 
@@ -252,6 +263,8 @@ void AbilityDelegator::Print(const std::string &msg)
 
 void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -278,6 +291,8 @@ void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityP
 
 void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -304,6 +319,8 @@ void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegator
 
 void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -330,6 +347,8 @@ void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegato
 
 void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -356,6 +375,8 @@ void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegat
 
 void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -382,6 +403,8 @@ void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbi
 
 void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -408,6 +431,8 @@ void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbi
 
 void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid input parameter");
         return;
@@ -459,6 +484,8 @@ AbilityDelegator::AbilityState AbilityDelegator::ConvertAbilityState(
 
 void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
 {
+    HILOG_INFO("Enter");
+
     if (!ability) {
         HILOG_WARN("Invalid ability property");
         return;
@@ -480,6 +507,8 @@ void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegator
 
 std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)
 {
+    HILOG_INFO("Enter");
+
     if (!token) {
         HILOG_WARN("Invalid input parameter");
         return {};

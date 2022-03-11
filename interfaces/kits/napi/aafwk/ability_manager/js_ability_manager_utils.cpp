@@ -17,6 +17,7 @@
 
 #include <cstdint>
 
+#include "ability_record_info.h"
 #include "hilog_wrapper.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
@@ -96,6 +97,32 @@ NativeValue* CreateJsExtensionRunningInfo(NativeEngine &engine, const AAFwk::Ext
     object->SetProperty("processName", CreateJsValue(engine, info.processName));
     object->SetProperty("startTime", CreateJsValue(engine, info.startTime));
     object->SetProperty("clientPackage", CreateNativeArray(engine, info.clientPackage));
+    return objValue;
+}
+
+NativeValue *AbilityStateInit(NativeEngine *engine)
+{
+    HILOG_INFO("enter");
+
+    if (engine == nullptr) {
+        HILOG_ERROR("Invalid input parameters");
+        return nullptr;
+    }
+
+    NativeValue *objValue = engine->CreateObject();
+    NativeObject *object = ConvertNativeValueTo<NativeObject>(objValue);
+
+    if (object == nullptr) {
+        HILOG_ERROR("Failed to get object");
+        return nullptr;
+    }
+
+    object->SetProperty("INITIAL", CreateJsValue(*engine, (int32_t)AAFwk::AbilityState::INITIAL));
+    object->SetProperty("FOREGROUND", CreateJsValue(*engine, (int32_t)AAFwk::AbilityState::FOREGROUND_NEW));
+    object->SetProperty("BACKGROUND", CreateJsValue(*engine, (int32_t)AAFwk::AbilityState::BACKGROUND_NEW));
+    object->SetProperty("FOREGROUNDING", CreateJsValue(*engine, (int32_t)AAFwk::AbilityState::FOREGROUNDING_NEW));
+    object->SetProperty("BACKGROUNDING", CreateJsValue(*engine, (int32_t)AAFwk::AbilityState::BACKGROUNDING_NEW));
+
     return objValue;
 }
 }  // namespace AbilityRuntime
