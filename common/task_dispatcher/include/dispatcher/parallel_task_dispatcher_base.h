@@ -41,6 +41,7 @@ class ParallelTaskDispatcherBase : public BaseTaskDispatcher,
 public:
     ParallelTaskDispatcherBase(
         TaskPriority taskPriority, std::shared_ptr<TaskExecutor> &executor, const std::string &dispatcherName);
+
     virtual ~ParallelTaskDispatcherBase() = default;
     /**
      *  Called when post a task to the TaskDispatcher with waiting Attention: Call

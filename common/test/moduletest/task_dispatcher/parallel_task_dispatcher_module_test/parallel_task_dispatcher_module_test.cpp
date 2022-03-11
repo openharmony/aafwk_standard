@@ -74,7 +74,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_LifeCycleTest_
     ptr->AsyncDispatch(runnable);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     context->Shutdown(true);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -85,11 +85,11 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_LifeCycleTest_
 HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_CreateParallelDispatcherTest_001, TestSize.Level1)
 {
     auto name = std::string("ParallelTaskDispatcher_CreateParallelDispatcherTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<ParallelTaskDispatcher> ptr1 = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     std::shared_ptr<ParallelTaskDispatcher> ptr2 = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     EXPECT_FALSE((ptr1.get() == ptr2.get()));
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -100,7 +100,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_CreateParallel
 HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_SyncDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("ParallelTaskDispatcher_SyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<ParallelTaskDispatcher> ptr = CreateMtParallelTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     EXPECT_TRUE(count.load() == 0);
@@ -126,7 +126,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_SyncDispatchTe
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 2);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -194,7 +194,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncGroupDisp
     EXPECT_TRUE(ptr->GroupDispatchWait(group, 1000));
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     EXPECT_TRUE(count.load() == 3);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -223,7 +223,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_AsyncGroupDisp
     EXPECT_EQ(result, false);
     auto time = std::chrono::milliseconds(600);
     std::this_thread::sleep_for(time);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -256,7 +256,7 @@ HWTEST_F(ParallelTaskDispatcherModuleTest, ParallelTaskDispatcher_ApplyDispatchT
         std::this_thread::sleep_for(time);
         int index = count.fetch_add(1);
         EXPECT_TRUE(index < repeatCount);
-        GTEST_LOG_(INFO) << name + " repeats2";
+        GTEST_LOG_(INFO) << (name + " repeats2");
     });
     ptr->ApplyDispatch(repeats2, repeatCount);
 
