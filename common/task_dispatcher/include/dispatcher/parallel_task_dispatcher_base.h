@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +41,7 @@ class ParallelTaskDispatcherBase : public BaseTaskDispatcher,
 public:
     ParallelTaskDispatcherBase(
         TaskPriority taskPriority, std::shared_ptr<TaskExecutor> &executor, const std::string &dispatcherName);
+
     virtual ~ParallelTaskDispatcherBase() = default;
     /**
      *  Called when post a task to the TaskDispatcher with waiting Attention: Call

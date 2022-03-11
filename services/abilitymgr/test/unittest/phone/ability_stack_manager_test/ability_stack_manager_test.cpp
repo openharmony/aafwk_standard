@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1585,76 +1585,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_044, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Failed to verify RemoveStack
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
-    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->RemoveStack(-1);
-    EXPECT_EQ(ERR_INVALID_VALUE, result);
-
-    result = stackManager_->RemoveStack(10);
-    EXPECT_EQ(REMOVE_STACK_ID_NOT_EXIST, result);
-
-    result = stackManager_->RemoveStack(0);
-    EXPECT_EQ(REMOVE_STACK_LAUNCHER_DENIED, result);
-
-    stackManager_->missionStackList_.clear();
-    result = stackManager_->RemoveStack(1);
-    EXPECT_EQ(MISSION_STACK_LIST_IS_EMPTY, result);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: RemoveStack
- * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_046, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
-    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto topAbility = stackManager_->GetCurrentTopAbility();
-    topAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->RemoveStack(1);
-    EXPECT_EQ(ERR_OK, result);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: RemoveStack
- * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_047, TestSize.Level1)
 {
@@ -1675,11 +1610,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_047, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.Level1)
 {
@@ -1740,11 +1675,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.Level1)
 {
@@ -2199,7 +2134,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_061, TestSize.
     stackManager_->Init();
     auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
 
-    // defult mission id
+    // default mission id
     abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
         std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN));
     EXPECT_TRUE(abilityStartSetting);
@@ -2289,7 +2224,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_062, TestSize.
  * SubFunction: NA
  * FunctionPoints: Start the floating window according to the parameters
  * EnvConditions: NA
- * CaseDescription: a defult ability + Start a floating window application
+ * CaseDescription: a default ability + Start a floating window application
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_063, TestSize.Level1)
 {
@@ -2414,7 +2349,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_065, TestSize.
     EXPECT_TRUE(stact);
     EXPECT_EQ(stact->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
-    // radioAbility in the defult stack
+    // radioAbility in the default stack
     EXPECT_EQ(redioMissionRecord->GetMissionStack()->GetMissionStackId(), DEFAULT_MISSION_STACK_ID);
 }
 

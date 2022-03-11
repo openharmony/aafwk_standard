@@ -34,6 +34,7 @@ public:
         std::string codePath;
         std::string packagePath;
         std::shared_ptr<AppExecFwk::EventRunner> eventRunner;
+        bool loadAce = true;
     };
 
     static std::unique_ptr<Runtime> Create(const Options& options);

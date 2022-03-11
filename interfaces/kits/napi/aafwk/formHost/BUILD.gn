@@ -19,6 +19,7 @@ ohos_shared_library("formhost_napi") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formHost",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formUtil",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
@@ -32,11 +33,13 @@ ohos_shared_library("formhost_napi") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formUtil:formutil_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/ace/napi:ace_napi",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
   ]
 
   external_deps = [
+    "ability_base:want",
     "ability_runtime:ability_manager",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",

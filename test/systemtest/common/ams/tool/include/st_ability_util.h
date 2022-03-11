@@ -273,17 +273,6 @@ public:
     static ErrCode StopServiceAbility(const AAFwk::Want &want, unsigned int usec = 0);
 
     /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @param  {sptr<AAFwk::IAbilityManager>} abilityMs                  : Ability Manager Service ptr
-     * @param  {time_t} delay                  : Waiting time for ability to GetAppProcessInfo (milliseconds)
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    static int RemoveStack(int id, sptr<AAFwk::IAbilityManager> &abilityMs, const time_t &backHmoeDelay = 0,
-        const time_t &removeDelay = 0);
-
-    /**
      *
      * @param  {string} bundleFilePath                  : Hap File Name
      * @param  {AppExecFwk::InstallFlag} installFlag                  : install flag

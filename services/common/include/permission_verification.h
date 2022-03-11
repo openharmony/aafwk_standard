@@ -33,6 +33,8 @@ public:
 
     bool VerifyRunningInfoPerm();
 
+    bool VerifyControllerPerm();
+
 private:
     DISALLOW_COPY_AND_MOVE(PermissionVerification);
     unsigned int GetCallingTokenID();

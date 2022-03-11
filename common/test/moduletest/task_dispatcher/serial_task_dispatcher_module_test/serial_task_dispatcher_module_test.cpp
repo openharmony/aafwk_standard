@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,7 +69,7 @@ std::shared_ptr<SerialTaskDispatcher> SerialTaskDispatcherModuleTest::CreateMtSe
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_LifeCycleTest_001, TestSize.Level1)
 {
     auto name = std::string("SerialTaskDispatcher_LifeCycleTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> ptr = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     std::shared_ptr<Runnable> runnable = std::make_shared<Runnable>([&]() {
@@ -80,7 +80,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_LifeCycleTest_001,
     ptr->SyncDispatch(runnable);
     context->Shutdown(true);
     EXPECT_EQ(count.load(), 1);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -91,11 +91,11 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_LifeCycleTest_001,
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_CreateSerialDispatcherTest_001, TestSize.Level1)
 {
     auto name = std::string("SerialTaskDispatcher_CreateSerialDispatcherTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> ptr1 = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::shared_ptr<SerialTaskDispatcher> ptr2 = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     EXPECT_FALSE((ptr1.get() == ptr2.get()));
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -146,7 +146,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_SyncDispatchTest_0
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("SerialTaskDispatcher_AsyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> ptr = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     long sleep1 = 200;
@@ -171,7 +171,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 2);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -182,7 +182,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_002, TestSize.Level1)
 {
     auto name = std::string("SerialTaskDispatcher_AsyncDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> ptr = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     const int total = 300;
     std::atomic<int> count(0);
@@ -200,7 +200,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_
     auto time = std::chrono::milliseconds(wait + 1000);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == total);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -211,7 +211,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_AsyncDispatchTest_
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> dispatcher = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     int sleep1 = 2000;
@@ -270,7 +270,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_
         std::this_thread::sleep_for(time);
         EXPECT_TRUE(count.load() == 3);
     }
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -281,11 +281,11 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_002, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_003");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> dispatcher = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     int sleep1 = 2000;
     dispatcher->DelayDispatch(nullptr, sleep1);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -296,7 +296,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_003, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_DelayDispatchTest_004");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> dispatcher = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     int sleep1 = -2000;
@@ -323,7 +323,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_
         std::this_thread::sleep_for(time);
         EXPECT_TRUE(count.load() == 2);
     }
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -334,7 +334,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_DelayDispatchTest_
 HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_ApplyDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SerialTaskDispatcher_ApplyDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
     std::shared_ptr<SerialTaskDispatcher> ptr = CreateMtSerialTaskDispatcher(name, TaskPriority::DEFAULT);
     std::atomic<int> count(0);
     long sleep1 = 101;
@@ -361,7 +361,7 @@ HWTEST_F(SerialTaskDispatcherModuleTest, SerialTaskDispatcher_ApplyDispatchTest_
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 20);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**

@@ -30,6 +30,7 @@
 
 #include "ability_lifecycle_executor.h"
 #include "ability_runtime/context/context.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -65,10 +66,12 @@ public:
     void Prepare();
     void OnRun();
 
+    ErrCode StartAbility(const AAFwk::Want &want);
+
     bool DoAbilityForeground(const sptr<IRemoteObject> &token);
     bool DoAbilityBackground(const sptr<IRemoteObject> &token);
 
-    std::unique_ptr<ShellCmdResult> ExecuteShellCommand(const std::string &cmd, const int64_t timeoutMs);
+    std::unique_ptr<ShellCmdResult> ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec);
 
     void Print(const std::string &msg);
 

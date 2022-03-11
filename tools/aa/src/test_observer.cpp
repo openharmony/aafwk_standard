@@ -45,7 +45,7 @@ void TestObserver::TestFinished(const std::string &msg, const int &resultCode)
     isFinished_ = true;
 }
 
-ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutMs)
+ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec)
 {
     HILOG_INFO("enter");
     ShellCommandResult result;
@@ -57,8 +57,8 @@ ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, con
         return result;
     }
 
-    int64_t timeout = (timeoutMs <= 0) ? SHELL_COMMAND_TIMEOUT_MAX : timeoutMs;
-    std::this_thread::sleep_for(std::chrono::microseconds(timeout));
+    int64_t timeout = (timeoutSec <= 0) ? SHELL_COMMAND_TIMEOUT_MAX : timeoutSec;
+    std::this_thread::sleep_for(std::chrono::seconds(timeout));
 
     char commandResult[1024] = {0};
     while ((fgets(commandResult, sizeof(commandResult), file)) != nullptr) {

@@ -21,6 +21,7 @@
 #include "ability_monitor.h"
 #include "js_ability_delegator_registry.h"
 #include "js_ability_monitor.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
@@ -43,6 +44,7 @@ public:
     static NativeValue *GetAppContext(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *GetAbilityState(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *GetCurrentTopAbility(NativeEngine *engine, NativeCallbackInfo *info);
+    static NativeValue *StartAbility(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *DoAbilityForeground(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *DoAbilityBackground(NativeEngine *engine, NativeCallbackInfo *info);
     static NativeValue *FinishTest(NativeEngine *engine, NativeCallbackInfo *info);
@@ -56,6 +58,7 @@ private:
     NativeValue *OnGetAppContext(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnGetAbilityState(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnGetCurrentTopAbility(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue *OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnDoAbilityForeground(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnDoAbilityBackground(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue *OnFinishTest(NativeEngine &engine, NativeCallbackInfo &info);
@@ -77,7 +80,8 @@ private:
         NativeEngine &engine, NativeCallbackInfo &info, std::string &cmd, TimeoutCallback &opt, int64_t &timeout);
     NativeValue *ParseAbilityCommonPara(
         NativeEngine &engine, NativeCallbackInfo &info, sptr<OHOS::IRemoteObject> &remoteObject);
-    NativeValue *ParseAbilityCommonRemainingPara(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue *ParseStartAbilityPara(
+        NativeEngine &engine, NativeCallbackInfo &info, AAFwk::Want &want);
     NativeValue *ParseFinishTestPara(NativeEngine &engine, NativeCallbackInfo &info, std::string &msg, int64_t &code);
 };
 }  // namespace AbilityDelegatorJs

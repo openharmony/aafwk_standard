@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "form_provider_stub.h"
 #include "appexecfwk_errors.h"
 #include "app_scheduler_interface.h"
 #include "errors.h"
-#include "form_provider_stub.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
@@ -39,6 +39,8 @@ FormProviderStub::FormProviderStub()
         &FormProviderStub::HandleNotifyFormCastTempForm;
     memberFuncMap_[static_cast<uint32_t>(IFormProvider::Message::FORM_PROVIDER_EVENT_MESSAGE)] =
         &FormProviderStub::HandleFireFormEvent;
+    memberFuncMap_[static_cast<uint32_t>(IFormProvider::Message::FORM_PROVIDER_NOTIFY_STATE_ACQUIRE)] =
+        &FormProviderStub::HandleAcquireState;
 }
 
 FormProviderStub::~FormProviderStub()
@@ -54,7 +56,7 @@ FormProviderStub::~FormProviderStub()
  */
 int FormProviderStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("FormProviderStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("FormProviderStub::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = FormProviderStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
@@ -261,6 +263,33 @@ int FormProviderStub::HandleFireFormEvent(MessageParcel &data, MessageParcel &re
     }
 
     int32_t result = FireFormEvent(formId, message, *want, client);
+    reply.WriteInt32(result);
+    return result;
+}
+/**
+ * @brief handle AcquireState message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormProviderStub::HandleAcquireState(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<Want> wantArg(data.ReadParcelable<Want>());
+    if (!wantArg) {
+        HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    if (client == nullptr) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    int32_t result = AcquireState(*wantArg, *want, client);
     reply.WriteInt32(result);
     return result;
 }

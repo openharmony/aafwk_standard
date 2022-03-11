@@ -106,6 +106,15 @@ private:
      */
     virtual int FireFormEvent(const int64_t formId, const std::string &message, const Want &want, 
     const sptr<IRemoteObject> &callerToken) override;
+
+    /**
+     * @brief Acquire form state to form provider.
+     * @param wantArg The want of onAcquireFormState.
+     * @param want The want of the request.
+     * @param callerToken Form provider proxy object.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken) override;
 private:
     DISALLOW_COPY_AND_MOVE(MockFormProviderClient);
 };

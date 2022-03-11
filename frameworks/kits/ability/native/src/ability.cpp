@@ -23,7 +23,9 @@
 #include "ability_post_event_timeout.h"
 #include "ability_runtime/js_ability.h"
 #include "abs_shared_result_set.h"
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
 #include "background_task_mgr_helper.h"
+#endif
 #include "bytrace.h"
 #include "configuration_convertor.h"
 #include "connection_manager.h"
@@ -31,7 +33,9 @@
 #include "continuation_manager.h"
 #include "continuation_register_manager.h"
 #include "continuation_register_manager_proxy.h"
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
 #include "continuous_task_param.h"
+#endif
 #include "data_ability_operation.h"
 #include "data_ability_predicates.h"
 #include "data_ability_result.h"
@@ -291,12 +295,14 @@ void Ability::OnStart(const Want &want)
                 HILOG_ERROR("%{public}s error, resConfig is nullptr.", __func__);
                 return;
             }
-            resConfig->SetScreenDensity(ConvertDensity(density));
-            resConfig->SetDirection(ConvertDirection(height, width));
             auto resourceManager = GetResourceManager();
             if (resourceManager != nullptr) {
+                resourceManager->GetResConfig(*resConfig);
+                resConfig->SetScreenDensity(ConvertDensity(density));
+                resConfig->SetDirection(ConvertDirection(height, width));
                 resourceManager->UpdateResConfig(*resConfig);
-                HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
+                HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                    resConfig->GetScreenDensity(), resConfig->GetDirection());
             }
         }
     }
@@ -1012,8 +1018,13 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
 
     // Notify ResourceManager
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
-    if (resConfig != nullptr) {
-        HILOG_INFO("make resource mgr data");
+    if (resConfig == nullptr) {
+        HILOG_ERROR("Create res config failed.");
+        return;
+    }
+    auto resourceManager = GetResourceManager();
+    if (resourceManager != nullptr) {
+        resourceManager->GetResConfig(*resConfig);
 #ifdef SUPPORT_GRAPHICS
         if (!language.empty()) {
             UErrorCode status = U_ZERO_ERROR;
@@ -1025,13 +1036,10 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
         }
 #endif
         resConfig->SetColorMode(ConvertColorMode(colormode));
-
-        auto resourceManager = GetResourceManager();
-        if (resourceManager != nullptr) {
-            resourceManager->UpdateResConfig(*resConfig);
-            HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
-        }
+        resourceManager->UpdateResConfig(*resConfig);
+        HILOG_INFO("Notify ResourceManager, colorMode: %{public}d.", resConfig->GetColorMode());
     }
+
 #ifdef SUPPORT_GRAPHICS
     // Notify WindowScene
     if (scene_ != nullptr && !language.empty()) {
@@ -1784,11 +1792,11 @@ std::weak_ptr<IContinuationRegisterManager> Ability::GetContinuationRegisterMana
 /**
  * @brief Callback function to ask the user to prepare for the migration .
  *
- * @return If the user allows migration and saves data suscessfully, it returns true; otherwise, it returns false.
+ * @return If the user allows migration and saves data suscessfully, it returns 0; otherwise, it returns errcode.
  */
-bool Ability::OnContinue(WantParams &wantParams)
+int32_t Ability::OnContinue(WantParams &wantParams)
 {
-    return false;
+    return ContinuationManager::OnContinueResult::Reject;
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -2116,10 +2124,14 @@ ErrCode Ability::DeleteForm(const int64_t formId)
  */
 int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent)
 {
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
     uint32_t defaultBgMode = 0;
     BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
+#else
+    return ERR_INVALID_OPERATION;
+#endif
 }
 
 /**
@@ -2129,7 +2141,11 @@ int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &
  */
 int Ability::StopBackgroundRunning()
 {
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
     return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
+#else
+    return ERR_INVALID_OPERATION;
+#endif
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -2478,6 +2494,17 @@ void Ability::OnVisibilityChanged(const std::map<int64_t, int32_t> &formEventsMa
  */
 void Ability::OnTriggerEvent(const int64_t formId, const std::string &message)
 {}
+
+/**
+ * @brief Called to notify the form supplier to acquire form state.
+ *
+ * @param want Indicates the detailed information about the form to be obtained, including
+ *             the bundle name, module name, ability name, form name and form dimension.
+ */
+FormState Ability::OnAcquireFormState(const Want &want)
+{
+    return FormState::DEFAULT;
+}
 /**
  * @brief Delete or release form with formId.
  *
@@ -2916,6 +2943,54 @@ bool Ability::CheckFMSReady()
 }
 
 /**
+ * @brief Delete the given invalid forms.
+ *
+ * @param formIds Indicates the ID of the forms to delete.
+ * @param numFormsDeleted Returns the number of the deleted forms.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::DeleteInvalidForms(const std::vector<int64_t> &formIds, int32_t &numFormsDeleted)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // DeleteInvalidForms request to fms
+    int resultCode = FormMgr::GetInstance().DeleteInvalidForms(formIds, FormHostClient::GetInstance(), numFormsDeleted);
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to DeleteInvalidForms, error code is %{public}d.", __func__, resultCode);
+    }
+    return resultCode;
+}
+
+/**
+ * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+ *
+ * @param want Indicates a set of parameters to be transparently passed to the form provider.
+ * @param stateInfo Returns the form's state info of the specify.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::AcquireFormState(const Want &want, FormStateInfo &stateInfo)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // AcquireFormState request to fms
+    int resultCode = FormMgr::GetInstance().AcquireFormState(want, FormHostClient::GetInstance(), stateInfo);
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to AcquireFormState, error code is %{public}d.", __func__, resultCode);
+    }
+    return resultCode;
+}
+
+/**
  * @brief Get All FormsInfo.
  *
  * @param formInfos Return the forms' information of all forms provided.
@@ -3235,7 +3310,9 @@ std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsRe
         HILOG_INFO("Ability::ParsePredictionArgsReference push_back done");
     }
 
-    predicates->SetWhereArgs(strPredicatesList);
+    if (predicates) {
+        predicates->SetWhereArgs(strPredicatesList);
+    }
 
     return predicates;
 }
@@ -3523,13 +3600,14 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     int32_t height = display->GetHeight();
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     if (resConfig != nullptr) {
-        resConfig->SetScreenDensity(ConvertDensity(density));
-        resConfig->SetDirection(ConvertDirection(height, width));
-
         auto resourceManager = GetResourceManager();
         if (resourceManager != nullptr) {
+            resourceManager->GetResConfig(*resConfig);
+            resConfig->SetScreenDensity(ConvertDensity(density));
+            resConfig->SetDirection(ConvertDirection(height, width));
             resourceManager->UpdateResConfig(*resConfig);
-            HILOG_INFO("%{public}s Notify ResourceManager.", __func__);
+            HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                resConfig->GetScreenDensity(), resConfig->GetDirection());
         }
     }
 
@@ -3570,6 +3648,19 @@ void Ability::OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to)
     float density = display->GetVirtualPixelRatio();
     int32_t width = display->GetWidth();
     int32_t height = display->GetHeight();
+    std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    if (resConfig != nullptr) {
+        auto resourceManager = GetResourceManager();
+        if (resourceManager != nullptr) {
+            resourceManager->GetResConfig(*resConfig);
+            resConfig->SetScreenDensity(ConvertDensity(density));
+            resConfig->SetDirection(ConvertDirection(height, width));
+            resourceManager->UpdateResConfig(*resConfig);
+            HILOG_INFO("%{public}s Notify ResourceManager, Density: %{public}d, Direction: %{public}d.", __func__,
+                resConfig->GetScreenDensity(), resConfig->GetDirection());
+        }
+    }
+
     Configuration newConfig;
     newConfig.AddItem(ConfigurationInner::APPLICATION_DISPLAYID, std::to_string(to));
     newConfig.AddItem(to, ConfigurationInner::APPLICATION_DIRECTION, GetDirectionStr(height, width));

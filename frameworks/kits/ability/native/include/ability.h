@@ -45,6 +45,7 @@
 #include "form_death_callback.h"
 #include "form_info.h"
 #include "form_provider_info.h"
+#include "form_state_info.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/key_event.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/pointer_event.h"
 #endif
@@ -1282,6 +1283,13 @@ public:
      */
     virtual void OnTriggerEvent(const int64_t formId, const std::string &message);
     /**
+     * @brief Called to notify the form supplier to acquire form state.
+     *
+     * @param want Indicates the detailed information about the form to be obtained, including
+     *             the bundle name, module name, ability name, form name and form dimension.
+     */
+    virtual FormState OnAcquireFormState(const Want &want);
+    /**
      * @brief Requests for form data update.
      *
      * This method must be called when the application has detected that a system setting item (such as the language,
@@ -1327,6 +1335,24 @@ public:
      * @return Returns true if form manager service ready; returns false otherwise.
      */
     bool CheckFMSReady();
+
+    /**
+     * @brief Delete the given invalid forms.
+     *
+     * @param formIds Indicates the ID of the forms to delete.
+     * @param numFormsDeleted Returns the number of the deleted forms.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    ErrCode DeleteInvalidForms(const std::vector<int64_t> &formIds, int32_t &numFormsDeleted);
+
+    /**
+     * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+     *
+     * @param want Indicates a set of parameters to be transparently passed to the form provider.
+     * @param stateInfo Returns the form's state info of the specify.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    ErrCode AcquireFormState(const Want &want, FormStateInfo &stateInfo);
 
     /**
      * @brief Get All FormsInfo.
@@ -1387,10 +1413,10 @@ public:
      * @brief Prepare user data of local Ability.
      *
      * @param wantParams Indicates the user data to be saved.
-     * @return If the ability is willing to continue and data saved successfully, it returns true;
-     * otherwise, it returns false.
+     * @return If the ability is willing to continue and data saved successfully, it returns 0;
+     * otherwise, it returns errcode.
      */
-    virtual bool OnContinue(WantParams &wantParams);
+    virtual int32_t OnContinue(WantParams &wantParams);
 
 #ifdef SUPPORT_GRAPHICS
     /**

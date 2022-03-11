@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,7 @@ void FormAbilityDeleteForm::AcquireFormCallback::OnAcquired(const int32_t result
         ability_->FMS_deleteForm_common(formJsInfo.formId, this->caseName_);
     }
 }
+
 void FormAbilityDeleteForm::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -116,6 +117,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_0300(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_0300, EVENT_CODE_300, "");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_0400(std::string data)
 {
     std::shared_ptr<AcquireFormCallback> callback =
@@ -217,6 +219,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_0800(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_0800, EVENT_CODE_800, "");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_0900(std::string data)
 {
     std::shared_ptr<AcquireFormCallback> callback =
@@ -347,6 +350,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1400(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1400, EVENT_CODE_1400, "");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1401(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -411,6 +415,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1501(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1501, EVENT_CODE_1510, "deleteError");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1502(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -423,6 +428,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1502(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1502, EVENT_CODE_1511, "false");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1600(std::string data)
 {
     std::shared_ptr<AcquireFormCallback> callback =
@@ -444,6 +450,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1600(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1600, EVENT_CODE_1600, "");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1601(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -473,6 +480,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1601(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1601, EVENT_CODE_1610, "deleteError");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1602(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -537,6 +545,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1701(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1701, EVENT_CODE_1701, "deleteError");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteForm_1702(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -549,6 +558,7 @@ void FormAbilityDeleteForm::FMS_deleteForm_1702(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1702, EVENT_CODE_1702, "false");
     }
 }
+
 void FormAbilityDeleteForm::FMS_acquire_tempForm_batch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -573,6 +583,7 @@ void FormAbilityDeleteForm::FMS_acquire_tempForm_batch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_TEMP_FORM_BATCH, EVENT_CODE_TEMP_BATCH, "false");
     }
 }
+
 void FormAbilityDeleteForm::FMS_acquireForm_batch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -597,6 +608,7 @@ void FormAbilityDeleteForm::FMS_acquireForm_batch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "false");
     }
 }
+
 void FormAbilityDeleteForm::FMS_deleteFormBatch(std::string strFormId)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -712,6 +724,7 @@ void FormAbilityDeleteForm::DeleteForm_1000(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1000, EVENT_CODE_1000, "");
     }
 }
+
 void FormAbilityDeleteForm::DeleteForm_1100(int64_t form_id)
 {
     bool bResult = DeleteForm(form_id);
@@ -723,38 +736,47 @@ void FormAbilityDeleteForm::DeleteForm_1100(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1100, EVENT_CODE_1100, "false");
     }
 }
+
 void FormAbilityDeleteForm::DeleteForm_1200(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1200, EVENT_CODE_1200, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1400(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1400, EVENT_CODE_1400, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1500(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1500, EVENT_CODE_1500, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1501(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1501, EVENT_CODE_1510, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1600(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1600, EVENT_CODE_1600, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1601(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1601, EVENT_CODE_1610, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1700(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1700, EVENT_CODE_1700, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::DeleteForm_1701(int64_t form_id)
 {
     FormTestUtils::PublishEvent(FORM_EVENT_RECV_DELETE_FORM_1701, EVENT_CODE_1701, std::to_string(form_id));
 }
+
 void FormAbilityDeleteForm::OnStart(const Want &want)
 {
     HILOG_INFO("FormAbilityDeleteForm::onStart");
@@ -789,6 +811,7 @@ void FormAbilityDeleteForm::OnStart(const Want &want)
     };
     SubscribeEvent(eventList);
 }
+
 void FormAbilityDeleteForm::OnActive()
 {
     HILOG_INFO("FormAbilityDeleteForm::OnActive");
@@ -803,18 +826,21 @@ void FormAbilityDeleteForm::OnStop()
 
     Ability::OnStop();
 }
+
 void FormAbilityDeleteForm::OnInactive()
 {
     HILOG_INFO("FormAbilityDeleteForm::OnInactive");
 
     Ability::OnInactive();
 }
+
 void FormAbilityDeleteForm::OnBackground()
 {
     HILOG_INFO("FormAbilityDeleteForm::OnBackground");
 
     Ability::OnBackground();
 }
+
 void FormAbilityDeleteForm::SubscribeEvent(const std::vector<std::string> &eventList)
 {
     MatchingSkills matchingSkills;

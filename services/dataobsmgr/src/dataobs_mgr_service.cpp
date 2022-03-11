@@ -77,9 +77,6 @@ bool DataObsMgrService::Init()
     }
 
     handler_ = std::make_shared<AppExecFwk::EventHandler>(eventLoop_);
-    if (handler_ == nullptr) {
-        return false;
-    }
 
     HILOG_INFO("init success");
     return true;

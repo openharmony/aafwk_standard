@@ -29,6 +29,8 @@ FormSupplyStub::FormSupplyStub()
         &FormSupplyStub::HandleOnAcquire;
     memberFuncMap_[static_cast<uint32_t>(IFormSupply::Message::TRANSACTION_EVENT_HANDLE)] =
         &FormSupplyStub::HandleOnEventHandle;
+    memberFuncMap_[static_cast<uint32_t>(IFormSupply::Message::TRANSACTION_FORM_STATE_ACQUIRED)] =
+        &FormSupplyStub::HandleOnAcquireStateResult;
 }
 
 FormSupplyStub::~FormSupplyStub()
@@ -44,7 +46,7 @@ FormSupplyStub::~FormSupplyStub()
  */
 int FormSupplyStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("FormSupplyStub::OnReceived, code = %{public}d, flags= %{public}d.", code, option.GetFlags());
+    HILOG_INFO("FormSupplyStub::OnReceived, code = %{public}u, flags= %{public}d.", code, option.GetFlags());
     std::u16string descriptor = FormSupplyStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
@@ -117,6 +119,26 @@ int FormSupplyStub::HandleOnEventHandle(MessageParcel &data, MessageParcel &repl
     }
 
     int32_t result = OnEventHandle(*want);
+    reply.WriteInt32(result);
+    return result;
+}
+
+/**
+ * @brief handle OnAcquireStateResult message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormSupplyStub::HandleOnAcquireStateResult(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
+        reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    auto state = (FormState) data.ReadInt32();
+    int32_t result = OnAcquireStateResult(state, *want);
     reply.WriteInt32(result);
     return result;
 }

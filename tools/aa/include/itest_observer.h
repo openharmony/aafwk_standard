@@ -28,7 +28,7 @@ public:
     virtual void TestStatus(const std::string &msg, const int &resultCode) = 0;
     virtual void TestFinished(const std::string &msg, const int &resultCode) = 0;
     virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutMs) = 0;
+        const std::string &cmd, const int64_t timeoutSec) = 0;
 
     enum class Message {
         AA_TEST_STATUS = 1,

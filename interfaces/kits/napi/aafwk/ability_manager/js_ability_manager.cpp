@@ -166,6 +166,8 @@ NativeValue* JsAbilityManagerInit(NativeEngine* engine, NativeValue* exportObj)
     std::unique_ptr<JsAbilityManager> jsAbilityManager = std::make_unique<JsAbilityManager>();
     object->SetNativePointer(jsAbilityManager.release(), JsAbilityManager::Finalizer, nullptr);
 
+    object->SetProperty("AbilityState", AbilityStateInit(engine));
+
     HILOG_INFO("JsAbilityManagerInit BindNativeFunction called");
     BindNativeFunction(*engine, *object, "getAbilityRunningInfos", JsAbilityManager::GetAbilityRunningInfos);
     BindNativeFunction(*engine, *object, "getExtensionRunningInfos", JsAbilityManager::GetExtensionRunningInfos);

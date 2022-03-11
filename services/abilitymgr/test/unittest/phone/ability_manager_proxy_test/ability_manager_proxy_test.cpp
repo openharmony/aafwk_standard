@@ -534,24 +534,6 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0023, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveStack
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of RemoveStack
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0024, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    proxy_->RemoveStack(1);
-
-    EXPECT_EQ(IAbilityManager::REMOVE_STACK, mock_->code_);
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: MoveMissionToTop
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService MoveMissionToTop
