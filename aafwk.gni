@@ -28,7 +28,8 @@ system_test_app_path =
 declare_args() {
   background_task_mgr_continuous_task_enable = true
 
-  if (!defined(global_parts_info.resourceschedule_background_task_mgr)) {
+  if (defined(global_parts_info) &&
+    !defined(global_parts_info.resourceschedule_background_task_mgr)) {
     background_task_mgr_continuous_task_enable = false
   }
 }
