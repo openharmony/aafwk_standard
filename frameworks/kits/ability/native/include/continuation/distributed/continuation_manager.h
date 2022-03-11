@@ -72,6 +72,11 @@ public:
 
     void ChangeProcessStateToInit();
 
+    enum OnContinueResult {
+        AGREE = 0,
+        Reject = 1,
+        MISMATCH = 2
+    };
 private:
     enum ProgressState { INITIAL, WAITING_SCHEDULE, IN_PROGRESS };
 
