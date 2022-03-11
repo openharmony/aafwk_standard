@@ -28,6 +28,7 @@ NativeValue* CreateJsExtensionRunningInfoArray(
     NativeEngine &engine, const std::vector<AAFwk::ExtensionRunningInfo> &infos);
 NativeValue* CreateJsAbilityRunningInfo(NativeEngine &engine, const AAFwk::AbilityRunningInfo &info);
 NativeValue* CreateJsExtensionRunningInfo(NativeEngine &engine, const AAFwk::ExtensionRunningInfo &info);
+NativeValue *AbilityStateInit(NativeEngine *engine);
 }  // namespace AbilityRuntime
 }  // namespace OHOS
 #endif // OHOS_APPEXECFWK_RUNTIME_APP_MANAGER_UTILS_H
