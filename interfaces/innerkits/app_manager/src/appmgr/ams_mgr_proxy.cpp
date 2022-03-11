@@ -391,34 +391,6 @@ void AmsMgrProxy::PrepareTerminate(const sptr<IRemoteObject> &token)
     HILOG_DEBUG("end");
 }
 
-int AmsMgrProxy::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    HILOG_DEBUG("start");
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        return ERR_INVALID_DATA;
-    }
-    if (!data.WriteString16(Str8ToStr16(permission)) || !data.WriteInt32(pid) || !data.WriteInt32(uid)) {
-        HILOG_ERROR("%{public}s, write failed", __func__);
-        return ERR_INVALID_DATA;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        HILOG_ERROR("Remote() is NULL");
-        return ERR_NULL_OBJECT;
-    }
-    auto ret =
-        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::COMPEL_VERIFY_PERMISSION), data, reply, option);
-    if (ret != NO_ERROR) {
-        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
-        return ERR_INVALID_DATA;
-    }
-    message = Str16ToStr8(reply.ReadString16());
-    return reply.ReadInt32();
-}
-
 void AmsMgrProxy::GetRunningProcessInfoByToken(
     const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info)
 {

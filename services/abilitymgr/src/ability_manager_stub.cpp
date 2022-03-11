@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -94,7 +94,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
     requestFuncMap_[SET_STACK_SETTING] = &AbilityManagerStub::SetMissionStackSettingInner;
     requestFuncMap_[IS_FIRST_IN_MISSION] = &AbilityManagerStub::IsFirstInMissionInner;
-    requestFuncMap_[COMPEL_VERIFY_PERMISSION] = &AbilityManagerStub::CompelVerifyPermissionInner;
     requestFuncMap_[POWER_OFF] = &AbilityManagerStub::PowerOffInner;
     requestFuncMap_[POWER_ON] = &AbilityManagerStub::PowerOnInner;
     requestFuncMap_[LUCK_MISSION] = &AbilityManagerStub::LockMissionInner;
@@ -152,6 +151,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[DELEGATOR_DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DelegatorDoAbilityBackgroundInner;
     requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
     requestFuncMap_[DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DoAbilityBackgroundInner;
+    requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -422,7 +422,8 @@ int AbilityManagerStub::ClearUpApplicationDataInner(MessageParcel &data, Message
 int AbilityManagerStub::UninstallAppInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string bundleName = Str16ToStr8(data.ReadString16());
-    int result = UninstallApp(bundleName);
+    int32_t uid = data.ReadInt32();
+    int result = UninstallApp(bundleName, uid);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("remove stack error");
         return ERR_INVALID_VALUE;
@@ -688,18 +689,6 @@ int AbilityManagerStub::IsFirstInMissionInner(MessageParcel &data, MessageParcel
         HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::CompelVerifyPermissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto permission = Str16ToStr8(data.ReadString16());
-    auto pid = data.ReadInt32();
-    auto uid = data.ReadInt32();
-    std::string message;
-    auto result = CompelVerifyPermission(permission, pid, uid, message);
-    reply.WriteString16(Str8ToStr16(message));
-    reply.WriteInt32(result);
     return NO_ERROR;
 }
 
@@ -1174,6 +1163,17 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
     int result = MoveMissionToFront(missionId);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("MoveMissionToFront failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::GetMissionIdByTokenInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    int32_t missionId = GetMissionIdByToken(token);
+    if (!reply.WriteInt32(missionId)) {
+        HILOG_ERROR("GetMissionIdByToken write missionId failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

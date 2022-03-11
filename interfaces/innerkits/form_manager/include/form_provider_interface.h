@@ -103,6 +103,15 @@ public:
     virtual int FireFormEvent(const int64_t formId, const std::string &message, const Want &want,
     const sptr<IRemoteObject> &callerToken) = 0;
 
+    /**
+     * @brief Acquire form state to form provider.
+     * @param wantArg The want of onAcquireFormState.
+     * @param want The want of the request.
+     * @param callerToken Form provider proxy object.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken) = 0;
+
     enum class Message {
         // ipc id 1-1000 for kit
         // ipc id 1001-2000 for DMS
@@ -127,6 +136,9 @@ public:
 
         // ipc id for event notify (3057)
         FORM_PROVIDER_EVENT_MESSAGE,
+
+        // ipc id for acquiring form state (3058)
+        FORM_PROVIDER_NOTIFY_STATE_ACQUIRE,
     };
 };
 }  // namespace AppExecFwk

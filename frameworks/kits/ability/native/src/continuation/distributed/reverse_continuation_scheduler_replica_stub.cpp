@@ -58,7 +58,7 @@ int32_t ReverseContinuationSchedulerReplicaStub::NotifyReverseResultInner(Messag
 int ReverseContinuationSchedulerReplicaStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_INFO("%{public}s called begin, code = %{public}d, flags= %{public}d.", __func__, code, option.GetFlags());
+    HILOG_INFO("%{public}s called begin, code = %{public}u, flags= %{public}d.", __func__, code, option.GetFlags());
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (remoteDescriptor != ReverseContinuationSchedulerReplicaStub::GetDescriptor()) {
         HILOG_ERROR("ReverseContinuationSchedulerReplicaStub::OnRemoteRequest token is invalid");

@@ -112,6 +112,59 @@ struct AsyncCheckFMSReadyCallbackInfo {
     bool isFMSReady;
 };
 
+struct AsyncDeleteInvalidFormsCallbackInfo {
+    napi_env env;
+    OHOS::AppExecFwk::Ability *ability;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    std::vector<int64_t> formIds;
+    int numFormsDeleted;
+    int result;
+};
+
+struct AsyncAcquireFormStateCallbackInfo {
+    napi_env env;
+    OHOS::AppExecFwk::Ability *ability;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    OHOS::AAFwk::Want want;
+    OHOS::AppExecFwk::FormStateInfo stateInfo;
+    int result;
+};
+
+struct AsyncFormUninstallObserverCallbackInfo {
+    napi_env env;
+    OHOS::AppExecFwk::Ability *ability;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    int result;
+};
+
+struct AsyncNotifyFormsVisibleCallbackInfo {
+    napi_env env;
+    OHOS::AppExecFwk::Ability *ability;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    std::vector<int64_t> formIds;
+    bool isVisible;
+    int result;
+};
+
+struct AsyncNotifyFormsEnableUpdateCallbackInfo {
+    napi_env env;
+    OHOS::AppExecFwk::Ability *ability;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback;
+    std::vector<int64_t> formIds;
+    bool isEnableUpdate;
+    int result;
+};
+
 struct AsyncGetFormsInfoCallbackInfo {
     napi_env env;
     OHOS::AppExecFwk::Ability *ability;
@@ -133,6 +186,12 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info);
 napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info);
 napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info);
 napi_value NAPI_CheckFMSReady(napi_env env, napi_callback_info info);
+napi_value NAPI_DeleteInvalidForms(napi_env env, napi_callback_info info);
+napi_value NAPI_AcquireFormState(napi_env env, napi_callback_info info);
+napi_value NAPI_RegisterFormUninstallObserver(napi_env env, napi_callback_info info);
+napi_value NAPI_UnregisterFormUninstallObserver(napi_env env, napi_callback_info info);
+napi_value NAPI_NotifyFormsVisible(napi_env env, napi_callback_info info);
+napi_value NAPI_NotifyFormsEnableUpdate(napi_env env, napi_callback_info info);
 napi_value NAPI_GetAllFormsInfo(napi_env env, napi_callback_info info);
 napi_value NAPI_GetFormsInfo(napi_env env, napi_callback_info info);
 

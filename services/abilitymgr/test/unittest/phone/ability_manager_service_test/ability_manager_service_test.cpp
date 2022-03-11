@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1262,7 +1262,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level1)
 {
     abilityMs_->currentStackManager_ = nullptr;
-    auto result = abilityMs_->UninstallApp("bundle");
+    auto result = abilityMs_->UninstallApp("bundle", -1);
     EXPECT_EQ(ERR_NO_INIT, result);
 }
 
@@ -2795,24 +2795,6 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_012, TestSize.Level1)
     abilityTv->SetAbilityState(AbilityState::ACTIVE);
     auto resultFunction = abilityMs_->MoveMissionToEnd(ability->GetToken(), true);
     EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: CompelVerifyPermission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService CompelVerifyPermission
- * EnvConditions: NA
- * CaseDescription: Verify function CompelVerifyPermission
- */
-HWTEST_F(AbilityManagerServiceTest, compelverifypermission_001, TestSize.Level1)
-{
-    const std::string permission = "permission";
-    int pid = 100;
-    int uid = 1000;
-    std::string message;
-    auto resultFunction = abilityMs_->CompelVerifyPermission(permission, pid, uid, message);
-    EXPECT_EQ(resultFunction, ERR_OK);
 }
 
 /*

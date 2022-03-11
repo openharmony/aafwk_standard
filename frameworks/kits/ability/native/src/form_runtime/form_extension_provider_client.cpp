@@ -379,6 +379,49 @@ void FormExtensionProviderClient::FireFormExtensionEvent(const int64_t formId, c
 }
 
 /**
+ * @brief Acquire form state to form provider.
+ * @param wantArg The want of onAcquireFormState.
+ * @param want The want of the request.
+ * @param callerToken Form provider proxy object.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormExtensionProviderClient::AcquireState(const Want &wantArg, const Want &want,
+                                              const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    std::pair<int, int> errorCode = CheckParam(want, callerToken);
+    if (errorCode.first != ERR_OK) {
+        HILOG_ERROR("%{public}s CheckParam failed", __func__);
+        return errorCode.second;
+    }
+
+    std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
+    std::function<void()> notifyFormExtensionAcquireStateFunc = [client = sptr<FormExtensionProviderClient>(this),
+        wantArg, want, callerToken]() {
+        client->NotifyFormExtensionAcquireState(wantArg, want, callerToken);
+    };
+    mainHandler->PostSyncTask(notifyFormExtensionAcquireStateFunc);
+    return ERR_OK;
+}
+
+void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wantArg, const Want &want,
+                                                                  const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    int errorCode = ERR_OK;
+    FormState state = FormState::UNKNOWN;
+    std::shared_ptr<FormExtension> ownerFormExtension = GetOwner();
+    if (ownerFormExtension == nullptr) {
+        HILOG_ERROR("%{public}s error, ownerFormExtension is nullptr.", __func__);
+        errorCode = ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY;
+    } else {
+        state = ownerFormExtension->OnAcquireFormState(wantArg);
+    }
+    HandleAcquireStateResult(state, errorCode, want, callerToken);
+    HILOG_INFO("%{public}s called end.", __func__);
+}
+
+/**
  * @brief Set the owner form extension of the form provider client.
  *
  * @param formExtension The owner form extension of the form provider client.

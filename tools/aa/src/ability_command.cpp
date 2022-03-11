@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -353,9 +353,7 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
 
 ErrCode AbilityManagerShellCommand::init()
 {
-    ErrCode result = AbilityManagerClient::GetInstance()->Connect();
-
-    return result;
+    return AbilityManagerClient::GetInstance()->Connect();
 }
 
 ErrCode AbilityManagerShellCommand::RunAsHelpCommand()
@@ -566,7 +564,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     int userID = DEFAULT_INVAL_VALUE;
     bool isfirstCommand = false;
     std::string args;
-
     for (auto it = argList_.begin(); it != argList_.end(); it++) {
         if (*it == "-c" || *it == "--client") {
             if (isClient == false) {
@@ -640,7 +637,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 break;
             }
             case 'l': {
-                if (isfirstCommand == false && optarg == nullptr) {
+                if (isfirstCommand == false) {
                     isfirstCommand = true;
                 } else {
                     // 'aa dumpsys -i 10 -element -lastpage'
@@ -1230,7 +1227,7 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         if (opt == "-h" || opt == "--help") {
             resultReceiver_.append(HELP_MSG_TEST);
             return OHOS::ERR_OK;
-        } else if (opt == "-p" || opt == "-w") {
+        } else if (opt == "-b" || opt == "-w" || opt == "-p" || opt == "-m") {
             if (i >= argc_ - 1) {
                 return TestCommandError("error: option [" + opt + "] requires a value.\n");
             }
@@ -1259,7 +1256,7 @@ bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::stri
 {
     HILOG_INFO("enter");
 
-    std::vector<std::string> opts = {"-p", "-s unittest"};
+    std::vector<std::string> opts = {"-b", "-s unittest"};
     for (auto opt : opts) {
         auto it = params.find(opt);
         if (it == params.end()) {

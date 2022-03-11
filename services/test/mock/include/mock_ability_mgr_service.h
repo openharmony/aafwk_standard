@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,12 +63,12 @@ public:
     MOCK_METHOD1(RemoveMission, int(int));
     MOCK_METHOD1(RemoveStack, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
+    MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(KillProcess, int(const std::string &));
-    MOCK_METHOD1(UninstallApp, int(const std::string &));
+    MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));
     MOCK_METHOD4(OnRemoteRequest, int(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option));
     MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
     MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
-    MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD0(PowerOff, int());
     MOCK_METHOD0(PowerOn, int());
     MOCK_METHOD1(LockMission, int(int));

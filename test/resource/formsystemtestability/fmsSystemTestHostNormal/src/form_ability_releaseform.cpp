@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ void FormAbilityReleaseForm::AcquireFormCallback::OnAcquired(const int32_t resul
         ability_->FMS_releaseForm_common(formJsInfo.formId, this->caseName_, this->lastformId_);
     }
 }
+
 void FormAbilityReleaseForm::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -102,6 +103,7 @@ void FormAbilityReleaseForm::FMS_releaseForm_0300(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0300, EVENT_CODE_300, "");
     }
 }
+
 void FormAbilityReleaseForm::FMS_releaseForm_0400(std::string data)
 {
     std::shared_ptr<AcquireFormCallback> callback =
@@ -202,6 +204,7 @@ void FormAbilityReleaseForm::FMS_releaseForm_0800(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0800, EVENT_CODE_800, "");
     }
 }
+
 void FormAbilityReleaseForm::FMS_releaseForm_0900(std::string data)
 {
     std::shared_ptr<AcquireFormCallback> callback =
@@ -333,6 +336,7 @@ void FormAbilityReleaseForm::FMS_releaseForm_1400(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_1400, EVENT_CODE_1400, "");
     }
 }
+
 void FormAbilityReleaseForm::FMS_releaseForm_common_del(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -410,6 +414,7 @@ void FormAbilityReleaseForm::ReleaseForm_0700(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0700, EVENT_CODE_700, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_0800(int64_t form_id)
 {
     bool isReleaseCache = false;
@@ -422,6 +427,7 @@ void FormAbilityReleaseForm::ReleaseForm_0800(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0800, EVENT_CODE_800, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_0900(int64_t form_id)
 {
     bool isReleaseCache = false;
@@ -434,6 +440,7 @@ void FormAbilityReleaseForm::ReleaseForm_0900(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_0900, EVENT_CODE_900, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_1000(int64_t form_id)
 {
     bool isReleaseCache = true;
@@ -446,6 +453,7 @@ void FormAbilityReleaseForm::ReleaseForm_1000(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_1000, EVENT_CODE_1000, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_1100(int64_t form_id)
 {
     bool isReleaseCache = true;
@@ -458,6 +466,7 @@ void FormAbilityReleaseForm::ReleaseForm_1100(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_1100, EVENT_CODE_1100, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_1200(int64_t form_id)
 {
     bool isReleaseCache = true;
@@ -470,6 +479,7 @@ void FormAbilityReleaseForm::ReleaseForm_1200(int64_t form_id)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_RELEASE_FORM_1200, EVENT_CODE_1200, "false");
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_1300(int64_t form_id, std::string lastFormId)
 {
     if (lastFormId == "") {
@@ -489,6 +499,7 @@ void FormAbilityReleaseForm::ReleaseForm_1300(int64_t form_id, std::string lastF
         }
     }
 }
+
 void FormAbilityReleaseForm::ReleaseForm_1400(int64_t form_id)
 {
     bool isReleaseCache = true;
@@ -525,6 +536,7 @@ void FormAbilityReleaseForm::OnStart(const Want &want)
     };
     SubscribeEvent(eventList);
 }
+
 void FormAbilityReleaseForm::OnActive()
 {
     HILOG_INFO("FormAbilityReleaseForm::OnActive");
@@ -539,18 +551,21 @@ void FormAbilityReleaseForm::OnStop()
 
     Ability::OnStop();
 }
+
 void FormAbilityReleaseForm::OnInactive()
 {
     HILOG_INFO("FormAbilityReleaseForm::OnInactive");
 
     Ability::OnInactive();
 }
+
 void FormAbilityReleaseForm::OnBackground()
 {
     HILOG_INFO("FormAbilityReleaseForm::OnBackground");
 
     Ability::OnBackground();
 }
+
 void FormAbilityReleaseForm::SubscribeEvent(const std::vector<std::string> &eventList)
 {
     MatchingSkills matchingSkills;

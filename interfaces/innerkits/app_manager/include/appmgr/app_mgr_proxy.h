@@ -207,6 +207,13 @@ public:
      */
     virtual void AttachRenderProcess(const sptr<IRemoteObject> &renderApp) override;
 
+    /**
+     * Post a task to the not response process.
+     *
+     * @param pid, the not response process id.
+     */
+    virtual void PostANRTaskByProcessID(const pid_t pid) override;
+
 private:
     bool SendTransactCmd(IAppMgr::Message code, MessageParcel &data, MessageParcel &reply);
     bool WriteInterfaceToken(MessageParcel &data);

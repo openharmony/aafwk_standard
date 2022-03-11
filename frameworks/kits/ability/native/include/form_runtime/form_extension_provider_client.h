@@ -108,6 +108,15 @@ public:
         const Want &want, const sptr<IRemoteObject> &callerToken) override;
 
     /**
+     * @brief Acquire form state to form provider.
+     * @param wantArg The want of onAcquireFormState.
+     * @param want The want of the request.
+     * @param callerToken Form provider proxy object.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken) override;
+
+    /**
      * @brief Set the owner form extension of the form provider client.
      *
      * @param formExtension The owner form extension of the form provider client.
@@ -141,6 +150,7 @@ private:
         const sptr<IRemoteObject> &callerToken);
     void FireFormExtensionEvent(const int64_t formId, const std::string &message, const Want &want,
         const sptr<IRemoteObject> &callerToken);
+    void NotifyFormExtensionAcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken);
 
 private:
     mutable std::mutex formExtensionMutex_;

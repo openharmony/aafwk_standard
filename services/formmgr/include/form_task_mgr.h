@@ -144,6 +144,14 @@ public:
     void PostFormEventTask(const int64_t formId, const std::string &message, const Want &want,
         const sptr<IRemoteObject> &remoteObject);
 
+    /**
+    * @brief Post acquire state to form provider.
+    * @param wantArg The want of onAcquireFormState.
+    * @param want The want of the request.
+    * @param remoteObject Form provider proxy object.
+    */
+    void PostAcquireStateTask(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject);
+
      /**
      * @brief Post uninstall message to form host(task).
      * @param formIds The Id list of the forms.
@@ -240,6 +248,14 @@ private:
      */
     void FireFormEvent(const int64_t formId, const std::string &message, const Want &want,
         const sptr<IRemoteObject> &remoteObject);
+
+    /**
+     * @brief Acquire form state to form provider.
+     * @param wantArg The want of onAcquireFormState.
+     * @param want The want of the request.
+     * @param remoteObject Form provider proxy object.
+     */
+    void AcquireState(const Want &wantArg, const Want &want, const sptr <IRemoteObject> &remoteObject);
 
     /**
      * @brief Handle uninstall message.
