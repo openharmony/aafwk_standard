@@ -91,7 +91,9 @@ static std::mutex formLock;
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
 #endif
+#ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
 constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
+#endif
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
 {
@@ -508,6 +510,7 @@ bool Ability::IsRestoredInContinuation() const
 
 void Ability::WaitingDistributedObjectSyncComplete(const Want& want)
 {
+#ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
 
@@ -538,6 +541,9 @@ void Ability::WaitingDistributedObjectSyncComplete(const Want& want)
         handler_->PostTask(timeout, "Waiting_Sync_Timeout", DISTRIBUTED_OBJECT_TIMEOUT);
         HILOG_INFO("continuation set timeout end");
     }
+#else
+    NotityContinuationResult(want, true);
+#endif
 }
 
 void Ability::NotityContinuationResult(const Want& want, bool success)
