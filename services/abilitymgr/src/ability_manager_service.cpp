@@ -2580,9 +2580,18 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, userId, request.abilityInfo));
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
+        HILOG_WARN("%{public}s, QueryAbilityInfo again, userId is 0", __func__);
+        IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, U0_USER_ID, request.abilityInfo));
+    }
+    if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
         std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
         IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos));
+        if (extensionInfos.size() <= 0) {
+            HILOG_WARN("%{public}s, QueryExtensionAbilityInfos again, userId is 0", __func__);
+            IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag,
+                U0_USER_ID, extensionInfos));
+        }
         if (extensionInfos.size() <= 0) {
             HILOG_ERROR("Get extension info failed.");
             return RESOLVE_ABILITY_ERR;
@@ -3259,8 +3268,8 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
     }
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     CHECK_POINTER(abilityRecord);
+    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
 
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
