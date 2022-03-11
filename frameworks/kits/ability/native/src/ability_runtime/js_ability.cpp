@@ -269,7 +269,7 @@ void JsAbility::OnBackground()
 }
 #endif
 
-bool JsAbility::OnContinue(WantParams &wantParams)
+int32_t JsAbility::OnContinue(WantParams &wantParams)
 {
     HandleScope handleScope(jsRuntime_);
     auto &nativeEngine = jsRuntime_.GetNativeEngine();
@@ -295,12 +295,12 @@ bool JsAbility::OnContinue(WantParams &wantParams)
     napi_value new_napiWantParams = reinterpret_cast<napi_value>(jsWantParams);
     OHOS::AppExecFwk::UnwrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), new_napiWantParams, wantParams);
 
-    NativeBoolean *boolResult = ConvertNativeValueTo<NativeBoolean>(result);
-    if (boolResult == nullptr) {
+    NativeNumber *numberResult = ConvertNativeValueTo<NativeNumber>(result);
+    if (numberResult == nullptr) {
         return false;
     }
 
-    return *boolResult;
+    return *numberResult;
 }
 
 void JsAbility::OnConfigurationUpdated(const Configuration &configuration)
