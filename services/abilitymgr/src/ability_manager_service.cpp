@@ -3259,8 +3259,8 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
     }
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     CHECK_POINTER(abilityRecord);
+    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
 
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {

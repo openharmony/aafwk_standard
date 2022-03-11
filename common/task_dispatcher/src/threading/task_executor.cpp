@@ -71,11 +71,11 @@ ErrCode TaskExecutor::DoWorks(const std::shared_ptr<WorkerThread> &worker)
     while (((task != nullptr && done == false) || ((task = GetTask(worker)) != nullptr))) {
         HILOG_INFO("TaskExecutor::DoWorks loop tasks.");
 
-        BeforeRun(task);
-
-        task->Run();
-
-        AfterRun(task);
+        if (task) {
+            BeforeRun(task);
+            task->Run();
+            AfterRun(task);
+        }
 
         worker->IncTaskCount();
         IncrementAndGet(taskCounter_);
