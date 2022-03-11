@@ -319,14 +319,6 @@ public:
     ErrCode RemoveMissions(std::vector<int> missionId);
 
     /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode RemoveStack(int id);
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.

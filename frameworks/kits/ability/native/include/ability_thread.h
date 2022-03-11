@@ -19,7 +19,6 @@
 #include "want.h"
 #include "ability_manager_client.h"
 #include "ability_manager_interface.h"
-#include "ability_impl.h"
 #include "ability.h"
 #include "ability_local_record.h"
 #include "context.h"

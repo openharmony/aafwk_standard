@@ -1668,7 +1668,7 @@ void MainThread::LoadAppLibrary()
         HILOG_ERROR("Fail to dlopen %{public}s, [%{public}s]", appPath.c_str(), dlerror());
         exit(-1);
     }
-    HILOG_INFO("MainThread::handleLaunchApplication End calling dlopen.";
+    HILOG_INFO("MainThread::handleLaunchApplication End calling dlopen.");
 #endif  // APPLICATION_LIBRARY_LOADER
 }
 

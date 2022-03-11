@@ -53,7 +53,6 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[LIST_STACK_INFO] = &AbilityManagerStub::GetAllStackInfoInner;
     requestFuncMap_[GET_RECENT_MISSION] = &AbilityManagerStub::GetRecentMissionsInner;
     requestFuncMap_[REMOVE_MISSION] = &AbilityManagerStub::RemoveMissionInner;
-    requestFuncMap_[REMOVE_STACK] = &AbilityManagerStub::RemoveStackInner;
     requestFuncMap_[COMMAND_ABILITY_DONE] = &AbilityManagerStub::ScheduleCommandAbilityDoneInner;
     requestFuncMap_[GET_MISSION_SNAPSHOT] = &AbilityManagerStub::GetMissionSnapshotInner;
     requestFuncMap_[ACQUIRE_DATA_ABILITY] = &AbilityManagerStub::AcquireDataAbilityInner;
@@ -308,17 +307,6 @@ int AbilityManagerStub::RemoveMissionInner(MessageParcel &data, MessageParcel &r
     int32_t result = RemoveMission(id);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("remove mission error.");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::RemoveStackInner(MessageParcel &data, MessageParcel &reply)
-{
-    int id = data.ReadInt32();
-    int32_t result = RemoveStack(id);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("remove stack error");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

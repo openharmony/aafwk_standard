@@ -180,11 +180,6 @@ ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
     return ret;
 }
 
-ErrCode AbilityManagerClient::RemoveStack(int id)
-{
-    return ERR_OK;
-}
-
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
     return ERR_OK;
