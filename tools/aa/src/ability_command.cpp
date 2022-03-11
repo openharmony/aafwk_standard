@@ -886,6 +886,11 @@ ErrCode AbilityManagerShellCommand::RunAsDumpCommand()
 ErrCode AbilityManagerShellCommand::RunAsForceStop()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    if (argList_.empty()) {
+        resultReceiver_.append(HELP_MSG_FORCE_STOP + "\n");
+        return OHOS::ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("Bundle name : %{public}s", argList_[0].c_str());
     ErrCode result = OHOS::ERR_OK;
     result = AbilityManagerClient::GetInstance()->KillProcess(argList_[0]);
     if (result == OHOS::ERR_OK) {
@@ -1416,7 +1421,11 @@ ErrCode AbilityManagerShellCommand::RunAsBlockAbilityCommand()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
     ErrCode result = OHOS::ERR_OK;
-    result = AbilityManagerClient::GetInstance()->BlockAbility(atoi(argList_[0].c_str()));
+    if (argList_.size() > 0) {
+        result = AbilityManagerClient::GetInstance()->BlockAbility(atoi(argList_[0].c_str()));
+    } else {
+        result = OHOS::ERR_INVALID_VALUE;
+    }
 
     if (result == OHOS::ERR_OK) {
         HILOG_INFO("%{public}s", STRING_BLOCK_ABILITY_OK.c_str());
