@@ -658,7 +658,7 @@ public:
     bool SetMissionInformation(const MissionInformation &missionInformation) override;
 
     /**
-     * set lock screen white list
+     * set lock screen
      *
      * @param isAllow Whether to allow lock screen.
      *
