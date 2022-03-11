@@ -106,10 +106,8 @@ public:
     {
         return true;
     };
-#ifdef SUPPORT_GRAPHICS
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) {};
     virtual void NotifyTopActiveAbilityChanged(bool flag) {};
-#endif
     virtual bool ScheduleNotifyChange(const Uri &uri)
     {
         return true;

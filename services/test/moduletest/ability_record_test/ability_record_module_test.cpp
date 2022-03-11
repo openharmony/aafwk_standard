@@ -520,6 +520,7 @@ HWTEST_F(AbilityRecordModuleTest, ConnectionRecord_001, TestSize.Level2)
  */
 HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
@@ -532,6 +533,7 @@ HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
         abilityRecord->RemoveWindowInfo();
         EXPECT_FALSE(abilityRecord->GetWindowInfo());
     }
+#endif
 }
 
 /*

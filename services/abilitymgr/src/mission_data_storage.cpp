@@ -19,7 +19,9 @@
 #include "hilog_wrapper.h"
 #include "image_source.h"
 #include "media_errors.h"
+#ifdef SUPPORT_GRAPHICS
 #include "png.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -143,12 +145,14 @@ void MissionDataStorage::SaveSnapshotFile(int32_t missionId, const MissionSnapsh
             return;
         }
     }
+#ifdef SUPPORT_GRAPHICS
     const uint8_t* data = missionSnapshot.snapshot->GetPixels();
     bool saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
         missionSnapshot.snapshot->GetHeight(), data);
     if (!saveMissionFile) {
         HILOG_ERROR("snapshot: save mission snapshot failed, path = %{public}s.", filePath.c_str());
     }
+#endif
 }
 
 void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
@@ -162,34 +166,40 @@ void MissionDataStorage::SaveMissionSnapshot(int32_t missionId, const MissionSna
 
 bool MissionDataStorage::GetCachedSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot)
 {
+#ifdef SUPPORT_GRAPHICS
     std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
     auto pixelMap = cachedPixelMap_.find(missionId);
     if (pixelMap != cachedPixelMap_.end()) {
         missionSnapshot.snapshot = pixelMap->second;
         return true;
     }
+#endif
     return false;
 }
 
 bool MissionDataStorage::SaveCachedSnapshot(int32_t missionId, const MissionSnapshot& missionSnapshot)
 {
+#ifdef SUPPORT_GRAPHICS
     std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
     auto result = cachedPixelMap_.insert_or_assign(missionId, missionSnapshot.snapshot);
     if (!result.second) {
         HILOG_ERROR("snapshot: save snapshot cache failed, missionId = %{public}d", missionId);
         return false;
     }
+#endif
     return true;
 }
 
 bool MissionDataStorage::DeleteCachedSnapshot(int32_t missionId)
 {
+#ifdef SUPPORT_GRAPHICS
     std::lock_guard<std::mutex> lock(cachedPixelMapMutex_);
     auto result = cachedPixelMap_.erase(missionId);
     if (result != 1) {
         HILOG_ERROR("snapshot: delete snapshot cache failed, missionId = %{public}d", missionId);
         return false;
     }
+#endif
     return true;
 }
 
@@ -209,6 +219,7 @@ void MissionDataStorage::DeleteMissionSnapshot(int32_t missionId)
 
 bool MissionDataStorage::GetMissionSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot)
 {
+#ifdef SUPPORT_GRAPHICS
     if (GetCachedSnapshot(missionId, missionSnapshot)) {
         HILOG_INFO("snapshot: GetMissionSnapshot from cache, missionId = %{public}d", missionId);
         return true;
@@ -232,6 +243,7 @@ bool MissionDataStorage::GetMissionSnapshot(int32_t missionId, MissionSnapshot& 
         return false;
     }
     missionSnapshot.snapshot = std::move(pixelMap);
+#endif
     return true;
 }
 
@@ -243,6 +255,7 @@ std::string MissionDataStorage::GetMissionSnapshotPath(int32_t missionId)
 
 bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data)
 {
+#ifdef SUPPORT_GRAPHICS
     const int BITMAP_DEPTH = 8; // color depth
     const int BPP = 4; // bytes per pixel
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -283,6 +296,7 @@ bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32
     // free memory
     png_destroy_write_struct(&png_ptr, &info_ptr);
     (void)fclose(fp);
+#endif
     return true;
 }
 }  // namespace AAFwk

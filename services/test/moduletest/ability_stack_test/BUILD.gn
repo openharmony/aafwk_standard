@@ -115,6 +115,7 @@ ohos_moduletest("ability_stack_module_test") {
       "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
       "//third_party/libpng:libpng",
     ]
+    defines = [ "SUPPORT_GRAPHICS" ]
   }
 
   external_deps = [

@@ -1093,6 +1093,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     int result = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(0, result);
@@ -1113,6 +1114,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.
     EXPECT_EQ(static_cast<int>(stackManager_->windowTokenToAbilityMap_.size()), 1);
     stackManager_->AddWindowInfo(token, 2);
     EXPECT_EQ(static_cast<int>(stackManager_->windowTokenToAbilityMap_.size()), 1);
+#endif
 }
 
 /*

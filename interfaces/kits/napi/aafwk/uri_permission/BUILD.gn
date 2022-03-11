@@ -13,6 +13,7 @@
 
 # import("//ark/ts2abc/ts2panda/ts2abc_config.gni")
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("uripermissionmanager_napi") {
   sources = [
     "js_uri_perm_mgr.cpp",
@@ -38,6 +39,13 @@ ohos_shared_library("uripermissionmanager_napi") {
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
   ]
+
+  if (!ability_runtime_graphics) {
+    external_deps += [
+      "ipc:ipc_core",
+      "utils_base:utils",
+    ]
+  }
 
   relative_install_dir = "module/application"
 

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("featureability") {
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
@@ -65,6 +66,10 @@ ohos_shared_library("featureability") {
 
     #"appdatamgr_jskits:rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
 
   relative_install_dir = "module/ability"
 

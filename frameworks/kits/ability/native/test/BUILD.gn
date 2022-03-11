@@ -22,7 +22,6 @@ INNERKITS_PATH = "//foundation/aafwk/standard/interfaces/innerkits"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//base/global/i18n_standard/frameworks/intl/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
@@ -56,8 +55,10 @@ config("module_private_config") {
   ]
 
   if (ability_runtime_graphics) {
-    include_dirs +=
-        [ "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include" ]
+    include_dirs += [
+      "//base/global/i18n_standard/frameworks/intl/include",
+      "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
+    ]
   }
 }
 
@@ -324,36 +325,38 @@ ohos_unittest("ability_context_test") {
 
 ohos_unittest("page_ability_impl_test") {
   module_out_path = module_output_path
-  sources = [
-    "../src/page_ability_impl.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/mock_replace_ability_impl.cpp",
-    "unittest/page_ability_impl_test.cpp",
-  ]
+  if (ability_runtime_graphics) {
+    sources = [
+      "../src/page_ability_impl.cpp",
+      "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/mock_replace_ability_impl.cpp",
+      "unittest/page_ability_impl_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "${INNERKITS_PATH}/want:want",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+    deps = [
+      "${INNERKITS_PATH}/want:want",
+      "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+      "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+      "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+      "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
+      "//third_party/googletest:gtest_main",
+      "//utils/native/base:utils",
+    ]
 
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
-  ]
+    external_deps = [
+      "hiviewdfx_hilog_native:libhilog",
+      "ipc:ipc_core",
+      "multimodalinput_base:libmmi-client",
+    ]
+  }
 }
 
 ohos_unittest("service_ability_impl_test") {
@@ -393,34 +396,35 @@ ohos_unittest("service_ability_impl_test") {
 
 ohos_unittest("scene_created_test") {
   module_out_path = module_output_path
+  if (ability_runtime_graphics) {
+    include_dirs = [ "//foundation/windowmanager/interfaces/innerkits/wm" ]
 
-  include_dirs = [ "//foundation/windowmanager/interfaces/innerkits/wm" ]
+    configs = [ ":module_ability_context_config" ]
 
-  configs = [ ":module_ability_context_config" ]
+    sources = [ "unittest/scene_created_test.cpp" ]
 
-  sources = [ "unittest/scene_created_test.cpp" ]
+    deps = [
+      "${INNERKITS_PATH}/want:want",
+      "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+      "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+      "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+      "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+      "//third_party/googletest:gtest_main",
+      "//utils/native/base:utils",
+    ]
 
-  deps = [
-    "${INNERKITS_PATH}/want:want",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
-  ]
+    external_deps = [
+      "hiviewdfx_hilog_native:libhilog",
+      "ipc:ipc_core",
+      "multimodalinput_base:libmmi-client",
+    ]
+  }
 }
 
 ohos_unittest("data_ability_helper_test") {
@@ -548,7 +552,6 @@ ohos_unittest("ability_impl_test") {
   deps = [
     "${INNERKITS_PATH}/uri:zuri",
     "${INNERKITS_PATH}/want:want",
-    "//base/global/i18n_standard/frameworks/intl:intl_util",
     "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
@@ -561,7 +564,6 @@ ohos_unittest("ability_impl_test") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -579,6 +581,10 @@ ohos_unittest("ability_impl_test") {
 
   if (ability_runtime_graphics) {
     sources += [ "unittest/ability_impl_test.cpp" ]
+    deps += [
+      "//base/global/i18n_standard/frameworks/intl:intl_util",
+      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
+    ]
     external_deps += [ "multimodalinput_base:libmmi-client" ]
   }
 }
@@ -663,44 +669,46 @@ ohos_unittest("ability_thread_call_request_test") {
 
 ohos_unittest("form_provider_client_test") {
   module_out_path = module_output_path
-  include_dirs = [
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/appexecfwk/appexecfwk_lite/interfaces/kits/bundle_lite",
-  ]
+  if (ability_runtime_graphics) {
+    include_dirs = [
+      "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+      "//foundation/appexecfwk/appexecfwk_lite/interfaces/kits/bundle_lite",
+    ]
 
-  sources = [
-    "mock/include/mock_form_supply_callback.cpp",
-    "unittest/form_provider_client_test.cpp",
-  ]
+    sources = [
+      "mock/include/mock_form_supply_callback.cpp",
+      "unittest/form_provider_client_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "${INNERKITS_PATH}/want:want",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+    deps = [
+      "${INNERKITS_PATH}/want:want",
+      "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
+      "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+      "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+      "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+      "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+      "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+      "//foundation/graphic/standard:libwmclient",
+      "//third_party/googletest:gtest_main",
+      "//utils/native/base:utils",
+    ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_core",
-    "form_runtime:form_manager",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
-  ]
+    external_deps = [
+      "bundle_framework:appexecfwk_core",
+      "form_runtime:form_manager",
+      "hiviewdfx_hilog_native:libhilog",
+      "ipc:ipc_core",
+      "multimodalinput_base:libmmi-client",
+    ]
+  }
 }
 
 ohos_unittest("data_ability_impl_test") {
@@ -1088,47 +1096,49 @@ ohos_unittest("data_ability_result_test") {
 
 ohos_unittest("form_host_client_test") {
   module_out_path = module_output_path
-  sources = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/ability_start_setting.cpp",
-    "mock/include/mock_bundle_manager_form.cpp",
-    "unittest/form_host_client_test.cpp",
-  ]
+  if (ability_runtime_graphics) {
+    sources = [
+      "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
+      "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/app_loader.cpp",
+      "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/application_context.cpp",
+      "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
+      "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
+      "//foundation/aafwk/standard/services/abilitymgr/src/ability_start_setting.cpp",
+      "mock/include/mock_bundle_manager_form.cpp",
+      "unittest/form_host_client_test.cpp",
+    ]
 
-  configs = [ ":module_private_config" ]
+    configs = [ ":module_private_config" ]
 
-  deps = [
-    "${INNERKITS_PATH}/want:want",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/graphic/standard:libwmclient",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+    deps = [
+      "${INNERKITS_PATH}/want:want",
+      "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
+      "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+      "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
+      "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+      "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+      "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+      "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+      "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+      "//foundation/graphic/standard:libwmclient",
+      "//third_party/googletest:gmock_main",
+      "//third_party/googletest:gtest_main",
+      "//utils/native/base:utils",
+    ]
 
-  external_deps = [
-    "ability_runtime:runtime",
-    "bundle_framework:appexecfwk_core",
-    "form_runtime:fmskit_native",
-    "form_runtime:form_manager",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
-  ]
+    external_deps = [
+      "ability_runtime:runtime",
+      "bundle_framework:appexecfwk_core",
+      "form_runtime:fmskit_native",
+      "form_runtime:form_manager",
+      "hiviewdfx_hilog_native:libhilog",
+      "ipc:ipc_core",
+      "multimodalinput_base:libmmi-client",
+    ]
+  }
 }
 
 ohos_unittest("continuation_test") {
