@@ -132,10 +132,7 @@ ErrCode AppMgrService::Init()
     }
     appMgrServiceInner_->Init();
     handler_ = std::make_shared<AMSEventHandler>(runner_, appMgrServiceInner_);
-    if (!handler_) {
-        HILOG_ERROR("init failed without handler");
-        return ERR_INVALID_OPERATION;
-    }
+
     appMgrServiceInner_->SetEventHandler(handler_);
     ErrCode openErr = appMgrServiceInner_->OpenAppSpawnConnection();
     if (FAILED(openErr)) {

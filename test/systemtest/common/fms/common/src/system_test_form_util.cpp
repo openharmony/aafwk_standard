@@ -315,22 +315,6 @@ void SystemTestFormUtil::CleanMsg(FormEvent &event)
     return event.Clean();
 }
 
-int SystemTestFormUtil::RemoveStack(
-    int id, sptr<AAFwk::IAbilityManager> &abilityMs, const time_t &backHmoeDelay, const time_t &removeDelay)
-{
-    Want wantEntity;
-    wantEntity.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
-    StartAbility(wantEntity, abilityMs);
-    std::this_thread::sleep_for(std::chrono::milliseconds(backHmoeDelay));
-    if (!abilityMs) {
-        HILOG_INFO("RemoveStack abilityMs nullptr");
-        return OHOS::ERR_INVALID_VALUE;
-    }
-    int result = abilityMs->RemoveStack(id);
-    std::this_thread::sleep_for(std::chrono::milliseconds(removeDelay));
-    return result;
-}
-
 const std::string MSG_SUCCESS = "[SUCCESS]";
 void SystemTestFormUtil::Install(const std::string &bundleFilePath, const InstallFlag installFlag)
 {

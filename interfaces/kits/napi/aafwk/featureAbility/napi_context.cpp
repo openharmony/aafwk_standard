@@ -383,6 +383,11 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 
     if (permissions.empty()) {
         HILOG_ERROR("%{public}s, the string vector permissions is empty.", __func__);
+        return;
+    }
+    if (permissions.size() != grantResults.size()) {
+        HILOG_ERROR("%{public}s, the size of permissions not equal the size of grantResults.", __func__);
+        return;
     }
     uv_loop_s *loop = nullptr;
 
@@ -428,14 +433,13 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 return;
             }
 
-            napi_value result[ARGS_TWO] = {0};
-            result[PARAM0] = GetCallbackErrorValue(onRequestPermissionCB->cb.env, 0);
-            napi_create_object(onRequestPermissionCB->cb.env, &result[PARAM1]);
+            napi_value result[ARGS_ONE] = {0};
+            napi_create_object(onRequestPermissionCB->cb.env, &result[PARAM0]);
 
             // create requestCode
             napi_value jsValue = 0;
             napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->requestCode, &jsValue);
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "requestCode", jsValue);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "requestCode", jsValue);
 
             // create permissions
             napi_value perValue = 0;
@@ -449,7 +453,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                     &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, perArray, i, perValue);
             }
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "permissions", perArray);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "permissions", perArray);
 
             // create grantResults
             napi_value grantArray;
@@ -459,7 +463,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->grantResults[j], &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, grantArray, j, perValue);
             }
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "authResults", grantArray);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "authResults", grantArray);
 
             // call CB function
             napi_value callback = 0;
@@ -469,7 +473,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
             napi_value callResult = 0;
             napi_get_reference_value(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback, &callback);
             napi_call_function(
-                onRequestPermissionCB->cb.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+                onRequestPermissionCB->cb.env, undefined, callback, ARGS_ONE, &result[PARAM0], &callResult);
 
             if (onRequestPermissionCB->cb.callback != nullptr) {
                 napi_delete_reference(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback);

@@ -83,7 +83,6 @@ public:
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t missionId, MissionPixelMap &missionPixelMap));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(RemoveMission, int(int id));
-    MOCK_METHOD1(RemoveStack, int(int id));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
 

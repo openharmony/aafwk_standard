@@ -767,23 +767,6 @@ int AbilityStackManager::RemoveMissionByIdLocked(int missionId)
     return TerminateAbilityLocked(terminateLists);
 }
 
-int AbilityStackManager::RemoveStack(int stackId)
-{
-    HILOG_DEBUG("stackId : %{public}d", stackId);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (stackId < MIN_MISSION_STACK_ID) {
-        HILOG_ERROR("stackId:%{public}d is invalid.", stackId);
-        return ERR_INVALID_VALUE;
-    }
-
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-
-    return RemoveStackLocked(stackId);
-}
-
 int AbilityStackManager::RemoveStackLocked(int stackId)
 {
     HILOG_DEBUG("stackId : %{public}d", stackId);

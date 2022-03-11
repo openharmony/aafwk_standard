@@ -53,7 +53,6 @@ public:
     MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<RecentMissionInfo> &));
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
     MOCK_METHOD1(RemoveMission, int(int));
-    MOCK_METHOD1(RemoveStack, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(KillProcess, int(const std::string &));

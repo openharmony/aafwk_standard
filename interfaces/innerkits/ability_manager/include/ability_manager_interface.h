@@ -358,14 +358,6 @@ public:
     virtual int RemoveMission(int id) = 0;
 
     /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int RemoveStack(int id) = 0;
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.

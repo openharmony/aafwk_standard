@@ -202,11 +202,6 @@ public:
         return 0;
     }
 
-    virtual int RemoveStack(int id)
-    {
-        return 0;
-    }
-
     virtual int KillProcess(const std::string &bundleName)
     {
         return 0;

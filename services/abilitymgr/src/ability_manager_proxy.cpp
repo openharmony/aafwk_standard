@@ -842,28 +842,6 @@ int AbilityManagerProxy::RemoveMission(int id)
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::RemoveStack(int id)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(id)) {
-        HILOG_ERROR("id write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    error = Remote()->SendRequest(IAbilityManager::REMOVE_STACK, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
 int AbilityManagerProxy::KillProcess(const std::string &bundleName)
 {
     MessageParcel data;
