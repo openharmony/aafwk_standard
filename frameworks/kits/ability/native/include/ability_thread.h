@@ -509,6 +509,12 @@ private:
     void HandleUpdateConfiguration(const Configuration &config);
 
     /**
+     * Block ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int BlockAbility();
+
+    /**
      * @brief Handle the scheduling update configuration of extension.
      *
      * @param config Configuration

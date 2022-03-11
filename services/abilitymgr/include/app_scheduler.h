@@ -290,6 +290,13 @@ public:
      */
     void PostANRTaskByProcessID(const pid_t pid);
 
+    /**
+     * Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int BlockAppService();
+
 protected:
     /**
      * OnAbilityRequestDone, app manager service call this interface after ability request done.

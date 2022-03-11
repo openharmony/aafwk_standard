@@ -716,6 +716,28 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
 
+    /**
+     * Block ability manager service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAmsService() = 0;
+
+    /**
+     * Block ability.
+     *
+     * @param abilityRecordId The Ability Record Id.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAbility(int32_t abilityRecordId) = 0;
+
+    /**
+     * Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAppService() = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -952,6 +974,12 @@ public:
         CLEAR_UP_APPLICATION_DATA,
 
         START_ABILITY_FOR_OPTIONS,
+
+        BLOCK_AMS_SERVICE,
+
+        BLOCK_ABILITY,
+
+        BLOCK_APP_SERVICE,
 
         // ipc id for call ability
         START_CALL_ABILITY,

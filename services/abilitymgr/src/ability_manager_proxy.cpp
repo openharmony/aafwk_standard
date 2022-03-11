@@ -2656,5 +2656,57 @@ int32_t AbilityManagerProxy::GetMissionIdByToken(const sptr<IRemoteObject> &toke
 
     return reply.ReadInt32();
 }
+
+int AbilityManagerProxy::BlockAmsService()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_AMS_SERVICE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("BlockAmsService error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::BlockAbility(int32_t abilityRecordId)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(abilityRecordId)) {
+        HILOG_ERROR("pid WriteInt32 fail.");
+        return ERR_INVALID_VALUE;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_ABILITY, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("BlockAbility error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::BlockAppService()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_APP_SERVICE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("BlockAmsService error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
 }  // namespace AAFwk
 }  // namespace OHOS

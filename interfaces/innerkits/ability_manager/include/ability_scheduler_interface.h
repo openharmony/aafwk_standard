@@ -277,8 +277,10 @@ public:
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) = 0;
     virtual void ContinueAbility(const std::string& deviceId) = 0;
     virtual void NotifyContinuationResult(int32_t result) = 0;
-	
+
     virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) = 0;
+
+    virtual int BlockAbility() = 0;
 
     virtual sptr<IRemoteObject> CallRequest() = 0;
 
@@ -362,7 +364,7 @@ public:
 
         // ipc id for notify continuation result
         NOTIFY_CONTINUATION_RESULT,
-		
+
 		// ipc id for scheduling call request
         REQUEST_CALL_REMOTE,
 
@@ -370,7 +372,10 @@ public:
         CONTINUE_ABILITY,
 
         // ipc id for dump ability runner
-        DUMP_ABILITY_RUNNER_INNER
+        DUMP_ABILITY_RUNNER_INNER,
+
+        // block ability runner
+        BLOCK_ABILITY_INNER
     };
 };
 }  // namespace AAFwk

@@ -78,6 +78,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleAttachRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
         &AppMgrStub::HandlePostANRTaskByProcessID;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::BLOCK_APP_SERVICE)] =
+        &AppMgrStub::HandleBlockAppServiceDone;
 }
 
 AppMgrStub::~AppMgrStub()
@@ -393,6 +395,14 @@ int32_t AppMgrStub::HandlePostANRTaskByProcessID(MessageParcel &data, MessagePar
     auto pid = data.ReadInt32();
     PostANRTaskByProcessID(pid);
     return NO_ERROR;
+}
+
+int32_t AppMgrStub::HandleBlockAppServiceDone(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s", __func__);
+    int32_t result = BlockAppService();
+    reply.WriteInt32(result);
+    return result;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
