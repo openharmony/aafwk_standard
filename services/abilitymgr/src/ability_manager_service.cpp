@@ -3309,7 +3309,8 @@ void AbilityManagerService::StartingSystemUiAbility()
     uint32_t waitCnt = 0;
     // Wait 10 minutes for the installation to complete.
     IN_PROCESS_CALL_WITHOUT_RET(
-        while (!bms->QueryAbilityInfo(systemUiWant, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
+        while (!bms->QueryAbilityInfo(systemUiWant, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
+            U0_USER_ID, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
             HILOG_INFO("Waiting query system ui info completed.");
             usleep(REPOLL_TIME_MICRO_SECONDS);
             waitCnt++;
