@@ -867,6 +867,22 @@ public:
     {
         return 0;
     }
+
+    virtual int BlockAmsService()
+    {
+        return 0;
+    }
+
+    virtual int BlockAppService()
+    {
+        return 0;
+    }
+
+    virtual int BlockAbility(int32_t abilityRecordId)
+    {
+        return 0;
+    }
+
 private:
     Semaphore sem_;
 };

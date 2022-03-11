@@ -22,6 +22,9 @@
         ],
         "rom": "",
         "ram": "",
+        "hisysevent_config":[
+          "//foundation/aafwk/standard/hisysevent.yaml"
+        ],
         "deps": {
           "components": [
               "appspawn",

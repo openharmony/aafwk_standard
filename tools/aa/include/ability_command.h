@@ -32,7 +32,10 @@ const std::string HELP_MSG = "usage: aa <command> <options>\n"
                              "  dump                        dump the ability info\n"
                              "  force-stop <bundle-name>    force stop the process with bundle name\n"
                              "  test                        start the test framework with options\n"
-                             "  ApplicationNotRespondin     Pass in pid with options\n";
+                             "  ApplicationNotRespondin     Pass in pid with options\n"
+                             "  block-ability <ability-record-id>       block ability with ability record id\n"
+                             "  block-ams-service                       block ams service\n"
+                             "  block-app-service                       block app service\n";
 
 const std::string HELP_MSG_SCREEN =
     "usage: aa screen <options>\n"
@@ -103,6 +106,7 @@ const std::string HELP_MSG_TEST =
     "                  [-w <wait-time>]\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
+const std::string HELP_MSG_BLOCK_ABILITY = "usage: aa block-ability <abilityrecordid>\n";
 const std::string HELP_MSG_FORCE_TIMEOUT =
     "usage: aa force-timeout <ability-name> <INITIAL|FOREGROUND_NEW|BACKGROUND_NEW|TERMINATING>\n"
     "usage: aa force-timeout clean.";
@@ -115,7 +119,8 @@ const std::string STRING_START_ABILITY_OK = "start ability successfully.";
 const std::string STRING_START_ABILITY_NG = "error: failed to start ability.";
 
 const std::string STRING_STOP_SERVICE_ABILITY_OK = "stop service ability successfully.";
-const std::string STRING_STOP_SERVICE_ABILITY_NG = "error: failed to stop service ability.";
+const std::string STRING_STOP_SERVICE_ABILITY_NG =
+    "error: failed to stop service ability.";
 
 const std::string STRING_SCREEN_POWER_ON = "on";
 
@@ -127,15 +132,26 @@ const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off scree
 const std::string STRING_FORCE_STOP_OK = "force stop process successfully.";
 const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
 
-const std::string STRING_FORCE_TIMEOUT_OK = "force ability timeout successfully.";
-const std::string STRING_FORCE_TIMEOUT_NG = "error: failed to force ability timeout.";
-
 const std::string STRING_START_USER_TEST_OK = "start user test successfully.";
 const std::string STRING_START_USER_TEST_NG = "error: failed to start user test.";
+
+
+const std::string STRING_BLOCK_ABILITY_OK = "block ability successfully.";
+const std::string STRING_BLOCK_ABILITY_NG = "error: failed to block stop ability.";
+
+const std::string STRING_BLOCK_AMS_SERVICE_OK = "block ams service successfully.";
+const std::string STRING_BLOCK_AMS_SERVICE_NG = "error: failed to block ams service.";
+
+const std::string  STRING_BLOCK_APP_SERVICE_OK = "block app service successfully.";
+const std::string  STRING_BLOCK_APP_SERVICE_NG =
+    "error: failed to block app service.";
 
 const int USER_TEST_COMMAND_START_INDEX = 2;
 const int USER_TEST_COMMAND_PARAMS_NUM = 2;
 const int TIME_RATE_MS = 1000;
+const std::string STRING_FORCE_TIMEOUT_OK = "force ability timeout successfully.";
+const std::string STRING_FORCE_TIMEOUT_NG = "error: failed to force ability timeout.";
+
 
 const int NUMBER_TWO = 2;
 const int NUMBER_ONE = 1;
@@ -161,6 +177,9 @@ private:
     ErrCode RunAsForceStop();
     ErrCode RunForceTimeoutForTest();
     ErrCode RunAsSendAppNotRespondinProcessID();
+    ErrCode RunAsBlockAbilityCommand();
+    ErrCode RunAsBlockAmsServiceCommand();
+    ErrCode RunAsBlockAppServiceCommand();
     sptr<IAbilityManager> GetAbilityManagerService();
 
     ErrCode RunAsDumpCommandOptopt();

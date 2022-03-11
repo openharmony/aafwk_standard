@@ -451,5 +451,16 @@ void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
 
     service->PostANRTaskByProcessID(pid);
 }
+
+int AppMgrClient::BlockAppService()
+{
+    HILOG_INFO("%{public}s", __func__);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        HILOG_ERROR("service is nullptr");
+        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    }
+    return service->BlockAppService();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

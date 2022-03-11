@@ -139,6 +139,9 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
     requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsRunningInStabilityTestInner;
     requestFuncMap_[SEND_APP_NOT_RESPONSE_PROCESS_ID] = &AbilityManagerStub::SendANRProcessIDInner;
+    requestFuncMap_[BLOCK_ABILITY] = &AbilityManagerStub::BlockAbilityInner;
+    requestFuncMap_[BLOCK_AMS_SERVICE] = &AbilityManagerStub::BlockAmsServiceInner;
+    requestFuncMap_[BLOCK_APP_SERVICE] = &AbilityManagerStub::BlockAppServiceInner;
 }
 
 void AbilityManagerStub::ThirdStepInit()
@@ -178,7 +181,7 @@ int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel
 {
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
     int resultCode = data.ReadInt32();
-    Want *resultWant = data.ReadParcelable<Want>();
+Want *resultWant = data.ReadParcelable<Want>();
     bool flag = data.ReadBool();
     int32_t result;
     if (flag) {
@@ -1538,6 +1541,37 @@ int AbilityManagerStub::ForceTimeoutForTestInner(MessageParcel &data, MessagePar
     int result = ForceTimeoutForTest(abilityName, state);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("force ability timeout error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::BlockAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t abilityReocrdId = data.ReadInt32();
+    int32_t result = BlockAbility(abilityReocrdId);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("reply write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::BlockAmsServiceInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t result = BlockAmsService();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("reply write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::BlockAppServiceInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t result = BlockAppService();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

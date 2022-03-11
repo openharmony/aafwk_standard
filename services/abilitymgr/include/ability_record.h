@@ -800,6 +800,7 @@ public:
     void SetWindowMode(int32_t windowMode);
     void RemoveWindowMode();
     LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
+    int BlockAbility();
 
 protected:
     void SendEvent(uint32_t msg, uint32_t timeOut);

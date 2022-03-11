@@ -15,6 +15,10 @@
 
 #include "ability_thread.h"
 
+#include <chrono>
+#include <functional>
+#include <thread>
+
 #include "ability_context_impl.h"
 #include "ability_impl_factory.h"
 #include "ability_loader.h"
@@ -34,8 +38,10 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+using namespace std::chrono_literals;
 using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 using DataObsMgrClient = OHOS::AAFwk::DataObsMgrClient;
+const int32_t BLOCK_ABILITY_TIME = 20;
 constexpr static char ABILITY_NAME[] = "Ability";
 constexpr static char ACE_ABILITY_NAME[] = "AceAbility";
 constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
@@ -1693,6 +1699,23 @@ sptr<IRemoteObject> AbilityThread::CallRequest()
 
     HILOG_INFO("AbilityThread::CallRequest end");
     return retval;
+}
+
+int AbilityThread::BlockAbility()
+{
+    HILOG_INFO("AbilityThread::BlockAblity begin");
+    if (abilityHandler_) {
+        auto task = []() {
+            while (1) {
+                std::this_thread::sleep_for(BLOCK_ABILITY_TIME*1s);
+            }
+        };
+        HILOG_INFO("AbilityThread::BlockAblity post task");
+        abilityHandler_->PostTask(task);
+        HILOG_INFO("AbilityThread::BlockAblity end");
+        return ERR_OK;
+    }
+    return ERR_NO_INIT;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
