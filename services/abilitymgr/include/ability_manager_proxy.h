@@ -321,14 +321,6 @@ public:
     virtual int RemoveMission(int id) override;
 
     /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int RemoveStack(int id) override;
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.

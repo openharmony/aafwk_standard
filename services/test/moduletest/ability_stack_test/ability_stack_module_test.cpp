@@ -3489,60 +3489,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
 
 /*
  * Feature: AaFwk
- * Function:RemoveStack
- * SubFunction:Remove Stack
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription:Remove Stack
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
-{
-    stackManager_->isMultiWinMoving_ = false;
-    // start launcher
-    auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
-    auto ref = stackManager_->StartAbility(worldAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordWorld = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordWorld);
-    abilityRecordWorld->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    auto musicTopAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "musicTop", "com.ix.hiTopMusic");
-    ref = stackManager_->StartAbility(musicTopAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordMusic);
-    topAbilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    std::shared_ptr<MissionStack> targetStack = stackManager_->GetTargetMissionStack(musicTopAbilityRequest);
-    EXPECT_EQ(stackManager_->currentMissionStack_, targetStack);
-
-    // start split ability
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
-    EXPECT_TRUE(abilityStartSetting);
-    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
-        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY));
-    radioAbilityRequest.startSetting = abilityStartSetting;
-    ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto topMissionRecordRadio = stackManager_->GetTopMissionRecord();
-    EXPECT_TRUE(topMissionRecordRadio);
-
-#ifdef SUPPORT_GRAPHICS
-    EXPECT_EQ(stackManager_->curSysWindowMode_, SystemWindowMode::SPLITSCREEN_WINDOW_MODE);
-#endif
-
-    auto stackId = topMissionRecordRadio->GetMissionStack()->GetMissionStackId();
-    stackManager_->RemoveStack(stackId);
-    EXPECT_EQ(stackManager_->GetCurrentTopAbility(), abilityRecordWorld);
-}
-
-/*
- * Feature: AaFwk
  * Function:OnTimeOut
  * SubFunction:Start ability timeout, the previous ability state changes to Active->Inactve->Active
  * FunctionPoints:

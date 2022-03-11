@@ -922,16 +922,6 @@ int AbilityManagerService::RemoveMission(int id)
     }
     return currentStackManager_->RemoveMissionById(id);
 }
-
-int AbilityManagerService::RemoveStack(int id)
-{
-    HILOG_INFO("Remove stack.");
-    if (id < 0) {
-        HILOG_ERROR("Stack id is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-    return currentStackManager_->RemoveStack(id);
-}
 #endif
 
 int AbilityManagerService::ConnectAbility(

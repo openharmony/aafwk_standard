@@ -177,7 +177,6 @@ void AmsPageAbilityTest::SetUp(void)
 void AmsPageAbilityTest::TearDown(void)
 {
     GTEST_LOG_(INFO) << "void AmsPageAbilityTest::TearDown(void)";
-    STAbilityUtil::RemoveStack(1, abilityMs_, WAIT_TIME, WAIT_LAUNCHER_OK);
     std::vector<std::string> vecBundleName;
     for (const auto &suffix : bundleNameSuffix) {
         vecBundleName.push_back(bundleNameBase + suffix);

@@ -148,7 +148,6 @@ void ActsAmsKitTest::SetUp(void)
 
 void ActsAmsKitTest::TearDown(void)
 {
-    STAbilityUtil::RemoveStack(1, abilityMs, WAIT_TIME, WAIT_LAUNCHER_OK);
     CleanMsg();
 }
 
@@ -2021,61 +2020,5 @@ HWTEST_F(ActsAmsKitTest, AMS_Page_Application_2600, Function | MediumTest | Leve
             GTEST_LOG_(INFO) << "AMS_Page_Application_2600 : " << i;
             break;
         }
-    }
-}
-
-/**
- * @tc.number    : AMS_Page_Application_2700
- * @tc.name      : OHOSApplicationApi::Lifecycle callback function
- * @tc.desc      : 1.Control the life cycle of the ability
- *                 2.Application registration capability life cycle callback
- *                 3.The callback function corresponding to the registered class will be called
- */
-HWTEST_F(ActsAmsKitTest, AMS_Page_Application_2700, Function | MediumTest | Level1)
-{
-    for (int i = 1; i <= stLevel_.AMSLevel; i++) {
-        MAP_STR_STR params;
-        params["targetBundle"] = bundleName2;
-        params["targetAbility"] = thirdAbilityName;
-        Want want = STAbilityUtil::MakeWant("device", sixthAbilityName, bundleName2, params);
-        STAbilityUtil::StartAbility(want, abilityMs);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityActive, 0), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityInactive, 0), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, thirdAbilityName + g_onAbilityStart, 0), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, thirdAbilityName + g_onAbilityActive, 0), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityBackground, 0), 0);
-        CleanMsg();
-        STAbilityUtil::RemoveStack(1, abilityMs, WAIT_TIME, WAIT_LAUNCHER_OK);
-    }
-}
-
-/**
- * @tc.number    : AMS_Page_Application_2800
- * @tc.name      : OHOSApplicationApi::Lifecycle callback function
- * @tc.desc      : 1.Control the life cycle of the ability
- *                 2.Application registration capability life cycle callback
- *                 3.The callback function corresponding to the registered class will be called
- */
-HWTEST_F(ActsAmsKitTest, AMS_Page_Application_2800, Function | MediumTest | Level1)
-{
-    for (int i = 1; i <= stLevel_.AMSLevel; i++) {
-        MAP_STR_STR params;
-        int onStopWantCount = 1;
-        params["targetBundle"] = bundleName3;
-        params["targetAbility"] = abilityNameBase;
-        Want want = STAbilityUtil::MakeWant("device", sixthAbilityName, bundleName2, params);
-        STAbilityUtil::StartAbility(want, abilityMs);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityActive, 0), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityInactive, 0), 0);
-        EXPECT_EQ(
-            STAbilityUtil::WaitCompleted(abilityEvent, abilityNameBase + g_abilityStateOnActive, onStopWantCount), 0);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityBackground, 0), 0);
-        STAbilityUtil::StopAbility(terminatePageAbility, 0, abilityNameBase);
-        EXPECT_EQ(STAbilityUtil::WaitCompleted(abilityEvent, sixthAbilityName + g_onAbilityActive, 0), 0);
-        EXPECT_EQ(
-            STAbilityUtil::WaitCompleted(abilityEvent, abilityNameBase + g_abilityStateOnStop, onStopWantCount), 0);
-
-        CleanMsg();
-        STAbilityUtil::RemoveStack(1, abilityMs, WAIT_TIME, WAIT_LAUNCHER_OK);
     }
 }

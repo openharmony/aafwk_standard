@@ -156,11 +156,6 @@ int MockAbilityManagerService::RemoveMission(int id)
     return 0;
 }
 
-int MockAbilityManagerService::RemoveStack(int id)
-{
-    return 0;
-}
-
 int MockAbilityManagerService::MoveMissionToTop(int32_t missionId)
 {
     return 0;

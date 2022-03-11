@@ -142,10 +142,6 @@ public:
     {
         return 0;
     }
-    virtual int RemoveStack(int id) override
-    {
-        return 0;
-    }
     virtual int KillProcess(const std::string &bundleName) override
     {
         return 0;
