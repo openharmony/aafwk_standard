@@ -2580,9 +2580,18 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, userId, request.abilityInfo));
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
+        HILOG_WARN("%{public}s, QueryAbilityInfo again, userId is %{public}d", __func__, userId);
+        IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, U0_USER_ID, request.abilityInfo));
+    }
+    if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
         std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
         IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos));
+        if (extensionInfos.size() <= 0) {
+            HILOG_WARN("%{public}s, QueryExtensionAbilityInfos again, userId is %{public}d", __func__, userId);
+            IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag,
+                U0_USER_ID, extensionInfos));
+        }
         if (extensionInfos.size() <= 0) {
             HILOG_ERROR("Get extension info failed.");
             return RESOLVE_ABILITY_ERR;
@@ -3309,8 +3318,7 @@ void AbilityManagerService::StartingSystemUiAbility()
     uint32_t waitCnt = 0;
     // Wait 10 minutes for the installation to complete.
     IN_PROCESS_CALL_WITHOUT_RET(
-        while (!bms->QueryAbilityInfo(systemUiWant, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
-            U0_USER_ID, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
+        while (!bms->QueryAbilityInfo(systemUiWant, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
             HILOG_INFO("Waiting query system ui info completed.");
             usleep(REPOLL_TIME_MICRO_SECONDS);
             waitCnt++;
