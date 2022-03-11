@@ -15,11 +15,12 @@
 
 // redefine private and protected since testcase need to invoke and test private function
 #include <gtest/gtest.h>
+#include "spec_task_dispatcher.h"
+#include "app_log_wrapper.h"
 #include "base_task_dispatcher.h"
 #include "hilog_wrapper.h"
 #include "task_dispatcher_context.h"
 #include "task_dispatcher.h"
-#include "spec_task_dispatcher.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;
@@ -101,7 +102,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_SyncDispatchTest_001, 
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_AsyncDispatchTest_001, TestSize.Level1)
 {
     auto name = std::string("SpecTaskDispatcher_AsyncDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     std::atomic<int> count(0);
     long sleep1 = 200;
@@ -127,7 +128,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_AsyncDispatchTest_001,
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 2);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -138,7 +139,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_AsyncDispatchTest_001,
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SpecTaskDispatcher_DelayDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     std::atomic<int> count(0);
     int sleep1 = 2000;
@@ -197,7 +198,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_001,
         std::this_thread::sleep_for(time);
         EXPECT_TRUE(count.load() == 3);
     }
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -208,11 +209,11 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_001,
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_002, TestSize.Level0)
 {
     auto name = std::string("SpecTaskDispatcher_DelayDispatchTest_002");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     int sleep1 = 2000;
     ptrSpecTaskDispatcher->DelayDispatch(std::make_shared<Runnable>(nullptr), sleep1);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -223,11 +224,11 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_002,
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_003, TestSize.Level0)
 {
     auto name = std::string("SpecTaskDispatcher_DelayDispatchTest_003");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     int sleep1 = 2000;
     ptrSpecTaskDispatcher->DelayDispatch(nullptr, sleep1);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -238,7 +239,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_003,
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_004, TestSize.Level0)
 {
     auto name = std::string("SpecTaskDispatcher_DelayDispatchTest_004");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     std::atomic<int> count(0);
     int sleep1 = -2000;
@@ -266,7 +267,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_004,
         std::this_thread::sleep_for(time);
         EXPECT_TRUE(count.load() == 2);
     }
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }
 
 /**
@@ -277,7 +278,7 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_DelayDispatchTest_004,
 HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_ApplyDispatchTest_001, TestSize.Level0)
 {
     auto name = std::string("SpecTaskDispatcher_ApplyDispatchTest_001");
-    GTEST_LOG_(INFO) << name + " start";
+    GTEST_LOG_(INFO) << (name + " start");
 
     std::atomic<int> count(0);
     long sleep1 = 101;
@@ -305,5 +306,5 @@ HWTEST_F(SpecTaskDispatcherModuleTest, SpecTaskDispatcher_ApplyDispatchTest_001,
     auto time = std::chrono::milliseconds(wait);
     std::this_thread::sleep_for(time);
     EXPECT_TRUE(count.load() == 20);
-    GTEST_LOG_(INFO) << name + " end";
+    GTEST_LOG_(INFO) << (name + " end");
 }

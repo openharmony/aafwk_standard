@@ -14,6 +14,7 @@
  */
 #ifndef OHOS_APP_DISPATCHER_GROUP_IMPL_H
 #define OHOS_APP_DISPATCHER_GROUP_IMPL_H
+
 #include <atomic>
 #include <deque>
 #include <mutex>
@@ -29,6 +30,7 @@ namespace AppExecFwk {
 class GroupImpl : public Group {
 public:
     GroupImpl();
+
     ~GroupImpl() = default;
     /**
      *  Wait all tasks associated to this group to be done.

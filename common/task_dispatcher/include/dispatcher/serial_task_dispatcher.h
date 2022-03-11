@@ -81,6 +81,7 @@ public:
      *
      */
     std::shared_ptr<Revocable> DelayDispatch(const std::shared_ptr<Runnable> &runnable, long delayMs);
+
 private:
     ErrCode OnNewTaskIn(std::shared_ptr<Task> &task);
 
@@ -104,6 +105,7 @@ private:
     bool DoNext(bool isExhausted);
 
     void DoWork(std::shared_ptr<Task> &task);
+
 private:
     static std::string DISPATCHER_TAG;
     static std::string ASYNC_DISPATCHER_TAG;
