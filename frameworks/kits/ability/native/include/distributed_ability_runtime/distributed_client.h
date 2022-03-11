@@ -40,7 +40,7 @@ public:
     int32_t NotifyCompleteContinuation(const std::u16string &devId, int32_t sessionId, bool isSuccess);
     int32_t ConnectRemoteAbility(const OHOS::AAFwk::Want& want, const sptr<IRemoteObject>& connect,
         int32_t callerUid, int32_t callerPid, uint32_t accessToken);
-    int32_t DisconnectRemoteAbility(const sptr<IRemoteObject>& connect);
+    int32_t DisconnectRemoteAbility(const sptr<IRemoteObject>& connect, int32_t callerUid, uint32_t accessToken);
     int32_t StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag);
     int32_t StopSyncRemoteMissions(const std::string& devId);
     int32_t RegisterMissionListener(const std::u16string& devId, const sptr<IRemoteObject>& obj);
