@@ -1585,76 +1585,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_044, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Failed to verify RemoveStack
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_045, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
-    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->RemoveStack(-1);
-    EXPECT_EQ(ERR_INVALID_VALUE, result);
-
-    result = stackManager_->RemoveStack(10);
-    EXPECT_EQ(REMOVE_STACK_ID_NOT_EXIST, result);
-
-    result = stackManager_->RemoveStack(0);
-    EXPECT_EQ(REMOVE_STACK_LAUNCHER_DENIED, result);
-
-    stackManager_->missionStackList_.clear();
-    result = stackManager_->RemoveStack(1);
-    EXPECT_EQ(MISSION_STACK_LIST_IS_EMPTY, result);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: RemoveStack
- * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_046, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto firstTopAbility = stackManager_->GetCurrentTopAbility();
-    firstTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto secondTopAbility = stackManager_->GetCurrentTopAbility();
-    secondTopAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->StartAbility(launcherAbilityRequest_);
-    EXPECT_EQ(ERR_OK, result);
-    auto topAbility = stackManager_->GetCurrentTopAbility();
-    topAbility->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    result = stackManager_->RemoveStack(1);
-    EXPECT_EQ(ERR_OK, result);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: RemoveStack
- * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_047, TestSize.Level1)
 {
@@ -1675,11 +1610,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_047, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.Level1)
 {
@@ -1740,11 +1675,11 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_048, TestSize.
 
 /*
  * Feature: AbilityStackManager
- * Function: RemoveStack
+ * Function: StartAbility
  * SubFunction: NA
- * FunctionPoints: RemoveStack
+ * FunctionPoints: StartAbility
  * EnvConditions: NA
- * CaseDescription: Succeeded to verify RemoveStack
+ * CaseDescription: Succeeded to verify StartAbility
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_049, TestSize.Level1)
 {

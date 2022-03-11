@@ -171,7 +171,6 @@ public:
 
     int RemoveMission(int id) override;
 
-    int RemoveStack(int id) override;
     sptr<IAbilityScheduler> AcquireDataAbility(
         const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken) override
     {
