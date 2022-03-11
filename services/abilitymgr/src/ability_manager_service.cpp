@@ -2786,7 +2786,7 @@ int AbilityManagerService::ClearUpApplicationData(const std::string &bundleName)
 
 int AbilityManagerService::UninstallApp(const std::string &bundleName, int32_t uid)
 {
-    HILOG_DEBUG("Uninstall app, bundleName: %{public}s", bundleName.c_str());
+    HILOG_DEBUG("Uninstall app, bundleName: %{public}s, uid=%{public}d", bundleName.c_str(), uid);
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t pid = getpid();
     if (callingPid != pid) {
@@ -2796,10 +2796,12 @@ int AbilityManagerService::UninstallApp(const std::string &bundleName, int32_t u
 
     int32_t targetUserId = uid / BASE_USER_RANGE;
     auto listManager = GetListManagerByUserId(targetUserId);
-    CHECK_POINTER_AND_RETURN(listManager, ERR_NO_INIT);
-    listManager->UninstallApp(bundleName, uid);
-    CHECK_POINTER_AND_RETURN(pendingWantManager_, ERR_NO_INIT);
-    pendingWantManager_->ClearPendingWantRecord(bundleName, uid);
+    if (listManager) {
+        listManager->UninstallApp(bundleName, uid);
+    }
+    if (pendingWantManager_) {
+        pendingWantManager_->ClearPendingWantRecord(bundleName, uid);
+    }
     int ret = DelayedSingleton<AppScheduler>::GetInstance()->KillApplicationByUid(bundleName, uid);
     if (ret != ERR_OK) {
         return UNINSTALL_APP_FAILED;
