@@ -99,8 +99,7 @@ bool MissionInfoMgr::AddMissionInfo(const InnerMissionInfo &missionInfo)
 bool MissionInfoMgr::UpdateMissionInfo(const InnerMissionInfo &missionInfo)
 {
     auto id = missionInfo.missionInfo.id;
-    if (missionIdMap_.find(id) == missionIdMap_.end()
-        || (missionIdMap_.find(id) != missionIdMap_.end() && !missionIdMap_[id])) {
+    if (missionIdMap_.find(id) == missionIdMap_.end() || !missionIdMap_[id]) {
         HILOG_ERROR("update mission info failed, missionId %{public}d not exists", id);
         return false;
     }

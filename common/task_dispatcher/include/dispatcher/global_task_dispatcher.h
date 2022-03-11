@@ -31,7 +31,7 @@ private:
 
 public:
     GlobalTaskDispatcher(TaskPriority priority, std::shared_ptr<TaskExecutor> &executor);
-    ~GlobalTaskDispatcher(){};
+    ~GlobalTaskDispatcher() = default;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
