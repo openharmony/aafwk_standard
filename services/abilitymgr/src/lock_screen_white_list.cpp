@@ -25,7 +25,7 @@ using json = nlohmann::json;
 
 bool LockScreenWhiteList::SetWhiteListInfo(const std::string &bundleName, bool isAllow)
 {
-    HILOG_INFO("SetWhiteListInfo bundleName %{public}s, isAllow %{public}d",
+    HILOG_INFO("bundleName %{public}s, isAllow %{public}d",
         bundleName.c_str(),
         static_cast<int>(isAllow));
     nlohmann::json jsonFile;
@@ -106,7 +106,7 @@ bool LockScreenWhiteList::FindBundleNameOnWhiteList(const std::string &bundleNam
 {
     nlohmann::json jsonFile;
     if (!GetWhiteListInfo(jsonFile)) {
-        HILOG_INFO("GetWhiteListInfo fail...");
+        HILOG_INFO("fail...");
         return false;
     }
     if (jsonFile.contains(bundleName)) {
