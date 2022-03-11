@@ -36,6 +36,7 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/datashare_ext_ability:datashareextensionability_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/datashare_ext_ability_context:datashareextensionabilitycontext_napi",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/extensioncontext:extensioncontext_napi",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/mission_manager:distributedmissionmanager",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/mission_manager:missionmanager_napi",
@@ -49,10 +50,6 @@ group("napi_packages") {
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant:wantconstant",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantagent:wantagent",
   ]
-
-  if (ability_runtime_graphics) {
-    deps += [ "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability" ]
-  }
 }
 
 group("form_napi_packages") {

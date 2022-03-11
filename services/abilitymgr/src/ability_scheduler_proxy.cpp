@@ -647,7 +647,6 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
     return ret;
 }
 
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief notify multi window mode changed.
  *
@@ -656,6 +655,7 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
  */
 void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {
+#ifdef SUPPORT_GRAPHICS
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -674,8 +674,8 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
     if (err != NO_ERROR) {
         HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %{public}d", err);
     }
-}
 #endif
+}
 
 /**
  * @brief Registers an observer to DataObsMgr specified by the given Uri.
@@ -789,6 +789,7 @@ bool AbilitySchedulerProxy::ScheduleNotifyChange(const Uri &uri)
  */
 void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
 {
+#ifdef SUPPORT_GRAPHICS
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -803,6 +804,7 @@ void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
     if (err != NO_ERROR) {
         HILOG_ERROR("NotifyTopActiveAbilityChanged fail to SendRequest. err: %{public}d", err);
     }
+#endif
 }
 
 /**

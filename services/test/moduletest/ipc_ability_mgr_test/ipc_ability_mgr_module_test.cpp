@@ -199,6 +199,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_004, TestSize.Level1)
  */
 HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_005, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_005 start";
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
@@ -212,6 +213,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_005, TestSize.Level1)
     }
 
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_005 end";
+#endif
 }
 
 /*

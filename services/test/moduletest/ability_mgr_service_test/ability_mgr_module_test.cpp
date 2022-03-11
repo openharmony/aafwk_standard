@@ -674,6 +674,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_004, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_005, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
 
@@ -695,6 +696,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_005, TestSize.Level1)
     EXPECT_EQ((std::size_t)1, stackManager_->windowTokenToAbilityMap_.size());
     abilityRecord->RemoveWindowInfo();
     stackManager_->windowTokenToAbilityMap_.clear();
+#endif
 }
 
 /*

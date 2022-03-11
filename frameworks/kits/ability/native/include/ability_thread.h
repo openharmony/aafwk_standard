@@ -287,7 +287,6 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify multi window mode changed.
      *
@@ -302,7 +301,6 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag);
-#endif
 
     /**
      * @brief continue ability to target device.

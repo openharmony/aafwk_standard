@@ -201,7 +201,6 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify multi window mode changed.
      *
@@ -209,7 +208,6 @@ public:
      * @param flag Indicates this ability has been enter this mode.
      */
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
-#endif
 
     /**
      * @brief Registers an observer to DataObsMgr specified by the given Uri.
@@ -231,14 +229,12 @@ public:
      */
     bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override;
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify this ability is top active ability.
      *
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag) override;
-#endif
 
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.

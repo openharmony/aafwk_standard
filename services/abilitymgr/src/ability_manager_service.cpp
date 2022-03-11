@@ -44,8 +44,8 @@
 #include "ui_service_mgr_client.h"
 #include "locale_config.h"
 #include "lock_screen_white_list.h"
-#include "mission_info_mgr.h"
 #endif
+#include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "sa_mgr_client.h"
@@ -194,9 +194,7 @@ bool AbilityManagerService::Init()
     amsConfigResolver_->Parse();
     HILOG_INFO("ams config parse");
     useNewMission_ = amsConfigResolver_->IsUseNewMission();
-#ifdef SUPPORT_GRAPHICS
     InitMissionListManager(userId, true);
-#endif
     SwitchManagers(U0_USER_ID, false);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
     if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
@@ -336,7 +334,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         HILOG_ERROR("IsAbilityControllerStart failed: %{public}s", abilityInfo.bundleName.c_str());
         return ERR_WOULD_BLOCK;
     }
-#ifdef SUPPORT_GRAPHICS
     auto missionListManager = GetListManagerByUserId(validUserId);
     if (missionListManager == nullptr) {
         HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
@@ -344,7 +341,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
     HILOG_DEBUG("%{public}s StartAbility by MissionList", __func__);
     return missionListManager->StartAbility(abilityRequest);
-#endif
 }
 
 int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
@@ -415,14 +411,12 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         return ERR_WOULD_BLOCK;
     }
-#ifdef SUPPORT_GRAPHICS
     auto missionListManager = GetListManagerByUserId(validUserId);
     if (missionListManager == nullptr) {
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
         return ERR_INVALID_VALUE;
     }
     return missionListManager->StartAbility(abilityRequest);
-#endif
 }
 
 int AbilityManagerService::StartAbility(const Want &want, const StartOptions &startOptions,
@@ -488,7 +482,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         return ERR_WOULD_BLOCK;
     }
     GrantUriPermission(want, validUserId);
-#ifdef SUPPORT_GRAPHICS
     abilityRequest.want.SetParam(Want::PARAM_RESV_DISPLAY_ID, startOptions.GetDisplayID());
     abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
     auto missionListManager = GetListManagerByUserId(validUserId);
@@ -497,7 +490,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         return ERR_INVALID_VALUE;
     }
     return missionListManager->StartAbility(abilityRequest);
-#endif
 }
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
@@ -616,14 +608,12 @@ int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &t
         return ERR_WOULD_BLOCK;
     }
 
-#ifdef SUPPORT_GRAPHICS
     auto missionListManager = GetListManagerByUserId(userId);
     if (missionListManager == nullptr) {
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return missionListManager->TerminateAbility(abilityRecord, resultCode, resultWant, flag);
-#endif
 }
 
 int AbilityManagerService::StartRemoteAbility(const Want &want, int requestCode)
@@ -736,9 +726,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
 
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto type = abilityRecord->GetAbilityInfo().type;
-#ifdef SUPPORT_GRAPHICS
     auto stackManager = GetStackManagerByUserId(userId);
-#endif
     auto connectManager = GetConnectManagerByUserId(userId);
     switch (type) {
         case AppExecFwk::AbilityType::SERVICE:
@@ -811,17 +799,14 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
     if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
         return ERR_WOULD_BLOCK;
     }
-#ifdef SUPPORT_GRAPHICS
     auto missionListManager = GetListManagerByUserId(userId);
     if (!missionListManager) {
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return missionListManager->MinimizeAbility(token, fromUser);
-#endif
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::GetRecentMissions(
     const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
@@ -872,7 +857,6 @@ int AbilityManagerService::GetMissionLockModeState()
     CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
     return currentStackManager_->GetMissionLockModeState();
 }
-#endif
 
 int AbilityManagerService::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
@@ -880,7 +864,6 @@ int AbilityManagerService::UpdateConfiguration(const AppExecFwk::Configuration &
     return DelayedSingleton<AppScheduler>::GetInstance()->UpdateConfiguration(config);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::MoveMissionToTop(int32_t missionId)
 {
     HILOG_INFO("Move mission to top.");
@@ -932,7 +915,6 @@ int AbilityManagerService::RemoveStack(int id)
     }
     return currentStackManager_->RemoveStack(id);
 }
-#endif
 
 int AbilityManagerService::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
@@ -1053,7 +1035,6 @@ int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &co
     return dmsClient.DisconnectRemoteAbility(connect);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams)
 {
@@ -1066,7 +1047,6 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
     DistributedClient dmsClient;
     return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
 }
-#endif
 
 int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
 {
@@ -1130,7 +1110,6 @@ int AbilityManagerService::NotifyContinuationResult(int32_t missionId, int32_t r
     return ERR_OK;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::StartSyncRemoteMissions(const std::string& devId, bool fixConflict, int64_t tag)
 {
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
@@ -1184,7 +1163,6 @@ int AbilityManagerService::UnRegisterMissionListener(const std::string &deviceId
     DistributedClient dmsClient;
     return dmsClient.UnRegisterMissionListener(Str8ToStr16(deviceId), listener->AsObject());
 }
-#endif
 
 void AbilityManagerService::RemoveAllServiceRecord()
 {
@@ -1351,7 +1329,6 @@ int AbilityManagerService::GetPendingRequestWant(const sptr<IWantSender> &target
     return pendingWantManager_->GetPendingRequestWant(target, want);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::SetShowOnLockScreen(bool isAllow)
 {
     HILOG_INFO("SetShowOnLockScreen");
@@ -1569,7 +1546,6 @@ int32_t AbilityManagerService::GetMissionIdByToken(const sptr<IRemoteObject> &to
 
     return GetMissionIdByAbilityToken(token);
 }
-#endif
 
 bool AbilityManagerService::IsAbilityControllerStartById(int32_t missionId)
 {
@@ -1744,14 +1720,12 @@ int AbilityManagerService::AttachAbilityThread(
         }
         returnCode = dataAbilityManager->AttachAbilityThread(scheduler, token);
     } else {
-#ifdef SUPPORT_GRAPHICS
         auto missionListManager = GetListManagerByUserId(userId);
         if (!missionListManager) {
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
             return ERR_INVALID_VALUE;
         }
         returnCode = missionListManager->AttachAbilityThread(scheduler, token);
-#endif
     }
     return returnCode;
 }
@@ -1759,30 +1733,24 @@ int AbilityManagerService::AttachAbilityThread(
 void AbilityManagerService::DumpFuncInit()
 {
     dumpFuncMap_[KEY_DUMP_ALL] = &AbilityManagerService::DumpInner;
-#ifdef SUPPORT_GRAPHICS
     dumpFuncMap_[KEY_DUMP_STACK_LIST] = &AbilityManagerService::DumpStackListInner;
     dumpFuncMap_[KEY_DUMP_STACK] = &AbilityManagerService::DumpStackInner;
-#endif
     dumpFuncMap_[KEY_DUMP_MISSION] = &AbilityManagerService::DumpMissionInner;
     dumpFuncMap_[KEY_DUMP_TOP_ABILITY] = &AbilityManagerService::DumpTopAbilityInner;
     dumpFuncMap_[KEY_DUMP_WAIT_QUEUE] = &AbilityManagerService::DumpWaittingAbilityQueueInner;
     dumpFuncMap_[KEY_DUMP_SERVICE] = &AbilityManagerService::DumpStateInner;
     dumpFuncMap_[KEY_DUMP_DATA] = &AbilityManagerService::DataDumpStateInner;
     dumpFuncMap_[KEY_DUMP_FOCUS_ABILITY] = &AbilityManagerService::DumpFocusMapInner;
-#ifdef SUPPORT_GRAPHICS
     dumpFuncMap_[KEY_DUMP_WINDOW_MODE] = &AbilityManagerService::DumpWindowModeInner;
     dumpFuncMap_[KEY_DUMP_MISSION_LIST] = &AbilityManagerService::DumpMissionListInner;
     dumpFuncMap_[KEY_DUMP_MISSION_INFOS] = &AbilityManagerService::DumpMissionInfosInner;
-#endif
 }
 
 void AbilityManagerService::DumpSysFuncInit()
 {
     dumpsysFuncMap_[KEY_DUMPSYS_ALL] = &AbilityManagerService::DumpSysInner;
-#ifdef SUPPORT_GRAPHICS
     dumpsysFuncMap_[KEY_DUMPSYS_MISSION_LIST] = &AbilityManagerService::DumpSysMissionListInner;
     dumpsysFuncMap_[KEY_DUMPSYS_ABILITY] = &AbilityManagerService::DumpSysAbilityInner;
-#endif
     dumpsysFuncMap_[KEY_DUMPSYS_SERVICE] = &AbilityManagerService::DumpSysStateInner;
     dumpsysFuncMap_[KEY_DUMPSYS_PENDING] = &AbilityManagerService::DumpSysPendingInner;
     dumpsysFuncMap_[KEY_DUMPSYS_PROCESS] = &AbilityManagerService::DumpSysProcess;
@@ -1803,7 +1771,6 @@ void AbilityManagerService::DumpSysInner(
     DumpSysProcess(args, info, isClient, isUserID, userId);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::DumpSysMissionListInner(
     const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId)
 {
@@ -1867,7 +1834,6 @@ void AbilityManagerService::DumpSysAbilityInner(
         info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
     }
 }
-#endif
 
 void AbilityManagerService::DumpSysStateInner(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
@@ -2020,7 +1986,6 @@ void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::
     }
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::DumpStackListInner(const std::string &args, std::vector<std::string> &info)
 {
     currentStackManager_->DumpStackList(info);
@@ -2081,7 +2046,6 @@ void AbilityManagerService::DumpMissionInner(const std::string &args, std::vecto
     (void)StrToInt(argList[1], missionId);
     currentMissionListManager_->DumpMission(missionId, info);
 }
-#endif
 
 void AbilityManagerService::DumpTopAbilityInner(const std::string &args, std::vector<std::string> &info)
 {
@@ -2226,14 +2190,12 @@ int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &toke
         }
         return dataAbilityManager->AbilityTransitionDone(token, state);
     }
-#ifdef SUPPORT_GRAPHICS
     auto missionListManager = GetListManagerByUserId(userId);
     if (!missionListManager) {
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return missionListManager->AbilityTransactionDone(token, state, saveData);
-#endif
 }
 
 int AbilityManagerService::ScheduleConnectAbilityDone(
@@ -2312,7 +2274,6 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
     return connectManager->ScheduleCommandAbilityDoneLocked(token);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
 {
     HILOG_DEBUG("Add window id.");
@@ -2328,7 +2289,6 @@ void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int3
     }
     stackManager->AddWindowInfo(token, windowToken);
 }
-#endif
 
 void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
@@ -2361,14 +2321,12 @@ void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
             break;
         }
         default: {
-#ifdef SUPPORT_GRAPHICS
             auto missionListManager = GetListManagerByUserId(userId);
             if (!missionListManager) {
                 HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
                 return;
             }
             missionListManager->OnAbilityRequestDone(token, state);
-#endif
             break;
         }
     }
@@ -2378,9 +2336,7 @@ void AbilityManagerService::OnAppStateChanged(const AppInfo &info)
 {
     HILOG_INFO("On app state changed.");
     connectManager_->OnAppStateChanged(info);
-#ifdef SUPPORT_GRAPHICS
     currentMissionListManager_->OnAppStateChanged(info);
-#endif
     dataAbilityManager_->OnAppStateChanged(info);
 }
 
@@ -2389,7 +2345,6 @@ std::shared_ptr<AbilityEventHandler> AbilityManagerService::GetEventHandler()
     return handler_;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::SetStackManager(int userId, bool switchUser)
 {
     auto iterator = stackManagers_.find(userId);
@@ -2436,7 +2391,6 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManager()
 {
     return currentStackManager_;
 }
-#endif
 
 void AbilityManagerService::DumpWaittingAbilityQueue(std::string &result)
 {
@@ -2628,7 +2582,6 @@ int AbilityManagerService::GenerateAbilityRequest(
     return ERR_OK;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::GetAllStackInfo(StackInfo &stackInfo)
 {
     HILOG_DEBUG("Get all stack info.");
@@ -2636,7 +2589,6 @@ int AbilityManagerService::GetAllStackInfo(StackInfo &stackInfo)
     currentStackManager_->GetAllStackInfo(stackInfo);
     return ERR_OK;
 }
-#endif
 
 int AbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId)
 {
@@ -2743,12 +2695,10 @@ void AbilityManagerService::GetMaxRestartNum(int &max)
     }
 }
 
-#ifdef SUPPORT_GRAPHICS
 bool AbilityManagerService::IsUseNewMission()
 {
     return useNewMission_;
 }
-#endif
 
 int AbilityManagerService::KillProcess(const std::string &bundleName)
 {
@@ -3033,7 +2983,6 @@ std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUse
     return nullptr;
 }
 
-#ifdef SUPPORT_GRAPHICS
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserId(int32_t userId)
 {
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
@@ -3044,7 +2993,6 @@ std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserI
     HILOG_ERROR("%{public}s, Failed to get Manager. UserId = %{public}d", __func__, userId);
     return nullptr;
 }
-#endif
 
 std::shared_ptr<AbilityConnectManager> AbilityManagerService::GetConnectManagerByUserId(int32_t userId)
 {
@@ -3125,7 +3073,6 @@ std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager
     return nullptr;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::MoveMissionToFloatingStack(const MissionOption &missionOption)
 {
     HILOG_INFO("Move mission to floating stack.");
@@ -3137,7 +3084,6 @@ int AbilityManagerService::MoveMissionToSplitScreenStack(const MissionOption &pr
     HILOG_INFO("Move mission to split screen stack.");
     return currentStackManager_->MoveMissionToSplitScreenStack(primary, secondary);
 }
-#endif
 
 int AbilityManagerService::ChangeFocusAbility(
     const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
@@ -3158,7 +3104,6 @@ int AbilityManagerService::ChangeFocusAbility(
     return currentStackManager_->ChangeFocusAbility(lostFocusToken, getFocusToken);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::MinimizeMultiWindow(int missionId)
 {
     HILOG_INFO("Minimize multi window.");
@@ -3251,7 +3196,6 @@ int AbilityManagerService::UnlockMission(int missionId)
     HILOG_DEBUG("locker uid :%{public}d, pid :%{public}d. isSystemApp: %{public}d", callerUid, callerPid, isSystemApp);
     return currentStackManager_->StartLockMission(callerUid, missionId, isSystemApp, false);
 }
-#endif
 
 int AbilityManagerService::GetUidByBundleName(std::string bundleName)
 {
@@ -3307,9 +3251,9 @@ void AbilityManagerService::StartSystemApplication()
     StartupResidentProcess(U0_USER_ID);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::StartingSystemUiAbility()
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
     AppExecFwk::AbilityInfo systemUiInfo;
     auto bms = GetBundleManager();
@@ -3326,8 +3270,8 @@ void AbilityManagerService::StartingSystemUiAbility()
         }
     );
     (void)StartAbility(systemUiWant, U0_USER_ID, DEFAULT_INVAL_VALUE);
-}
 #endif
+}
 
 void AbilityManagerService::ConnectBmsService()
 {
@@ -3373,14 +3317,12 @@ int AbilityManagerService::GetWantSenderInfo(const sptr<IWantSender> &target, st
     return pendingWantManager_->GetWantSenderInfo(target, info);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::UpdateLockScreenState(bool isLockScreen)
 {
     HILOG_DEBUG("%{public}s begin", __func__);
     CHECK_POINTER(currentStackManager_);
     currentStackManager_->UpdateLockScreenState(isLockScreen);
 }
-#endif
 
 /**
  * Get system memory information.
@@ -3455,7 +3397,6 @@ bool AbilityManagerService::IsRamConstrainedDevice()
     return isRamConstrainedDevice;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::GetMissionSaveTime() const
 {
     if (!amsConfigResolver_) {
@@ -3488,7 +3429,6 @@ sptr<IRemoteObject> AbilityManagerService::GetAbilityTokenByMissionId(int32_t mi
     }
     return currentMissionListManager_->GetAbilityTokenByMissionId(missionId);
 }
-#endif
 
 void AbilityManagerService::StartingSettingsDataAbility()
 {
@@ -3759,7 +3699,6 @@ void AbilityManagerService::ClearUserData(int32_t userId)
     pendingWantManagers_.erase(userId);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler)
 {
     auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
@@ -3826,17 +3765,14 @@ void AbilityManagerService::StopFreezingScreen()
 {
     HILOG_INFO("%{public}s", __func__);
 }
-#endif
 
 void AbilityManagerService::UserStarted(int32_t userId)
 {
     HILOG_INFO("%{public}s", __func__);
     InitConnectManager(userId, false);
-#ifdef SUPPORT_GRAPHICS
     SetStackManager(userId, false);
     InitMissionListManager(userId, false);
     InitDataAbilityManager(userId, false);
-#endif
     InitPendWantManager(userId, false);
 }
 
@@ -3857,16 +3793,13 @@ void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
 {
     HILOG_INFO("%{public}s, SwitchManagers:%{public}d-----begin", __func__, userId);
     InitConnectManager(userId, switchUser);
-#ifdef SUPPORT_GRAPHICS
     SetStackManager(userId, switchUser);
     InitMissionListManager(userId, switchUser);
-#endif
     InitDataAbilityManager(userId, switchUser);
     InitPendWantManager(userId, switchUser);
     HILOG_INFO("%{public}s, SwitchManagers:%{public}d-----end", __func__, userId);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::PauseOldUser(int32_t userId)
 {
     HILOG_INFO("%{public}s, PauseOldUser:%{public}d-----begin", __func__, userId);
@@ -3927,18 +3860,15 @@ void AbilityManagerService::PauseOldStackManager(int32_t userId)
     }
     manager->PauseManager();
 }
-#endif
 
 void AbilityManagerService::StartUserApps(int32_t userId, bool isBoot)
 {
     HILOG_INFO("StartUserApps, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
-#ifdef SUPPORT_GRAPHICS
     if (currentMissionListManager_ && currentMissionListManager_->IsStarted()) {
         HILOG_INFO("missionListManager ResumeManager");
         currentMissionListManager_->ResumeManager();
         return;
     }
-#endif
     StartSystemAbilityByUser(userId, isBoot);
 }
 
@@ -3950,9 +3880,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartingLauncherAbility(isBoot);
-#ifdef SUPPORT_GRAPHICS
         StartingScreenLockAbility();
-#endif
         return;
     }
 
@@ -3961,11 +3889,9 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
         StartingLauncherAbility(isBoot);
     }
 
-#ifdef SUPPORT_GRAPHICS
     if (amsConfigResolver_->GetStartScreenLockState()) {
         StartingScreenLockAbility();
     }
-#endif
 
     if (amsConfigResolver_->GetPhoneServiceState()) {
         HILOG_INFO("start phone service");
@@ -4101,11 +4027,9 @@ int AbilityManagerService::SendANRProcessID(int pid)
             HILOG_ERROR("Kill app not response process failed");
         }
     };
-#ifdef SUPPORT_GRAPHICS
     if (!SetANRMissionByProcessID(pid)) {
         HILOG_ERROR("Set app not response mission record failed");
     }
-#endif
     handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
     appScheduler_->PostANRTaskByProcessID(pid);
     return ERR_OK;
@@ -4324,7 +4248,6 @@ int AbilityManagerService::DoAbilityBackground(const sptr<IRemoteObject> &token,
     return ret;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)
 {
     HILOG_INFO("enter missionId : %{public}d", missionId);
@@ -4338,6 +4261,7 @@ int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)
     return currentMissionListManager_->MoveMissionToFront(missionId);
 }
 
+#ifdef SUPPORT_GRAPHICS
 int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId)
 {
     auto bms = GetBundleManager();
@@ -4382,9 +4306,9 @@ bool AbilityManagerService::JudgeMultiUserConcurrency(const AppExecFwk::AbilityI
     return true;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityManagerService::StartingScreenLockAbility()
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
     CHECK_POINTER_IS_NULLPTR(bms);
@@ -4410,8 +4334,8 @@ void AbilityManagerService::StartingScreenLockAbility()
     if (attemptNums <= maxAttemptNums) {
         (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
     }
-}
 #endif
+}
 
 int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
@@ -4523,7 +4447,6 @@ bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequ
     return false;
 }
 
-#ifdef SUPPORT_GRAPHICS
 bool AbilityManagerService::SetANRMissionByProcessID(int pid)
 {
     HILOG_INFO("start.");
@@ -4551,7 +4474,6 @@ bool AbilityManagerService::SetANRMissionByProcessID(int pid)
     }
     return true;
 }
-#endif
 
 void AbilityManagerService::StartupResidentProcess(int userId)
 {

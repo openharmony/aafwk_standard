@@ -633,6 +633,7 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
 
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
     resConfig->SetLocaleInfo("zh", "Hans", "CN");
+#ifdef SUPPORT_GRAPHICS
     if (resConfig->GetLocaleInfo() != nullptr) {
         HILOG_INFO(
             "ContextContainer::InitResourceManager language: %{public}s, script: %{public}s, region: %{public}s,",
@@ -642,6 +643,7 @@ void ContextContainer::InitResourceManager(BundleInfo &bundleInfo, std::shared_p
     } else {
         HILOG_INFO("ContextContainer::InitResourceManager language: GetLocaleInfo is null.");
     }
+#endif
     resourceManager->UpdateResConfig(*resConfig);
     deal->initResourceManager(resourceManager);
 }
