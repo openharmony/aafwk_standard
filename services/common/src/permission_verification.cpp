@@ -62,6 +62,20 @@ bool PermissionVerification::VerifyRunningInfoPerm()
     return false;
 }
 
+bool PermissionVerification::VerifyControllerPerm()
+{
+    if (IsSACall()) {
+        HILOG_DEBUG("%{public}s: the interface called by SA.", __func__);
+        return true;
+    }
+    if (VerifyCallingPermission(PermissionConstants::PERMISSION_SET_ABILITY_CONTROLLER)) {
+        HILOG_DEBUG("%{public}s: Permission verification succeeded.", __func__);
+        return true;
+    }
+    HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
+    return false;
+}
+
 unsigned int PermissionVerification::GetCallingTokenID()
 {
     auto callerToken = IPCSkeleton::GetCallingTokenID();

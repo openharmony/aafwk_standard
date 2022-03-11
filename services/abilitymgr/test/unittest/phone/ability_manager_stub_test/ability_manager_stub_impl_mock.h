@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -225,7 +225,7 @@ public:
         return 0;
     }
 
-    virtual int UninstallApp(const std::string &bundleName)
+    virtual int UninstallApp(const std::string &bundleName, int32_t uid)
     {
         return 0;
     }
@@ -238,11 +238,6 @@ public:
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override
     {
         return true;
-    }
-
-    int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) override
-    {
-        return 0;
     }
 
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override
@@ -362,6 +357,10 @@ public:
         return 0;
     }
     virtual int MoveMissionToFront(int32_t missionId, const StartOptions &startOptions) override
+    {
+        return 0;
+    }
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override
     {
         return 0;
     }

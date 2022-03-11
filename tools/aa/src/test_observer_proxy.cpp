@@ -101,7 +101,7 @@ void TestObserverProxy::TestFinished(const std::string &msg, const int &resultCo
 }
 
 ShellCommandResult TestObserverProxy::ExecuteShellCommand(
-    const std::string &cmd, const int64_t timeoutMs)
+    const std::string &cmd, const int64_t timeoutSec)
 {
     HILOG_INFO("start");
 
@@ -125,8 +125,8 @@ ShellCommandResult TestObserverProxy::ExecuteShellCommand(
         return result;
     }
 
-    if (!data.WriteInt64(timeoutMs)) {
-        HILOG_ERROR("Failed to write timeoutMs");
+    if (!data.WriteInt64(timeoutSec)) {
+        HILOG_ERROR("Failed to write timeoutSec");
         return result;
     }
 

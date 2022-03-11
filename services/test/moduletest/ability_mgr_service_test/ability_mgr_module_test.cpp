@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1142,27 +1142,6 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_018, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: CompelVerifyPermission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService CompelVerifyPermission
- * EnvConditions: NA
- * CaseDescription: Verify function CompelVerifyPermission
- */
-HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_025, TestSize.Level1)
-{
-    EXPECT_TRUE(abilityMgrServ_);
-    EXPECT_TRUE(mockAppMgrClient_);
-    const std::string permission = "permission";
-    int pid = 100;
-    int uid = 1000;
-    std::string message;
-    int runTimes = 1;
-    EXPECT_CALL(*mockAppMgrClient_, CompelVerifyPermission(_, _, _, _)).Times(runTimes);
-    auto resultFunction = abilityMgrServ_->CompelVerifyPermission(permission, pid, uid, message);
-    EXPECT_EQ(resultFunction, 0);
-}
-/*
- * Feature: AbilityManagerService
  * Function: AmsConfigurationParameter
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService CompelVerifyPermission
@@ -1245,7 +1224,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_001, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName3");
+    abilityMgrServ_->UninstallApp("bundleName3", 1);
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
 }
@@ -1288,7 +1267,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_002, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName2");
+    abilityMgrServ_->UninstallApp("bundleName2", 1);
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 0);
 }
@@ -1331,7 +1310,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_003, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName1");
+    abilityMgrServ_->UninstallApp("bundleName1", 1);
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }
@@ -1374,7 +1353,7 @@ HWTEST_F(AbilityMgrModuleTest, UninstallApp_004, TestSize.Level1)
         wantSenderInfo1, nullptr)->AsObject());
     EXPECT_NE(pendingRecord1, nullptr);
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 2);
-    abilityMgrServ_->UninstallApp("bundleName3");
+    abilityMgrServ_->UninstallApp("bundleName3", 1);
     WaitAMS();
     EXPECT_EQ((int)abilityMgrServ_->pendingWantManager_->wantRecords_.size(), 1);
 }

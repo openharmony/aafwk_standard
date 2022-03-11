@@ -30,12 +30,12 @@ public:
     virtual void TestStatus(const std::string &msg, const int &resultCode) override;
     virtual void TestFinished(const std::string &msg, const int &resultCode) override;
     virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutMs) override;
+        const std::string &cmd, const int64_t timeoutSec) override;
     bool WaitForFinish(const int64_t &timeoutMs);
 
 private:
     bool isFinished_;
-    static constexpr int64_t SHELL_COMMAND_TIMEOUT_MAX = 5000;
+    static constexpr int64_t SHELL_COMMAND_TIMEOUT_MAX = 5;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

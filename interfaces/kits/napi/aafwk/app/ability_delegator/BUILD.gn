@@ -38,6 +38,7 @@ ohos_shared_library("abilitydelegatorregistry") {
 
   external_deps = [
     "ability_base:base",
+    "ability_base:want",
     "ability_runtime:ability_manager",
     "ability_runtime:abilitykit_native",
     "ability_runtime:runtime",

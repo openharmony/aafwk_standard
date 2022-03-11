@@ -143,18 +143,6 @@ public:
 
     virtual void PrepareTerminate(const sptr<IRemoteObject> &token) = 0;
 
-    /**
-     * Checks whether a specified permission has been granted to the process identified by pid and uid
-     *
-     * @param permission Indicates the permission to check.
-     * @param pid Indicates the ID of the process to check.
-     * @param uid Indicates the UID of the process to check.
-     * @param message Describe success or failure
-     *
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) = 0;
-
     virtual void GetRunningProcessInfoByToken(
         const sptr<IRemoteObject> &token, OHOS::AppExecFwk::RunningProcessInfo &info) = 0;
 
@@ -184,7 +172,6 @@ public:
         KILL_PROCESS_WITH_ACCOUNT,
         KILL_APPLICATION,
         ABILITY_ATTACH_TIMEOUT,
-        COMPEL_VERIFY_PERMISSION,
         PREPARE_TERMINATE_ABILITY,
         KILL_APPLICATION_BYUID,
         GET_RUNNING_PROCESS_INFO_BY_TOKEN,

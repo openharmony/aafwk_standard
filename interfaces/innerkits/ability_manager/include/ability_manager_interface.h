@@ -394,10 +394,11 @@ public:
     /**
      * Uninstall app
      *
-     * @param bundleName.
+     * @param bundleName bundle name of uninstalling app.
+     * @param uid uid of bundle.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UninstallApp(const std::string &bundleName) = 0;
+    virtual int UninstallApp(const std::string &bundleName, int32_t uid) = 0;
 
     /**
      * Moving mission to the specified stack by mission option(Enter floating window mode).
@@ -463,18 +464,6 @@ public:
      * @return Returns true is first in Mission.
      */
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) = 0;
-
-    /**
-     * Checks whether a specified permission has been granted to the process identified by pid and uid
-     *
-     * @param permission Indicates the permission to check.
-     * @param pid Indicates the ID of the process to check.
-     * @param uid Indicates the UID of the process to check.
-     * @param message Describe success or failure
-     *
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message) = 0;
 
     /**
      * Save the top ability States and move them to the background
@@ -727,6 +716,14 @@ public:
      */
     virtual int SendANRProcessID(int pid) = 0;
 
+    /**
+     * Get mission id by ability token.
+     *
+     * @param token The token of ability.
+     * @return Returns -1 if do not find mission, otherwise return mission id.
+     */
+    virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
+
     enum {
         // ipc id 1-1000 for kit
         // ipc id for terminating ability (1)
@@ -896,6 +893,9 @@ public:
 
         // ipc id for move mission to front by options (56)
         MOVE_MISSION_TO_FRONT_BY_OPTIONS,
+
+        // ipc for get mission id by ability token (57)
+        GET_MISSION_ID_BY_ABILITY_TOKEN,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

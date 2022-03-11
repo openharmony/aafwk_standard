@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -355,7 +355,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_005, TestSize.Level1)
     EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
     EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleCleanAbility(_)).Times(1);
 
-    // simulate press back key, AppA to backgroud and exit.
+    // simulate press back key, AppA to background and exit.
     serviceInner_->UpdateAbilityState(testAppB.GetToken("abilityB1"), AbilityState::ABILITY_STATE_FOREGROUND);
     serviceInner_->ApplicationForegrounded(testAppB.appRecord_->GetRecordId());
     serviceInner_->UpdateAbilityState(testAppA.GetToken("abilityA1"), AbilityState::ABILITY_STATE_BACKGROUND);

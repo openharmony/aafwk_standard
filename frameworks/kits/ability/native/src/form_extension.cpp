@@ -94,5 +94,11 @@ void FormExtension::OnVisibilityChange(const std::map<int64_t, int32_t>& formEve
 {
     HILOG_INFO("%{public}s called.", __func__);
 }
+
+FormState FormExtension::OnAcquireFormState(const Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return FormState::DEFAULT;
+}
 }
 }

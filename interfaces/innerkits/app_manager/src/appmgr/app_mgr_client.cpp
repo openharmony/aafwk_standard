@@ -277,23 +277,6 @@ void AppMgrClient::PrepareTerminate(const sptr<IRemoteObject> &token)
     amsService->PrepareTerminate(token);
 }
 
-int AppMgrClient::CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message)
-{
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
-    if (service == nullptr) {
-        return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
-    }
-    sptr<IAmsMgr> amsService = service->GetAmsMgr();
-    if (amsService == nullptr) {
-        return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
-    }
-    auto result = amsService->CompelVerifyPermission(permission, pid, uid, message);
-    if (result != ERR_OK) {
-        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
-    }
-    return AppMgrResultCode::RESULT_OK;
-}
-
 /**
  * Get system memory information.
  * @param SystemMemoryAttr, memory information.
@@ -456,6 +439,17 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
         HILOG_INFO("AttachRenderProcess");
         service->AttachRenderProcess(renderScheduler->AsObject());
     }
+}
+
+void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service == nullptr) {
+        HILOG_ERROR("service is nullptr");
+        return;
+    }
+
+    service->PostANRTaskByProcessID(pid);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
