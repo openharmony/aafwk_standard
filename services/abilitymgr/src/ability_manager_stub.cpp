@@ -181,7 +181,7 @@ int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel
 {
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
     int resultCode = data.ReadInt32();
-Want *resultWant = data.ReadParcelable<Want>();
+    Want *resultWant = data.ReadParcelable<Want>();
     bool flag = data.ReadBool();
     int32_t result;
     if (flag) {
