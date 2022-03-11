@@ -116,7 +116,7 @@ private:
             };
 
         NativeValue* lastParam =
-            (info.argc == UPDATE_FORM_PARAMS_SIZE) ? nullptr : info.argv[UPDATE_FORM_PARAMS_SIZE - 1];
+            (info.argc == UPDATE_FORM_PARAMS_SIZE) ? nullptr : info.argv[info.argc - 1];
         NativeValue* result = nullptr;
         AsyncTask::Schedule(
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
