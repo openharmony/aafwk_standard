@@ -60,6 +60,7 @@ ohos_shared_library("missionmanager_napi") {
       "//third_party/icu/icu4c/source/common",
     ]
     external_deps += [ "multimedia_image_standard:image" ]
+    defines = [ "SUPPORT_GRAPHICS" ]
   }
 
   relative_install_dir = "module/application"

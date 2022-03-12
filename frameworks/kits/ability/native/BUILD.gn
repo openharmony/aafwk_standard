@@ -42,6 +42,7 @@ config("ability_config") {
     "//foundation/aafwk/standard/common/task_dispatcher/include/threading",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include/task",
     "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
   ]
 
   cflags = []
@@ -58,7 +59,6 @@ config("ability_config") {
   if (ability_runtime_graphics) {
     include_dirs += [
       "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
-      "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
     ]
     defines += [ "SUPPORT_GRAPHICS" ]
   }

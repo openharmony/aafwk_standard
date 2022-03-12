@@ -51,16 +51,12 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_REGISTEROBSERVER] = &AbilitySchedulerStub::RegisterObserverInner;
     requestFuncMap_[SCHEDULE_UNREGISTEROBSERVER] = &AbilitySchedulerStub::UnregisterObserverInner;
     requestFuncMap_[SCHEDULE_NOTIFYCHANGE] = &AbilitySchedulerStub::NotifyChangeInner;
-#ifdef SUPPORT_GRAPHICS
     requestFuncMap_[MULTI_WIN_CHANGED] = &AbilitySchedulerStub::MutiWinModeChangedInner;
-#endif
     requestFuncMap_[SCHEDULE_NORMALIZEURI] = &AbilitySchedulerStub::NormalizeUriInner;
     requestFuncMap_[SCHEDULE_DENORMALIZEURI] = &AbilitySchedulerStub::DenormalizeUriInner;
     requestFuncMap_[SCHEDULE_UPDATE_CONFIGURATION] = &AbilitySchedulerStub::UpdateConfigurationInner;
     requestFuncMap_[SCHEDULE_EXECUTEBATCH] = &AbilitySchedulerStub::ExecuteBatchInner;
-#ifdef SUPPORT_GRAPHICS
     requestFuncMap_[TOP_ACTIVE_ABILITY_CHANGED] = &AbilitySchedulerStub::TopActiveAbilityChangedInner;
-#endif
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilitySchedulerStub::NotifyContinuationResultInner;
     requestFuncMap_[REQUEST_CALL_REMOTE] = &AbilitySchedulerStub::CallRequestInner;
     requestFuncMap_[CONTINUE_ABILITY] = &AbilitySchedulerStub::ContinueAbilityInner;
@@ -512,7 +508,6 @@ int AbilitySchedulerStub::UpdateConfigurationInner(MessageParcel &data, MessageP
     return NO_ERROR;
 }
 
-#ifdef SUPPORT_GRAPHICS
 int AbilitySchedulerStub::MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t winModeKey = data.ReadInt32();
@@ -527,7 +522,6 @@ int AbilitySchedulerStub::TopActiveAbilityChangedInner(MessageParcel &data, Mess
     NotifyTopActiveAbilityChanged(flag);
     return NO_ERROR;
 }
-#endif
 
 int AbilitySchedulerStub::ExecuteBatchInner(MessageParcel &data, MessageParcel &reply)
 {

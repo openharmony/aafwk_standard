@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("abilitydelegatorregistry") {
   include_dirs = [
@@ -49,6 +50,10 @@ ohos_shared_library("abilitydelegatorregistry") {
     "ipc_js:rpc",
     "napi:ace_napi",
   ]
+
+  if (!ability_runtime_graphics) {
+    external_deps += [ "utils_base:utils" ]
+  }
 
   relative_install_dir = "module/application"
 

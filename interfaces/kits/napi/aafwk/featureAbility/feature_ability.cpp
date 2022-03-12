@@ -626,6 +626,7 @@ napi_value TerminateAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbac
  */
 napi_value NAPI_HasWindowFocus(napi_env env, napi_callback_info info)
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_INFO("%{public}s,called", __func__);
     AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
@@ -644,6 +645,9 @@ napi_value NAPI_HasWindowFocus(napi_env env, napi_callback_info info)
     }
     HILOG_INFO("%{public}s,end", __func__);
     return ret;
+#else
+   return nullptr;
+#endif
 }
 
 /**
@@ -670,6 +674,7 @@ napi_value NAPI_GetContext(napi_env env, napi_callback_info info)
  */
 napi_value HasWindowFocusWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo *asyncCallbackInfo)
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr.", __func__);
@@ -695,8 +700,12 @@ napi_value HasWindowFocusWrap(napi_env env, napi_callback_info info, AsyncCallba
     }
     HILOG_INFO("%{public}s, asyncCallback end.", __func__);
     return ret;
+#else
+   return nullptr;
+#endif
 }
 
+#ifdef SUPPORT_GRAPHICS
 napi_value HasWindowFocusAsync(
     napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
@@ -802,6 +811,14 @@ napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackI
     HILOG_INFO("%{public}s, promise end.", __func__);
     return promise;
 }
+#else
+napi_value HasWindowFocusAsync(
+    napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
+{}
+
+napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
+{}
+#endif
 
 EXTERN_C_START
 /**

@@ -36,6 +36,11 @@
 #include "napi_result_set.h"
 #include "securec.h"
 
+#ifndef SUPPORT_GRAPHICS
+#define DBL_MIN ((double)2.22507385850720138309e-308L)
+#define DBL_MAX ((double)2.22507385850720138309e-308L)
+#endif
+
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 

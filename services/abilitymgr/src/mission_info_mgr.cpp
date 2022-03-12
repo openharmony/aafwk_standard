@@ -414,7 +414,9 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
         HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
         return false;
     }
+#ifdef SUPPORT_GRAPHICS
     missionSnapshot.snapshot = snapshot.GetPixelMap();
+#endif
     missionSnapshot.topAbility = it->missionInfo.want.GetElement();
     if (!taskDataPersistenceMgr_->SaveMissionSnapshot(missionId, missionSnapshot)) {
         HILOG_ERROR("snapshot: save mission snapshot failed");
