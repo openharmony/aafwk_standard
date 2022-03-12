@@ -1387,10 +1387,10 @@ public:
      * @brief Prepare user data of local Ability.
      *
      * @param wantParams Indicates the user data to be saved.
-     * @return If the ability is willing to continue and data saved successfully, it returns true;
-     * otherwise, it returns false.
+     * @return If the ability is willing to continue and data saved successfully, it returns 0;
+     * otherwise, it returns errcode.
      */
-    virtual bool OnContinue(WantParams &wantParams);
+    virtual int32_t OnContinue(WantParams &wantParams);
 
 #ifdef SUPPORT_GRAPHICS
     /**
