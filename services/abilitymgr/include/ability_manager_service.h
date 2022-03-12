@@ -1064,9 +1064,7 @@ private:
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
-#ifdef SUPPORT_GRAPHICS
     void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
-#endif
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();

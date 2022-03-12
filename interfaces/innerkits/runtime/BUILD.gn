@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 config("runtime_config") {
   visibility = [ ":*" ]
@@ -56,7 +57,6 @@ ohos_shared_library("runtime") {
 
   deps = [
     "//ark/js_runtime:libark_jsruntime",
-    "//foundation/ace/ace_engine/frameworks/core:ace_container_scope",
     "//foundation/ace/napi:ace_napi_ark",
   ]
 
@@ -64,7 +64,6 @@ ohos_shared_library("runtime") {
     "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:app_manager",
-    "ace_engine_standard:ace_uicontent",
     "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
@@ -73,6 +72,12 @@ ohos_shared_library("runtime") {
     "resmgr_standard:global_resmgr",
     "utils_base:utils",
   ]
+
+  if (ability_runtime_graphics) {
+    deps +=
+        [ "//foundation/ace/ace_engine/frameworks/core:ace_container_scope" ]
+    external_deps += [ "ace_engine_standard:ace_uicontent" ]
+  }
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
