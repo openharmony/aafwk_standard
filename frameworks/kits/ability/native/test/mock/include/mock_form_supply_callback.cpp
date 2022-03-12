@@ -55,5 +55,17 @@ int MockFormSupplyCallback::OnEventHandle(const Want& want)
     HILOG_INFO("MockFormSupplyCallback::OnEventHandle called.");
     return 1;
 }
+
+/**
+ * OnAcquireStateResult
+ *
+ * @param state Form state
+ * @param want input data
+ */
+int MockFormSupplyCallback::OnAcquireStateResult(FormState state, const Want &want)
+{
+    HILOG_INFO("MockFormSupplyCallback::OnAcquireStateResult called.");
+    return 1;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

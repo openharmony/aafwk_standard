@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -160,6 +160,7 @@ public:
     MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
+    MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
 
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
@@ -170,7 +171,6 @@ public:
 
     int RemoveMission(int id) override;
 
-    int RemoveStack(int id) override;
     sptr<IAbilityScheduler> AcquireDataAbility(
         const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken) override
     {
@@ -198,7 +198,7 @@ public:
 
     int KillProcess(const std::string &bundleName) override;
 
-    int UninstallApp(const std::string &bundleName) override;
+    int UninstallApp(const std::string &bundleName, int32_t uid) override;
 
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override
     {
@@ -208,8 +208,6 @@ public:
     virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
 
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
-
-    virtual int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     virtual int SetShowOnLockScreen(bool isAllow) override
     {

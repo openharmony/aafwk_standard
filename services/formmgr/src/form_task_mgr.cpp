@@ -225,6 +225,23 @@ void FormTaskMgr::PostFormEventTask(const int64_t formId, const std::string &mes
 }
 
 /**
+* @brief Post acquire state to form provider.
+* @param wantArg The want of onAcquireFormState.
+* @param want The want of the request.
+* @param remoteObject Form provider proxy object.
+*/
+void FormTaskMgr::PostAcquireStateTask(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject)
+{
+    if (eventHandler_ == nullptr) {
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
+        return;
+    }
+    std::function<void()> acquireStateFunc = std::bind(&FormTaskMgr::AcquireState,
+        this, wantArg, want, remoteObject);
+    eventHandler_->PostTask(acquireStateFunc, FORM_TASK_DELAY_TIME);
+}
+
+/**
  * @brief Post uninstall message to form host(task).
  * @param formIds The Id list of the forms.
  * @param remoteObject Form provider proxy object.
@@ -458,6 +475,31 @@ void FormTaskMgr::FireFormEvent(const int64_t formId, const std::string &message
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
         HILOG_ERROR("%{public}s, Failed to fire message event to form provider", __func__);
+    }
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
+ * @brief Acquire form state to form provider.
+ * @param wantArg The want of onAcquireFormState.
+ * @param want The want of the request.
+ * @param remoteObject Form provider proxy object.
+ */
+void FormTaskMgr::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
+    sptr<IFormProvider> formProviderProxy = iface_cast<IFormProvider>(remoteObject);
+    if (formProviderProxy == nullptr) {
+        FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
+        HILOG_ERROR("%{public}s, Failed to get formProviderProxy", __func__);
+        return;
+    }
+
+    int error = formProviderProxy->AcquireState(wantArg, want, FormSupplyCallback::GetInstance());
+    if (error != ERR_OK) {
+        FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
+        HILOG_ERROR("%{public}s, Failed to acquire form state to form provider", __func__);
     }
     HILOG_INFO("%{public}s end", __func__);
 }

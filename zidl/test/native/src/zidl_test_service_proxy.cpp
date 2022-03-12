@@ -30,6 +30,9 @@ ErrCode ZidlTestServiceProxy::TestIntTransaction(
 
     data.WriteInt32(_data);
 
+    if (Remote() == nullptr) {
+        return ERR_INVALID_VALUE;
+    }
     int32_t st = Remote()->SendRequest(COMMAND_TEST_INT_TRANSACTION, data, reply, option);
     if (st != ERR_NONE) {
         return st;
@@ -57,6 +60,9 @@ ErrCode ZidlTestServiceProxy::TestStringTransaction(
 
     data.WriteString16(Str8ToStr16(_data));
 
+    if (Remote() == nullptr) {
+        return ERR_INVALID_VALUE;
+    }
     int32_t st = Remote()->SendRequest(COMMAND_TEST_STRING_TRANSACTION, data, reply, option);
     if (st != ERR_NONE) {
         return st;

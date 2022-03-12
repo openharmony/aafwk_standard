@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -211,6 +211,15 @@ public:
     int KillApplication(const std::string &bundleName);
 
     /**
+     * kill the application by uid
+     *
+     * @param bundleName name of bundle.
+     * @param uid uid of bundle.
+     * @return 0 if success.
+     */
+    int KillApplicationByUid(const std::string &bundleName, int32_t uid);
+
+    /**
      * clear the application data
      *
      * @param bundleName.
@@ -220,18 +229,6 @@ public:
     void AttachTimeOut(const sptr<IRemoteObject> &token);
 
     void PrepareTerminate(const sptr<IRemoteObject> &token);
-
-    /**
-     * Checks whether a specified permission has been granted to the process identified by pid and uid
-     *
-     * @param permission Indicates the permission to check.
-     * @param pid Indicates the ID of the process to check.
-     * @param uid Indicates the UID of the process to check.
-     * @param message Describe success or failure
-     *
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     /**
      * Get system memory information.
@@ -285,6 +282,13 @@ public:
      * @return Returns true on success, others on failure.
      */
     int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens);
+
+    /**
+     * Post a task to the not response process.
+     *
+     * @param pid, the not response process id.
+     */
+    void PostANRTaskByProcessID(const pid_t pid);
 
 protected:
     /**

@@ -317,13 +317,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode RemoveMissions(std::vector<int> missionId);
-
-    /**
-     * Remove the specified mission stack by stack id
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
     ErrCode RemoveStack(int id);
 
     /**
@@ -358,8 +351,6 @@ public:
      * @return Returns true is first in Mission.
      */
     ErrCode IsFirstInMission(const sptr<IRemoteObject> &token);
-
-    ErrCode CompelVerifyPermission(const std::string &permission, int pid, int uid, std::string &message);
 
     /**
      * Save the top ability States and move them to the background
@@ -635,6 +626,15 @@ public:
      */
     ErrCode MoveMissionToFront(int32_t missionId);
     ErrCode MoveMissionToFront(int32_t missionId, const StartOptions &startOptions);
+
+    /**
+     * @brief Get mission id by ability token.
+     *
+     * @param token ability token.
+     * @param missionId output mission id.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetMissionIdByToken(const sptr<IRemoteObject> &token, int32_t &missionId);
 
 	/**
      * Start Ability, connect session with common ability.

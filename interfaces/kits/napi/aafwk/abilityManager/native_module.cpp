@@ -49,7 +49,6 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("removeRecentTask", NAPI_RemoveMission),
         DECLARE_NAPI_FUNCTION("removeMissions", NAPI_RemoveMissions),
         DECLARE_NAPI_FUNCTION("deleteMissions", NAPI_RemoveMissions),
-        DECLARE_NAPI_FUNCTION("clearMissions", NAPI_ClearMissions),
         DECLARE_NAPI_FUNCTION("moveMissionToTop", NAPI_MoveMissionToTop),
         DECLARE_NAPI_FUNCTION("killProcessesByBundleName", NAPI_KillProcessesByBundleName),
         DECLARE_NAPI_FUNCTION("clearUpApplicationData", NAPI_ClearUpApplicationData),

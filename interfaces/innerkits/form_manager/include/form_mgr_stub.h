@@ -172,6 +172,20 @@ private:
      */
     int32_t HandleDistributedDataDeleteForm(MessageParcel &data, MessageParcel &reply);
     /**
+     * @brief Handle DeleteInvalidForms message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleDeleteInvalidForms(MessageParcel &data, MessageParcel &reply);
+    /**
+     * @brief Handle AcquireFormState message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleAcquireFormState(MessageParcel &data, MessageParcel &reply);
+    /**
      * @brief Handle GetAllFormsInfo message.
      * @param data input param.
      * @param reply output param.

@@ -1831,7 +1831,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_035, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult ability, put in float stack
+    // start default ability, put in float stack
     auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1877,7 +1877,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_036, TestSize.Level1)
     EXPECT_TRUE(topAbilityRecordRadio);
     topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1906,7 +1906,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_037, TestSize.Level1)
     auto topAbilityRecord1 = stackManager_->GetCurrentTopAbility();
     topAbilityRecord1->SetAbilityState(OHOS::AAFwk::ACTIVE);
 
-    // start defult singleton ability, put in float stack
+    // start default singleton ability, put in float stack
     auto musicTonAbilityRequest = GenerateAbilityRequest("device", "MusicSAbility", "music", "com.ix.hiMusic");
     ref = stackManager_->StartAbility(musicTonAbilityRequest);
     EXPECT_EQ(ERR_OK, ref);
@@ -1971,7 +1971,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_038, TestSize.Level1)
  * SubFunction: Try moving other applications to the floating window stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the defult ability to the floating window stack
+ * CaseDescription: Move the default ability to the floating window stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_039, TestSize.Level1)
 {
@@ -2166,7 +2166,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_043, TestSize.Level1)
  * SubFunction: moving other applications to the floating window stack or Full screen stack
  * FunctionPoints:
  * EnvConditions: NA
- * CaseDescription: Move the float ability to the defult stack
+ * CaseDescription: Move the float ability to the default stack
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
 {
@@ -2250,7 +2250,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_045, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     radioAbilityRecord->SetScheduler(scheduler);
 
-    // top float ability move to defult stack
+    // top float ability move to default stack
     ref = stackManager_->MaximizeMultiWindow(radioAbilityRecord->GetMissionRecordId());
     EXPECT_EQ(ERR_OK, ref);
 
@@ -3485,60 +3485,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_068, TestSize.Level1)
     EXPECT_EQ(true, ref);
 
     EXPECT_EQ(stackManager_->GetCurrentTopAbility(), topAbilityRecordMusic);
-}
-
-/*
- * Feature: AaFwk
- * Function:RemoveStack
- * SubFunction:Remove Stack
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription:Remove Stack
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_069, TestSize.Level1)
-{
-    stackManager_->isMultiWinMoving_ = false;
-    // start launcher
-    auto worldAbilityRequest = GenerateAbilityRequest("device", "WorldAbility", "world", "com.ix.hiworld");
-    auto ref = stackManager_->StartAbility(worldAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordWorld = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordWorld);
-    abilityRecordWorld->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    auto musicTopAbilityRequest = GenerateAbilityRequest("device", "MusicTopAbility", "musicTop", "com.ix.hiTopMusic");
-    ref = stackManager_->StartAbility(musicTopAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordMusic);
-    topAbilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-
-    std::shared_ptr<MissionStack> targetStack = stackManager_->GetTargetMissionStack(musicTopAbilityRequest);
-    EXPECT_EQ(stackManager_->currentMissionStack_, targetStack);
-
-    // start split ability
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto abilityStartSetting = AbilityStartSetting::GetEmptySetting();
-    EXPECT_TRUE(abilityStartSetting);
-    abilityStartSetting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY,
-        std::to_string(AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY));
-    radioAbilityRequest.startSetting = abilityStartSetting;
-    ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto topMissionRecordRadio = stackManager_->GetTopMissionRecord();
-    EXPECT_TRUE(topMissionRecordRadio);
-
-#ifdef SUPPORT_GRAPHICS
-    EXPECT_EQ(stackManager_->curSysWindowMode_, SystemWindowMode::SPLITSCREEN_WINDOW_MODE);
-#endif
-
-    auto stackId = topMissionRecordRadio->GetMissionStack()->GetMissionStackId();
-    stackManager_->RemoveStack(stackId);
-    EXPECT_EQ(stackManager_->GetCurrentTopAbility(), abilityRecordWorld);
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ void FormAbilityCommonA::AcquireFormCallback::OnAcquired(const int32_t result, c
 {
     HILOG_INFO("%{public}s called[%{public}s]", __func__, std::to_string(formJsInfo.formId).c_str());
 }
+
 void FormAbilityCommonA::AcquireFormCallback::OnUpdate(const int32_t result, const FormJsInfo &formJsInfo) const
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -71,6 +72,7 @@ void FormAbilityCommonA::FMS_acquireForm(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ONE_NORMAL_FORM, EVENT_CODE_100, "");
     }
 }
+
 void FormAbilityCommonA::FMS_deleteForm(std::string data)
 {
     HILOG_INFO("%{public}s formId: %{public}s", __func__, data.c_str());
@@ -83,6 +85,7 @@ void FormAbilityCommonA::FMS_deleteForm(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ONE_NORMAL_FORM_DEL, EVENT_CODE_101, "false");
     }
 }
+
 void FormAbilityCommonA::FMS_acquireForm_batch(std::string data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -107,6 +110,7 @@ void FormAbilityCommonA::FMS_acquireForm_batch(std::string data)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_ACQUIRE_FORM_BATCH, EVENT_CODE_BATCH, "false");
     }
 }
+
 void FormAbilityCommonA::FMS_deleteFormBatch(std::string strFormId)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -119,15 +123,18 @@ void FormAbilityCommonA::FMS_deleteFormBatch(std::string strFormId)
         FormTestUtils::PublishEvent(FORM_EVENT_RECV_CLEAR_FORM_BATCH, EVENT_CODE_CLEAR_BATCH, "false");
     }
 }
+
 FormAbilityCommonA::~FormAbilityCommonA()
 {
     CommonEventManager::UnSubscribeCommonEvent(subscriber_);
 }
+
 void FormAbilityCommonA::OnStart(const Want &want)
 {
     HILOG_INFO("FormAbilityCommonA::onStart");
     Ability::OnStart(want);
 }
+
 void FormAbilityCommonA::OnActive()
 {
     HILOG_INFO("FormAbilityCommonA::OnActive");
@@ -142,18 +149,21 @@ void FormAbilityCommonA::OnStop()
 
     Ability::OnStop();
 }
+
 void FormAbilityCommonA::OnInactive()
 {
     HILOG_INFO("FormAbilityCommonA::OnInactive");
 
     Ability::OnInactive();
 }
+
 void FormAbilityCommonA::OnBackground()
 {
     HILOG_INFO("FormAbilityCommonA::OnBackground");
 
     Ability::OnBackground();
 }
+
 void FormAbilityCommonA::SubscribeEvent()
 {
     HILOG_INFO("FormAbilityCommonA::SubscribeEvent");

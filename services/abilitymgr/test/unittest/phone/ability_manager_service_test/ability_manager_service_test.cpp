@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -799,54 +799,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_018, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveStack
- * EnvConditions: NA
- * CaseDescription: 1.stackid < 0, RemoveStack failed
- *                  2.stackid no exist, RemoveStack failed
- *                  3.don't allow remove luncher mission stack
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_019, TestSize.Level1)
-{
-    EXPECT_EQ(abilityMs_->RemoveStack(-1), OHOS::ERR_INVALID_VALUE);
-    EXPECT_EQ(abilityMs_->RemoveStack(INT_MAX), REMOVE_STACK_ID_NOT_EXIST);
-    EXPECT_EQ(abilityMs_->RemoveStack(0), REMOVE_STACK_LAUNCHER_DENIED);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: RemoveStack
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveStack
- * EnvConditions: NA
- * CaseDescription: remove default stack success
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_020, TestSize.Level1)
-{
-    Want want;
-    ElementName element("device", "com.ix.music", "MusicAbility");
-    want.SetElement(element);
-    auto result = StartAbility(want);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(OHOS::ERR_OK, result);
-    auto stackManage = abilityMs_->GetStackManager();
-    stackManage->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-
-    Want want1;
-    ElementName element1("device", "com.ix.music", "MusicAbility");
-    want1.SetElement(element1);
-    auto result1 = StartAbility(want);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(OHOS::ERR_OK, result1);
-
-    EXPECT_EQ(stackManage->GetCurrentMissionStack()->GetMissionRecordCount(), 1);
-    EXPECT_EQ(abilityMs_->RemoveStack(1), ERR_OK);
-
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: ConnectAbility
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService ConnectAbility
@@ -1262,7 +1214,7 @@ HWTEST_F(AbilityManagerServiceTest, Interface_029, TestSize.Level1)
 HWTEST_F(AbilityManagerServiceTest, Interface_030, TestSize.Level1)
 {
     abilityMs_->currentStackManager_ = nullptr;
-    auto result = abilityMs_->UninstallApp("bundle");
+    auto result = abilityMs_->UninstallApp("bundle", -1);
     EXPECT_EQ(ERR_NO_INIT, result);
 }
 
@@ -2795,24 +2747,6 @@ HWTEST_F(AbilityManagerServiceTest, movemissiontoend_012, TestSize.Level1)
     abilityTv->SetAbilityState(AbilityState::ACTIVE);
     auto resultFunction = abilityMs_->MoveMissionToEnd(ability->GetToken(), true);
     EXPECT_EQ(resultFunction, MOVE_MISSION_FAILED);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: CompelVerifyPermission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService CompelVerifyPermission
- * EnvConditions: NA
- * CaseDescription: Verify function CompelVerifyPermission
- */
-HWTEST_F(AbilityManagerServiceTest, compelverifypermission_001, TestSize.Level1)
-{
-    const std::string permission = "permission";
-    int pid = 100;
-    int uid = 1000;
-    std::string message;
-    auto resultFunction = abilityMs_->CompelVerifyPermission(permission, pid, uid, message);
-    EXPECT_EQ(resultFunction, ERR_OK);
 }
 
 /*

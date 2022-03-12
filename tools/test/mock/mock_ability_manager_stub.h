@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -83,13 +83,11 @@ public:
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t missionId, MissionPixelMap &missionPixelMap));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(RemoveMission, int(int id));
-    MOCK_METHOD1(RemoveStack, int(int id));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
-    MOCK_METHOD1(UninstallApp, int(const std::string &bundleName));
+    MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
 
     MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
     MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
-    MOCK_METHOD4(CompelVerifyPermission, int(const std::string &permission, int pid, int uid, std::string &message));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -117,6 +115,7 @@ public:
         ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
     MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
     MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
+    MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));

@@ -48,6 +48,14 @@ public:
      */
     virtual int OnEventHandle(const Want &want) override;
 
+    /**
+     * @brief Accept form state from form provider.
+     * @param state Form state.
+     * @param want input data.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int OnAcquireStateResult(FormState state, const Want &want) override;
+
 private:
     template<typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);

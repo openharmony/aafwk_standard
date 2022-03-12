@@ -29,7 +29,7 @@ bool MissionPixelMap::ReadFromParcel(Parcel &parcel)
     }
     topAbility = *ability;
     std::unique_ptr<AAFwk::ImageInfo> image(parcel.ReadParcelable<AAFwk::ImageInfo>());
-    if (ability == nullptr) {
+    if (image == nullptr) {
         return false;
     }
     imageInfo = *image;
@@ -39,9 +39,6 @@ bool MissionPixelMap::ReadFromParcel(Parcel &parcel)
 MissionPixelMap *MissionPixelMap::Unmarshalling(Parcel &parcel)
 {
     MissionPixelMap *info = new (std::nothrow) MissionPixelMap();
-    if (info == nullptr) {
-        return nullptr;
-    }
 
     if (!info->ReadFromParcel(parcel)) {
         delete info;
@@ -69,7 +66,7 @@ bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
     }
     topAbility = *ability;
     std::shared_ptr<Media::PixelMap> pixelMap(parcel.ReadParcelable<Media::PixelMap>());
-    if (ability == nullptr) {
+    if (pixelMap == nullptr) {
         return false;
     }
     snapshot = pixelMap;
@@ -79,9 +76,6 @@ bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
 MissionSnapshot *MissionSnapshot::Unmarshalling(Parcel &parcel)
 {
     MissionSnapshot *info = new (std::nothrow) MissionSnapshot();
-    if (info == nullptr) {
-        return nullptr;
-    }
 
     if (!info->ReadFromParcel(parcel)) {
         delete info;
