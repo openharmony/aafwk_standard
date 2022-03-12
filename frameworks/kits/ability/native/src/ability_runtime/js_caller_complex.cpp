@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,23 +42,74 @@ static std::map<NativeValueType, std::string> logcast = {
 
 class JsCallerComplex {
 public:
+    enum class OBJSTATE {
+        OBJ_NORMAL,
+        OBJ_EXECUTION,
+        OBJ_RELEASE
+    };
+
     explicit JsCallerComplex(
         NativeEngine& engine, std::shared_ptr<AbilityContext> context, sptr<IRemoteObject> callee,
         std::shared_ptr<CallerCallBack> callerCallBack) : context_(context), callee_(callee),
         releaseCallBackEngine_(engine), callerCallBackObj_(callerCallBack), jsreleaseCallBackObj_(nullptr)
-        {
-            handler_ = std::make_shared<AppExecFwk::EventHandler>(AppExecFwk::EventRunner::GetMainEventRunner());
-        };
-    virtual~JsCallerComplex() {};
+    {
+        AddJsCallerComplex(this);
+        handler_ = std::make_shared<AppExecFwk::EventHandler>(AppExecFwk::EventRunner::GetMainEventRunner());
+        currentState_ = OBJSTATE::OBJ_NORMAL;
+    };
+    virtual~JsCallerComplex()
+    {
+        RemoveJsCallerComplex(this);
+    };
+
+    static bool ReleaseObject(JsCallerComplex* data)
+    {
+        HILOG_DEBUG("ReleaseObject begin %{public}p", data);
+        if (data == nullptr) {
+            HILOG_ERROR("ReleaseObject begin, but input parameters is nullptr");
+            return false;
+        }
+
+        if (!data->ChangeCurrentState(OBJSTATE::OBJ_RELEASE)) {
+            auto handler = data->GetEventHandler();
+            if (handler == nullptr) {
+                HILOG_ERROR("ReleaseObject error end, Get eventHandler failed");
+                return false;
+            }
+            auto releaseObjTask = [pdata = data] () {
+                if (!FindJsCallerComplex(pdata)) {
+                    HILOG_ERROR("ReleaseObject error end, but input parameters does not found");
+                    return;
+                }
+                ReleaseObject(pdata);
+            };
+
+            handler->PostTask(releaseObjTask, "FinalizerRelease");
+            return false;
+        } else {
+            // when the object is about to be destroyed, does not reset state
+            std::unique_ptr<JsCallerComplex> delObj(data);
+        }
+        HILOG_DEBUG("ReleaseObject success end %{public}p", data);
+        return true;
+    }
 
     static void Finalizer(NativeEngine* engine, void* data, void* hint)
     {
+        HILOG_DEBUG("JsCallerComplex::%{public}s begin.", __func__);
         if (data == nullptr) {
             HILOG_ERROR("JsCallerComplex::%{public}s is called, but input parameters is nullptr", __func__);
             return;
         }
-        std::unique_ptr<JsCallerComplex>(static_cast<JsCallerComplex*>(data));
-        HILOG_ERROR("JsCallerComplex::%{public}s is called.", __func__);
+
+        auto ptr = static_cast<JsCallerComplex*>(data);
+        if (!FindJsCallerComplex(ptr)) {
+            HILOG_ERROR("JsCallerComplex::%{public}s is called, but input parameters does not found", __func__);
+            return;
+        }
+
+        ReleaseObject(ptr);
+        HILOG_DEBUG("JsCallerComplex::%{public}s end.", __func__);
     }
 
     static NativeValue* JsRelease(NativeEngine* engine, NativeCallbackInfo* info)
@@ -97,9 +148,125 @@ public:
         return object->SetOnReleaseCallBackInner(*engine, *info);
     }
 
+    static bool AddJsCallerComplex(JsCallerComplex* ptr)
+    {
+        if (ptr == nullptr) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters is nullptr", __func__);
+            return false;
+        }
+
+        std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
+        auto iter = jsCallerComplexManagerList.find(ptr);
+        if (iter != jsCallerComplexManagerList.end()) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, ptr[%{public}p] address exists", __func__, ptr);
+            return false;
+        }
+
+        auto iterRet = jsCallerComplexManagerList.emplace(ptr);
+        HILOG_DEBUG("JsAbilityContext::%{public}s, execution ends and retval is %{public}s",
+            __func__, iterRet.second ? "true" : "false");
+        return iterRet.second;
+    }
+
+    static bool RemoveJsCallerComplex(JsCallerComplex* ptr)
+    {
+        if (ptr == nullptr) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters is nullptr", __func__);
+            return false;
+        }
+
+        std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
+        auto iter = jsCallerComplexManagerList.find(ptr);
+        if (iter == jsCallerComplexManagerList.end()) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters[%{public}p] not found", __func__, ptr);
+            return false;
+        }
+
+        jsCallerComplexManagerList.erase(ptr);
+        HILOG_DEBUG("JsAbilityContext::%{public}s, called", __func__);
+        return true;
+    }
+
+    static bool FindJsCallerComplex(JsCallerComplex* ptr)
+    {
+        if (ptr == nullptr) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters is nullptr", __func__);
+            return false;
+        }
+        auto ret = true;
+        std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
+        auto iter = jsCallerComplexManagerList.find(ptr);
+        if (iter == jsCallerComplexManagerList.end()) {
+            ret = false;
+        }
+        HILOG_DEBUG("JsAbilityContext::%{public}s, execution ends and retval is %{public}s",
+            __func__, ret ? "true" : "false");
+        return ret;
+    }
+
+    static bool FindJsCallerComplexAndChangeState(JsCallerComplex* ptr, OBJSTATE state)
+    {
+        if (ptr == nullptr) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters is nullptr", __func__);
+            return false;
+        }
+
+        std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
+        auto iter = jsCallerComplexManagerList.find(ptr);
+        if (iter == jsCallerComplexManagerList.end()) {
+            HILOG_ERROR("JsAbilityContext::%{public}s, execution end, but not found", __func__);
+            return false;
+        }
+
+        auto ret = ptr->ChangeCurrentState(state);
+        HILOG_DEBUG("JsAbilityContext::%{public}s, execution ends and ChangeCurrentState retval is %{public}s",
+            __func__, ret ? "true" : "false");
+
+        return ret;
+    }
+
     sptr<IRemoteObject> GetRemoteObject()
     {
         return callee_;
+    }
+
+    std::shared_ptr<AppExecFwk::EventHandler> GetEventHandler()
+    {
+        return handler_;
+    }
+
+    bool ChangeCurrentState(OBJSTATE state)
+    {
+        auto ret = false;
+        if (stateMechanismMutex_.try_lock() == false) {
+            HILOG_ERROR("mutex try_lock false");
+            return ret;
+        }
+
+        if (currentState_ == OBJSTATE::OBJ_NORMAL) {
+            currentState_ = state;
+            ret = true;
+            HILOG_DEBUG("currentState_ == OBJSTATE::OBJ_NORMAL");
+        } else if (currentState_ == state) {
+            ret = true;
+            HILOG_DEBUG("currentState_ == state");
+        } else {
+            ret = false;
+            HILOG_DEBUG("ret = false");
+        }
+
+        stateMechanismMutex_.unlock();
+        return ret;
+    }
+
+    OBJSTATE GetCurrentState()
+    {
+        return currentState_;
+    }
+
+    void StateReset()
+    {
+        currentState_ = OBJSTATE::OBJ_NORMAL;
     }
 
 private:
@@ -108,18 +275,24 @@ private:
     {
         HILOG_DEBUG("OnReleaseNotify begin");
         if (handler_ == nullptr) {
-            HILOG_ERROR("");
+            HILOG_ERROR("handler parameters error");
             return;
         }
 
-        auto task = [notify = this, &str] () { notify->OnReleaseNotifyTask(str); };
+        auto task = [notify = this, &str] () {
+            if (!FindJsCallerComplex(notify)) {
+                HILOG_ERROR("ptr[%{public}p] not found, address error", notify);
+                return;
+            }
+            notify->OnReleaseNotifyTask(str);
+        };
         handler_->PostSyncTask(task, "OnReleaseNotify");
         HILOG_DEBUG("OnReleaseNotify end");
     }
 
     void OnReleaseNotifyTask(const std::string &str)
     {
-        HILOG_DEBUG("OnReleaseNotifyTask begin");
+        HILOG_DEBUG("OnReleaseNotifyTask begin %{public}p", this);
         if (jsreleaseCallBackObj_ == nullptr) {
             HILOG_ERROR("JsCallerComplex::%{public}s, jsreleaseObj is nullptr", __func__);
             return;
@@ -129,9 +302,10 @@ private:
         NativeValue* callback = jsreleaseCallBackObj_->Get();
         NativeValue* args[] = { CreateJsValue(releaseCallBackEngine_, str) };
         releaseCallBackEngine_.CallFunction(value, callback, args, 1);
-        HILOG_DEBUG("OnReleaseNotifyTask CallFunction call done");
+        HILOG_DEBUG("OnReleaseNotifyTask CallFunction call done %{public}p", this);
         callee_ = nullptr;
-        HILOG_DEBUG("OnReleaseNotifyTask end");
+        StateReset();
+        HILOG_DEBUG("OnReleaseNotifyTask end %{public}p", this);
     }
 
     NativeValue* ReleaseInner(NativeEngine& engine, NativeCallbackInfo& info)
@@ -183,8 +357,14 @@ private:
             return CreateJsError(engine, -1, "CallerComplex on release input params isn`t function.");
         }
 
-        jsreleaseCallBackObj_ = std::unique_ptr<NativeReference>(releaseCallBackEngine_.CreateReference(param1, 1));
-        auto task = [notify = this] (const std::string &str) { notify->OnReleaseNotify(str); };
+        jsreleaseCallBackObj_.reset(releaseCallBackEngine_.CreateReference(param1, 1));
+        auto task = [notify = this] (const std::string &str) {
+            if (!FindJsCallerComplexAndChangeState(notify, OBJSTATE::OBJ_EXECUTION)) {
+                HILOG_ERROR("ptr[%{public}p] not found, address error", notify);
+                return;
+            }
+            notify->OnReleaseNotify(str);
+        };
         callerCallBackObj_->SetOnRelease(task);
         HILOG_DEBUG("JsCallerComplex::%{public}s, end", __func__);
         return engine.CreateUndefined();
@@ -197,7 +377,15 @@ private:
     std::shared_ptr<CallerCallBack> callerCallBackObj_;
     std::unique_ptr<NativeReference> jsreleaseCallBackObj_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    std::mutex stateMechanismMutex_;
+    OBJSTATE currentState_;
+
+    static std::set<JsCallerComplex*> jsCallerComplexManagerList;
+    static std::mutex jsCallerComplexMutex;
 };
+
+std::set<JsCallerComplex*> JsCallerComplex::jsCallerComplexManagerList;
+std::mutex JsCallerComplex::jsCallerComplexMutex;
 } // nameless
 
 NativeValue* CreateJsCallerComplex(
