@@ -1169,7 +1169,10 @@ std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
     NAPI_CALL_BASE(env, napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total), {});
     length = std::min<size_t>(length, total - offset);
     std::vector<uint8_t> result(sizeof(uint8_t) + length);
-    memcpy_s(result.data(), result.size(), &data[offset], length);
+    int retCode = memcpy_s(result.data(), result.size(), &data[offset], length);
+    if (retCode != 0) {
+        return {};
+    }
     return result;
 }
 

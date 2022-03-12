@@ -1156,11 +1156,11 @@ napi_value NAPI_GetDataAbilityHelper(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
     DataAbilityHelperCB *dataAbilityHelperCB = new (std::nothrow) DataAbilityHelperCB;
-    dataAbilityHelperCB->cbBase.cbInfo.env = env;
     if (dataAbilityHelperCB == nullptr) {
         HILOG_ERROR("%{public}s, dataAbilityHelperCB == nullptr", __func__);
         return WrapVoidToJS(env);
     }
+    dataAbilityHelperCB->cbBase.cbInfo.env = env;
     napi_value ret = GetDataAbilityHelperWrap(env, info, dataAbilityHelperCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr", __func__);

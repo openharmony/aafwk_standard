@@ -2627,7 +2627,7 @@ int AbilityManagerService::GenerateAbilityRequest(
         return RESOLVE_APP_ERR;
     }
     request.appInfo = request.abilityInfo.applicationInfo;
-    request.compatibleVersion = request.appInfo.apiCompatibleVersion;
+    request.compatibleVersion = (int32_t)request.appInfo.apiCompatibleVersion;
     request.uid = request.appInfo.uid;
     HILOG_DEBUG("End, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
@@ -3427,9 +3427,9 @@ int AbilityManagerService::GetAppMemorySize()
     int ret = GetParameter(key, def, valueGet, len);
     if ((ret != GET_PARAMETER_OTHER) && (ret != GET_PARAMETER_INCORRECT)) {
         int *size = 0;
-        int len = strlen(valueGet);
+        size_t len = strlen(valueGet);
         int index = 0;
-        for (int i = 0; i < len; i++) {
+        for (size_t i = 0; i < len; i++) {
             while (!(valueGet[i] > '0' && valueGet[i] < '9')) {
                 i++;
             }
@@ -4363,7 +4363,7 @@ int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId
 
 void AbilityManagerService::UpdateCallerInfo(Want& want)
 {
-    int32_t tokenId = IPCSkeleton::GetCallingTokenID();
+    int32_t tokenId = (int32_t)IPCSkeleton::GetCallingTokenID();
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     int32_t callerPid = IPCSkeleton::GetCallingPid();
     want.SetParam(Want::PARAM_RESV_CALLER_TOKEN, tokenId);
@@ -4637,8 +4637,8 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
 bool AbilityManagerService::GetValidDataAbilityUri(const std::string &abilityInfoUri, std::string &adjustUri)
 {
     // note: do not use abilityInfo.uri directly, need check uri first.
-    int32_t firstSeparator = abilityInfoUri.find_first_of('/');
-    int32_t lastSeparator = abilityInfoUri.find_last_of('/');
+    size_t firstSeparator = abilityInfoUri.find_first_of('/');
+    size_t lastSeparator = abilityInfoUri.find_last_of('/');
     if (lastSeparator - firstSeparator != 1) {
         HILOG_ERROR("ability info uri error, uri: %{public}s", abilityInfoUri.c_str());
         return false;

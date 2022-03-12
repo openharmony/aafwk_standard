@@ -525,10 +525,10 @@ Want &Want::SetParam(const std::string &key, bool value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<bool> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IBoolean);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (std::size_t i = 0; i < size; i++) {
             ao->Set(i, Boolean::Box(value[i]));
         }
         parameters_.SetParam(key, ao);
@@ -599,12 +599,12 @@ Want &Want::SetParam(const std::string &key, byte value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<byte> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IByte);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Byte::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -673,12 +673,12 @@ Want &Want::SetParam(const std::string &key, zchar value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<zchar> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IChar);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Char::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -747,12 +747,12 @@ Want &Want::SetParam(const std::string &key, int value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<int> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IInteger);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Integer::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -821,12 +821,12 @@ Want &Want::SetParam(const std::string &key, double value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<double> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IDouble);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Double::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -894,13 +894,13 @@ Want &Want::SetParam(const std::string &key, float value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<float> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IFloat);
     if (ao == nullptr) {
         return *this;
     }
 
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Float::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -994,12 +994,12 @@ Want &Want::SetParam(const std::string &key, long value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<long> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_ILong);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Long::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -1074,12 +1074,12 @@ Want &Want::SetParam(const std::string &key, short value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<short> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IShort);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, Short::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -1147,12 +1147,12 @@ Want &Want::SetParam(const std::string &key, const std::string &value)
  */
 Want &Want::SetParam(const std::string &key, const std::vector<std::string> &value)
 {
-    long size = value.size();
+    std::size_t size = value.size();
     sptr<IArray> ao = new (std::nothrow) Array(size, g_IID_IString);
     if (ao == nullptr) {
         return *this;
     }
-    for (long i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         ao->Set(i, String::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -1390,7 +1390,7 @@ void Want::ToUriStringInner(std::string &uriString) const
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
         char buf[HEX_STRING_BUF_LEN] {0};
-        std::size_t len = snprintf_s(buf, HEX_STRING_BUF_LEN, HEX_STRING_BUF_LEN - 1, "0x%08x", operation_.GetFlags());
+        int len = snprintf_s(buf, HEX_STRING_BUF_LEN, HEX_STRING_BUF_LEN - 1, "0x%08x", operation_.GetFlags());
         if (len == HEX_STRING_LEN) {
             std::string flag = buf;
             uriString += Encode(flag);
