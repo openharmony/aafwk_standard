@@ -147,6 +147,11 @@ public:
         return sptr<IRemoteObject>(nullptr);
     }
 
+    virtual int BlockAbility()
+    {
+        return 0;
+    }
+
     int code_ = 0;
 };
 }  // namespace AAFwk

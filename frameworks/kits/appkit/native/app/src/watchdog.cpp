@@ -109,7 +109,7 @@ bool WatchDog::Timer()
         if (!stopWatchDog_) {
             auto timeoutTask = [&]() {
             appMainThreadIsAlive_ = false;
-            std::string eventType = "APP_MAIN_THREAD_TIMEOUT";
+            std::string eventType = "THREAD_BLOCK_3S";
             std::string msgContent = "app main thread is not response!";
             if (applicationInfo_ != nullptr) {
                 OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,

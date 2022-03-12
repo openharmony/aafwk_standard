@@ -971,5 +971,30 @@ ErrCode AbilityManagerClient::SendANRProcessID(int pid)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->SendANRProcessID(pid);
 }
+
+ErrCode AbilityManagerClient::BlockAmsService()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->BlockAmsService();
+}
+
+ErrCode AbilityManagerClient::BlockAbility(int32_t abilityRecordId)
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->BlockAbility(abilityRecordId);
+}
+
+ErrCode AbilityManagerClient::BlockAppService()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->BlockAppService();
+    return 0;
+}
 }  // namespace AAFwk
 }  // namespace AAFwk

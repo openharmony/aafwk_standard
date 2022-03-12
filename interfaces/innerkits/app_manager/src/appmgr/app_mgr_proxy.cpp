@@ -677,5 +677,25 @@ void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
     }
     HILOG_DEBUG("end");
 }
+
+int AppMgrProxy::BlockAppService()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return ERR_FLATTEN_OBJECT;
+    }
+
+    int32_t ret =
+        Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::BLOCK_APP_SERVICE), data, reply, option);
+    if (ret != NO_ERROR) {
+        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+    return reply.ReadInt32();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -229,7 +229,7 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
         HILOG_ERROR("GetBundleInfo is fail");
         return false;
     }
-    bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo));
+    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo);
     if (!bundleMgrResult) {
         HILOG_ERROR("GetHapModuleInfo is fail");
         return false;
@@ -1651,8 +1651,10 @@ void AppMgrServiceInner::RestartResidentProcess(std::shared_ptr<AppRunningRecord
 
     auto bundleMgr = remoteClientManager_->GetBundleManager();
     BundleInfo bundleInfo;
+    auto callerUid = IPCSkeleton::GetCallingUid();
+    auto userId = GetUserIdByUid(callerUid);
     if (!IN_PROCESS_CALL(
-        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo))) {
+        bundleMgr->GetBundleInfo(appRecord->GetBundleName(), BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId))) {
         HILOG_ERROR("GetBundleInfo fail");
         return;
     }
