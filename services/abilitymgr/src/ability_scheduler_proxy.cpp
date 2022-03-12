@@ -1024,13 +1024,13 @@ sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
     if (!WriteInterfaceToken(data)) {
         return nullptr;
     }
-    
+
     int32_t err = Remote()->SendRequest(IAbilityScheduler::REQUEST_CALL_REMOTE, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("CallRequest fail to SendRequest. err: %{public}d", err);
         return nullptr;
     }
-    
+
     int32_t result = reply.ReadInt32();
     if (result != ERR_OK) {
         HILOG_ERROR("CallRequest failed, err %{public}d", result);
@@ -1044,6 +1044,29 @@ sptr<IRemoteObject> AbilitySchedulerProxy::CallRequest()
 
     HILOG_INFO("AbilitySchedulerProxy::CallRequest end");
     return call;
+}
+
+int AbilitySchedulerProxy::BlockAbility()
+{
+    HILOG_INFO("AbilitySchedulerProxy::BlockAbility start");
+    int ret = -1;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return ret;
+    }
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::BLOCK_ABILITY_INNER, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("BlockAbility fail to SendRequest. err: %d", err);
+        return ret;
+    }
+    if (!reply.ReadInt32(ret)) {
+        HILOG_ERROR("fail to ReadInt32 ret");
+        return ret;
+    }
+    return ret;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

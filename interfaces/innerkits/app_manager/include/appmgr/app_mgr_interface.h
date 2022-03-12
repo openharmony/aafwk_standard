@@ -194,6 +194,12 @@ public:
      * @return Returns true on success, others on failure.
      */
     virtual int GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens) = 0;
+    /**
+     *  Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAppService() = 0;
 
     /**
      * Start nweb render process, called by nweb host.
@@ -241,6 +247,7 @@ public:
         START_USER_TEST_PROCESS,
         FINISH_USER_TEST,
         SCHEDULE_ACCEPT_WANT_DONE,
+        BLOCK_APP_SERVICE,
         APP_GET_ABILITY_RECORDS_BY_PROCESS_ID,
         START_RENDER_PROCESS,
         ATTACH_RENDER_PROCESS,

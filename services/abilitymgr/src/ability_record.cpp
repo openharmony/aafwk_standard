@@ -1714,5 +1714,15 @@ void AbilityRecord::RemoveWindowMode()
 {
     want_.RemoveParam(Want::PARAM_RESV_WINDOW_MODE);
 }
+
+int AbilityRecord::BlockAbility()
+{
+    HILOG_INFO("BlockAbility.");
+    if (scheduler_) {
+        HILOG_INFO("scheduler_ begain to call BlockAbility %{public}s", __func__);
+        return scheduler_->BlockAbility();
+    }
+    return ERR_NO_INIT;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

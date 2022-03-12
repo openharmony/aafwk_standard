@@ -125,6 +125,10 @@ public:
     {
         return std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>();
     };
+    virtual int BlockAbility()
+    {
+        return 0;
+    };
     virtual void NotifyContinuationResult(int32_t result) {};
     virtual void ContinueAbility(const std::string& deviceId) {};
     virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) {};

@@ -97,6 +97,9 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
         {"force-timeout", std::bind(&AbilityManagerShellCommand::RunForceTimeoutForTest, this)},
         {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
+        {"block-ability", std::bind(&AbilityManagerShellCommand::RunAsBlockAbilityCommand, this)},
+        {"block-ams-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAmsServiceCommand, this)},
+        {"block-app-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAppServiceCommand, this)},
     };
 
     return OHOS::ERR_OK;
@@ -1410,6 +1413,59 @@ ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
     } else {
         resultReceiver_.append(HELP_ApplicationNotRespondin+ "\n");
         result = OHOS::ERR_INVALID_VALUE;
+    }
+    return result;
+}
+
+ErrCode AbilityManagerShellCommand::RunAsBlockAbilityCommand()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    ErrCode result = OHOS::ERR_OK;
+    if (argList_.size() > 0) {
+        result = AbilityManagerClient::GetInstance()->BlockAbility(atoi(argList_[0].c_str()));
+    } else {
+        result = OHOS::ERR_INVALID_VALUE;
+    }
+
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("%{public}s", STRING_BLOCK_ABILITY_OK.c_str());
+        resultReceiver_ = STRING_BLOCK_ABILITY_OK + "\n";
+    } else {
+        HILOG_INFO("%{public}s result = %{public}d", STRING_BLOCK_ABILITY_NG.c_str(), result);
+        resultReceiver_ = STRING_BLOCK_ABILITY_NG + "\n";
+        resultReceiver_.append(GetMessageFromCode(result));
+    }
+    return result;
+}
+
+ErrCode AbilityManagerShellCommand::RunAsBlockAmsServiceCommand()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    ErrCode result = OHOS::ERR_OK;
+    result = AbilityManagerClient::GetInstance()->BlockAmsService();
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("%{public}s", STRING_BLOCK_AMS_SERVICE_OK.c_str());
+        resultReceiver_ = STRING_BLOCK_AMS_SERVICE_OK + "\n";
+    } else {
+        HILOG_INFO("%{public}s result = %{public}d", STRING_BLOCK_AMS_SERVICE_NG.c_str(), result);
+        resultReceiver_ = STRING_BLOCK_AMS_SERVICE_NG + "\n";
+        resultReceiver_.append(GetMessageFromCode(result));
+    }
+    return result;
+}
+
+ErrCode AbilityManagerShellCommand::RunAsBlockAppServiceCommand()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    ErrCode result = OHOS::ERR_OK;
+    result = AbilityManagerClient::GetInstance()->BlockAppService();
+    if (result == OHOS::ERR_OK) {
+        HILOG_INFO("%{public}s", STRING_BLOCK_APP_SERVICE_OK.c_str());
+        resultReceiver_ = STRING_BLOCK_APP_SERVICE_OK + "\n";
+    } else {
+        HILOG_INFO("%{public}s result = %{public}d", STRING_BLOCK_APP_SERVICE_NG.c_str(), result);
+        resultReceiver_ = STRING_BLOCK_APP_SERVICE_NG + "\n";
+        resultReceiver_.append(GetMessageFromCode(result));
     }
     return result;
 }

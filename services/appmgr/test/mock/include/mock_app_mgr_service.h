@@ -56,6 +56,7 @@ public:
         void(const int32_t recordId, const AAFwk::Want &want, const std::string &flag));
     MOCK_METHOD2(GetAbilityRecordsByProcessID, int(const int pid, std::vector<sptr<IRemoteObject>> &tokens));
     MOCK_METHOD1(PostANRTaskByProcessID, void(const pid_t pid));
+    MOCK_METHOD0(BlockAppService, int());
 
     virtual int StartUserTestProcess(
         const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)

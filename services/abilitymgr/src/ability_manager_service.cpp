@@ -16,6 +16,7 @@
 #include "ability_manager_service.h"
 #include "accesstoken_kit.h"
 
+#include <chrono>
 #include <fstream>
 #include <functional>
 #include <memory>
@@ -23,6 +24,7 @@
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <thread>
 #include <unistd.h>
 #include <csignal>
 #include <cstdlib>
@@ -63,6 +65,7 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 namespace OHOS {
 namespace AAFwk {
 using namespace std::chrono;
+using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
@@ -74,6 +77,7 @@ constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
+const int32_t BLOCK_AMS_SERVICE_TIME = 65;
 const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
@@ -1169,16 +1173,18 @@ sptr<IWantSender> AbilityManagerService::GetWantSender(
     CHECK_POINTER_AND_RETURN(bms, nullptr);
 
     int32_t callerUid = IPCSkeleton::GetCallingUid();
+    int userId = wantSenderInfo.userId;
     AppExecFwk::BundleInfo bundleInfo;
     if (!wantSenderInfo.bundleName.empty()) {
         bool bundleMgrResult = false;
         if (wantSenderInfo.userId < 0) {
-            bundleMgrResult = IN_PROCESS_CALL(bms->GetBundleInfo(wantSenderInfo.bundleName,
-                AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo));
-        } else {
-            bundleMgrResult = IN_PROCESS_CALL(bms->GetBundleInfo(wantSenderInfo.bundleName,
-                AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, wantSenderInfo.userId));
+            if (AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callerUid, userId) != 0) {
+                HILOG_ERROR("GetOsAccountLocalIdFromUid failed. uid=%{public}d", callerUid);
+                return nullptr;
+            }
         }
+        bundleMgrResult = IN_PROCESS_CALL(bms->GetBundleInfo(wantSenderInfo.bundleName,
+            AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId));
         if (!bundleMgrResult) {
             HILOG_ERROR("GetBundleInfo is fail.");
             return nullptr;
@@ -1211,9 +1217,15 @@ void AbilityManagerService::CancelWantSender(const sptr<IWantSender> &sender)
     int32_t callerUid = IPCSkeleton::GetCallingUid();
     sptr<PendingWantRecord> record = iface_cast<PendingWantRecord>(sender->AsObject());
 
+    int userId = -1;
+    if (AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callerUid, userId) != 0) {
+        HILOG_ERROR("GetOsAccountLocalIdFromUid failed. uid=%{public}d", callerUid);
+        return;
+    }
     AppExecFwk::BundleInfo bundleInfo;
     bool bundleMgrResult = IN_PROCESS_CALL(
-        bms->GetBundleInfo(record->GetKey()->GetBundleName(), AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo));
+        bms->GetBundleInfo(record->GetKey()->GetBundleName(),
+            AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetBundleInfo is fail.");
         return;
@@ -1769,7 +1781,7 @@ void AbilityManagerService::DumpSysMissionListInner(
         std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
-            info.push_back("error: No user found'.");
+            info.push_back("error: No user found.");
             return;
         }
         targetManager = it->second;
@@ -1801,7 +1813,7 @@ void AbilityManagerService::DumpSysAbilityInner(
         std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = missionListManagers_.find(userId);
         if (it == missionListManagers_.end()) {
-            info.push_back("error: No user found'.");
+            info.push_back("error: No user found.");
             return;
         }
         targetManager = it->second;
@@ -1834,7 +1846,7 @@ void AbilityManagerService::DumpSysStateInner(
         std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = connectManagers_.find(userId);
         if (it == connectManagers_.end()) {
-            info.push_back("error: No user found'.");
+            info.push_back("error: No user found.");
             return;
         }
         targetManager = it->second;
@@ -1867,7 +1879,7 @@ void AbilityManagerService::DumpSysPendingInner(
         std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = pendingWantManagers_.find(userId);
         if (it == pendingWantManagers_.end()) {
-            info.push_back("error: No user found'.");
+            info.push_back("error: No user found.");
             return;
         }
         targetManager = it->second;
@@ -1945,7 +1957,7 @@ void AbilityManagerService::DataDumpSysStateInner(
         std::shared_lock<std::shared_mutex> lock(managersMutex_);
         auto it = dataAbilityManagers_.find(userId);
         if (it == dataAbilityManagers_.end()) {
-            info.push_back("error: No user found'.");
+            info.push_back("error: No user found.");
             return;
         }
         targetManager = it->second;
@@ -4634,6 +4646,50 @@ int AbilityManagerService::VerifyAccountPermission(int32_t userId)
     }
     HILOG_ERROR("%{public}s: Permission verification failed", __func__);
     return CHECK_PERMISSION_FAILED;
+}
+
+int AbilityManagerService::BlockAmsService()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    if (callerUid != AbilityUtil::ROOT_UID) {
+        HILOG_ERROR("calling uid has no permission to force timeout.");
+        return INVALID_DATA;
+    }
+    if (handler_) {
+        HILOG_DEBUG("%{public}s begain post block ams service task", __func__);
+        auto BlockAmsServiceTask = [aams = shared_from_this()]() {
+            while (1) {
+                HILOG_DEBUG("%{public}s begain block ams service", __func__);
+                std::this_thread::sleep_for(BLOCK_AMS_SERVICE_TIME*1s);
+            }
+        };
+        handler_->PostTask(BlockAmsServiceTask, "blockamsservice");
+        return ERR_OK;
+    }
+    return ERR_NO_INIT;
+}
+
+int AbilityManagerService::BlockAbility(int32_t abilityRecordId)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    if (callerUid != AbilityUtil::ROOT_UID) {
+        HILOG_ERROR("calling uid has no permission to force timeout.");
+        return INVALID_DATA;
+    }
+    return currentMissionListManager_->BlockAbility(abilityRecordId);
+}
+
+int AbilityManagerService::BlockAppService()
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    if (callerUid != AbilityUtil::ROOT_UID) {
+        HILOG_ERROR("calling uid has no permission to force timeout.");
+        return INVALID_DATA;
+    }
+    return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
 }
 }  // namespace AAFwk
 }  // namespace OHOS

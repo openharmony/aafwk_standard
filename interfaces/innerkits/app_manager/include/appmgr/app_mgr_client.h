@@ -201,6 +201,13 @@ public:
     virtual AppMgrResultCode UpdateConfiguration(const Configuration &config);
 
     /**
+     * Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAppService();
+
+    /**
      * Start a user test
      */
     virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,

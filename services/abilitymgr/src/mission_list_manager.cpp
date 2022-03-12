@@ -2420,5 +2420,44 @@ void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionLis
         }
     }
 }
+
+int MissionListManager::BlockAbility(int32_t abilityRecordId)
+{
+    int ret = -1;
+    for (const auto &missionList : currentMissionLists_) {
+        if (missionList && missionList != launcherList_) {
+            HILOG_INFO("missionList begain to call BlockAbilityByRecordId %{public}s", __func__);
+            if (missionList->BlockAbilityByRecordId(abilityRecordId) == ERR_OK) {
+                HILOG_INFO("missionList call BlockAbilityByRecordId success");
+                ret = ERR_OK;
+            }
+        }
+    }
+
+    if (defaultStandardList_) {
+        HILOG_INFO("defaultStandardList begain to call BlockAbilityByRecordId %{public}s", __func__);
+        if (defaultStandardList_->BlockAbilityByRecordId(abilityRecordId) == ERR_OK) {
+            HILOG_INFO("defaultStandardList call BlockAbilityByRecordId success");
+            ret = ERR_OK;
+        }
+    }
+
+    if (defaultSingleList_) {
+        HILOG_INFO("defaultSingleList begain to call BlockAbilityByRecordId %{public}s", __func__);
+        if (defaultSingleList_->BlockAbilityByRecordId(abilityRecordId) == ERR_OK) {
+            HILOG_INFO("defaultSingleList_ call BlockAbilityByRecordId success");
+            ret = ERR_OK;
+        }
+    }
+
+    if (launcherList_) {
+        HILOG_INFO("launcherList begain to call BlockAbilityByRecordId %{public}s", __func__);
+        if (launcherList_->BlockAbilityByRecordId(abilityRecordId) == ERR_OK) {
+            HILOG_INFO("launcherList_ call BlockAbilityByRecordId success");
+            ret = ERR_OK;
+        }
+    }
+    return ret;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

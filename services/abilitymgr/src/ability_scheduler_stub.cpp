@@ -61,6 +61,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[REQUEST_CALL_REMOTE] = &AbilitySchedulerStub::CallRequestInner;
     requestFuncMap_[CONTINUE_ABILITY] = &AbilitySchedulerStub::ContinueAbilityInner;
     requestFuncMap_[DUMP_ABILITY_RUNNER_INNER] = &AbilitySchedulerStub::DumpAbilityInfoInner;
+    requestFuncMap_[BLOCK_ABILITY_INNER] = &AbilitySchedulerStub::BlockAbilityInner;
 }
 
 AbilitySchedulerStub::~AbilitySchedulerStub()
@@ -621,6 +622,18 @@ int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &r
 
     HILOG_INFO("AbilitySchedulerStub::CallRequestInner end");
 
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::BlockAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("AbilitySchedulerStub::BlockAbilityInner start");
+
+    auto result = BlockAbility();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("fail to WriteInt32 result");
+        return ERR_INVALID_VALUE;
+    }
     return NO_ERROR;
 }
 

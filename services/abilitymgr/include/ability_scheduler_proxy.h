@@ -308,6 +308,8 @@ public:
     void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) override;
     sptr<IRemoteObject> CallRequest() override;
 
+    int BlockAbility() override;
+
 private:
     bool WriteInterfaceToken(MessageParcel &data);
 
