@@ -34,7 +34,8 @@ struct AsyncErrMsgCallbackInfo {
 
 napi_value NapiGetResut(napi_env env, int iResult);
 bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value);
-void InnerCreateRetMsg(napi_env env, int32_t code, napi_value* result);
+void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result);
+void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result);
 napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo);
 
 #endif /* NAPI_FORM_UTIL_H_ */

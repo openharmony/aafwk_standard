@@ -31,7 +31,6 @@ using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-    constexpr size_t ARGS_SIZE_ONE = 1;
     constexpr size_t ARGS_SIZE_TWO = 2;
     constexpr size_t ARGS_SIZE_THREE = 3;
     constexpr int REF_COUNT = 1;
@@ -229,7 +228,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_INVALID_FORM_ID,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -251,7 +250,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -273,7 +272,7 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_REFRESH_TIME_NUM_ERR,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -304,10 +303,10 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
         // Check the value type of the arguments
         valueType = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_TWO], &valueType));
-        NAPI_ASSERT(env, valueType == napi_function, "The arguments[2] type of setFormNextRefreshTime is incorrect,\
-        expected type is function.");
+        NAPI_ASSERT(env, valueType == napi_function, "The arguments[2] type of setFormNextRefreshTime is incorrect, "
+            "expected type is function.");
 
-        napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
+        napi_create_reference(env, argv[ARGS_SIZE_TWO], REF_COUNT, &asyncCallbackInfo->callback);
 
         napi_value resourceName;
         napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
@@ -330,14 +329,14 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
 
                 if (asyncCallbackInfo->callback != nullptr) {
-                    napi_value result;
-                    InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
+                    napi_value result[ARGS_SIZE_TWO] = {0};
+                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, result);
                     napi_value callback;
                     napi_value undefined;
                     napi_get_undefined(env, &undefined);
                     napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                     napi_value callResult;
-                    napi_call_function(env, undefined, callback, ARGS_SIZE_ONE, &result, &callResult);
+                    napi_call_function(env, undefined, callback, ARGS_SIZE_TWO, result, &callResult);
                     napi_delete_reference(env, asyncCallbackInfo->callback);
                 }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -373,8 +372,12 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
                 (AsyncNextRefreshTimeFormCallbackInfo *)data;
 
                 napi_value result;
-                InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -435,7 +438,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_INVALID_FORM_ID,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -458,7 +461,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -480,7 +483,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 .callback = nullptr,
                 .code = ERR_APPEXECFWK_FORM_INVALID_PROVIDER_DATA,
                 .type = 0,
-                .callbackValue = argv[1]
+                .callbackValue = argv[ARGS_SIZE_TWO]
             };
 
         if (argc == ARGS_SIZE_THREE) {
@@ -521,10 +524,10 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
         // Check the value type of the arguments
         valueType = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[ARGS_SIZE_TWO], &valueType));
-        NAPI_ASSERT(env, valueType == napi_function, "The arguments[2] type of updateForm is incorrect,\
-        expected type is function.");
+        NAPI_ASSERT(env, valueType == napi_function, "The arguments[2] type of updateForm is incorrect, "
+            "expected type is function.");
 
-        napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
+        napi_create_reference(env, argv[ARGS_SIZE_TWO], REF_COUNT, &asyncCallbackInfo->callback);
 
         napi_value resourceName;
         napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
@@ -542,14 +545,14 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
 
                 if (asyncCallbackInfo->callback != nullptr) {
-                    napi_value result;
-                    InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
+                    napi_value result[ARGS_SIZE_TWO] = {0};
+                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, result);
                     napi_value callback;
                     napi_value undefined;
                     napi_get_undefined(env, &undefined);
                     napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                     napi_value callResult;
-                    napi_call_function(env, undefined, callback, ARGS_SIZE_ONE, &result, &callResult);
+                    napi_call_function(env, undefined, callback, ARGS_SIZE_TWO, result, &callResult);
                     napi_delete_reference(env, asyncCallbackInfo->callback);
                 }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -582,8 +585,12 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
                 AsyncUpdateFormCallbackInfo *asyncCallbackInfo = (AsyncUpdateFormCallbackInfo *)data;
 
                 napi_value result;
-                InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },

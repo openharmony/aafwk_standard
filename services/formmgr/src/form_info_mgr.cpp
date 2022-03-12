@@ -306,7 +306,7 @@ ErrCode FormInfoMgr::GetFormsInfoByBundle(const std::string &bundleName, std::ve
     }
 
     if (!CheckBundlePermission() && !IsCaller(bundleName)) {
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE;
     }
 
     std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
@@ -331,7 +331,7 @@ ErrCode FormInfoMgr::GetFormsInfoByModule(const std::string &bundleName, const s
     }
 
     if (!CheckBundlePermission() && !IsCaller(bundleName)) {
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE;
     }
 
     std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
