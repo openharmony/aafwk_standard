@@ -88,7 +88,7 @@ int64_t FormUtil::GenerateFormId(int64_t udidHash)
     size_t elapsedHash = std::hash<std::string>()(std::to_string(elapsedTime));
     HILOG_INFO("%{public}s, GenerateFormId generate elapsed hash %{public}zu", __func__, elapsedHash);
     uint64_t unsignedudidHash = static_cast<uint64_t>(udidHash);
-    uint64_t formId = unsignedudidHash | (int32_t)(elapsedHash & 0x000000007fffffffL);
+    uint64_t formId = unsignedudidHash | (uint32_t)(elapsedHash & 0x000000007fffffffL);
     int64_t ret = static_cast<int64_t>(formId);
     HILOG_INFO("%{public}s, GenerateFormId generate formId %{public}" PRId64 "", __func__, ret);
     return ret;

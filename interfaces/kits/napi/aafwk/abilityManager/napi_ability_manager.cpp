@@ -1822,7 +1822,7 @@ napi_value NAPI_GetAbilityMissionSnapshotWrap(
 napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info)
 {
     size_t argc = 2;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}d]", (int32_t)argc);
 

@@ -199,12 +199,12 @@ bool Operation::operator==(const Operation &other) const
     if (deviceId_ != other.deviceId_) {
         return false;
     }
-    long entitiesCount = entities_.size();
-    long otherEntitiesCount = other.entities_.size();
+    size_t entitiesCount = entities_.size();
+    size_t otherEntitiesCount = other.entities_.size();
     if (entitiesCount != otherEntitiesCount) {
         return false;
     } else {
-        for (long i = 0; i < entitiesCount; i++) {
+        for (size_t i = 0; i < entitiesCount; i++) {
             if (entities_[i] != other.entities_[i]) {
                 return false;
             }
@@ -379,10 +379,11 @@ void Operation::DumpInfo(int level) const
     ABILITYBASE_LOGI("===Operation::action_ %{public}s =============", action_.c_str());
     ABILITYBASE_LOGI("===Operation::bundleName_ %{public}s =============", bundleName_.c_str());
     ABILITYBASE_LOGI("===Operation::deviceId_ %{public}s =============", deviceId_.c_str());
-    long entities_count = entities_.size();
-    ABILITYBASE_LOGI("===Operation::entities_: count %{public}ld =============", entities_count);
-    for (long i = 0; i < entities_count; i++) {
-        ABILITYBASE_LOGI("=Operation::entities_[%{public}ld]:%{public}s =============", i, entities_[i].c_str());
+    size_t entities_count = entities_.size();
+    ABILITYBASE_LOGI("===Operation::entities_: count %{public}u =============", (uint32_t)entities_count);
+    for (size_t i = 0; i < entities_count; i++) {
+        ABILITYBASE_LOGI("=Operation::entities_[%{public}u]: %{public}s =============", (uint32_t)i,
+            entities_[i].c_str());
     }
     ABILITYBASE_LOGI("===Operation::flags_ %{public}ud =============", flags_);
     ABILITYBASE_LOGI("===Operation::uri_ %{public}s =============", uri_.ToString().c_str());
