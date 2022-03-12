@@ -1025,8 +1025,10 @@ int AbilityManagerService::DisconnectLocalAbility(const sptr<IAbilityConnection>
 int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &connect)
 {
     HILOG_INFO("%{public}s begin DisconnectAbilityRemote", __func__);
+    int32_t callerUid = IPCSkeleton::GetCallingUid();
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
     DistributedClient dmsClient;
-    return dmsClient.DisconnectRemoteAbility(connect);
+    return dmsClient.DisconnectRemoteAbility(connect, callerUid, accessToken);
 }
 
 int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
