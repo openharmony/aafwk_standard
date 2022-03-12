@@ -19,13 +19,14 @@
 namespace OHOS {
 namespace AAFwk {
 namespace PermissionConstants {
-const std::string PERMISSION_CLEAN_BACKGROUND_PROCESSES = "ohos.permission.CLEAN_BACKGROUND_PROCESSES";
-const std::string PERMISSION_INTERACT_ACROSS_LOCAL_ACCOUNTS = "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS";
-const std::string PERMISSION_GET_RUNNING_INFO = "ohos.permission.GET_RUNNING_INFO";
-const std::string PERMISSION_UPDATE_CONFIGURATION = "ohos.permission.UPDATE_CONFIGURATION";
 const std::string PERMISSION_CLEAN_APPLICATION_DATA = "ohos.permission.CLEAN_APPLICATION_DATA";
-const std::string PERMISSION_RUNNING_STATE_OBSERVER = "ohos.permission.RUNNING_STATE_OBSERVER";
+const std::string PERMISSION_CLEAN_BACKGROUND_PROCESSES = "ohos.permission.CLEAN_BACKGROUND_PROCESSES";
+const std::string PERMISSION_GET_RUNNING_INFO = "ohos.permission.GET_RUNNING_INFO";
+const std::string PERMISSION_INTERACT_ACROSS_LOCAL_ACCOUNTS = "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS";
 const std::string PERMISSION_MANAGE_MISSION = "ohos.permission.MANAGE_MISSIONS";
+const std::string PERMISSION_RUNNING_STATE_OBSERVER = "ohos.permission.RUNNING_STATE_OBSERVER";
+const std::string PERMISSION_SET_ABILITY_CONTROLLER = "ohos.permission.SET_ABILITY_CONTROLLER";
+const std::string PERMISSION_UPDATE_CONFIGURATION = "ohos.permission.UPDATE_CONFIGURATION";
 } // namespace PermissionConstants
 } // namespace AAFwk
 } // namespace OHOS

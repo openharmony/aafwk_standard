@@ -28,7 +28,7 @@ public:
     virtual void TestStatus(const std::string &msg, const int &resultCode) override;
     virtual void TestFinished(const std::string &msg, const int &resultCode) override;
     virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutMs) override;
+        const std::string &cmd, const int64_t timeoutSec) override;
 
 private:
     static inline BrokerDelegator<TestObserverProxy> delegator_;

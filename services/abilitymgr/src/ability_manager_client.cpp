@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -346,9 +346,7 @@ ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
 
 ErrCode AbilityManagerClient::RemoveStack(int id)
 {
-    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->RemoveStack(id);
+    return 0;
 }
 #endif
 
@@ -389,17 +387,7 @@ ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
     }
     return ERR_OK;
 }
-#endif
 
-ErrCode AbilityManagerClient::CompelVerifyPermission(
-    const std::string &permission, int pid, int uid, std::string &message)
-{
-    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
-    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->CompelVerifyPermission(permission, pid, uid, message);
-}
-
-#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::MoveMissionToFloatingStack(const MissionOption &missionOption)
 {
     CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
@@ -810,6 +798,23 @@ ErrCode AbilityManagerClient::MoveMissionToFront(int32_t missionId, const StartO
 
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->MoveMissionToFront(missionId, startOptions);
+}
+
+ErrCode AbilityManagerClient::GetMissionIdByToken(const sptr<IRemoteObject> &token, int32_t &missionId)
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    if (!abms) {
+        HILOG_ERROR("ability manager service connect failed!");
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
+
+    missionId = abms->GetMissionIdByToken(token);
+    if (missionId <= 0) {
+        HILOG_ERROR("get missionid by token failed!");
+        return MISSION_NOT_FOUND;
+    }
+    return ERR_OK;
 }
 #endif
 

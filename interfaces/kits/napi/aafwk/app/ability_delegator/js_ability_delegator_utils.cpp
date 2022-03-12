@@ -44,6 +44,7 @@ NativeValue *CreateJsAbilityDelegator(NativeEngine &engine)
     BindNativeFunction(engine, *object, "getAppContext", JSAbilityDelegator::GetAppContext);
     BindNativeFunction(engine, *object, "getAbilityState", JSAbilityDelegator::GetAbilityState);
     BindNativeFunction(engine, *object, "getCurrentTopAbility", JSAbilityDelegator::GetCurrentTopAbility);
+    BindNativeFunction(engine, *object, "startAbility", JSAbilityDelegator::StartAbility);
     BindNativeFunction(engine, *object, "doAbilityForeground", JSAbilityDelegator::DoAbilityForeground);
     BindNativeFunction(engine, *object, "doAbilityBackground", JSAbilityDelegator::DoAbilityBackground);
     BindNativeFunction(engine, *object, "print", JSAbilityDelegator::Print);

@@ -49,6 +49,11 @@ ohos_shared_library("form_manager") {
     "src/provider_connect_stub.cpp",
   ]
 
+  defines = [
+    "APP_LOG_TAG = \"FormMgrService\"",
+    "LOG_DOMAIN = 0xD001120",
+  ]
+
   public_configs = [
     ":formmgr_sdk_config",
     "${services_path}/formmgr:formmgr_config",

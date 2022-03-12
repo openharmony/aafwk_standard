@@ -21,11 +21,20 @@
 #include "js_ability_delegator_utils.h"
 #include "js_context_utils.h"
 #include "js_runtime_utils.h"
+#include "napi_common_want.h"
 #include "napi_remote_object.h"
 #include "shell_cmd_result.h"
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
+struct AbilityTokenBox {
+    sptr<IRemoteObject> token_;
+};
+
+struct ShellCmdResultBox {
+    std::unique_ptr<ShellCmdResult> shellCmdResult_;
+};
+
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
 constexpr size_t INDEX_ZERO = 0;
@@ -77,6 +86,12 @@ NativeValue *JSAbilityDelegator::GetCurrentTopAbility(NativeEngine *engine, Nati
 {
     JSAbilityDelegator *me = CheckParamsAndGetThis<JSAbilityDelegator>(engine, info);
     return (me != nullptr) ? me->OnGetCurrentTopAbility(*engine, *info) : nullptr;
+}
+
+NativeValue *JSAbilityDelegator::StartAbility(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JSAbilityDelegator *me = CheckParamsAndGetThis<JSAbilityDelegator>(engine, info);
+    return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
 }
 
 NativeValue *JSAbilityDelegator::DoAbilityForeground(NativeEngine *engine, NativeCallbackInfo *info)
@@ -188,21 +203,26 @@ NativeValue *JSAbilityDelegator::OnWaitAbilityMonitor(NativeEngine &engine, Nati
         return engine.CreateUndefined();
     }
 
+    auto abilityTokenBox = std::make_shared<AbilityTokenBox>();
+    AsyncTask::ExecuteCallback execute = [monitor, timeout, opt, abilityTokenBox]() {
+        HILOG_INFO("OnWaitAbilityMonitor AsyncTask ExecuteCallback is called");
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            HILOG_ERROR("OnWaitAbilityMonitor AsyncTask ExecuteCallback, Invalid delegator");
+            return;
+        }
+
+        if (opt.hasTimeoutPara) {
+            abilityTokenBox->token_ = delegator->WaitAbilityMonitor(monitor, timeout);
+        } else {
+            abilityTokenBox->token_ = delegator->WaitAbilityMonitor(monitor);
+        }
+    };
+
     AsyncTask::CompleteCallback complete =
-        [monitor, timeout, opt, this](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            HILOG_INFO("OnWaitAbilityMonitor AsyncTask is called");
-            auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
-            if (!delegator) {
-                task.Reject(engine, CreateJsError(engine, ERROR, "waitAbilityMonitor failed."));
-                return;
-            }
-            sptr<IRemoteObject> remoteObject = nullptr;
-            if (opt.hasTimeoutPara) {
-                remoteObject = delegator->WaitAbilityMonitor(monitor, timeout);
-            } else {
-                remoteObject = delegator->WaitAbilityMonitor(monitor);
-            }
-            NativeValue *ability = CreateAbilityObject(engine, remoteObject);
+        [abilityTokenBox, this](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            HILOG_INFO("OnWaitAbilityMonitor AsyncTask CompleteCallback is called");
+            NativeValue *ability = CreateAbilityObject(engine, abilityTokenBox->token_);
             if (ability) {
                 task.Resolve(engine, ability);
             } else {
@@ -219,7 +239,7 @@ NativeValue *JSAbilityDelegator::OnWaitAbilityMonitor(NativeEngine &engine, Nati
 
     NativeValue *result = nullptr;
     AsyncTask::Schedule(
-        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, std::move(execute), std::move(complete), &result));
     return result;
 }
 
@@ -263,16 +283,21 @@ NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, Nat
         return engine.CreateUndefined();
     }
 
-    AsyncTask::CompleteCallback complete = [cmd, timeoutSecs](NativeEngine &engine, AsyncTask &task, int32_t status) {
-        HILOG_INFO("OnExecuteShellCommand AsyncTask is called");
+    auto shellCmdResultBox = std::make_shared<ShellCmdResultBox>();
+    AsyncTask::ExecuteCallback execute = [cmd, timeoutSecs, shellCmdResultBox]() {
+        HILOG_INFO("OnExecuteShellCommand AsyncTask ExecuteCallback is called");
         auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
         if (!delegator) {
-            task.Reject(engine, CreateJsError(engine, ERROR, "executeShellCommand failed."));
+            HILOG_ERROR("OnExecuteShellCommand AsyncTask ExecuteCallback, Invalid delegator");
             return;
         }
-        std::unique_ptr<ShellCmdResult> shellResult =
-            delegator->ExecuteShellCommand(cmd, timeoutSecs);
-        NativeValue *result = CreateJsShellCmdResult(engine, shellResult);
+
+        shellCmdResultBox->shellCmdResult_ = delegator->ExecuteShellCommand(cmd, timeoutSecs);
+    };
+
+    AsyncTask::CompleteCallback complete = [shellCmdResultBox](NativeEngine &engine, AsyncTask &task, int32_t status) {
+        HILOG_INFO("OnExecuteShellCommand AsyncTask CompleteCallback is called");
+        NativeValue *result = CreateJsShellCmdResult(engine, shellCmdResultBox->shellCmdResult_);
         if (result) {
             task.Resolve(engine, result);
         } else {
@@ -289,7 +314,7 @@ NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, Nat
 
     NativeValue *result = nullptr;
     AsyncTask::Schedule(
-        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, std::move(execute), std::move(complete), &result));
     return result;
 }
 
@@ -364,6 +389,38 @@ NativeValue *JSAbilityDelegator::OnGetCurrentTopAbility(NativeEngine &engine, Na
     };
 
     NativeValue *lastParam = (info.argc >= ARGC_ONE) ? info.argv[INDEX_ZERO] : nullptr;
+    NativeValue *result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    return result;
+}
+
+NativeValue *JSAbilityDelegator::OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("enter, argc = %{public}d", static_cast<int>(info.argc));
+
+    AAFwk::Want want;
+    if (!ParseStartAbilityPara(engine, info, want)) {
+        HILOG_ERROR("Parse startAbility parameters failed");
+        return engine.CreateUndefined();
+    }
+
+    AsyncTask::CompleteCallback complete = [want](NativeEngine &engine, AsyncTask &task, int32_t status) {
+        HILOG_INFO("OnStartAbility AsyncTask is called");
+        auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+        if (!delegator) {
+            task.Reject(engine, CreateJsError(engine, ERROR, "startAbility failed."));
+            return;
+        }
+        int result = delegator->StartAbility(want);
+        if (result) {
+            task.Reject(engine, CreateJsError(engine, result, "startAbility failed."));
+        } else {
+            task.Resolve(engine, engine.CreateNull());
+        }
+    };
+
+    NativeValue *lastParam = (info.argc > ARGC_ONE) ? info.argv[INDEX_ONE] : nullptr;
     NativeValue *result = nullptr;
     AsyncTask::Schedule(
         engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -539,8 +596,8 @@ NativeValue *JSAbilityDelegator::CreateAbilityObject(NativeEngine &engine, const
     return objValue;
 }
 
-void JSAbilityDelegator::AbilityLifecycleStateToJs(const AbilityDelegator::AbilityState &lifeState,
-    AbilityLifecycleState &abilityLifeState)
+void JSAbilityDelegator::AbilityLifecycleStateToJs(
+    const AbilityDelegator::AbilityState &lifeState, AbilityLifecycleState &abilityLifeState)
 {
     HILOG_INFO("enter and lifeState = %{public}d", (int32_t)lifeState);
     switch (lifeState) {
@@ -678,8 +735,8 @@ NativeValue *JSAbilityDelegator::ParseExecuteShellCommandPara(
     return engine.CreateNull();
 }
 
-NativeValue *JSAbilityDelegator::ParseAbilityCommonPara(NativeEngine &engine, NativeCallbackInfo &info,
-    sptr<OHOS::IRemoteObject> &remoteObject)
+NativeValue *JSAbilityDelegator::ParseAbilityCommonPara(
+    NativeEngine &engine, NativeCallbackInfo &info, sptr<OHOS::IRemoteObject> &remoteObject)
 {
     HILOG_INFO("enter");
     if (info.argc < ARGC_ONE) {
@@ -701,8 +758,32 @@ NativeValue *JSAbilityDelegator::ParseAbilityCommonPara(NativeEngine &engine, Na
     return engine.CreateNull();
 }
 
-NativeValue *JSAbilityDelegator::ParseFinishTestPara(NativeEngine &engine,
-    NativeCallbackInfo &info, std::string &msg, int64_t &code)
+NativeValue *JSAbilityDelegator::ParseStartAbilityPara(
+    NativeEngine &engine, NativeCallbackInfo &info, AAFwk::Want &want)
+{
+    HILOG_INFO("enter");
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("Incorrect number of parameters");
+        return nullptr;
+    }
+
+    if (!OHOS::AppExecFwk::UnwrapWant(
+        reinterpret_cast<napi_env>(&engine), reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), want)) {
+        HILOG_ERROR("Parse want parameter failed");
+        return nullptr;
+    }
+
+    if (info.argc > ARGC_ONE) {
+        if (info.argv[INDEX_ONE]->TypeOf() != NativeValueType::NATIVE_FUNCTION) {
+            HILOG_ERROR("Parse StartAbility callback parameters failed");
+            return nullptr;
+        }
+    }
+    return engine.CreateNull();
+}
+
+NativeValue *JSAbilityDelegator::ParseFinishTestPara(
+    NativeEngine &engine, NativeCallbackInfo &info, std::string &msg, int64_t &code)
 {
     HILOG_INFO("enter");
     if (info.argc < ARGC_TWO) {

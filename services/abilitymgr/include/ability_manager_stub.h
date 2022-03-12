@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,7 +69,6 @@ private:
     int GetAllStackInfoInner(MessageParcel &data, MessageParcel &reply);
     int GetRecentMissionsInner(MessageParcel &data, MessageParcel &reply);
     int RemoveMissionInner(MessageParcel &data, MessageParcel &reply);
-    int RemoveStackInner(MessageParcel &data, MessageParcel &reply);
     int ScheduleCommandAbilityDoneInner(MessageParcel &data, MessageParcel &reply);
     int GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply);
     int AcquireDataAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -96,7 +95,6 @@ private:
     int CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply);
     int SetMissionStackSettingInner(MessageParcel &data, MessageParcel &reply);
     int IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply);
-    int CompelVerifyPermissionInner(MessageParcel &data, MessageParcel &reply);
     int PowerOffInner(MessageParcel &data, MessageParcel &reply);
     int PowerOnInner(MessageParcel &data, MessageParcel &reply);
     int LockMissionInner(MessageParcel &data, MessageParcel &reply);
@@ -144,6 +142,7 @@ private:
     int CleanMissionInner(MessageParcel &data, MessageParcel &reply);
     int CleanAllMissionsInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontInner(MessageParcel &data, MessageParcel &reply);
+    int GetMissionIdByTokenInner(MessageParcel &data, MessageParcel &reply);
 
 	// for new version ability (call ability)
     int StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply);

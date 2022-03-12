@@ -323,7 +323,9 @@ bool JsRuntime::Initialize(const Options& options)
         return false;
     }
 
-    OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
+    if (options.loadAce) {
+        OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
+    }
     codePath_ = options.codePath;
 
     auto moduleManager = NativeModuleManager::GetInstance();
@@ -524,7 +526,7 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
     std::string straceStr = "";
-    // [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr);
+    // [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr)
     return straceStr;
 }
 }  // namespace AbilityRuntime

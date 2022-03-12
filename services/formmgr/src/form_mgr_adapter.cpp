@@ -18,6 +18,7 @@
 
 #include "appexecfwk_errors.h"
 #include "form_acquire_connection.h"
+#include "form_acquire_state_connection.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
 #include "form_cache_mgr.h"
@@ -1189,7 +1190,7 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
     itemInfo.SetHostBundleName(hostBundleName);
-    std::string icon = IN_PROCESS_CALL(iBundleMgr->GetAbilityIcon(bundleInfo.name, formInfo.abilityName));
+    std::string icon = iBundleMgr->GetAbilityIcon(bundleInfo.name, formInfo.abilityName);
     itemInfo.SetIcon(icon);
 
     itemInfo.SetAbilityName(formInfo.abilityName);
@@ -1712,6 +1713,99 @@ int32_t FormMgrAdapter::GetCurrentUserId(const int callingUid)
     int32_t userId = callingUid / UID_CALLINGUID_TRANSFORM_DIVISOR;
     return userId;
 }
+
+/**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms to delete.
+ * @param callerToken Caller ability token.
+ * @param numFormsDeleted Returns the number of the deleted forms.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::DeleteInvalidForms(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                       int32_t &numFormsDeleted)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, deleteForm invalid param", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+    numFormsDeleted = 0;
+
+    for (int64_t formId: formIds) {
+        HILOG_DEBUG("check formId: %{public}" PRId64 "", formId);
+        if (formId <= 0) {
+            continue;
+        }
+        int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+        if (FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
+            HILOG_INFO("delete temp form, formId: %{public}" PRId64 "", formId);
+            int ret = HandleDeleteTempForm(matchedFormId, callerToken);
+            if (ret == ERR_OK) {
+                numFormsDeleted++;
+            } else {
+                HILOG_ERROR("failed to delete the temp form, formId: %{public}" PRId64 "", formId);
+            }
+            continue;
+        }
+
+        if (!FormDataMgr::GetInstance().ExistFormRecord(matchedFormId)) {
+            HILOG_ERROR("%{public}s, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+            continue;
+        }
+
+        HILOG_INFO("delete form, formId: %{public}" PRId64 "", formId);
+        int ret = HandleDeleteForm(matchedFormId, callerToken);
+        if (ret == ERR_OK) {
+            numFormsDeleted++;
+        } else {
+            HILOG_ERROR("failed to delete the form, formId: %{public}" PRId64 "", formId);
+        }
+    }
+    HILOG_INFO("%{public}s done, %{public}d forms deleted.", __func__, numFormsDeleted);
+    return ERR_OK;
+}
+
+/**
+ * @brief Acquire form state info by passing a set of parameters (using Want) to the form provider.
+ * @param want Indicates a set of parameters to be transparently passed to the form provider.
+ * @param callerToken Caller ability token.
+ * @param stateInfo Returns the form's state info of the specify.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken,
+                                     FormStateInfo &stateInfo)
+{
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, deleteForm invalid param", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+    std::string bundleName = want.GetElement().GetBundleName();
+    std::string abilityName = want.GetElement().GetAbilityName();
+
+    if (bundleName.empty()) {
+        HILOG_ERROR("%{public}s error, bundleName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+    if (abilityName.empty()) {
+        HILOG_ERROR("%{public}s error, abilityName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    HILOG_DEBUG("bundleName:%{public}s, abilityName:%{public}s", bundleName.c_str(), abilityName.c_str());
+    sptr<IAbilityConnection> acquireFormStateConnection = new FormAcquireStateConnection(bundleName, abilityName, want);
+
+    Want targetWant;
+    targetWant.AddFlags(Want::FLAG_ABILITY_FORM_ENABLED);
+    targetWant.SetElementName(bundleName, abilityName);
+    ErrCode errorCode = FormAmsHelper::GetInstance().ConnectServiceAbility(targetWant, acquireFormStateConnection);
+    if (errorCode != ERR_OK) {
+        HILOG_ERROR("%{public}s, ConnectServiceAbility failed.", __func__);
+        return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
+    }
+    stateInfo.state = FormState::DEFAULT;
+    return ERR_OK;
+}
+
 /**
  * @brief Get All FormsInfo.
  * @param formInfos Return the forms' information of all forms provided.

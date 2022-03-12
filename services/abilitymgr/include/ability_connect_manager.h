@@ -230,6 +230,8 @@ public:
 
     void DumpState(std::vector<std::string> &info, bool isClient, const std::string &args = "") const;
 
+    void StopAllExtensions();
+
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
     static constexpr uint32_t CONNECT_TIMEOUT_MSG = 1;

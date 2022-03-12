@@ -1009,6 +1009,19 @@ void AppRunningRecord::ScheduleAcceptWantDone()
     eventHandler_->RemoveEvent(AMSEventHandler::START_SPECIFIED_ABILITY_TIMEOUT_MSG, eventId_);
 }
 
+void AppRunningRecord::ApplicationTerminated()
+{
+    HILOG_DEBUG("Application terminated bundle %{public}s and eventId %{public}d", mainBundleName_.c_str(),
+        static_cast<int>(eventId_));
+
+    if (!eventHandler_) {
+        HILOG_ERROR("eventHandler_ is nullptr");
+        return;
+    }
+
+    eventHandler_->RemoveEvent(AMSEventHandler::TERMINATE_APPLICATION_TIMEOUT_MSG, eventId_);
+}
+
 const AAFwk::Want &AppRunningRecord::GetSpecifiedWant() const
 {
     return SpecifiedWant_;
