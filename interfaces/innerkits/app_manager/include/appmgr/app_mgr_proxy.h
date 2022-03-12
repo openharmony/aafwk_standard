@@ -214,6 +214,13 @@ public:
      */
     virtual void PostANRTaskByProcessID(const pid_t pid) override;
 
+    /**
+     * Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int BlockAppService() override;
+
 private:
     bool SendTransactCmd(IAppMgr::Message code, MessageParcel &data, MessageParcel &reply);
     bool WriteInterfaceToken(MessageParcel &data);

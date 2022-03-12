@@ -342,5 +342,22 @@ void MissionList::DumpList(std::vector<std::string> &info, bool isClient)
         }
     }
 }
+
+int MissionList::BlockAbilityByRecordId(int32_t abilityRecordId)
+{
+    int ret = -1;
+    for (const auto& mission : missions_) {
+        if (mission) {
+            auto abilityRecord = mission->GetAbilityRecord();
+            if (abilityRecord) {
+                if (abilityRecord->GetRecordId() == abilityRecordId) {
+                    HILOG_INFO("record begain to call BlockAbilityByRecordId %{public}s", __func__);
+                    return abilityRecord->BlockAbility();
+                }
+            }
+        }
+    }
+    return ret;
+}
 }  // namespace AAFwk
 }  // namespace OHOS
