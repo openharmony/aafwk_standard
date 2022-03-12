@@ -30,46 +30,13 @@ using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-    constexpr size_t ARGS_SIZE_ONE = 1;
+    constexpr size_t ARGS_SIZE_TWO = 2;
     constexpr int INT_64_LENGTH = 19;
     constexpr int ZERO_VALUE = 0;
     constexpr int REF_COUNT = 1;
     constexpr int DECIMAL_VALUE = 10;
     constexpr int BASE_NUMBER = 9;
     constexpr int CALLBACK_FLG = 1;
-    OHOS::AppExecFwk::Ability* g_ability = nullptr;
-}
-
-/**
- * @brief GetGlobalAbility
- *
- * @param[in] env The environment that the Node-API call is invoked under
- *
- * @return OHOS::AppExecFwk::Ability*
- */
-static OHOS::AppExecFwk::Ability* GetGlobalAbility(napi_env env)
-{
-    // get global value
-    napi_value global = nullptr;
-    napi_get_global(env, &global);
-
-    // get ability
-    napi_value abilityObj = nullptr;
-    napi_get_named_property(env, global, "ability", &abilityObj);
-
-    // get ability pointer
-    OHOS::AppExecFwk::Ability* ability = nullptr;
-    napi_get_value_external(env, abilityObj, (void**)&ability);
-    HILOG_INFO("%{public}s, ability = [%{public}p]", __func__, ability);
-    if (ability == nullptr) {
-        if (g_ability == nullptr) {
-            std::unique_ptr<AbilityRuntime::Runtime> runtime;
-            g_ability = OHOS::AppExecFwk::Ability::Create(runtime);
-        }
-        ability = g_ability;
-        HILOG_INFO("%{public}s, Use Local tmp Ability for Stage Module", __func__);
-    }
-    return ability;
 }
 
 /**
@@ -147,7 +114,7 @@ bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value)
 }
 
 /**
- * @brief Create return message
+ * @brief Create return message(callback)
  *
  * @param[in] env The environment that the Node-API call is invoked under
  * @param[in] code result code
@@ -155,7 +122,35 @@ bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value)
  *
  * @return void
  */
-void InnerCreateRetMsg(napi_env env, int32_t code, napi_value* result)
+void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result)
+{
+    HILOG_DEBUG("%{public}s called. code:%{public}d", __func__, code);
+    napi_value error = nullptr;
+    napi_value errCode = nullptr;
+    napi_create_object(env, &error);
+    napi_create_int32(env, code, &errCode);
+    napi_set_named_property(env, error, "code", errCode);
+    result[0] = error;
+
+    if (code == ERR_OK) {
+        napi_value data = nullptr;
+        napi_create_int32(env, ERR_OK, &data);
+        result[1] = data;
+    }
+
+    HILOG_DEBUG("%{public}s, end.", __func__);
+}
+
+/**
+ * @brief Create return message(promise)
+ *
+ * @param[in] env The environment that the Node-API call is invoked under
+ * @param[in] code result code
+ * @param[out] result result message
+ *
+ * @return void
+ */
+void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result)
 {
     HILOG_DEBUG("%{public}s called. code:%{public}d", __func__, code);
     if (code == ERR_OK) {
@@ -163,18 +158,11 @@ void InnerCreateRetMsg(napi_env env, int32_t code, napi_value* result)
         return;
     }
 
-    OHOS::AppExecFwk::Ability* ability = GetGlobalAbility(env);
-    std::string msg = ability->GetErrorMsg(code);
-    HILOG_DEBUG("message: %{public}s", msg.c_str());
     napi_value errInfo = nullptr;
     napi_value errCode = nullptr;
-    napi_value errMsg = nullptr;
-
     napi_create_object(env, &errInfo);
     napi_create_int32(env, code, &errCode);
-    napi_create_string_utf8(env, msg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
     napi_set_named_property(env, errInfo, "code", errCode);
-    napi_set_named_property(env, errInfo, "data", errMsg);
     result[0] = errInfo;
     HILOG_DEBUG("%{public}s, end.", __func__);
 }
@@ -183,9 +171,7 @@ void InnerCreateRetMsg(napi_env env, int32_t code, napi_value* result)
  * @brief Send error message.
  *
  * @param[in] env The environment that the Node-API call is invoked under
- * @param[in] value Use create callback
- * @param[in] code Result code
- * @param[in] type Callback or promise type
+ * @param[in] asyncCallbackInfo Reference, callback info via Node-API
  * @param[out] result result message
  *
  * @return void
@@ -221,12 +207,12 @@ napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo)
                 if (asyncCallbackInfo->callback != nullptr) {
                     napi_value callback;
                     napi_value undefined;
-                    napi_value result;
-                    InnerCreateRetMsg(env, asyncCallbackInfo->code, &result);
+                    napi_value result[ARGS_SIZE_TWO] = {0};
+                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->code, result);
                     napi_get_undefined(env, &undefined);
                     napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                     napi_value callResult;
-                    napi_call_function(env, undefined, callback, ARGS_SIZE_ONE, &result, &callResult);
+                    napi_call_function(env, undefined, callback, ARGS_SIZE_TWO, result, &callResult);
                     napi_delete_reference(env, asyncCallbackInfo->callback);
                 }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -255,8 +241,8 @@ napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo)
                 AsyncErrMsgCallbackInfo *asyncCallbackInfo = (AsyncErrMsgCallbackInfo *)data;
 
                 napi_value result;
-                InnerCreateRetMsg(env, asyncCallbackInfo->code, &result);
-                napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
+                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->code, &result);
+                napi_reject_deferred(env, asyncCallbackInfo->deferred, result);
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
