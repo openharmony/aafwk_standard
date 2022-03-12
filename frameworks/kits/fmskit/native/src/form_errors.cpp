@@ -56,6 +56,10 @@ void FormErrors::InitErrorMessageMap()
             "check permission deny, need to request ohos.permission.REQUIRE_FORM.",
         },
         {
+            ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE,
+            "check permission deny, need to request ohos.permission.GET_BUNDLE_INFO_PRIVILEGED.",
+        },
+        {
             ERR_APPEXECFWK_FORM_PERMISSION_DENY_SYS,
             "check permission deny, need system permission.",
         },
@@ -75,7 +79,16 @@ void FormErrors::InitErrorMessageMap()
             ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR, "formId must be a numeric string.",
         },
         {
+            ERR_APPEXECFWK_FORM_FORM_ARRAY_ERR, "formIds must be a array.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_RELEASE_FLG_ERR, "release cache flag must be a boolean.",
+        },
+        {
             ERR_APPEXECFWK_FORM_REFRESH_TIME_NUM_ERR, "refresh time must be a number.",
+        },
+        {
+            ERR_APPEXECFWK_FORM_FORM_ID_ARRAY_ERR, "formId array is empty.",
         },
         {
             ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME, "bundleName is not available.",
