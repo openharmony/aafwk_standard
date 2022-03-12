@@ -54,7 +54,7 @@ public:
     void OnForeground(const Want &want) override;
     void OnBackground() override;
 #endif
-    bool OnContinue(WantParams &wantParams) override;
+    int32_t OnContinue(WantParams &wantParams) override;
     void OnConfigurationUpdated(const Configuration &configuration) override;
     void UpdateContextConfiguration() override;
     void OnNewWant(const Want &want) override;

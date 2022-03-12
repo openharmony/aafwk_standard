@@ -156,20 +156,20 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
         return ERR_INVALID_VALUE;
     }
 
-    bool status;
     HILOG_INFO("OnContinue begin");
-    status = ability->OnContinue(wantParams);
-    HILOG_INFO("OnContinue end");
-    if (!status) {
+    int32_t status = ability->OnContinue(wantParams);
+    HILOG_INFO("OnContinue end, status: %{public}d", status);
+    if (status != OnContinueResult::AGREE) {
         HILOG_ERROR("OnContinue failed.");
         return CONTINUE_ON_CONTINUE_FAILED;
     }
     auto abilityInfo = abilityInfo_.lock();
     std::string &bundleName = abilityInfo->bundleName;
     ObjectStore::DistributedObjectStore::GetInstance(bundleName)->TriggerSync();
+
 #ifdef SUPPORT_GRAPHICS
-    status = GetContentInfo(wantParams);
-    if (!status) {
+    bool ret = GetContentInfo(wantParams);
+    if (!ret) {
         HILOG_ERROR("GetContentInfo failed.");
         return CONTINUE_GET_CONTENT_FAILED;
     }
