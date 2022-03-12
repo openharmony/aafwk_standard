@@ -142,6 +142,10 @@ public:
     {
         return sptr<IRemoteObject>(this);
     }
+    virtual int BlockAbility() override
+    {
+        return 0;
+    }
 };
 }  // namespace AAFwk
 }  // namespace OHOS

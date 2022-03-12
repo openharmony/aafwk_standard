@@ -15,6 +15,9 @@
 
 #include "app_mgr_service.h"
 
+#include <chrono>
+#include <thread>
+
 #include <nlohmann/json.hpp>
 #include <sys/types.h>
 
@@ -35,8 +38,10 @@
 namespace OHOS {
 namespace AppExecFwk {
 namespace {
+using namespace std::chrono_literals;
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
 static const int APP_MS_TIMEOUT = 60;
+static const int APP_MS_BLOCK = 65;
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
 const std::string TASK_APPLICATION_FOREGROUNDED = "ApplicationForegroundedTask";
@@ -451,6 +456,22 @@ void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
         return;
     }
     object->ScheduleANRProcess();
+}
+
+int AppMgrService::BlockAppService()
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    if (!IsReady()) {
+        return ERR_INVALID_OPERATION;
+    }
+    auto task = [=]() {
+        while (1) {
+            HILOG_DEBUG("%{public}s begain block app service", __func__);
+            std::this_thread::sleep_for(APP_MS_BLOCK*1s);
+        }
+    };
+    handler_->PostTask(task);
+    return ERR_OK;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

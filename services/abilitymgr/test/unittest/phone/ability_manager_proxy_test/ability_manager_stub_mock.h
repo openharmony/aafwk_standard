@@ -415,6 +415,9 @@ public:
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
     MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
+    MOCK_METHOD0(BlockAppService, int());
+    MOCK_METHOD0(BlockAmsService, int());
+    MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
     {

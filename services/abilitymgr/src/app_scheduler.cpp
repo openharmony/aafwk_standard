@@ -371,5 +371,17 @@ void AppScheduler::PostANRTaskByProcessID(const pid_t pid)
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->PostANRTaskByProcessID(pid);
 }
+
+int AppScheduler::BlockAppService()
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
+    auto ret = static_cast<int>(appMgrClient_->BlockAppService());
+    if (ret != ERR_OK) {
+        HILOG_ERROR("BlockAppService failed.");
+        return INNER_ERR;
+    }
+    return ERR_OK;
+}
 }  // namespace AAFwk
 }  // namespace OHOS

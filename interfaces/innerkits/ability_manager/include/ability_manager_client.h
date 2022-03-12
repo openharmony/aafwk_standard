@@ -786,6 +786,28 @@ public:
      */
     ErrCode SendANRProcessID(int pid);
 
+    /**
+     * Block ability manager service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode BlockAmsService();
+
+    /**
+     * Block ability.
+     *
+     * @param abilityRecordId The Ability Record Id.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode BlockAbility(int32_t abilityRecordId);
+
+    /**
+     * Block app service.
+     *
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode BlockAppService();
+
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;

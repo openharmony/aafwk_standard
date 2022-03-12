@@ -339,6 +339,14 @@ public:
      */
     std::shared_ptr<AbilityRecord> GetCurrentTopAbility(const std::string &bundleName);
 
+    /**
+     * Block ability.
+     *
+     * @param abilityRecordId The Ability Record Id.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int BlockAbility(int abilityReocrdId);
+
     void UninstallApp(const std::string &bundleName, int32_t uid);
 
     bool IsStarted();
@@ -407,7 +415,7 @@ private:
     int ResolveAbility(const std::shared_ptr<AbilityRecord> &targetAbility, const AbilityRequest &abilityRequest);
     std::shared_ptr<AbilityRecord> GetAbilityRecordByName(const AppExecFwk::ElementName &element);
     int CallAbilityLocked(const AbilityRequest &abilityRequest);
-    void UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord>& abilityRecord);
+    void UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
     void AddUninstallTags(const std::string &bundleName, int32_t uid);
 
