@@ -122,7 +122,7 @@ bool Intent::ParseFlag(const std::string &content, Intent &intent)
             }
         }
         int base = 16;  // hex string
-        unsigned int flag = std::stoi(contentLower, nullptr, base);
+        unsigned int flag = (unsigned int)std::stoi(contentLower, nullptr, base);
         intent.SetFlag(flag);
     }
     return true;
@@ -366,7 +366,7 @@ std::string Intent::ToUri()
     if (flags_ != 0) {
         uriString += "flag=";
         char buf[HEX_STRING_BUF_LEN];
-        std::size_t len = snprintf_s(buf, sizeof(buf), HEX_STRING_LEN, "0x%08x", flags_);
+        int len = snprintf_s(buf, sizeof(buf), HEX_STRING_LEN, "0x%08x", flags_);
         if (len == HEX_STRING_LEN) {
             std::string flag = buf;
             uriString += Encode(flag);
@@ -579,9 +579,9 @@ std::vector<bool> Intent::GetBoolArrayParam(const std::string &key)
 
 Intent &Intent::SetBoolArrayParam(const std::string &key, const std::vector<bool> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IBoolean);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Boolean::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -596,9 +596,9 @@ Intent &Intent::SetCharParam(const std::string &key, const zchar value)
 
 Intent &Intent::SetCharArrayParam(const std::string &key, const std::vector<zchar> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IChar);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Char::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -635,9 +635,9 @@ Intent &Intent::SetByteParam(const std::string &key, const byte value)
 
 Intent &Intent::SetByteArrayParam(const std::string &key, const std::vector<byte> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IByte);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Byte::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -674,9 +674,9 @@ Intent &Intent::SetShortParam(const std::string &key, const short value)
 
 Intent &Intent::SetShortArrayParam(const std::string &key, const std::vector<short> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IShort);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Short::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -713,9 +713,9 @@ Intent &Intent::SetIntParam(const std::string &key, const int value)
 
 Intent &Intent::SetIntArrayParam(const std::string &key, const std::vector<int> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IInteger);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Integer::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -774,9 +774,9 @@ std::vector<long> Intent::GetLongArrayParam(const std::string &key)
 
 Intent &Intent::SetLongArrayParam(const std::string &key, const std::vector<long> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_ILong);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Long::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -813,9 +813,9 @@ std::vector<float> Intent::GetFloatArrayParam(const std::string &key)
 
 Intent &Intent::SetFloatArrayParam(const std::string &key, const std::vector<float> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IFloat);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Float::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -852,9 +852,9 @@ std::vector<double> Intent::GetDoubleArrayParam(const std::string &key)
 
 Intent &Intent::SetDoubleArrayParam(const std::string &key, const std::vector<double> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IDouble);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, Double::Box(value[i]));
     }
     parameters_.SetParam(key, ao);
@@ -891,9 +891,9 @@ std::vector<std::string> Intent::GetStringArrayParam(const std::string &key)
 
 Intent &Intent::SetStringArrayParam(const std::string &key, const std::vector<std::string> &value)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<IArray> ao = new Array(size, g_IID_IString);
-    for (long i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         ao->Set(i, String::Box(value[i]));
     }
     parameters_.SetParam(key, ao);

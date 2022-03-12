@@ -216,9 +216,9 @@ bool Configuration::ReadFromParcel(Parcel &parcel)
         ABILITYBASE_LOGE("ReadStringVector for values failed.");
         return false;
     }
-    int32_t keySize = keys.size();
-    int32_t valueSize = values.size();
-    if (keySize != valueSize || configSize != valueSize) {
+    size_t keySize = keys.size();
+    size_t valueSize = values.size();
+    if (keySize != valueSize || configSize != (int32_t)valueSize) {
         ABILITYBASE_LOGE("ReadFromParcel failed, invalid size.");
         return false;
     }
